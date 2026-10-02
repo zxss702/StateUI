@@ -7,12 +7,12 @@
 ///     @Environment private var window: WindowSession
 ///
 ///     VStack { … }
-///         .onCreated {
+///         .onAppear {
 ///             window.title = "Gallery"
 ///             window.width = 1100
 ///             window.height = 800
 ///         }
-///         .onChanged(window.phase) {
+///         .onChange(of: window.phase) {
 ///             if window.phase == .stopped { try await save() }
 ///         }
 ///
@@ -92,7 +92,7 @@ public final class WindowSession {
     /// Authored window chrome presented by hosts that support a custom title
     /// area.
     ///
-    ///     .onCreated {
+    ///     .onAppear {
     ///         if device.formFactor == .desktop {
     ///             window.titleBar = TitleBar("Notes").trailingContent { AccountButton() }
     ///         }
@@ -106,7 +106,7 @@ public final class WindowSession {
     ///
     ///     @State private var sheets: [Sheet] = []
     ///
-    ///     .onCreated {
+    ///     .onAppear {
     ///         window.modalStack = ModalStack($sheets) { sheet in
     ///             switch sheet {
     ///             case .settings: SettingsPage(sheets: $sheets)
@@ -130,7 +130,7 @@ public final class WindowSession {
     ///         static let offline = OverlayKey("offline")
     ///     }
     ///
-    ///     .onChanged(connection.isOnline) {
+    ///     .onChange(of: connection.isOnline) {
     ///         window.overlays[.offline] = connection.isOnline ? nil : OfflineBanner()
     ///     }
     ///
@@ -184,18 +184,18 @@ public final class WindowSession {
     var props: [Prop: PropValue] {
         var props: [Prop: PropValue] = [:]
 
-        props.describe(WindowContract.title, title)
-        props.describe(WindowContract.x, x)
-        props.describe(WindowContract.y, y)
-        props.describe(WindowContract.width, width)
-        props.describe(WindowContract.height, height)
-        props.describe(WindowContract.isMaximizable, isMaximizable)
-        props.describe(WindowContract.isMinimizable, isMinimizable)
-        props.describe(WindowContract.isTranslucent, isTranslucent)
-        props.describe(WindowContract.minimumWidth, minimumWidth)
-        props.describe(WindowContract.minimumHeight, minimumHeight)
-        props.describe(WindowContract.maximumWidth, maximumWidth)
-        props.describe(WindowContract.maximumHeight, maximumHeight)
+        props.describe(WindowSceneContract.title, title)
+        props.describe(WindowSceneContract.x, x)
+        props.describe(WindowSceneContract.y, y)
+        props.describe(WindowSceneContract.width, width)
+        props.describe(WindowSceneContract.height, height)
+        props.describe(WindowSceneContract.isMaximizable, isMaximizable)
+        props.describe(WindowSceneContract.isMinimizable, isMinimizable)
+        props.describe(WindowSceneContract.isTranslucent, isTranslucent)
+        props.describe(WindowSceneContract.minimumWidth, minimumWidth)
+        props.describe(WindowSceneContract.minimumHeight, minimumHeight)
+        props.describe(WindowSceneContract.maximumWidth, maximumWidth)
+        props.describe(WindowSceneContract.maximumHeight, maximumHeight)
 
         return props
     }
@@ -206,7 +206,7 @@ public final class WindowSession {
     var slots: [Node] {
         var slots: [Node] = []
 
-        if let bar = titleBar { slots.append(bar.body) }
+        if let bar = titleBar { slots.append(bar.node) }
         if let stack = modalStack { slots.append(stack.node) }
 
         return slots

@@ -40,20 +40,20 @@ private struct Borrower {
 
 /// A view that OWNS its state - rebuilt on every render, like any view, which
 /// is exactly what the differ has to see through.
-private struct Counter: ContentView {
+private struct Counter: View {
     @State var count = 0
 
-    var content: any View {
+    var body: some View {
         Button("Count: \(count)").onClicked { count += 1 }
     }
 }
 
 /// A different kind of view at the same place, which must NOT inherit
 /// Counter's state.
-private struct Timer: ContentView {
+private struct Timer: View {
     @State var count = 100
 
-    var content: any View {
+    var body: some View {
         Button("Tick: \(count)").onClicked { count += 1 }
     }
 }
@@ -65,13 +65,13 @@ private struct Timer: ContentView {
 /// The element is stored BARE, without a modifier: a modifier wraps it in a
 /// `Node`, which the state walk stops at, and a slot holding a node has no
 /// state to shift.
-private struct Shelf: ContentView {
+private struct Shelf: View {
     /// What sits above the count, when anything does.
     let extra: Element?
 
     @State var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
             if let extra {
                 extra
@@ -86,17 +86,17 @@ private struct Shelf: ContentView {
 /// the navigation bar hang off the page, not under it - written into the
 /// page's session as it comes into the tree: the title again whenever the
 /// query moves, and the view on the bar holding the query's own binding.
-private struct QueryPage: ContentView {
+private struct QueryPage: View {
     @Environment private var page: PageSession
     @State var query = ""
 
-    var content: any View {
-        Label(query)
-            .onCreated {
+    var body: some View {
+        Text(query)
+            .onAppear {
                 page.title = "Results: \(query)"
                 page.titleView = SearchField($query).placeholder("Type here")
             }
-            .onChanged(query) { page.title = "Results: \(query)" }
+            .onChange(of: query) { page.title = "Results: \(query)" }
     }
 }
 
@@ -105,14 +105,14 @@ private struct QueryPage: ContentView {
 /// the shape EVERY optional property of a page and a window has,
 /// `title.map { … }`, and the one whose clearing must not take the state under
 /// it down.
-private struct TitledPage: ContentView {
+private struct TitledPage: View {
     @Environment private var page: PageSession
     let titled: Bool
 
-    var content: any View {
+    var body: some View {
         Counter()
-            .onCreated { page.title = titled ? "Named" : nil }
-            .onChanged(titled) { page.title = titled ? "Named" : nil }
+            .onAppear { page.title = titled ? "Named" : nil }
+            .onChange(of: titled) { page.title = titled ? "Named" : nil }
     }
 }
 
@@ -123,16 +123,16 @@ private final class Builds {
 }
 
 /// A view whose content is one read the test chooses.
-private struct Shown: ContentView {
+private struct Shown: View {
     let read: () -> Void
 
     init(_ read: @escaping () -> Void) {
         self.read = read
     }
 
-    var content: any View {
+    var body: some View {
         read()
-        return Label("shown")
+        return Text("shown")
     }
 }
 
@@ -186,17 +186,17 @@ final class StateTests: XCTestCase {
     func testStateOnAViewSurvivesTheRebuild() {
         let renders = Renders()
 
-        let first = renders.render(Counter().body)
+        let first = renders.render(Counter().node)
         renders.fire(first.events?["clicked"] ?? -1)
 
         // A fresh value, as every render makes one - same identity, same type.
-        let second = renders.render(Counter().body, changed: Renderer.shared.pendingChanges)
+        let second = renders.render(Counter().node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(second.props["text"], .string("Count: 1"),
                        "the rebuilt view kept the tapped count")
 
         renders.fire(first.events?["clicked"] ?? -1)
-        let third = renders.render(Counter().body, changed: Renderer.shared.pendingChanges)
+        let third = renders.render(Counter().node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(third.props["text"], .string("Count: 2"),
                        "and keeps on keeping it")
@@ -205,10 +205,10 @@ final class StateTests: XCTestCase {
     func testADifferentViewTypeAtTheSamePlaceStartsOver() {
         let renders = Renders()
 
-        let first = renders.render(Counter().body)
+        let first = renders.render(Counter().node)
         renders.fire(first.events?["clicked"] ?? -1)
 
-        let second = renders.render(Timer().body)
+        let second = renders.render(Timer().node)
 
         XCTAssertEqual(second.props["text"], .string("Tick: 100"),
                        "another kind of view starts with its own initial value")
@@ -217,28 +217,28 @@ final class StateTests: XCTestCase {
     func testADifferentIdentityStartsOverToo() {
         let renders = Renders()
 
-        let first = renders.render(stack([Counter().id("a").body]))
+        let first = renders.render(stack([Counter().id("a").node]))
         renders.fire(first.child("a")?.events?["clicked"] ?? -1)
 
-        let second = renders.render(stack([Counter().id("b").body]))
+        let second = renders.render(stack([Counter().id("b").node]))
 
         XCTAssertEqual(second.child("b")?.props["text"], .string("Count: 0"),
                        "an element the author renamed is a new element, state included")
     }
 
     func testAViewInsideAViewKeepsItsOwnState() {
-        struct Wrapper: ContentView {
-            var content: any View {
+        struct Wrapper: View {
+            var body: some View {
                 VStack { Counter() }
             }
         }
 
         let renders = Renders()
 
-        let first = renders.render(Wrapper().body)
+        let first = renders.render(Wrapper().node)
         renders.fire(first.children.first?.events?["clicked"] ?? -1)
 
-        let second = renders.render(Wrapper().body, changed: Renderer.shared.pendingChanges)
+        let second = renders.render(Wrapper().node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(second.children.first?.props["text"], .string("Count: 1"))
     }
@@ -248,14 +248,14 @@ final class StateTests: XCTestCase {
 
         // Nothing on the shelf yet, so its own count is the only state the
         // walk finds.
-        let first = renders.render(Shelf(extra: nil).body)
+        let first = renders.render(Shelf(extra: nil).node)
         renders.fire(first.children[0].events?["clicked"] ?? -1)
 
         // The slot fills, and what it fills with owns state of its own - found
         // FIRST, the property being declared first. Paired by position, the
         // newcomer would take the shelf's count and the shelf would be handed
         // nothing.
-        let second = renders.render(Shelf(extra: Counter()).body, changed: Renderer.shared.pendingChanges)
+        let second = renders.render(Shelf(extra: Counter()).node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(second.children.count, 2, "the slot's view and the shelf's own button")
         XCTAssertEqual(second.children[1].props["text"], .string("Shelf: 1"),
@@ -265,10 +265,10 @@ final class StateTests: XCTestCase {
     func testAStoredViewThatArrivesStartsAtItsOwnInitialValue() {
         let renders = Renders()
 
-        let first = renders.render(Shelf(extra: nil).body)
+        let first = renders.render(Shelf(extra: nil).node)
         renders.fire(first.children[0].events?["clicked"] ?? -1)
 
-        let second = renders.render(Shelf(extra: Counter()).body, changed: Renderer.shared.pendingChanges)
+        let second = renders.render(Shelf(extra: Counter()).node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(second.children[0].props["text"], .string("Count: 0"),
                        "a path nobody answered last render is state that starts over")
@@ -276,7 +276,7 @@ final class StateTests: XCTestCase {
         // And the two are two: moving the newcomer moves nothing else.
         renders.fire(second.children[0].events?["clicked"] ?? -1)
 
-        let third = renders.render(Shelf(extra: Counter()).body, changed: Renderer.shared.pendingChanges)
+        let third = renders.render(Shelf(extra: Counter()).node, changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(third.children.count, 1,
                        "the shelf's own count did not move, so nothing is said about it")
@@ -287,14 +287,14 @@ final class StateTests: XCTestCase {
     /// factory inside a stored builder list - is another path: the branch key
     /// alone would hand Timer the count Counter left behind.
     func testABranchHoldingAnotherViewTypeStartsOver() {
-        struct Holder: ContentView {
-            let parts: [Element]
+        struct Holder: View {
+            let parts: any View
 
-            init(@ViewBuilder _ parts: () -> [Element]) {
+            init(@ViewBuilder _ parts: () -> any View) {
                 self.parts = parts()
             }
 
-            var content: any View {
+            var body: some View {
                 VStack { parts }
             }
         }
@@ -311,10 +311,10 @@ final class StateTests: XCTestCase {
 
         let renders = Renders()
 
-        let first = renders.render(make(ticking: false).body)
+        let first = renders.render(make(ticking: false).node)
         renders.fire(first.children[0].events?["clicked"] ?? -1)
 
-        let second = renders.render(make(ticking: true).body)
+        let second = renders.render(make(ticking: true).node)
 
         XCTAssertEqual(second.children[0].props["text"], .string("Tick: 100"),
                        "a branch that holds another view type is another path")
@@ -372,15 +372,15 @@ final class StateTests: XCTestCase {
         let second = renders.settled(Node.page(QueryPage()), changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(second.props["title"], .string("Results: alpha"))
-        XCTAssertEqual(second.children.first { $0.type == "Label" }?.props["text"],
+        XCTAssertEqual(second.children.first { $0.type == "Text" }?.props["text"],
                        .string("alpha"))
     }
 
     func testABorrowedValueStaysItsOwnersAcrossRebuilds() {
-        struct Borrowing: ContentView {
+        struct Borrowing: View {
             @Binding var counter: Int
 
-            var content: any View {
+            var body: some View {
                 Button("Count: \(counter)").onClicked { counter += 1 }
             }
         }
@@ -389,13 +389,13 @@ final class StateTests: XCTestCase {
         let counter = State(10)
         let renders = Renders()
 
-        let first = renders.render(Borrowing(counter: counter.projectedValue).body)
+        let first = renders.render(Borrowing(counter: counter.projectedValue).node)
         renders.fire(first.events?["clicked"] ?? -1)
 
         XCTAssertEqual(counter.get(), 11, "the write went to the owner, not a copy")
 
         let second = renders.render(
-            Borrowing(counter: counter.projectedValue).body, changed: Renderer.shared.pendingChanges)
+            Borrowing(counter: counter.projectedValue).node, changed: Renderer.shared.pendingChanges)
         XCTAssertEqual(second.props["text"], .string("Count: 11"))
     }
 
@@ -590,9 +590,9 @@ extension StateTests {
         let renders = Renders()
 
         renders.render(stack([
-            Label("walked").opacity(fade.projectedValue).body,
-            Shown { destination.count += 1; _ = fade.get() }.body,
-            Shown { journey.count += 1; _ = fade.projectedValue.journey.value }.body,
+            Text("walked").opacity(fade.projectedValue).node,
+            Shown { destination.count += 1; _ = fade.get() }.node,
+            Shown { journey.count += 1; _ = fade.projectedValue.journey.value }.node,
         ], id: "root"))
         _ = Renderer.shared.renderHost(baseline: 0)
         XCTAssertEqual(destination.count, 1)
@@ -630,10 +630,10 @@ extension StateTests {
         let renders = Renders()
 
         renders.render(stack([
-            Label("walked").opacity(fade.projectedValue).body,
+            Text("walked").opacity(fade.projectedValue).node,
             Shown { _ = shown.get() }
                 .samples(fade.projectedValue, into: shown.projectedValue, .every(0))
-                .body,
+                .node,
         ], id: "root"))
 
         // The host says: going to 0, and got as far as 0.75 so far.
@@ -655,10 +655,10 @@ extension StateTests {
         let renders = Renders()
 
         renders.render(stack([
-            Label("walked").opacity(fade.projectedValue).body,
+            Text("walked").opacity(fade.projectedValue).node,
             Shown { _ = shown.get() }
                 .samples(fade.projectedValue, into: shown.projectedValue, .every(0))
-                .body,
+                .node,
         ], id: "root"))
         _ = Renderer.shared.renderHost(baseline: 0)
 
@@ -682,10 +682,10 @@ extension StateTests {
         let renders = Renders()
 
         renders.render(stack([
-            Label("walked").opacity(fade.projectedValue).body,
+            Text("walked").opacity(fade.projectedValue).node,
             Shown { _ = shown.get() }
                 .samples(fade.projectedValue, into: shown.projectedValue, .every(30))
-                .body,
+                .node,
         ], id: "root"))
 
         moved(fade.number, to: [0.5, 0, 0, 0, 0, 0, 0, 0], mask: 0b1)
@@ -718,7 +718,7 @@ extension StateTests {
             renders.render(stack([
                 Shown { _ = shown.get() }
                     .samples(fade.projectedValue, into: shown.projectedValue, .every(100))
-                    .body,
+                    .node,
             ], id: "root"))
 
             source = fade.storage
@@ -747,10 +747,10 @@ extension StateTests {
 
         func tree() -> Node {
             stack([
-                Label("walked").opacity(fade.projectedValue).body,
+                Text("walked").opacity(fade.projectedValue).node,
                 Shown { _ = shown.get() }
                     .samples(fade.projectedValue, into: shown.projectedValue, .every(100_000))
-                    .body,
+                    .node,
             ], id: "root")
         }
 
@@ -781,13 +781,13 @@ extension StateTests {
         let renders = Renders()
 
         renders.render(stack([
-            Label("walked").opacity(fade.projectedValue).body,
+            Text("walked").opacity(fade.projectedValue).node,
             Shown { _ = quick.get() }
                 .samples(fade.projectedValue, into: quick.projectedValue, .every(0))
-                .body,
+                .node,
             Shown { _ = slow.get() }
                 .samples(fade.projectedValue, into: slow.projectedValue, .every(100_000))
-                .body,
+                .node,
         ], id: "root"))
 
         moved(fade.number, to: [0.5, 0, 0, 0, 0, 0, 0, 0], mask: 0b1)

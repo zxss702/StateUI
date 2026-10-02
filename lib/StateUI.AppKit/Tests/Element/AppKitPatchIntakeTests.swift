@@ -14,7 +14,7 @@ import XCTest
 final class AppKitPatchIntakeTests: XCTestCase {
     private func stack(_ children: [String]) -> HostPatch {
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
-        stack.children = .arranged(children.map { HostPatch(id: .manual($0), type: .colorBox) })
+        stack.children = .arranged(children.map { HostPatch(id: .manual($0), type: .colorPicker) })
         return stack
     }
 
@@ -41,12 +41,12 @@ final class AppKitPatchIntakeTests: XCTestCase {
 }
 
 /// A count in a label, and a button that adds one.
-private struct Counter: ContentView {
+private struct Counter: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\(count)").fontSize(24)
+            Text("\(count)").fontSize(24)
             Button("Add").onClicked { count += 1 }
         }
     }

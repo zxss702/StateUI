@@ -17,7 +17,7 @@
     public let velocity: [Double]
 
     /// The law carrying it to the destination.
-    public let motion: Motion
+    public let animation: Animation
 
     /// The continuation waiting for arrival, or nil when nobody waits.
     public let completion: Int?
@@ -30,14 +30,14 @@
         value: [Double],
         destination: [Double],
         velocity: [Double],
-        motion: Motion,
+        animation: Animation,
         completion: Int?,
         stopped: UInt64
     ) {
         self.value = value
         self.destination = destination
         self.velocity = velocity
-        self.motion = motion
+        self.animation = animation
         self.completion = completion
         self.stopped = stopped
     }
@@ -62,7 +62,7 @@
     /// How fast the value currently moves.
     public static let velocity = HostJourneyUpdate(rawValue: 1 << 2)
 
-    /// The per-frame report emitted while a host motion is under way.
+    /// The per-frame report emitted while a host animation is under way.
     public static let frame: HostJourneyUpdate = [.value, .velocity]
 
     /// The complete position of a journey when it is aimed, stopped or landed.

@@ -18,14 +18,14 @@
         case "Button": return dressing.dress(Button())
         case "Canvas": return dressing.dress(Canvas())
         case "CheckBox": return dressing.dress(CheckBox())
-        case "ColorBox": return dressing.dress(ColorBox())
+        case "ColorPicker": return dressing.dress(ColorPicker())
         case "DatePicker": return dressing.dress(DatePicker())
         case "Ellipse": return dressing.dress(Ellipse())
         case "Grid": return dressing.dress(Grid())
         case "HStack": return dressing.dress(HStack())
         case "Image": return dressing.dress(Image())
-        case "ItemsView": return dressing.dress(ItemsView(0..<20) { Label("Item \($0)") }.width(240).height(160))
-        case "Label": return dressing.dress(Label())
+        case "List": return dressing.dress(List(0..<20) { Text("Item \($0)") }.frame(width: 240).frame(height: 160))
+        case "Text": return dressing.dress(Text())
         case "Line": return dressing.dress(Line())
         case "Map": return dressing.dress(Map())
         case "Path": return dressing.dress(Path())
@@ -54,7 +54,7 @@
     /// `element`'s control wearing `worn`, found by `id` - or words naming the element that stands in no stack, which
     /// the case finding it by its id then fails on.
     public static func view(_ element: String, _ worn: [any Worn] = [], id: String = "specimen") -> any View {
-        make(element, Dressing(worn, id: id)) ?? Label("no specimen of \(element)")
+        make(element, Dressing(worn, id: id)) ?? Text("no specimen of \(element)")
     }
 
     /// A page holding `element`'s specimen wearing `worn` where an application puts one, `beside` it on the page. A
@@ -65,31 +65,31 @@
         let others: [Element] = beside.map { $0 }
         switch element {
         case "Span":
-            return VStack { [Label().spans { dressing.wear(TextSpan("Some words")) }] + others }
+            return VStack { [Text().spans { dressing.wear(TextSpan("Some words")) }] + others }
         case "MenuItem":
             return VStack {
-                [Label("Row").contextMenu { dressing.wear(MenuItem("Copy")).id(dressing.id) }.id("row")] + others
+                [Text("Row").contextMenu { dressing.wear(MenuItem("Copy")).id(dressing.id) }.id("row")] + others
             }
         case "ToolbarItem":
             return NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
                 SessionPage(beside: others, key: "\(worn)") { page, _ in
                     page.toolbarItems = [dressing.wear(ToolbarItem("Save")).id(dressing.id)]
                 }
-            } destination: { _ in Label("Pushed") }
+            } destination: { _ in Text("Pushed") }
         case "TitleBar":
             return SessionPage(beside: others, key: "\(worn)") { _, window in
                 window.titleBar = dressing.wear(TitleBar("Title")).id(dressing.id)
             }
         case "NavigationStack":
             return dressing.wear(NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
-                VStack { [Label("Root")] + others }
-            } destination: { _ in Label("Pushed") })
-        case "SplitView":
-            return dressing.wear(SplitView(State(wrappedValue: true).projectedValue) {
-                Label("Sidebar")
-            } detail: { VStack { [Label("Detail")] + others } })
-        case "TabbedView":
-            return dressing.wear(TabbedView([0, 1]) { tab in VStack { [Label("Tab \(tab)")] + (tab == 0 ? others : []) } })
+                VStack { [Text("Root")] + others }
+            } destination: { _ in Text("Pushed") })
+        case "NavigationSplitView":
+            return dressing.wear(NavigationSplitView(State(wrappedValue: true).projectedValue) {
+                Text("Sidebar")
+            } detail: { VStack { [Text("Detail")] + others } })
+        case "TabView":
+            return dressing.wear(TabView([0, 1]) { tab in VStack { [Text("Tab \(tab)")] + (tab == 0 ? others : []) } })
         default:
             return VStack { [view(element, worn)] + others }
         }
@@ -105,7 +105,7 @@
 
 /// A page that writes its page's and its window's sessions - a toolbar's items, a title bar - as it is made and
 /// again whenever what it writes changes, over words and what stands beside them.
-public struct SessionPage: ContentView {
+public struct SessionPage: View {
     /// What stands beside its words.
     let beside: [Element]
 
@@ -127,10 +127,10 @@ public struct SessionPage: ContentView {
         self.write = write
     }
 
-    public var content: any View {
+    public var body: some View {
         let (write, page, window) = (self.write, self.page, self.window)
-        return VStack { [Label("Page")] + beside }
-            .onCreated { write(page, window) }
-            .onChanged(key) { write(page, window) }
+        return VStack { [Text("Page")] + beside }
+            .onAppear { write(page, window) }
+            .onChange(of: key) { write(page, window) }
     }
 }

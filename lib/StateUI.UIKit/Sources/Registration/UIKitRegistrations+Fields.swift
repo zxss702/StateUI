@@ -55,9 +55,9 @@ extension UIKitRegistrations {
         TextElementContract.text, TextElementContract.textCase, InputViewContract.placeholder,
         InputViewContract.maximumLength,
         VisualElementContract.isEnabled, InputViewContract.isReadOnly, InputViewContract.isSpellCheckEnabled,
-        InputViewContract.isTextPredictionEnabled, InputViewContract.inputPurpose, FontElementContract.fontSize,
-        FontElementContract.fontAttributes, FontElementContract.fontFamily, TextStyleElementContract.textColor,
-        InputViewContract.placeholderColor, TextAlignmentElementContract.horizontalTextAlignment,
+        InputViewContract.isTextPredictionEnabled, InputViewContract.textContentType, FontElementContract.fontSize,
+        FontElementContract.fontAttributes, FontElementContract.fontFamily, TextStyleElementContract.foregroundStyle,
+        InputViewContract.placeholderColor, TextAlignmentElementContract.multilineTextAlignment,
         InputViewContract.cursorPosition, InputViewContract.selectionLength,
     ]
 
@@ -77,18 +77,18 @@ extension UIKitRegistrations {
         if values.changed(VisualElementContract.isEnabled) || values.changed(InputViewContract.isReadOnly)
             || values.changed(InputViewContract.isSpellCheckEnabled)
             || values.changed(InputViewContract.isTextPredictionEnabled)
-            || values.changed(InputViewContract.inputPurpose) {
+            || values.changed(InputViewContract.textContentType) {
             view.setBehaviour(
                 enabled: values[VisualElementContract.isEnabled] ?? true,
                 readOnly: values[InputViewContract.isReadOnly] ?? false,
                 keyboard: UIKitKeyboard(
                     spellChecked: values[InputViewContract.isSpellCheckEnabled] ?? true,
                     predicted: values[InputViewContract.isTextPredictionEnabled] ?? true,
-                    purpose: values[InputViewContract.inputPurpose]))
+                    purpose: values[InputViewContract.textContentType]))
         }
         if let look = TextMembers.look(values) { view.setLook(look) }
-        if values.changed(TextAlignmentElementContract.horizontalTextAlignment) {
-            view.setAlignment(values[TextAlignmentElementContract.horizontalTextAlignment] ?? .start)
+        if values.changed(TextAlignmentElementContract.multilineTextAlignment) {
+            view.setAlignment(values[TextAlignmentElementContract.multilineTextAlignment] ?? .start)
         }
         if values.changed(InputViewContract.cursorPosition) || values.changed(InputViewContract.selectionLength),
            let caret = values[InputViewContract.cursorPosition] {

@@ -49,7 +49,7 @@ final class AppKitTextFieldView: NSView, NSTextFieldDelegate {
         writeText: Bool,
         placeholder: String?,
         placeholderColor: NSColor?,
-        foregroundColor: NSColor,
+        foregroundStyle: NSColor,
         backgroundColor: NSColor?,
         font: NSFont,
         horizontalAlignment: Int32?,
@@ -84,7 +84,7 @@ final class AppKitTextFieldView: NSView, NSTextFieldDelegate {
             textField.placeholderString = placeholder
         }
 
-        textField.textColor = foregroundColor
+        textField.textColor = foregroundStyle
         textField.font = font
         textField.isEnabled = enabled
         textField.isEditable = !readOnly

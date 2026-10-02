@@ -3,7 +3,7 @@
 
 // The shape of a composed view.
 //
-// A `ContentView` is what a piece of interface IS in this library, and the
+// A `View` is what a piece of interface IS in this library, and the
 // question every one of them answers is: how does a caller configure it? The
 // library answers with MODIFIERS - `GalleryView(cards).position($x)`
 // - which is the same answer every control gives, because the rule is written
@@ -24,7 +24,7 @@
 //
 // The same for an explicit initializer's parameters: a defaulted parameter is
 // the same door with the same knob on it, so an optional argument is a second
-// initializer delegating to the first - `FrameReader` carries that pair.
+// initializer delegating to the first - `GeometryReader` carries that pair.
 
 import Foundation
 import XCTest
@@ -57,7 +57,7 @@ final class CompositionTests: XCTestCase {
                 offenders.append(
                     "\(view.file): \(view.name).init has a defaulted parameter '\(parameter)'. "
                         + "A value a caller may leave out is a modifier, or a second "
-                        + "initializer delegating to this one - see FrameReader.")
+                        + "initializer delegating to this one - see GeometryReader.")
             }
         }
 
@@ -173,11 +173,11 @@ final class CompositionTests: XCTestCase {
         }
     }
 
-    /// Every composed view in the repository: the library's `ContentView`s and
+    /// Every composed view in the repository: the library's `View`s and
     /// every view an application declares.
     ///
     /// An application's views are taken whatever they conform to - `MenuRow` is
-    /// an `Element` rather than a `ContentView`, being a row with no state, and
+    /// an `Element` rather than a `View`, being a row with no state, and
     /// the rule is the same for it. The LIBRARY's plain `View`s are its control
     /// wrappers, which the control recipe and ControlTests already hold to
     /// their own shape.
@@ -186,13 +186,13 @@ final class CompositionTests: XCTestCase {
         var found: [ComposedView] = []
 
         let roots = [
-            ("lib/StateUI/Sources", ["ContentView"]),
-            ("apps", ["ContentView", "Element", "View"]),
+            ("lib/StateUI/Sources", ["View"]),
+            ("apps", ["View", "Element", "View"]),
         ]
 
-        // Protocols that REFINE ContentView carry the rule with them -
+        // Protocols that REFINE View carry the rule with them -
         // `SampleContent` is what every gallery sample is written against.
-        var composed = Set(["ContentView"])
+        var composed = Set(["View"])
         var files: [(path: String, source: String)] = []
 
         for (root, _) in roots {
@@ -219,11 +219,11 @@ final class CompositionTests: XCTestCase {
         }
 
         // A type may be made a view by an EXTENSION rather than by its own
-        // declaration - `extension Card: ContentView {}` - and one written that
+        // declaration - `extension Card: View {}` - and one written that
         // way would otherwise never be looked at, so its name is collected here
         // and matched below whatever the declaration says.
         //
-        // PER ROOT, using that root's own set: the library counts `ContentView`
+        // PER ROOT, using that root's own set: the library counts `View`
         // alone, and taking `Element` there too made `Node` - which conforms by
         // extension and is the patch's data structure rather than a view - a
         // composed view with four defaulted initializer parameters.
@@ -274,7 +274,7 @@ final class CompositionTests: XCTestCase {
 
     /// The source with every multi-line string literal taken out.
     ///
-    /// A sample's `static let code` holds SWIFT - whole `struct … : ContentView`
+    /// A sample's `static let code` holds SWIFT - whole `struct … : View`
     /// declarations, several of them - and a scanner that reads those is reading
     /// an example rather than the program. Measured: five of the gallery's
     /// samples declare a view inside their snippet.

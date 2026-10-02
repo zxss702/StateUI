@@ -15,7 +15,7 @@
 
     /// The tree wrote `offset` for a scroller standing at `standing` along `orientation`: where to move it now; nil
     /// where it asks nothing, or waits for the first layout.
-    public mutating func written(_ offset: Point?, standing: Point, orientation: ScrollOrientation) -> Point? {
+    public mutating func written(_ offset: Point?, standing: Point, orientation: Axis) -> Point? {
         guard let target = ScrollArithmetic.offsetWritten(offset, standing: standing, orientation: orientation) else {
             return nil
         }

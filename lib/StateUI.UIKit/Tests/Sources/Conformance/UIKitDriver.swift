@@ -16,9 +16,9 @@ final class UIKitDriver: HostDriver {
     let cannot = [
         "read the line of a shape drawing no outline":
             "UIKit draws no outline for a shape given no stroke, and holds none of its line",
-        "read verticalScrollBarVisibility of ScrollView":
+        "read verticalScrollIndicators of ScrollView":
             "UIKit shows a scroll indicator only while the user scrolls: always and as UIKit decides show alike",
-        "read horizontalScrollBarVisibility of ScrollView":
+        "read horizontalScrollIndicators of ScrollView":
             "UIKit shows a scroll indicator only while the user scrolls: always and as UIKit decides show alike",
     ]
     let platformHasNone = UIKitDriver.none()
@@ -40,7 +40,7 @@ final class UIKitDriver: HostDriver {
         for layout in ["Grid", "HStack", "VStack", "ZStack", "ScrollView"] {
             none["read shape of \(layout)"] =
                 "UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it"
-            for member in ["padding", "avoidsSafeArea"] {
+            for member in ["padding", "ignoresSafeArea"] {
                 none["read \(member) of \(layout)"] =
                     "UIKit's view places its children where StateUI's layout says; their frames prove it"
             }
@@ -78,7 +78,7 @@ final class UIKitDriver: HostDriver {
     }
 
     /// Runs `application` on a new host, as the next launch does: what the last kept stands.
-    func start(clock: TestClock?, application: @escaping @Sendable () -> any Application) throws -> MountedTree {
+    func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree {
         finish()
         written.listen()
         let renderer = UIKitRenderer.running(clock: clock, application: application)
@@ -149,7 +149,7 @@ final class UIKitDriver: HostDriver {
     func perform(_ act: UserAct, on element: MountedElement) throws {
         let view = (element.native as? UIKitElement)?.view
         switch (act, view) {
-        case (.activate, _) where element.parent?.type == .itemsView:
+        case (.activate, _) where element.parent?.type == .list:
             guard let items = (element.parent?.native as? UIKitElement)?.view as? UIKitItemsView,
                   case .manual(let identity) = element.id
             else { throw DriverCannot(act, on: element) }
@@ -206,30 +206,30 @@ final class UIKitDriver: HostDriver {
             guard renderer?.actToolkit.showing?.press(caption, typing: words) == true else {
                 throw DriverCannot("press \(caption): no question shows it")
             }
-        case (.switchAway, _) where element.type == .window: renderer?.window(element, movedTo: .inactive)
-        case (.switchBack, _) where element.type == .window: renderer?.window(element, movedTo: .active)
-        case (.minimize, _) where element.type == .window:
+        case (.switchAway, _) where element.type == .windowScene: renderer?.window(element, movedTo: .inactive)
+        case (.switchBack, _) where element.type == .windowScene: renderer?.window(element, movedTo: .active)
+        case (.minimize, _) where element.type == .windowScene:
             renderer?.window(element, movedTo: .inactive)
             renderer?.window(element, movedTo: .background)
-        case (.restore, _) where element.type == .window:
+        case (.restore, _) where element.type == .windowScene:
             renderer?.window(element, movedTo: .inactive)
             renderer?.window(element, movedTo: .active)
-        case (.bringToFront, _) where element.type == .window:
+        case (.bringToFront, _) where element.type == .windowScene:
             // The window taken to the front is the active one; every other window's scene resigns.
             for (other, _) in renderer?.roster.windows ?? [] where other !== element {
                 renderer?.window(other, movedTo: .inactive)
             }
             renderer?.window(element, movedTo: .active)
-        case (.close, _) where element.type == .window:
+        case (.close, _) where element.type == .windowScene:
             // As the user swipes a window's scene away: it leaves the front, goes behind, then closes.
             renderer?.window(element, movedTo: .inactive)
             renderer?.window(element, movedTo: .background)
             renderer?.runtime.userClosed(element)
-        case (.goBack, _) where element.type == .window || NodeType.pageTypes.contains(element.type):
+        case (.goBack, _) where element.type == .windowScene || NodeType.pageTypes.contains(element.type):
             try performOnPages(act, on: element)
         case (.choose, _) where NodeType.pageTypes.contains(element.type):
             try performOnPages(act, on: element)
-        case (.toggle, _) where element.type == .splitView:
+        case (.toggle, _) where element.type == .navigationSplitView:
             try performOnPages(act, on: element)
         case (.activate, _) where element.type == .toolbarItem: try performOnPages(act, on: element)
         case (.activate, _) where element.type == .menuItem:
@@ -273,7 +273,7 @@ final class UIKitDriver: HostDriver {
     }
 
     func held(_ property: Prop, on element: MountedElement) throws -> HostValue? {
-        if element.type == .window { return try windowHolds(property, element) }
+        if element.type == .windowScene { return try windowHolds(property, element) }
         if let held = try pageHolds(property, element) { return held }
         let view = (element.native as? UIKitElement)?.view
         switch (property, view) {
@@ -330,11 +330,11 @@ final class UIKitDriver: HostDriver {
         case (.isEnabled, let control as UIControl): return control.isEnabled.propValue
         case (.isEnabled, let label as UILabel): return label.isEnabled.propValue
         case (.isEnabled, let editor as UITextView): return (editor.isEditable || editor.isSelectable).propValue
-        case (.padding, let button as UIButton):
+        case (.contentPadding, let button as UIButton):
             guard let insets = button.configuration?.contentInsets else { return nil }
-            return Insets(insets.leading, insets.top, insets.trailing, insets.bottom).propValue
-        case (.padding, let label as UIKitLabelView):
-            return Insets(label.padding.left, label.padding.top, label.padding.right, label.padding.bottom).propValue
+            return EdgeInsets(insets.leading, insets.top, insets.trailing, insets.bottom).propValue
+        case (.contentPadding, let label as UIKitLabelView):
+            return EdgeInsets(label.padding.left, label.padding.top, label.padding.right, label.padding.bottom).propValue
         case (_, let view?):
             if let held = try Self.viewHolds(property, view, element.native as? UIKitElement) { return held }
             throw DriverCannot(reading: property, of: element)

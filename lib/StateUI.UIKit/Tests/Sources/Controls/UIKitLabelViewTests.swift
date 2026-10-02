@@ -14,7 +14,7 @@ final class UIKitLabelViewTests: XCTestCase {
     func testALabelsBackgroundFillsItsBox() {
         let label = UIKitLabelView()
         label.setText("Box")
-        label.setPadding(Insets(12))
+        label.setPadding(EdgeInsets(12))
         label.frame = CGRect(x: 0, y: 0, width: 100, height: 60)
         label.setBackground(Color(red: 255, green: 0, blue: 0).propValue)
         XCTAssertTrue(Self.draws(label, [255, 0, 0], at: CGPoint(x: 3, y: 3)), "a colour, in the padding")

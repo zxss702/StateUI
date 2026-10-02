@@ -48,7 +48,7 @@
 
     /// The controller of the window `element` stands in; nil for none.
     public func controller(of element: MountedElement) -> Controller? {
-        guard let window = element.enclosing(type: .window) else { return nil }
+        guard let window = element.enclosing(type: .windowScene) else { return nil }
 
         return entries.first { $0.element === window }?.controller
     }

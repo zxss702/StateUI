@@ -11,7 +11,7 @@ public enum ShapeContract: Contract {
     public static let tiers: [any Contract.Type] = [ViewContract.self]
 
     /// How the shape fills the room it was given when the two differ.
-    public static let aspect = ElementProperty<Self, Aspect>("aspect", layer: .native)
+    public static let aspect = ElementProperty<Self, ContentMode>("aspect", layer: .native)
 
     /// What the inside of the shape is painted with.
     public static let fill = ElementProperty<Self, Brush>("fill", layer: .stateUI)

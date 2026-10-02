@@ -31,7 +31,7 @@ private struct PressCard: Element {
     let press = Aim(Button.self)
     let action: EventHandler
 
-    var body: Node {
+    var node: Node {
         let press = self.press
         let action = self.action
 
@@ -43,7 +43,7 @@ private struct PressCard: Element {
                 try await action()
                 _ = try await restored
             }
-            .body
+            .node
     }
 }
 
@@ -100,14 +100,14 @@ final class ConcurrencyTests: XCTestCase {
                         // Two acts in flight at once, from two pool threads -
                         // the shape the gallery's concurrent sample has, and
                         // the one that corrupted the unguarded registry.
-                        async let one: Bool = named("a", ColorBox.self).focus()
-                        async let two: Bool = named("b", ColorBox.self).focus()
+                        async let one: Bool = named("a", ColorPicker.self).focus()
+                        async let two: Bool = named("b", ColorPicker.self).focus()
                         _ = try await (one, two)
 
                         finished += 1
                     }
                 }
-                .body)
+                .node)
 
         let id = try XCTUnwrap(patch.events?["clicked"])
         XCTAssertTrue(renders.fire(id))
@@ -152,13 +152,13 @@ final class ConcurrencyTests: XCTestCase {
         let patch = renders.render(
             Button("Go")
                 .onClicked {
-                    _ = try await named("a", ColorBox.self).focus()
-                    async let restored: Bool = named("a", ColorBox.self).focus()
-                    _ = try await named("b", ColorBox.self).focus()
+                    _ = try await named("a", ColorPicker.self).focus()
+                    async let restored: Bool = named("a", ColorPicker.self).focus()
+                    _ = try await named("b", ColorPicker.self).focus()
                     _ = try await restored
                     reached = true
                 }
-                .body)
+                .node)
 
         let id = try XCTUnwrap(patch.events?["clicked"])
         XCTAssertTrue(renders.fire(id))
@@ -199,8 +199,8 @@ final class ConcurrencyTests: XCTestCase {
 
         let patch = renders.render(
             PressCard(
-                action: { _ = try await named("b", ColorBox.self).focus() }
-            ).body)
+                action: { _ = try await named("b", ColorPicker.self).focus() }
+            ).node)
 
         let id = try XCTUnwrap(patch.events?["clicked"])
         XCTAssertTrue(renders.fire(id))
@@ -243,13 +243,13 @@ final class ConcurrencyTests: XCTestCase {
         let patch = renders.render(
             Button("Go")
                 .onClicked {
-                    _ = try await named("a", ColorBox.self).focus()
-                    async let restored: Bool = named("a", ColorBox.self).focus()
-                    _ = try await named("b", ColorBox.self).focus()
+                    _ = try await named("a", ColorPicker.self).focus()
+                    async let restored: Bool = named("a", ColorPicker.self).focus()
+                    _ = try await named("b", ColorPicker.self).focus()
                     _ = try await restored
                     reached = true
                 }
-                .body)
+                .node)
 
         let id = try XCTUnwrap(patch.events?["clicked"])
         XCTAssertTrue(renders.fire(id))
@@ -285,10 +285,10 @@ final class ConcurrencyTests: XCTestCase {
         let patch = renders.render(
             Button("Go")
                 .onClicked {
-                    _ = try await named("a", ColorBox.self).focus()
+                    _ = try await named("a", ColorPicker.self).focus()
                     reached = true
                 }
-                .body)
+                .node)
 
         let id = try XCTUnwrap(patch.events?["clicked"])
         XCTAssertTrue(renders.fire(id))

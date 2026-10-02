@@ -47,7 +47,7 @@ class AppKitSingleChildView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
 
     private func measuredContentSize(width availableWidth: CGFloat?) -> NSSize {
         NSSize(SingleChildArithmetic.size(
-            of: item, padding: Insets(padding), width: availableWidth.map(Double.init)))
+            of: item, padding: EdgeInsets(padding), width: availableWidth.map(Double.init)))
     }
 
     override func layout() {
@@ -56,7 +56,7 @@ class AppKitSingleChildView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
 
         let room = (insetsBySafeArea ? safeAreaRect : bounds).placed
         item.view.frame = NSRect(
-            placed: SingleChildArithmetic.place(of: item, in: room, padding: Insets(padding), direction: direction))
+            placed: SingleChildArithmetic.place(of: item, in: room, padding: EdgeInsets(padding), direction: direction))
     }
 }
 

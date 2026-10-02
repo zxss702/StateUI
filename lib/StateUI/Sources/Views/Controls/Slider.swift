@@ -33,7 +33,7 @@ extension SliderProperties {
 /// number it shows that, and `.onValueChanged` is how the drag gets anywhere.
 ///
 /// The range is 0 to 1 until `.minimum` and `.maximum` say otherwise.
-public struct Slider: View, TintElement, SliderProperties {
+public struct Slider: VisualElement, TintElement, SliderProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -57,7 +57,7 @@ public struct Slider: View, TintElement, SliderProperties {
     ///     Slider($volume)
     ///
     /// An assignment (`volume = 1`) animates the thumb there under the
-    /// element's motion; `$volume.journey` reads where the thumb is, and
+    /// element's animation; `$volume.journey` reads where the thumb is, and
     /// `try await $volume.journey.move(to: 1)` waits for the arrival.
     public init(_ value: Binding<Double>) {
         self = Slider().value(value)

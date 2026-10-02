@@ -18,10 +18,10 @@ final class WinUIRadioButtonViewTests: XCTestCase {
                 VStack {
                     RadioButton("Ready").isOn(ready.projectedValue)
                         .visualState(.checked) { $0.background(Color("#FF0000")) }
-                        .width(200).height(40)
+                        .frame(width: 200).frame(height: 40)
                     RadioButton("Busy").isOn(busy.projectedValue)
                         .visualState(.checked) { $0.background(Color("#FF0000")) }
-                        .width(200).height(40)
+                        .frame(width: 200).frame(height: 40)
                 }
                 .horizontalAlignment(.start)
             }

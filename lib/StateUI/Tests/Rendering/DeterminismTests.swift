@@ -36,52 +36,52 @@ private enum Route: Hashable { case detail(String) }
 
 /// A view that READS state, so a session can take the clean walk - the render
 /// that builds only what read what changed - and have something to build.
-private struct Counter: ContentView {
+private struct Counter: View {
     @Binding var count: Int
 
-    var content: any View { Label("Count: \(count)").fontSize(20) }
+    var body: some View { Text("Count: \(count)").fontSize(20) }
 }
 
 /// The stack's root. Every page of the session names itself as it comes into
 /// the tree, which is the message that brings it - so the session's messages
 /// carry every title a host reads.
-private struct HomePage: ContentView {
+private struct HomePage: View {
     @Environment private var page: PageSession
 
     /// Lent rather than read here: what reads it is `Counter`, one level down,
     /// which is what makes the clean walk's answer interesting.
     let count: Binding<Int>
 
-    var content: any View {
+    var body: some View {
         VStack {
             Counter(count: count)
             Button("Open").onClicked {}
-            Label("themed").textColor(Color(light: .black, dark: .white))
+            Text("themed").foregroundStyle(Color(light: .black, dark: .white))
         }
         .spacing(12)
-        .onCreated {
+        .onAppear {
             page.title = "Home"
             page.icon = ImageSource("home.png")
         }
     }
 }
 
-private struct DetailPage: ContentView {
+private struct DetailPage: View {
     @Environment private var page: PageSession
     let name: String
 
-    var content: any View { Label(name).onCreated { page.title = name } }
+    var body: some View { Text(name).onAppear { page.title = name } }
 }
 
-private struct SettingsPage: ContentView {
+private struct SettingsPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("Settings").fontAttributes(.bold)
+            Text("Settings").fontAttributes(.bold)
             Switch(true).onToggled { _ in }
         }
-        .onCreated {
+        .onAppear {
             page.title = "Settings"
             page.icon = ImageSource("settings.png")
         }
@@ -90,13 +90,13 @@ private struct SettingsPage: ContentView {
 
 /// The one window of the deterministic session: tabs over a stack, which is the
 /// widest tree one screenful of it can hold.
-private struct DeterminismWindow: Window {
+private struct DeterminismWindow: WindowScene {
     let tab: Binding<Tab>
     let path: Binding<[Route]>
     let count: Binding<Int>
 
     var page: any Page {
-        TabbedView([Tab.home, .settings]) { which in
+        TabView([Tab.home, .settings]) { which in
             switch which {
             case .home:
                 return NavigationStack(path) {
@@ -150,8 +150,8 @@ final class DeterminismTests: XCTestCase {
         let count = State<Int>(0)
 
         let styles = StyleSheet {
-            Style<Label>().fontSize(14).textColor(Color(light: .black, dark: .white))
-            Style<Button>().background(Color("#512BD4")).textColor(.white)
+            Style<Text>().fontSize(14).foregroundStyle(Color(light: .black, dark: .white))
+            Style<Button>().background(Color("#512BD4")).foregroundStyle(.white)
         }
 
         // The APPLICATION over its scene and the scene over its window, which is
@@ -164,14 +164,14 @@ final class DeterminismTests: XCTestCase {
             var scene = Node(type: .scene, children: [main])
             scene.id = "1"
 
-            return Node(type: .application, children: [scene])
+            return Node(type: .app, children: [scene])
         }
 
         func window() -> Node {
             DeterminismWindow(
                 tab: tab.projectedValue,
                 path: path.projectedValue,
-                count: count.projectedValue).body
+                count: count.projectedValue).node
         }
 
         func render(_ name: String, complete: Bool = false) {
@@ -258,11 +258,11 @@ final class DeterminismTests: XCTestCase {
         let props: [(Prop, PropValue)] = [
             (.text, .string("hello")),
             (.fontSize, .number(20)),
-            (.textColor, Color("#512BD4").propValue),
+            (.foregroundStyle, Color("#512BD4").propValue),
             (.background, Color.white.propValue),
             (.opacity, .number(0.5)),
-            (.margin, .numbers([1, 2, 3, 4])),
-            (.padding, .numbers([4, 3, 2, 1])),
+            (.padding, .numbers([1, 2, 3, 4])),
+            (.contentPadding, .numbers([4, 3, 2, 1])),
             (.width, .number(120)),
             (.height, .number(44)),
             (.isVisible, .bool(true)),
@@ -271,11 +271,11 @@ final class DeterminismTests: XCTestCase {
         ]
 
         let events: [Event] = [
-            .tapped, .isFocusedChanged, .clicked, .toggled, .frameChanged,
+            .tapGesture, .isFocusedChanged, .clicked, .toggled, .frameChanged,
         ]
 
         func written(_ order: [(Prop, PropValue)], _ handlers: [Event]) -> String {
-            var node = Node(type: .label)
+            var node = Node(type: .text)
 
             for (key, value) in order {
                 node.props[key] = value

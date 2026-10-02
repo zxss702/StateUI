@@ -15,11 +15,11 @@ public enum ScrollViewContract: ElementContract {
     ]
 
     /// Whether the bar along the bottom is drawn.
-    public static let horizontalScrollBarVisibility = ElementProperty<Self, ScrollBarVisibility>(
-        "horizontalScrollBarVisibility", layer: .adaptive)
+    public static let horizontalScrollIndicators = ElementProperty<Self, ScrollIndicatorVisibility>(
+        "horizontalScrollIndicators", layer: .adaptive)
 
     /// Which way it scrolls.
-    public static let orientation = ElementProperty<Self, ScrollOrientation>("orientation", layer: .native)
+    public static let orientation = ElementProperty<Self, Axis>("orientation", layer: .native)
 
     /// Where the scroller stands, in device units from the content's top-left
     /// corner: one point, so a diagonal scroll arrives on both axes together.
@@ -36,12 +36,12 @@ public enum ScrollViewContract: ElementContract {
     public static let scrollYChanged = ElementEvent<Self, Double>("scrollYChanged", layer: .native)
 
     /// Whether the bar down the side is drawn.
-    public static let verticalScrollBarVisibility = ElementProperty<Self, ScrollBarVisibility>(
-        "verticalScrollBarVisibility", layer: .adaptive)
+    public static let verticalScrollIndicators = ElementProperty<Self, ScrollIndicatorVisibility>(
+        "verticalScrollIndicators", layer: .adaptive)
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        horizontalScrollBarVisibility, orientation, scrollOffset, scrollStopped, scrollXChanged,
-        scrollYChanged, verticalScrollBarVisibility,
+        horizontalScrollIndicators, orientation, scrollOffset, scrollStopped, scrollXChanged,
+        scrollYChanged, verticalScrollIndicators,
     ]
 }

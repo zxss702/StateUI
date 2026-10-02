@@ -25,7 +25,7 @@ final class DisplayCycleTests: XCTestCase {
         cycle.presenter = presenter
 
         let travelling = HostJourney(
-            value: [0], destination: [100], velocity: [0], motion: .eased(400), completion: nil, stopped: 0)
+            value: [0], destination: [100], velocity: [0], animation: .eased(400), completion: nil, stopped: 0)
         _ = channels.presentedValue(
             for: HostStateBinding(state: 9, mode: .out, kind: .property),
             from: HostBoundary.value(of: travelling),
@@ -35,7 +35,7 @@ final class DisplayCycleTests: XCTestCase {
             key: DescribedKey(mount: 1, property: .opacity),
             standing: .number(0),
             target: .number(1),
-            motion: .eased(400),
+            animation: .eased(400),
             now: 0,
             reducesMotion: false)
         _ = channels.takeOutputs()
@@ -56,7 +56,7 @@ final class DisplayCycleTests: XCTestCase {
         XCTAssertFalse(runtime.clock.held, "nothing moves")
 
         runtime.tree.receiveProperty(
-            mount: 1, property: .opacity, standing: .number(0), target: .number(1), motion: .eased(200, .linear))
+            mount: 1, property: .opacity, standing: .number(0), target: .number(1), animation: .eased(200, .linear))
         XCTAssertTrue(runtime.clock.held, "a property's animation holds it as it starts")
         runtime.displayCycle.frame(now: 100)
         XCTAssertTrue(runtime.clock.held, "and while it runs")

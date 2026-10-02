@@ -130,7 +130,7 @@ final class ActCallShapeTests: XCTestCase {
             _ = try await Dialogs.prompt(
                 "Rename", message: "A new name for the draft",
                 placeholder: "Name", initialValue: "Draft 1",
-                maximumLength: 40, inputPurpose: .text)
+                maximumLength: 40, textContentType: .text)
         }
     }
 
@@ -187,10 +187,10 @@ final class ActCallShapeTests: XCTestCase {
     /// list has groups - and says where it stands, after the view.
     func testScrollingAListCrossesWithItsArgumentsInPlace() async throws {
         try await check("scrollTo", [.string("list"), .string("500"), .enumeration(ScrollAnchor.start.rawValue)]) {
-            try await named("list", ItemsViewContract.self).scrollTo(500, anchor: .start)
+            try await named("list", ListContract.self).scrollTo(500, anchor: .start)
         }
         try await check("scrollTo", [.string("list"), .string("Fruit\u{1F}Pear"), .enumeration(ScrollAnchor.nearest.rawValue)]) {
-            try await named("list", ItemsViewContract.self).scrollTo("Pear", inGroup: "Fruit")
+            try await named("list", ListContract.self).scrollTo("Pear", inGroup: "Fruit")
         }
     }
 
@@ -252,9 +252,9 @@ final class ActCallShapeTests: XCTestCase {
     /// take: the key as a NAME, the value as it is, and nobody waiting.
     func testAKeptValueCrossesWithItsArgumentsInPlace() throws {
         drain()
-        PersistentStore.shared.record(PersistentKey("com.example.theme", of: String.self), .string("dusk"))
+        PersistentStore.shared.record(PersistentKey("com.example.colorScheme", of: String.self), .string("dusk"))
 
-        taken(drain(), "persistValue", [.name("com.example.theme"), .string("dusk")], awaited: false)
+        taken(drain(), "persistValue", [.name("com.example.colorScheme"), .string("dusk")], awaited: false)
     }
 
     /// A scene's kept value on its way to the platform's record of that scene:
@@ -262,7 +262,7 @@ final class ActCallShapeTests: XCTestCase {
     /// the act `Scenes.takeSaves` queues, which SceneTests reads off a live
     /// scene.
     func testASceneValueCrossesWithItsArgumentsInPlace() throws {
-        let call = ActCall(ApplicationContract.persistSceneValue, Name("2"), Name("shade"), PropValue.string("dusk"))
+        let call = ActCall(AppContract.persistSceneValue, Name("2"), Name("shade"), PropValue.string("dusk"))
 
         taken([HostActCall(call)], "persistSceneValue", [.name("2"), .name("shade"), .string("dusk")], awaited: false)
     }

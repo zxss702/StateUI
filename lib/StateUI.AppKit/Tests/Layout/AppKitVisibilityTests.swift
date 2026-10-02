@@ -12,12 +12,12 @@ import XCTest
 /// goes when it gets there, and one being shown comes up from nothing, so two
 /// views in one slot change over rather than blink.
 final class AppKitVisibilityTests: XCTestCase {
-    /// A label, visible or not, crossing under `motion`.
-    private func label(visible: Bool, motion: Motion = .eased(100, .linear)) -> HostPatch {
-        var label = HostPatch(id: .manual("label"), type: .label)
+    /// A label, visible or not, crossing under `animation`.
+    private func label(visible: Bool, animation: Animation = .eased(100, .linear)) -> HostPatch {
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties[.text] = .string("here")
         label.properties[.isVisible] = .bool(visible)
-        label.motion = HostLayoutMotion(motion: motion, lanes: .all)
+        label.animation = HostLayoutMotion(animation: animation, lanes: .all)
         return label
     }
 
@@ -73,7 +73,7 @@ final class AppKitVisibilityTests: XCTestCase {
         XCTAssertEqual(view.alphaValue, 1, accuracy: 0.001)
     }
 
-    /// A view that faded away and is shown again under `.motion(.none)` is
+    /// A view that faded away and is shown again under `.animation(.none)` is
     /// back at once and answers input: the fade's deafness never outlives it.
     @MainActor
     func testAViewShownAgainWithoutTravellingAnswersInput() throws {
@@ -86,7 +86,7 @@ final class AppKitVisibilityTests: XCTestCase {
         renderer.applyForTesting(label(visible: false))
         now = 100
         renderer.advanceAnimationsForTesting()
-        renderer.applyForTesting(label(visible: true, motion: Motion.none))
+        renderer.applyForTesting(label(visible: true, animation: Animation.none))
 
         XCTAssertFalse(view.isHidden)
         XCTAssertEqual(view.alphaValue, 1, accuracy: 0.001)
@@ -104,13 +104,13 @@ final class AppKitVisibilityTests: XCTestCase {
 
         func rows(firstVisible: Bool) -> HostPatch {
             var stack = HostPatch(id: .manual("stack"), type: .vStack)
-            stack.motion = HostLayoutMotion(motion: .eased(200, .linear), lanes: .all)
-            var first = HostPatch(id: .manual("first"), type: .colorBox)
+            stack.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
+            var first = HostPatch(id: .manual("first"), type: .colorPicker)
             first.properties = [
                 .width: .number(100), .height: .number(40), .isVisible: .bool(firstVisible),
             ]
-            first.motion = HostLayoutMotion(motion: .eased(100, .linear), lanes: .all)
-            var second = HostPatch(id: .manual("second"), type: .colorBox)
+            first.animation = HostLayoutMotion(animation: .eased(100, .linear), lanes: .all)
+            var second = HostPatch(id: .manual("second"), type: .colorPicker)
             second.properties = [.width: .number(100), .height: .number(40)]
             stack.children = .arranged([first, second])
             return stack

@@ -8,12 +8,12 @@ import CStateUIGTK
 import XCTest
 
 /// A page and its counter: a click raises the count, and the caption reads it.
-struct CounterPage: ContentView {
+struct CounterPage: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("count \(count)")
+            Text("count \(count)")
             Button("Add")
                 .onClicked { count += 1 }
         }
@@ -71,13 +71,13 @@ final class GTKRendererTests: XCTestCase {
         }
     }
 
-    /// The desktop's style, dark or light, is the application's theme.
+    /// The desktop's style, dark or light, is the application's color scheme.
     func testTheDesktopsStyleIsTheApplicationsTheme() {
         onUIThread {
-            _ = GTKRenderer.running { Label("styled") }
+            _ = GTKRenderer.running { Text("styled") }
             let dark = adw_style_manager_get_dark(adw_style_manager_get_default()) != 0
 
-            XCTAssertEqual(StandardEnvironment.app.requestedTheme, dark ? .dark : .light)
+            XCTAssertEqual(StandardEnvironment.appInfo.colorScheme, dark ? .dark : .light)
         }
     }
 
@@ -94,12 +94,12 @@ final class GTKRendererTests: XCTestCase {
 }
 
 /// A page that sizes its window as it is made.
-private struct SizedPage: ContentView {
+private struct SizedPage: View {
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         let window = self.window
-        return Label("sized").onCreated {
+        return Text("sized").onAppear {
             window.width = 700
             window.height = 500
             window.minimumWidth = 400

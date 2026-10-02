@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // A run of cards the user swipes through, in a shape one word chooses: a
-// PlacedLayout for the cards, a ScrollReader for the hand, and a state between.
+// PlacedLayout for the cards, a ScrollViewReader for the hand, and a state between.
 // Design: docs/design/views/measured-layouts.md#gallery-view
 
 /// One card at a time, swiped through, in a shape one word chooses.
@@ -24,7 +24,7 @@
 /// A swipe settles on a card, and `.position($:)` says which; assigning it
 /// moves the run. A tap opens the middle card, handed to `.onItemTapped`. No
 /// view is rebuilt while the run moves: the one render is the card changing.
-public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentView {
+public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     // State first: boxes are adopted by path, and the card faces stored below
     // may carry boxes of their own.
     // Design: docs/design/views/composition.md#state-declared-first
@@ -117,7 +117,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     ///   - content: The card's face, run for every item.
     public init(
         _ items: Items,
-        content: @escaping (Items.Element) -> Element
+        content: @escaping (Items.Element) -> any View
     ) where Items.Element: Hashable, Id == Items.Element {
         self.init(items, id: \.self, content: content)
     }
@@ -137,7 +137,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     public init(
         _ items: Items,
         id: KeyPath<Items.Element, Id>,
-        content: @escaping (Items.Element) -> Element
+        content: @escaping (Items.Element) -> any View
     ) {
         source = Source(items: items, path: id, card: content)
     }
@@ -161,7 +161,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     ///     @State private var shown = 0
     ///
     ///     GalleryView(albums) { … }.position($shown)
-    ///     Label(albums[shown].title)
+    ///     Text(albums[shown].title)
     ///
     /// Assigning it moves the run. A gallery nobody lends a binding to keeps
     /// the card itself and still settles on one.
@@ -244,7 +244,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     /// What to draw over a card to send it into the background, and how far.
     ///
     ///     GalleryView(covers, id: \.name) { face($0) }
-    ///         .shade(ColorBox(Color("#000000")).cornerRadius(14))
+    ///         .shade(ColorPicker(Color("#000000")).cornerRadius(14))
     ///
     /// A shade darkens a far card without showing the card behind it, as
     /// fading would; the card in front wears none of it. Give the view the
@@ -268,7 +268,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     /// given, and then a quarter.
     ///
     ///     GalleryView(covers, id: \.name) { face($0) }
-    ///         .shade(ColorBox(Color("#000000")).cornerRadius(14))
+    ///         .shade(ColorPicker(Color("#000000")).cornerRadius(14))
     ///         .fading(0)
     ///
     /// - Parameter amount: how far a far card fades.
@@ -300,7 +300,9 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     }
 
     /// The cards, the shape they stand in, and the scroller that turns them.
-    public var content: any View {
+        public var body: some View { AnyView(content) }
+
+        private var content: any View {
         let items = source.items
         let count = items.count
 
@@ -332,7 +334,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
         // Design: docs/design/views/composition.md#a-watcher-is-a-view-of-its-own
         let asked = { min(max(pin?.wrappedValue ?? showns.wrappedValue, 0), count - 1) }
 
-        // The shape and the motion are read here: a read an engine makes is
+        // The shape and the animation are read here: a read an engine makes is
         // recorded nowhere, so a change read only there would move nothing.
         let shape = wearing ?? look
         let travels = flying
@@ -357,10 +359,10 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
         // by the placement written on the wrapper every frame.
         var run = PlacedLayout(items, id: source.path) { item in
             Grid {
-                ModifiedContent(node: make(item).body)
+                ModifiedContent(node: make(item).node)
                     // Which card is pressed, never which is in front.
-                    .scale(dips.wrappedValue == item[keyPath: path] ? Self.dip : 1)
-                    .motion(Self.pressing)
+                    .scaleEffect(dips.wrappedValue == item[keyPath: path] ? Self.dip : 1)
+                    .animation(Self.pressing)
             }
         }
 
@@ -377,7 +379,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
                 placements = PlacedRun(
                     (0..<count).map { place($0, count, room, shape) },
                     // Following the hand, placements arrive; a shape change animates.
-                    motion: travels ? .inherited : .none)
+                    animation: travels ? .inherited : .none)
 
                 // The middle card is named as the run passes halfway: one render
                 // per card crossed, none per frame.
@@ -428,12 +430,12 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
 
         guard swipes else {
             return Grid {
-                ModifiedContent(node: cards.body)
+                ModifiedContent(node: cards.node)
                 turning
             }
         }
 
-        var reader = ScrollReader(across: Double(count - 1) * step) { cards }
+        var reader = ScrollViewReader(across: Double(count - 1) * step) { cards }
             .scrollOffset($scrolled)
             // The run comes to rest on the nearest card, by a write.
             .onScrollStopped {
@@ -471,7 +473,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
 
         if let tapped {
             // The tap is answered on the card in front, as its shape draws it.
-            reader = reader.onTapped(within: drawn) {
+            reader = reader.onTapGesture(within: drawn) {
                 // The press shows, and the card is back at its size, before the
                 // tap's own work, which usually builds a page.
                 let middle = items.index(items.startIndex, offsetBy: asked())
@@ -523,7 +525,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
     private static var held: Int { 60 }
 
     /// How the press animates, down and back: short, as an answer to a finger.
-    private static var pressing: Motion { .eased(50, .cubicOut) }
+    private static var pressing: Animation { .eased(50, .cubicOut) }
 
     /// How far a far card fades unless said: all of it, or a quarter where a
     /// shade does the rest.
@@ -693,13 +695,13 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
         let path: KeyPath<Items.Element, Id>
 
         /// The card's face.
-        let card: (Items.Element) -> Element
+        let card: (Items.Element) -> any View
 
         /// What the initializers were handed.
         init(
             items: Items,
             path: KeyPath<Items.Element, Id>,
-            card: @escaping (Items.Element) -> Element
+            card: @escaping (Items.Element) -> any View
         ) {
             self.items = items
             self.path = path
@@ -711,7 +713,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: ContentV
 /// The run's watcher: a view of nothing that reads where the run is asked to
 /// be, so the read rebuilds it and not the deck.
 /// Design: docs/design/views/composition.md#a-watcher-is-a-view-of-its-own
-private struct Turning: ContentView {
+private struct Turning: View {
     /// Where the run is asked to be - ASKED here, so the read is this view's.
     let at: () -> Int
 
@@ -724,14 +726,20 @@ private struct Turning: ContentView {
     /// What a new shape means.
     let wore: () async throws -> Void
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         let position = at()
 
-        return ColorBox(Color("#00000000"))
-            .width(0)
-            .height(0)
-            .ignoresInput(true)
-            .onChanged(position) { try await turned(position) }
-            .onChanged(look) { try await wore() }
+        return ColorPicker(Color("#00000000"))
+            .frame(width: 0)
+            .frame(height: 0)
+            .allowsHitTesting(!true)
+            .onChange(of: position) { try await turned(position) }
+            .onChange(of: look) { try await wore() }
     }
 }

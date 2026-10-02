@@ -23,10 +23,10 @@ final class GTKBrushTests: XCTestCase {
         onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    ZStack {}.background(circle).width(200).height(100)
-                    Rectangle().fill(circle).width(200).height(100)
-                    ZStack {}.background(circle).width(100).height(200)
-                    Rectangle().fill(circle).width(100).height(200)
+                    ZStack {}.background(circle).frame(width: 200).frame(height: 100)
+                    Rectangle().fill(circle).frame(width: 200).frame(height: 100)
+                    ZStack {}.background(circle).frame(width: 100).frame(height: 200)
+                    Rectangle().fill(circle).frame(width: 100).frame(height: 200)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)

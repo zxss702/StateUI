@@ -116,14 +116,14 @@ final class WinUIActToolkit: ActToolkit {
         return true
     }
 
-    /// An ItemsView's scroll to an item.
+    /// An List's scroll to an item.
     func performOwn(_ call: HostActCall) -> Bool {
         guard call.act == .scrollTo else { return false }
         let core = renderer.runtime.core
         do {
             let element = try renderer.runtime.tree.aimed(call)
             guard let items = (element.native as? WinUIElement)?.view as? WinUIItemsView else {
-                core.fail(call, "scrollTo is an act of an ItemsView", log: { WinUIRenderer.log.error($0) })
+                core.fail(call, "scrollTo is an act of an List", log: { WinUIRenderer.log.error($0) })
                 return true
             }
             items.scroll(

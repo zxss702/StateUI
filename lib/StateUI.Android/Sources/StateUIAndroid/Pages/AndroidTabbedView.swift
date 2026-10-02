@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// A TabbedView: the chosen tab's page over a row of tabs along the bottom, the host's `StateUITabs`.
+/// A TabView: the chosen tab's page over a row of tabs along the bottom, the host's `StateUITabs`.
 /// Design: docs/design/platforms/android/pages.md#tabs
 @MainActor
 final class AndroidTabbedView: AndroidLayoutView {
@@ -74,7 +74,7 @@ final class AndroidTabbedView: AndroidLayoutView {
     }
 
     override func contentSize(width: Double?) -> LayoutSize {
-        let page = SingleChildArithmetic.size(of: selectedItem, padding: Insets(0), width: width)
+        let page = SingleChildArithmetic.size(of: selectedItem, padding: EdgeInsets(0), width: width)
         return RowEdge.size(page: page, row: rowHeight(width: width))
     }
 
@@ -84,7 +84,7 @@ final class AndroidTabbedView: AndroidLayoutView {
         row.layout(rowRoom)
         guard let page = selectedItem else { return }
 
-        page.view.layout(SingleChildArithmetic.place(of: page, in: room, padding: Insets(0), direction: direction))
+        page.view.layout(SingleChildArithmetic.place(of: page, in: room, padding: EdgeInsets(0), direction: direction))
     }
 
     private func rowHeight(width: Double?) -> Double {

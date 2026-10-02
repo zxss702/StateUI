@@ -21,19 +21,19 @@
                 s.start {
                     VStack {
                         Grid {
-                            ColorBox(.red).width(50).height(20).horizontalAlignment(.start)
+                            ColorPicker(.red).frame(width: 50).frame(height: 20).horizontalAlignment(.start)
                                 .onEvent(ViewContract.frameChanged) { a.values.append($0) }
-                            ColorBox(.green).height(20).gridColumn(1)
+                            ColorPicker(.green).frame(height: 20).gridColumn(1)
                                 .onEvent(ViewContract.frameChanged) { b.values.append($0) }
-                            ColorBox(.blue).width(30).height(40).gridRow(1).gridColumnSpan(2).horizontalAlignment(.end)
+                            ColorPicker(.blue).frame(width: 30).frame(height: 40).gridRow(1).gridColumnSpan(2).horizontalAlignment(.end)
                                 .onEvent(ViewContract.frameChanged) { c.values.append($0) }
                         }
                         .columns(.fixed(100), .fill)
                         .rows(.auto, .auto)
                         .rowSpacing(10)
                         .columnSpacing(5)
-                        .padding(10)
-                        .width(300)
+                        .contentPadding(10)
+                        .frame(width: 300)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -51,13 +51,13 @@
                 s.start {
                     VStack {
                         Grid {
-                            ColorBox(.red).height(30)
-                            ColorBox(.green).gridRow(1).onEvent(ViewContract.frameChanged) { box.values.append($0) }
-                            ColorBox(.blue).height(20).gridRow(2)
+                            ColorPicker(.red).frame(height: 30)
+                            ColorPicker(.green).gridRow(1).onEvent(ViewContract.frameChanged) { box.values.append($0) }
+                            ColorPicker(.blue).frame(height: 20).gridRow(2)
                         }
                         .rows(.auto, .fill, .auto)
-                        .width(100)
-                        .height(200)
+                        .frame(width: 100)
+                        .frame(height: 200)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -73,14 +73,14 @@
                 s.start {
                     VStack {
                         Grid {
-                            ColorBox(.red).gridRowSpan(2).onEvent(ViewContract.frameChanged) { box.values.append($0) }
-                            ColorBox(.green).height(20).gridColumn(1)
-                            ColorBox(.blue).height(30).gridRow(1).gridColumn(1)
+                            ColorPicker(.red).gridRowSpan(2).onEvent(ViewContract.frameChanged) { box.values.append($0) }
+                            ColorPicker(.green).frame(height: 20).gridColumn(1)
+                            ColorPicker(.blue).frame(height: 30).gridRow(1).gridColumn(1)
                         }
                         .columns(.fixed(20), .fill)
                         .rows(.auto, .auto)
                         .rowSpacing(10)
-                        .width(100)
+                        .frame(width: 100)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -97,8 +97,8 @@
                 s.start {
                     VStack {
                         Grid {
-                            ColorBox(.red).width(20).height(20)
-                            ColorBox(.green).width(20).height(20).gridColumn(1).gridRow(1)
+                            ColorPicker(.red).frame(width: 20).frame(height: 20)
+                            ColorPicker(.green).frame(width: 20).frame(height: 20).gridColumn(1).gridRow(1)
                                 .onEvent(ViewContract.frameChanged) { box.values.append($0) }
                         }
                         .columns(.fixed(20), .fixed(20))
@@ -124,8 +124,8 @@
                 s.start {
                     VStack {
                         Grid {
-                            ColorBox(.red)
-                            ColorBox(.green).gridColumn(1).gridRow(1).onEvent(ViewContract.frameChanged) { box.values.append($0) }
+                            ColorPicker(.red)
+                            ColorPicker(.green).gridColumn(1).gridRow(1).onEvent(ViewContract.frameChanged) { box.values.append($0) }
                         }
                         .columns(.fixed(wide.wrappedValue ? 60 : 30), .fixed(20))
                         .rows(.fixed(wide.wrappedValue ? 50 : 10), .fixed(20))

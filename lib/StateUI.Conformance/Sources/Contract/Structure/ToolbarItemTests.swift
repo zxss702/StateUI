@@ -72,6 +72,6 @@
     ) -> any Page {
         NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
             SessionPage(beside: beside.map { $0 }, key: key) { page, _ in page.toolbarItems = items() }
-        } destination: { _ in Label("Pushed") }
+        } destination: { _ in Text("Pushed") }
     }
 }

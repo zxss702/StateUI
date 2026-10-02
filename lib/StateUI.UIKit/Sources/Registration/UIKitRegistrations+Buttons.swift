@@ -25,8 +25,8 @@ extension UIKitRegistrations {
                             (look.size, look.attributes, look.family, look.color)
                     }
                 }
-                if values.changed(PaddingElementContract.padding) {
-                    view.setPadding(values[PaddingElementContract.padding])
+                if values.changed(PaddingElementContract.contentPadding) {
+                    view.setPadding(values[PaddingElementContract.contentPadding])
                 }
             }
             button.property(VisualElementContract.isEnabled) { view, enabled in view.isEnabled = enabled ?? true }

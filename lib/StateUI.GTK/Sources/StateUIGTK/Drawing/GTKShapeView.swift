@@ -16,7 +16,7 @@ final class GTKShapeView: GTKPanelView {
     enum Geometry: Equatable {
         case rectangle([Double])
         case ellipse
-        case authored([Double], evenOdd: Bool, aspect: Aspect, transform: [Double]?)
+        case authored([Double], evenOdd: Bool, aspect: ContentMode, transform: [Double]?)
     }
 
     private var geometry = Geometry.rectangle([0, 0, 0, 0])

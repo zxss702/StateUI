@@ -28,7 +28,7 @@ extension UIKitElement {
         item.placed = self
         item.drawing = drawing
         if fadesIn {
-            item.fadeIn = { [weak self] motion in self?.fadeIn(under: motion) }
+            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
         }
         return item
     }

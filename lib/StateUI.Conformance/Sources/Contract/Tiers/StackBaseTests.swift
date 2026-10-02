@@ -26,8 +26,8 @@
                 VStack {
                     Stacked.stack(element, spacing: wide.wrappedValue ? 20 : 10) {
                         [
-                            ColorBox(.red).width(20).height(20),
-                            ColorBox(.blue).width(20).height(20).onEvent(ViewContract.frameChanged) { second.values.append($0) },
+                            ColorPicker(.red).frame(width: 20).frame(height: 20),
+                            ColorPicker(.blue).frame(width: 20).frame(height: 20).onEvent(ViewContract.frameChanged) { second.values.append($0) },
                         ]
                     }
                     Button("Wider").onClicked { wide.wrappedValue = true }.id("change")

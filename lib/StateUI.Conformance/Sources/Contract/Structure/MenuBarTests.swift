@@ -15,7 +15,7 @@
                 Covered(MenuBarContract.self), Covered(MenuContract.text), Covered(MenuItemElementContract.isEnabled, on: "MenuItem"),
             ]) { s in
                 s.start { MenusPage(heard: Received()) }
-                let window = try s.element(ofType: WindowContract.nodeType)
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
 
                 try s.settle { try s.menu(of: window) == "File[New;-;Recent[a.txt]];Edit[!Undo]" }
                 s.expect(try s.menu(of: window), "File[New;-;Recent[a.txt]];Edit[!Undo]")
@@ -36,7 +36,7 @@
                 Covered(MenuBarContract.self),
             ], needs: [Covered(ButtonContract.clicked)]) { s in
                 s.start { MenusPage(heard: Received()) }
-                let window = try s.element(ofType: WindowContract.nodeType)
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
 
                 try s.perform(.activate, on: s.element("more"))
                 try s.settle { try s.menu(of: window) == "File[New;-;Recent[a.txt;b.txt]];Edit[!Undo]" }
@@ -47,9 +47,9 @@
                 s.start {
                     NavigationStack(path.projectedValue) {
                         MenusPage(heard: Received())
-                    } destination: { _ in Label("Note") }
+                    } destination: { _ in Text("Note") }
                 }
-                let window = try s.element(ofType: WindowContract.nodeType)
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
                 try s.settle { try s.menu(of: window) != "" }
 
                 path.wrappedValue = [1]
@@ -66,7 +66,7 @@
 
 /// A page writing its menus into its session - File, with a submenu of what a state lists, and Edit - and saying
 /// what the user chose.
-struct MenusPage: ContentView {
+struct MenusPage: View {
     let heard: Received<String>
 
     @State private var recent = ["a.txt"]
@@ -77,21 +77,21 @@ struct MenusPage: ContentView {
         return [
             Menu("File") {
                 MenuItem("New").onClicked { heard.values.append("new") }.id("new")
-                MenuSeparator()
+                Divider()
                 Menu("Recent") {
                     ForEach(recent, id: \.self) { file in
                         MenuItem(file).onClicked { heard.values.append("open \(file)") }.id("open \(file)")
                     }
                 }
             },
-            Menu("Edit") { MenuItem("Undo").isEnabled(false) },
+            Menu("Edit") { MenuItem("Undo").disabled(!false) },
         ]
     }
 
-    var content: any View {
+    var body: some View {
         let (page, recent, menus) = (self.page, $recent, self.menus)
         return VStack { Button("More").onClicked { recent.wrappedValue.append("b.txt") }.id("more") }
-            .onCreated { page.menuBar = menus }
-            .onChanged(recent.wrappedValue) { page.menuBar = menus }
+            .onAppear { page.menuBar = menus }
+            .onChange(of: recent.wrappedValue) { page.menuBar = menus }
     }
 }

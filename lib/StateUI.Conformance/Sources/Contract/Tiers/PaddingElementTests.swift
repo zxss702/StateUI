@@ -13,7 +13,7 @@
     public static var cases: [ConformanceCase] {
         Specimens.wearing(PaddingElementContract.self).flatMap { element in
             (holdsChildren(element) ? [keepsItsChildIn(element)] : [])
-                + [Aspects.holds(PaddingElementContract.padding, on: element, Insets(4), then: Insets(8, 2, 8, 2),
+                + [Aspects.holds(PaddingElementContract.contentPadding, on: element, EdgeInsets(4), then: EdgeInsets(8, 2, 8, 2),
                                  with: Words.on(element))]
         }
     }
@@ -26,14 +26,14 @@
     /// A layout's child stands its padding in from the layout's corner, and the padding the tree changes it to.
     static func keepsItsChildIn(_ element: String) -> ConformanceCase {
         ConformanceCase("\(element).keepsItsChildItsPaddingIn", proves: [
-            Covered(PaddingElementContract.padding, on: element),
+            Covered(PaddingElementContract.contentPadding, on: element),
         ], needs: [Covered(ButtonContract.clicked)]) { s in
             let wide = State(wrappedValue: false)
             let frames = Received<[Double]>()
             s.start {
                 VStack {
-                    Padded.layout(element, padding: wide.wrappedValue ? Insets(20, 12, 0, 0) : Insets(10, 6, 0, 0)) {
-                        ColorBox(.red).width(20).height(20).horizontalAlignment(.start).verticalAlignment(.start)
+                    Padded.layout(element, padding: wide.wrappedValue ? EdgeInsets(20, 12, 0, 0) : EdgeInsets(10, 6, 0, 0)) {
+                        ColorPicker(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
                             .onEvent(ViewContract.frameChanged) { frames.values.append($0) }
                     }
                     Button("Wider").onClicked { wide.wrappedValue = true }.id("change")
@@ -54,14 +54,14 @@
 /// A layout of each kind holding a view within its padding.
 enum Padded {
     /// A layout of `element`'s kind holding `content`, `padding` in.
-    static func layout(_ element: String, padding: Insets, _ content: () -> any View) -> any View {
+    static func layout(_ element: String, padding: EdgeInsets, _ content: () -> any View) -> any View {
         let held = content()
-        let dressing = Dressing([Write(PaddingElementContract.padding, padding)], id: "layout")
+        let dressing = Dressing([Write(PaddingElementContract.contentPadding, padding)], id: "layout")
         switch element {
         case "Grid": return dressing.dress(Grid { held })
         case "HStack": return dressing.dress(HStack { held })
         case "ZStack": return dressing.dress(ZStack { held })
-        case "ScrollView": return dressing.dress(ScrollView { held }.height(100))
+        case "ScrollView": return dressing.dress(ScrollView { held }.frame(height: 100))
         default: return dressing.dress(VStack { held })
         }
     }

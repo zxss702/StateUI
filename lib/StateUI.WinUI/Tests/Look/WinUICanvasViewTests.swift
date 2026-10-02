@@ -8,21 +8,21 @@ import CStateUIWinUI
 import XCTest
 
 /// A canvas that says where a press on it went, a switch that widens it, and one that takes it away.
-private struct PressPage: ContentView {
+private struct PressPage: View {
     @State private var said = ""
     @State private var wide = false
     @State private var shown = true
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(said)
+            Text(said)
             if shown {
                 Canvas {
                     Draw.fillColor(Color("#FF0000"))
                     Draw.fillRectangle(x: 0, y: 0, width: 300, height: 20)
                 }
-                .width(wide ? 200 : 100)
-                .height(20)
+                .frame(width: wide ? 200 : 100)
+                .frame(height: 20)
                 .horizontalAlignment(.start)
                 .onPressed { point in said += "pressed \(Int(point.x)),\(Int(point.y)); " }
                 .onDragged { point in said += "dragged \(Int(point.x)),\(Int(point.y)); " }
@@ -31,25 +31,25 @@ private struct PressPage: ContentView {
             Button("Widen").onClicked { wide = true }
             Button("Hide").onClicked { shown = false }
         }
-        .width(300)
+        .frame(width: 300)
         .horizontalAlignment(.start)
         .verticalAlignment(.start)
     }
 }
 
 /// A canvas a click shows.
-private struct ShowingPage: ContentView {
+private struct ShowingPage: View {
     @State private var shown = false
 
-    var content: any View {
+    var body: some View {
         VStack {
             if shown {
                 Canvas {
                     Draw.fillColor(Color("#FF0000"))
                     Draw.fillRectangle(x: 0, y: 0, width: 300, height: 20)
                 }
-                .width(100)
-                .height(20)
+                .frame(width: 100)
+                .frame(height: 20)
             }
             Button("Show").onClicked { shown = true }
         }
@@ -133,7 +133,7 @@ final class WinUICanvasViewTests: XCTestCase {
     func testTextIsWrittenInItsBox() throws {
         let row = (0..<100).map { (Double($0), 10.0) }
         let set = try drawn(width: 100, height: 20, at: row) {
-            Draw.textColor(Color("#000000"))
+            Draw.foregroundStyle(Color("#000000"))
             Draw.fontSize(16)
             Draw.drawText("WW", x: 0, y: 0, width: 100, height: 20, horizontalAlignment: .end)
         }
@@ -142,7 +142,7 @@ final class WinUICanvasViewTests: XCTestCase {
 
         let lines = [10.0, 30.0].flatMap { y in (0..<40).map { (Double($0), y) } }
         let wrapped = try drawn(width: 40, height: 40, at: lines) {
-            Draw.textColor(Color("#000000"))
+            Draw.foregroundStyle(Color("#000000"))
             Draw.fontSize(16)
             Draw.drawText("WWW WWW WWW", x: 0, y: 0, width: 40, height: 20)
         }
@@ -206,12 +206,12 @@ final class WinUICanvasViewTests: XCTestCase {
             let host = WinUIRenderer.running {
                 VStack {
                     Canvas(drawing)
-                        .width(width)
-                        .height(height)
+                        .frame(width: width)
+                        .frame(height: height)
                         .horizontalAlignment(.start)
                 }
-                .width(width + 40)
-                .height(height + 40)
+                .frame(width: width + 40)
+                .frame(height: height + 40)
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
             }

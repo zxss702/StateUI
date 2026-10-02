@@ -10,8 +10,8 @@ public enum PaddingElementContract: Contract {
     public static let tiers: [any Contract.Type] = [VisualElementContract.self]
 
     /// The space inside the element, between its edges and what it holds.
-    public static let padding = ElementProperty<Self, Insets>("padding", layer: .native, moves: .spacing)
+    public static let contentPadding = ElementProperty<Self, EdgeInsets>("contentPadding", layer: .native, moves: .spacing)
 
     /// The tier's own members.
-    public static let members: [any ContractMember] = [padding]
+    public static let members: [any ContractMember] = [contentPadding]
 }

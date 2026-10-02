@@ -3,11 +3,17 @@
 
 /// An inspector folded to one line: the last render that reached its scene,
 /// said the way the list says it, and the button that opens it out again.
-struct InspectorStrip: ContentView {
+struct InspectorStrip: View {
     /// The scene it looks at, by its number.
     let scene: String
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         let model = InspectorModel.shared
 
         // Built again as renders land, the way the whole inspector is.
@@ -22,11 +28,11 @@ struct InspectorStrip: ContentView {
                 if let last {
                     Row(pass: last, scene: element, index: Scenes.shared.index(of: scene), chosen: false)
                 } else {
-                    Label(InspectorView.waiting(all.count))
+                    Text(InspectorView.waiting(all.count))
                         .fontSize(12)
-                        .textColor(Look.subtle)
+                        .foregroundStyle(Look.subtle)
                         .lineBreak(.tailTruncation)
-                        .margin(8, 4)
+                        .padding(8, 4)
                 }
             }
             .verticalAlignment(.center)
@@ -44,6 +50,6 @@ struct InspectorStrip: ContentView {
             .gridColumn(1)
         }
         .columns(.fill, .auto)
-        .padding(2, 4)
+        .contentPadding(2, 4)
     }
 }

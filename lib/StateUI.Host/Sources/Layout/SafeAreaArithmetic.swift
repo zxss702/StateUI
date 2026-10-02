@@ -35,12 +35,12 @@
 
 extension MountedElement {
     /// Which edges of the window's safe area this layout stands clear of, as the tree says; nil where it says nothing.
-    public var avoidsSafeArea: SafeAreaEdges? {
-        value(.avoidsSafeArea).flatMap(SafeAreaEdges.init(propValue:))
+    public var ignoresSafeArea: SafeAreaEdges? {
+        value(.ignoresSafeArea).flatMap(SafeAreaEdges.init(propValue:))
     }
 
     /// The edges a page's content lets it under the bars on: its own content's, which is the page's one child.
     public var contentSafeArea: SafeAreaEdges? {
-        type == .page ? children.first?.avoidsSafeArea : avoidsSafeArea
+        type == .page ? children.first?.ignoresSafeArea : ignoresSafeArea
     }
 }

@@ -23,8 +23,8 @@ extension AppKitRegistrations {
             picker.applies([
                 PickerContract.options, PickerContract.selectedIndex, PickerContract.title,
                 PickerContract.isOpen, FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.textColor,
-                TintElementContract.tint, TextAlignmentElementContract.horizontalTextAlignment,
+                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
+                TintElementContract.tint, TextAlignmentElementContract.multilineTextAlignment,
                 VisualElementContract.isEnabled,
             ]) { view, values in
                 view.apply(
@@ -37,11 +37,11 @@ extension AppKitRegistrations {
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
-                    textColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     tint: values[TintElementContract.tint].flatMap { nsColor($0.propValue) },
                     alignment: appKitTextAlignment(
-                        values[TextAlignmentElementContract.horizontalTextAlignment]?.rawValue),
+                        values[TextAlignmentElementContract.multilineTextAlignment]?.rawValue),
                     enabled: values[VisualElementContract.isEnabled] ?? true,
                     open: values[PickerContract.isOpen] ?? false,
                     writeOpen: values.changed(PickerContract.isOpen))
@@ -63,7 +63,7 @@ extension AppKitRegistrations {
             picker.applies([
                 DatePickerContract.date, DatePickerContract.minimumDate, DatePickerContract.maximumDate,
                 FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.textColor,
+                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
                 VisualElementContract.isEnabled,
             ]) { view, values in
                 view.apply(
@@ -76,7 +76,7 @@ extension AppKitRegistrations {
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
-                    textColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     enabled: values[VisualElementContract.isEnabled] ?? true)
             }
@@ -94,7 +94,7 @@ extension AppKitRegistrations {
         }, members: { picker in
             picker.applies([
                 TimePickerContract.time, FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.textColor,
+                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
                 VisualElementContract.isEnabled,
             ]) { view, values in
                 view.apply(
@@ -107,7 +107,7 @@ extension AppKitRegistrations {
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
-                    textColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     enabled: values[VisualElementContract.isEnabled] ?? true)
             }

@@ -24,7 +24,7 @@ final class AppKitProgressViewTests: XCTestCase {
         XCTAssertFalse(shows(native))
 
         var margin = HostPatch(id: .manual("activity"), type: .activityIndicator)
-        margin.properties[.margin] = .numbers([4, 4, 4, 4])
+        margin.properties[.contentPadding] = .numbers([4, 4, 4, 4])
         renderer.applyForTesting(changedTree(margin))
         XCTAssertFalse(shows(native))
 

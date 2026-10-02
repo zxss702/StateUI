@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Easing curves: a closed vocabulary, numbered by StateUI.
-// Design: docs/design/types/motion.md#easing-curves
+// Design: docs/design/types/animation.md#easing-curves
 
-/// The curve an animation follows; with a duration, it makes an eased motion.
+/// The curve an animation follows; with a duration, it makes an eased animation.
 ///
 ///     @State private var fade = 1.0
 ///     …

@@ -22,11 +22,11 @@ private final class Said {
 }
 
 /// A view that reads its own state and says why it is being described.
-private struct Watched: ContentView {
+private struct Watched: View {
     let said: Said
     @State var count = 0
 
-    var content: any View {
+    var body: some View {
         said.last = debugInfo()
         said.count += 1
         return ModifiedContent(node: label("count \(count)"))
@@ -34,24 +34,24 @@ private struct Watched: ContentView {
 }
 
 /// A parent that reads a state of its own and holds a child that reads none.
-private struct Holder: ContentView {
+private struct Holder: View {
     let mine: Said
     let theirs: Said
     @State var title = "t"
 
-    var content: any View {
+    var body: some View {
         mine.last = debugInfo()
-        return ModifiedContent(node: stack([label(title), Passenger(said: theirs, caption: title).body]))
+        return ModifiedContent(node: stack([label(title), Passenger(said: theirs, caption: title).node]))
     }
 }
 
 /// A view with no state at all - built again only because its parent handed
 /// it something new.
-private struct Passenger: ContentView {
+private struct Passenger: View {
     let said: Said
     let caption: String
 
-    var content: any View {
+    var body: some View {
         said.last = debugInfo()
         return ModifiedContent(node: label("along"))
     }
@@ -59,18 +59,18 @@ private struct Passenger: ContentView {
 
 /// A view whose reading is taken INSIDE a container's closure, which is where
 /// an author most naturally puts one - beside the thing it is about.
-private struct Nested: ContentView {
+private struct Nested: View {
     let said: Said
 
     @State var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("count \(count)")
+            Text("count \(count)")
 
             // The differ runs this closure when it DESCENDS, not when the line
             // above it does, so the reading is taken then.
-            Label(seen())
+            Text(seen())
         }
     }
 
@@ -96,7 +96,7 @@ final class BuildsTests: XCTestCase {
         let said = Said()
         let view = Watched(said: said)
 
-        Renders().render(stack([view.body], id: "root"))
+        Renders().render(stack([view.node], id: "root"))
 
         XCTAssertEqual(said.last, "Watched: 1 build, first time")
     }
@@ -108,7 +108,7 @@ final class BuildsTests: XCTestCase {
         let view = Watched(said: said)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
 
         view.$count.wrappedValue = 1
         renders.revisit(changed: changed)
@@ -124,7 +124,7 @@ final class BuildsTests: XCTestCase {
         let holder = Holder(mine: mine, theirs: theirs)
         let renders = Renders()
 
-        renders.render(stack([holder.body], id: "root"))
+        renders.render(stack([holder.node], id: "root"))
 
         holder.$title.wrappedValue = "moved"
         renders.revisit(changed: changed)
@@ -140,7 +140,7 @@ final class BuildsTests: XCTestCase {
         let view = Watched(said: said)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
 
         for _ in 0..<3 {
             view.$count.wrappedValue += 1
@@ -158,8 +158,8 @@ final class BuildsTests: XCTestCase {
         let view = Watched(said: said)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
-        renders.renderFromScratch(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
+        renders.renderFromScratch(stack([view.node], id: "root"))
 
         XCTAssertEqual(said.last, "Watched: 2 builds, the whole tree")
     }
@@ -169,9 +169,9 @@ final class BuildsTests: XCTestCase {
     func testOutsideABodyThereIsNothingToSay() {
         let said = Said()
 
-        Renders().render(stack([Watched(said: said).body], id: "root"))
+        Renders().render(stack([Watched(said: said).node], id: "root"))
 
-        XCTAssertEqual(Label("x").debugInfo(), "nothing is being described here")
+        XCTAssertEqual(Text("x").debugInfo(), "nothing is being described here")
     }
 
     /// A reading taken inside a CONTAINER's closure answers about the view
@@ -187,7 +187,7 @@ final class BuildsTests: XCTestCase {
         let said = Said()
         let renders = Renders()
 
-        renders.render(stack([Nested(said: said).body], id: "root"))
+        renders.render(stack([Nested(said: said).node], id: "root"))
 
         XCTAssertTrue(
             said.last.hasPrefix("Nested: "),

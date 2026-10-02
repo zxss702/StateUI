@@ -130,7 +130,7 @@ final class WinUIWindowController {
 
         return WinUIWindowTabs(
             titles: tabs.titles, selected: tabs.shownIndex, select: { [weak tabs] index in tabs?.selectByUser(index) },
-            split: tabbed.parent?.enclosing(type: .splitView)?.winUI.view as? WinUISplitView)
+            split: tabbed.parent?.enclosing(type: .navigationSplitView)?.winUI.view as? WinUISplitView)
     }
 
     /// The page's corner in the window, in DIPs: where content stands clear of the window's chrome.

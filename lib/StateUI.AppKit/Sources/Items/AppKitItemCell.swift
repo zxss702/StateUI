@@ -6,7 +6,7 @@ import AppKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// What a cell of an ItemsView holds: one entry's subtree, placed by the layer's arithmetic, and the size it asks
+/// What a cell of an List holds: one entry's subtree, placed by the layer's arithmetic, and the size it asks
 /// for across the cell's fixed side.
 /// Design: docs/design/platforms/appkit/items.md#a-cell
 @MainActor
@@ -100,7 +100,7 @@ final class AppKitItemCellView: NSView {
     }
 }
 
-/// A cell of an ItemsView, holding one item.
+/// A cell of an List, holding one item.
 @MainActor
 final class AppKitItemCell: NSCollectionViewItem {
     private(set) lazy var holding = AppKitItemHolding(in: view)
@@ -120,7 +120,7 @@ final class AppKitItemCell: NSCollectionViewItem {
     }
 }
 
-/// A header or a footer of an ItemsView or of one of its groups.
+/// A header or a footer of an List or of one of its groups.
 @MainActor
 final class AppKitItemSupplement: NSView, NSCollectionViewElement {
     private(set) lazy var holding = AppKitItemHolding(in: self)

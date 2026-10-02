@@ -45,7 +45,7 @@ public final class HostStorage: @unchecked Sendable, NamedState {
 
     /// The element's own law - what `.inherited` means here - resolved by the differ.
     /// Design: docs/design/core/identity-and-diffing.md#driven-properties
-    var inherited: Motion = .inherited
+    var inherited: Animation = .inherited
 
     /// Which element resolved that law, so a second answering differently is heard.
     var inheritedBy: ElementId?
@@ -85,7 +85,7 @@ public final class HostStorage: @unchecked Sendable, NamedState {
             var bytes = published
 
             StateImage.lay((0..<width).map { StateImage.lane($0, of: published) }, at: width, into: &bytes)
-            StateImage.lay(StateLaw.lanes(of: Motion.none), at: at, into: &bytes)
+            StateImage.lay(StateLaw.lanes(of: Animation.none), at: at, into: &bytes)
 
             return bytes
 

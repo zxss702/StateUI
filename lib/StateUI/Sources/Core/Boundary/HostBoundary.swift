@@ -11,8 +11,8 @@
     public static var needsRender: Bool { Renderer.shared.needsRender }
 
     /// Updates the appearance used to resolve themed values before rendering.
-    public static func setTheme(_ theme: Theme) {
-        update(StandardEnvironment.app, \.requestedTheme, theme)
+    public static func setColorScheme(_ scheme: ColorScheme) {
+        update(StandardEnvironment.appInfo, \.colorScheme, scheme)
     }
 
     /// Replaces the standard device report used by application builds.
@@ -40,7 +40,7 @@
 
     /// Replaces the standard application-manifest report used by builds.
     public static func setApplicationInfo(_ info: HostApplicationInfo) {
-        let app = StandardEnvironment.app
+        let app = StandardEnvironment.appInfo
         update(app, \.name, info.name)
         update(app, \.packageName, info.packageName)
         update(app, \.versionString, info.versionString)
@@ -93,7 +93,7 @@
 
     /// Updates the process-wide application session from native lifecycle.
     public static func setApplicationPhase(_ phase: ApplicationPhase) {
-        update(StandardEnvironment.application, \.phase, phase)
+        update(StandardEnvironment.app, \.phase, phase)
     }
 
     /// Writes a report's field where it differs, so a report that repeats itself asks for no render.
@@ -106,7 +106,7 @@
 
     /// The typed keys the host reads before the first application render.
     public static var persistentKeys: [PersistentKey] {
-        StandardEnvironment.application.persistentKeys
+        StandardEnvironment.app.persistentKeys
     }
 
     /// Hydrates values found in the native store before the first render.
@@ -115,7 +115,7 @@
             values.sorted { $0.key < $1.key }.map { (name: $0.key, value: $0.value) })
     }
 
-    /// Decodes a complete property-state image for a native motion channel.
+    /// Decodes a complete property-state image for a native animation channel.
     ///
     /// Returns nil for text, plain values, feeds, placement runs and malformed
     /// images. The lane layout remains an implementation detail of StateUI.
@@ -138,7 +138,7 @@
             value: Array(lanes[0..<width]),
             destination: Array(lanes[width..<(width * 2)]),
             velocity: Array(lanes[(width * 2)..<(width * 3)]),
-            motion: StateLaw.motion(
+            animation: StateLaw.animation(
                 of: Array(lanes[lawStart..<(lawStart + StateLaw.lanes)])),
             completion: completion == 0 ? nil : completion,
             stopped: stoppedCount)
@@ -150,7 +150,7 @@
             journey.value
                 + journey.destination
                 + journey.velocity
-                + StateLaw.lanes(of: journey.motion)
+                + StateLaw.lanes(of: journey.animation)
                 + [Double(journey.completion ?? 0), Double(journey.stopped)])
     }
 
@@ -171,7 +171,7 @@
                     zIndex: $0.zIndex,
                     shade: $0.shade)
             },
-            motion: run.motion)
+            animation: run.animation)
     }
 
     /// Builds and returns a typed patch against the generation the host holds.
@@ -182,7 +182,7 @@
     /// Reads the complete image for an outward state attachment.
     ///
     /// Text and plain values arrive in their declared shape. A moving
-    /// property carries its complete journey so a host can retain one motion
+    /// property carries its complete journey so a host can retain one animation
     /// channel for every state number.
     public static func value(for binding: HostStateBinding) -> HostStateValue? {
         Renderer.shared.hostValue(for: binding)
@@ -203,7 +203,7 @@
     /// Reports a complete text, plain value, or feed through an inward state
     /// attachment.
     ///
-    /// A moving property reports through its host motion channel instead; its
+    /// A moving property reports through its host animation channel instead; its
     /// image contains the value, destination, velocity, law and completion,
     /// rather than only the value a user moved.
     @discardableResult
@@ -234,7 +234,7 @@
         Renderer.shared.hostReported(journey, updating: update, through: binding)
     }
 
-    /// Completes an awaited journey after its host motion ends or is replaced.
+    /// Completes an awaited journey after its host animation ends or is replaced.
     ///
     /// - Parameters:
     ///   - completion: The negative continuation id carried by the journey.

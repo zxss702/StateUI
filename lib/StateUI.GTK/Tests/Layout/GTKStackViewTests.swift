@@ -12,8 +12,8 @@ final class GTKStackViewTests: XCTestCase {
         onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Label("one")
-                    Label("two")
+                    Text("one")
+                    Text("two")
                 }
                 .spacing(10)
             }
@@ -31,11 +31,11 @@ final class GTKStackViewTests: XCTestCase {
         onUIThread {
             let host = GTKRenderer.running {
                 HStack {
-                    Label("left")
-                    Label("right")
+                    Text("left")
+                    Text("right")
                 }
                 .spacing(6)
-                .padding(Insets(4))
+                .contentPadding(EdgeInsets(4))
             }
             let labels = host.views(GTKLabelView.self).map(\.laidOutFrame)
 
@@ -52,7 +52,7 @@ final class GTKStackViewTests: XCTestCase {
             let host = GTKRenderer.running {
                 VStack {
                     Button("Tap")
-                    Label("below")
+                    Text("below")
                 }
             }
             let button = host.views(GTKButtonView.self)[0]

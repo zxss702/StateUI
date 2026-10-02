@@ -35,13 +35,13 @@
 }
 
 /// The property animations a patch describes, keyed by element and property.
-/// Design: docs/design/host/motion.md#described-motion
+/// Design: docs/design/host/animation.md#described-animation
 @_spi(Host) @MainActor public final class DescribedMotion {
     private let animator: Animator
     private var transitions: [DescribedKey: DescribedTransition] = [:]
     private var outputs: [DescribedOutput] = []
 
-    /// Described motion whose animations `animator` advances.
+    /// Described animation whose animations `animator` advances.
     public init(animator: Animator) {
         self.animator = animator
     }
@@ -54,14 +54,14 @@
         transitions[key]?.presented
     }
 
-    /// Starts, retargets or cuts short a property's animation; a nil `motion` snaps.
+    /// Starts, retargets or cuts short a property's animation; a nil `animation` snaps.
     /// `landed` runs when it ends or is cut short; returns whether one started.
     @discardableResult
     public func receive(
         key: DescribedKey,
         standing: HostValue?,
         target: HostValue?,
-        motion: Motion?,
+        animation: Animation?,
         landed: (() -> Void)? = nil,
         now: Double,
         reducesMotion: Bool
@@ -83,12 +83,12 @@
 
         guard let source,
               let target,
-              let motion,
-              !motion.isInherited,
-              !motion.isCustom,
-              motion.factor.isFinite,
+              let animation,
+              !animation.isInherited,
+              !animation.isCustom,
+              animation.factor.isFinite,
               !reducesMotion,
-              !(motion.law == .eased && motion.millis == 0),
+              !(animation.law == .eased && animation.millis == 0),
               let plan = MotionValuePlan(
                 from: source,
                 destination: target,
@@ -96,19 +96,19 @@
                 property: key.property)
         else { return false }
 
-        let animation = Animation(
+        let running = RunningAnimation(
             from: plan.from,
             destination: plan.destination,
             velocity: carriedVelocity.count == plan.from.count
                 ? carriedVelocity
                 : Array(repeating: 0, count: plan.from.count),
-            motion: motion,
+            animation: animation,
             began: now)
 
-        guard !animation.arrives else { return false }
+        guard !running.arrives else { return false }
         transitions[key] = DescribedTransition(
-            plan: plan, velocity: animation.velocity, landed: landed)
-        animator.start(animation, for: .described(key))
+            plan: plan, velocity: running.velocity, landed: landed)
+        animator.start(running, for: .described(key))
         return true
     }
 
@@ -186,7 +186,7 @@ private final class DescribedTransition {
 }
 
 /// A value as numeric lanes and back, keeping its shape.
-/// Design: docs/design/host/motion.md#described-motion
+/// Design: docs/design/host/animation.md#described-animation
 private struct MotionValuePlan {
     let from: [Double]
     let destination: [Double]

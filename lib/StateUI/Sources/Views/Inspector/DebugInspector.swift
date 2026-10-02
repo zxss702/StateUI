@@ -10,7 +10,7 @@
 /// `scene.openWindow(.debugInspector)`. Where a scene declares none, or the
 /// platform opens no second window, the inspector docks in the main window
 /// instead.
-public struct DebugInspector: Window {
+public struct DebugInspector: WindowScene {
     /// The scene it inspects - the one it is a window of.
     @Environment private var scene: SceneSession
 

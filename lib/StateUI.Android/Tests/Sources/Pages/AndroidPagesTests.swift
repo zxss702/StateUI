@@ -68,7 +68,7 @@ final class AndroidPagesTests: XCTestCase {
                 NavigationStack(path.projectedValue) {
                     TitledPage(title: "Items and Cards")
                 } destination: { _ in
-                    TabbedView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("ItemsView")
+                    TabView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("List")
                 }
             }
             host.layOut()
@@ -77,7 +77,7 @@ final class AndroidPagesTests: XCTestCase {
 
             path.wrappedValue = [1]
             host.runtime.pump.turn()
-            XCTAssertEqual(navigation.bar.content.title, "ItemsView")
+            XCTAssertEqual(navigation.bar.content.title, "List")
         }
     }
 
@@ -139,7 +139,7 @@ final class AndroidPagesTests: XCTestCase {
         try onMainActor {
             let open = State(wrappedValue: false)
             let host = AndroidRenderer.running {
-                SplitView(open.projectedValue) {
+                NavigationSplitView(open.projectedValue) {
                     TitledPage(title: "Menu", icon: "test_dot.png")
                 } detail: {
                     NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
@@ -171,7 +171,7 @@ final class AndroidPagesTests: XCTestCase {
     func testALayoutWhileTheDrawerSlidesLeavesItSliding() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                SplitView(State(wrappedValue: false).projectedValue) {
+                NavigationSplitView(State(wrappedValue: false).projectedValue) {
                     TitledPage(title: "Menu", icon: "test_dot.png")
                 } detail: {
                     NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
@@ -202,7 +202,7 @@ final class AndroidPagesTests: XCTestCase {
         try onMainActor {
             let tab = State(wrappedValue: 0)
             let host = AndroidRenderer.running {
-                TabbedView([0, 1]) { number in
+                TabView([0, 1]) { number in
                     TitledPage(title: "Tab \(number)")
                 }
                 .selection(tab.projectedValue)
@@ -223,7 +223,7 @@ final class AndroidPagesTests: XCTestCase {
         try onMainActor {
             let tab = State(wrappedValue: 0)
             let host = AndroidRenderer.running {
-                TabbedView([0, 1, 2]) { number in TitledPage(title: "Tab \(number)") }
+                TabView([0, 1, 2]) { number in TitledPage(title: "Tab \(number)") }
                     .selection(tab.projectedValue)
             }
             host.layOut()
@@ -242,7 +242,7 @@ final class AndroidPagesTests: XCTestCase {
 
     /// What a page puts on the bar: its actions in their priority's order, the overflow's last, each with its
     /// picture and whether it can be chosen - the picture of one that cannot be dimmed - a destructive one in
-    /// the theme's error colour; choosing one runs its handler, and one that cannot be chosen runs nothing.
+    /// the color scheme's error colour; choosing one runs its handler, and one that cannot be chosen runs nothing.
     func testAPagesToolbarItemsAreTheBarsActions() throws {
         try onMainActor {
             let heard = Received<String>()
@@ -252,7 +252,7 @@ final class AndroidPagesTests: XCTestCase {
                         ToolbarItem("Delete").placement(.overflow).isDestructive(true)
                             .onClicked { heard.values.append("delete") },
                         ToolbarItem("Save").priority(1).icon("test_wide.png").onClicked { heard.values.append("save") },
-                        ToolbarItem("Add").priority(0).icon("test_wide.png").isEnabled(false)
+                        ToolbarItem("Add").priority(0).icon("test_wide.png").disabled(!false)
                             .onClicked { heard.values.append("add") },
                     ])
                 } destination: { _ in
@@ -348,7 +348,7 @@ extension AndroidPagesTests {
                 NavigationStack(path.projectedValue) {
                     TitledPage(title: "Root")
                 } destination: { _ in
-                    TabbedView([0, 1]) { tab -> any Page in
+                    TabView([0, 1]) { tab -> any Page in
                         NavigationStack(State(wrappedValue: [Int]()).projectedValue) { TitledPage(title: "Tab \(tab)") }
                             destination: { number in TitledPage(title: "Pushed \(number)") }
                     }
@@ -371,7 +371,7 @@ extension AndroidPagesTests {
     func testATabsAndAnActionsPicturesStandAtTheIconSize() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                TabbedView([0, 1]) { number in
+                TabView([0, 1]) { number in
                     NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
                         TitledPage(
                             title: "Tab \(number)",
@@ -521,22 +521,22 @@ extension AndroidPagesTests {
 }
 
 /// A page on a blue ground with its words 8 points in, saying whether its bar shows and has a way back.
-private struct FurnishedPage: ContentView {
+private struct FurnishedPage: View {
     let title: String
     var hasBackButton = true
     var hasNavigationBar = true
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let page = self.page
         let title = self.title
         let back = hasBackButton
         let bar = hasNavigationBar
-        return Label(title).onCreated {
+        return Text(title).onAppear {
             page.title = title
             page.background = .blue
-            page.padding = Insets(8)
+            page.padding = EdgeInsets(8)
             page.hasBackButton = back
             page.hasNavigationBar = bar
         }
@@ -544,14 +544,14 @@ private struct FurnishedPage: ContentView {
 }
 
 /// A page whose search field stands in its bar in place of its title.
-private struct SearchingPage: ContentView {
+private struct SearchingPage: View {
     @Environment private var page: PageSession
     @State private var query = ""
 
-    var content: any View {
+    var body: some View {
         let page = self.page
         let query = $query
-        return Label("Results").onCreated {
+        return Text("Results").onAppear {
             page.title = "Search"
             page.titleView = SearchField(query).placeholder("Search")
         }
@@ -559,7 +559,7 @@ private struct SearchingPage: ContentView {
 }
 
 /// A page that presents its sheets over itself through its window's modal stack, and tells its scene.
-private struct SheetsPage: ContentView {
+private struct SheetsPage: View {
     let sheets: State<[Int]>
     var log = Received<String>()
     var scenes = Received<SceneSession>()
@@ -567,13 +567,13 @@ private struct SheetsPage: ContentView {
     @Environment private var window: WindowSession
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let sheets = self.sheets
         let log = self.log
         let window = self.window
         let scenes = self.scenes
         let scene = self.scene
-        return TitledPage(title: "Page", log: log).onCreated {
+        return TitledPage(title: "Page", log: log).onAppear {
             scenes.values.append(scene)
             window.modalStack = ModalStack(sheets.projectedValue) { number in
                 TitledPage(title: "Sheet \(number)", log: log)
@@ -583,7 +583,7 @@ private struct SheetsPage: ContentView {
 }
 
 /// A page that names itself, and writes each phase it hears into `log`.
-private struct TitledPage: ContentView {
+private struct TitledPage: View {
     let title: String
     var icon: ImageSource? = nil
     var log: Received<String>? = nil
@@ -591,17 +591,17 @@ private struct TitledPage: ContentView {
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let log = self.log
         let title = self.title
         let page = self.page
 
-        return Label(title)
-            .onCreated {
+        return Text(title)
+            .onAppear {
                 page.title = title
                 page.icon = icon
                 page.toolbarItems = actions
             }
-            .onChanged(page.phase) { log?.values.append("\(title) \(page.phase)") }
+            .onChange(of: page.phase) { log?.values.append("\(title) \(page.phase)") }
     }
 }

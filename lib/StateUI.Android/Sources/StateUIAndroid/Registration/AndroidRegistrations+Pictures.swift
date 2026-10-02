@@ -13,10 +13,10 @@ extension AndroidRegistrations {
             }
         }
 
-        registry.add(ColorBoxContract.self, create: { _ in AndroidColorBoxView() }) { box in
-            box.applies([ColorBoxContract.color, ColorBoxContract.cornerRadius]) { view, values in
+        registry.add(ColorPickerContract.self, create: { _ in AndroidColorBoxView() }) { box in
+            box.applies([ColorPickerContract.color, ColorPickerContract.cornerRadius]) { view, values in
                 view.apply(
-                    color: values[ColorBoxContract.color]?.propValue, corners: values[ColorBoxContract.cornerRadius])
+                    color: values[ColorPickerContract.color]?.propValue, corners: values[ColorPickerContract.cornerRadius])
             }
         }
     }

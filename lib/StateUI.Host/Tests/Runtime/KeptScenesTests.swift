@@ -14,7 +14,7 @@ final class KeptScenesTests: XCTestCase {
         let scenes = KeptScenes(scenes: [
             KeptScenes.Scene(
                 values: ["section": .number(2), "draft": .string("a\tb\nc"), "open": .bool(true)],
-                windows: [KeptScenes.Window(kind: "note", value: "7"), KeptScenes.Window(kind: "fonts", value: nil)]),
+                windows: [KeptScenes.WindowScene(kind: "note", value: "7"), KeptScenes.WindowScene(kind: "fonts", value: nil)]),
             KeptScenes.Scene(),
         ])
 
@@ -38,18 +38,18 @@ final class KeptScenesTests: XCTestCase {
     /// one is no such window.
     func testTheScenesATreeHoldsAreKeptWithTheirWindows() {
         let runtime = HostRuntime.still()
-        var root = HostPatch(id: .manual("application"), type: .application)
+        var root = HostPatch(id: .manual("application"), type: .app)
         var scene = HostPatch(id: .manual("1"), type: .scene)
-        var note = HostPatch(id: .manual("note 1"), type: .window)
+        var note = HostPatch(id: .manual("note 1"), type: .windowScene)
         note.properties = [.windowType: .name("note"), .windowValue: .string("7")]
-        scene.children = .arranged([HostPatch(id: .manual("main"), type: .window), note])
+        scene.children = .arranged([HostPatch(id: .manual("main"), type: .windowScene), note])
         root.children = .arranged([scene])
         runtime.tree.apply(root, complete: true)
 
         XCTAssertEqual(
             KeptScenes(of: runtime.tree.root, values: ["1": ["section": .number(2)], "9": ["gone": .bool(true)]]),
             KeptScenes(scenes: [
-                KeptScenes.Scene(values: ["section": .number(2)], windows: [KeptScenes.Window(kind: "note", value: "7")]),
+                KeptScenes.Scene(values: ["section": .number(2)], windows: [KeptScenes.WindowScene(kind: "note", value: "7")]),
             ]))
     }
 
@@ -63,7 +63,7 @@ final class KeptScenesTests: XCTestCase {
         let kept = KeptScenes(scenes: [
             KeptScenes.Scene(
                 values: ["kept.section": .number(2)],
-                windows: [KeptScenes.Window(kind: "kept.note", value: "7"), KeptScenes.Window(kind: "gone", value: nil)]),
+                windows: [KeptScenes.WindowScene(kind: "kept.note", value: "7"), KeptScenes.WindowScene(kind: "gone", value: nil)]),
         ])
 
         keeper.restore(kept, in: runtime)
@@ -72,7 +72,7 @@ final class KeptScenesTests: XCTestCase {
         XCTAssertEqual(windows.last?.value(.windowValue)?.string, "7")
         XCTAssertEqual(KeptApplication.sections.first, 2, "the scene's value, read at its first render")
         XCTAssertEqual(KeptScenes(try XCTUnwrap(keeper.changed(root: runtime.tree.root))), KeptScenes(scenes: [
-            KeptScenes.Scene(values: ["kept.section": .number(2)], windows: [KeptScenes.Window(kind: "kept.note", value: "7")]),
+            KeptScenes.Scene(values: ["kept.section": .number(2)], windows: [KeptScenes.WindowScene(kind: "kept.note", value: "7")]),
         ]))
         XCTAssertNil(keeper.changed(root: runtime.tree.root), "kept already")
 
@@ -98,10 +98,10 @@ final class KeptScenesTests: XCTestCase {
 }
 
 /// An application whose scene reads a kept section, and opens a note's window for a number.
-private struct KeptApplication: Application {
+private struct KeptApplication: App {
     nonisolated(unsafe) static var sections: [Int] = []
 
-    var scene: any Scene { KeptScene() }
+    var body: some Scene { KeptScene() }
 }
 
 private struct KeptScene: Scene {
@@ -112,21 +112,21 @@ private struct KeptScene: Scene {
     }
 }
 
-private struct KeptMainWindow: Window {
+private struct KeptMainWindow: WindowScene {
     var page: any Page { KeptSectionPage() }
 }
 
-private struct KeptSectionPage: ContentView {
+private struct KeptSectionPage: View {
     @State(sceneKey: SceneKey("kept.section", of: Int.self)) private var section = 0
 
-    var content: any View {
+    var body: some View {
         KeptApplication.sections.append(section)
-        return Label("section \(section)")
+        return Text("section \(section)")
     }
 }
 
-private struct KeptNoteWindow: Window {
+private struct KeptNoteWindow: WindowScene {
     let number: Int
 
-    var page: any Page { Label("note \(number)") }
+    var page: any Page { Text("note \(number)") }
 }

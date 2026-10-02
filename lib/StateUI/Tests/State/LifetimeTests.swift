@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// `.onCreated` and `.onDestroying`: what runs as an element comes into the
+// `.onAppear` and `.onDisappear`: what runs as an element comes into the
 // tree and as it leaves - its lifetime in the TREE, which the differ knows and
 // no platform has to report.
 
@@ -9,39 +9,39 @@ import XCTest
 @_spi(Host) @testable import StateUI
 
 /// A view that says when it comes and goes, into a log it is lent.
-private struct Coming: ContentView {
+private struct Coming: View {
     @Binding var log: [String]
     let name: String
 
-    var content: any View {
-        Label(name)
-            .onCreated { log.append("created \(name)") }
-            .onDestroying { log.append("destroying \(name)") }
+    var body: some View {
+        Text(name)
+            .onAppear { log.append("created \(name)") }
+            .onDisappear { log.append("destroying \(name)") }
     }
 }
 
 /// A view holding another, both saying when they come and go.
-private struct Holding: ContentView {
+private struct Holding: View {
     @Binding var log: [String]
 
-    var content: any View {
+    var body: some View {
         VStack {
             Coming(log: $log, name: "inner")
         }
-        .onCreated { log.append("created outer") }
-        .onDestroying { log.append("destroying outer") }
+        .onAppear { log.append("created outer") }
+        .onDisappear { log.append("destroying outer") }
     }
 }
 
 /// A view whose own state is changed while it stands and read as it leaves.
-private struct Drafting: ContentView {
+private struct Drafting: View {
     @Binding var log: [String]
     @State private var draft = "typed"
 
-    var content: any View {
+    var body: some View {
         Button(draft)
             .onClicked { draft = "edited" }
-            .onDestroying { log.append("saved \(draft)") }
+            .onDisappear { log.append("saved \(draft)") }
     }
 }
 
@@ -51,12 +51,12 @@ final class LifetimeTests: XCTestCase {
         Renderer.shared.clearInvalidation()
     }
 
-    /// An element runs `.onCreated` ONCE, after the render that brings it into
+    /// An element runs `.onAppear` ONCE, after the render that brings it into
     /// the tree - and a render that describes it again runs nothing.
     func testAnElementRunsOnCreatedOnceAsItComesIntoTheTree() {
         let log = State(wrappedValue: [String]())
         let renders = Renders()
-        let tree = { VStack { Coming(log: log.projectedValue, name: "a") }.body }
+        let tree = { VStack { Coming(log: log.projectedValue, name: "a") }.node }
 
         renders.render(tree())
         XCTAssertEqual(log.wrappedValue, ["created a"])
@@ -66,7 +66,7 @@ final class LifetimeTests: XCTestCase {
         XCTAssertEqual(log.wrappedValue, ["created a"])
     }
 
-    /// An element runs `.onDestroying` once, after the first render that no
+    /// An element runs `.onDisappear` once, after the first render that no
     /// longer describes it.
     func testAnElementRunsOnDestroyingAsItLeaves() {
         let log = State(wrappedValue: [String]())
@@ -77,7 +77,7 @@ final class LifetimeTests: XCTestCase {
                 if shown.wrappedValue {
                     Coming(log: log.projectedValue, name: "a")
                 }
-            }.body
+            }.node
         }
 
         renders.render(tree())
@@ -98,7 +98,7 @@ final class LifetimeTests: XCTestCase {
                 if shown.wrappedValue {
                     Holding(log: log.projectedValue)
                 }
-            }.body
+            }.node
         }
 
         renders.render(tree())
@@ -121,7 +121,7 @@ final class LifetimeTests: XCTestCase {
                 if shown.wrappedValue {
                     Drafting(log: log.projectedValue)
                 }
-            }.body
+            }.node
         }
 
         let first = renders.render(tree())
@@ -150,7 +150,7 @@ final class LifetimeTests: XCTestCase {
             VStack {
                 Coming(log: log.projectedValue, name: "\(identity.wrappedValue)")
                     .id(identity.wrappedValue)
-            }.body
+            }.node
         }
 
         renders.render(tree())
@@ -168,8 +168,8 @@ final class LifetimeTests: XCTestCase {
 
         renders.render(VStack {
             Coming(log: log.projectedValue, name: "a")
-                .onCreated { log.wrappedValue.append("written on it") }
-        }.body)
+                .onAppear { log.wrappedValue.append("written on it") }
+        }.node)
 
         XCTAssertEqual(log.wrappedValue, ["created a", "written on it"])
     }
@@ -186,15 +186,15 @@ final class LifetimeTests: XCTestCase {
             } destination: { _ in
                 LifetimePage()
             }
-            .onCreated { log.wrappedValue.append("created stack") }
-            .body)
+            .onAppear { log.wrappedValue.append("created stack") }
+            .node)
 
         XCTAssertEqual(log.wrappedValue, ["created stack"])
     }
 
     // MARK: - In the message that brings it
 
-    /// What `.onCreated` writes is in the message that brings the element -
+    /// What `.onAppear` writes is in the message that brings the element -
     /// a window's title given by its page as it comes in reaches the host
     /// with the window, not a render after it.
     func testWhatOnCreatedWritesIsInTheMessageThatBringsTheElement() throws {
@@ -205,7 +205,7 @@ final class LifetimeTests: XCTestCase {
         let first = Renderer.shared.renderHost(baseline: 0)
         let window = try XCTUnwrap(first.root.children.first?.children.first)
 
-        XCTAssertEqual(window.type, .window)
+        XCTAssertEqual(window.type, .windowScene)
         XCTAssertEqual(
             window.props["title"], .string("Titled"),
             "the title the page wrote as it came in waited for a render of its own")
@@ -239,7 +239,7 @@ final class LifetimeTests: XCTestCase {
     private func labels(in patch: HostPatch) -> [String] {
         var own: [String] = []
 
-        if patch.type == .label, case .string(let text)? = patch.props[.text] {
+        if patch.type == .text, case .string(let text)? = patch.props[.text] {
             own.append(text)
         }
 
@@ -248,46 +248,46 @@ final class LifetimeTests: XCTestCase {
 }
 
 /// An application whose page gives its window a title as it comes in.
-private struct Titling: Application {
-    var scene: any Scene { TitlingWindow() }
+private struct Titling: App {
+    var body: some Scene { TitlingWindow() }
 }
 
 /// The window the page names.
-private struct TitlingWindow: Window {
+private struct TitlingWindow: WindowScene {
     var page: any Page { TitlingPage() }
 }
 
 /// A page that names the window it is in as it comes into the tree.
-private struct TitlingPage: ContentView {
+private struct TitlingPage: View {
     @Environment private var window: WindowSession
 
-    var content: any View {
-        Label("hello").onCreated { window.title = "Titled" }
+    var body: some View {
+        Text("hello").onAppear { window.title = "Titled" }
     }
 }
 
 /// An application whose page counts itself up, one step per render, for ever.
-private struct Chaining: Application {
-    var scene: any Scene { ChainingWindow() }
+private struct Chaining: App {
+    var body: some Scene { ChainingWindow() }
 }
 
 /// The window the counting page is in.
-private struct ChainingWindow: Window {
+private struct ChainingWindow: WindowScene {
     var page: any Page { ChainingPage() }
 }
 
 /// A page whose count moves every time it is seen to have moved.
-private struct ChainingPage: ContentView {
+private struct ChainingPage: View {
     @State private var count = 0
 
-    var content: any View {
-        Label("\(count)")
-            .onCreated { count += 1 }
-            .onChanged(count) { count += 1 }
+    var body: some View {
+        Text("\(count)")
+            .onAppear { count += 1 }
+            .onChange(of: count) { count += 1 }
     }
 }
 
 /// A page with nothing on it, for a stack to hold.
-private struct LifetimePage: ContentView {
-    var content: any View { Label("page") }
+private struct LifetimePage: View {
+    var body: some View { Text("page") }
 }

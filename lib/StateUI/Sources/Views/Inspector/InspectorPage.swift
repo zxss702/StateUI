@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The page of an inspector's own window.
-struct InspectorPage: ContentView {
+struct InspectorPage: View {
     /// The scene it looks at, by its number.
     let scene: String
 
@@ -12,9 +12,15 @@ struct InspectorPage: ContentView {
     /// The page itself.
     @Environment private var page: PageSession
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         InspectorView(scene: scene, place: .window, wide: true)
-            .onCreated {
+            .onAppear {
                 page.background = Look.ground
                 window.title = "Inspector"
                 window.width = 900           // the renders and the one chosen, side by side
@@ -26,7 +32,7 @@ struct InspectorPage: ContentView {
                 InspectorModel.shared.windows += 1
                 InspectorModel.shared.record()
             }
-            .onDestroying {
+            .onDisappear {
                 // Recording stops once nothing shows.
                 InspectorModel.shared.windows -= 1
                 InspectorModel.shared.settle()

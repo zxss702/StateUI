@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// A Label: a `TextView` - its words, or runs of them each in its own colour, size and weight.
+/// A Text: a `TextView` - its words, or runs of them each in its own colour, size and weight.
 /// Design: docs/design/platforms/android/controls.md#a-labels-words
 @MainActor
 final class AndroidLabelView: AndroidTextView {
@@ -13,7 +13,7 @@ final class AndroidLabelView: AndroidTextView {
     private var spacing = 0.0
 
     /// Where the label's place travels: its words stand at that size meanwhile.
-    /// Design: docs/design/host/motion.md#words-at-their-destination
+    /// Design: docs/design/host/animation.md#words-at-their-destination
     private var bound: Rect?
 
     override func travels(to destination: Rect?) {

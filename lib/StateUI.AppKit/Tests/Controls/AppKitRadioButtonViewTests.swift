@@ -19,7 +19,7 @@ final class AppKitRadioButtonViewTests: XCTestCase {
             checked: true,
             text: "Medium",
             font: .systemFont(ofSize: 14),
-            textColor: .systemPurple,
+            foregroundStyle: .systemPurple,
             enabled: false)
         XCTAssertEqual(radio.state, .on)
         XCTAssertEqual(radio.title, "Medium")
@@ -30,7 +30,7 @@ final class AppKitRadioButtonViewTests: XCTestCase {
             checked: false,
             text: "Medium",
             font: .systemFont(ofSize: 14),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: true)
         radio.selectForTesting()
 
@@ -48,7 +48,7 @@ final class AppKitRadioButtonViewTests: XCTestCase {
         radio.properties = [
             .text: .string("Medium"),
             .textCase: .enumeration(TextCase.uppercase.rawValue),
-            .padding: .numbers([12, 6, 12, 6]),
+            .contentPadding: .numbers([12, 6, 12, 6]),
         ]
         renderer.applyForTesting(tree(radio))
 
@@ -86,11 +86,11 @@ final class AppKitRadioButtonViewTests: XCTestCase {
         content.children = .arranged([firstContainer, secondContainer])
         var page = HostPatch(id: .manual("page"), type: .page)
         page.children = .arranged([content])
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([page])
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }

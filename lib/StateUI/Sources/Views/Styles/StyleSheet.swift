@@ -7,7 +7,7 @@
 /// application:
 ///
 ///     application.styles = StyleSheet {
-///         Style<Label>().textColor(AppColors.text)
+///         Style<Text>().foregroundStyle(AppColors.text)
 ///         Style<Button>("Danger").background(.firebrick)
 ///     }
 ///

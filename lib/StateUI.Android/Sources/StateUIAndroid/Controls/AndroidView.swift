@@ -133,7 +133,7 @@ class AndroidView {
     var opacity: Double { ownOpacity }
 
     /// Moves, turns and scales the view where its layout put it, in points and degrees.
-    /// Design: docs/design/platforms/android/motion.md#moved-turned-and-scaled
+    /// Design: docs/design/platforms/android/animation.md#moved-turned-and-scaled
     func setTransform(_ transform: HostDrawingTransform) {
         own = transform
         applyTransform()

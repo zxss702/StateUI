@@ -44,7 +44,7 @@ final class UIKitCheckView: UIButton {
     }
 
     /// The room between its edges and what it shows: none where the tree says none.
-    func setPadding(_ insets: Insets?) {
+    func setPadding(_ insets: EdgeInsets?) {
         configuration?.contentInsets = insets.map {
             NSDirectionalEdgeInsets(top: $0.top, leading: $0.left, bottom: $0.bottom, trailing: $0.right)
         } ?? .zero

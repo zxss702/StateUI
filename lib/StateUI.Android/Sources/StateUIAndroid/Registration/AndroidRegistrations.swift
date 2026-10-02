@@ -35,12 +35,12 @@ enum AndroidRegistrations {
     /// (`HostActPerformer`) answers exactly these, and refuses every other by name.
     static let acts: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
-        ApplicationContract.alert, ApplicationContract.announce, ApplicationContract.chooseAction,
-        ApplicationContract.confirm, ApplicationContract.currentTime, ApplicationContract.currentTimeZone,
-        ApplicationContract.handlerFailed, ApplicationContract.hideOnScreenKeyboard, ApplicationContract.persistValue,
-        ApplicationContract.prompt, ApplicationContract.utcOffset,
+        AppContract.alert, AppContract.announce, AppContract.chooseAction,
+        AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
+        AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
+        AppContract.prompt, AppContract.utcOffset,
         WebViewContract.evaluateJavaScript, WebViewContract.goBack, WebViewContract.goForward, WebViewContract.reload,
-        ItemsViewContract.scrollTo,
+        ListContract.scrollTo,
     ]
 
     /// What `AndroidElement` puts on every view wearing each member's contract, by the host layer's rules.
@@ -59,8 +59,8 @@ enum AndroidRegistrations {
     static func applyText<Realized: ElementContract>(_ view: AndroidTextView, _ values: ElementValues<Realized>) {
         if let words = TextMembers.words(values) { view.setText(words) }
         if let look = TextMembers.look(values) { view.setLook(look) }
-        if values.changed(PaddingElementContract.padding) {
-            view.setPadding(values[PaddingElementContract.padding])
+        if values.changed(PaddingElementContract.contentPadding) {
+            view.setPadding(values[PaddingElementContract.contentPadding])
         }
     }
 }

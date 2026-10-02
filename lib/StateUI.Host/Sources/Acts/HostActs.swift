@@ -11,10 +11,10 @@
     /// and the zones, the on-screen keyboard, a kept value, and a handler's failure told.
     public static let performed: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
-        ApplicationContract.alert, ApplicationContract.announce, ApplicationContract.chooseAction,
-        ApplicationContract.confirm, ApplicationContract.currentTime, ApplicationContract.currentTimeZone,
-        ApplicationContract.handlerFailed, ApplicationContract.hideOnScreenKeyboard, ApplicationContract.persistValue,
-        ApplicationContract.prompt, ApplicationContract.utcOffset,
+        AppContract.alert, AppContract.announce, AppContract.chooseAction,
+        AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
+        AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
+        AppContract.prompt, AppContract.utcOffset,
     ]
 
     /// The answer to `currentTime`: the hour, the minute, the second and the millisecond of the local time.

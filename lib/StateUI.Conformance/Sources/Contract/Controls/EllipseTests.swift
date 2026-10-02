@@ -14,7 +14,7 @@
             ConformanceCase("anEllipseFillsItsRoomInsideItsCurve", proves: [
                 Covered(ShapeContract.fill, on: "Ellipse"),
             ]) { s in
-                s.start { VStack { Ellipse().fill(.red).width(100).height(60).id("shape") }.horizontalAlignment(.start) }
+                s.start { VStack { Ellipse().fill(.red).frame(width: 100).frame(height: 60).id("shape") }.horizontalAlignment(.start) }
                 let shape = try s.element("shape")
 
                 try s.settle { try s.color(of: shape, at: Point(50, 30)) == .red }

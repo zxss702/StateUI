@@ -26,24 +26,24 @@ enum StateLaw {
     }
 
     /// A law as its lanes.
-    static func lanes(of motion: Motion) -> [Double] {
-        if motion.isInherited { return [StateLaw.inherited, 0, 0] }
-        if motion.isCustom { return [StateLaw.custom, 0, 0] }
-        if motion.millis == 0 && motion.law == .eased { return [0, 0, 0] }
+    static func lanes(of animation: Animation) -> [Double] {
+        if animation.isInherited { return [StateLaw.inherited, 0, 0] }
+        if animation.isCustom { return [StateLaw.custom, 0, 0] }
+        if animation.millis == 0 && animation.law == .eased { return [0, 0, 0] }
 
-        return motion.law == .spring
-            ? [3, Double(motion.millis), motion.factor]
-            : [2, Double(motion.millis), Double(motion.curve.rawValue)]
+        return animation.law == .spring
+            ? [3, Double(animation.millis), animation.factor]
+            : [2, Double(animation.millis), Double(animation.curve.rawValue)]
     }
 
     /// And back.
-    static func motion(of lanes: [Double]) -> Motion {
+    static func animation(of lanes: [Double]) -> Animation {
         switch lanes.first ?? 0 {
         case 1: return .inherited
         case 2: return .eased(UInt(max(lanes[1], 0)), Easing(rawValue: Int32(lanes[2])) ?? .cubicOut)
         case 3: return .spring(response: UInt(max(lanes[1], 0)), damping: lanes[2])
         case 4: return .custom
-        default: return Motion.none
+        default: return Animation.none
         }
     }
 }

@@ -15,11 +15,11 @@ import XCTest
 func tree(_ content: HostPatch) -> HostPatch {
     var page = HostPatch(id: .manual("page"), type: .page)
     page.children = .arranged([content])
-    var window = HostPatch(id: .manual("window"), type: .window)
+    var window = HostPatch(id: .manual("window"), type: .windowScene)
     window.children = .arranged([page])
     var scene = HostPatch(id: .manual("scene"), type: .scene)
     scene.children = .arranged([window])
-    var application = HostPatch(id: .manual("application"), type: .application)
+    var application = HostPatch(id: .manual("application"), type: .app)
     application.children = .arranged([scene])
     return application
 }
@@ -28,11 +28,11 @@ func tree(_ content: HostPatch) -> HostPatch {
 func changedTree(_ content: HostPatch) -> HostPatch {
     var page = HostPatch(id: .manual("page"), type: .page)
     page.children = .changed([content])
-    var window = HostPatch(id: .manual("window"), type: .window)
+    var window = HostPatch(id: .manual("window"), type: .windowScene)
     window.children = .changed([page])
     var scene = HostPatch(id: .manual("scene"), type: .scene)
     scene.children = .changed([window])
-    var application = HostPatch(id: .manual("application"), type: .application)
+    var application = HostPatch(id: .manual("application"), type: .app)
     application.children = .changed([scene])
     return application
 }

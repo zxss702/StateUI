@@ -94,11 +94,11 @@ final class GTKImageViewTests: XCTestCase {
     /// The colours at `points` of the test's wide picture drawn as `aspect` says in a room `width` by `height`,
     /// read from the layout holding it, from the room's corner.
     private func drawn(
-        _ aspect: Aspect, width: Double, height: Double, at points: [(Double, Double)]
+        _ aspect: ContentMode, width: Double, height: Double, at points: [(Double, Double)]
     ) throws -> [UInt32] {
         try onUIThread {
             let host = GTKRenderer.running {
-                VStack { Image("test_wide.png").aspect(aspect).width(width).height(height) }
+                VStack { Image("test_wide.png").aspect(aspect).frame(width: width).frame(height: height) }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
             }

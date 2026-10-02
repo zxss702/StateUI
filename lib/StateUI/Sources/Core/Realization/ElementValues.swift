@@ -3,7 +3,7 @@
 
 /// The values an element holds, as its registration reads them: each by its
 /// member, as the type its contract declares - what the host presents, a
-/// value in motion or carried by a state included - and which of them
+/// value in animation or carried by a state included - and which of them
 /// changed.
 @_spi(Host) public struct ElementValues<Realized: ElementContract> {
     /// The element's current value for a key, as the host presents it.

@@ -222,7 +222,7 @@ final class AppKitTitleBarTests: XCTestCase {
 
 private extension AppKitTitleBarTests {
     func tree(_ bar: HostPatch?, windowTitle: String? = nil) -> HostPatch {
-        var label = HostPatch(id: .manual("page-label"), type: .label)
+        var label = HostPatch(id: .manual("page-label"), type: .text)
         label.properties[.text] = .string("Page")
 
         var page = HostPatch(id: .manual("page"), type: .page)
@@ -232,14 +232,14 @@ private extension AppKitTitleBarTests {
         var children = [page]
         if let bar { children.append(bar) }
 
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         if let windowTitle { window.properties[.title] = .string(windowTitle) }
         window.children = .arranged(children)
 
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
 
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
@@ -255,7 +255,7 @@ private extension AppKitTitleBarTests {
         var leadingSlot = HostPatch(id: .manual("leading-slot"), type: .leadingContent)
         leadingSlot.children = .arranged([leading])
 
-        var center = HostPatch(id: .manual("title-center"), type: .label)
+        var center = HostPatch(id: .manual("title-center"), type: .text)
         center.properties[.text] = .string("Center")
         var centerSlot = HostPatch(id: .manual("center-slot"), type: .content)
         centerSlot.children = .arranged([center])
@@ -283,7 +283,7 @@ private extension AppKitTitleBarTests {
     }
 
     func navigationTree(_ bar: HostPatch?) -> HostPatch {
-        var label = HostPatch(id: .manual("page-label"), type: .label)
+        var label = HostPatch(id: .manual("page-label"), type: .text)
         label.properties[.text] = .string("Page")
 
         var page = HostPatch(id: .manual("page"), type: .page)
@@ -293,20 +293,20 @@ private extension AppKitTitleBarTests {
         var navigation = HostPatch(id: .manual("navigation"), type: .navigationStack)
         navigation.children = .arranged([page])
 
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([navigation] + (bar.map { [$0] } ?? []))
 
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
 
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
 
     func flyoutTree(_ bar: HostPatch) -> HostPatch {
         let rows = (0..<30).map { index -> HostPatch in
-            var row = HostPatch(id: .manual("row-\(index)"), type: .label)
+            var row = HostPatch(id: .manual("row-\(index)"), type: .text)
             row.properties[.text] = .string("Row \(index)")
             return row
         }
@@ -321,19 +321,19 @@ private extension AppKitTitleBarTests {
         var navigation = HostPatch(id: .manual("navigation"), type: .navigationStack)
         navigation.children = .arranged([page])
 
-        var menuLabel = HostPatch(id: .manual("menu-label"), type: .label)
+        var menuLabel = HostPatch(id: .manual("menu-label"), type: .text)
         menuLabel.properties[.text] = .string("Menu")
         var menu = HostPatch(id: .manual("menu"), type: .page)
         menu.children = .arranged([menuLabel])
 
-        var flyout = HostPatch(id: .manual("flyout"), type: .splitView)
+        var flyout = HostPatch(id: .manual("flyout"), type: .navigationSplitView)
         flyout.children = .arranged([menu, navigation])
 
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([flyout, bar])
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }

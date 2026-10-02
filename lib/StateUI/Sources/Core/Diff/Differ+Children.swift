@@ -82,8 +82,20 @@ extension Differ {
             let (child, childPatch) = element(
                 id: id, rendered: match, node: childNode, sizesArrive: sizesArrive)
 
-            children.append(child)
-            patches.append(childPatch)
+            // A fragment anchors its subtree here but mounts no element of its
+            // own: its children are patched into this list directly.
+            if child.type == .fragment {
+                children.append(child)
+                switch childPatch.children {
+                case .arranged(let nested), .changed(let nested):
+                    patches.append(contentsOf: nested)
+                case .unchanged:
+                    break
+                }
+            } else {
+                children.append(child)
+                patches.append(childPatch)
+            }
         }
 
         for child in rendered where !claimed.contains(child.id) {

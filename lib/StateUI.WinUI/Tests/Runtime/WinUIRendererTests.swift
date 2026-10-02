@@ -8,12 +8,12 @@ import CStateUIWinUI
 import XCTest
 
 /// A page and its counter: a click raises the count, and the caption reads it.
-struct CounterPage: ContentView {
+struct CounterPage: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("count \(count)")
+            Text("count \(count)")
             Button("Add")
                 .onClicked { count += 1 }
         }
@@ -138,7 +138,7 @@ final class WinUIRendererTests: XCTestCase {
         }
     }
 
-    /// The environment is Windows' own: the page reads a desktop running Windows, and the system's theme as Windows
+    /// The environment is Windows' own: the page reads a desktop running Windows, and the system's color scheme as Windows
     /// has it now.
     func testThePageReadsWindowsAndItsTheme() {
         onUIThread {
@@ -153,18 +153,18 @@ final class WinUIRendererTests: XCTestCase {
 }
 
 /// A page saying the application's phase and its window's.
-private struct PhasePage: ContentView {
+private struct PhasePage: View {
     @Environment private var application: ApplicationSession
     @Environment private var window: WindowSession
 
-    var content: any View {
-        Label("\(application.phase) \(window.phase)")
+    var body: some View {
+        Text("\(application.phase) \(window.phase)")
     }
 }
 
 /// An application whose main window opens a tool window of its scene.
-private struct ToolApplication: Application {
-    var scene: any Scene { ToolScene() }
+private struct ToolApplication: App {
+    var body: some Scene { ToolScene() }
 }
 
 private struct ToolScene: Scene {
@@ -173,41 +173,41 @@ private struct ToolScene: Scene {
     }
 }
 
-private struct ToolMainWindow: Window {
+private struct ToolMainWindow: WindowScene {
     var page: any Page { ToolOpeningPage() }
 }
 
-private struct ToolOpeningPage: ContentView {
+private struct ToolOpeningPage: View {
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let scene = self.scene
         return Button("Tool").onClicked { try await scene.openWindow(WindowType("renderer.tool")) }
     }
 }
 
-private struct ToolWindow: Window {
-    var page: any Page { Label("A tool") }
+private struct ToolWindow: WindowScene {
+    var page: any Page { Text("A tool") }
 }
 
 /// A page saying the screen's width and turn.
-private struct DisplayPage: ContentView {
+private struct DisplayPage: View {
     @Environment private var display: DeviceDisplay
 
-    var content: any View {
-        Label("\(Int(display.width)) \(display.rotation)")
+    var body: some View {
+        Text("\(Int(display.width)) \(display.rotation)")
     }
 }
 
-/// A page saying what it runs on and the theme it runs in.
-private struct EnvironmentPage: ContentView {
+/// A page saying what it runs on and the color scheme it runs in.
+private struct EnvironmentPage: View {
     @Environment private var device: DeviceInfo
     @Environment private var app: AppInfo
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\(device.platform) \(device.formFactor)")
-            Label("\(app.requestedTheme)")
+            Text("\(device.platform) \(device.formFactor)")
+            Text("\(app.colorScheme)")
         }
     }
 }

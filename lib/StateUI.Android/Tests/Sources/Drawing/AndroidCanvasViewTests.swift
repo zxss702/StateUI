@@ -31,7 +31,7 @@ final class AndroidCanvasViewTests: XCTestCase {
                     Draw.fillColor(.blue)
                     Draw.fillRectangle(x: 0, y: 0, width: 10, height: 10)
                 }
-                .width(20).height(10).horizontalAlignment(.start)
+                .frame(width: 20).frame(height: 10).horizontalAlignment(.start)
             }
             host.layOut()
             let canvas = try XCTUnwrap(host.views(AndroidCanvasView.self).first)
@@ -49,7 +49,7 @@ final class AndroidCanvasViewTests: XCTestCase {
                     Draw.fillColor(.red)
                     Draw.fillArc(x: 0, y: 0, width: 20, height: 20, startAngle: 0, endAngle: 90, clockwise: true)
                 }
-                .width(20).height(20).horizontalAlignment(.start)
+                .frame(width: 20).frame(height: 20).horizontalAlignment(.start)
             }
             host.layOut()
             let canvas = try XCTUnwrap(host.views(AndroidCanvasView.self).first)
@@ -66,7 +66,7 @@ final class AndroidCanvasViewTests: XCTestCase {
                     .onPressed { heard.values.append("pressed \(Int($0.x)),\(Int($0.y))") }
                     .onDragged { heard.values.append("dragged \(Int($0.x)),\(Int($0.y))") }
                     .onReleased { heard.values.append("released \(Int($0.x)),\(Int($0.y))") }
-                    .width(50).height(50).horizontalAlignment(.start)
+                    .frame(width: 50).frame(height: 50).horizontalAlignment(.start)
             }
             host.layOut()
             let canvas = try XCTUnwrap(host.views(AndroidCanvasView.self).first)

@@ -175,8 +175,8 @@ final class ControlDictionaryTests: XCTestCase {
             "TextField.submitted": HostVerdict(element: "TextField", member: "submitted", mark: .cannot("submit - Keys.")),
             "TextField.text": HostVerdict(element: "TextField", member: "text", mark: .waiting(on: "TextField.x")),
             "Map": HostVerdict(element: "Map", member: nil, mark: .notPlanned(reason: "No maps.")),
-            "Label": HostVerdict(element: "Label", member: nil, mark: .proven),
-        ], stale: ["Label"])
+            "Text": HostVerdict(element: "Text", member: nil, mark: .proven),
+        ], stale: ["Text"])
 
         XCTAssertEqual(column.mark(of: nil, on: "Button").mark, "✅")
         XCTAssertEqual(column.mark(of: "clicked", on: "Button").mark, "✅")
@@ -189,8 +189,8 @@ final class ControlDictionaryTests: XCTestCase {
         XCTAssertEqual(column.mark(of: "submitted", on: "TextField").note, "cannot submit - Keys.")
         XCTAssertEqual(column.mark(of: "text", on: "TextField").mark, "⏸")
         XCTAssertEqual(column.mark(of: nil, on: "Map").mark, "–")
-        XCTAssertEqual(column.mark(of: nil, on: "Label").mark, "⌛")
-        XCTAssertEqual(column.mark(of: nil, on: "Label").note, "")
+        XCTAssertEqual(column.mark(of: nil, on: "Text").mark, "⌛")
+        XCTAssertEqual(column.mark(of: nil, on: "Text").note, "")
     }
 
     /// The revision the renderer reads a family at is the one `.scripts/Marks/revision.sh` prints, which Android's
@@ -233,9 +233,9 @@ final class ControlDictionaryTests: XCTestCase {
         }
     }
 
-    /// A part's verdict file is its family's: `ItemsView-2.txt` is `ItemsView`'s, `Button.txt` is `Button`'s.
+    /// A part's verdict file is its family's: `List-2.txt` is `List`'s, `Button.txt` is `Button`'s.
     func testAPartsFileIsItsFamilys() {
-        XCTAssertEqual(ControlDictionary.family(ofFile: "ItemsView-2.txt"), "ItemsView")
+        XCTAssertEqual(ControlDictionary.family(ofFile: "List-2.txt"), "List")
         XCTAssertEqual(ControlDictionary.family(ofFile: "VisualElement-10.txt"), "VisualElement")
         XCTAssertEqual(ControlDictionary.family(ofFile: "Button.txt"), "Button")
     }

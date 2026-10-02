@@ -84,7 +84,7 @@ final class AppKitDriver: HostDriver {
         return run(clock: clock, reducesMotion: reducesMotion) { OneWindowApplication(page: page) }
     }
 
-    func start(clock: TestClock?, application: @escaping @Sendable () -> any Application) throws -> MountedTree {
+    func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree {
         run(clock: clock, reducesMotion: false, application)
     }
 
@@ -101,7 +101,7 @@ final class AppKitDriver: HostDriver {
     /// the tree it mounted.
     /// Design: docs/design/platforms/appkit/conformance.md#windows
     private func run(
-        clock: TestClock?, reducesMotion: Bool, _ application: @escaping @Sendable () -> any Application
+        clock: TestClock?, reducesMotion: Bool, _ application: @escaping @Sendable () -> any App
     ) -> MountedTree {
         restorable = renderer.map { Self.encoded($0.windowsForTesting) } ?? []
         renderer?.closeForTesting()
@@ -182,7 +182,7 @@ final class AppKitDriver: HostDriver {
 
     func held(_ property: Prop, on element: MountedElement) throws -> HostValue? {
         layOutWindows()
-        if element.type == .window { return try windowHolds(property, element) }
+        if element.type == .windowScene { return try windowHolds(property, element) }
         if element.type == .menuItem || element.type == .toolbarItem { return try itemHolds(property, element) }
         let view = (element.native as? AppKitElement)?.view
         switch (property, view) {

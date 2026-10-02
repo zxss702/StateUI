@@ -6,8 +6,8 @@
 
 /// One report from a pan - what `.onPanUpdated` hands its handler.
 ///
-///     ColorBox(.cornflowerBlue)
-///         .translationX(offsetX)
+///     ColorPicker(.cornflowerBlue)
+///         .offset(x: offsetX)
 ///         .onPanUpdated { pan in
 ///             if pan.phase == .running { offsetX = pan.totalX }
 ///         }

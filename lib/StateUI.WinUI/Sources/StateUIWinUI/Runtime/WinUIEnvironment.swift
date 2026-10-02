@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIWinUI
 
-/// What the device, the application, the user's locale, the battery, the network, the system's theme and the screen
+/// What the device, the application, the user's locale, the battery, the network, the system's color scheme and the screen
 /// are, told to the core as the host starts, and again whenever Windows says one changed.
 /// Design: docs/design/platforms/winui/runtime.md#the-environment
 @MainActor
@@ -24,10 +24,10 @@ enum WinUIEnvironment {
         reportChanging(to: core)
     }
 
-    /// Tells `core` the theme, the user's locale, the battery and the network, as they stand now.
+    /// Tells `core` the color scheme, the user's locale, the battery and the network, as they stand now.
     static func reportChanging(to core: CoreLink) {
-        let theme = facts(StateUIFactsTheme)
-        core.setTheme(theme.first == "1" ? .dark : .light)
+        let colorScheme = facts(StateUIFactsTheme)
+        core.setColorScheme(colorScheme.first == "1" ? .dark : .light)
 
         if let locale = HostLocaleInfo(words: facts(StateUIFactsLocale)) { core.setLocaleInfo(locale) }
 

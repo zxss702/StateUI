@@ -29,11 +29,11 @@ private enum InteropTestContract: ApplicationTier {
 
 /// A page that calls the acts and listens for the event, writing whatever
 /// came back where a test can read it.
-private struct Calling: ContentView {
+private struct Calling: View {
     @State private var answer = "-"
     @State private var heard: [HostEventSubscription] = []
 
-    var content: any View {
+    var body: some View {
         VStack {
             Button("Ask")
                 .onClicked {
@@ -55,14 +55,14 @@ private struct Calling: ContentView {
                     }
                 }
 
-            Label(answer)
+            Text(answer)
         }
-        .onCreated {
+        .onAppear {
             heard = [
                 HostEvents.on(InteropTestContract.spoke) { said in answer = "heard \(said)" },
             ]
         }
-        .onDestroying {
+        .onDisappear {
             heard.forEach { $0.cancel() }
             heard = []
         }
@@ -116,7 +116,7 @@ final class LampControl: WinUIControl {
 }
 
 /// The Swift half, which the application could already write.
-private struct Lamp: View {
+private struct Lamp: VisualElement {
     var node = Node(contract: LampContract.self)
 
     func lit(_ value: Bool) -> Self {
@@ -136,12 +136,12 @@ extension Aim where Target == Lamp {
 }
 
 /// A page holding one lamp, saying what it last heard.
-private struct Pulling: ContentView {
+private struct Pulling: View {
     @State private var said = "-"
     @State private var on = true
     @Aim(Lamp.self) private var lamp
 
-    var content: any View {
+    var body: some View {
         VStack {
             Lamp()
                 .lit(on)
@@ -158,7 +158,7 @@ private struct Pulling: ContentView {
                     }
                 }
 
-            Label(said)
+            Text(said)
         }
     }
 }

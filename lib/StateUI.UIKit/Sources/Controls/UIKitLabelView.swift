@@ -6,7 +6,7 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A Label: a `UILabel` showing its words - or its spans' runs, each its own look over the label's - with their
+/// A Text: a `UILabel` showing its words - or its spans' runs, each its own look over the label's - with their
 /// look as attributes, standing across and down its room within its padding as the tree says.
 /// Design: docs/design/platforms/uikit/controls.md#a-labels-words
 @MainActor
@@ -60,7 +60,7 @@ final class UIKitLabelView: UILabel {
     }
 
     /// The room between the label's edge and its words.
-    func setPadding(_ insets: Insets?) {
+    func setPadding(_ insets: EdgeInsets?) {
         padding = insets.map(UIEdgeInsets.init) ?? .zero
         invalidateIntrinsicContentSize()
         setNeedsDisplay()

@@ -25,7 +25,7 @@
 /// Design: docs/design/host/layout.md#the-layout-arithmetic
 @_spi(Host) public struct LayoutValues: Equatable, Sendable {
     /// The space kept around the child, outside it.
-    public var margin = Insets(0)
+    public var margin = EdgeInsets(0)
 
     /// Across its slot: 0 start, 1 centre, 2 end, 3 fill.
     public var horizontal: Int32 = 3

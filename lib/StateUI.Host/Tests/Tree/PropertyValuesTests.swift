@@ -16,15 +16,15 @@ final class PropertyValuesTests: XCTestCase {
         let runtime = HostRuntime.still()
         let plain: [Prop: Int32] = [
             .background: 811, .isEnabled: 812, .isVisible: 813, .horizontalAlignment: 814, .opacity: 815,
-            .margin: 816,
+            .padding: 816,
         ]
         var bindings = plain.mapValues { HostStateBinding(state: $0, mode: .out, kind: .plain) }
         bindings[.tint] = HostStateBinding(state: 817, mode: .out, kind: .property)
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.driven = .replace(bindings)
         runtime.tree.apply(label, complete: true)
         let tint = HostJourney(
-            value: [0, 1, 0.2, 1], destination: [0, 1, 0.2, 1], velocity: [0, 0, 0, 0], motion: .none,
+            value: [0, 1, 0.2, 1], destination: [0, 1, 0.2, 1], velocity: [0, 0, 0, 0], animation: .none,
             completion: nil, stopped: 0)
 
         runtime.tree.present(states: [
@@ -44,7 +44,7 @@ final class PropertyValuesTests: XCTestCase {
         XCTAssertEqual(element.value(.isVisible), .bool(true))
         XCTAssertEqual(element.value(.horizontalAlignment), .enumeration(2))
         XCTAssertEqual(element.value(.opacity), .number(0.25))
-        XCTAssertEqual(element.value(.margin), .numbers([1, 2, 3, 4]))
+        XCTAssertEqual(element.value(.padding), .numbers([1, 2, 3, 4]))
     }
 
     /// A property the toolkit animates, given a value for the first time, starts from its resting value: no
@@ -52,25 +52,25 @@ final class PropertyValuesTests: XCTestCase {
     func testAPropertyFirstAnimatedStartsAtItsNeutralValue() throws {
         let runtime = HostRuntime(
             clock: StillClock(), reducesMotion: { false }, makeNative: { _ in AnimatingView() }, log: { _ in })
-        runtime.tree.apply(HostPatch(id: .manual("box"), type: .colorBox), complete: true)
+        runtime.tree.apply(HostPatch(id: .manual("box"), type: .colorPicker), complete: true)
         let targets: [Prop: HostValue] = [
-            .margin: .numbers([8, 8, 8, 8]), .rotation: .number(90), .scale: .number(3),
+            .padding: .numbers([8, 8, 8, 8]), .rotation: .number(90), .scale: .number(3),
             .cornerRadius: .numbers([4, 4, 4, 4]),
         ]
-        var moved = HostPatch(id: .manual("box"), type: .colorBox)
+        var moved = HostPatch(id: .manual("box"), type: .colorPicker)
         moved.properties = targets
-        moved.transitions = targets.mapValues { _ in HostTransition(motion: .eased(200, .linear)) }
+        moved.transitions = targets.mapValues { _ in HostTransition(animation: .eased(200, .linear)) }
 
         runtime.tree.apply(moved, complete: false)
 
         let box = try XCTUnwrap(runtime.tree.root)
-        XCTAssertEqual(box.value(.margin), .numbers([0, 0, 0, 0]))
+        XCTAssertEqual(box.value(.padding), .numbers([0, 0, 0, 0]))
         XCTAssertEqual(box.value(.rotation), .number(0))
         XCTAssertEqual(box.value(.scale), .number(1))
         XCTAssertEqual(box.value(.cornerRadius), .numbers([0, 0, 0, 0]))
 
         runtime.describedMotion.follow(runtime.animator.advance(to: 100))
-        XCTAssertEqual(box.value(.margin), .numbers([4, 4, 4, 4]), "and moves from there")
+        XCTAssertEqual(box.value(.padding), .numbers([4, 4, 4, 4]), "and moves from there")
         XCTAssertEqual(box.value(.scale), .number(2))
     }
 }

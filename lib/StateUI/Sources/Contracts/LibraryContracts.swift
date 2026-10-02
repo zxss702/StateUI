@@ -32,23 +32,23 @@
 
     /// Every element: one contract per node type the library declares.
     public static let elements: [any ElementContract.Type] = [
-        ActivityIndicatorContract.self, ApplicationContract.self,
+        ActivityIndicatorContract.self, AppContract.self,
         ButtonContract.self, CanvasContract.self, CheckBoxContract.self,
-        ColorBoxContract.self, ContentContract.self, ContextMenuContract.self, DatePickerContract.self,
-        EllipseContract.self, GridContract.self, HStackContract.self, ImageContract.self, ItemsViewContract.self,
-        LabelContract.self,
+        ColorPickerContract.self, ContentContract.self, ContextMenuContract.self, DatePickerContract.self,
+        EllipseContract.self, GridContract.self, HStackContract.self, ImageContract.self, ListContract.self,
+        TextContract.self,
         LeadingContentContract.self, LineContract.self, MapContract.self, MenuBarContract.self,
-        MenuContract.self, MenuItemContract.self, MenuSeparatorContract.self, ModalStackContract.self,
+        MenuContract.self, MenuItemContract.self, DividerContract.self, ModalStackContract.self,
         NavigationStackContract.self, OverlayContract.self, PageContract.self, PathContract.self,
         PickerContract.self, PinContract.self, PolygonContract.self, PolylineContract.self,
         PositionIndicatorContract.self, ProgressBarContract.self, RadioButtonContract.self,
         RectangleContract.self, SceneContract.self, ScrollViewContract.self,
         SearchFieldContract.self, SliderContract.self, SpanContract.self,
-        SpansContract.self, SplitViewContract.self, StepperContract.self, SwitchContract.self,
-        TabbedViewContract.self, TextEditorContract.self, TextFieldContract.self, TimePickerContract.self,
+        SpansContract.self, NavigationSplitViewContract.self, StepperContract.self, SwitchContract.self,
+        TabViewContract.self, TextEditorContract.self, TextFieldContract.self, TimePickerContract.self,
         TitleBarContract.self, TitleViewContract.self, ToolbarItemContract.self, ToolbarItemsContract.self,
         TrailingContentContract.self, VStackContract.self, WebViewContract.self,
-        WindowContract.self, ZStackContract.self,
+        WindowSceneContract.self, ZStackContract.self,
     ]
 
     /// Every contract.

@@ -73,7 +73,7 @@ final class UIKitButtonView: UIButton {
     }
 
     /// The room between the button's edge and what it shows.
-    func setPadding(_ insets: Insets?) {
+    func setPadding(_ insets: EdgeInsets?) {
         configuration?.contentInsets = insets.map {
             NSDirectionalEdgeInsets(top: $0.top, leading: $0.left, bottom: $0.bottom, trailing: $0.right)
         } ?? UIButton.Configuration.plain().contentInsets

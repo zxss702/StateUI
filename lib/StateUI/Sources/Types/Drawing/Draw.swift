@@ -7,7 +7,7 @@
 ///         Draw.fillColor(.cornflowerBlue)
 ///         Draw.fillRoundedRectangle(x: 0, y: 0, width: 120, height: 40, cornerRadius: 8)
 ///
-///         Draw.textColor(.white)
+///         Draw.foregroundStyle(.white)
 ///         Draw.fontSize(14)
 ///         Draw.drawText(
 ///             "Hello",
@@ -32,8 +32,8 @@ public enum Draw {
     }
 
     /// The colour `drawText` writes in.
-    public static func textColor(_ value: Color) -> DrawCommand {
-        DrawCommand(.textColor, [value.propValue])
+    public static func foregroundStyle(_ value: Color) -> DrawCommand {
+        DrawCommand(.foregroundStyle, [value.propValue])
     }
 
     /// How wide that outline is, in device units.

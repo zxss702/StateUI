@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// What each edge of a layout stays clear of - one answer for all four, or one
-/// for each. What `.avoidsSafeArea` takes.
+/// for each. What `.ignoresSafeArea` takes.
 public enum SafeAreaEdges: Equatable, Sendable, HostRepresentable {
     /// The same answer for all four edges.
     case uniform(SafeArea)

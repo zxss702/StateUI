@@ -42,11 +42,11 @@ public enum PageContract: ElementContract {
     public static let navigatingFrom = ElementEvent<Self, Void>("navigatingFrom", layer: .adaptive)
 
     /// The room kept inside the page's edges, in device units.
-    public static let padding = ElementProperty<Self, Insets>("padding", layer: .native, moves: .spacing)
+    public static let contentPadding = ElementProperty<Self, EdgeInsets>("contentPadding", layer: .native, moves: .spacing)
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
         appearing, backButtonTitle, background, disappearing, hasBackButton, hasNavigationBar, navigatedFrom,
-        navigatedTo, navigatingFrom, padding,
+        navigatedTo, navigatingFrom, contentPadding,
     ]
 }

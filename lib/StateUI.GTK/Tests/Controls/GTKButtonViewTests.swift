@@ -17,12 +17,12 @@ final class GTKButtonViewTests: XCTestCase {
                     Button("Save")
                         .fontSize(20)
                         .fontAttributes(.bold)
-                        .textColor(Color("#FFFFFF"))
+                        .foregroundStyle(Color("#FFFFFF"))
                         .background(Color("#0000FF"))
                         .stroke(Color("#FF0000"))
                         .strokeWidth(2)
                         .shape(.roundedRectangle(10))
-                        .padding(16, 11)
+                        .contentPadding(16, 11)
                 }
             }
             let button = try XCTUnwrap(host.views(GTKButtonView.self).first)

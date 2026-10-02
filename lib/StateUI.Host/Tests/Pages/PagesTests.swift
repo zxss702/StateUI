@@ -29,7 +29,7 @@ final class PagesTests: XCTestCase {
     }
 
     private func stackWindow(_ pages: [HostPatch]) -> HostPatch {
-        node("window", .window, events: [.created: 1], children: [node("stack", .navigationStack, children: pages)])
+        node("window", .windowScene, events: [.created: 1], children: [node("stack", .navigationStack, children: pages)])
     }
 
     private let first = [Event.appearing: Int32(2), .navigatedTo: 3]
@@ -65,11 +65,11 @@ final class PagesTests: XCTestCase {
 
     /// A tabbed view's tabs stand in the window's row down its stacks and split view details, and nowhere else.
     func testTabsStandInTheWindowDownItsStacksAndDetails() throws {
-        let tabs = { (id: String) in self.node(id, .tabbedView, children: [self.node("\(id).page", .page)]) }
-        let runtime = runtime(node("window", .window, children: [
-            node("split", .splitView, children: [
+        let tabs = { (id: String) in self.node(id, .tabView, children: [self.node("\(id).page", .page)]) }
+        let runtime = runtime(node("window", .windowScene, children: [
+            node("split", .navigationSplitView, children: [
                 tabs("sidebar"),
-                node("stack", .navigationStack, children: [node("detail", .tabbedView, children: [tabs("inner")])]),
+                node("stack", .navigationStack, children: [node("detail", .tabView, children: [tabs("inner")])]),
             ]),
             node("sheets", .modalStack, children: [tabs("sheet")]),
         ])) { _ in }
@@ -86,11 +86,11 @@ final class PagesTests: XCTestCase {
     /// its own, whose bar is the one.
     func testAStacksBarShowsOnlyWhereNoStackBelowHasOne() throws {
         let hidden = [Prop.hasNavigationBar: HostValue.bool(false)]
-        let runtime = runtime(node("window", .window, children: [node("stack", .navigationStack, children: [
+        let runtime = runtime(node("window", .windowScene, children: [node("stack", .navigationStack, children: [
             node("page", .page),
             node("bare", .page, hidden),
-            node("pages", .tabbedView, children: [node("tab", .page)]),
-            node("stacks", .tabbedView, children: [node("inner", .navigationStack, children: [node("top", .page)])]),
+            node("pages", .tabView, children: [node("tab", .page)]),
+            node("stacks", .tabView, children: [node("inner", .navigationStack, children: [node("top", .page)])]),
         ])])) { _ in }
         let root = try XCTUnwrap(runtime.tree.root)
         let shows = { (id: String) in root.first(id: .manual(id))?.showsTheStacksBar }
@@ -107,10 +107,10 @@ final class PagesTests: XCTestCase {
         let runtime = HostRuntime(
             clock: StillClock(), reducesMotion: { false },
             makeNative: { TabsReading($0) { read[$0] = $1 } }, log: { _ in })
-        let tabs = { (id: String) in self.node(id, .tabbedView, children: [self.node("\(id).page", .page)]) }
+        let tabs = { (id: String) in self.node(id, .tabView, children: [self.node("\(id).page", .page)]) }
 
         runtime.tree.apply(
-            node("window", .window, children: [node("split", .splitView, children: [tabs("sidebar"), tabs("detail")])]),
+            node("window", .windowScene, children: [node("split", .navigationSplitView, children: [tabs("sidebar"), tabs("detail")])]),
             complete: true)
 
         XCTAssertEqual(read, ["sidebar": false, "detail": true])
@@ -160,9 +160,9 @@ final class PagesTests: XCTestCase {
                 .placement: .enumeration(overflow ? ToolbarItemPlacement.overflow.rawValue : 0),
             ])
         }
-        let runtime = runtime(node("window", .window, children: [
+        let runtime = runtime(node("window", .windowScene, children: [
             node("bar", .titleBar, [.background: .string("bar")], children: [
-                node("slot", .content, children: [node("search", .label)]),
+                node("slot", .content, children: [node("search", .text)]),
             ]),
             node("stack", .navigationStack, [.barBackgroundColor: .string("stack")], children: [
                 node("home", .page, [.backButtonTitle: .string("Home")]),
@@ -170,7 +170,7 @@ final class PagesTests: XCTestCase {
                     node("items", .toolbarItems, children: [
                         item("late", 2, false), item("more", 0, true), item("first", 1, false), item("next", 1, false),
                     ]),
-                    node("view", .titleView, children: [node("words", .label)]),
+                    node("view", .titleView, children: [node("words", .text)]),
                 ]),
             ]),
         ])) { _ in }
@@ -189,16 +189,16 @@ final class PagesTests: XCTestCase {
     /// Tabs pushed onto a stack keep the title of the page beneath them; tabs with nothing beneath name the window by
     /// the chosen tab, and a stack in a tab by its top page.
     func testTabsPushedOntoAStackKeepTheTitleBeneathThem() throws {
-        let runtime = runtime(node("window", .window, [.title: .string("Window")], children: [
+        let runtime = runtime(node("window", .windowScene, [.title: .string("WindowScene")], children: [
             node("stack", .navigationStack, children: [
                 node("group", .page, [.title: .string("Items and Cards")]),
-                node("tabs", .tabbedView, [.currentPage: .number(1)], children: [
+                node("tabs", .tabView, [.currentPage: .number(1)], children: [
                     node("one", .page, [.title: .string("Example 1")]),
                     node("two", .page, [.title: .string("Example 2")]),
                 ]),
             ]),
-            node("alone", .tabbedView, children: [node("tab", .page, [.title: .string("Tab")])]),
-            node("stacked", .tabbedView, children: [
+            node("alone", .tabView, children: [node("tab", .page, [.title: .string("Tab")])]),
+            node("stacked", .tabView, children: [
                 node("inner", .navigationStack, children: [node("top", .page, [.title: .string("Top")])]),
             ]),
         ])) { _ in }
@@ -213,24 +213,24 @@ final class PagesTests: XCTestCase {
     /// Tabs pushed onto a stack are its last place: a title of their own names the window, never what the tabs show.
     /// A window's own tabs name it by the chosen tab, and a stack in the chosen tab by its top page, titled or not.
     func testTabsWithATitleNameTheWindowByItOnAStack() throws {
-        let runtime = runtime(node("window", .window, [.title: .string("Window")], children: [
+        let runtime = runtime(node("window", .windowScene, [.title: .string("WindowScene")], children: [
             node("stack", .navigationStack, children: [
                 node("group", .page, [.title: .string("Items and Cards")]),
-                node("tabs", .tabbedView, [.title: .string("ItemsView")], children: [
+                node("tabs", .tabView, [.title: .string("List")], children: [
                     node("one", .page, [.title: .string("Example 1")]),
                 ]),
             ]),
-            node("alone", .tabbedView, [.title: .string("Tabs")], children: [
+            node("alone", .tabView, [.title: .string("Tabs")], children: [
                 node("tab", .page, [.title: .string("Tab")]),
             ]),
-            node("stacked", .tabbedView, [.title: .string("Tabs")], children: [
+            node("stacked", .tabView, [.title: .string("Tabs")], children: [
                 node("inner", .navigationStack, children: [node("top", .page, [.title: .string("Top")])]),
             ]),
         ])) { _ in }
         let root = try XCTUnwrap(runtime.tree.root)
         let title = { (id: String) in WindowChrome(window: root, arrangement: root.first(id: .manual(id))).title }
 
-        XCTAssertEqual(title("stack"), "ItemsView", "the pushed tabs' own title")
+        XCTAssertEqual(title("stack"), "List", "the pushed tabs' own title")
         XCTAssertEqual(title("alone"), "Tab", "a window's own tabs: the chosen tab")
         XCTAssertEqual(title("stacked"), "Top", "a stack in a tab names the window by its top page")
     }
@@ -241,7 +241,7 @@ final class PagesTests: XCTestCase {
         let runtime = runtime(node("bar", .menuBar, children: [
             node("file", .menu, [.text: .string("File")], children: [
                 node("open", .menuItem, [.text: .string("Open"), .icon: .string("folder")]),
-                node("line", .menuSeparator),
+                node("line", .divider),
                 node("erase", .menuItem, [.text: .string("Erase"), .isDestructive: .bool(true), .icon: .string("")]),
                 node("recent", .menu, [.text: .string("Recent")], children: [
                     node("one", .menuItem, [.text: .string("One"), .isEnabled: .bool(false)]),
@@ -263,7 +263,7 @@ final class PagesTests: XCTestCase {
     /// A page's slots furnish its chrome and stand in none of its room; another element places every child.
     func testAPagePlacesAllButItsSlots() throws {
         let runtime = runtime(node("page", .page, children: [
-            node("items", .toolbarItems), node("words", .label), node("view", .titleView),
+            node("items", .toolbarItems), node("words", .text), node("view", .titleView),
         ])) { _ in }
 
         XCTAssertEqual(try XCTUnwrap(runtime.tree.root).arrangedChildren.map(\.id), [.manual("words")])
@@ -275,7 +275,7 @@ final class PagesTests: XCTestCase {
             self.node(id, .navigationStack, children: [self.node("\(id).a", .page), self.node("\(id).b", .page)])
         }
         func wayBack(_ sheets: [HostPatch]) throws -> WayBack? {
-            let runtime = runtime(node("window", .window, children: [twoPages("main"), node("modal", .modalStack, children: sheets)])) {
+            let runtime = runtime(node("window", .windowScene, children: [twoPages("main"), node("modal", .modalStack, children: sheets)])) {
                 _ in
             }
             let presentation = WindowPresentation()
@@ -307,7 +307,7 @@ private final class TabsReading: NativeElement {
     }
 
     func applied(changed: Set<Prop>, wasDescribed: Bool) {
-        guard element.type == .tabbedView, case .manual(let id) = element.id else { return }
+        guard element.type == .tabView, case .manual(let id) = element.id else { return }
         read(id, element.tabsStandInWindow)
     }
 

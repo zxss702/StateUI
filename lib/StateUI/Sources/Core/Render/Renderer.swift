@@ -14,7 +14,7 @@ public final class Renderer: @unchecked Sendable {
     /// The one renderer: a process has one host.
     public static let shared = Renderer()
 
-    private var application: Application?
+    private var application: (any App)?
     private var dirty = true
 
     /// The states written since the last render, by storage identity. Behind
@@ -126,8 +126,8 @@ public final class Renderer: @unchecked Sendable {
     ///
     /// - Parameter application: the application, made once what an earlier
     ///   registration wrote into the application's session is forgotten.
-    public func setApplication(_ application: @autoclosure () -> Application) {
-        StandardEnvironment.application.forget()
+    public func setApplication(_ application: @autoclosure () -> any App) {
+        StandardEnvironment.app.forget()
 
         // A new application is a new tree: the old one is let go, and every element of
         // this one arrives.
@@ -152,7 +152,7 @@ public final class Renderer: @unchecked Sendable {
 
     /// Names the application's own `@State` by their properties, once, since the
     /// application is never walked like a view.
-    static func name(statesOf application: Application) {
+    static func name(statesOf application: any App) {
         for child in Mirror(reflecting: application).children {
             if let label = child.label, let box = child.value as? StateBox {
                 box.named(label)
@@ -317,7 +317,7 @@ public final class Renderer: @unchecked Sendable {
             unreading(rootReads)
             reading(reads)
             rootReads = reads
-            differ.motion = built.motion
+            differ.animation = built.animation
 
             result = differ.reconcile(
                 rendered,
@@ -405,7 +405,7 @@ public final class Renderer: @unchecked Sendable {
                 unreading(rootReads)
                 reading(reads)
                 rootReads = reads
-                differ.motion = built.motion
+                differ.animation = built.animation
 
                 settled = differ.reconcile(
                     rendered, with: built.tree, styles: built.styles, changed: wrote)
@@ -445,28 +445,28 @@ public final class Renderer: @unchecked Sendable {
         return message
     }
 
-    /// The whole tree, its styles and its motion, read in one scope, so whatever
+    /// The whole tree, its styles and its animation, read in one scope, so whatever
     /// they read lands in `rootReads`.
-    private var root: (tree: Node, styles: StyleSheet?, motion: Motion) {
+    private var root: (tree: Node, styles: StyleSheet?, animation: Animation) {
         guard let application = application else {
             return (Renderer.unregistered, nil, .standard)
         }
 
         // The application is the root and its open scenes its children.
-        let session = StandardEnvironment.application
+        let session = StandardEnvironment.app
 
-        return (Scenes.shared.tree(of: application), session.styles, session.motion)
+        return (Scenes.shared.tree(of: application), session.styles, session.animation)
     }
 
     /// Shown until an application registers, in the shape a real one has.
     private static var unregistered: Node {
-        var label = Node(contract: LabelContract.self)
+        var label = Node(contract: TextContract.self)
         label.write(TextElementContract.text, "StateUI: no application registered")
 
         let page = Node(contract: PageContract.self, children: [label])
-        let main = Node(contract: WindowContract.self, id: SceneElement.mainKey, children: [page])
+        let main = Node(contract: WindowSceneContract.self, id: SceneElement.mainKey, children: [page])
         let scene = Node(contract: SceneContract.self, id: "1", children: [main])
 
-        return Node(contract: ApplicationContract.self, children: [scene])
+        return Node(contract: AppContract.self, children: [scene])
     }
 }

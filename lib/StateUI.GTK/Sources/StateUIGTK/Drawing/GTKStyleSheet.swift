@@ -13,7 +13,7 @@ enum GTKStyleSheet {
     private static var rules: [String: String] = [:]
 
     /// The class giving a widget `insets` of room between its edge and its content.
-    static func padding(_ insets: Insets) -> String {
+    static func padding(_ insets: EdgeInsets) -> String {
         let sides = [insets.top, insets.right, insets.bottom, insets.left].map { max(0, $0.isFinite ? $0 : 0) }
         let name = "stateui-padding-" + sides.map { css($0).replacing(".", with: "_") }.joined(separator: "-")
         write(name, "padding: " + sides.map { css($0) + "px" }.joined(separator: " ") + ";")
@@ -38,7 +38,7 @@ enum GTKStyleSheet {
     }
 
     /// The class drawing a button's box: its fill - a little fainter under the pointer and fainter again pressed,
-    /// which the theme's own states would otherwise lose under it - its outline and its corners' radius; nil where
+    /// which the color scheme's own states would otherwise lose under it - its outline and its corners' radius; nil where
     /// nothing is given.
     static func box(fill: GdkRGBA?, stroke: GdkRGBA?, strokeWidth: Double?, radius: Double?) -> String? {
         guard fill != nil || stroke != nil || radius != nil else { return nil }

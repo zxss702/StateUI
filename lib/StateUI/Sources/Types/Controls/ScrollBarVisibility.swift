@@ -4,9 +4,9 @@
 // A closed vocabulary, numbered by StateUI: append a case, never insert one.
 // Design: docs/design/types/vocabularies.md#written-out-and-appended
 
-/// When the scroll bars are drawn - what `.verticalScrollBarVisibility` and
-/// `.horizontalScrollBarVisibility` take.
-public enum ScrollBarVisibility: Int32, Sendable {
+/// When the scroll bars are drawn - what `.verticalScrollIndicators` and
+/// `.horizontalScrollIndicators` take.
+public enum ScrollIndicatorVisibility: Int32, Sendable {
     /// As the platform sees fit.
     case `default` = 0
 
@@ -17,5 +17,5 @@ public enum ScrollBarVisibility: Int32, Sendable {
     case never = 2
 }
 
-extension ScrollBarVisibility: HostRepresentable {}
-extension ScrollBarVisibility: StateChoice {}
+extension ScrollIndicatorVisibility: HostRepresentable {}
+extension ScrollIndicatorVisibility: StateChoice {}

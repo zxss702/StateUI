@@ -80,13 +80,13 @@ final class AndroidWebViewTests: XCTestCase {
 }
 
 /// A web view, aimed at, with a button that loads it again and one that asks its page's title.
-private struct BrowsingPage: ContentView {
+private struct BrowsingPage: View {
     @Aim(WebView.self) private var browser
     @State private var back = false
     @State private var forward = false
     let heard: Received<String>
 
-    var content: any View {
+    var body: some View {
         let browser = self.browser
         let heard = self.heard
         return VStack {
@@ -97,15 +97,15 @@ private struct BrowsingPage: ContentView {
                 .onNavigating { heard.values.append("navigating \($0.event) \($0.url)") }
                 .onNavigated { heard.values.append("navigated \($0.result) \($0.event) \($0.url)") }
                 .onProcessTerminated { heard.values.append("gone") }
-                .height(200)
+                .frame(height: 200)
             Button("Reload").onClicked { try await browser.reload() }
             Button("Title?").onClicked {
                 let title = try await browser.evaluateJavaScript("document.title")
                 heard.values.append("title \(title)")
             }
         }
-        .onChanged(back) { heard.values.append("back \(back)") }
-        .onChanged(forward) { heard.values.append("forward \(forward)") }
+        .onChange(of: back) { heard.values.append("back \(back)") }
+        .onChange(of: forward) { heard.values.append("forward \(forward)") }
     }
 }
 

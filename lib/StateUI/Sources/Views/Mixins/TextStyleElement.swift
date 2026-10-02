@@ -7,8 +7,8 @@
 public protocol TextStyleElement: PropertyContainer {}
 
 extension TextStyleElement {
-    /// The colour of the text; a `Color(light:dark:)` follows the system theme.
-    public func textColor(_ value: Color) -> Modified { setValue(TextStyleElementContract.textColor, value) }
+    /// The colour of the text; a `Color(light:dark:)` follows the system color scheme.
+    public func foregroundStyle(_ value: Color) -> Modified { setValue(TextStyleElementContract.foregroundStyle, value) }
 
     /// The space added between letters, in device units.
     public func characterSpacing(_ value: Double) -> Modified { setValue(TextStyleElementContract.characterSpacing, value) }
@@ -21,9 +21,9 @@ extension TextStyleElement where Self: VisualElement {
         journey(TextStyleElementContract.characterSpacing, by: state)
     }
 
-    /// `textColor` from a state, `$x`: the host animates the property to each
+    /// `foregroundStyle` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it.
-    public func textColor(_ state: Binding<Color>) -> Modified {
-        journey(TextStyleElementContract.textColor, by: state)
+    public func foregroundStyle(_ state: Binding<Color>) -> Modified {
+        journey(TextStyleElementContract.foregroundStyle, by: state)
     }
 }

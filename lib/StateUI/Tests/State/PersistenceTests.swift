@@ -37,12 +37,12 @@ private struct Preferences {
     @State(persistentKey: .appearance) var appearance = Appearance.light
 }
 
-private struct KeepingWindow: Window {
+private struct KeepingWindow: WindowScene {
     var page: any Page { KeepingPage() }
 }
 
-private struct KeepingPage: ContentView {
-    var content: any View { Label("kept") }
+private struct KeepingPage: View {
+    var body: some View { Text("kept") }
 }
 
 /// A MODEL that keeps two of its settings - the shape an application's own
@@ -58,19 +58,19 @@ private final class Settings {
 
 /// An application that keeps two of its settings, in the platform's own store -
 /// said as it is made, which is when the host asks for them.
-private struct KeepingApp: Application {
+private struct KeepingApp: App {
     @Environment private var application: ApplicationSession
 
     init() {
         application.persistentKeys = [.count, .name]
     }
 
-    var scene: any Scene { KeepingWindow() }
+    var body: some Scene { KeepingWindow() }
 }
 
 /// An application that keeps nothing, which is what most of them are.
-private struct PlainApp: Application {
-    var scene: any Scene { KeepingWindow() }
+private struct PlainApp: App {
+    var body: some Scene { KeepingWindow() }
 }
 
 final class PersistenceTests: XCTestCase {
@@ -295,7 +295,7 @@ final class PersistenceTests: XCTestCase {
     /// ...and the host, reporting what the user typed into the field that carries it.
     func testAKeptStateTheHostReportsIsSentToTheStore() throws {
         let preferences = Preferences()
-        let patch = Renders().render(TextField(preferences.$name).body)
+        let patch = Renders().render(TextField(preferences.$name).node)
         guard case .replace(let driven)? = patch.driven else { return XCTFail("expected the field's state") }
         _ = drainedActs()
 

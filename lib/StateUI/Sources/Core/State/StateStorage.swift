@@ -67,7 +67,7 @@ extension State {
         /// Design: docs/design/core/state.md#themed-colours-on-a-carried-state
         nonisolated(unsafe) var pair: Value?
 
-        /// Whether a value is a colour with a half for each theme.
+        /// Whether a value is a colour with a half for each color scheme.
         static func isPair(_ value: Value) -> Bool { (value as? Color)?.dark != nil }
 
         /// Whether the image is a journey's rather than the value's own lanes.
@@ -88,9 +88,9 @@ extension State {
         /// Whether the host carries this state.
         var carried: Bool { image != nil }
 
-        /// The law `@State(motion:)` declared, or `.inherited`; read once, when the
+        /// The law `@State(animation:)` declared, or `.inherited`; read once, when the
         /// journey image is made.
-        nonisolated(unsafe) var law: Motion = .inherited
+        nonisolated(unsafe) var law: Animation = .inherited
 
         /// Whether any build ever read this state - sticky, and what a write consults
         /// before asking for a render.
@@ -243,7 +243,7 @@ extension State.Storage where Value: Walked {
             if let image, image.number != nil { return nil }
 
             let initial = image.map { Self.lifted(from: $0) } ?? settled()
-            let start = JourneyLanes(initial, motion: law)
+            let start = JourneyLanes(initial, animation: law)
 
             pair = Self.isPair(initial) ? initial : nil
             let made: HostStorage
@@ -273,7 +273,7 @@ extension State.Storage where Value: Walked {
 
                 // Nobody animates it yet: the value lands where it is sent.
                 // Design: docs/design/core/state.md#a-state-nobody-wears
-                if made.number == nil, !journey.motion.isCustom {
+                if made.number == nil, !journey.animation.isCustom {
                     journey.value = target
                     journey.velocity = JourneyLanes<Value>.still
                 }
@@ -450,13 +450,13 @@ extension State.Storage where Value: StateValue {
     }
 
     /// Lays a colour pair's half in force and makes the element being built the
-    /// theme's reader.
+    /// color scheme's reader.
     /// Design: docs/design/core/state.md#themed-colours-on-a-carried-state
     func wearThemedPair() {
         guard let pair, let hostRead, let hostWrite else { return }
 
-        // The read that makes this element the theme's reader.
-        _ = StandardEnvironment.app.requestedTheme
+        // The read that makes this element the color scheme's reader.
+        _ = StandardEnvironment.appInfo.colorScheme
 
         guard StateImage.bytes(of: pair.carried) != StateImage.bytes(of: hostRead().carried) else { return }
 

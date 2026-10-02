@@ -44,7 +44,7 @@ extension UIKitDriver {
 
     /// A view's context menu, or a window's menus on the menu bar, as UIKit is handed them.
     func menu(of element: MountedElement) throws -> String {
-        if element.type == .window { return UIKitMenus.said(renderer?.menuBar ?? []) }
+        if element.type == .windowScene { return UIKitMenus.said(renderer?.menuBar ?? []) }
         guard let native = element.native as? UIKitElement, native.view != nil else {
             throw DriverCannot("read the menu of \(element.type.name)")
         }

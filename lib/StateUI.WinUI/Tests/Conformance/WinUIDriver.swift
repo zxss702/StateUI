@@ -41,11 +41,11 @@ final class WinUIDriver: HostDriver {
             "WinUI bounds UTF-16 units, not characters, so the host cuts what is typed; typing proves it",
         "read maximumLength of SearchField":
             "WinUI bounds UTF-16 units, not characters, so the host cuts what is typed; typing proves it",
-        "read padding of Grid": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
-        "read padding of HStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
-        "read padding of VStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
-        "read padding of ZStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
-        "read padding of ScrollView": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
+        "read contentPadding of Grid": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
+        "read contentPadding of HStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
+        "read contentPadding of VStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
+        "read contentPadding of ZStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
+        "read contentPadding of ScrollView": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
         "read spacing of HStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
         "read spacing of VStack": "WinUI's panel places its children where StateUI's layout says; their frames prove it",
     ]
@@ -85,7 +85,7 @@ final class WinUIDriver: HostDriver {
     func perform(_ act: UserAct, on element: MountedElement) throws {
         let view = (element.native as? WinUIElement)?.view
         switch (act, view) {
-        case (.activate, _) where element.parent?.type == .itemsView:
+        case (.activate, _) where element.parent?.type == .list:
             guard let items = (element.parent?.native as? WinUIElement)?.view as? WinUIItemsView,
                   case .manual(let identity) = element.id, items.activateForTesting(identity)
             else { throw DriverCannot(act, on: element) }
@@ -93,7 +93,7 @@ final class WinUIDriver: HostDriver {
         case (.scroll(let target), let items as WinUIItemsView): items.scrollForTesting(to: target)
         case (.activate, _): try activate(element, view)
         case (.toggle, let toggle as WinUIToggleView): toggle.toggle()
-        case (.toggle, _) where element.type == .splitView: try window().titleBar.chose(-2)
+        case (.toggle, _) where element.type == .navigationSplitView: try window().titleBar.chose(-2)
         case (.slide(let value), let slider as WinUISliderView): slider.move(to: value)
         case (.step(let up), let stepper as WinUIStepperView): stateui_winui_stepper_step_as_user(stepper.handle, up)
         case (.enterWords(let words), let stepper as WinUIStepperView):
@@ -107,7 +107,7 @@ final class WinUIDriver: HostDriver {
         case (.submit, let search as WinUISearchFieldView): stateui_winui_search_submit_as_user(search.handle)
         case (.choose(let place), let picker as WinUIPickerView):
             stateui_winui_picker_choose_as_user(picker.handle, Int32(place))
-        case (.choose(let place), _) where element.type == .tabbedView: try chooseTab(place, of: element)
+        case (.choose(let place), _) where element.type == .tabView: try chooseTab(place, of: element)
         case (.open, let picker as WinUIPickerView): stateui_winui_picker_open_as_user(picker.handle, true)
         case (.close, let picker as WinUIPickerView): stateui_winui_picker_open_as_user(picker.handle, false)
         case (.open, let picker as WinUIDatePickerView): stateui_winui_date_set_open(picker.handle, true)
@@ -140,16 +140,16 @@ final class WinUIDriver: HostDriver {
         case (.scroll(let offset), let scroll as WinUIScrollView): scroll.scroller.move(to: offset)
         case (.focus, let view?): _ = stateui_winui_focus(view.handle, true)
         case (.goBack, _) where element.type == .navigationStack: try window().titleBar.chose(-1)
-        case (.goBack, _) where element.type == .window: try window().titleBar.chose(-3)
-        case (.close, _) where element.type == .window: stateui_winui_window_close(try window(of: element).handle)
-        case (.minimize, _) where element.type == .window: try state(of: element, minimized: true, activated: false)
-        case (.restore, _) where element.type == .window: try state(of: element, minimized: false, activated: true)
-        case (.switchAway, _) where element.type == .window:
+        case (.goBack, _) where element.type == .windowScene: try window().titleBar.chose(-3)
+        case (.close, _) where element.type == .windowScene: stateui_winui_window_close(try window(of: element).handle)
+        case (.minimize, _) where element.type == .windowScene: try state(of: element, minimized: true, activated: false)
+        case (.restore, _) where element.type == .windowScene: try state(of: element, minimized: false, activated: true)
+        case (.switchAway, _) where element.type == .windowScene:
             for window in renderer?.windows ?? [] {
                 WinUICallbacks.table.windowStateChanged(window.window.number, false, false)
             }
-        case (.switchBack, _) where element.type == .window: try state(of: element, minimized: false, activated: true)
-        case (.bringToFront, _) where element.type == .window:
+        case (.switchBack, _) where element.type == .windowScene: try state(of: element, minimized: false, activated: true)
+        case (.bringToFront, _) where element.type == .windowScene:
             let front = try window(of: element)
             for window in renderer?.windows ?? [] where window.window !== front {
                 WinUICallbacks.table.windowStateChanged(window.window.number, false, false)

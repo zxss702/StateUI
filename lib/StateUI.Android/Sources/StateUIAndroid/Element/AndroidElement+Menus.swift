@@ -49,7 +49,7 @@ extension AndroidElement {
                 entries.append(.menu(
                     element.value(.text)?.string ?? "", isEnabled: element.value(.isEnabled)?.bool ?? true,
                     menuEntries(element.children, items: &items)))
-            case .menuSeparator:
+            case .divider:
                 entries.append(.separator)
             default:
                 break

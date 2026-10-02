@@ -668,10 +668,10 @@ final class AppKitPageTests: XCTestCase {
 
         var padded = HostPatch(id: .manual("padded"), type: .page)
         padded.properties = [
-            .padding: .numbers([10, 20, 30, 40]),
+            .contentPadding: .numbers([10, 20, 30, 40]),
             .background: .color(red: 51, green: 102, blue: 153, alpha: 255),
         ]
-        padded.children = .arranged([HostPatch(id: .manual("content"), type: .colorBox)])
+        padded.children = .arranged([HostPatch(id: .manual("content"), type: .colorPicker)])
         renderer.applyForTesting(tree(padded))
 
         let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("padded")))
@@ -792,7 +792,7 @@ final class AppKitPageTests: XCTestCase {
             presentsWindows: false)
         defer { renderer.closeForTesting() }
 
-        var title = HostPatch(id: .manual("title-label"), type: .label)
+        var title = HostPatch(id: .manual("title-label"), type: .text)
         title.properties[.text] = .string("Search title")
         var titleSlot = HostPatch(id: .manual("title-slot"), type: .titleView)
         titleSlot.children = .arranged([title])
@@ -837,7 +837,7 @@ final class AppKitPageTests: XCTestCase {
         func details(_ words: [String]) -> HostPatch {
             var row = HostPatch(id: .manual("row"), type: .hStack)
             row.children = .arranged(words.map { word in
-                var label = HostPatch(id: .manual(word), type: .label)
+                var label = HostPatch(id: .manual(word), type: .text)
                 label.properties[.text] = .string(word)
                 return label
             })
@@ -935,7 +935,7 @@ final class AppKitPageTests: XCTestCase {
         var save = HostPatch(id: .manual("save"), type: .menuItem)
         save.properties[.text] = .string("Save")
         save.events = .replace([.clicked: 60])
-        let separator = HostPatch(id: .manual("separator"), type: .menuSeparator)
+        let separator = HostPatch(id: .manual("separator"), type: .divider)
         var recentFile = HostPatch(id: .manual("recent-file"), type: .menuItem)
         recentFile.properties[.text] = .string("notes.txt")
         var recent = HostPatch(id: .manual("recent"), type: .menu)
@@ -994,7 +994,7 @@ final class AppKitPageTests: XCTestCase {
         let path = State(wrappedValue: [ChromeRoute]())
         let renderer = AppKitRenderer.running {
             NavigationStack(path.projectedValue) {
-                Label("Root")
+                Text("Root")
             } destination: { route in
                 ChromePage(route: route)
             }
@@ -1019,7 +1019,7 @@ final class AppKitPageTests: XCTestCase {
         let path = State(wrappedValue: [ChromeRoute]())
         let renderer = AppKitRenderer.running {
             NavigationStack(path.projectedValue) {
-                Label("Root")
+                Text("Root")
             } destination: { route in
                 ChromePage(route: route)
             }
@@ -1049,12 +1049,12 @@ private enum ChromeRoute: Hashable {
 /// A pushed page that offers one action and, for its route, takes its way
 /// back or its whole navigation bar away - written through its session as
 /// it comes in.
-private struct ChromePage: ContentView {
+private struct ChromePage: View {
     @Environment private var page: PageSession
     let route: ChromeRoute
 
-    var content: any View {
-        Label("Pushed").onCreated {
+    var body: some View {
+        Text("Pushed").onAppear {
             page.toolbarItems = [ToolbarItem("Save")]
             switch route {
             case .plain: break
@@ -1076,7 +1076,7 @@ private extension AppKitPageTests {
         modalPopped: Int32 = 902,
         width: Double? = nil
     ) -> HostPatch {
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         if let width { window.properties[.width] = .number(width) }
         if let modals {
             var stack = HostPatch(id: .manual("modals"), type: .modalStack)
@@ -1090,7 +1090,7 @@ private extension AppKitPageTests {
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
 
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
@@ -1108,7 +1108,7 @@ private extension AppKitPageTests {
         changed: Int32 = 901,
         id: String = "tabs"
     ) -> HostPatch {
-        var tabs = HostPatch(id: .manual(id), type: .tabbedView)
+        var tabs = HostPatch(id: .manual(id), type: .tabView)
         tabs.properties[.currentPage] = .number(Double(selected))
         tabs.events = .replace([.currentPageChanged: changed])
         tabs.children = .arranged(pages)
@@ -1121,7 +1121,7 @@ private extension AppKitPageTests {
         detail: HostPatch,
         changed: Int32 = 902
     ) -> HostPatch {
-        var flyout = HostPatch(id: .manual("flyout"), type: .splitView)
+        var flyout = HostPatch(id: .manual("flyout"), type: .navigationSplitView)
         flyout.properties[.isSidebarVisible] = .bool(presented)
         flyout.events = .replace([.isSidebarVisibleChanged: changed])
         flyout.children = .arranged([menu, detail])
@@ -1129,7 +1129,7 @@ private extension AppKitPageTests {
     }
 
     func page(_ id: String, title: String? = nil, events base: Int32) -> HostPatch {
-        var label = HostPatch(id: .manual("label-\(id)"), type: .label)
+        var label = HostPatch(id: .manual("label-\(id)"), type: .text)
         label.properties[.text] = .string(id)
 
         var page = HostPatch(id: .manual(id), type: .page)
@@ -1148,7 +1148,7 @@ private extension AppKitPageTests {
     /// One window holding `content`, asked - or, given nil, no longer asked -
     /// to let the desktop show through it.
     func windowTree(_ content: HostPatch, translucent: Bool?) -> HostPatch {
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         if let translucent {
             window.properties[.isTranslucent] = .bool(translucent)
         } else {
@@ -1159,7 +1159,7 @@ private extension AppKitPageTests {
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
 
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }

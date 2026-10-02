@@ -98,7 +98,7 @@ final class AppKitTextEditorView: NSView, NSTextViewDelegate {
         writeText: Bool,
         placeholder placeholderText: String?,
         placeholderColor: NSColor?,
-        foregroundColor: NSColor,
+        foregroundStyle: NSColor,
         backgroundColor: NSColor?,
         font: NSFont,
         horizontalAlignment: Int32?,
@@ -117,7 +117,7 @@ final class AppKitTextEditorView: NSView, NSTextViewDelegate {
         self.cursorPosition = cursorPosition
         self.selectionLength = selectionLength
 
-        textView.textColor = foregroundColor
+        textView.textColor = foregroundStyle
         textView.backgroundColor = backgroundColor ?? .textBackgroundColor
         textView.drawsBackground = true
         textView.font = font

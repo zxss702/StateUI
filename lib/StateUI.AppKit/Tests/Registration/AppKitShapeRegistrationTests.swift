@@ -22,7 +22,7 @@ final class AppKitShapeRegistrationTests: XCTestCase {
         let realization = AppKitRegistrations.registry.realization
 
         XCTAssertTrue(realization.elements.isSuperset(of: [
-            "Rectangle", "Ellipse", "Line", "Path", "Polygon", "Polyline", "ColorBox",
+            "Rectangle", "Ellipse", "Line", "Path", "Polygon", "Polyline", "ColorPicker",
         ]))
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "Rectangle", owner: "Rectangle", member: "cornerRadius")))
@@ -33,7 +33,7 @@ final class AppKitShapeRegistrationTests: XCTestCase {
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "Polygon", owner: "Polygon", member: "fillRule")))
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "ColorBox", owner: "ColorBox", member: "color")))
+            HostRealizedMember(element: "ColorPicker", owner: "ColorPicker", member: "color")))
     }
 
     /// What the shapes SHARE is recorded on every one of them, from the single
@@ -56,7 +56,7 @@ final class AppKitShapeRegistrationTests: XCTestCase {
 
         XCTAssertFalse(
             realization.members.contains(
-                HostRealizedMember(element: "ColorBox", owner: "Shape", member: "stroke")),
+                HostRealizedMember(element: "ColorPicker", owner: "Shape", member: "stroke")),
             "a colour box wears no Shape, and claims nothing of it")
     }
 

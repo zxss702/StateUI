@@ -15,11 +15,11 @@ final class WinUIPagesTests: XCTestCase {
         try onUIThread {
             let open = State(wrappedValue: false)
             let host = WinUIRenderer.running(room: WinUITestHost.wideRoom) {
-                SplitView(open.projectedValue) {
+                NavigationSplitView(open.projectedValue) {
                     TitledPage(title: "Menu")
                 } detail: {
                     ScrollView {
-                        VStack { HStack { Label("row") } }
+                        VStack { HStack { Text("row") } }
                     }
                 }
             }
@@ -47,16 +47,16 @@ final class WinUIPagesTests: XCTestCase {
         try onUIThread {
             let open = State(wrappedValue: true)
             let host = WinUIRenderer.running(room: WinUITestHost.wideRoom) {
-                SplitView(open.projectedValue) {
+                NavigationSplitView(open.projectedValue) {
                     Grid {
                         ScrollView {
-                            VStack { ForEach(0..<60, id: \.self) { Label("row \($0)") } }
+                            VStack { ForEach(0..<60, id: \.self) { Text("row \($0)") } }
                         }
-                        Label("footer").gridRow(1)
+                        Text("footer").gridRow(1)
                     }
                     .rows(.fill, .auto)
                 } detail: {
-                    Label("detail")
+                    Text("detail")
                 }
             }
             for _ in 0..<20 { host.step() }
@@ -78,7 +78,7 @@ final class WinUIPagesTests: XCTestCase {
             let tabs = State(wrappedValue: [0, 1, 2])
             let tab = State(wrappedValue: 2)
             let host = WinUIRenderer.running {
-                TabbedView(tabs.wrappedValue) { number in Label("Tab \(number)") }.selection(tab.projectedValue)
+                TabView(tabs.wrappedValue) { number in Text("Tab \(number)") }.selection(tab.projectedValue)
             }
             let tabbed = try XCTUnwrap(host.views(WinUITabbedView.self).first)
             let row: WinUIView = tabbed.tabsShownByWindow ? try XCTUnwrap(host.window).tabRow : tabbed.row
@@ -102,7 +102,7 @@ final class WinUIPagesTests: XCTestCase {
                 NavigationStack(path.projectedValue) {
                     TitledPage(title: "Items and Cards")
                 } destination: { _ in
-                    TabbedView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("ItemsView")
+                    TabView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("List")
                 }
             }
             let window = try XCTUnwrap(host.window)
@@ -111,12 +111,12 @@ final class WinUIPagesTests: XCTestCase {
             path.wrappedValue = [1]
             host.settle { host.views(WinUITabbedView.self).first?.titles == ["Example 1", "Example 2"] }
             XCTAssertEqual(host.views(WinUITabbedView.self).first?.titles, ["Example 1", "Example 2"], "pushed")
-            XCTAssertEqual(Self.words(window.titleBar, "title"), "ItemsView", "the chrome's title")
+            XCTAssertEqual(Self.words(window.titleBar, "title"), "List", "the chrome's title")
             var bytes = [CChar](repeating: 0, count: 64)
             let length = stateui_winui_window_system_title(window.handle, &bytes, Int32(bytes.count))
             XCTAssertEqual(
                 String(decoding: bytes.prefix(Int(length)).map { UInt8(bitPattern: $0) }, as: UTF8.self),
-                "ItemsView", "the window's own name")
+                "List", "the window's own name")
         }
     }
 
@@ -145,8 +145,8 @@ final class WinUIPagesTests: XCTestCase {
             let (navy, yellow) = (Color(red: 0, green: 0, blue: 128), Color(red: 255, green: 230, blue: 0))
             let host = WinUIRenderer.running {
                 NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
-                    Label("Root")
-                } destination: { _ in Label("Pushed") }
+                    Text("Root")
+                } destination: { _ in Text("Pushed") }
                     .barBackgroundColor(dark.wrappedValue ? navy : yellow)
             }
             let bar = try XCTUnwrap(host.window).titleBar
@@ -166,7 +166,7 @@ final class WinUIPagesTests: XCTestCase {
             let host = WinUIRenderer.running {
                 NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
                     TitledPage(title: "Home", actions: [ToolbarItem("Inspector")])
-                } destination: { _ in Label("Pushed") }
+                } destination: { _ in Text("Pushed") }
             }
             let bar = try XCTUnwrap(host.window).titleBar
             var (kept, room) = (-1.0, 0.0)
@@ -184,12 +184,12 @@ final class WinUIPagesTests: XCTestCase {
     func testASidebarTallerThanTheWindowScrolls() throws {
         try onUIThread {
             let host = WinUIRenderer.running(room: WinUITestHost.wideRoom) {
-                SplitView(State(wrappedValue: true).projectedValue) {
+                NavigationSplitView(State(wrappedValue: true).projectedValue) {
                     ScrollView {
-                        VStack { ForEach(Array(0..<100), id: \.self) { number in Label("Row \(number)") } }
+                        VStack { ForEach(Array(0..<100), id: \.self) { number in Text("Row \(number)") } }
                     }
                 } detail: {
-                    Label("Detail")
+                    Text("Detail")
                 }
             }
             host.layOut()
@@ -206,10 +206,10 @@ final class WinUIPagesTests: XCTestCase {
     func testATabbedDetailStandsItsTabsAcrossTheDetail() throws {
         try onUIThread {
             let host = WinUIRenderer.running {
-                SplitView(State(wrappedValue: true).projectedValue) {
+                NavigationSplitView(State(wrappedValue: true).projectedValue) {
                     TitledPage(title: "Menu")
                 } detail: {
-                    TabbedView([0, 1]) { number in TitledPage(title: "Tab \(number)") }
+                    TabView([0, 1]) { number in TitledPage(title: "Tab \(number)") }
                 }
             }
             let window = try XCTUnwrap(host.window)
@@ -222,7 +222,7 @@ final class WinUIPagesTests: XCTestCase {
 
 /// A page with a title, maybe a log of its phases, the actions it puts on the window's chrome, and whether it hides
 /// its navigation bar.
-private struct TitledPage: ContentView {
+private struct TitledPage: View {
     let title: String
     var log: Received<String>? = nil
     var actions: [ToolbarItem] = []
@@ -230,17 +230,17 @@ private struct TitledPage: ContentView {
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let log = self.log
         let title = self.title
         let page = self.page
 
-        return Label(title)
-            .onCreated {
+        return Text(title)
+            .onAppear {
                 page.title = title
                 page.toolbarItems = actions
                 if hidesBar { page.hasNavigationBar = false }
             }
-            .onChanged(page.phase) { log?.values.append("\(title) \(page.phase)") }
+            .onChange(of: page.phase) { log?.values.append("\(title) \(page.phase)") }
     }
 }

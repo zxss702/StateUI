@@ -30,7 +30,7 @@ extension TextLook {
 
 extension UIEdgeInsets {
     /// StateUI's insets in UIKit's order.
-    init(_ insets: Insets) {
+    init(_ insets: EdgeInsets) {
         self.init(top: insets.top, left: insets.left, bottom: insets.bottom, right: insets.right)
     }
 }

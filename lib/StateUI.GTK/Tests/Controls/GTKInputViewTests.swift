@@ -9,11 +9,11 @@ import StateUIConformance
 import XCTest
 
 /// A field and an editor sharing words a button rewrites, each telling what it hears.
-private struct RewrittenPage: ContentView {
+private struct RewrittenPage: View {
     @State private var words = "one"
     let heard: Received<String>
 
-    var content: any View {
+    var body: some View {
         let heard = self.heard
         return VStack {
             TextField($words).onTextChanged { heard.values.append("field \($0)") }
@@ -72,8 +72,8 @@ final class GTKInputViewTests: XCTestCase {
                         .isReadOnly(true)
                         .isSpellCheckEnabled(false)
                         .isTextPredictionEnabled(false)
-                        .inputPurpose(.email)
-                        .horizontalTextAlignment(.center)
+                        .textContentType(.email)
+                        .multilineTextAlignment(.center)
                         .isPassword(true)
                         .cursorPosition(2)
                         .selectionLength(3)
@@ -99,9 +99,9 @@ final class GTKInputViewTests: XCTestCase {
             let host = GTKRenderer.running {
                 VStack {
                     TextField("").placeholder("MMM").placeholderColor(Color("#FF0000")).fontSize(40)
-                        .fontAttributes(.bold).width(200)
-                    TextField("MMM").textColor(Color("#0000FF")).fontSize(40).fontAttributes(.bold).width(200)
-                    TextField("MMM").width(200)
+                        .fontAttributes(.bold).frame(width: 200)
+                    TextField("MMM").foregroundStyle(Color("#0000FF")).fontSize(40).fontAttributes(.bold).frame(width: 200)
+                    TextField("MMM").frame(width: 200)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
@@ -136,8 +136,8 @@ final class GTKInputViewTests: XCTestCase {
             let words = State(wrappedValue: "one")
             let host = GTKRenderer.running {
                 VStack {
-                    TextEditor(words.projectedValue).growsWithText(true).width(200)
-                    TextEditor(words.projectedValue).width(200)
+                    TextEditor(words.projectedValue).growsWithText(true).frame(width: 200)
+                    TextEditor(words.projectedValue).frame(width: 200)
                     Button("More").onClicked { words.wrappedValue = "one\ntwo\nthree\nfour\nfive" }
                 }
                 .horizontalAlignment(.start)

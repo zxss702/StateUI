@@ -21,7 +21,7 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
     let measurements = MeasurementCache()
 
     private(set) var padding = NSEdgeInsets()
-    private(set) var horizontalTextAlignment: NSTextAlignment = .left
+    private(set) var multilineTextAlignment: NSTextAlignment = .left
     private(set) var verticalTextAlignment: AppKitVerticalTextAlignment = .start
     private(set) var maximumNumberOfLines = 0
     private(set) var lineBreakMode: NSLineBreakMode = .byWordWrapping
@@ -66,7 +66,7 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
         let styled = paragraphStyled(
             attributedText, alignment: horizontalAlignment, breaking: lineBreakMode)
         let unchanged = textField.attributedStringValue.isEqual(to: styled)
-            && horizontalTextAlignment == horizontalAlignment
+            && multilineTextAlignment == horizontalAlignment
             && verticalTextAlignment == verticalAlignment
             && self.lineBreakMode == lineBreakMode
             && self.maximumNumberOfLines == max(0, maximumNumberOfLines)
@@ -81,7 +81,7 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
         textField.cell?.isScrollable = false
 
         self.padding = padding
-        horizontalTextAlignment = horizontalAlignment
+        multilineTextAlignment = horizontalAlignment
         verticalTextAlignment = verticalAlignment
         self.lineBreakMode = lineBreakMode
         self.maximumNumberOfLines = max(0, maximumNumberOfLines)

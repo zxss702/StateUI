@@ -29,12 +29,12 @@
                 s.expect(sheets.wrappedValue, [1, 2], "one over the other")
             },
             ConformanceCase("theUsersWayBackTakesTheTopPageAway", proves: [
-                Covered(ModalStackContract.self), Covered(WindowContract.modalPopped), Covered(PageContract.appearing),
+                Covered(ModalStackContract.self), Covered(WindowSceneContract.modalPopped), Covered(PageContract.appearing),
             ]) { s in
                 let log = Received<String>()
                 let sheets = State(wrappedValue: [1, 2])
                 s.start { SheetsPage(sheets: sheets, log: log) }
-                let window = try s.element(ofType: WindowContract.nodeType)
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
                 try s.settle { try s.held(VisualElementContract.isVisible, on: s.element("sheet2")) == true }
 
                 try s.perform(.goBack, on: window)
@@ -53,27 +53,27 @@
 }
 
 /// A page that presents numbered sheets over its window from one state, each able to present the next.
-struct SheetsPage: ContentView {
+struct SheetsPage: View {
     let sheets: State<[Int]>
     let log: Received<String>
 
     @Environment private var window: WindowSession
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let (sheets, log, window, page) = (self.sheets, self.log, self.window, self.page)
         return VStack {
-            Label("beneath")
+            Text("beneath")
             Button("Present").onClicked { sheets.wrappedValue.append(1) }.id("present")
         }
-        .onCreated {
+        .onAppear {
             window.modalStack = ModalStack(sheets.projectedValue) { number in
                 VStack {
-                    Label("On sheet \(number)").id("sheet\(number)")
+                    Text("On sheet \(number)").id("sheet\(number)")
                     Button("Another").onClicked { sheets.wrappedValue.append(number + 1) }.id("another\(number)")
                 }
             }
         }
-        .onChanged(page.phase) { log.values.append("beneath \(page.phase)") }
+        .onChange(of: page.phase) { log.values.append("beneath \(page.phase)") }
     }
 }

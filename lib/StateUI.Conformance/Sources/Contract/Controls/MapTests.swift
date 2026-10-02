@@ -15,7 +15,7 @@
             ConformanceCase("aMapShowsTheRegionTheTreeGivesIt", proves: [
                 Covered(MapContract.region),
             ]) { s in
-                s.start { VStack { Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000).height(300).id("map") } }
+                s.start { VStack { Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000).frame(height: 300).id("map") } }
 
                 s.expect(try s.held(MapContract.region, on: s.element("map")),
                          MapRegion(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000))
@@ -27,7 +27,7 @@
                 let moved = Received<String>()
                 s.start {
                     VStack {
-                        Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000).aim(map).height(300).id("map")
+                        Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000).aim(map).frame(height: 300).id("map")
                         Button("Kraków").onClicked {
                             try await map.moveToRegion(latitude: 50.06, longitude: 19.94, radiusMeters: 2_000)
                             moved.values.append("moved")
@@ -50,7 +50,7 @@
                 s.start {
                     VStack {
                         Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000)
-                            .onMapClicked { heard.values.append($0) }.height(300).id("map")
+                            .onMapClicked { heard.values.append($0) }.frame(height: 300).id("map")
                     }
                 }
 

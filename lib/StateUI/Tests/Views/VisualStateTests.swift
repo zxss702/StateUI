@@ -71,7 +71,7 @@ final class VisualStateTests: XCTestCase {
     /// nothing.
     func testAControlArrivesWithTheValuesOfTheStatesItIsIn() {
         func control(_ enabled: Bool) -> Node {
-            Button("Save").isEnabled(enabled).visualState(.disabled) { $0.background(.gray) }.id("c").body
+            Button("Save").disabled(!enabled).visualState(.disabled) { $0.background(.gray) }.id("c").node
         }
 
         let enabled = render(Renders(), control(true))
@@ -86,10 +86,10 @@ final class VisualStateTests: XCTestCase {
         func control(_ enabled: Bool) -> Node {
             Button("Save")
                 .background(.blue)
-                .isEnabled(enabled)
+                .disabled(!enabled)
                 .visualState(.disabled) { $0.background(.gray).opacity(0.5) }
                 .id("c")
-                .body
+                .node
         }
         let renders = Renders()
         let disabled = render(renders, control(false))
@@ -105,11 +105,11 @@ final class VisualStateTests: XCTestCase {
     /// that is on shows Disabled's values, and On's where Disabled sets none.
     func testEveryStateThatHoldsShowsTheFirstWinningAValue() {
         let patch = render(Renders(), Switch(true)
-            .isEnabled(false)
-            .visualState(.on) { $0.background(.green).translationX(4) }
+            .disabled(!false)
+            .visualState(.on) { $0.background(.green).offset(x: 4) }
             .visualState(.disabled) { $0.opacity(0.5).background(.gray) }
             .id("c")
-            .body)
+            .node)
 
         XCTAssertEqual(patch?.props["opacity"], .number(0.5))
         XCTAssertEqual(patch?.props["background"], gray, "Disabled before On")
@@ -121,7 +121,7 @@ final class VisualStateTests: XCTestCase {
     func testAStateFollowsTheValueItsControlIsBoundTo() {
         let on = State(wrappedValue: false)
         let renders = Renders()
-        let first = render(renders, Switch(on.projectedValue).visualState(.on) { $0.background(.green) }.id("c").body)
+        let first = render(renders, Switch(on.projectedValue).visualState(.on) { $0.background(.green) }.id("c").node)
         XCTAssertNil(first?.props["background"])
 
         Renderer.shared.clearInvalidation()
@@ -134,7 +134,7 @@ final class VisualStateTests: XCTestCase {
     func testTheUsersTurnEntersTheStateItFollows() throws {
         let on = State(wrappedValue: false)
         let renders = Renders()
-        let first = try XCTUnwrap(render(renders, Switch(on.projectedValue).visualState(.on) { $0.background(.green) }.id("c").body))
+        let first = try XCTUnwrap(render(renders, Switch(on.projectedValue).visualState(.on) { $0.background(.green) }.id("c").node))
         let binding = try XCTUnwrap(first.driven?.bindings["isOn"], "isOn is carried")
 
         Renderer.shared.clearInvalidation()
@@ -149,7 +149,7 @@ final class VisualStateTests: XCTestCase {
     /// in its pressed look, and the release gives its own back.
     func testAPressDescribesTheButtonAgainInItsPressedLook() throws {
         let renders = Renders()
-        let button = try XCTUnwrap(render(renders, Button("Save").visualState(.pressed) { $0.background(.green) }.id("c").body))
+        let button = try XCTUnwrap(render(renders, Button("Save").visualState(.pressed) { $0.background(.green) }.id("c").node))
         XCTAssertEqual(button.eventNames, ["pressed", "released"])
 
         XCTAssertEqual(fire(renders, button, "pressed")?.props["background"], green)
@@ -165,7 +165,7 @@ final class VisualStateTests: XCTestCase {
             .visualState(.focused) { $0.opacity(0.9) }
             .visualState(.pointerOver) { $0.opacity(0.8) }
             .id("c")
-            .body))
+            .node))
         XCTAssertEqual(lamp.props["opacity"], .number(1))
         XCTAssertEqual(lamp.eventNames, ["isFocusedChanged", "pointerEntered", "pointerExited"])
 
@@ -175,11 +175,11 @@ final class VisualStateTests: XCTestCase {
         XCTAssertEqual(fire(renders, lamp, "isFocusedChanged", [.bool(false)])?.props["opacity"], .number(1))
 
         let disabled = try XCTUnwrap(render(Renders(), Button("Save")
-            .isEnabled(false)
+            .disabled(!false)
             .visualState(.pressed) { $0.background(.green) }
             .visualState(.disabled) { $0.background(.gray) }
             .id("c")
-            .body))
+            .node))
         XCTAssertEqual(disabled.props["background"], gray, "disabled before pressed")
     }
 
@@ -194,7 +194,7 @@ final class VisualStateTests: XCTestCase {
             .visualState(.pressed) { $0.background(.green) }
             .onVisualStateChanged { heard.append($0.name) }
             .id("c")
-            .body))
+            .node))
         XCTAssertEqual(heard, [], "not for the state it arrives in")
 
         _ = fire(renders, button, "pressed")
@@ -212,7 +212,7 @@ final class VisualStateTests: XCTestCase {
         let button = try XCTUnwrap(render(renders, Button("Save")
             .onVisualStateChanged(.pressed) { heard.append($0 == .pressed ? "pressed" : $0.name) }
             .id("c")
-            .body))
+            .node))
 
         _ = fire(renders, button, "pressed")
         _ = fire(renders, button, "released")
@@ -226,7 +226,7 @@ final class VisualStateTests: XCTestCase {
         let renders = Renders()
         var heard: [String] = []
         let button = try XCTUnwrap(renders.render(
-            stack([Button("Save").onVisualStateChanged(.pressed) { heard.append($0.name) }.id("c").body], id: "root"),
+            stack([Button("Save").onVisualStateChanged(.pressed) { heard.append($0.name) }.id("c").node], id: "root"),
             styles: sheet).child("c"))
 
         Renderer.shared.clearInvalidation()

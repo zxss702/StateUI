@@ -12,11 +12,11 @@ import UIKit
 @MainActor
 final class UIKitScrollDocument: UIKitLayoutView {
     /// The room inside the scroller's own edge.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidate() } }
     }
 
-    var orientation = ScrollOrientation.vertical {
+    var orientation = Axis.vertical {
         didSet { if orientation != oldValue { invalidate() } }
     }
 

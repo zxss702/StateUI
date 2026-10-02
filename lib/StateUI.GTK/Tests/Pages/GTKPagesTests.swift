@@ -91,7 +91,7 @@ final class GTKPagesTests: XCTestCase {
                     TitledPage(title: "Notes", actions: [
                         ToolbarItem("Delete").placement(.overflow).onClicked { heard.values.append("delete") },
                         ToolbarItem("Save").priority(1).onClicked { heard.values.append("save") },
-                        ToolbarItem("Add").priority(0).isEnabled(false).onClicked { heard.values.append("add") },
+                        ToolbarItem("Add").priority(0).disabled(!false).onClicked { heard.values.append("add") },
                     ])
                 } destination: { _ in
                     TitledPage(title: "Note")
@@ -209,7 +209,7 @@ final class GTKPagesTests: XCTestCase {
 
 /// A page with a title, maybe a log of its phases, the actions it puts on its header bar, and whether it hides its
 /// navigation bar.
-struct TitledPage: ContentView {
+struct TitledPage: View {
     let title: String
     var log: Received<String>? = nil
     var actions: [ToolbarItem] = []
@@ -217,42 +217,42 @@ struct TitledPage: ContentView {
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let log = self.log
         let title = self.title
         let page = self.page
 
-        return Label(title)
-            .onCreated {
+        return Text(title)
+            .onAppear {
                 page.title = title
                 page.toolbarItems = actions
                 if hidesBar { page.hasNavigationBar = false }
             }
-            .onChanged(page.phase) { log?.values.append("\(title) \(page.phase)") }
+            .onChange(of: page.phase) { log?.values.append("\(title) \(page.phase)") }
     }
 }
 
 /// A page that gives its window a green title bar with white on it.
-private struct TitleBarPage: ContentView {
+private struct TitleBarPage: View {
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         let window = self.window
-        return Label("under a title bar").onCreated {
+        return Text("under a title bar").onAppear {
             window.titleBar = TitleBar("Titled").background(Color("#00FF00")).barForegroundColor(Color("#FFFFFF"))
         }
     }
 }
 
 /// A page whose title view is a search field.
-private struct SearchingPage: ContentView {
+private struct SearchingPage: View {
     @Environment private var page: PageSession
     @State private var query = ""
 
-    var content: any View {
+    var body: some View {
         let page = self.page
         let query = $query
-        return Label("Results").onCreated {
+        return Text("Results").onAppear {
             page.title = "Search"
             page.titleView = TextField(query).placeholder("Search")
         }

@@ -78,7 +78,7 @@ extension MountedElement {
         look.size = number(.fontSize)
         look.attributes = value(.fontAttributes)?.enumeration.map { FontAttributes(rawValue: $0) } ?? .none
         look.family = value(.fontFamily)?.name
-        look.color = value(.textColor)
+        look.color = value(.foregroundStyle)
         look.letterSpacing = number(.characterSpacing) ?? 0
         look.lineHeight = number(.lineHeight)
         look.decorations = value(.textDecorations)?.enumeration.map { TextDecorations(rawValue: $0) } ?? .none

@@ -19,7 +19,7 @@ public enum TimeZoneInfo {
     ///
     /// - Returns: the IANA identifier of the host's local time zone.
     public static nonisolated(nonsending) func local() async throws -> String {
-        try await stateUICall(ApplicationContract.currentTimeZone)
+        try await stateUICall(AppContract.currentTimeZone)
     }
 
     /// How far a zone is from UTC on a given day.
@@ -43,7 +43,7 @@ public enum TimeZoneInfo {
         of zone: String? = nil,
         on date: CalendarDate? = nil
     ) async throws -> Duration {
-        let minutes = try await stateUICall(ApplicationContract.utcOffset, zone, date)
+        let minutes = try await stateUICall(AppContract.utcOffset, zone, date)
 
         return .seconds(minutes * 60)
     }

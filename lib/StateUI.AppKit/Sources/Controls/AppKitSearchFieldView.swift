@@ -43,7 +43,7 @@ final class AppKitSearchFieldView: NSSearchField, NSSearchFieldDelegate {
         writeText: Bool,
         placeholder: String?,
         placeholderColor: NSColor?,
-        foregroundColor: NSColor,
+        foregroundStyle: NSColor,
         backgroundColor: NSColor?,
         font: NSFont,
         horizontalAlignment: Int32?,
@@ -72,7 +72,7 @@ final class AppKitSearchFieldView: NSSearchField, NSSearchFieldDelegate {
             placeholderString = placeholder
         }
 
-        textColor = foregroundColor
+        textColor = foregroundStyle
         self.font = font
         isEnabled = enabled
         isEditable = !readOnly

@@ -9,7 +9,7 @@ import UIKit
 /// A page or an overlay: its one child within its padding (`SingleChildArithmetic`).
 @MainActor
 final class UIKitSingleChildView: UIKitLayoutView {
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet {
             guard padding != oldValue else { return }
             forgetMeasurements()

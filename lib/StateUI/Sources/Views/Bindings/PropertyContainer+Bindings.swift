@@ -135,7 +135,7 @@ extension PropertyContainer {
         onImage image: HostStorage,
         mode: StateMode,
         kind: StateKind,
-        moving: MotionValues,
+        moving: AnimationValues,
         conversion: Conversion? = nil
     ) -> Modified {
         modified {

@@ -17,11 +17,11 @@ final class WinUIButtonViewTests: XCTestCase {
                 VStack {
                     Button("Go")
                         .background(Color("#512BD4"))
-                        .textColor(Color("#FFFFFF"))
+                        .foregroundStyle(Color("#FFFFFF"))
                         .shape(.roundedRectangle(10))
-                        .padding(16, 11)
-                        .width(120)
-                        .height(40)
+                        .contentPadding(16, 11)
+                        .frame(width: 120)
+                        .frame(height: 40)
                         .horizontalAlignment(.start)
                 }
             }
@@ -34,7 +34,7 @@ final class WinUIButtonViewTests: XCTestCase {
     /// A button nothing styles is WinUI's own: the platform's fill, not the application's.
     func testAButtonNothingStylesIsWinUIsOwn() throws {
         try onUIThread {
-            let host = WinUIRenderer.running { VStack { Button("Plain").width(120).height(40).horizontalAlignment(.start) } }
+            let host = WinUIRenderer.running { VStack { Button("Plain").frame(width: 120).frame(height: 40).horizontalAlignment(.start) } }
             let button = try XCTUnwrap(host.views(WinUIButtonView.self).first)
 
             XCTAssertNotEqual(button.pixels(at: [(60, 3)]), [0xFF51_2BD4])

@@ -4,7 +4,7 @@
 import StateUI
 
 /// The window of a `OneWindowApplication`, its page built again each time the window is.
-public struct OneWindow: Window {
+public struct OneWindow: WindowScene {
     /// The page the window shows.
     public let content: @Sendable () -> any Page
 

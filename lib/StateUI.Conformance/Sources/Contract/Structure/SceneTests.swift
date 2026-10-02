@@ -13,7 +13,7 @@
     public static var cases: [ConformanceCase] {
         [
             ConformanceCase("aSceneHoldsItsWindow", proves: [Covered(SceneContract.self)]) { s in
-                s.start { VStack { Label("In a scene").id("label") } }
+                s.start { VStack { Text("In a scene").id("label") } }
 
                 _ = try s.element(ofType: SceneContract.nodeType)
                 s.expect(try s.held(VisualElementContract.isVisible, on: s.element("label")), true)
@@ -23,7 +23,7 @@
             ]) { s in
                 let log = Received<ScenePhase>()
                 s.start { ScenePhasePage(log: log) }
-                let window = try s.element(ofType: WindowContract.nodeType)
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
                 s.settle { log.values.last == .active }
 
                 try s.perform(.switchAway, on: window)
@@ -44,60 +44,60 @@
                 s.settle { !sessions.values.isEmpty }
                 s.expect(sessions.values.first?.scenes.count, 1)
 
-                try s.perform(.close, on: s.element(ofType: WindowContract.nodeType))
+                try s.perform(.close, on: s.element(ofType: WindowSceneContract.nodeType))
                 s.settle { sessions.values.first?.scenes.isEmpty == true }
                 s.expect(sessions.values.first?.scenes.count, 0, "the scene ended")
             },
             ConformanceCase("aWindowOfItsOwnTheUserClosesIsHeard", proves: [
                 Covered(SceneContract.windowClosed),
-            ], needs: [Covered(WindowContract.windowType)]) { s in
+            ], needs: [Covered(WindowSceneContract.windowType)]) { s in
                 try s.start(application: { NotesApplication() })
                 try s.perform(.activate, on: s.element("open"))
-                s.settle { s.elements(ofType: WindowContract.nodeType).count == 2 }
-                guard let note = s.elements(ofType: WindowContract.nodeType).last else { return s.fail("no second window") }
+                s.settle { s.elements(ofType: WindowSceneContract.nodeType).count == 2 }
+                guard let note = s.elements(ofType: WindowSceneContract.nodeType).last else { return s.fail("no second window") }
 
                 try s.perform(.close, on: note)
-                s.settle { s.elements(ofType: WindowContract.nodeType).count == 1 }
-                s.expect(s.elements(ofType: WindowContract.nodeType).count, 1, "the scene let the note's window go")
+                s.settle { s.elements(ofType: WindowSceneContract.nodeType).count == 1 }
+                s.expect(s.elements(ofType: WindowSceneContract.nodeType).count, 1, "the scene let the note's window go")
             },
             ConformanceCase("aWindowThePlatformRestoresComesBackForItsValue", proves: [
                 Covered(SceneContract.windowRestored),
             ]) { s in
                 try s.start(application: { NotesApplication() })
                 try s.perform(.activate, on: s.element("open"))
-                s.settle { s.elements(ofType: WindowContract.nodeType).count == 2 }
+                s.settle { s.elements(ofType: WindowSceneContract.nodeType).count == 2 }
 
                 try s.start(application: { NotesApplication() })
-                s.settle { s.elements(ofType: WindowContract.nodeType).count == 2 }
-                guard let note = s.elements(ofType: WindowContract.nodeType).last else { return s.fail("nothing restored") }
-                s.expect(try s.held(WindowContract.windowValue, on: note), "7", "the note restored for its number")
+                s.settle { s.elements(ofType: WindowSceneContract.nodeType).count == 2 }
+                guard let note = s.elements(ofType: WindowSceneContract.nodeType).last else { return s.fail("nothing restored") }
+                s.expect(try s.held(WindowSceneContract.windowValue, on: note), "7", "the note restored for its number")
             },
         ]
     }
 }
 
 /// A page saying each phase its scene goes through.
-struct ScenePhasePage: ContentView {
+struct ScenePhasePage: View {
     let log: Received<ScenePhase>
 
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let (log, scene) = (self.log, self.scene)
-        return Label("Scene")
-            .onCreated { log.values.append(scene.phase) }
-            .onChanged(scene.phase) { log.values.append(scene.phase) }
+        return Text("Scene")
+            .onAppear { log.values.append(scene.phase) }
+            .onChange(of: scene.phase) { log.values.append(scene.phase) }
     }
 }
 
 /// A page handing its application's session to the case.
-struct ApplicationPage: ContentView {
+struct ApplicationPage: View {
     let sessions: Received<ApplicationSession>
 
     @Environment private var application: ApplicationSession
 
-    var content: any View {
+    var body: some View {
         let (sessions, application) = (self.sessions, self.application)
-        return Label("Application").onCreated { sessions.values.append(application) }
+        return Text("App").onAppear { sessions.values.append(application) }
     }
 }

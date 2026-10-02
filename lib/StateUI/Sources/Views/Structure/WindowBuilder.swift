@@ -6,17 +6,17 @@
 @resultBuilder
 public enum WindowBuilder {
     /// A window written as a statement.
-    public static func buildExpression(_ window: Window) -> Window { window }
+    public static func buildExpression(_ window: WindowScene) -> WindowScene { window }
 
     /// The one window the closure holds.
-    public static func buildBlock(_ window: Window) -> Window { window }
+    public static func buildBlock(_ window: WindowScene) -> WindowScene { window }
 
     /// The `if` branch of an if/else.
-    public static func buildEither(first window: Window) -> Window { window }
+    public static func buildEither(first window: WindowScene) -> WindowScene { window }
 
     /// The `else` branch.
-    public static func buildEither(second window: Window) -> Window { window }
+    public static func buildEither(second window: WindowScene) -> WindowScene { window }
 
     /// What an `if #available(…)` block builds.
-    public static func buildLimitedAvailability(_ window: Window) -> Window { window }
+    public static func buildLimitedAvailability(_ window: WindowScene) -> WindowScene { window }
 }

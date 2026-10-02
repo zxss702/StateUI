@@ -14,7 +14,7 @@ extension OverlayKey {
 
 /// A page filled by a button, presenting its sheets from one state, writing its menus from another and laying a
 /// notice over its window from a third, which tells its scene.
-private struct OverlaidPage: ContentView {
+private struct OverlaidPage: View {
     let sheets: State<[Int]>
     let menus: State<Bool>
     let scenes: Received<SceneSession>
@@ -24,22 +24,22 @@ private struct OverlaidPage: ContentView {
     @Environment private var scene: SceneSession
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let (sheets, menus, scenes, notice) = (self.sheets, self.menus, self.scenes, self.notice)
         let (window, scene, page) = (self.window, self.scene, self.page)
         return Button("Beneath")
             .horizontalAlignment(.fill)
             .verticalAlignment(.fill)
-            .onCreated {
+            .onAppear {
                 scenes.values.append(scene)
-                window.modalStack = ModalStack(sheets.projectedValue) { number in Label("Sheet \(number)") }
+                window.modalStack = ModalStack(sheets.projectedValue) { number in Text("Sheet \(number)") }
             }
-            .onChanged(menus.wrappedValue) {
+            .onChange(of: menus.wrappedValue) {
                 page.menuBar = menus.wrappedValue ? [Menu("File") { MenuItem("New") }] : []
             }
-            .onChanged(notice.wrappedValue) {
+            .onChange(of: notice.wrappedValue) {
                 window.overlays[.notice] = notice.wrappedValue
-                    ? Label("Offline").horizontalAlignment(.center).verticalAlignment(.start) : nil
+                    ? Text("Offline").horizontalAlignment(.center).verticalAlignment(.start) : nil
             }
     }
 }

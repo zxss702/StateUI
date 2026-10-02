@@ -44,9 +44,9 @@ extension TimePickerProperties {
 /// gets anywhere.
 ///
 /// The time is a `ClockTime`: hours, minutes and seconds since midnight. The
-/// picker takes `.textColor` but has no `.text`, the field showing the
+/// picker takes `.foregroundStyle` but has no `.text`, the field showing the
 /// formatted time.
-public struct TimePicker: View, TextStyleElement, FontElement, TimePickerProperties {
+public struct TimePicker: VisualElement, TextStyleElement, FontElement, TimePickerProperties{
     /// The node this control describes.
     public var node: Node
 

@@ -7,7 +7,7 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// The theme, the user's locale, the battery and the network, told to the core as the host starts and whenever one
+/// The color scheme, the user's locale, the battery and the network, told to the core as the host starts and whenever one
 /// changes, for as long as the application runs.
 /// Design: docs/design/platforms/uikit/runtime.md#the-environment
 @MainActor
@@ -34,8 +34,8 @@ final class UIKitEnvironment {
         watch()
     }
 
-    /// Follows the theme of `scene`, the first iOS connected: what it stands in now, then each change - the
-    /// theme is the whole application's, which every scene follows alike.
+    /// Follows the color scheme of `scene`, the first iOS connected: what it stands in now, then each change - the
+    /// color scheme is the whole application's, which every scene follows alike.
     func followTheme(of scene: UIWindowScene) {
         guard watchedScene == nil else { return }
         reportChange { self.reportTheme(scene.traitCollection.userInterfaceStyle) }
@@ -45,7 +45,7 @@ final class UIKitEnvironment {
         }
     }
 
-    /// Stops following the theme of the scene it followed, which stays.
+    /// Stops following the color scheme of the scene it followed, which stays.
     func stopFollowingTheme(of scene: UIWindowScene) {
         guard let watchedScene else { return }
         scene.unregisterForTraitChanges(watchedScene)
@@ -81,9 +81,9 @@ final class UIKitEnvironment {
         reportChange { report(self) }
     }
 
-    /// The theme a scene stands in: dark, else light.
+    /// The color scheme a scene stands in: dark, else light.
     func reportTheme(_ style: UIUserInterfaceStyle) {
-        core.setTheme(style == .dark ? .dark : .light)
+        core.setColorScheme(style == .dark ? .dark : .light)
     }
 
     func reportLocale() {

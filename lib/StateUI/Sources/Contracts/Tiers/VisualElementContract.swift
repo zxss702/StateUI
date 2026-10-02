@@ -92,15 +92,15 @@ public enum VisualElementContract: Contract {
         "pivotY", layer: .native, moves: .transform)
 
     /// How far the element is turned in the screen's plane, in degrees.
-    public static let rotation = ElementProperty<Self, Double>(
+    public static let rotation = ElementProperty<Self, Angle>(
         "rotation", layer: .native, moves: .transform)
 
     /// How far the element is tipped about its horizontal axis, in degrees.
-    public static let rotationX = ElementProperty<Self, Double>(
+    public static let rotationX = ElementProperty<Self, Angle>(
         "rotationX", layer: .native, moves: .transform)
 
     /// How far the element is turned about its vertical axis, in degrees.
-    public static let rotationY = ElementProperty<Self, Double>(
+    public static let rotationY = ElementProperty<Self, Angle>(
         "rotationY", layer: .native, moves: .transform)
 
     /// How much the element is scaled, both ways.

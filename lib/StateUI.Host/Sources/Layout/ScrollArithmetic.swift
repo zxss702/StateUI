@@ -9,7 +9,7 @@
     /// The content's natural size for the width offered; a scroller along its width offers none.
     @MainActor
     public static func contentSize<Child: LayoutChild>(
-        of item: Child?, padding: Insets, orientation: ScrollOrientation, width offered: Double?
+        of item: Child?, padding: EdgeInsets, orientation: Axis, width offered: Double?
     ) -> LayoutSize {
         guard let item else { return .zero }
 
@@ -25,7 +25,7 @@
     /// The document's size in `viewport`, never smaller than it, and where the child stands in it.
     @MainActor
     public static func arrange<Child: LayoutChild>(
-        _ item: Child, padding: Insets, orientation: ScrollOrientation, in viewport: LayoutSize
+        _ item: Child, padding: EdgeInsets, orientation: Axis, in viewport: LayoutSize
     ) -> (document: LayoutSize, place: Rect) {
         let values = item.values
         let margin = values.margin
@@ -56,12 +56,12 @@
     }
 
     /// Whether the content is held to the scroller's width: it scrolls only down, or not at all.
-    private static func fitsWidth(_ orientation: ScrollOrientation) -> Bool {
+    private static func fitsWidth(_ orientation: Axis) -> Bool {
         orientation == .vertical || orientation == .neither
     }
 
     /// The room the padding and the child's margin take, across and down.
-    private static func insets(_ margin: Insets, _ padding: Insets) -> (across: Double, down: Double) {
+    private static func insets(_ margin: EdgeInsets, _ padding: EdgeInsets) -> (across: Double, down: Double) {
         (padding.left + padding.right + margin.left + margin.right,
          padding.top + padding.bottom + margin.top + margin.bottom)
     }

@@ -56,7 +56,7 @@
         trailing = titleBar?.slotContent(.trailingContent)
         (background, foreground) = (page ?? window).barColors
         menuBar = page?.children.first { $0.type == .menuBar }
-        sidebarToggle = arrangement?.type == .splitView ? arrangement : nil
+        sidebarToggle = arrangement?.type == .navigationSplitView ? arrangement : nil
     }
 
     /// Whether the chrome shows what an element of `type` moves on a frame: a window's frame, a title bar's own
@@ -65,5 +65,5 @@
         followed.contains(type)
     }
 
-    private static let followed: Set<NodeType> = [.window, .titleBar, .navigationStack, .tabbedView]
+    private static let followed: Set<NodeType> = [.windowScene, .titleBar, .navigationStack, .tabView]
 }

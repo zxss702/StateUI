@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 
 /// A layout whose children animate to the places a patch gives them.
-/// Design: docs/design/host/motion.md#layout-motion
+/// Design: docs/design/host/animation.md#layout-animation
 @MainActor
 class AndroidTravellingLayout: AndroidLayoutView {
     /// How the children travel to their places, by the host layer's rule.

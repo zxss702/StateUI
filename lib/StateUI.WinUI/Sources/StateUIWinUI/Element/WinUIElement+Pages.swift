@@ -21,12 +21,12 @@ extension WinUIElement {
     /// Keeps an arrangement's own parts with the tree: a tabbed view's row, a split view's sidebar.
     func arrangePages(changed: Set<Prop>) {
         switch type {
-        case .tabbedView:
+        case .tabView:
             guard let tabs = view as? WinUITabbedView else { return }
             tabs.tabsShownByWindow = element.tabsStandInWindow
             tabs.show(children.map { $0.value(.title)?.string ?? "" }, requested: value(.currentPage)?.number.map { Int($0) })
             tabs.onSelection = { [weak self] previous, selected in self?.tabChosen(from: previous, to: selected) }
-        case .splitView:
+        case .navigationSplitView:
             guard let split = view as? WinUISplitView else { return }
             // The split's first room is decided inside a layout pass, and said once the pass is over.
             split.onPresentationChanged = { [weak self] presented in
@@ -47,7 +47,7 @@ extension WinUIElement {
 
     /// The user showed or hid a split view's sidebar through the window's chrome.
     func changeSidebarVisibility(to presented: Bool) {
-        guard type == .splitView, let split = view as? WinUISplitView, split.isPresented != presented else { return }
+        guard type == .navigationSplitView, let split = view as? WinUISplitView, split.isPresented != presented else { return }
 
         split.present(presented)
         sidebarShown(presented)

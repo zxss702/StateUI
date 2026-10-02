@@ -14,17 +14,17 @@
         public var values: [String: HostValue]
 
         /// Its windows of a kind of their own, in order.
-        public var windows: [Window]
+        public var windows: [WindowScene]
 
         /// A scene keeping `values`, with `windows` open.
-        public init(values: [String: HostValue] = [:], windows: [Window] = []) {
+        public init(values: [String: HostValue] = [:], windows: [WindowScene] = []) {
             self.values = values
             self.windows = windows
         }
     }
 
     /// A window of a kind of its own: the kind, and the text of the value it was opened for, where it was.
-    public struct Window: Equatable, Sendable {
+    public struct WindowScene: Equatable, Sendable {
         /// The kind a scene declares it under.
         public let kind: String
 
@@ -57,9 +57,9 @@
             case ("value", 3) where !scenes.isEmpty:
                 if let value = Self.value(fields[2]) { scenes[scenes.count - 1].values[fields[1]] = value }
             case ("window", 2) where !scenes.isEmpty:
-                scenes[scenes.count - 1].windows.append(Window(kind: fields[1], value: nil))
+                scenes[scenes.count - 1].windows.append(WindowScene(kind: fields[1], value: nil))
             case ("window", 3) where !scenes.isEmpty:
-                scenes[scenes.count - 1].windows.append(Window(kind: fields[1], value: fields[2]))
+                scenes[scenes.count - 1].windows.append(WindowScene(kind: fields[1], value: fields[2]))
             default:
                 continue
             }
@@ -73,7 +73,7 @@
             Scene(
                 values: values[Self.key(of: scene)] ?? [:],
                 windows: scene.windows.compactMap { window in
-                    window.value(.windowType)?.name.map { Window(kind: $0, value: window.value(.windowValue)?.string) }
+                    window.value(.windowType)?.name.map { WindowScene(kind: $0, value: window.value(.windowValue)?.string) }
                 })
         }
     }

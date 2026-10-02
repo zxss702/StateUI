@@ -62,7 +62,7 @@ private final class TypingForm {
     @State var query = ""
 }
 
-private struct TypingWindow: Window {
+private struct TypingWindow: WindowScene {
     let form: TypingForm
 
     var page: any Page {
@@ -74,9 +74,17 @@ private struct TypingWindow: Window {
     }
 }
 
-private struct TypingApp: Application {
+private struct TypingApp: App {
     let form: TypingForm
 
-    var scene: any Scene { TypingWindow(form: form) }
+    init() {
+        form = TypingForm()
+    }
+
+    init(form: TypingForm) {
+        self.form = form
+    }
+
+    var body: some Scene { TypingWindow(form: form) }
 }
 #endif

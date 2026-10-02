@@ -11,7 +11,7 @@ enum GTKRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
         "Canvas", "Content", "ContextMenu", "DatePicker", "LeadingContent", "Map", "Menu", "MenuBar",
-        "MenuItem", "MenuSeparator", "ModalStack", "Pin", "PositionIndicator", "TimePicker", "TrailingContent",
+        "MenuItem", "Divider", "ModalStack", "Pin", "PositionIndicator", "TimePicker", "TrailingContent",
         "WebView",
     ]
 
@@ -33,9 +33,9 @@ enum GTKRealization {
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own
-        .unrealized("ItemsView", "style", why: "No style can name an ItemsView: a style names its control by an "
+        .unrealized("List", "style", why: "No style can name an List: a style names its control by an "
             + "initializer that sets nothing, which a list of some items has not."),
-        .partial("Label", "background", missing: "A brush fills the box with its first colour alone."),
+        .partial("Text", "background", missing: "A brush fills the box with its first colour alone."),
         .complete("Page", "appearing"),
         .complete("Page", "disappearing"),
         .complete("Page", "hasNavigationBar"),
@@ -47,10 +47,10 @@ enum GTKRealization {
         .complete("Span", "fontAttributes"),
         .complete("Span", "fontSize"),
         .complete("Span", "text"),
-        .complete("Span", "textColor"),
+        .complete("Span", "foregroundStyle"),
         .complete("Span", "textDecorations"),
-        .complete("SplitView", "isSidebarVisible"),
-        .complete("TabbedView", "currentPage"),
+        .complete("NavigationSplitView", "isSidebarVisible"),
+        .complete("TabView", "currentPage"),
         .complete("TitleBar", "background"),
         .complete("TitleBar", "barForegroundColor"),
         .complete("ToolbarItem", "placement"),

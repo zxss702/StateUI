@@ -53,12 +53,12 @@ dragging the slider rebuilds nothing:
 ## In Code
 
 ```swift
-struct CounterPage: ContentView {
+struct CounterPage: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("Tapped \(count) times")
+            Text("Tapped \(count) times")
             Button("Tap me").onClicked { count += 1 }
         }
     }

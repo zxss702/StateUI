@@ -18,7 +18,7 @@ extension HostPatch {
         if case .arranged = children { return true }
         return false
     }
-    var lanes: MotionLanes { motion?.lanes ?? .all }
+    var lanes: AnimationLanes { animation?.lanes ?? .all }
 
     /// The patch at a path of identities below this one, or nil where the
     /// message says nothing about one of them.
@@ -92,10 +92,10 @@ extension HostActCall {
 /// (see `Renderer.stateChanged`). The element counts as a reader for as long as
 /// the tree that holds it stands, so the `Renders` that drew it is kept alive
 /// for as long as the reader must count.
-private struct Reading: ContentView {
+private struct Reading: View {
     let read: () -> Void
 
-    var content: any View {
+    var body: some View {
         read()
         return ModifiedContent(node: label("reader"))
     }
@@ -110,7 +110,7 @@ private struct Reading: ContentView {
 ///     _ = reader
 func reading(_ read: @escaping () -> Void) -> Renders {
     let renders = Renders()
-    renders.render(Reading(read: read).body)
+    renders.render(Reading(read: read).node)
     return renders
 }
 
@@ -135,10 +135,10 @@ final class Renders {
     func render(
         _ tree: Node,
         styles: StyleSheet? = nil,
-        motion: Motion = .standard,
+        animation: Animation = .standard,
         changed: Set<ObjectIdentifier> = []
     ) -> HostPatch {
-        differ.motion = motion
+        differ.animation = animation
         differ.named = Renderer.shared.pendingNames
 
         let result = differ.reconcile(rendered, with: tree, styles: styles, changed: changed)
@@ -150,7 +150,7 @@ final class Renders {
     /// Renders a tree the way the RENDERER sends it: the walk, then the
     /// handlers it found run before the message leaves and what they wrote
     /// walked into it - see `Renderer.renderHost`. What a page or a window
-    /// writes into its session from `.onCreated` is in the patch this answers.
+    /// writes into its session from `.onAppear` is in the patch this answers.
     ///
     /// The invalidation is TAKEN, as the renderer takes it: what a test wrote
     /// goes in as `changed`, what the passes walk is what the handlers wrote,
@@ -162,7 +162,7 @@ final class Renders {
         styles: StyleSheet? = nil,
         changed: Set<ObjectIdentifier> = []
     ) -> HostPatch {
-        differ.motion = .standard
+        differ.animation = .standard
         differ.named = Renderer.shared.pendingNames
 
         let result = differ.settling(
@@ -427,10 +427,10 @@ enum SourceTree {
     /// property name, so the scan reads the member.
     /// THREE ways, and the third is the one a scan can miss: a type that is
     /// not a `PropertyContainer` cannot write `setValue`, so it writes into
-    /// `props` directly - a `Window`'s properties, a menu item's - and the
+    /// `props` directly - a `WindowScene`'s properties, a menu item's - and the
     /// subscript is therefore read as well, without a leading dot, which is
     /// also how the properties a PAGE contributes (`props[.title]` on a local
-    /// dictionary in Application.swift) are seen.
+    /// dictionary in App.swift) are seen.
     ///
     /// A member written with its contract counts in the same places -
     /// `setValue(VisualElementContract.opacity, …)`, `$0.write(ViewContract.tapCount, …)`,
@@ -461,8 +461,8 @@ enum SourceTree {
     }
 
     /// Every EVENT a source file subscribes - `addHandler(.scrollYChanged)`,
-    /// or the member with its contract, `onEvent(ViewContract.tapped, …)` and
-    /// `addHandler(ViewContract.tapped.token, …)`, resolved as `propertyKeys`
+    /// or the member with its contract, `onEvent(ViewContract.tapGesture, …)` and
+    /// `addHandler(ViewContract.tapGesture.token, …)`, resolved as `propertyKeys`
     /// resolves one.
     ///
     /// The sibling of `propertyKeys`, and the reason it exists: a modifier
@@ -529,7 +529,7 @@ enum SourceTree {
     }()
 
     /// Every node type a source file describes: each node it builds, built
-    /// through its contract - `Node(contract: LabelContract.self)` - the one
+    /// through its contract - `Node(contract: TextContract.self)` - the one
     /// road a library source builds a node by
     /// (`testEveryNodeIsBuiltThroughItsContract`). A contract is named for its
     /// node type with `Contract` after it (`testEveryNodeTypeIsItsContractsName`),
@@ -566,7 +566,7 @@ enum SourceTree {
 
     /// One of the library's own source files, read as text - found by its name
     /// wherever it sits, the names being unique across the sources, or by its
-    /// path under the sources, `Views/Text/Label.swift`.
+    /// path under the sources, `Views/Text/Text.swift`.
     static func text(in file: String) throws -> String {
         let found = try allSources().filter { $0.path == file || $0.path.hasSuffix("/" + file) }
         guard found.count == 1, let source = found.first else {
@@ -583,7 +583,7 @@ enum SourceTree {
 
     /// The names one vocabulary's tokens stand for, read off Tokens.swift:
     /// a token stands under its member's name, and a node type's is that name
-    /// capitalized - `"Prop"` answers `fontSize`, `"NodeType"` answers `Label`.
+    /// capitalized - `"Prop"` answers `fontSize`, `"NodeType"` answers `Text`.
     static func tokenNames(of vocabulary: String) throws -> Set<String> {
         tokenNames(of: vocabulary, in: try text(in: "Tokens.swift"))
     }
@@ -650,7 +650,7 @@ enum SourceTree {
     /// Every Swift runtime's sources: the host layer, `lib/StateUI.Host/Sources`,
     /// and the package of each Swift host, for the guards that hold every
     /// runtime to one architecture. A path is relative to `lib/` and written
-    /// with forward slashes - `StateUI.Host/Sources/Motion/Animator.swift`.
+    /// with forward slashes - `StateUI.Host/Sources/Animation/Animator.swift`.
     static func runtimeSources() throws -> [(path: String, text: String)] {
         let lib = repository.appendingPathComponent("lib")
         let roots = [
@@ -715,10 +715,10 @@ enum SourceTree {
     /// one, so they have no case and no style. Their modifiers are exercised
     /// by `PageBarTests`, which is where a page is described.
     ///
-    /// A Span is one run of text inside a Label - text and a font, and no
+    /// A Span is one run of text inside a Text - text and a font, and no
     /// opacity, no margin, no size - so it can neither be built alone nor
     /// styled. Spans is the collection holding the runs. Both are exercised by
-    /// the Label case, which builds them.
+    /// the Text case, which builds them.
     ///
     /// ContextMenu is the one written by a MODIFIER rather than by a type:
     /// `.contextMenu` on any view appends it. It is a menu, not a view - and
@@ -731,7 +731,7 @@ enum SourceTree {
     static let notViews: Set<String> = [
         "Spans", "Span",
         "ToolbarItem", "Menu",
-        "MenuItem", "MenuSeparator",
+        "MenuItem", "Divider",
         "ContextMenu",
         "Pin",
     ]
@@ -749,15 +749,15 @@ enum SourceTree {
     /// The files under Views/ that describe controls, by name: a file's folder
     /// is its topic, and a guard reads it by the name the sources keep unique.
     ///
-    /// Application.swift and the style files describe the application and the
+    /// App.swift and the style files describe the application and the
     /// styles its controls are given - neither a control, and each with tests
     /// of its own; the shared tier's files and ViewBuilder.swift describe no
     /// type at all.
     ///
-    /// NavigationStack.swift and TabbedView.swift are the same kind of thing: a
+    /// NavigationStack.swift and TabView.swift are the same kind of thing: a
     /// PAGE arranges other pages, so there is no control to build one on and
     /// nothing about it can be styled - what they do is a stack and a set of
-    /// tabs, and NavigationStackTests and TabbedViewTests are where those are
+    /// tabs, and NavigationStackTests and TabViewTests are where those are
     /// checked. ModalStack.swift arranges pages too, over the
     /// window rather than inside it.
     ///
@@ -772,11 +772,11 @@ enum SourceTree {
     static func controlSources() throws -> [String] {
         let views = sources.appendingPathComponent("Views")
         let skipped: Set = [
-            "Application.swift", "ViewBuilder.swift",
+            "App.swift", "ViewBuilder.swift",
             "Style.swift", "StyleBag+Properties.swift", "StyleBuilder.swift", "StyleSheet.swift",
             "StyleTarget.swift", "VisualState.swift", "VisualStateList.swift",
             "VisualElement+VisualStates.swift",
-            "NavigationStack.swift", "TabbedView.swift", "SplitView.swift",
+            "NavigationStack.swift", "TabView.swift", "NavigationSplitView.swift",
             "ModalStack.swift",
         ]
 
@@ -884,7 +884,7 @@ extension ElementId: CustomStringConvertible {
 
 /// A label, as short as the tests need one.
 func label(_ text: String, id: String? = nil) -> Node {
-    Node(type: "Label", id: id, props: ["text": .string(text)])
+    Node(type: "Text", id: id, props: ["text": .string(text)])
 }
 
 /// A button with a click handler, for the tests about handler ids.
@@ -898,17 +898,17 @@ func stack(_ children: [Node], id: String? = nil) -> Node {
     Node(type: "VStack", id: id, children: children)
 }
 
-/// Runs the closure with the system theme set to `theme`, and puts back
+/// Runs the closure with the system color scheme set to `color scheme`, and puts back
 /// whatever it was.
 ///
-/// The theme is what the differ reads as it builds an element wearing a pair
+/// The color scheme is what the differ reads as it builds an element wearing a pair
 /// - see Color.swift - so this is how a test asks for the other half.
 /// The provider is the one the host pushes into, which is exactly what a real
-/// theme change writes.
-func withTheme(_ theme: Theme, _ body: () -> Void) {
-    let held = StandardEnvironment.app.requestedTheme
-    StandardEnvironment.app.requestedTheme = theme
-    defer { StandardEnvironment.app.requestedTheme = held }
+/// color scheme change writes.
+func withTheme(_ colorScheme: ColorScheme, _ body: () -> Void) {
+    let held = StandardEnvironment.appInfo.colorScheme
+    StandardEnvironment.appInfo.colorScheme = colorScheme
+    defer { StandardEnvironment.appInfo.colorScheme = held }
 
     body()
 }
@@ -966,7 +966,7 @@ func moved(_ number: Int32, to lanes: [Double], mask: UInt64 = ~0) {
 
     let journey = HostJourney(
         value: said[0], destination: said[1], velocity: said[2],
-        motion: standing.motion, completion: standing.completion, stopped: standing.stopped)
+        animation: standing.animation, completion: standing.completion, stopped: standing.stopped)
 
     XCTAssertTrue(
         HostBoundary.report(journey, updating: update, through: binding),

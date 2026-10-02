@@ -32,7 +32,7 @@ public enum PropValue: Equatable, Sendable {
     /// True or false.
     case bool(Bool)
 
-    /// A fixed-length list of numbers - a structured value such as `Insets`, as
+    /// A fixed-length list of numbers - a structured value such as `EdgeInsets`, as
     /// left, top, right, bottom.
     case numbers([Double])
 
@@ -46,7 +46,7 @@ public enum PropValue: Equatable, Sendable {
     /// brush (Brush.swift).
     case values([PropValue])
 
-    /// A value with a half for each theme, resolved by the differ as the element is
+    /// A value with a half for each color scheme, resolved by the differ as the element is
     /// built. Never handed to a host.
     /// Design: docs/design/core/identity-and-diffing.md#themes
     indirect case themed(light: PropValue, dark: PropValue)
@@ -61,14 +61,14 @@ public enum PropValue: Equatable, Sendable {
     }
 
     /// Which kind of value this is where the value itself says: a colour.
-    var kind: MotionValues {
+    var kind: AnimationValues {
         switch self {
         case .color, .values: .colour
         default: []
         }
     }
 
-    /// Whether this value has a half for each theme anywhere in it.
+    /// Whether this value has a half for each color scheme anywhere in it.
     var isThemed: Bool {
         switch self {
         case .themed: true
@@ -77,13 +77,13 @@ public enum PropValue: Equatable, Sendable {
         }
     }
 
-    /// This value with the half in force picked - a read of the theme.
-    func resolvingTheme() -> PropValue {
+    /// This value with the half in force picked - a read of the color scheme.
+    func resolvingColorScheme() -> PropValue {
         switch self {
         case .themed(let light, let dark):
-            (StandardEnvironment.app.requestedTheme == .dark ? dark : light).resolvingTheme()
+            (StandardEnvironment.appInfo.colorScheme == .dark ? dark : light).resolvingColorScheme()
         case .values(let values):
-            .values(values.map { $0.resolvingTheme() })
+            .values(values.map { $0.resolvingColorScheme() })
         default:
             self
         }
@@ -212,7 +212,7 @@ public typealias ValueEventHandler<each Value> = nonisolated(nonsending) (repeat
 /// A type no host resolves draws the unknown-control marker rather than hiding
 /// the rest of the interface.
 public struct Node {
-    /// The element's StateUI type token, such as `.label`,
+    /// The element's StateUI type token, such as `.text`,
     /// `.vStack`, or an application's own registered type.
     public internal(set) var type: NodeType
 
@@ -285,17 +285,17 @@ public struct Node {
         reportsFrame || children.contains(where: \.reportsFrame)
     }
 
-    /// How this element's values animate - what `.motion(_:)` wrote - or nil for the
-    /// application's. Per node, never inherited (Motion.swift).
-    var motion: MotionPlan?
+    /// How this element's values animate - what `.animation(_:)` wrote - or nil for the
+    /// application's. Per node, never inherited (Animation.swift).
+    var animation: AnimationPlan?
 
     /// The values `.onChanged` watches, in written order (Changes.swift).
     var watches: [Watch] = []
 
-    /// What `.onCreated` runs, in written order (Lifetime.swift).
+    /// What `.onAppear` runs, in written order (Lifetime.swift).
     var created: [EventHandler] = []
 
-    /// What `.onDestroying` runs, in written order.
+    /// What `.onDisappear` runs, in written order.
     var destroying: [EventHandler] = []
 
     /// The engines this element runs, in written order; the differ registers them
@@ -354,14 +354,14 @@ public struct Node {
 }
 
 /// Anything that describes itself as a UI tree. A view is a value; StateUI reads
-/// `body` whenever it needs the element's description.
+/// `node` whenever it needs the element's description.
 public protocol Element {
     /// This view as a node, read afresh on every render.
-    var body: Node { get }
+    var node: Node { get }
 }
 
 /// A `Node` is an `Element`, so raw nodes and controls mix in one builder.
 extension Node: Element {
-    /// Itself - a node already is what a body describes.
-    public var body: Node { self }
+    /// Itself - a node already is what a view describes.
+    public var node: Node { self }
 }

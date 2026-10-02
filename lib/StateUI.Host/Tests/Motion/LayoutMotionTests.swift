@@ -132,7 +132,7 @@ final class LayoutMotionTests: XCTestCase {
 
     /// A layout told to move nothing places its children at once, and a child that joins it is simply there.
     func testALayoutToldToMoveNothingPlacesAtOnce() {
-        let layout = HandWoundLayout(motion: HostLayoutMotion(motion: .none, lanes: .all))
+        let layout = HandWoundLayout(animation: HostLayoutMotion(animation: .none, lanes: .all))
         let moved = Placed()
         layout.arrange([(moved, 1, Self.row(1))])
 
@@ -145,9 +145,9 @@ final class LayoutMotionTests: XCTestCase {
 
     /// A layout that says nothing of its own, or that inherits, travels the way the application says.
     func testALayoutThatSaysNothingTravelsTheApplicationsWay() {
-        for said in [nil, HostLayoutMotion(motion: .inherited, lanes: .all)] {
-            let layout = HandWoundLayout(motion: said)
-            layout.motion.applicationMotion = .eased(200, .linear)
+        for said in [nil, HostLayoutMotion(animation: .inherited, lanes: .all)] {
+            let layout = HandWoundLayout(animation: said)
+            layout.animation.applicationMotion = .eased(200, .linear)
             let moved = Placed()
             layout.arrange([(moved, 1, Self.row(1))])
 
@@ -207,7 +207,7 @@ final class LayoutMotionTests: XCTestCase {
         layout.arrange([(moved, 1, Self.row(0, y: 100))])
         layout.frame(at: 100)
 
-        layout.motion.remove(mount: 1)
+        layout.animation.remove(mount: 1)
         layout.frame(at: 150)
 
         XCTAssertFalse(layout.animator.isMoving)
@@ -238,21 +238,21 @@ private final class Placed: PlacedView {
 private final class HandWoundLayout {
     let animator = Animator()
     let places = TravellingPlaces()
-    private(set) var motion: LayoutMotion!
+    private(set) var animation: LayoutMotion!
     var reducesMotion = false
 
     /// The children that joined fading in, and the law each fades under.
-    private(set) var fades: [UInt64: Motion] = [:]
+    private(set) var fades: [UInt64: Animation] = [:]
 
     private var now = 0.0
 
-    /// A layout whose patches say `motion`: 200 ms on a linear law, every side of a place.
-    init(motion said: HostLayoutMotion? = HostLayoutMotion(motion: .eased(200, .linear), lanes: .all)) {
-        motion = LayoutMotion(
+    /// A layout whose patches say `animation`: 200 ms on a linear law, every side of a place.
+    init(animation said: HostLayoutMotion? = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)) {
+        animation = LayoutMotion(
             animator: animator, now: { [unowned self] in self.now },
             reducesMotion: { [unowned self] in self.reducesMotion })
-        places.layoutMotion = motion
-        places.motion = said
+        places.layoutMotion = animation
+        places.animation = said
     }
 
     /// An arrangement `width` wide, after a patch where `patched`; every child states its width of 100 but the
@@ -279,6 +279,6 @@ private final class HandWoundLayout {
     /// A display frame at `time`.
     func frame(at time: Double) {
         now = time
-        motion.follow(animator.advance(to: time, reducesMotion: reducesMotion))
+        animation.follow(animator.advance(to: time, reducesMotion: reducesMotion))
     }
 }

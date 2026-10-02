@@ -27,7 +27,7 @@ final class UIKitGridView: UIKitLayoutView {
     }
 
     /// The room inside the grid's own edge.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidate() } }
     }
 

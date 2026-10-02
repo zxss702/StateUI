@@ -42,12 +42,12 @@ extension GridProperties {
 /// Arranges its children in rows and columns.
 ///
 ///     Grid {
-///         Label("Column 0, Row 0")
+///         Text("Column 0, Row 0")
 ///
-///         Label("Column 1, Row 0")
+///         Text("Column 1, Row 0")
 ///             .gridColumn(1)
 ///
-///         Label("Spanning both")
+///         Text("Spanning both")
 ///             .gridRow(1)
 ///             .gridColumnSpan(2)
 ///     }
@@ -72,9 +72,9 @@ public struct Grid: Layout, GridProperties {
 
     /// A grid holding what the closure describes. The closure runs when the
     /// differ reaches the grid.
-    public init(@ViewBuilder content: @escaping () -> [Element]) {
+    public init(@ViewBuilder content: @escaping () -> any View) {
         node = Node(contract: GridContract.self)
-        node.producer = { content().map { $0.body } }
+        node.producer = { content().node.asChildren }
     }
 
 }

@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIWinUI
 
-/// A ColorBox: a figure of one colour, which takes the room its layout gives it and asks for none.
+/// A ColorPicker: a figure of one colour, which takes the room its layout gives it and asks for none.
 @MainActor
 final class WinUIColorBoxView: WinUIView {
     init() {

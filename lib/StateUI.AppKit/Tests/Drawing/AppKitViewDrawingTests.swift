@@ -78,7 +78,7 @@ final class AppKitViewDrawingTests: XCTestCase {
     @MainActor
     func testEveryControlKeepsAppKitsLayerAndItsDrawing() throws {
         let appKitLayer = String(describing: type(of: NSView().makeBackingLayer()))
-        let pages: Set<NodeType> = [.page, .navigationStack, .tabbedView, .splitView]
+        let pages: Set<NodeType> = [.page, .navigationStack, .tabView, .navigationSplitView]
         let drawn = LibraryContracts.elements
             .filter { $0.layer != .structure && $0.layer != .provider }
             .map { $0.nodeType }
@@ -110,7 +110,7 @@ final class AppKitViewDrawingTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
         func drawnBox(_ id: String, _ properties: [Prop: HostValue]) -> HostPatch {
-            var box = HostPatch(id: .manual(id), type: .colorBox)
+            var box = HostPatch(id: .manual(id), type: .colorPicker)
             box.properties = properties.merging([.width: .number(100), .height: .number(60)]) { $1 }
             return box
         }
@@ -145,17 +145,17 @@ final class AppKitViewDrawingTests: XCTestCase {
     // MARK: - Helpers
 
     private func windowTree(page: HostPatch) -> HostPatch {
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([page])
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
 
     private func box(id: String = "box", rotation: Double) -> HostPatch {
-        var box = HostPatch(id: .manual(id), type: .colorBox)
+        var box = HostPatch(id: .manual(id), type: .colorPicker)
         box.properties[.rotation] = .number(rotation)
         box.properties[.width] = .number(100)
         box.properties[.height] = .number(60)

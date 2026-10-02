@@ -3,7 +3,7 @@
 
 /// An inspector docked in its scene's main window, in a layout that takes no
 /// touches of its own, so the page under it stays in use.
-struct InspectorPanel: ContentView {
+struct InspectorPanel: View {
     /// The scene it looks at, by its number.
     let scene: String
 
@@ -12,7 +12,13 @@ struct InspectorPanel: ContentView {
 
     @Environment private var device: DeviceInfo
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         // Read here, so a panel folding or opening out is the one view built
         // again - the window under it standing as it was.
         let collapsed = place == .bottom && InspectorModel.shared.collapsed.contains(scene)
@@ -30,7 +36,7 @@ struct InspectorPanel: ContentView {
         .strokeWidth(1)
         .shape(.roundedRectangle(14))
         .clipsContent(true)
-        .margin(8)
+        .padding(8)
 
         if place == .side {
             // Under the bar, which keeps the page's own buttons in reach.

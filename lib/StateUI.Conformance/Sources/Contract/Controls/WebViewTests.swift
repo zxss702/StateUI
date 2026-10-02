@@ -23,7 +23,7 @@
                         WebView().source(html: Self.page("First"))
                             .onNavigating { heard.values.append("navigating \($0.event)") }
                             .onNavigated { heard.values.append("navigated \($0.result)") }
-                            .height(200).id("web")
+                            .frame(height: 200).id("web")
                     }
                 }
 
@@ -40,7 +40,7 @@
                 s.start {
                     VStack {
                         WebView().source(html: Self.page("First")).aim(web)
-                            .onNavigated { _ in arrived.values.append(true) }.height(200).id("web")
+                            .onNavigated { _ in arrived.values.append(true) }.frame(height: 200).id("web")
                         Button("Ask").onClicked { said.values.append(try await web.evaluateJavaScript("1 + 1")) }.id("ask")
                     }
                 }
@@ -59,7 +59,7 @@
                 s.start {
                     VStack {
                         WebView().userAgent("StateUI conformance").source(html: Self.page("First")).aim(web)
-                            .onNavigated { _ in arrived.values.append(true) }.height(200).id("web")
+                            .onNavigated { _ in arrived.values.append(true) }.frame(height: 200).id("web")
                         Button("Ask").onClicked {
                             said.values.append(try await web.evaluateJavaScript("navigator.userAgent"))
                         }.id("ask")
@@ -86,7 +86,7 @@
                             .onEvent(WebViewContract.canGoBackChanged) { heard.values.append("back \($0)") }
                             .onEvent(WebViewContract.canGoForwardChanged) { heard.values.append("forward \($0)") }
                             .onNavigated { _ in arrived.values.append(true) }
-                            .height(200).id("web")
+                            .frame(height: 200).id("web")
                         Button("Second").onClicked { second.wrappedValue = true }.id("second")
                         Button("Back").onClicked { try await web.goBack() }.id("back")
                         Button("Forward").onClicked { try await web.goForward() }.id("forward")
@@ -122,7 +122,7 @@
                 s.start {
                     VStack {
                         WebView().source(html: Self.page("First")).aim(web)
-                            .onNavigating { heard.values.append($0.event) }.height(200).id("web")
+                            .onNavigating { heard.values.append($0.event) }.frame(height: 200).id("web")
                         Button("Reload").onClicked { try await web.reload() }.id("reload")
                     }
                 }
@@ -137,7 +137,7 @@
                 s.start {
                     VStack {
                         WebView().source(html: Self.page("First"))
-                            .onProcessTerminated { heard.values.append("ended") }.height(200).id("web")
+                            .onProcessTerminated { heard.values.append("ended") }.frame(height: 200).id("web")
                     }
                 }
 

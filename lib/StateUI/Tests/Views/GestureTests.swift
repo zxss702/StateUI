@@ -21,12 +21,12 @@ final class GestureTests: XCTestCase {
         var points: [Point] = []
 
         let patch = renders.render(
-            ColorBox(.cornflowerBlue)
+            ColorPicker(.cornflowerBlue)
                 .onSwiped { swipes.append($0) }
                 .onPanUpdated { pans.append($0) }
                 .onPinchUpdated { pinches.append($0) }
                 .onPointerMoved { points.append($0) }
-                .body)
+                .node)
 
         let events = patch.events?.handlers ?? [:]
 
@@ -64,7 +64,7 @@ final class GestureTests: XCTestCase {
         let renders = Renders()
         var pans = 0
 
-        let patch = renders.render(ColorBox().onPanUpdated { _ in pans += 1 }.body)
+        let patch = renders.render(ColorPicker().onPanUpdated { _ in pans += 1 }.node)
         let id = patch.events?["panUpdated"] ?? -1
 
         renders.fire(id, with: [.enumeration(GesturePhase.running.rawValue), .number(12.5)])
@@ -88,7 +88,7 @@ final class GestureTests: XCTestCase {
         let renders = Renders()
         var swipes = 0
 
-        let patch = renders.render(ColorBox().onSwiped { _ in swipes += 1 }.body)
+        let patch = renders.render(ColorPicker().onSwiped { _ in swipes += 1 }.node)
         let id = patch.events?["swiped"] ?? -1
 
         // A direction sent as a plain number, and a payload with nothing in it.
@@ -114,7 +114,7 @@ final class GestureTests: XCTestCase {
         let renders = Renders()
         var swipes: [SwipeDirection] = []
 
-        let patch = renders.render(ColorBox().onSwiped { swipes.append($0) }.body)
+        let patch = renders.render(ColorPicker().onSwiped { swipes.append($0) }.node)
         let id = patch.events?["swiped"] ?? -1
 
         // What the platform sent, and the same thing spelled tidily.
@@ -131,11 +131,11 @@ final class GestureTests: XCTestCase {
         let renders = Renders()
 
         let patch = renders.render(
-            ColorBox()
+            ColorPicker()
                 .onSwiped(direction: [.up, .down], threshold: 40) { _ in }
                 .onPanUpdated(touchCount: 2) { _ in }
-                .onTapped(count: 2) {}
-                .body)
+                .onTapGesture(count: 2) {}
+                .node)
 
         // The bits this library numbers them with - up 4, down 8 - as the one
         // number a bit set travels as.
@@ -149,7 +149,7 @@ final class GestureTests: XCTestCase {
     /// every direction rather than none.
     func testAViewListensForEveryDirectionUnlessItSaysOtherwise() {
         let renders = Renders()
-        let patch = renders.render(ColorBox().onSwiped { _ in }.body)
+        let patch = renders.render(ColorPicker().onSwiped { _ in }.node)
 
         XCTAssertEqual(patch.props["swipeDirection"], .enumeration(15), "every bit there is")
         XCTAssertNil(patch.props["swipeThreshold"], "a threshold nobody set is not sent")
@@ -165,12 +165,12 @@ final class GestureTests: XCTestCase {
         var heard: [String] = []
 
         let patch = renders.render(
-            ColorBox()
+            ColorPicker()
                 .onPinchUpdated { _ in typed += 1 }
                 .onEvent(ViewContract.pinchUpdated) { phase, scale, origin in
                     heard.append("\(phase) \(scale) \(origin.x),\(origin.y)")
                 }
-                .body)
+                .node)
 
         let id = patch.events?["pinchUpdated"] ?? -1
 
@@ -198,12 +198,12 @@ final class GestureTests: XCTestCase {
         var second = 0
 
         let patch = renders.render(
-            ColorBox()
-                .onTapped { first += 1 }
-                .onTapped { second += 1 }
-                .body)
+            ColorPicker()
+                .onTapGesture { first += 1 }
+                .onTapGesture { second += 1 }
+                .node)
 
-        renders.fire(patch.events?["tapped"] ?? -1)
+        renders.fire(patch.events?["tapGesture"] ?? -1)
 
         XCTAssertEqual(first, 1)
         XCTAssertEqual(second, 1, "the second handler ran too, rather than replacing the first")
@@ -215,17 +215,17 @@ final class GestureTests: XCTestCase {
 
         let patch = renders.render(
             VStack {
-                Label("Alpha")
+                Text("Alpha")
                     .draggable(text: "Alpha")
                     .id("source")
 
                 ZStack {
-                    Label("Drop here")
+                    Text("Drop here")
                 }
                 .onDrop { dropped.append($0) }
                 .id("target")
             }
-            .body)
+            .node)
 
         let source = patch.child("source")
         XCTAssertEqual(source?.props["dragText"], .string("Alpha"))

@@ -7,10 +7,10 @@ import UIKit
 @_spi(Host) import StateUIHost
 
 extension UIKitRegistrations {
-    /// A Label: its words in their case, or its spans' runs; their look, the space between the letters and the
+    /// A Text: its words in their case, or its spans' runs; their look, the space between the letters and the
     /// lines, and the lines under or through them; how they break and where they stand; the room around them.
     static func text(_ registry: Registry<UIView>) {
-        registry.add(LabelContract.self, create: { _ in UIKitLabelView() }) { label in
+        registry.add(TextContract.self, create: { _ in UIKitLabelView() }) { label in
             label.applies(TextMembers.members) { view, values in
                 if let words = TextMembers.words(values) { view.setText(words) }
                 if let look = TextMembers.look(values) {
@@ -19,20 +19,20 @@ extension UIKitRegistrations {
                             (look.size, look.attributes, look.family, look.color)
                     }
                 }
-                if values.changed(PaddingElementContract.padding) {
-                    view.setPadding(values[PaddingElementContract.padding])
+                if values.changed(PaddingElementContract.contentPadding) {
+                    view.setPadding(values[PaddingElementContract.contentPadding])
                 }
             }
-            label.applies([LabelContract.lineBreak, LabelContract.maximumLines]) { view, values in
+            label.applies([TextContract.lineBreak, TextContract.lineLimit]) { view, values in
                 view.setLines(
-                    breaking: values[LabelContract.lineBreak] ?? .wordWrap, maximum: values[LabelContract.maximumLines])
+                    breaking: values[TextContract.lineBreak] ?? .wordWrap, maximum: values[TextContract.lineLimit])
             }
             label.applies([
-                TextAlignmentElementContract.horizontalTextAlignment,
+                TextAlignmentElementContract.multilineTextAlignment,
                 TextAlignmentElementContract.verticalTextAlignment,
             ]) { view, values in
                 view.setAlignment(
-                    horizontal: values[TextAlignmentElementContract.horizontalTextAlignment] ?? .start,
+                    horizontal: values[TextAlignmentElementContract.multilineTextAlignment] ?? .start,
                     vertical: values[TextAlignmentElementContract.verticalTextAlignment] ?? .start)
             }
             label.property(VisualElementContract.isEnabled) { view, enabled in view.isEnabled = enabled ?? true }

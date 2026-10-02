@@ -27,7 +27,7 @@ final class Differ {
     private(set) var styles: StyleSheet?
 
     /// How a changed value animates where its element says nothing else.
-    var motion: Motion = .standard
+    var animation: Animation = .standard
 
     /// Whether the sheet moved at the top of this walk, which carries no view.
     /// Design: docs/design/core/identity-and-diffing.md#what-a-carry-cannot-see
@@ -39,11 +39,11 @@ final class Differ {
     /// What each changed state is called, for `debugInfo()` (Builds.swift).
     var named: [ObjectIdentifier: String] = [:]
 
-    /// The handlers this walk found to run - `.onChanged`, `.onCreated` - in order.
+    /// The handlers this walk found to run - `.onChanged`, `.onAppear` - in order.
     /// Design: docs/design/core/render.md#handlers-in-the-message
     var fired: [EventHandler] = []
 
-    /// The `.onDestroying` handlers of what this walk let go, innermost first.
+    /// The `.onDisappear` handlers of what this walk let go, innermost first.
     private var leaving: [EventHandler] = []
 
     /// The environments in scope where the walk stands, nearest last.
@@ -173,7 +173,7 @@ final class Differ {
     }
 
     /// Drops the handlers and engines of an element that left the tree, and of
-    /// everything under it, and books its `.onDestroying`.
+    /// everything under it, and books its `.onDisappear`.
     func forget(_ node: RenderedNode) {
         for id in node.events.values {
             handlers.removeValue(forKey: id)
@@ -188,7 +188,7 @@ final class Differ {
             forget(child)
         }
 
-        // Its `.onDestroying`, once its subtree's is booked - innermost first.
+        // Its `.onDisappear`, once its subtree's is booked - innermost first.
         leaving.append(contentsOf: node.destroying)
     }
 

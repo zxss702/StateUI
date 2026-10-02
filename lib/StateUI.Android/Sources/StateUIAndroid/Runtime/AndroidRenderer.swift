@@ -24,7 +24,7 @@ final class AndroidRenderer {
 
     let frameClock: AndroidFrameClock
 
-    /// Whether the user asked for less motion: every animation arrives at once.
+    /// Whether the user asked for less animation: every animation arrives at once.
     let reducesMotion: () -> Bool
 
     /// The parts every host holds alike - the core's link, the motions, the display cycle, the mounted tree and
@@ -50,7 +50,7 @@ final class AndroidRenderer {
     private(set) var windowTitle: String??
 
     /// A runtime showing its page in `root`, on the display's clock or on `clock`,
-    /// with the motion the user's settings allow or as `reducesMotion` says.
+    /// with the animation the user's settings allow or as `reducesMotion` says.
     init(
         context: JavaObject, root: JavaObject, density: Double,
         clock: (() -> Double)? = nil, reducesMotion: @escaping () -> Bool = { AndroidRenderer.animationsRemoved() }
@@ -64,8 +64,8 @@ final class AndroidRenderer {
         runtime.pump.presenter = self
     }
 
-    /// Whether the user turned the system's animations off, which StateUI reads as asking for less motion.
-    /// Design: docs/design/platforms/android/motion.md#less-motion
+    /// Whether the user turned the system's animations off, which StateUI reads as asking for less animation.
+    /// Design: docs/design/platforms/android/animation.md#less-animation
     static func animationsRemoved() -> Bool {
         !Java.callStaticBool(JavaAPI.valueAnimator, JavaAPI.areAnimatorsEnabled)
     }
@@ -128,7 +128,7 @@ final class AndroidRenderer {
     /// application, its scene and its window, each rendered before the next.
     /// Design: docs/design/platforms/android/runtime.md#the-activitys-lifecycle
     func setPhase(_ phase: ApplicationPhase) {
-        guard let window = runtime.tree.root?.first(type: .window) else {
+        guard let window = runtime.tree.root?.first(type: .windowScene) else {
             runtime.core.setApplicationPhase(phase)
             return runtime.pump.turn()
         }
@@ -182,7 +182,7 @@ final class AndroidRenderer {
     /// window made.
     /// Design: docs/design/platforms/android/pages.md#the-windows-overlay
     private func showWindow() {
-        guard let window = runtime.tree.root?.first(type: .window) else { return }
+        guard let window = runtime.tree.root?.first(type: .windowScene) else { return }
         showTitle(of: window)
 
         let changes = presentation.show(window, in: runtime.lifecycle)
@@ -239,7 +239,7 @@ final class AndroidRenderer {
 
     /// Goes `way` back in the first window.
     func goBack(_ way: WayBack) {
-        guard let window = runtime.tree.root?.first(type: .window) else { return }
+        guard let window = runtime.tree.root?.first(type: .windowScene) else { return }
         runtime.goBack(way, in: window)
     }
 

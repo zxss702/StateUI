@@ -64,12 +64,12 @@ final class DiffTests: XCTestCase {
         let renders = Renders()
 
         func code(_ name: Color) -> Node {
-            Label()
+            Text()
                 .spans {
-                    TextSpan("let ").textColor(.purple)
-                    TextSpan("counter").textColor(name)
+                    TextSpan("let ").foregroundStyle(.purple)
+                    TextSpan("counter").foregroundStyle(name)
                 }
-                .body
+                .node
         }
 
         renders.render(code(.steelBlue))
@@ -85,7 +85,7 @@ final class DiffTests: XCTestCase {
         let changed = try XCTUnwrap(runs.children.first)
         XCTAssertEqual(runs.children.count, 1, "only the run whose colour moved")
         XCTAssertEqual(changed.type, "Span")
-        XCTAssertEqual(changed.props, ["textColor": Color("#B22222").propValue],
+        XCTAssertEqual(changed.props, ["foregroundStyle": Color("#B22222").propValue],
                        "the colour alone - not the text it still shows")
     }
 
@@ -95,7 +95,7 @@ final class DiffTests: XCTestCase {
         let renders = Renders()
 
         func line(_ sold: Bool) -> Node {
-            Label()
+            Text()
                 .spans {
                     TextSpan("Sold")
 
@@ -103,7 +103,7 @@ final class DiffTests: XCTestCase {
                         TextSpan(" out")
                     }
                 }
-                .body
+                .node
         }
 
         renders.render(line(true))
@@ -120,12 +120,12 @@ final class DiffTests: XCTestCase {
     func testALostPropertyIsClearedRatherThanReplacingTheControl() {
         let renders = Renders()
 
-        renders.render(Node(type: "Label", id: "a", props: [
+        renders.render(Node(type: "Text", id: "a", props: [
             "text": .string("one"),
             "fontSize": .number(20),
         ]))
 
-        let patch = renders.render(Node(type: "Label", id: "a", props: ["text": .string("one")]))
+        let patch = renders.render(Node(type: "Text", id: "a", props: ["text": .string("one")]))
 
         XCTAssertFalse(patch.replace, "the control stays, with its handlers and everything under it")
         XCTAssertEqual(patch.cleared, ["fontSize"], "and the property that went away is named")
@@ -136,10 +136,10 @@ final class DiffTests: XCTestCase {
         let renders = Renders()
 
         renders.render(stack([
-            Node(type: "Label", id: "a", props: ["fontSize": .number(20)]),
+            Node(type: "Text", id: "a", props: ["fontSize": .number(20)]),
         ]))
 
-        let patch = renders.render(stack([Node(type: "Label", id: "a")]))
+        let patch = renders.render(stack([Node(type: "Text", id: "a")]))
 
         // The label says nothing except that a property is gone. A patch is
         // dropped when it is empty, and one that clears is not empty - without
@@ -169,7 +169,7 @@ final class DiffTests: XCTestCase {
     func testAChangedTypeReplacesTheControl() {
         let renders = Renders()
 
-        renders.render(Node(type: "Label", id: "a", props: ["text": .string("one")]))
+        renders.render(Node(type: "Text", id: "a", props: ["text": .string("one")]))
         let patch = renders.render(Node(type: "Button", id: "a", props: ["text": .string("one")]))
 
         XCTAssertTrue(patch.replace)
@@ -416,10 +416,10 @@ final class DiffTests: XCTestCase {
 }
 
 /// A view that owns a counter, for the test that a resync does not take it.
-private struct Tally: ContentView {
+private struct Tally: View {
     @State var count = 0
 
-    var content: any View {
+    var body: some View {
         Button("Count: \(count)").onClicked { count += 1 }
     }
 }
@@ -431,10 +431,10 @@ extension DiffTests {
     func testAResyncKeepsAViewsState() {
         let renders = Renders()
 
-        let first = renders.render(Tally().body)
+        let first = renders.render(Tally().node)
         renders.fire(first.events?["clicked"] ?? -1)
 
-        let resync = renders.renderFromScratch(Tally().body)
+        let resync = renders.renderFromScratch(Tally().node)
 
         XCTAssertEqual(
             resync.props["text"], .string("Count: 1"),
@@ -443,7 +443,7 @@ extension DiffTests {
         renders.fire(resync.events?["clicked"] ?? -1)
 
         XCTAssertEqual(
-            renders.render(Tally().body, changed: Renderer.shared.pendingChanges).props["text"], .string("Count: 2"),
+            renders.render(Tally().node, changed: Renderer.shared.pendingChanges).props["text"], .string("Count: 2"),
             "and the handler kept writing to the storage the view still reads")
     }
 }

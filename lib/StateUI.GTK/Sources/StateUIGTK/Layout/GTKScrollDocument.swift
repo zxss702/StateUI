@@ -10,11 +10,11 @@
 @MainActor
 final class GTKScrollDocument: GTKLayoutView {
     /// The room inside the scroller's own edge.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 
-    var orientation = ScrollOrientation.vertical {
+    var orientation = Axis.vertical {
         didSet { if orientation != oldValue { invalidateMeasurements() } }
     }
 

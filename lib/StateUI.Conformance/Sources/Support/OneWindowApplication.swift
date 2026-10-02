@@ -4,14 +4,19 @@
 import StateUI
 
 /// The smallest complete application around one page: one scene, one window.
-public struct OneWindowApplication: Application {
+public struct OneWindowApplication: App {
     /// The page, built again each time the window is.
     public let page: @Sendable () -> any Page
+
+    /// An application of one empty window.
+    public init() {
+        self.page = { EmptyView() }
+    }
 
     /// An application showing `page` in its one window.
     public init(page: @escaping @Sendable () -> any Page) {
         self.page = page
     }
 
-    public var scene: any Scene { OneWindow(content: page) }
+    public var body: some Scene { OneWindow(content: page) }
 }

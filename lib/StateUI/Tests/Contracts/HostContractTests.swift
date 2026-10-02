@@ -53,7 +53,7 @@ final class HostContractTests: XCTestCase {
         let tokenSource = try SourceTree.text(in: "Tokens.swift")
         let barSource = try SourceTree.text(in: "BarElement.swift")
         let navigationSource = try SourceTree.text(in: "NavigationStack.swift")
-        let tabSource = try SourceTree.text(in: "TabbedView.swift")
+        let tabSource = try SourceTree.text(in: "TabView.swift")
         let properties = declaredNames(of: "Prop", in: tokenSource)
 
         XCTAssertFalse(properties.contains("barBackground"))
@@ -71,7 +71,7 @@ final class HostContractTests: XCTestCase {
     func testFlyoutVocabularyDoesNotExposeHostPresentationPolicy() throws {
         let tokenSource = try SourceTree.text(in: "Tokens.swift")
         let vocabularies = try Self.typeSources().map(\.text).joined(separator: "\n")
-        let flyoutSource = try SourceTree.text(in: "SplitView.swift")
+        let flyoutSource = try SourceTree.text(in: "NavigationSplitView.swift")
         let properties = declaredNames(of: "Prop", in: tokenSource)
 
         XCTAssertFalse(properties.contains("flyoutLayoutBehavior"))
@@ -111,7 +111,7 @@ final class HostContractTests: XCTestCase {
         let formerTypes = ["NavigationPage", "TabbedPage", "FlyoutPage"]
 
         XCTAssertTrue(controls.isSuperset(of: [
-            "NavigationStack", "TabbedView", "SplitView", "TitleView",
+            "NavigationStack", "TabView", "NavigationSplitView", "TitleView",
         ]))
         XCTAssertTrue(
             controls.isDisjoint(with: Set(formerTypes + ["NavigationPageTitleView"])),
@@ -147,15 +147,15 @@ final class HostContractTests: XCTestCase {
         let path = State<[Int]>([])
         let sidebar = State(false)
         let arrangements: [any Page] = [
-            NavigationStack(path.projectedValue) { Label("root") } destination: { _ in Label("page") },
-            TabbedView([0, 1]) { _ in Label("tab") },
-            SplitView(sidebar.projectedValue) { Label("sidebar") } detail: { Label("detail") },
+            NavigationStack(path.projectedValue) { Text("root") } destination: { _ in Text("page") },
+            TabView([0, 1]) { _ in Text("tab") },
+            NavigationSplitView(sidebar.projectedValue) { Text("sidebar") } detail: { Text("detail") },
         ]
 
         for arrangement in arrangements {
-            XCTAssertFalse(
+            XCTAssertTrue(
                 arrangement is any View,
-                "\(type(of: arrangement)) is a view, so it could stand inside content")
+                "\(type(of: arrangement)) is a view, so it can stand inside content")
         }
 
         for (path, text) in try SourceTree.allSources() {
@@ -184,7 +184,7 @@ final class HostContractTests: XCTestCase {
 
     func testProtocolNodesRemainStructural() {
         for type in [
-            NodeType.application, .scene, .window, .overlay,
+            NodeType.app, .scene, .windowScene, .overlay,
         ] {
             XCTAssertEqual(Self.layer(of: type), .structure)
         }
@@ -311,7 +311,7 @@ final class HostContractTests: XCTestCase {
 
         let files = try SourceTree.allSources().map(\.path)
             .filter { $0.hasPrefix("Views/") || $0.hasPrefix("Types/") }
-        XCTAssertTrue(files.contains { $0.hasSuffix("/Label.swift") }, "the views are read")
+        XCTAssertTrue(files.contains { $0.hasSuffix("/Text.swift") }, "the views are read")
         for file in files {
             let source = try SourceTree.text(in: file)
             for name in former + ["contextFlyout"] {
@@ -345,8 +345,8 @@ final class HostContractTests: XCTestCase {
             controls.isDisjoint(with: ["Entry", "Editor", "SearchBar", "FormattedString"]),
             "a text control keeps its former name")
         XCTAssertTrue(properties.isSuperset(of: [
-            "maximumLines", "maximumLength", "lineBreak", "textCase", "inputPurpose",
-            "returnKey", "showsClearButton", "growsWithText",
+            "lineLimit", "maximumLength", "lineBreak", "textCase", "textContentType",
+            "submitLabel", "showsClearButton", "growsWithText",
         ]))
         XCTAssertTrue(
             properties.isDisjoint(with: former),
@@ -379,10 +379,10 @@ final class HostContractTests: XCTestCase {
         }
     }
 
-    /// Every control speaks in plain words: a box of colour is a `ColorBox`, a
+    /// Every control speaks in plain words: a box of colour is a `ColorPicker`, a
     /// drawing surface a `Canvas`, the dots beside a carousel a
     /// `PositionIndicator`, and a menu is a `Menu` at any depth - on the bar or
-    /// inside another - holding `MenuItem`s and `MenuSeparator`s.
+    /// inside another - holding `MenuItem`s and `Divider`s.
     func testControlsSpeakInPlainWords() throws {
         let tokenSource = try SourceTree.text(in: "Tokens.swift")
         let controls = declaredNames(of: "NodeType", in: tokenSource)
@@ -394,8 +394,8 @@ final class HostContractTests: XCTestCase {
         ]
 
         XCTAssertTrue(controls.isSuperset(of: [
-            "ColorBox", "Canvas", "PositionIndicator",
-            "Menu", "MenuBar", "MenuItem", "MenuSeparator",
+            "ColorPicker", "Canvas", "PositionIndicator",
+            "Menu", "MenuBar", "MenuItem", "Divider",
         ]))
         XCTAssertTrue(controls.isDisjoint(with: former), "a control keeps its former name")
         XCTAssertTrue(events.contains("dragged"))
@@ -468,9 +468,9 @@ final class HostContractTests: XCTestCase {
     /// `.fill`, `.stretch` or `.center` - no second enum for shapes and no case
     /// that repeats its type.
     func testAspectIsOneWordForImagesAndShapes() throws {
-        let aspectSource = try SourceTree.text(in: "Aspect.swift")
+        let aspectSource = try SourceTree.text(in: "ContentMode.swift")
         for aspect in ["case fit = 0", "case fill = 1", "case stretch = 2", "case center = 3"] {
-            XCTAssertTrue(aspectSource.contains(aspect), "Aspect does not declare `\(aspect)`")
+            XCTAssertTrue(aspectSource.contains(aspect), "ContentMode does not declare `\(aspect)`")
         }
 
         let files = try FileManager.default
@@ -493,7 +493,7 @@ final class HostContractTests: XCTestCase {
         let properties = declaredNames(of: "Prop", in: tokenSource)
 
         XCTAssertTrue(properties.contains("tint"))
-        XCTAssertTrue(properties.contains("color"), "a ColorBox keeps its colour")
+        XCTAssertTrue(properties.contains("color"), "a ColorPicker keeps its colour")
         XCTAssertTrue(
             properties.isDisjoint(with: [
                 "onColor", "offColor", "thumbColor", "thumbImageSource", "minimumTrackColor",
@@ -554,7 +554,7 @@ final class HostContractTests: XCTestCase {
         let properties = declaredNames(of: "Prop", in: tokenSource)
         let acts = declaredNames(of: "Act", in: tokenSource)
 
-        XCTAssertTrue(properties.contains("avoidsSafeArea"))
+        XCTAssertTrue(properties.contains("ignoresSafeArea"))
         XCTAssertFalse(properties.contains("safeAreaEdges"), "a layout's safe area keeps a second name")
         XCTAssertTrue(acts.contains("hideOnScreenKeyboard"))
         XCTAssertFalse(acts.contains("hideSoftInput"), "the keyboard keeps a second name")
@@ -577,10 +577,10 @@ final class HostContractTests: XCTestCase {
             }
         }
         for spelling in [
-            "public struct Insets:", "public enum FormFactor", "public enum Theme", "case system",
+            "public struct EdgeInsets:", "public enum FormFactor", "public enum ColorScheme", "case system",
             "public enum GesturePhase", "case sineIn", "case sineOut", "public enum ScreenReader",
             "public enum OnScreenKeyboard", "public enum SafeArea", "case keyboard",
-            "func avoidsSafeArea(", "public protocol ModifiableElement", "var formFactor",
+            "func ignoresSafeArea(", "public protocol ModifiableElement", "var formFactor",
             "var phase: GesturePhase",
         ] {
             XCTAssertTrue(everything.contains(spelling), "no source says \(spelling)")

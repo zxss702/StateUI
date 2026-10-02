@@ -18,7 +18,7 @@
     /// What runs every animation the host carries.
     public let animator = Animator()
 
-    /// Each state's one motion channel, shared by every control bound to it.
+    /// Each state's one animation channel, shared by every control bound to it.
     public let stateChannels: StateChannels
 
     /// The animations the tree describes: a property's transition.
@@ -42,7 +42,7 @@
     /// The host's frame clock, whose frames run the display cycle.
     public let clock: any FrameClock
 
-    /// Whether the user asked for less motion: every animation arrives at once.
+    /// Whether the user asked for less animation: every animation arrives at once.
     public let reducesMotion: () -> Bool
 
     /// Where the application, its scenes and its windows stand, as the toolkit told it.
@@ -117,7 +117,7 @@
         return true
     }
 
-    /// What the application stands on changed - the theme, the locale, the power, the network: `report` tells the
+    /// What the application stands on changed - the color scheme, the locale, the power, the network: `report` tells the
     /// core what stands now, the tree follows the language's direction, and a turn renders what it all changed.
     /// Design: docs/design/host/runtime.md#the-environment
     public func environmentChanged(_ report: () -> Void) {

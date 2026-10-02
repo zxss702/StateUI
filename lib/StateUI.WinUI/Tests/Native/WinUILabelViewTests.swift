@@ -8,15 +8,15 @@ import CStateUIWinUI
 import XCTest
 
 /// One label, its words in spans until a button takes them away.
-private struct SpannedPage: ContentView {
+private struct SpannedPage: View {
     @State private var spanned = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             if spanned {
-                Label("own").spans { TextSpan("runs") }.id("words")
+                Text("own").spans { TextSpan("runs") }.id("words")
             } else {
-                Label("own").id("words")
+                Text("own").id("words")
             }
             Button("Plain").onClicked { spanned = false }
         }
@@ -24,10 +24,10 @@ private struct SpannedPage: ContentView {
 }
 
 final class WinUILabelViewTests: XCTestCase {
-    /// A label with nothing said stands as WinUI's own body text, in the theme's colour.
+    /// A label with nothing said stands as WinUI's own body text, in the color scheme's colour.
     func testALabelWithNothingSaidIsWinUIsOwnText() throws {
         try onUIThread {
-            let host = WinUIRenderer.running { VStack { Label("plain") } }
+            let host = WinUIRenderer.running { VStack { Text("plain") } }
             let style = try XCTUnwrap(host.views(WinUILabelView.self).first).wordsStyle
 
             XCTAssertEqual(style.size, WinUITextView.platformFontSize)

@@ -23,11 +23,11 @@ private enum InteropTestContract: ApplicationTier {
 }
 
 /// A page that calls the acts and listens for the event, showing whatever came back.
-private struct Calling: ContentView {
+private struct Calling: View {
     @State private var answer = "-"
     @State private var heard: [HostEventSubscription] = []
 
-    var content: any View {
+    var body: some View {
         VStack {
             Button("Ask").onClicked {
                 do {
@@ -45,10 +45,10 @@ private struct Calling: ContentView {
                     answer = "thrown: \(error)"
                 }
             }
-            Label(answer)
+            Text(answer)
         }
-        .onCreated { heard = [HostEvents.on(InteropTestContract.spoke) { said in answer = "heard \(said)" }] }
-        .onDestroying {
+        .onAppear { heard = [HostEvents.on(InteropTestContract.spoke) { said in answer = "heard \(said)" }] }
+        .onDisappear {
             heard.forEach { $0.cancel() }
             heard = []
         }
@@ -94,7 +94,7 @@ private final class LampControl: AndroidControl {
 }
 
 /// The Swift half, which the application could already write.
-private struct Lamp: View {
+private struct Lamp: VisualElement {
     var node = Node(contract: LampContract.self)
 
     func lit(_ value: Bool) -> Self {
@@ -114,11 +114,11 @@ extension Aim where Target == Lamp {
 }
 
 /// A lamp, lit, that says when it is pulled or flashed.
-private struct Pulling: ContentView {
+private struct Pulling: View {
     @State private var said = "-"
     @Aim(Lamp.self) private var lamp
 
-    var content: any View {
+    var body: some View {
         VStack {
             Lamp().lit(true).onPulled { pulls in said = "pulled \(pulls)" }.aim(lamp)
             Button("Flash").onClicked {
@@ -129,7 +129,7 @@ private struct Pulling: ContentView {
                     said = "thrown: \(error)"
                 }
             }
-            Label(said)
+            Text(said)
         }
     }
 }

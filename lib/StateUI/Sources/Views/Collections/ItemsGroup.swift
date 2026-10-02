@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/// One group of an `ItemsView`'s items, under a header and over a footer where
+/// One group of an `List`'s items, under a header and over a footer where
 /// it has them.
 ///
-///     ItemsView(groups: shelves.map { shelf in
-///         ItemsGroup(shelf.items) { Label($0) }
+///     List(groups: shelves.map { shelf in
+///         ItemsGroup(shelf.items) { Text($0) }
 ///             .id(shelf.name)
-///             .header(Label(shelf.name).fontAttributes(.bold))
+///             .header(Text(shelf.name).fontAttributes(.bold))
 ///     })
 ///
 /// Each group names itself with `.id`, so two groups may hold equal items; a

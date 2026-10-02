@@ -34,20 +34,20 @@ final class BuilderTests: XCTestCase {
 
     /// The one that started this: an `if` with no `else` moved its siblings.
     ///
-    /// Signed out, the TextField is child 0; signed in, child 0 is the Label. By
-    /// index that reads as "the TextField became a Label", which is a changed type
+    /// Signed out, the TextField is child 0; signed in, child 0 is the Text. By
+    /// index that reads as "the TextField became a Text", which is a changed type
     /// and so a REPLACED control - the search box was rebuilt on every toggle,
     /// losing its focus, its caret and its scroll.
     func testAConditionalDoesNotMoveTheViewsAfterIt() {
         func tree(signedIn: Bool) -> Node {
             VStack {
                 if signedIn {
-                    Label("Welcome")
+                    Text("Welcome")
                 }
 
                 TextField("search")
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -82,12 +82,12 @@ final class BuilderTests: XCTestCase {
         func tree(showing: Bool) -> Node {
             VStack {
                 if showing {
-                    Label("note")
+                    Text("note")
                 }
 
                 Button("Go").onClicked { taps.wrappedValue += 1 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -120,7 +120,7 @@ final class BuilderTests: XCTestCase {
                     TextField("nickname")
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -145,21 +145,21 @@ final class BuilderTests: XCTestCase {
     func testABranchComesBackWholeRatherThanPatched() {
         func tree(showing: Bool) -> Node {
             Grid {
-                Label("tabs").gridRow(0)
+                Text("tabs").gridRow(0)
 
                 if showing {
                     ZStack {
-                        ColorBox(Color("#512BD4")).cornerRadius(10)
+                        ColorPicker(Color("#512BD4")).cornerRadius(10)
                     }
                     .gridRow(1)
                 } else {
                     ScrollView {
-                        Label("code")
+                        Text("code")
                     }
                     .gridRow(1)
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -169,10 +169,10 @@ final class BuilderTests: XCTestCase {
         let third = renders.render(tree(showing: true))
 
         // The header is not part of the conditional and must not be touched.
-        XCTAssertNil(patch(third, forType: "Label").flatMap { $0.props["text"] },
+        XCTAssertNil(patch(third, forType: "Text").flatMap { $0.props["text"] },
                      "a view beside the conditional was re-sent")
 
-        let box = try? XCTUnwrap(patch(third, forType: "ColorBox"))
+        let box = try? XCTUnwrap(patch(third, forType: "ColorPicker"))
         XCTAssertNotNil(box?.props["color"], "the branch came back without its colour")
         XCTAssertNotNil(box?.props["cornerRadius"], "the branch came back without its shape")
     }
@@ -183,10 +183,10 @@ final class BuilderTests: XCTestCase {
     /// have written - and the `id:` form names which part of the item it is.
     func testAForEachRowIsIdentifiedByItsItem() {
         var tree = VStack {
-            ForEach(["left", "right"]) { Label($0) }
-            ForEach([(name: "a", n: 1), (name: "b", n: 2)], id: \.name) { Label($0.name) }
+            ForEach(["left", "right"]) { Text($0) }
+            ForEach([(name: "a", n: 1), (name: "b", n: 2)], id: \.name) { Text($0.name) }
         }
-        .body
+        .node
 
         // Raw trees keep a container's content in its closure; see the differ.
         tree.materialize()
@@ -195,9 +195,9 @@ final class BuilderTests: XCTestCase {
 
         // A written `.id()` wins over the item.
         var named = VStack {
-            ForEach(["x"]) { Label($0).id("mine") }
+            ForEach(["x"]) { Text($0).id("mine") }
         }
-        .body
+        .node
 
         named.materialize()
 
@@ -211,10 +211,10 @@ final class BuilderTests: XCTestCase {
         func tree(_ items: [String]) -> Node {
             VStack {
                 ForEach(items) { item in
-                    Label(item)
+                    Text(item)
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -243,13 +243,13 @@ final class BuilderTests: XCTestCase {
             VStack {
                 ForEach(0...10) { turn in
                     if turn == chosen {
-                        return Label("turn \(turn)")
+                        Text("turn \(turn)")
                     } else {
-                        return ColorBox(Color("#C8C8C8"))
+                        ColorPicker(Color("#C8C8C8"))
                     }
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -268,11 +268,11 @@ final class BuilderTests: XCTestCase {
                        "a loop of 11 reported \(second.children.count) changes for a swap of 2")
 
         let types = second.children.map { $0.type }.sorted()
-        XCTAssertEqual(types, ["ColorBox", "Label"])
+        XCTAssertEqual(types, ["ColorPicker", "Text"])
 
         // The chosen one is turn 7's, and it is the element that has stood
         // at turn 7's place since the first render.
-        let label = second.children.first { $0.type == "Label" }
+        let label = second.children.first { $0.type == "Text" }
         XCTAssertEqual(label?.id, first.children[7].id, "the label is not turn 7's element")
         XCTAssertEqual(label?.props["text"], .string("turn 7"))
     }
@@ -282,10 +282,10 @@ final class BuilderTests: XCTestCase {
         func tree(turns: Int) -> Node {
             VStack {
                 ForEach(0..<turns) { turn in
-                    Label("turn \(turn)")
+                    Text("turn \(turn)")
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -319,16 +319,16 @@ final class BuilderTests: XCTestCase {
         func tree(showing: Bool, first: Bool) -> Node {
             VStack {
                 if showing {
-                    Label("note")
+                    Text("note")
                 }
 
                 if first {
-                    Label("a").id("row")
+                    Text("a").id("row")
                 } else {
-                    Label("b").id("row")
+                    Text("b").id("row")
                 }
             }
-            .body
+            .node
         }
 
         let renders = Renders()
@@ -354,7 +354,7 @@ final class BuilderTests: XCTestCase {
             Node(
                 type: "VStack",
                 children: [
-                    Node(type: "Label", props: ["text": .string(text)]),
+                    Node(type: "Text", props: ["text": .string(text)]),
                     Node(type: "TextField", props: ["text": .string("kept")]),
                 ])
         }
@@ -382,14 +382,14 @@ final class BuilderTests: XCTestCase {
     func testThePathNeverReachesTheHost() {
         let tree = VStack {
             if true {
-                Label("shown")
+                Text("shown")
             }
 
             ForEach(0..<2) { turn in
-                Label("turn \(turn)")
+                Text("turn \(turn)")
             }
         }
-        .body
+        .node
 
         let dump = PatchDump.text(Renders().render(tree))
 

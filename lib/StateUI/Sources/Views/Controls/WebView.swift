@@ -45,7 +45,7 @@ extension WebViewProperties {
 /// `browser.goBack()`, `browser.reload()`,
 /// `browser.evaluateJavaScript("…")`; what it reports arrives in a binding,
 /// `.canGoBack($hasBack)`.
-public struct WebView: View, WebViewProperties {
+public struct WebView: VisualElement, WebViewProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -254,7 +254,7 @@ extension Aim where Target == WebView {
     ///         .canGoBack($hasBack)
     ///
     ///     Button("Back")
-    ///         .isEnabled(hasBack)
+    ///         .disabled(!hasBack)
     ///         .onClicked { try await browser.goBack() }
     ///
     /// - Throws: `StateUIError` when no view of that id is being shown, or

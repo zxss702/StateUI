@@ -12,10 +12,10 @@ import XCTest
 ///
 /// IT ANSWERS FOR THE MACHINE ITSELF, so no test reads what the machine
 /// happens to be set to. `AppKitRenderer` asks macOS whether it should reduce
-/// motion, and a machine that says yes snaps every described motion to its
+/// animation, and a machine that says yes snaps every described animation to its
 /// destination: a test asserting the first frame of a journey then reads the
 /// last one - measured as `("60.0") is not equal to ("40.0")` on a CI runner,
-/// which is a virtual machine with Reduce Motion on, while the same test
+/// which is a virtual machine with Reduce Animation on, while the same test
 /// passed on every desktop. A test that wants the other answer says so.
 ///
 /// It also shows no window and keeps the machine's own defaults out of the
@@ -39,9 +39,9 @@ func testRenderer(
 /// The suite answers for the machine rather than reading it.
 final class AppKitTestRendererTests: XCTestCase {
     /// EVERY TEST MAKES ITS RENDERER THROUGH `testRenderer`. The host's own
-    /// initializer asks macOS whether it should reduce motion, and a machine
+    /// initializer asks macOS whether it should reduce animation, and a machine
     /// that says yes - a CI runner is a virtual machine, and says yes - snaps
-    /// every described motion to its destination. A test built on the
+    /// every described animation to its destination. A test built on the
     /// initializer therefore passes on a desktop and fails on the runner, on
     /// the first frame of a journey, with nothing in the failure about the
     /// setting behind it.
@@ -58,7 +58,7 @@ final class AppKitTestRendererTests: XCTestCase {
         XCTAssertEqual(
             direct, [],
             "these make a renderer through AppKitRenderer, which reads the machine's own Reduce "
-                + "Motion setting - make it with testRenderer, which answers for the machine")
+                + "Animation setting - make it with testRenderer, which answers for the machine")
     }
 }
 #endif

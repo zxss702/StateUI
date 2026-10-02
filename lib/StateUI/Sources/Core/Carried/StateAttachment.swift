@@ -55,7 +55,7 @@ struct StateRegistration {
     let kind: StateKind
 
     /// Which of the view's values this is, which `.inherited` is resolved against.
-    let values: MotionValues
+    let values: AnimationValues
 
     /// The value as this side reads it now, the read noted as a build's; nil where nothing can.
     var current: (() -> StateCarried)? = nil

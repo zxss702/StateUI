@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// An ItemsView: AndroidX's recycler over the list's identities, in the relay's `StateUIItemsView`, a cell holding
+/// An List: AndroidX's recycler over the list's identities, in the relay's `StateUIItemsView`, a cell holding
 /// each entry's subtree as the recycler binds it (`ItemsCells`). The recycler scrolls, reuses its cells and tells
 /// TalkBack; StateUI builds what a cell holds and decides what a tap chooses and opens (`ItemsTap`).
 /// Design: docs/design/platforms/android/items.md
@@ -23,7 +23,7 @@ final class AndroidItemsView: AndroidView {
     /// Whether the list left the tree: what the recycler still says is heard by nobody.
     private var released = false
 
-    /// Whether the motion of a change or of a scroll the tree asks for is left out.
+    /// Whether the animation of a change or of a scroll the tree asks for is left out.
     private let reducesMotion: () -> Bool
 
     /// What the cells show chosen, how many the user may choose, and whether a tap does anything.
@@ -37,7 +37,7 @@ final class AndroidItemsView: AndroidView {
         self.cells = cells
         self.reducesMotion = reducesMotion
         super.init { number in
-            Java.new(JavaAPI.itemsView, JavaAPI.newItemsView, .object(AndroidRenderer.context), .long(number))
+            Java.new(JavaAPI.list, JavaAPI.newItemsView, .object(AndroidRenderer.context), .long(number))
         }
     }
 

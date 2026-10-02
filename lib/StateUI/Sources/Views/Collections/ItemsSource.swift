@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/// What builds the view of one entry of an ItemsView, whatever its items' type.
+/// What builds the view of one entry of an List, whatever its items' type.
 protocol ItemsViews: AnyObject {
     /// The view of the entry of `identity`; nil where the list shows none.
     func view(for identity: String) -> (any View)?
 }
 
-/// What one build of an ItemsView holds: its groups, every identity they show
+/// What one build of an List holds: its groups, every identity they show
 /// in order, and how each entry is made. A new one for every build its parent
 /// makes; the same one while only the host's cells change, so an entry built
 /// from it is carried whole.
@@ -81,7 +81,7 @@ final class ItemsSource<Items: RandomAccessCollection, Id: Hashable>: ItemsViews
     /// `.id()` is.
     private func unique(_ identity: String) -> String {
         guard places[identity] != nil else { return identity }
-        complain("two items of an ItemsView describe as \"\(identity)\"; give each its own identity")
+        complain("two items of an List describe as \"\(identity)\"; give each its own identity")
         var variant = 1
         while places["\(identity)\u{0}\(variant)"] != nil { variant += 1 }
         return "\(identity)\u{0}\(variant)"
@@ -122,21 +122,27 @@ final class ItemsSource<Items: RandomAccessCollection, Id: Hashable>: ItemsViews
         realized.filter { places[$0] != nil }
             .sorted { (order[$0] ?? 0) < (order[$1] ?? 0) }
             .map { identity in
-                var node = ItemsEntry(identity: identity, source: self).body
+                var node = ItemsEntry(identity: identity, source: self).node
                 node.id = identity
                 return node
             }
     }
 }
 
-/// One entry of an ItemsView, built as a view of its own - with its own reads, so
+/// One entry of an List, built as a view of its own - with its own reads, so
 /// a state it reads builds it alone - and carried whole while its source is the
 /// same.
-struct ItemsEntry: ContentView {
+struct ItemsEntry: View {
     let identity: String
     let source: any ItemsViews
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         source.view(for: identity) ?? VStack {}
     }
 }

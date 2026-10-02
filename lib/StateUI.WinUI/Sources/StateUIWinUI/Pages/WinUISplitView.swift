@@ -4,7 +4,7 @@
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A SplitView: the sidebar page in WinUI's own navigation pane - beside the detail page where the window is wide,
+/// A NavigationSplitView: the sidebar page in WinUI's own navigation pane - beside the detail page where the window is wide,
 /// over it and closed by a click beside it where it is narrow - which WinUI places, as it places any Windows app's.
 /// Whether the sidebar shows is StateUI's binding, which the window's chrome toggles and which follows what WinUI
 /// shows. The host's one adaptation is that a window wide enough for both panes opens with the sidebar shown; after

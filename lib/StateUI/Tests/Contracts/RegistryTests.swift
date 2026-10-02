@@ -49,7 +49,7 @@ final class RegistryTests: XCTestCase {
         let registry = Self.lamps()
 
         XCTAssertTrue(Self.view(of: LampContract.nodeType, in: registry) is LampView)
-        XCTAssertNil(Self.view(of: LabelContract.nodeType, in: registry))
+        XCTAssertNil(Self.view(of: TextContract.nodeType, in: registry))
     }
 
     /// A property registered alone reaches the view as the type its contract
@@ -108,7 +108,7 @@ final class RegistryTests: XCTestCase {
         XCTAssertEqual(view.opacity, 0.5)
         XCTAssertTrue(registry.realization.members.contains(
             HostRealizedMember(element: "Test.Lamp", owner: "VisualElement", member: "opacity")))
-        XCTAssertFalse(registry.realization.members.contains { $0.member == "maximumLines" })
+        XCTAssertFalse(registry.realization.members.contains { $0.member == "lineLimit" })
     }
 
     /// The view raises an event of its own by member: the raise hands the
@@ -236,7 +236,7 @@ final class RegistryTests: XCTestCase {
         HostBoundary.setRealization(Self.lamps().realization)
 
         XCTAssertTrue(HostBoundary.realizes(LampContract.self))
-        XCTAssertFalse(HostBoundary.realizes(LabelContract.self))
+        XCTAssertFalse(HostBoundary.realizes(TextContract.self))
         XCTAssertTrue(HostBoundary.realizes(LampContract.signal))
         XCTAssertTrue(HostBoundary.realizes(LampContract.lampTapped))
         XCTAssertFalse(HostBoundary.realizes(LampContract.unrealized))
@@ -296,7 +296,7 @@ final class RegistryTests: XCTestCase {
         }, members: { lamp in
             lamp.property(LampContract.signal) { view, signal in view.signal = signal }
             lamp.property(VisualElementContract.opacity) { view, opacity in view.opacity = opacity }
-            lamp.property(LabelContract.maximumLines) { _, _ in }
+            lamp.property(TextContract.lineLimit) { _, _ in }
             lamp.applies([LampContract.caption, LampContract.emphasis]) { view, values in
                 view.caption = (values[LampContract.caption] ?? "")
                     + (values[LampContract.emphasis] == true ? "!" : "")

@@ -44,12 +44,12 @@ final class PlacesRulesTests: XCTestCase {
             PictureArithmetic.glyph(LayoutSize(width: 5, height: 0), height: 24), LayoutSize(width: 5, height: 0))
     }
 
-    /// A layout with no motion places its children at once; its first arrangement places them at once too; the
+    /// A layout with no animation places its children at once; its first arrangement places them at once too; the
     /// arrangement after a patch sends them on their way.
     func testALayoutsChildrenTravelOnlyWhereAPatchSentThem() {
         let animator = Animator()
-        let motion = LayoutMotion(animator: animator, now: { 0 }, reducesMotion: { false })
-        motion.applicationMotion = .spring(response: 240)
+        let animation = LayoutMotion(animator: animator, now: { 0 }, reducesMotion: { false })
+        animation.applicationMotion = .spring(response: 240)
         let places = TravellingPlaces()
         let child = Placed()
         var values = LayoutValues()
@@ -57,9 +57,9 @@ final class PlacesRulesTests: XCTestCase {
 
         places.begin(width: 100)
         places.place(child, mount: 1, at: Rect(x: 0, y: 0, width: 10, height: 10), values: values, fadeIn: nil)
-        XCTAssertEqual(child.placedFrame, Rect(x: 0, y: 0, width: 10, height: 10), "no motion: at once")
+        XCTAssertEqual(child.placedFrame, Rect(x: 0, y: 0, width: 10, height: 10), "no animation: at once")
 
-        places.layoutMotion = motion
+        places.layoutMotion = animation
         places.begin(width: 100)
         places.place(child, mount: 1, at: Rect(x: 0, y: 0, width: 10, height: 10), values: values, fadeIn: nil)
         places.patchArrived()
@@ -81,7 +81,7 @@ final class PlacesRulesTests: XCTestCase {
     /// measure, on any host; what changes a size always does.
     func testOnlyWhatChangesASizeIsMeasuredAgain() {
         let drawn: Set<Prop> = [
-            .opacity, .background, .textColor, .placeholderColor, .tint, .color, .isEnabled,
+            .opacity, .background, .foregroundStyle, .placeholderColor, .tint, .color, .isEnabled,
             .isOn, .value, .minimum, .maximum, .progress, .cursorPosition, .selectionLength,
             .stroke, .fill, .strokeWidth, .strokeDashPattern, .strokeDashOffset, .strokeLineCap, .strokeLineJoin,
             .strokeMiterLimit, .shape, .cornerRadius, .renderTransform, .barBackgroundColor, .barForegroundColor,

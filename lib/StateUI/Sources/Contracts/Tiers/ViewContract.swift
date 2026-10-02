@@ -59,7 +59,7 @@ public enum ViewContract: Contract {
         "horizontalAlignment", layer: .native)
 
     /// The space kept outside the view, between it and its neighbours.
-    public static let margin = ElementProperty<Self, Insets>("margin", layer: .native, moves: .spacing)
+    public static let padding = ElementProperty<Self, EdgeInsets>("padding", layer: .native, moves: .spacing)
 
     /// How many pointers a pan must have.
     public static let panTouchCount = ElementProperty<Self, Int>(
@@ -114,7 +114,7 @@ public enum ViewContract: Contract {
         "tapCount", layer: .structure, travels: false, cleared: false)
 
     /// The view was tapped.
-    public static let tapped = ElementEvent<Self, Void>("tapped", layer: .native)
+    public static let tapGesture = ElementEvent<Self, Void>("tapGesture", layer: .native)
 
     /// How the view uses the height its layout offers.
     public static let verticalAlignment = ElementProperty<Self, Alignment>(
@@ -124,9 +124,9 @@ public enum ViewContract: Contract {
     public static let members: [any ContractMember] = [
         allowDrop, area, canDrag, dragLeave,
         dragOver, dragStarting, dragText, drop, dropCompleted, frameChanged, gridColumn,
-        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, margin, panTouchCount,
+        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, padding, panTouchCount,
         panUpdated, panXChannel, panYChannel, pinchUpdated, pointerEntered, pointerExited,
         pointerMoved, pointerPressed, pointerReleased, swipeDirection, swipeThreshold, swiped,
-        tapCount, tapped, verticalAlignment,
+        tapCount, tapGesture, verticalAlignment,
     ]
 }

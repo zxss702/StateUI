@@ -47,7 +47,7 @@ enum PatchDump {
 
         var head = indent + patch.type.name + " " + spelled(patch.id)
         if patch.replace { head += " replace" }
-        if let placement = patch.motion { head += moving(placement) }
+        if let placement = patch.animation { head += moving(placement) }
         if case .arranged(let children) = patch.children { head += " arranged(\(children.count))" }
         out += head + "\n"
 
@@ -56,7 +56,7 @@ enum PatchDump {
         }
 
         for key in patch.transitions.keys.sorted() {
-            out += indent + "  \(key.name) \(travelling(patch.transitions[key]!.motion))\n"
+            out += indent + "  \(key.name) \(travelling(patch.transitions[key]!.animation))\n"
         }
 
         if case .replace(let driven)? = patch.driven {
@@ -112,23 +112,23 @@ enum PatchDump {
             said += " holding \(held.joined(separator: "+")) still"
         }
 
-        let motion = placement.motion
+        let animation = placement.animation
 
-        if motion.isInherited {
+        if animation.isInherited {
             return said + " moves as the application does"
         }
 
-        switch motion.law {
-        case .spring: return said + " moves on a spring over \(motion.millis)ms"
-        case .eased: return said + (motion.millis == 0 ? " moves at once" : " moves over \(motion.millis)ms \(motion.curve)")
+        switch animation.law {
+        case .spring: return said + " moves on a spring over \(animation.millis)ms"
+        case .eased: return said + (animation.millis == 0 ? " moves at once" : " moves over \(animation.millis)ms \(animation.curve)")
         }
     }
 
     /// How one property travels to the value the line above it states.
-    private static func travelling(_ motion: Motion) -> String {
-        switch motion.law {
-        case .spring: "springs over \(motion.millis)ms, damping \(motion.factor)"
-        case .eased: "travels over \(motion.millis)ms \(motion.curve)(\(motion.curve.rawValue))"
+    private static func travelling(_ animation: Animation) -> String {
+        switch animation.law {
+        case .spring: "springs over \(animation.millis)ms, damping \(animation.factor)"
+        case .eased: "travels over \(animation.millis)ms \(animation.curve)(\(animation.curve.rawValue))"
         }
     }
 
@@ -183,19 +183,19 @@ enum PatchDump {
         // The view tiers and the text mixins.
         case Prop.horizontalAlignment.name, Prop.verticalAlignment.name:
             return spelled(member, as: Alignment.self)
-        case Prop.horizontalTextAlignment.name, Prop.verticalTextAlignment.name:
+        case Prop.multilineTextAlignment.name, Prop.verticalTextAlignment.name:
             return spelled(member, as: TextAlignment.self)
         case Prop.lineBreak.name:
             return spelled(member, as: LineBreak.self)
         case Prop.textCase.name:
             return spelled(member, as: TextCase.self)
         case Prop.aspect.name:
-            return spelled(member, as: Aspect.self)
+            return spelled(member, as: ContentMode.self)
         case Prop.iconPosition.name:
             return spelled(member, as: IconPosition.self)
         case Prop.type.name:
             return spelled(member, as: PinType.self)
-        case Prop.avoidsSafeArea.name:
+        case Prop.ignoresSafeArea.name:
             return spelled(member, as: SafeArea.self)
         case Prop.layoutDirection.name:
             return spelled(member, as: LayoutDirection.self)
@@ -203,16 +203,16 @@ enum PatchDump {
             return spelled(member, as: HeadingLevel.self)
 
         // The inputs.
-        case Prop.inputPurpose.name:
+        case Prop.textContentType.name:
             return spelled(member, as: InputPurpose.self)
-        case Prop.returnKey.name:
+        case Prop.submitLabel.name:
             return spelled(member, as: ReturnKey.self)
 
         // Scrolling, and the pages.
         case Prop.orientation.name:
-            return spelled(member, as: ScrollOrientation.self)
-        case Prop.horizontalScrollBarVisibility.name, Prop.verticalScrollBarVisibility.name:
-            return spelled(member, as: ScrollBarVisibility.self)
+            return spelled(member, as: Axis.self)
+        case Prop.horizontalScrollIndicators.name, Prop.verticalScrollIndicators.name:
+            return spelled(member, as: ScrollIndicatorVisibility.self)
         case Prop.placement.name:
             return spelled(member, as: ToolbarItemPlacement.self)
 

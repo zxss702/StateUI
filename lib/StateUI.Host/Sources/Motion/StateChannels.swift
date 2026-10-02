@@ -34,7 +34,7 @@
 }
 
 /// One channel per host-carried `@State`, shared by every control bound to it.
-/// Design: docs/design/host/motion.md#state-channels
+/// Design: docs/design/host/animation.md#state-channels
 @_spi(Host) @MainActor public final class StateChannels {
     private let animator: Animator
     private var channels: [Int32: StateChannel] = [:]
@@ -181,7 +181,7 @@ private final class StateChannel {
     private var value: [Double]
     private var destination: [Double]
     private var velocity: [Double]
-    private var motion: Motion
+    private var animation: Animation
     private var completion: Int?
     private var stopped: UInt64
 
@@ -202,11 +202,11 @@ private final class StateChannel {
         value = journey.value
         destination = journey.destination
         velocity = journey.velocity
-        motion = journey.motion
+        animation = journey.animation
         completion = journey.completion
         stopped = journey.stopped
 
-        guard !motion.isCustom else { return }
+        guard !animation.isCustom else { return }
         aim(
             at: journey,
             usesStatedVelocity: true,
@@ -221,7 +221,7 @@ private final class StateChannel {
             value: value,
             destination: destination,
             velocity: velocity,
-            motion: motion,
+            animation: animation,
             completion: completion,
             stopped: stopped)
     }
@@ -253,7 +253,7 @@ private final class StateChannel {
             animator.halt(target)
             destination = value
             velocity = Array(repeating: 0, count: width)
-            motion = incoming.motion
+            animation = incoming.animation
             stopped = incoming.stopped
             emit(self, .position, nil)
         }
@@ -265,7 +265,7 @@ private final class StateChannel {
             value = incoming.value
             destination = incoming.destination
             velocity = incoming.velocity
-            motion = incoming.motion
+            animation = incoming.animation
             completion = nil
             stopped = incoming.stopped
         }
@@ -287,7 +287,7 @@ private final class StateChannel {
                 reducesMotion: reducesMotion,
                 emit: emit)
         } else {
-            motion = incoming.motion
+            animation = incoming.animation
             stopped = incoming.stopped
             emit(self, nil, nil)
         }
@@ -346,12 +346,12 @@ private final class StateChannel {
             if isActive { cancelCompletion(emit: emit) }
         }
 
-        motion = incoming.motion
+        animation = incoming.animation
         completion = usesCompletion ? incoming.completion : nil
         stopped = incoming.stopped
         destination = incoming.destination
 
-        if motion.isCustom {
+        if animation.isCustom {
             animator.halt(target)
             value = incoming.value
             velocity = incoming.velocity
@@ -359,17 +359,17 @@ private final class StateChannel {
             return
         }
 
-        let animation = Animation(
+        let running = RunningAnimation(
             from: value,
             destination: destination,
             velocity: (usesStatedVelocity ? incoming.velocity : velocity).map { $0 / 1_000 },
-            motion: motion,
+            animation: animation,
             began: now)
-        velocity = animation.velocity.map { $0 * 1_000 }
+        velocity = running.velocity.map { $0 * 1_000 }
 
-        let instant = motion.law == .eased && motion.millis == 0
+        let instant = animation.law == .eased && animation.millis == 0
 
-        if instant || reducesMotion || animation.arrives {
+        if instant || reducesMotion || running.arrives {
             animator.halt(target)
             value = destination
             velocity = Array(repeating: 0, count: value.count)
@@ -379,7 +379,7 @@ private final class StateChannel {
             return
         }
 
-        animator.start(animation, for: target)
+        animator.start(running, for: target)
         emit(self, .position, nil)
     }
 

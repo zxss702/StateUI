@@ -198,7 +198,7 @@ final class AppKitWindowController: NSWindowController {
         content.set(
             page: arrangement?.appKit.presentableViews.first,
             overlay: presentation.overlay?.children.first?.appKit.layoutItem,
-            spansTitleBar: arrangement?.type == .splitView)
+            spansTitleBar: arrangement?.type == .navigationSplitView)
         if window.contentView !== content {
             content.frame = NSRect(origin: .zero, size: window.contentLayoutRect.size)
             content.autoresizingMask = [.width, .height]

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// What a Window puts on the host boundary.
+// What a WindowScene puts on the host boundary.
 //
 // A window declares its page, its title bar and its modal stack; what it is
 // called, where it stands, how big it is and where it is in its life are its
@@ -15,12 +15,12 @@ import XCTest
 
 /// A window as an author declares one: a page, and nothing else - what it is
 /// told, a title bar included, being its session's.
-private struct PlainWindow: Window {
+private struct PlainWindow: WindowScene {
     var page: any Page { Home() }
 }
 
-private struct Home: ContentView {
-    var content: any View { ModifiedContent(node: label("home")) }
+private struct Home: View {
+    var body: some View { ModifiedContent(node: label("home")) }
 }
 
 extension OverlayKey {
@@ -31,7 +31,7 @@ extension OverlayKey {
 /// A desktop-sized window session used to verify the complete authored shape.
 private func desktop() -> WindowSession {
     let session = WindowSession()
-    session.title = "My Application"
+    session.title = "My App"
     session.width = 1200
     session.height = 800
     session.minimumWidth = 600
@@ -49,10 +49,10 @@ final class WindowTests: XCTestCase {
 
     /// Every authored session property keeps its StateUI spelling and value.
     func testAWindowCarriesItsSessionProperties() {
-        let node = PlainWindow().body(session: desktop()).built
+        let node = PlainWindow().node(session: desktop()).built
 
-        XCTAssertEqual(node.type, "Window")
-        XCTAssertEqual(node.props["title"], .string("My Application"))
+        XCTAssertEqual(node.type, "WindowScene")
+        XCTAssertEqual(node.props["title"], .string("My App"))
         XCTAssertEqual(node.props["width"], .number(1200))
         XCTAssertEqual(node.props["height"], .number(800))
         XCTAssertEqual(node.props["minimumWidth"], .number(600))
@@ -70,7 +70,7 @@ final class WindowTests: XCTestCase {
             .subtitle("Home")
             .leadingContent { label("lead") }
 
-        let node = PlainWindow().body(session: session).built
+        let node = PlainWindow().node(session: session).built
 
         let bars = node.children.filter { $0.type == "TitleBar" }
 
@@ -85,12 +85,12 @@ final class WindowTests: XCTestCase {
     /// written again under a key keeps its place; with no layer there is no overlay.
     func testAWindowLaysItsOverlaysInOneStack() throws {
         let session = WindowSession()
-        XCTAssertFalse(PlainWindow().body(session: session).built.children.contains { $0.type == .overlay })
+        XCTAssertFalse(PlainWindow().node(session: session).built.children.contains { $0.type == .overlay })
 
         session.overlays[.banner] = ModifiedContent(node: label("banner"))
         session.overlays[.toast] = ModifiedContent(node: label("toast"))
         session.overlays[.banner] = ModifiedContent(node: label("banner again"))
-        let node = PlainWindow().body(session: session).built
+        let node = PlainWindow().node(session: session).built
 
         let overlay = try XCTUnwrap(node.children.last)
         XCTAssertEqual(overlay.type, .overlay)
@@ -102,7 +102,7 @@ final class WindowTests: XCTestCase {
         session.overlays[.banner] = nil
         session.overlays[.toast] = nil
         XCTAssertEqual(session.overlays.keys, [])
-        XCTAssertFalse(PlainWindow().body(session: session).built.children.contains { $0.type == .overlay })
+        XCTAssertFalse(PlainWindow().node(session: session).built.children.contains { $0.type == .overlay })
     }
 
     /// A layer keeps its element as the others come and go: the one standing second stays itself as the first is
@@ -113,11 +113,11 @@ final class WindowTests: XCTestCase {
 
         session.overlays[.banner] = ModifiedContent(node: label("banner"))
         session.overlays[.toast] = TextField("toast")
-        let both = entry(in: renders.render(PlainWindow().body(session: session)))
+        let both = entry(in: renders.render(PlainWindow().node(session: session)))
 
         session.overlays[.banner] = nil
         let alone = entry(in: renders.render(
-            PlainWindow().body(session: session), changed: Renderer.shared.pendingChanges))
+            PlainWindow().node(session: session), changed: Renderer.shared.pendingChanges))
 
         XCTAssertNotNil(both)
         XCTAssertEqual(both, alone)
@@ -147,7 +147,7 @@ final class WindowTests: XCTestCase {
                     }
                 }
 
-            return PlainWindow().body(session: session)
+            return PlainWindow().node(session: session)
         }
 
         let renders = Renders()
@@ -173,7 +173,7 @@ final class WindowTests: XCTestCase {
                         Button("Account")
                     }
                 }
-                .body
+                .node
                 .built
         }
 
@@ -190,7 +190,7 @@ final class WindowTests: XCTestCase {
                 Button("Account")
                 Button("Settings")
             }
-            .body
+            .node
             .built
 
         let slot = try XCTUnwrap(bar.children.first)
@@ -212,7 +212,7 @@ final class WindowTests: XCTestCase {
                         Button("Menu")
                     }
                 }
-                .body
+                .node
                 .built
         }
 
@@ -242,7 +242,7 @@ final class WindowTests: XCTestCase {
         session.maximumWidth = 1600
         session.maximumHeight = 1200
 
-        let node = PlainWindow().body(session: session).built
+        let node = PlainWindow().node(session: session).built
 
         XCTAssertEqual(node.props["maximumWidth"], .number(1600))
         XCTAssertEqual(node.props["maximumHeight"], .number(1200))
@@ -256,7 +256,7 @@ final class WindowTests: XCTestCase {
         let session = WindowSession()
         session.title = "Plain"
 
-        let node = PlainWindow().body(session: session).built
+        let node = PlainWindow().node(session: session).built
 
         XCTAssertEqual(node.propNames, ["title"])
     }
@@ -264,7 +264,7 @@ final class WindowTests: XCTestCase {
     /// The page is still the child, whatever else the window carries - the
     /// window's own properties change the window, never what is in it.
     func testThePropertiesLeaveThePageAlone() throws {
-        let node = PlainWindow().body(session: desktop()).built
+        let node = PlainWindow().node(session: desktop()).built
 
         XCTAssertEqual(node.children.count, 1)
         XCTAssertEqual(try XCTUnwrap(node.children.first).type, "Page")
@@ -273,7 +273,7 @@ final class WindowTests: XCTestCase {
     /// The size a session says is the window's own properties, exactly the
     /// numbers written.
     func testTheSessionsSizeIsTheWindowsProperties() {
-        let patch = Renders().render(PlainWindow().body(session: desktop()))
+        let patch = Renders().render(PlainWindow().node(session: desktop()))
 
         XCTAssertEqual(patch.props["width"], .number(1200))
         XCTAssertEqual(patch.props["minimumHeight"], .number(400))
@@ -287,12 +287,12 @@ final class WindowTests: XCTestCase {
         session.width = 1200
 
         let renders = Renders()
-        renders.render(PlainWindow().body(session: session))
+        renders.render(PlainWindow().node(session: session))
 
         session.width = 1400
 
         let patch = renders.render(
-            PlainWindow().body(session: session),
+            PlainWindow().node(session: session),
             changed: Renderer.shared.pendingChanges)
 
         XCTAssertEqual(patch.propNames, ["width"])
@@ -302,7 +302,7 @@ final class WindowTests: XCTestCase {
     /// The window node carries the six moments of its life as its events, so
     /// the host's window reports with them.
     func testAWindowsLifetimeRidesAsItsEvents() {
-        let patch = Renders().render(PlainWindow().body(session: WindowSession()))
+        let patch = Renders().render(PlainWindow().node(session: WindowSession()))
 
         XCTAssertEqual(
             patch.events?.keys.sorted(),
@@ -315,7 +315,7 @@ final class WindowTests: XCTestCase {
         let session = WindowSession()
         let renders = Renders()
 
-        let patch = renders.render(PlainWindow().body(session: session))
+        let patch = renders.render(PlainWindow().node(session: session))
         let events = try XCTUnwrap(patch.events)
 
         XCTAssertTrue(renders.fire(try XCTUnwrap(events["stopped"])))

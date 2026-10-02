@@ -17,7 +17,7 @@ final class HostDeclarationTests: XCTestCase {
     /// acts included.
     func testADeclarationReadsBackAsItWasWritten() {
         var sample = Self.sample
-        sample.shared = HostDeclaration.Element(members: ["opacity"], events: ["tapped"])
+        sample.shared = HostDeclaration.Element(members: ["opacity"], events: ["tapGesture"])
         sample.acts = ["focus"]
 
         XCTAssertEqual(HostDeclaration(text: sample.text), sample)
@@ -29,7 +29,7 @@ final class HostDeclarationTests: XCTestCase {
         let same = HostDeclaration(elements: [
             "Slider": HostDeclaration.Element(
                 members: ["value", "minimum", "maximum"], events: ["valueChanged"]),
-            "Label": HostDeclaration.Element(members: ["maximumLines", "fontSize"]),
+            "Text": HostDeclaration.Element(members: ["lineLimit", "fontSize"]),
         ])
 
         XCTAssertEqual(same.text, Self.sample.text)
@@ -45,8 +45,8 @@ final class HostDeclarationTests: XCTestCase {
             HostDeclaration(text: whole.replacingOccurrences(of: "(acts)\n", with: "")),
             "the acts left out")
         XCTAssertNil(HostDeclaration(text: "  opacity\n" + whole), "a member under nothing")
-        XCTAssertNil(HostDeclaration(text: "Label\n" + whole), "an element said twice")
-        XCTAssertNil(HostDeclaration(text: whole + "Label\n"), "an element after the shared machinery")
+        XCTAssertNil(HostDeclaration(text: "Text\n" + whole), "an element said twice")
+        XCTAssertNil(HostDeclaration(text: whole + "Text\n"), "an element after the shared machinery")
         XCTAssertNil(HostDeclaration(text: whole + "  opacity\n"), "a member among the acts")
     }
 
@@ -57,9 +57,9 @@ final class HostDeclarationTests: XCTestCase {
         let realization = Self.sample.realization
 
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "Label", owner: "Label", member: "maximumLines")))
+            HostRealizedMember(element: "Text", owner: "Text", member: "lineLimit")))
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "Label", owner: "FontElement", member: "fontSize")))
+            HostRealizedMember(element: "Text", owner: "FontElement", member: "fontSize")))
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "Slider", owner: "Slider", member: "valueChanged")))
     }
@@ -70,8 +70,8 @@ final class HostDeclarationTests: XCTestCase {
         HostBoundary.setRealization(Self.sample.realization)
         defer { HostBoundary.setRealization(HostRealization()) }
 
-        XCTAssertTrue(HostBoundary.realizes(LabelContract.self))
-        XCTAssertTrue(HostBoundary.realizes(LabelContract.maximumLines))
+        XCTAssertTrue(HostBoundary.realizes(TextContract.self))
+        XCTAssertTrue(HostBoundary.realizes(TextContract.lineLimit))
         XCTAssertTrue(HostBoundary.realizes(FontElementContract.fontSize))
         XCTAssertFalse(HostBoundary.realizes(ButtonContract.self))
     }
@@ -80,7 +80,7 @@ final class HostDeclarationTests: XCTestCase {
     /// owner: it is a host and the contracts disagreeing, and it is named.
     func testAMemberNoContractDeclaresIsNamedRatherThanGuessedAt() {
         let wrong = HostDeclaration(elements: [
-            "Label": HostDeclaration.Element(members: ["maximumLines", "nosuchmember"]),
+            "Text": HostDeclaration.Element(members: ["lineLimit", "nosuchmember"]),
         ])
 
         XCTAssertFalse(wrong.realization.members.contains { $0.member == "nosuchmember" })
@@ -130,32 +130,32 @@ final class HostDeclarationTests: XCTestCase {
     /// own there, the shared machinery once, and leaves an application's own element to the application.
     func testARegistryDeclaresTheSharedMachineryOnce() {
         let realization = HostRealization(
-            elements: ["Label", "Slider", "Doodle"],
+            elements: ["Text", "Slider", "Doodle"],
             members: [
-                HostRealizedMember(element: "Label", owner: "Label", member: "maximumLines"),
-                HostRealizedMember(element: "Label", owner: "VisualElement", member: "opacity"),
+                HostRealizedMember(element: "Text", owner: "Text", member: "lineLimit"),
+                HostRealizedMember(element: "Text", owner: "VisualElement", member: "opacity"),
                 HostRealizedMember(element: "Slider", owner: "Slider", member: "valueChanged"),
                 HostRealizedMember(element: "Slider", owner: "VisualElement", member: "opacity"),
-                HostRealizedMember(element: "Slider", owner: "View", member: "tapped"),
+                HostRealizedMember(element: "Slider", owner: "View", member: "tapGesture"),
                 HostRealizedMember(element: "Doodle", owner: "Doodle", member: "ink"),
             ])
 
-        let declaration = HostDeclaration(realization: realization, shared: ["opacity", "tapped"], acts: ["focus"])
+        let declaration = HostDeclaration(realization: realization, shared: ["opacity", "tapGesture"], acts: ["focus"])
 
         XCTAssertEqual(declaration.elements, [
-            "Label": HostDeclaration.Element(members: ["maximumLines"]),
+            "Text": HostDeclaration.Element(members: ["lineLimit"]),
             "Slider": HostDeclaration.Element(events: ["valueChanged"]),
         ])
-        XCTAssertEqual(declaration.shared, HostDeclaration.Element(members: ["opacity"], events: ["tapped"]))
+        XCTAssertEqual(declaration.shared, HostDeclaration.Element(members: ["opacity"], events: ["tapGesture"]))
         XCTAssertEqual(declaration.acts, ["focus"])
         XCTAssertEqual(declaration.text, """
-            Label
-              maximumLines
             Slider
               valueChanged()
+            Text
+              lineLimit
             (every element)
               opacity
-              tapped()
+              tapGesture()
             (acts)
               focus()
 
@@ -167,7 +167,7 @@ final class HostDeclarationTests: XCTestCase {
     /// A host declaring a label with a member of its own and one of a tier it
     /// wears, and a slider with the value a user moves.
     private static let sample = HostDeclaration(elements: [
-        "Label": HostDeclaration.Element(members: ["fontSize", "maximumLines"]),
+        "Text": HostDeclaration.Element(members: ["fontSize", "lineLimit"]),
         "Slider": HostDeclaration.Element(
             members: ["maximum", "minimum", "value"], events: ["valueChanged"]),
     ])

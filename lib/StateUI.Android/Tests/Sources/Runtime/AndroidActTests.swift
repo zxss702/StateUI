@@ -20,7 +20,7 @@ final class AndroidActTests: XCTestCase {
         onMainActor {
             let said = State(wrappedValue: "")
             let host = AndroidRenderer.running {
-                Label(said.wrappedValue).onCreated {
+                Text(said.wrappedValue).onAppear {
                     let time = try await ClockTime.now()
                     let zone = try await TimeZoneInfo.local()
                     said.wrappedValue = "\(time.hour) \(time.minute) \(zone)"
@@ -52,11 +52,11 @@ final class AndroidActTests: XCTestCase {
 }
 
 /// A field, and a button that aims the focus at it.
-private struct FocusPage: ContentView {
+private struct FocusPage: View {
     @Aim(TextField.self) private var field
     let answers: Received<Bool>
 
-    var content: any View {
+    var body: some View {
         let answers = self.answers
         let field = self.field
         return VStack {

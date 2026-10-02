@@ -18,11 +18,11 @@ extension AppKitDriver {
             return "the host's action called, not the pop-up's"
         case "pickDate", "pickTime":
             return "the host's change handler called, not the picker's action"
-        case "scroll" where element == "ItemsView":
+        case "scroll" where element == "List":
             return nil
         case "scroll":
             return "the host's movement moved, not the clip view"
-        case "choose" where element == "ItemsView", "activate" where element == "an item of ItemsView":
+        case "choose" where element == "List", "activate" where element == "an item of List":
             return "the collection's delegate told, no click"
         case "answer":
             return "the host's response called, no alert shown"
@@ -35,10 +35,10 @@ extension AppKitDriver {
         default: break
         }
         switch ability {
-        case "read currentPage of TabbedView": return "the host's tab choice, not the tab view's"
+        case "read currentPage of TabView": return "the host's tab choice, not the tab view's"
         case "read isRunning of ActivityIndicator": return "the host's own flag; the indicator holds none to read"
-        case "read windowType of Window", "read windowValue of Window": return "the host's restoration record"
-        case "read the menu of Window": return "menu items built from the tree at the read, not the main menu"
+        case "read windowType of WindowScene", "read windowValue of WindowScene": return "the host's restoration record"
+        case "read the menu of WindowScene": return "menu items built from the tree at the read, not the main menu"
         case "read what the screen reader said": return "the host's own list of what it announced"
         case "read a question": return "the captions the host keeps, not the alert's buttons"
         default: break

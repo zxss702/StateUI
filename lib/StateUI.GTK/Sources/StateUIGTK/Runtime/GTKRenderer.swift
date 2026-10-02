@@ -17,7 +17,7 @@ final class GTKRenderer {
 
     let frameClock: GTKFrameClock
 
-    /// Whether the user asked for less motion: every animation arrives at once.
+    /// Whether the user asked for less animation: every animation arrives at once.
     private let reducesMotion: () -> Bool
 
     /// The application the windows belong to.
@@ -46,7 +46,7 @@ final class GTKRenderer {
     /// Whether the screen the window stands on has been told.
     private var reportedDisplay = false
 
-    /// A runtime whose windows belong to `application`, on GLib's monotonic clock or on `clock`, with the motion
+    /// A runtime whose windows belong to `application`, on GLib's monotonic clock or on `clock`, with the animation
     /// `reducesMotion` allows.
     init(
         application: UnsafeMutablePointer<GtkApplication>,
@@ -111,7 +111,7 @@ final class GTKRenderer {
     /// pages hearing that they show, and tells the window it was made, once, in its turn.
     /// Design: docs/design/platforms/gtk/runtime.md#the-window
     private func showWindow() {
-        guard let element = runtime.tree.root?.first(type: .window) else { return }
+        guard let element = runtime.tree.root?.first(type: .windowScene) else { return }
 
         let window = self.window ?? GTKWindow(application: application)
         if self.window == nil {
@@ -140,7 +140,7 @@ final class GTKRenderer {
     /// Writes every shown page's chrome on its header bar, and names the window after the page the user sees.
     /// Design: docs/design/platforms/gtk/pages.md#the-chrome
     func refreshChrome() {
-        guard let window, let element = runtime.tree.root?.first(type: .window)?.gtk else { return }
+        guard let window, let element = runtime.tree.root?.first(type: .windowScene)?.gtk else { return }
 
         let arrangement = presentation.arrangement?.gtk
         if let arrangement, GTKElement.framedTypes.contains(arrangement.type) {
@@ -154,7 +154,7 @@ final class GTKRenderer {
 
     /// Collapses the window's split view where the window is narrow.
     private func adaptSplitViews(in window: GTKWindow) {
-        guard let split = presentation.arrangement?.gtk, split.type == .splitView, let view = split.view as? GTKSplitView
+        guard let split = presentation.arrangement?.gtk, split.type == .navigationSplitView, let view = split.view as? GTKSplitView
         else { return }
 
         view.adapt(in: window.widget)

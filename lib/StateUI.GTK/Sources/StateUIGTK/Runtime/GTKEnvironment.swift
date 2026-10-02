@@ -6,7 +6,7 @@
 import CStateUIGTK
 
 /// What the device, the application, the desktop's style and the screen are, told to the core as the host starts,
-/// and again whenever the desktop says one changed; and what the user asks of motion.
+/// and again whenever the desktop says one changed; and what the user asks of animation.
 /// Design: docs/design/platforms/gtk/runtime.md#the-environment
 @MainActor
 enum GTKEnvironment {
@@ -30,7 +30,7 @@ enum GTKEnvironment {
     /// Tells `core` the desktop's style as it stands now: dark or light.
     static func reportChanging(to core: CoreLink) {
         let style = adw_style_manager_get_default()
-        core.setTheme(adw_style_manager_get_dark(style) != 0 ? .dark : .light)
+        core.setColorScheme(adw_style_manager_get_dark(style) != 0 ? .dark : .light)
     }
 
     /// Calls `changed` whenever the desktop's style turns dark or light.
@@ -63,8 +63,8 @@ enum GTKEnvironment {
             refreshRate: Double(gdk_monitor_get_refresh_rate(monitor)) / 1_000))
     }
 
-    /// Whether the user asked for less motion: the desktop's animations turned off.
-    /// Design: docs/design/platforms/gtk/motion.md#less-motion
+    /// Whether the user asked for less animation: the desktop's animations turned off.
+    /// Design: docs/design/platforms/gtk/animation.md#less-animation
     static var reducesMotion: Bool {
         guard let settings = gtk_settings_get_default() else { return false }
 

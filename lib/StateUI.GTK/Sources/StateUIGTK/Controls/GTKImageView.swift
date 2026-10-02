@@ -15,7 +15,7 @@ final class GTKImageView: GTKPanelView {
     private(set) var found = false
 
     /// How the picture fills its room.
-    private var aspect = Aspect.fit
+    private var aspect = ContentMode.fit
 
     /// The file read, its own size in logical pixels, and whether it is an SVG, drawn at the size it shows at.
     private var path: String?
@@ -31,7 +31,7 @@ final class GTKImageView: GTKPanelView {
     }
 
     /// Shows the picture `source` names, filling its room as `aspect` says.
-    func apply(source: ImageSource?, aspect: Aspect) {
+    func apply(source: ImageSource?, aspect: ContentMode) {
         file = source?.file ?? ""
         self.aspect = aspect
         path = GTKPictures.path(of: file)
@@ -60,7 +60,7 @@ final class GTKImageView: GTKPanelView {
     }
 
     /// Reads the picture's pixels for a room: a bitmap once, an SVG at the size it shows at in the room, at the
-    /// display's scale - again only for more pixels, so a size in motion does not read it every frame. An SVG
+    /// display's scale - again only for more pixels, so a size in animation does not read it every frame. An SVG
     /// keeps its own proportions as it is read, so a stretched one is read covering the room and drawn squeezed
     /// into it.
     /// Design: docs/design/platforms/gtk/controls.md#pictures

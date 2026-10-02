@@ -149,7 +149,7 @@ extension Renderer {
         var lanes = standing.value
             + standing.destination
             + standing.velocity
-            + StateLaw.lanes(of: standing.motion)
+            + StateLaw.lanes(of: standing.animation)
             + [Double(standing.completion ?? 0), Double(standing.stopped)]
         var mask: UInt64 = 0
 

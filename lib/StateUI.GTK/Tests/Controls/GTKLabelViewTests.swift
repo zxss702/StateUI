@@ -8,27 +8,27 @@ import CStateUIGTK
 import XCTest
 
 /// A word whose colour a button changes.
-private struct ChangingRunPage: ContentView {
+private struct ChangingRunPage: View {
     @State private var red = true
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label().spans { TextSpan("word").textColor(red ? Color("#FF0000") : Color("#0000FF")) }
+            Text().spans { TextSpan("word").foregroundStyle(red ? Color("#FF0000") : Color("#0000FF")) }
             Button("Blue").onClicked { red = false }
         }
     }
 }
 
 /// One label, its words in spans until a button takes them away.
-private struct SpannedPage: ContentView {
+private struct SpannedPage: View {
     @State private var spanned = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             if spanned {
-                Label("own").spans { TextSpan("runs") }.id("words")
+                Text("own").spans { TextSpan("runs") }.id("words")
             } else {
-                Label("own").id("words")
+                Text("own").id("words")
             }
             Button("Plain").onClicked { spanned = false }
         }
@@ -41,16 +41,16 @@ final class GTKLabelViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Label("words")
+                    Text("words")
                         .fontSize(20)
                         .fontAttributes([.bold, .italic])
                         .fontFamily("monospace")
-                        .textColor(Color("#FF0000"))
+                        .foregroundStyle(Color("#FF0000"))
                         .characterSpacing(2)
                         .lineHeight(1.5)
                         .textDecorations(.underline)
-                        .maximumLines(2)
-                        .horizontalTextAlignment(.center)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
                 }
             }
             let label = try XCTUnwrap(host.views(GTKLabelView.self).first)
@@ -76,8 +76,8 @@ final class GTKLabelViewTests: XCTestCase {
         onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Label("7").background(Color("#FF0000")).verticalTextAlignment(.end).width(60).height(72)
-                    Label("at the top").height(72)
+                    Text("7").background(Color("#FF0000")).verticalTextAlignment(.end).frame(width: 60).frame(height: 72)
+                    Text("at the top").frame(height: 72)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
@@ -96,8 +96,8 @@ final class GTKLabelViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Label("words")
-                    Label("words").padding(24, 8, 12, 4)
+                    Text("words")
+                    Text("words").contentPadding(24, 8, 12, 4)
                 }
             }
             let labels = host.views(GTKLabelView.self)
@@ -116,11 +116,11 @@ final class GTKLabelViewTests: XCTestCase {
             let words = "one two three four five six seven eight nine ten eleven twelve"
             let host = GTKRenderer.running {
                 VStack {
-                    Label(words).lineBreak(.tailTruncation)
-                    Label(words).maximumLines(2)
-                    Label(words)
-                    Label("one")
-                    Label(words).lineBreak(.tailTruncation).maximumLines(3)
+                    Text(words).lineBreak(.tailTruncation)
+                    Text(words).lineLimit(2)
+                    Text(words)
+                    Text("one")
+                    Text(words).lineBreak(.tailTruncation).lineLimit(3)
                 }
             }
             let heights = host.views(GTKLabelView.self).map { $0.measure(width: 120, height: nil).height }
@@ -138,9 +138,9 @@ final class GTKLabelViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Label()
+                    Text()
                         .spans {
-                            TextSpan("let ").textColor(Color("#FF0000"))
+                            TextSpan("let ").foregroundStyle(Color("#FF0000"))
                             TextSpan("x").fontSize(20).fontAttributes([.bold, .italic])
                             TextSpan(" = 1").textDecorations(.underline).background(Color("#FFFF00"))
                         }

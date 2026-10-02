@@ -12,12 +12,12 @@ final class WinUILayoutMotionTests: XCTestCase {
     /// A vertical stack of 100 x 40 labels in `order`, travelling on a 200 ms linear law; `hidden` fade out in 100 ms.
     private static func stack(_ order: [String], hidden: Set<String> = []) -> HostPatch {
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
-        stack.motion = HostLayoutMotion(motion: .eased(200, .linear), lanes: .all)
+        stack.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
         stack.children = .arranged(order.map { name in
-            var row = HostPatch(id: .manual(name), type: .label)
+            var row = HostPatch(id: .manual(name), type: .text)
             row.properties = [.text: .string(name), .width: .number(100), .height: .number(40)]
             row.properties[.isVisible] = .bool(!hidden.contains(name))
-            row.motion = HostLayoutMotion(motion: .eased(100, .linear), lanes: .all)
+            row.animation = HostLayoutMotion(animation: .eased(100, .linear), lanes: .all)
             return row
         })
         return stack
@@ -169,16 +169,16 @@ final class WinUILayoutMotionTests: XCTestCase {
 }
 
 /// A label on red lengthened by a button, in a stack whose children travel for 200 ms.
-private struct LengtheningPage: ContentView {
+private struct LengtheningPage: View {
     @State private var long = false
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(long ? "Text & typing" : "Text").background(.red).horizontalAlignment(.start)
+            Text(long ? "Text & typing" : "Text").background(.red).horizontalAlignment(.start)
             Button("Longer").onClicked { long = true }
         }
-        .motion(.eased(200, .linear))
-        .width(300)
+        .animation(.eased(200, .linear))
+        .frame(width: 300)
         .horizontalAlignment(.start)
         .verticalAlignment(.start)
     }

@@ -10,8 +10,8 @@ extension ScrollViewProperties {
     ///
     /// `.neither` is for a scroller with nothing to scroll, such as an emptied
     /// list: it goes back to the beginning. To stop the user's hand and leave
-    /// the scroller where it stands, write `.ignoresInput(true)` instead.
-    public func orientation(_ value: ScrollOrientation) -> Modified {
+    /// the scroller where it stands, write `.allowsHitTesting(!true)` instead.
+    public func orientation(_ value: Axis) -> Modified {
         setValue(ScrollViewContract.orientation, value)
     }
 
@@ -19,13 +19,13 @@ extension ScrollViewProperties {
     ///
     /// `.never` is what a scroller inside a page of cards usually wants - the
     /// bar says the same thing the content already does.
-    public func verticalScrollBarVisibility(_ value: ScrollBarVisibility) -> Modified {
-        setValue(ScrollViewContract.verticalScrollBarVisibility, value)
+    public func verticalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
+        setValue(ScrollViewContract.verticalScrollIndicators, value)
     }
 
     /// The same, along the bottom.
-    public func horizontalScrollBarVisibility(_ value: ScrollBarVisibility) -> Modified {
-        setValue(ScrollViewContract.horizontalScrollBarVisibility, value)
+    public func horizontalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
+        setValue(ScrollViewContract.horizontalScrollIndicators, value)
     }
 }
 
@@ -34,7 +34,7 @@ extension ScrollViewProperties {
 ///     ScrollView {
 ///         VStack { … }
 ///     }
-///     .verticalScrollBarVisibility(.never)
+///     .verticalScrollIndicators(.never)
 ///
 /// `.padding` is inside the scroller and moves with the content; `.margin` is
 /// outside it and stays put. A ScrollView describes every child it holds,
@@ -44,7 +44,7 @@ extension ScrollViewProperties {
 /// axis and passes a dominant gesture on the disabled axis to the enclosing
 /// scroller. A horizontal code listing can therefore live inside a vertical
 /// page without interrupting the page's movement.
-public struct ScrollView: View, PaddingElement, BorderElement, ScrollViewProperties {
+public struct ScrollView: VisualElement, PaddingElement, BorderElement, ScrollViewProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -55,9 +55,9 @@ public struct ScrollView: View, PaddingElement, BorderElement, ScrollViewPropert
 
     /// A scrollable view around what the closure describes. The closure runs
     /// when the differ reaches the scroller.
-    public init(@ViewBuilder content: @escaping () -> [Element]) {
+    public init(@ViewBuilder content: @escaping () -> any View) {
         node = Node(contract: ScrollViewContract.self)
-        node.producer = { content().map { $0.body } }
+        node.producer = { content().node.asChildren }
     }
 
     /// Where the scroller stands, in device units from the content's top-left
@@ -71,7 +71,7 @@ public struct ScrollView: View, PaddingElement, BorderElement, ScrollViewPropert
     ///     Button("Top").onClicked { offset = .zero }
     ///
     /// `offset` is where it is going and `$offset.journey.value` where it is. A
-    /// write animates under the element's motion, `$offset.journey.snap(to:)`
+    /// write animates under the element's animation, `$offset.journey.snap(to:)`
     /// jumps, and `try await $offset.journey.move(to:)` waits for the arrival.
     /// Handing `$offset` over reads nothing: a body that reads `offset` renders
     /// on every report, and `.samples($offset, into:, .every(100))` holds a
@@ -99,21 +99,21 @@ public struct ScrollView: View, PaddingElement, BorderElement, ScrollViewPropert
 }
 
 extension ScrollView {
-    /// `horizontalScrollBarVisibility` from a state, `$x`: the host sets each
+    /// `horizontalScrollIndicators` from a state, `$x`: the host sets each
     /// new value as it stands, and no view is rebuilt for it.
-    public func horizontalScrollBarVisibility(_ state: Binding<ScrollBarVisibility>) -> Modified {
-        plain(.horizontalScrollBarVisibility, by: state)
+    public func horizontalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
+        plain(.horizontalScrollIndicators, by: state)
     }
 
     /// `orientation` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func orientation(_ state: Binding<ScrollOrientation>) -> Modified {
+    public func orientation(_ state: Binding<Axis>) -> Modified {
         plain(.orientation, by: state)
     }
 
-    /// `verticalScrollBarVisibility` from a state, `$x`: the host sets each new
+    /// `verticalScrollIndicators` from a state, `$x`: the host sets each new
     /// value as it stands, and no view is rebuilt for it.
-    public func verticalScrollBarVisibility(_ state: Binding<ScrollBarVisibility>) -> Modified {
-        plain(.verticalScrollBarVisibility, by: state)
+    public func verticalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
+        plain(.verticalScrollIndicators, by: state)
     }
 }

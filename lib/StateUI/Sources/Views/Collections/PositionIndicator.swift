@@ -63,7 +63,7 @@ extension PositionIndicatorProperties {
 /// It is joined to a `GalleryView` by shared state: the gallery's
 /// `.position($shown)` writes it as the user swipes, and `.position(shown)`
 /// here reads it. It serves anything with a place in a sequence.
-public struct PositionIndicator: View, PositionIndicatorProperties {
+public struct PositionIndicator: VisualElement, PositionIndicatorProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -83,9 +83,9 @@ public struct PositionIndicator: View, PositionIndicatorProperties {
     /// The items take the place of `count`, which is derived from them.
     public init<Items: RandomAccessCollection>(
         _ items: Items,
-        content: (Items.Element) -> Element
+        content: (Items.Element) -> any View
     ) {
-        node = Node(contract: PositionIndicatorContract.self, children: items.map { content($0).body })
+        node = Node(contract: PositionIndicatorContract.self, children: items.map { content($0).node })
     }
 
 }

@@ -35,7 +35,7 @@ final class UIKitElement: NativeElement {
     var isPlaced = false
 
     /// Where a label's place travels: its words stand at that size meanwhile.
-    /// Design: docs/design/host/motion.md#words-at-their-destination
+    /// Design: docs/design/host/animation.md#words-at-their-destination
     var wordsRoom: Rect?
 
     /// A menu item's or a toolbar item's action, as UIKit was last handed it.
@@ -129,7 +129,7 @@ extension UIKitElement: PlacedView {
     }
 
     func travels(to destination: Rect?) {
-        if type == .label { wordsRoom = destination }
+        if type == .text { wordsRoom = destination }
     }
 }
 

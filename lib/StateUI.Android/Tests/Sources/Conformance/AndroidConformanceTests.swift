@@ -17,13 +17,13 @@ final class AndroidConformanceTests: XCTestCase {
             ("testButton", testButton),
             ("testCanvas", testCanvas),
             ("testCheckBox", testCheckBox),
-            ("testColorBox", testColorBox),
+            ("testColorPicker", testColorPicker),
             ("testDatePicker", testDatePicker),
             ("testEllipse", testEllipse),
             ("testGrid", testGrid),
             ("testHStack", testHStack),
             ("testImage", testImage),
-            ("testLabel", testLabel),
+            ("testText", testText),
             ("testLine", testLine),
             ("testMap", testMap),
             ("testPath", testPath),
@@ -35,7 +35,7 @@ final class AndroidConformanceTests: XCTestCase {
             ("testRadioButton", testRadioButton),
             ("testRectangle", testRectangle),
             ("testScrollView", testScrollView),
-            ("testItemsView", testItemsView),
+            ("testList", testList),
             ("testSearchField", testSearchField),
             ("testSlider", testSlider),
             ("testStepper", testStepper),
@@ -63,8 +63,8 @@ final class AndroidConformanceTests: XCTestCase {
             ("testScene", testScene),
             ("testSpan", testSpan),
             ("testSpans", testSpans),
-            ("testSplitView", testSplitView),
-            ("testTabbedView", testTabbedView),
+            ("testNavigationSplitView", testNavigationSplitView),
+            ("testTabView", testTabView),
             ("testTitleView", testTitleView),
             ("testToolbarItem", testToolbarItem),
             ("testToolbarItems", testToolbarItems),
@@ -97,13 +97,13 @@ final class AndroidConformanceTests: XCTestCase {
     func testButton() throws { try conform(ButtonTests.self) }
     func testCanvas() throws { try conform(CanvasTests.self) }
     func testCheckBox() throws { try conform(CheckBoxTests.self) }
-    func testColorBox() throws { try conform(ColorBoxTests.self) }
+    func testColorPicker() throws { try conform(ColorPickerTests.self) }
     func testDatePicker() throws { try conform(DatePickerTests.self) }
     func testEllipse() throws { try conform(EllipseTests.self) }
     func testGrid() throws { try conform(GridTests.self) }
     func testHStack() throws { try conform(HStackTests.self) }
     func testImage() throws { try conform(ImageTests.self) }
-    func testLabel() throws { try conform(LabelTests.self) }
+    func testText() throws { try conform(TextTests.self) }
     func testLine() throws { try conform(LineTests.self) }
     func testMap() throws { try conform(MapTests.self) }
     func testPath() throws { try conform(PathTests.self) }
@@ -115,7 +115,7 @@ final class AndroidConformanceTests: XCTestCase {
     func testRadioButton() throws { try conform(RadioButtonTests.self) }
     func testRectangle() throws { try conform(RectangleTests.self) }
     func testScrollView() throws { try conform(ScrollViewTests.self) }
-    func testItemsView() throws { try conform(ItemsViewTests.self) }
+    func testList() throws { try conform(ListTests.self) }
     func testSearchField() throws { try conform(SearchFieldTests.self) }
     func testSlider() throws { try conform(SliderTests.self) }
     func testStepper() throws { try conform(StepperTests.self) }
@@ -143,8 +143,8 @@ final class AndroidConformanceTests: XCTestCase {
     func testScene() throws { try conform(SceneTests.self) }
     func testSpan() throws { try conform(SpanTests.self) }
     func testSpans() throws { try conform(SpansTests.self) }
-    func testSplitView() throws { try conform(SplitViewTests.self) }
-    func testTabbedView() throws { try conform(TabbedViewTests.self) }
+    func testNavigationSplitView() throws { try conform(NavigationSplitViewTests.self) }
+    func testTabView() throws { try conform(TabViewTests.self) }
     func testTitleView() throws { try conform(TitleViewTests.self) }
     func testToolbarItem() throws { try conform(ToolbarItemTests.self) }
     func testToolbarItems() throws { try conform(ToolbarItemsTests.self) }

@@ -20,7 +20,7 @@ final class AppKitButtonViewTests: XCTestCase {
             imagePosition: .imageTrailing,
             imageScaling: .scaleProportionallyUpOrDown,
             font: .systemFont(ofSize: 15),
-            textColor: .systemPurple,
+            foregroundStyle: .systemPurple,
             backgroundColor: .systemYellow,
             strokeColor: .systemBlue,
             strokeWidth: 2,
@@ -47,7 +47,7 @@ final class AppKitButtonViewTests: XCTestCase {
             imagePosition: .imageOnly,
             imageScaling: .scaleNone,
             font: .systemFont(ofSize: 13),
-            textColor: .controlTextColor,
+            foregroundStyle: .controlTextColor,
             backgroundColor: nil,
             strokeColor: nil,
             strokeWidth: 1,
@@ -79,7 +79,7 @@ final class AppKitButtonViewTests: XCTestCase {
         let button = AppKitButtonView()
         button.apply(
             text: "Save", image: nil, imagePosition: .noImage, imageScaling: .scaleNone,
-            font: .systemFont(ofSize: 13), textColor: .labelColor, backgroundColor: .systemBlue, strokeColor: nil,
+            font: .systemFont(ofSize: 13), foregroundStyle: .labelColor, backgroundColor: .systemBlue, strokeColor: nil,
             strokeWidth: 0, shape: .rectangle, lineBreakMode: .byTruncatingTail, enabled: true)
         let alpha = { Double(button.layer?.backgroundColor?.alpha ?? 0) }
         let crossing = { (type: NSEvent.EventType) in
@@ -151,14 +151,14 @@ final class AppKitButtonViewTests: XCTestCase {
             button.properties = properties
             return button
         }
-        func icon(_ aspect: Aspect) -> [Prop: HostValue] {
+        func icon(_ aspect: ContentMode) -> [Prop: HostValue] {
             [.icon: .string("save.png"), .aspect: .enumeration(aspect.rawValue)]
         }
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.children = .arranged([
             button("padded", [
                 .text: .string("Save"),
-                .padding: .numbers([20, 10, 20, 10]),
+                .contentPadding: .numbers([20, 10, 20, 10]),
                 .stroke: Brush.solidColor(Color("#FF0000")).propValue,
                 .strokeWidth: .number(2),
                 .shape: ContainerShape.roundedRectangle(6).propValue,

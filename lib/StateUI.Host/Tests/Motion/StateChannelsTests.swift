@@ -18,7 +18,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(200, .cubicOut),
+            animation: .eased(200, .cubicOut),
             completion: nil,
             stopped: 0)
         let carried = HostBoundary.value(of: journey)
@@ -46,7 +46,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(200, .cubicOut),
+            animation: .eased(200, .cubicOut),
             completion: nil,
             stopped: 0)
         _ = channels.presentedValue(
@@ -60,7 +60,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [0.2],
             velocity: [0],
-            motion: .eased(200, .linear),
+            animation: .eased(200, .linear),
             completion: nil,
             stopped: 0)
         channels.receive(
@@ -89,7 +89,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(100, .linear),
+            animation: .eased(100, .linear),
             completion: -23,
             stopped: 0)
         _ = channels.presentedValue(
@@ -123,7 +123,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(200, .linear),
+            animation: .eased(200, .linear),
             completion: -29,
             stopped: 0)
         _ = channels.presentedValue(
@@ -155,7 +155,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(200, .cubicOut),
+            animation: .eased(200, .cubicOut),
             completion: -31,
             stopped: 0)
         _ = channels.presentedValue(
@@ -187,7 +187,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(200, .linear),
+            animation: .eased(200, .linear),
             completion: nil,
             stopped: 0)
         _ = channels.presentedValue(
@@ -211,7 +211,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(100, .linear),
+            animation: .eased(100, .linear),
             completion: -41,
             stopped: 0)
         _ = channels.presentedValue(
@@ -225,7 +225,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0.25],
             destination: [0.25],
             velocity: [0],
-            motion: moving.motion,
+            animation: moving.animation,
             completion: -41,
             stopped: 0)
         channels.receive(
@@ -260,7 +260,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [1],
             velocity: [0],
-            motion: .eased(100, .linear),
+            animation: .eased(100, .linear),
             completion: -41,
             stopped: 0)
         _ = channels.presentedValue(
@@ -274,7 +274,7 @@ final class StateChannelsTests: XCTestCase {
             value: [0],
             destination: [0.25],
             velocity: [0],
-            motion: .eased(100, .linear),
+            animation: .eased(100, .linear),
             completion: -42,
             stopped: 0)
         channels.receive(
@@ -331,7 +331,7 @@ final class StateChannelsTests: XCTestCase {
     @MainActor
     func testAnEmptyDrivenMapLetsItsStatesGo() throws {
         let runtime = HostRuntime.still()
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.driven = .replace([
             .opacity: HostStateBinding(state: Self.worn, mode: .out, kind: .property),
             .rotation: HostStateBinding(state: Self.worn + 1, mode: .out, kind: .property),
@@ -343,7 +343,7 @@ final class StateChannelsTests: XCTestCase {
         Self.open(Self.worn + 1, in: runtime, from: 0, to: 0)
         XCTAssertEqual(runtime.stateChannels.count, 2)
 
-        var unbound = HostPatch(id: .manual("label"), type: .label)
+        var unbound = HostPatch(id: .manual("label"), type: .text)
         unbound.driven = .replace([:])
         stack.children = .changed([unbound])
         runtime.tree.apply(stack, complete: false)
@@ -359,7 +359,7 @@ final class StateChannelsTests: XCTestCase {
     private static func labels(_ names: [String]) -> HostPatch {
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.children = .arranged(names.map { name in
-            var label = HostPatch(id: .manual(name), type: .label)
+            var label = HostPatch(id: .manual(name), type: .text)
             label.driven = .replace([.opacity: HostStateBinding(state: worn, mode: .out, kind: .property)])
             return label
         })
@@ -370,7 +370,7 @@ final class StateChannelsTests: XCTestCase {
     @MainActor
     private static func open(_ state: Int32, in runtime: HostRuntime, from value: Double, to destination: Double) {
         let journey = HostJourney(
-            value: [value], destination: [destination], velocity: [0], motion: .eased(200, .linear), completion: nil,
+            value: [value], destination: [destination], velocity: [0], animation: .eased(200, .linear), completion: nil,
             stopped: 0)
         _ = runtime.stateChannels.presentedValue(
             for: HostStateBinding(state: state, mode: .out, kind: .property),

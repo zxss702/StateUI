@@ -6,7 +6,7 @@ extension VisualElement where Self: StyleTarget {
     /// says, said about one control.
     ///
     ///     Button("Save")
-    ///         .visualState(.disabled) { $0.textColor(Palette.disabled) }
+    ///         .visualState(.disabled) { $0.foregroundStyle(Palette.disabled) }
     ///
     /// A state written here is written over the state of the same name in the
     /// control's style, one setter at a time. Leaving the state gives the
@@ -42,8 +42,8 @@ extension VisualElement where Self: StyleTarget {
     ///
     ///     @State private var lift = 1.0
     ///
-    ///     ZStack { Label("Open") }
-    ///         .scale($lift)
+    ///     ZStack { Text("Open") }
+    ///         .scaleEffect($lift)
     ///         .onVisualStateChanged(.pointerOver, .normal) { state in
     ///             try await $lift.journey.move(to: state == .pointerOver ? 1.03 : 1, .eased(120, .cubicOut))
     ///         }

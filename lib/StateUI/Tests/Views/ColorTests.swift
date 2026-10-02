@@ -75,10 +75,10 @@ final class ColorTests: XCTestCase {
         XCTAssertEqual(
             themed.propValue,
             .themed(light: Color.white.propValue, dark: Color.black.propValue))
-        XCTAssertEqual(themed.propValue.resolvingTheme(), Color.white.propValue)
+        XCTAssertEqual(themed.propValue.resolvingColorScheme(), Color.white.propValue)
 
         withTheme(.dark) {
-            XCTAssertEqual(themed.propValue.resolvingTheme(), Color.black.propValue)
+            XCTAssertEqual(themed.propValue.resolvingColorScheme(), Color.black.propValue)
         }
     }
 
@@ -86,12 +86,12 @@ final class ColorTests: XCTestCase {
 
     /// A drawing is a list of RECORDS - one number for the canvas member, its
     /// arguments after it as the things they are - so a colour in one crosses
-    /// as the four bytes every other colour crosses as, and the theme picks
+    /// as the four bytes every other colour crosses as, and the color scheme picks
     /// its half as the element holding the drawing is built.
     func testADrawingWritesEachColourAsItsFourChannels() {
         func drawn() -> PropValue? {
             Canvas { Draw.fillColor(Color(light: Color("#6495ED"), dark: .black)) }
-                .body.props[.drawable]?.resolvingTheme()
+                .node.props[.drawable]?.resolvingColorScheme()
         }
 
         // One record: the fillColor command's number, then the colour itself.

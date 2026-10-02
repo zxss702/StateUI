@@ -36,9 +36,9 @@ extension MountedElement {
             case .navigationStack:
                 background = background ?? element.value(.barBackgroundColor)
                 foreground = foreground ?? element.value(.barForegroundColor)
-            case .tabbedView:
+            case .tabView:
                 background = background ?? element.value(.barBackgroundColor)
-            case .window:
+            case .windowScene:
                 let titleBar = element.children.first { $0.type == .titleBar }
                 background = background ?? titleBar?.value(.background)
                 foreground = foreground ?? titleBar?.value(.barForegroundColor)

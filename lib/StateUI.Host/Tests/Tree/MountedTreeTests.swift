@@ -28,7 +28,7 @@ final class MountedTreeTests: XCTestCase {
         tree.apply(Self.stack("stack", ["a"]), complete: true)
 
         var sparse = HostPatch(id: .manual("stack"), type: .vStack)
-        sparse.children = .changed([HostPatch(id: .manual("stranger"), type: .label)])
+        sparse.children = .changed([HostPatch(id: .manual("stranger"), type: .text)])
         tree.intake.take(sparse, generation: 2) { tree.apply($0, complete: false) }
 
         XCTAssertEqual(tree.root?.children.map(\.id), [.manual("a")])
@@ -68,7 +68,7 @@ final class MountedTreeTests: XCTestCase {
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.children = .arranged([row])
         tree.apply(stack, complete: true)
-        let standing = HostJourney(value: [0], destination: [0], velocity: [0], motion: .none, completion: nil, stopped: 0)
+        let standing = HostJourney(value: [0], destination: [0], velocity: [0], animation: .none, completion: nil, stopped: 0)
         _ = tree.stateChannels.presentedValue(
             for: HostStateBinding(state: 700, mode: .inOut, kind: .property),
             from: HostBoundary.value(of: standing),
@@ -89,7 +89,7 @@ final class MountedTreeTests: XCTestCase {
         let (tree, log) = Self.tree()
         func layers(_ rows: [String]) -> HostPatch {
             var layers = HostPatch(id: .manual("layers"), type: .zStack)
-            layers.children = .arranged(rows.map { HostPatch(id: .manual($0), type: .label) })
+            layers.children = .arranged(rows.map { HostPatch(id: .manual($0), type: .text) })
             return layers
         }
         tree.apply(layers(["a"]), complete: true)
@@ -126,15 +126,15 @@ final class MountedTreeTests: XCTestCase {
             return patch
         }
         func list(_ rows: [String]) -> HostPatch {
-            patch("list", .zStack, .arranged(rows.map { patch($0, .label) }))
+            patch("list", .zStack, .arranged(rows.map { patch($0, .text) }))
         }
         func secondScene(_ rows: [String]) -> HostPatch {
-            patch("application", .application, .changed([patch("2", .scene, .changed([list(rows)]))]))
+            patch("application", .app, .changed([patch("2", .scene, .changed([list(rows)]))]))
         }
 
         let (tree, _) = Self.tree()
-        let whole = patch("application", .application, .arranged([
-            patch("1", .scene, .arranged([patch("a", .label)])),
+        let whole = patch("application", .app, .arranged([
+            patch("1", .scene, .arranged([patch("a", .text)])),
             patch("2", .scene, .arranged([list(["r1"])])),
         ]))
         tree.intake.take(whole, generation: 1) { tree.apply($0, complete: true) }
@@ -244,7 +244,7 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testAFrameArrangesTheParentThatPlacesAChangedChild() {
         let (tree, log) = Self.tree(viewless: ["slot"])
-        var child = HostPatch(id: .manual("child"), type: .label)
+        var child = HostPatch(id: .manual("child"), type: .text)
         child.properties = [.width: .number(10)]
         var slot = HostPatch(id: .manual("slot"), type: .content)
         slot.children = .arranged([child])
@@ -264,7 +264,7 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testARowSaysWhatItHoldsInReadingOrder() throws {
         func label(_ id: String, _ words: String) -> HostPatch {
-            var patch = HostPatch(id: .manual(id), type: .label)
+            var patch = HostPatch(id: .manual(id), type: .text)
             patch.properties = [.text: .string(words)]
             return patch
         }
@@ -298,13 +298,13 @@ final class MountedTreeTests: XCTestCase {
     func testFourSidesAreReadAsTheTreeGivesThem() throws {
         let (tree, _) = Self.tree(viewless: [])
         var page = HostPatch(id: .manual("page"), type: .page)
-        page.properties = [.padding: .numbers([1, 2, 3, 4]), .margin: .numbers([5, 6])]
+        page.properties = [.contentPadding: .numbers([1, 2, 3, 4]), .padding: .numbers([5, 6])]
         tree.apply(page, complete: true)
         let element = try XCTUnwrap(tree.root)
 
-        XCTAssertEqual(element.insets(.padding), Insets(1, 2, 3, 4))
-        XCTAssertEqual(element.insets(.margin), Insets(0), "fewer than four")
-        XCTAssertEqual(element.insets(Prop("sides")), Insets(0), "none given")
+        XCTAssertEqual(element.insets(.contentPadding), EdgeInsets(1, 2, 3, 4))
+        XCTAssertEqual(element.insets(.padding), EdgeInsets(0), "fewer than four")
+        XCTAssertEqual(element.insets(Prop("sides")), EdgeInsets(0), "none given")
     }
 
     /// What a frame asks is the host layer's, the same on every host: a colour moved presents the element alone, a
@@ -312,7 +312,7 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testWhatAFrameAsksFollowsWhatMoved() {
         let (tree, log) = Self.tree(viewless: [])
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [.width: .number(10)]
         let bars = HostPatch(id: .manual("bars"), type: .navigationStack)
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
@@ -321,7 +321,7 @@ final class MountedTreeTests: XCTestCase {
         let (labelMount, barsMount) = (tree.root!.children[0].mount, tree.root!.children[1].mount)
 
         log.arranged.removeAll()
-        let colour = tree.present(states: [:], properties: [labelMount: [.textColor]])
+        let colour = tree.present(states: [:], properties: [labelMount: [.foregroundStyle]])
         XCTAssertEqual(log.arranged, ["label"], "a colour moves the label alone")
         XCTAssertFalse(colour.windowChrome)
 
@@ -365,10 +365,10 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testAChildsAreaReachesItsLayout() {
         let (tree, _) = Self.tree()
-        var half = HostPatch(id: .manual("half"), type: .label)
+        var half = HostPatch(id: .manual("half"), type: .text)
         half.properties[.area] = Area.proportional(0.5, 0, 0.5, 1).propValue
         var layers = HostPatch(id: .manual("layers"), type: .zStack)
-        layers.children = .arranged([half, HostPatch(id: .manual("whole"), type: .label)])
+        layers.children = .arranged([half, HostPatch(id: .manual("whole"), type: .text)])
         tree.apply(layers, complete: true)
 
         XCTAssertEqual(tree.root?.children.first?.layoutValues.area, .proportional(0.5, 0, 0.5, 1))
@@ -380,7 +380,7 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testABoundZIndexRestacksItsLayoutInAFrame() {
         let (tree, log) = Self.tree()
-        var raised = HostPatch(id: .manual("raised"), type: .label)
+        var raised = HostPatch(id: .manual("raised"), type: .text)
         raised.driven = .replace([.zIndex: HostStateBinding(state: 700, mode: .out, kind: .plain)])
         var grid = HostPatch(id: .manual("grid"), type: .grid)
         grid.children = .arranged([raised, Self.layer("still", 1)])
@@ -400,11 +400,11 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testCreatedHandlersAreTakenOnceInTreeOrder() {
         let (tree, _) = Self.tree()
-        var first = HostPatch(id: .manual("first"), type: .label)
+        var first = HostPatch(id: .manual("first"), type: .text)
         first.events = .replace([.created: 11])
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.events = .replace([.created: 12])
-        var second = HostPatch(id: .manual("second"), type: .label)
+        var second = HostPatch(id: .manual("second"), type: .text)
         second.events = .replace([.created: 13])
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.children = .arranged([first, window, second])
@@ -446,7 +446,7 @@ final class MountedTreeTests: XCTestCase {
     func testAnElementsAccessibilityWordsAreItsOwn() {
         let (tree, _) = Self.tree()
         func label(_ id: String, _ properties: [Prop: HostValue]) -> HostPatch {
-            var label = HostPatch(id: .manual(id), type: .label)
+            var label = HostPatch(id: .manual(id), type: .text)
             label.properties = properties
             return label
         }
@@ -477,10 +477,10 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testAnElementIsDrawnOverItsPlaceAsItSays() {
         let (tree, _) = Self.tree()
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [.scale: .number(2), .scaleX: .number(1.5), .translationY: .number(8), .rotation: .number(30)]
         var root = HostPatch(id: .manual("root"), type: .vStack)
-        root.children = .arranged([label, HostPatch(id: .manual("plain"), type: .label)])
+        root.children = .arranged([label, HostPatch(id: .manual("plain"), type: .text)])
         tree.apply(root, complete: true)
 
         let drawn = tree.root?.first(id: .manual("label"))?.drawingTransform
@@ -509,11 +509,11 @@ final class MountedTreeTests: XCTestCase {
             ]),
             span("two", [.text: .string("Small"), .textCase: .enumeration(TextCase.lowercase.rawValue)]),
         ])
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [.textCase: .enumeration(TextCase.uppercase.rawValue)]
         label.children = .arranged([spans])
         var root = HostPatch(id: .manual("root"), type: .vStack)
-        root.children = .arranged([label, HostPatch(id: .manual("plain"), type: .label)])
+        root.children = .arranged([label, HostPatch(id: .manual("plain"), type: .text)])
         tree.apply(root, complete: true)
 
         let runs = tree.root?.first(id: .manual("label"))?.textRuns
@@ -529,7 +529,7 @@ final class MountedTreeTests: XCTestCase {
     @MainActor
     func testAnElementsLookIsItsOwnValues() {
         let (tree, _) = Self.tree()
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .fontSize: .number(15), .fontFamily: .name("Menlo"), .characterSpacing: .number(2),
             .lineHeight: .number(1.2), .textDecorations: .enumeration(TextDecorations.underline.rawValue),
@@ -570,9 +570,9 @@ final class MountedTreeTests: XCTestCase {
         outer.properties[.layoutDirection] = LayoutDirection.rightToLeft.propValue
         var stated = HostPatch(id: .manual("stated"), type: .hStack)
         stated.properties[.layoutDirection] = LayoutDirection.leftToRight.propValue
-        outer.children = .arranged([HostPatch(id: .manual("inheriting"), type: .label), stated])
+        outer.children = .arranged([HostPatch(id: .manual("inheriting"), type: .text), stated])
         var root = HostPatch(id: .manual("root"), type: .vStack)
-        root.children = .arranged([outer, HostPatch(id: .manual("plain"), type: .label)])
+        root.children = .arranged([outer, HostPatch(id: .manual("plain"), type: .text)])
         tree.apply(root, complete: true)
 
         let rootElement = tree.root
@@ -623,7 +623,7 @@ final class MountedTreeTests: XCTestCase {
 
     private static func stack(_ id: String, _ children: [String]) -> HostPatch {
         var stack = HostPatch(id: .manual(id), type: .vStack)
-        stack.children = .arranged(children.map { HostPatch(id: .manual($0), type: .label) })
+        stack.children = .arranged(children.map { HostPatch(id: .manual($0), type: .text) })
         return stack
     }
 
@@ -637,7 +637,7 @@ final class MountedTreeTests: XCTestCase {
     }
 
     private static func layer(_ id: String, _ zIndex: Double) -> HostPatch {
-        var label = HostPatch(id: .manual(id), type: .label)
+        var label = HostPatch(id: .manual(id), type: .text)
         label.properties[.zIndex] = .number(zIndex)
         return label
     }

@@ -25,8 +25,8 @@ public struct ElementProperty<Owner: Contract, Value: HostRepresentable>: Contra
     /// Whether a value no longer described is put back to the control's default.
     let cleared: Bool
 
-    /// Which of a view's values it is, for `.motion(_:_:)`, where the value cannot say.
-    let moves: MotionValues
+    /// Which of a view's values it is, for `.animation(_:_:)`, where the value cannot say.
+    let moves: AnimationValues
 
     /// A property declared in `Owner`.
     ///
@@ -42,7 +42,7 @@ public struct ElementProperty<Owner: Contract, Value: HostRepresentable>: Contra
         layer: ElementLayer = .provider,
         travels: Bool = true,
         cleared: Bool = true,
-        moves: MotionValues = []
+        moves: AnimationValues = []
     ) {
         self.name = name
         self.layer = layer

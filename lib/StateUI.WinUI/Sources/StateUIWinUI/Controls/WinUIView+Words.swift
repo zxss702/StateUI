@@ -23,8 +23,8 @@ extension WinUIView {
     }
 
     /// The room kept around the words, in DIPs.
-    func setPadding(_ padding: Insets?) {
-        let room = padding ?? Insets(0)
+    func setPadding(_ padding: EdgeInsets?) {
+        let room = padding ?? EdgeInsets(0)
         stateui_winui_set_padding(handle, room.left, room.top, room.right, room.bottom)
     }
 

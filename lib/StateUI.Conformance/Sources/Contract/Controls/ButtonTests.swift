@@ -14,13 +14,13 @@
             Aspects.standsAlone("Button"),
             ConformanceCase("eachClickIsHeardOnceAndRendersWhatItsHandlerChanged", proves: [
                 Covered(ButtonContract.clicked),
-                Covered(TextElementContract.text, on: LabelContract.self),
+                Covered(TextElementContract.text, on: TextContract.self),
             ]) { s in
                 let count = State(wrappedValue: 0)
                 let heard = Received<Int>()
                 s.start {
                     VStack {
-                        Label("count \(count.wrappedValue)").id("label")
+                        Text("count \(count.wrappedValue)").id("label")
                         Button("Add").onClicked {
                             count.wrappedValue += 1
                             heard.values.append(count.wrappedValue)
@@ -46,7 +46,7 @@
                         Button("Hold")
                             .onPressed { heard.values.append("pressed") }
                             .onReleased { heard.values.append("released") }
-                            .width(120).height(40).id("button")
+                            .frame(width: 120).frame(height: 40).id("button")
                     }
                     .horizontalAlignment(.start)
                 }

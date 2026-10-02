@@ -17,7 +17,7 @@ extension WinUIElement {
     }
 
     func makeView() -> WinUIView? {
-        if type == .itemsView, let host {
+        if type == .list, let host {
             return WinUIItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false
             })
@@ -35,8 +35,8 @@ extension WinUIElement {
         switch type {
         case .page, .overlay: return WinUISingleChildView()
         case .navigationStack: return WinUINavigationView()
-        case .splitView: return WinUISplitView()
-        case .tabbedView: return WinUITabbedView()
+        case .navigationSplitView: return WinUISplitView()
+        case .tabView: return WinUITabbedView()
         default: return WinUIUnsupportedView(type)
         }
     }
@@ -68,8 +68,8 @@ extension WinUIElement {
             case .opacity: view.setOpacity(value(.opacity)?.number ?? 1)
             case .isVisible: view.setShown(isShown)
             case .background: (view as? WinUILayoutView)?.setBackground(value(.background))
-            case .padding where type == .page:
-                (view as? WinUISingleChildView)?.padding = element.insets(.padding)
+            case .contentPadding where type == .page:
+                (view as? WinUISingleChildView)?.padding = element.insets(.contentPadding)
             default: break
             }
         }
@@ -88,7 +88,7 @@ extension WinUIElement {
     func invalidateMeasurements() {
         var element: WinUIElement? = self
         while let each = element {
-            // An entry of an ItemsView is measured by its cell; the list's own size never follows its items.
+            // An entry of an List is measured by its cell; the list's own size never follows its items.
             if let items = each.parent?.view as? WinUIItemsView {
                 items.remeasure(each.element)
                 break

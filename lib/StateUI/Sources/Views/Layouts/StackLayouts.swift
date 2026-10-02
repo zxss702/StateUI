@@ -4,11 +4,11 @@
 /// Stacks its children top to bottom, each as tall as it asks to be.
 ///
 ///     VStack {
-///         Label("One")
-///         Label("Two")
+///         Text("One")
+///         Text("Two")
 ///     }
 ///     .spacing(12)
-///     .padding(24)
+///     .contentPadding(24)
 ///
 /// Children go in the trailing closure; everything else is a modifier, so the
 /// layout of the code follows the layout on screen.
@@ -31,9 +31,9 @@ public struct VStack: StackBase {
 
     /// A column of whatever the closure describes, in the order written.
     /// The closure is kept and run when the differ describes the stack.
-    public init(@ViewBuilder content: @escaping () -> [Element]) {
+    public init(@ViewBuilder content: @escaping () -> any View) {
         node = Node(contract: VStackContract.self)
-        node.producer = { content().map { $0.body } }
+        node.producer = { content().node.asChildren }
     }
 }
 
@@ -41,7 +41,7 @@ public struct VStack: StackBase {
 ///
 ///     HStack {
 ///         Image("nav_home.png")
-///         Label("Home")
+///         Text("Home")
 ///     }
 ///     .spacing(8)
 ///
@@ -58,8 +58,8 @@ public struct HStack: StackBase {
 
     /// A row of whatever the closure describes, in the order written.
     /// The closure is kept and run when the differ describes the stack.
-    public init(@ViewBuilder content: @escaping () -> [Element]) {
+    public init(@ViewBuilder content: @escaping () -> any View) {
         node = Node(contract: HStackContract.self)
-        node.producer = { content().map { $0.body } }
+        node.producer = { content().node.asChildren }
     }
 }

@@ -41,9 +41,9 @@
                 let (growing, fixed) = (Received<[Double]>(), Received<[Double]>())
                 s.start {
                     VStack {
-                        TextEditor(words.projectedValue).growsWithText(true).width(200)
+                        TextEditor(words.projectedValue).growsWithText(true).frame(width: 200)
                             .onEvent(ViewContract.frameChanged) { growing.values.append($0) }.id("growing")
-                        TextEditor(words.projectedValue).growsWithText(false).width(200)
+                        TextEditor(words.projectedValue).growsWithText(false).frame(width: 200)
                             .onEvent(ViewContract.frameChanged) { fixed.values.append($0) }.id("fixed")
                         Button("More").onClicked { words.wrappedValue = "one\ntwo\nthree\nfour\nfive" }.id("change")
                     }

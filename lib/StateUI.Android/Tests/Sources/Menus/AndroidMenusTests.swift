@@ -22,14 +22,14 @@ final class AndroidMenusTests: XCTestCase {
         try onMainActor {
             let heard = Received<String>()
             let host = AndroidRenderer.running {
-                Label("Row").contextMenu {
+                Text("Row").contextMenu {
                     MenuItem("Duplicate").onClicked { heard.values.append("duplicate") }
                     Menu("Move") {
-                        MenuItem("To the top").isEnabled(false).onClicked { heard.values.append("top") }
+                        MenuItem("To the top").disabled(!false).onClicked { heard.values.append("top") }
                     }
-                    MenuSeparator()
+                    Divider()
                     MenuItem("Remove").isDestructive(true).onClicked { heard.values.append("remove") }
-                    MenuItem("Erase").isDestructive(true).isEnabled(false).onClicked { heard.values.append("erase") }
+                    MenuItem("Erase").isDestructive(true).disabled(!false).onClicked { heard.values.append("erase") }
                 }
             }
             let label = try XCTUnwrap(host.views(AndroidLabelView.self).first)
@@ -50,8 +50,8 @@ final class AndroidMenusTests: XCTestCase {
         try onMainActor {
             let offers = State(wrappedValue: true)
             let host = AndroidRenderer.running {
-                if offers.wrappedValue { return Label("Row").contextMenu { MenuItem("Duplicate") } }
-                return Label("Row")
+                if offers.wrappedValue { return Text("Row").contextMenu { MenuItem("Duplicate") } }
+                return Text("Row")
             }
             let label = try XCTUnwrap(host.views(AndroidLabelView.self).first)
 

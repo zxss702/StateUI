@@ -10,7 +10,7 @@
 /// Design: docs/design/platforms/gtk/pages.md
 extension GTKElement {
     /// What stands in a frame of its own, with a header bar: a page, and a tabbed view.
-    static let framedTypes: Set<NodeType> = [.page, .tabbedView]
+    static let framedTypes: Set<NodeType> = [.page, .tabView]
 
     /// The tab the user chose on a tabbed view, which the host layer shows.
     var chosenTab: Int? {
@@ -29,10 +29,10 @@ extension GTKElement {
     /// page's, named by the page that names the window (`titledPage`), its switcher beneath the bar.
     /// Design: docs/design/platforms/gtk/pages.md#the-chrome
     var chrome: GTKPageChrome {
-        if type == .tabbedView {
+        if type == .tabView {
             var chrome = element.selectedTab?.visiblePage?.gtk.chrome ?? GTKPageChrome()
             chrome.title = element.titledPage?.value(.title)?.string
-                ?? element.enclosing(type: .window)?.value(.title)?.string ?? ""
+                ?? element.enclosing(type: .windowScene)?.value(.title)?.string ?? ""
             chrome.tabs = (view as? GTKTabbedView)?.switcher
             chrome.showsBar = value(.hasNavigationBar)?.bool != false
             chrome.offersBack = value(.hasBackButton)?.bool != false
@@ -75,7 +75,7 @@ extension GTKElement {
                     frame, title: page.element.visiblePage?.value(.title)?.string ?? "", canPop: chrome.offersBack)
                 page.composeChrome()
             }
-        case .splitView:
+        case .navigationSplitView:
             guard let split = view as? GTKSplitView else { return }
             let shows = element.sidebarIsVisible
             let showing: (shows: Bool, toggle: () -> Void) = (shows, { [weak self] in
@@ -95,7 +95,7 @@ extension GTKElement {
                     detail.composeChrome(showingSidebar: showing)
                 }
             }
-        case .tabbedView:
+        case .tabView:
             element.selectedTab?.gtk.composeChrome()
         default:
             break
@@ -108,11 +108,11 @@ extension GTKElement {
         switch type {
         case .navigationStack:
             (view as? GTKNavigationView)?.onPopped = { [weak self] remaining in self?.userPopped(remaining: remaining) }
-        case .tabbedView:
+        case .tabView:
             guard let tabs = view as? GTKTabbedView else { return }
             tabs.show(children.map { $0.value(.title)?.string ?? "" }, requested: value(.currentPage)?.number.map { Int($0) })
             tabs.onSelection = { [weak self] previous, selected in self?.tabChosen(from: previous, to: selected) }
-        case .splitView:
+        case .navigationSplitView:
             guard let split = view as? GTKSplitView else { return }
             split.onPresentationChanged = { [weak self] presented in self?.sidebarChanged(to: presented) }
             if changed.contains(.isSidebarVisible) { split.present(value(.isSidebarVisible)?.bool == true) }
@@ -148,7 +148,7 @@ extension GTKElement {
 
     /// The user showed or hid a split view's sidebar through a header bar's button.
     func changeSidebarVisibility(to presented: Bool) {
-        guard type == .splitView, let split = view as? GTKSplitView, split.isPresented != presented else { return }
+        guard type == .navigationSplitView, let split = view as? GTKSplitView, split.isPresented != presented else { return }
 
         split.present(presented)
         sidebarChanged(to: presented)

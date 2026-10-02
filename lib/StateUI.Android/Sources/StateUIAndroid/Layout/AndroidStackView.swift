@@ -16,7 +16,7 @@ final class AndroidStackView: AndroidTravellingLayout {
     }
 
     /// The room inside the stack's own edge, in points.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 

@@ -33,12 +33,12 @@ extension AppKitRegistrations {
                     placeholder: values[InputViewContract.placeholder],
                     placeholderColor: values[InputViewContract.placeholderColor]
                         .flatMap { nsColor($0.propValue) },
-                    foregroundColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     backgroundColor: values[VisualElementContract.background]
                         .flatMap { nsColor($0.propValue) },
                     font: Self.font(values),
-                    horizontalAlignment: values[TextAlignmentElementContract.horizontalTextAlignment]?.rawValue,
+                    horizontalAlignment: values[TextAlignmentElementContract.multilineTextAlignment]?.rawValue,
                     enabled: values[VisualElementContract.isEnabled] ?? true,
                     readOnly: values[InputViewContract.isReadOnly] ?? false,
                     secure: values[TextFieldContract.isPassword] ?? false,
@@ -71,12 +71,12 @@ extension AppKitRegistrations {
                     placeholder: values[InputViewContract.placeholder],
                     placeholderColor: values[InputViewContract.placeholderColor]
                         .flatMap { nsColor($0.propValue) },
-                    foregroundColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     backgroundColor: values[VisualElementContract.background]
                         .flatMap { nsColor($0.propValue) },
                     font: Self.font(values),
-                    horizontalAlignment: values[TextAlignmentElementContract.horizontalTextAlignment]?.rawValue,
+                    horizontalAlignment: values[TextAlignmentElementContract.multilineTextAlignment]?.rawValue,
                     enabled: values[VisualElementContract.isEnabled] ?? true,
                     readOnly: values[InputViewContract.isReadOnly] ?? false,
                     maximumLength: values[InputViewContract.maximumLength],
@@ -109,12 +109,12 @@ extension AppKitRegistrations {
                     placeholder: values[InputViewContract.placeholder],
                     placeholderColor: values[InputViewContract.placeholderColor]
                         .flatMap { nsColor($0.propValue) },
-                    foregroundColor: values[TextStyleElementContract.textColor]
+                    foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
                     backgroundColor: values[VisualElementContract.background]
                         .flatMap { nsColor($0.propValue) },
                     font: Self.font(values),
-                    horizontalAlignment: values[TextAlignmentElementContract.horizontalTextAlignment]?.rawValue,
+                    horizontalAlignment: values[TextAlignmentElementContract.multilineTextAlignment]?.rawValue,
                     enabled: values[VisualElementContract.isEnabled] ?? true,
                     readOnly: values[InputViewContract.isReadOnly] ?? false,
                     maximumLength: values[InputViewContract.maximumLength],
@@ -133,9 +133,9 @@ extension AppKitRegistrations {
     private static let fieldMembers: [any ContractMember] = [
         TextElementContract.text, TextElementContract.textCase, InputViewContract.placeholder,
         InputViewContract.placeholderColor,
-        TextStyleElementContract.textColor, VisualElementContract.background,
+        TextStyleElementContract.foregroundStyle, VisualElementContract.background,
         FontElementContract.fontFamily, FontElementContract.fontSize, FontElementContract.fontAttributes,
-        TextAlignmentElementContract.horizontalTextAlignment, VisualElementContract.isEnabled,
+        TextAlignmentElementContract.multilineTextAlignment, VisualElementContract.isEnabled,
         InputViewContract.isReadOnly, InputViewContract.maximumLength,
         InputViewContract.isSpellCheckEnabled, InputViewContract.isTextPredictionEnabled,
         InputViewContract.cursorPosition, InputViewContract.selectionLength,

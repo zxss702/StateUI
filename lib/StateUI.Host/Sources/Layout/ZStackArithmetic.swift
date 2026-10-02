@@ -10,7 +10,7 @@
     /// The room the children and the padding take for the width offered: as much as the child that needs the
     /// most, at its natural size.
     @MainActor
-    public static func size<Child: LayoutChild>(of items: [Child], padding: Insets, width offered: Double?) -> LayoutSize {
+    public static func size<Child: LayoutChild>(of items: [Child], padding: EdgeInsets, width offered: Double?) -> LayoutSize {
         let inner = offered.map { max(0, $0 - padding.left - padding.right) }
         var width = 0.0
         var height = 0.0
@@ -28,13 +28,13 @@
     /// turned about the room's middle.
     @MainActor
     public static func places<Child: LayoutChild>(
-        of items: [Child], in room: Rect, padding: Insets, direction: LayoutDirection
+        of items: [Child], in room: Rect, padding: EdgeInsets, direction: LayoutDirection
     ) -> [Rect?] {
         let content = room.inset(padding)
         return items.map { item in
             guard item.isShown else { return nil }
             let area = rectangle(of: item.values.area, in: content)
-            let place = SingleChildArithmetic.place(of: item, in: area, padding: Insets(0), direction: .leftToRight)
+            let place = SingleChildArithmetic.place(of: item, in: area, padding: EdgeInsets(0), direction: .leftToRight)
             return direction.places(place, in: room)
         }
     }

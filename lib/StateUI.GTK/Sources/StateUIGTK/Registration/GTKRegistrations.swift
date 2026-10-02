@@ -44,10 +44,10 @@ enum GTKRegistrations {
     /// The acts `GTKActPerformer` performs.
     static let acts: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
-        ApplicationContract.alert, ApplicationContract.announce, ApplicationContract.chooseAction,
-        ApplicationContract.confirm, ApplicationContract.currentTime, ApplicationContract.currentTimeZone,
-        ApplicationContract.handlerFailed, ApplicationContract.hideOnScreenKeyboard, ApplicationContract.persistValue,
-        ApplicationContract.prompt, ApplicationContract.utcOffset, ItemsViewContract.scrollTo,
+        AppContract.alert, AppContract.announce, AppContract.chooseAction,
+        AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
+        AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
+        AppContract.prompt, AppContract.utcOffset, ListContract.scrollTo,
     ]
 
 }

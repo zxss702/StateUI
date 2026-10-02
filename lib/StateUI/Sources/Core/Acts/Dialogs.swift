@@ -26,7 +26,7 @@ public enum Dialogs {
         message: String,
         cancel: String = "OK"
     ) async throws {
-        try await stateUICall(ApplicationContract.alert, title, message, cancel)
+        try await stateUICall(AppContract.alert, title, message, cancel)
     }
 
     /// Asks the user a yes-or-no question.
@@ -49,7 +49,7 @@ public enum Dialogs {
         accept: String,
         cancel: String
     ) async throws -> Bool {
-        try await stateUICall(ApplicationContract.confirm, title, message, accept, cancel)
+        try await stateUICall(AppContract.confirm, title, message, accept, cancel)
     }
 
     /// Offers the user a list of things to do.
@@ -74,7 +74,7 @@ public enum Dialogs {
         destruction: String? = nil,
         buttons: [String]
     ) async throws -> String? {
-        try await stateUICall(ApplicationContract.chooseAction, title, cancel, destruction, buttons)
+        try await stateUICall(AppContract.chooseAction, title, cancel, destruction, buttons)
     }
 
     /// Asks the user to type something.
@@ -92,7 +92,7 @@ public enum Dialogs {
     ///   - placeholder: what the field says while it is empty. Nil for nothing.
     ///   - initialValue: what the field starts holding.
     ///   - maximumLength: how many characters the field accepts. Nil for no limit.
-    ///   - inputPurpose: what the field is for, which picks the keyboard the
+    ///   - textContentType: what the field is for, which picks the keyboard the
     ///     platform offers.
     /// - Returns: what was typed when `accept` was pressed - empty included,
     ///   which is an answer - or nil when the prompt was cancelled.
@@ -101,10 +101,10 @@ public enum Dialogs {
         _ title: String, message: String = "",
         accept: String = "OK", cancel: String = "Cancel",
         placeholder: String? = nil, initialValue: String = "",
-        maximumLength: Int? = nil, inputPurpose: InputPurpose = .default
+        maximumLength: Int? = nil, textContentType: InputPurpose = .default
     ) async throws -> String? {
         try await stateUICall(
-            ApplicationContract.prompt, title, message, accept, cancel, placeholder, maximumLength,
-            inputPurpose, initialValue)
+            AppContract.prompt, title, message, accept, cancel, placeholder, maximumLength,
+            textContentType, initialValue)
     }
 }

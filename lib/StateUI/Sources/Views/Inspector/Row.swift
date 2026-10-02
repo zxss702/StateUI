@@ -2,13 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// One render in the list.
-struct Row: ContentView {
+struct Row: View {
     let pass: InspectedPass
     let scene: ElementId
     let index: Int?
     let chosen: Bool
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         let mine = pass.entries.filter { $0.scene == scene }
         let built = mine.filter { if case .built = $0.outcome { return true } else { return false } }.count
         let carried = mine.filter { $0.outcome == .carried }.count
@@ -18,20 +24,20 @@ struct Row: ContentView {
         } ?? "…"
 
         return VStack {
-            Label("#\(pass.number)  \(Look.road(pass.road))  "
+            Text("#\(pass.number)  \(Look.road(pass.road))  "
                 + (pass.causes.isEmpty ? "" : "for " + pass.causes.joined(separator: ", ")))
                 .fontSize(12)
                 .fontAttributes(.bold)
-                .textColor(Look.ink)
+                .foregroundStyle(Look.ink)
                 .lineBreak(.tailTruncation)
 
-            Label("Swift \(swift) · host \(host) · \(built) built · \(carried) carried")
+            Text("Swift \(swift) · host \(host) · \(built) built · \(carried) carried")
                 .fontSize(11)
-                .textColor(Look.subtle)
+                .foregroundStyle(Look.subtle)
                 .lineBreak(.tailTruncation)
         }
         .spacing(1)
-        .padding(8, 4)
+        .contentPadding(8, 4)
         .background(chosen ? Look.chosen : .transparent)
     }
 }

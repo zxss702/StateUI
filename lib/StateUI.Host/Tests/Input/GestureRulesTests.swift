@@ -20,7 +20,7 @@ final class GestureRulesTests: XCTestCase {
         }
         var root = HostPatch(id: .manual("root"), type: .vStack)
         root.children = .arranged([
-            view("tapped", [:], [.tapped: 1, .pinchUpdated: 2]),
+            view("tapGesture", [:], [.tapGesture: 1, .pinchUpdated: 2]),
             view("panned", [.panXChannel: .number(7)], [.pointerMoved: 3]),
             view("twoFingers", [.panXChannel: .number(7), .panTouchCount: .number(2)], [:]),
             view("deaf", [:], [:]),
@@ -28,7 +28,7 @@ final class GestureRulesTests: XCTestCase {
         runtime.tree.apply(root, complete: true)
         func hearing(_ id: String) throws -> Hearing { try XCTUnwrap(runtime.tree.root?.first(id: .manual(id))).hearing }
 
-        XCTAssertEqual(try hearing("tapped"), [.taps, .pinches])
+        XCTAssertEqual(try hearing("tapGesture"), [.taps, .pinches])
         XCTAssertEqual(try hearing("panned"), [.drags, .pointer])
         XCTAssertEqual(try hearing("twoFingers"), [], "a pan of more than one pointer is not recognized")
         XCTAssertEqual(try hearing("deaf"), [])

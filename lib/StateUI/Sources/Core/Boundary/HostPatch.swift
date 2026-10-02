@@ -62,7 +62,7 @@
 
     /// How this element's children animate when it puts them somewhere new,
     /// sent when it changed and only by an element that places children.
-    public var motion: HostLayoutMotion?
+    public var animation: HostLayoutMotion?
 
     /// The sparse or complete change to this element's children.
     public var children: HostChildrenUpdate = .unchanged
@@ -71,16 +71,16 @@
 /// A property transition accompanying its target value.
 @_spi(Host) public struct HostTransition: Equatable, Sendable {
     /// How the property moves to its target.
-    public let motion: Motion
+    public let animation: Animation
 }
 
 /// A changed movement law for children placed by a layout.
 @_spi(Host) public struct HostLayoutMotion: Equatable, Sendable {
     /// How the child placement moves.
-    public let motion: Motion
+    public let animation: Animation
 
     /// Which placement coordinates move under that law.
-    public let lanes: MotionLanes
+    public let lanes: AnimationLanes
 }
 
 /// How a sparse patch changes an element's children.

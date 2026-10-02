@@ -6,7 +6,7 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A ColorBox: one colour filling the room its layout gives it, which asks for none, its corners rounded as the tree
+/// A ColorPicker: one colour filling the room its layout gives it, which asks for none, its corners rounded as the tree
 /// says (`BoxArithmetic`).
 @MainActor
 final class UIKitColorBoxView: UIView {

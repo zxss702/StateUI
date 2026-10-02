@@ -26,7 +26,7 @@
     /// nothing, and the case needing it fails.
     func reason(cannot ability: String) -> String?
 
-    /// Why `ability` - an act, "tap on Label"; a read, "read isOn of CheckBox" - reaches past the toolkit, where it
+    /// Why `ability` - an act, "tap on Text"; a read, "read isOn of CheckBox" - reaches past the toolkit, where it
     /// does: an act handed to the host's own entry rather than the toolkit's input, a read of what the host keeps
     /// rather than what the toolkit holds. A member a case proves only that way is proven by the host's own - 🔌,
     /// not ✅. Nil where the toolkit's own input or state serves it.
@@ -39,7 +39,7 @@
     /// Runs `application` on a new host, its display frames at `clock`'s time where one is given; the tree it
     /// mounted.
     /// - Throws: `DriverCannot` where this driver runs one page alone.
-    func start(clock: TestClock?, application: @escaping @Sendable () -> any Application) throws -> MountedTree
+    func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree
 
     /// Forgets what the host's stores keep - the values, the scenes - as an application's first launch finds them.
     func forgetWhatIsKept()
@@ -111,7 +111,7 @@ extension HostDriver {
 
     public func forgetWhatIsKept() {}
 
-    public func start(clock: TestClock?, application: @escaping @Sendable () -> any Application) throws -> MountedTree {
+    public func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree {
         throw DriverCannot("start an application")
     }
 

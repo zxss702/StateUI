@@ -124,13 +124,13 @@
             },
             ConformanceCase("aUsersMoveTakesTheJourneyAndIsHeard", proves: [
                 Covered(SliderContract.value), Covered(SliderContract.valueChanged),
-                Covered(TextElementContract.text, on: LabelContract.self),
+                Covered(TextElementContract.text, on: TextContract.self),
             ]) { s in
                 let level = State(wrappedValue: 0.0)
                 let moves = Received<Double>()
                 s.start {
                     VStack {
-                        Label("level \(level.wrappedValue)").id("label")
+                        Text("level \(level.wrappedValue)").id("label")
                         Slider(level.projectedValue).onValueChanged { moves.values.append($0) }.id("slider")
                     }
                 }
@@ -154,7 +154,7 @@
                         Slider(0.5)
                             .onEvent(SliderContract.dragStarted) { heard.values.append("started") }
                             .onEvent(SliderContract.dragCompleted) { heard.values.append("completed") }
-                            .width(200).id("slider")
+                            .frame(width: 200).id("slider")
                     }
                     .horizontalAlignment(.start)
                 }

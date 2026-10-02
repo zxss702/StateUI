@@ -170,7 +170,7 @@
     /// - Parameter event: the member, written with its contract.
     public func raises<Owner: ApplicationTier, Payload>(_ event: ElementEvent<Owner, Payload>) {
         applicationEvents.insert(
-            HostRealizedMember(element: ApplicationContract.name, owner: Owner.name, member: event.name))
+            HostRealizedMember(element: AppContract.name, owner: Owner.name, member: event.name))
     }
 
     /// A view for a node type, made by its registration, its reports handed to `send`
@@ -194,7 +194,7 @@
     /// ones - on the element's view, as its registration takes it: a property
     /// registered alone in name order, nil where it is no longer described,
     /// then each whole applier whose members changed. Every value is read
-    /// through `read`, as the host presents it - a value in motion or carried
+    /// through `read`, as the host presents it - a value in animation or carried
     /// by a state included, not only what the tree described. Answers which
     /// properties a registration took; the rest are the caller's.
     ///

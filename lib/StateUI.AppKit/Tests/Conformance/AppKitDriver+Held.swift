@@ -26,7 +26,7 @@ extension AppKitDriver {
             return accessibility(property, native.accessibilityTarget(of: view), view)
         case .accessibilityHeadingLevel:
             throw DriverCannot("read a heading's level", because: "AppKit marks a heading, not its level")
-        case .fontSize, .fontAttributes, .fontFamily, .textColor:
+        case .fontSize, .fontAttributes, .fontFamily, .foregroundStyle:
             return try words(property, view)
         case .background:
             return view.layer?.backgroundColor.flatMap { NSColor(cgColor: $0) }.map { Background.color(color($0)).propValue }
@@ -85,7 +85,7 @@ extension AppKitDriver {
             if traits.contains(.boldFontMask) { attributes.insert(.bold) }
             if traits.contains(.italicFontMask) { attributes.insert(.italic) }
             return attributes.propValue
-        case .textColor:
+        case .foregroundStyle:
             if let written = attributes?[.foregroundColor] as? NSColor { return color(written).propValue }
             if let field = control as? NSTextField, let written = field.textColor { return color(written).propValue }
             if let written = text?.textColor { return color(written).propValue }

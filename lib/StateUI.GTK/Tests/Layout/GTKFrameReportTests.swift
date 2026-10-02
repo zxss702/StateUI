@@ -8,23 +8,23 @@ import StateUIConformance
 import XCTest
 
 /// A box that says where it stands, into a state and to a handler, and a reader built from its own frame.
-private struct FramesPage: ContentView {
+private struct FramesPage: View {
     @State private var said = ""
     @State private var room = Rect(x: 0, y: 0, width: 0, height: 0)
     @State private var wide = false
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("said \(said)")
-            Label("room \(Int(room.width))x\(Int(room.height))")
-            ColorBox(.steelBlue)
-                .width(wide ? 200 : 120)
-                .height(60)
+            Text("said \(said)")
+            Text("room \(Int(room.width))x\(Int(room.height))")
+            ColorPicker(.steelBlue)
+                .frame(width: wide ? 200 : 120)
+                .frame(height: 60)
                 .frame($room)
                 .onFrameChanged { frame in said = "\(Int(frame.width))x\(Int(frame.height))" }
-            FrameReader { frame in Label("reader \(Int(frame.width))") }
-                .width(90)
-                .height(20)
+            GeometryReader { frame in Text("reader \(Int(frame.width))") }
+                .frame(width: 90)
+                .frame(height: 20)
             Button("Widen").onClicked { wide = true }
         }
         .horizontalAlignment(.start)
@@ -33,18 +33,18 @@ private struct FramesPage: ContentView {
 }
 
 /// A page under its header bar: a stack at the top of its content, and a label at the stack's top.
-private struct PlacedOnAPage: ContentView {
+private struct PlacedOnAPage: View {
     let heard: Received<String>
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let page = self.page
         let heard = self.heard
         return VStack {
-            Label("top").onFrameChanged(in: .global) { frame in heard.values.append("window \(Int(frame.y))") }
+            Text("top").onFrameChanged(in: .global) { frame in heard.values.append("window \(Int(frame.y))") }
         }
         .onFrameChanged(in: .safeArea) { frame in heard.values.append("page \(Int(frame.y))") }
-        .onCreated { page.title = "Placed" }
+        .onAppear { page.title = "Placed" }
     }
 }
 
@@ -67,7 +67,7 @@ final class GTKFrameReportTests: XCTestCase {
             let heard = Received<[Double]>()
             let host = GTKRenderer.running {
                 VStack {
-                    ColorBox(.steelBlue).width(120).height(60)
+                    ColorPicker(.steelBlue).frame(width: 120).frame(height: 60)
                         .onEvent(ViewContract.frameChanged) { heard.values.append($0) }
                 }
                 .horizontalAlignment(.start)

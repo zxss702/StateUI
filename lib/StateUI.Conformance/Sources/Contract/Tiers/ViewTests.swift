@@ -24,14 +24,14 @@
     /// A view stands its margin in from its parent's corner.
     static func margined(_ element: String) -> ConformanceCase {
         ConformanceCase("\(element).standsInsideItsMargin", proves: [
-            Covered(ViewContract.margin, on: element), Covered(ViewContract.frameChanged, on: element),
+            Covered(ViewContract.padding, on: element), Covered(ViewContract.frameChanged, on: element),
         ]) { s in
             let frames = Received<[Double]>()
             s.start {
                 VStack {
                     reporting(element, frames, [
                         Write(VisualElementContract.width, 120), Write(VisualElementContract.height, 40),
-                        Write(ViewContract.margin, Insets(10, 6, 0, 0)),
+                        Write(ViewContract.padding, EdgeInsets(10, 6, 0, 0)),
                     ])
                 }
                 .horizontalAlignment(.start)
@@ -59,14 +59,14 @@
                             Write(ViewContract.horizontalAlignment, Alignment.end),
                         ], id: "across")
                     }
-                    .width(300)
+                    .frame(width: 300)
                     HStack {
                         reporting(element, down, [
                             Write(VisualElementContract.width, 20), Write(VisualElementContract.height, 40),
                             Write(ViewContract.verticalAlignment, Alignment.end),
                         ], id: "down")
                     }
-                    .height(100)
+                    .frame(height: 100)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
@@ -93,7 +93,7 @@
                                   ? Area.proportional(0.5, 0.5, 0.5, 0.5) : Area.absolute(10, 20, 30, 40)),
                         ])
                     }
-                    .width(200).height(200)
+                    .frame(width: 200).frame(height: 200)
                     Button("Share").onClicked { shared.wrappedValue = true }.id("change")
                 }
                 .horizontalAlignment(.start)
@@ -159,14 +159,14 @@
     /// A quick run of taps is heard once it reaches the count the view asks for, and not before.
     static func tapped(_ element: String) -> ConformanceCase {
         ConformanceCase("\(element).aRunOfTapsIsHeardAtItsCount", proves: [
-            Covered(ViewContract.tapped, on: element), Covered(ViewContract.tapCount, on: element),
+            Covered(ViewContract.tapGesture, on: element), Covered(ViewContract.tapCount, on: element),
         ]) { s in
             let heard = Received<String>()
             s.start {
                 VStack {
                     Specimens.view(element, [
                         Write(VisualElementContract.width, 80), Write(VisualElementContract.height, 40),
-                        Write(ViewContract.tapCount, 2), HearDone(ViewContract.tapped) { heard.values.append("tapped") },
+                        Write(ViewContract.tapCount, 2), HearDone(ViewContract.tapGesture) { heard.values.append("tapped") },
                     ])
                 }
                 .horizontalAlignment(.start)
@@ -332,7 +332,7 @@
                         HearDone(ViewContract.dragStarting) { heard.values.append("starting") },
                         HearDone(ViewContract.dropCompleted) { heard.values.append("completed") },
                     ])
-                    ColorBox(.red).width(80).height(40).setValue(ViewContract.allowDrop, true)
+                    ColorPicker(.red).frame(width: 80).frame(height: 40).setValue(ViewContract.allowDrop, true)
                         .onEvent(ViewContract.drop) { heard.values.append("drop \($0)") }.id("target")
                 }
                 .horizontalAlignment(.start)
@@ -353,7 +353,7 @@
             let heard = Received<String>()
             s.start {
                 VStack {
-                    ColorBox(.red).width(80).height(40).setValue(ViewContract.canDrag, true)
+                    ColorPicker(.red).frame(width: 80).frame(height: 40).setValue(ViewContract.canDrag, true)
                         .setValue(ViewContract.dragText, "words").id("source")
                     Specimens.view(element, [
                         Write(VisualElementContract.width, 80), Write(VisualElementContract.height, 40),

@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIWinUI
 
-/// A cell of an ItemsView: a StateUI panel the relay stands in an `ItemContainer`, holding one entry's subtree placed
+/// A cell of an List: a StateUI panel the relay stands in an `ItemContainer`, holding one entry's subtree placed
 /// by the layer's arithmetic. WinUI measures it, and it answers with the room its entry takes.
 /// Design: docs/design/platforms/winui/items.md#a-cell
 @MainActor

@@ -5,7 +5,7 @@
 // Design: docs/design/types/vocabularies.md#written-out-and-appended
 
 /// Which ways a `ScrollView` scrolls.
-public enum ScrollOrientation: Int32, Sendable {
+public enum Axis: Int32, Sendable {
     /// Up and down. The default.
     case vertical = 0
 
@@ -20,5 +20,5 @@ public enum ScrollOrientation: Int32, Sendable {
     case neither = 3
 }
 
-extension ScrollOrientation: HostRepresentable {}
-extension ScrollOrientation: StateChoice {}
+extension Axis: HostRepresentable {}
+extension Axis: StateChoice {}

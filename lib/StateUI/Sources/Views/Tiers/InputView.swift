@@ -7,7 +7,7 @@
 public protocol InputViewProperties: ViewProperties {}
 
 /// A view the user types into.
-public protocol InputView: View, InputViewProperties {}
+public protocol InputView: VisualElement, InputViewProperties {}
 
 extension InputView {
     /// Fires on every edit, with the whole of the new text. Runs after a
@@ -70,8 +70,8 @@ extension InputViewProperties {
 
     /// What the field is for - an email address, a number, a url and the rest -
     /// which picks the keyboard the platform offers.
-    public func inputPurpose(_ value: InputPurpose) -> Modified {
-        setValue(InputViewContract.inputPurpose, value)
+    public func textContentType(_ value: InputPurpose) -> Modified {
+        setValue(InputViewContract.textContentType, value)
     }
 
     /// How many characters the field accepts.
@@ -105,10 +105,10 @@ extension InputView {
         plain(InputViewContract.isTextPredictionEnabled, by: state)
     }
 
-    /// `inputPurpose` from a state, `$x`: the host sets each new value as it
+    /// `textContentType` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func inputPurpose(_ state: Binding<InputPurpose>) -> Modified {
-        plain(InputViewContract.inputPurpose, by: state)
+    public func textContentType(_ state: Binding<InputPurpose>) -> Modified {
+        plain(InputViewContract.textContentType, by: state)
     }
 
     /// `maximumLength` from a state, `$x`: the host sets each new value as it

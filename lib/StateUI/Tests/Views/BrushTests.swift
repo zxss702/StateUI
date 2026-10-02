@@ -43,7 +43,7 @@ final class BrushTests: XCTestCase {
                     [GradientStop(.gold, 0), GradientStop(.tomato, 1)],
                     startPoint: Point(0, 0),
                     endPoint: diagonal ? Point(1, 1) : Point(1, 0)))
-                .body
+                .node
                 .built
         }
 
@@ -74,17 +74,17 @@ final class BrushTests: XCTestCase {
 
     /// A stop written with a themed colour holds its pair like any other, and
     /// the element wearing the brush is built with the half in force - so
-    /// what crosses is one gradient, and a theme change builds that element
+    /// what crosses is one gradient, and a color scheme change builds that element
     /// again.
     func testAThemedStopPicksItsHalfLikeAnyOtherColour() {
         let brush = Brush.solidColor(Color(light: .white, dark: .black)).propValue
 
         XCTAssertEqual(brush, .values([
             .enumeration(1), .themed(light: Color.white.propValue, dark: Color.black.propValue)]))
-        XCTAssertEqual(brush.resolvingTheme(), .values([.enumeration(1), Color.white.propValue]))
+        XCTAssertEqual(brush.resolvingColorScheme(), .values([.enumeration(1), Color.white.propValue]))
 
         withTheme(.dark) {
-            XCTAssertEqual(brush.resolvingTheme(), .values([.enumeration(1), Color.black.propValue]))
+            XCTAssertEqual(brush.resolvingColorScheme(), .values([.enumeration(1), Color.black.propValue]))
         }
     }
 }

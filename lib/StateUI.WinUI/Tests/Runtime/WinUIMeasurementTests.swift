@@ -8,21 +8,21 @@ import XCTest
 
 /// Words `depth` grids deep, each grid with words and a stack of its own beside them.
 private func nest(_ depth: Int, _ words: String) -> Node {
-    guard depth > 0 else { return Label(words).margin(2).body }
+    guard depth > 0 else { return Text(words).padding(2).node }
 
     return Grid {
         nest(depth - 1, words)
-        Label("beside \(depth)").gridRow(1)
+        Text("beside \(depth)").gridRow(1)
         VStack {
-            Label("a \(depth)")
-            Label("b \(depth)")
+            Text("a \(depth)")
+            Text("b \(depth)")
         }
         .gridColumn(1)
     }
     .rows(.auto, .auto)
     .columns(.auto, .fill)
-    .margin(2)
-    .body
+    .padding(2)
+    .node
 }
 
 final class WinUIMeasurementTests: XCTestCase {

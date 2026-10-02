@@ -6,7 +6,7 @@ import AppKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// An ItemsView's layout as AppKit's compositional layout: a list down, a row across, or a grid of the columns its
+/// An List's layout as AppKit's compositional layout: a list down, a row across, or a grid of the columns its
 /// width holds (`ItemsGrid`); each entry sized by what it asks for, headers and footers standing before and after.
 /// Design: docs/design/platforms/appkit/items.md#the-layout
 @MainActor

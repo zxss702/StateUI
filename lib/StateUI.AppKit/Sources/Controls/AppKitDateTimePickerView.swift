@@ -50,12 +50,12 @@ final class AppKitDateTimePickerView: NSDatePicker {
         minimum: [Double]?,
         maximum: [Double]?,
         font: NSFont,
-        textColor: NSColor,
+        foregroundStyle: NSColor,
         enabled: Bool
     ) {
         ProgramWrite.perform {
             self.font = font
-            self.textColor = textColor
+            self.textColor = foregroundStyle
             isEnabled = enabled
 
             if mode == .date {

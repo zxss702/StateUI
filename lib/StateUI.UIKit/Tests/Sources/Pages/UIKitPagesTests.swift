@@ -18,23 +18,23 @@ final class UIKitPagesTests: XCTestCase {
             NavigationStack(path.projectedValue) {
                 TitledPage(title: "Items and Cards")
             } destination: { _ in
-                TabbedView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("ItemsView")
+                TabView([1, 2]) { number in TitledPage(title: "Example \(number)") }.title("List")
             }
         }
         defer { host.finish() }
         let window: UIWindow = try XCTUnwrap(host.roster.windows.first?.1.window)
-        host.settle { window.windowScene?.title == "Items and Cards" }
-        XCTAssertEqual(window.windowScene?.title, "Items and Cards")
+        host.settle { window.window?.title == "Items and Cards" }
+        XCTAssertEqual(window.window?.title, "Items and Cards")
 
         path.wrappedValue = [1]
         let pushed: () -> UIViewController? = {
-            (host.runtime.tree.root.flatMap { Self.tabbedView(in: $0) }?.native as? UIKitElement)?.controller
+            (host.runtime.tree.root.flatMap { Self.tabView(in: $0) }?.native as? UIKitElement)?.controller
         }
         host.settle { pushed() != nil }
         host.runtime.pump.turn()
         let tabs: UIViewController = try XCTUnwrap(pushed())
-        XCTAssertEqual(tabs.navigationItem.title, "ItemsView", "the bar's title")
-        XCTAssertEqual(window.windowScene?.title, "ItemsView", "the scene's")
+        XCTAssertEqual(tabs.navigationItem.title, "List", "the bar's title")
+        XCTAssertEqual(window.window?.title, "List", "the scene's")
     }
 
     /// Words on a bar the tree paints stand light on a dark bar and dark on a light one, where the tree writes no
@@ -46,7 +46,7 @@ final class UIKitPagesTests: XCTestCase {
         let host = UIKitRenderer.running(reducesMotion: true) {
             NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
                 TitledPage(title: "Root")
-            } destination: { _ in Label("Pushed") }
+            } destination: { _ in Text("Pushed") }
                 .barBackgroundColor(dark.wrappedValue ? navy : yellow)
         }
         defer { host.finish() }
@@ -70,7 +70,7 @@ final class UIKitPagesTests: XCTestCase {
     func testAPagesContentReachesUnderTheBarsWhereItSaysSo() throws {
         let under = State(wrappedValue: false)
         let host = UIKitRenderer.running {
-            ZStack {}.avoidsSafeArea(under.wrappedValue ? .none : .container)
+            ZStack {}.ignoresSafeArea(under.wrappedValue ? .none : .container)
         }
         defer { host.finish() }
         let page = { (host.runtime.tree.root.flatMap { Self.first(.page, in: $0) }?.native as? UIKitElement) }
@@ -102,7 +102,7 @@ final class UIKitPagesTests: XCTestCase {
     /// The first tabbed view in `element`'s tree.
     @MainActor
     private static func tabbedView(in element: MountedElement) -> MountedElement? {
-        first(.tabbedView, in: element)
+        first(.tabView, in: element)
     }
 
     /// The first element of `type` in `element`'s tree.
@@ -113,24 +113,24 @@ final class UIKitPagesTests: XCTestCase {
 }
 
 /// A page that names itself.
-private struct TitledPage: ContentView {
+private struct TitledPage: View {
     let title: String
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let title = self.title
         let page = self.page
-        return Label(title).onCreated { page.title = title }
+        return Text(title).onAppear { page.title = title }
     }
 }
 
 /// A page whose background the page itself says, as the Gallery's pages do.
-private struct PaintedPage: ContentView {
+private struct PaintedPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let page = self.page
-        return Label("Painted").onCreated { page.background = Color("#F7F5FC") }
+        return Text("Painted").onAppear { page.background = Color("#F7F5FC") }
     }
 }

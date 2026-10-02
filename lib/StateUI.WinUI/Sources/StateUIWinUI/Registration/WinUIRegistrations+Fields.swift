@@ -53,7 +53,7 @@ extension WinUIRegistrations {
         TextElementContract.text, TextElementContract.textCase, InputViewContract.placeholder,
         InputViewContract.maximumLength,
         VisualElementContract.isEnabled, FontElementContract.fontSize, FontElementContract.fontAttributes,
-        FontElementContract.fontFamily, TextStyleElementContract.textColor,
+        FontElementContract.fontFamily, TextStyleElementContract.foregroundStyle,
     ]
 
     private static func applyWords<Realized: ElementContract>(_ view: WinUIInputView, _ values: ElementValues<Realized>) {
@@ -73,8 +73,8 @@ extension WinUIRegistrations {
                 size: values[FontElementContract.fontSize], attributes: values[FontElementContract.fontAttributes],
                 family: values[FontElementContract.fontFamily]?.text)
         }
-        if values.changed(TextStyleElementContract.textColor) {
-            view.setForeground(values[TextStyleElementContract.textColor]?.propValue)
+        if values.changed(TextStyleElementContract.foregroundStyle) {
+            view.setForeground(values[TextStyleElementContract.foregroundStyle]?.propValue)
         }
     }
 
@@ -82,7 +82,7 @@ extension WinUIRegistrations {
     /// caret and the selection.
     private static let boxMembers: [any ContractMember] = [
         InputViewContract.isReadOnly, InputViewContract.isSpellCheckEnabled, InputViewContract.isTextPredictionEnabled,
-        InputViewContract.inputPurpose, TextAlignmentElementContract.horizontalTextAlignment,
+        InputViewContract.textContentType, TextAlignmentElementContract.multilineTextAlignment,
         InputViewContract.placeholderColor, InputViewContract.cursorPosition, InputViewContract.selectionLength,
     ]
 
@@ -91,9 +91,9 @@ extension WinUIRegistrations {
             readOnly: values[InputViewContract.isReadOnly] ?? false,
             spellChecked: values[InputViewContract.isSpellCheckEnabled] ?? true,
             predicted: values[InputViewContract.isTextPredictionEnabled] ?? true,
-            purpose: values[InputViewContract.inputPurpose])
+            purpose: values[InputViewContract.textContentType])
         view.setLook(
-            alignment: values[TextAlignmentElementContract.horizontalTextAlignment] ?? .start,
+            alignment: values[TextAlignmentElementContract.multilineTextAlignment] ?? .start,
             placeholderColor: values[InputViewContract.placeholderColor]?.propValue)
         if values.changed(InputViewContract.cursorPosition) || values.changed(InputViewContract.selectionLength),
            let caret = values[InputViewContract.cursorPosition] {

@@ -196,12 +196,12 @@ final class ApplicationLifecycleTests: XCTestCase {
 
         runtime.windowStateChanged(element, minimized: true, activated: false)
         runtime.settlePhases()
-        XCTAssertEqual(StandardEnvironment.application.phase, .background)
+        XCTAssertEqual(StandardEnvironment.app.phase, .background)
         XCTAssertEqual(window.phase, .stopped)
 
         runtime.windowStateChanged(element, minimized: false, activated: true)
         runtime.settlePhases()
-        XCTAssertEqual(StandardEnvironment.application.phase, .active)
+        XCTAssertEqual(StandardEnvironment.app.phase, .active)
         XCTAssertEqual(window.phase, .activated)
     }
 
@@ -227,7 +227,7 @@ final class ApplicationLifecycleTests: XCTestCase {
     /// An application of `scenes`, each its windows, and the lifecycle a runtime holds for it.
     private static func application(_ scenes: [(String, [HostPatch])]) -> (HostRuntime, ApplicationLifecycle) {
         let runtime = HostRuntime.still()
-        var root = HostPatch(id: .manual("application"), type: .application)
+        var root = HostPatch(id: .manual("application"), type: .app)
         root.children = .arranged(scenes.map { name, windows in
             var scene = HostPatch(id: .manual(name), type: .scene)
             scene.children = .arranged(windows)
@@ -239,7 +239,7 @@ final class ApplicationLifecycleTests: XCTestCase {
 
     /// A window element named `name`, of `kind` where it is not a scene's main window, saying `properties`.
     private static func window(_ name: String, kind: String? = nil, _ properties: [Prop: HostValue] = [:]) -> HostPatch {
-        var window = HostPatch(id: .manual(name), type: .window)
+        var window = HostPatch(id: .manual(name), type: .windowScene)
         window.properties = properties
         if let kind { window.properties[.windowType] = .name(kind) }
         return window
@@ -264,10 +264,10 @@ final class ApplicationLifecycleTests: XCTestCase {
     }
 }
 
-private struct PhasesApplication: Application {
-    var scene: any Scene { PhasesWindow() }
+private struct PhasesApplication: App {
+    var body: some Scene { PhasesWindow() }
 }
 
-private struct PhasesWindow: Window {
-    var page: any Page { Label("phases") }
+private struct PhasesWindow: WindowScene {
+    var page: any Page { Text("phases") }
 }

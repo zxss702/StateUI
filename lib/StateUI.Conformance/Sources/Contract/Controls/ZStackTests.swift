@@ -17,11 +17,11 @@
                 s.start {
                     VStack {
                         ZStack {
-                            ColorBox(.red).onEvent(ViewContract.frameChanged) { back.values.append($0) }.id("back")
-                            ColorBox(.blue).width(20).height(20).horizontalAlignment(.start).verticalAlignment(.start)
+                            ColorPicker(.red).onEvent(ViewContract.frameChanged) { back.values.append($0) }.id("back")
+                            ColorPicker(.blue).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
                                 .onEvent(ViewContract.frameChanged) { front.values.append($0) }.id("front")
                         }
-                        .width(60).height(40)
+                        .frame(width: 60).frame(height: 40)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -35,11 +35,11 @@
                 s.start {
                     VStack {
                         ZStack {
-                            ColorBox(.red).id("back")
-                            ColorBox(.blue).width(20).height(20).horizontalAlignment(.start).verticalAlignment(.start)
+                            ColorPicker(.red).id("back")
+                            ColorPicker(.blue).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
                                 .id("front")
                         }
-                        .width(60).height(40)
+                        .frame(width: 60).frame(height: 40)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)

@@ -13,7 +13,7 @@ final class AppKitMenuBarTests: XCTestCase {
     @MainActor
     func testTheMenuBarHoldsTheTextCommandsAFieldAnswers() throws {
         let main = StateUIAppKit.mainMenu(newScene: nil)
-        XCTAssertEqual(main.items.map(\.title).dropFirst(), ["File", "Edit", "Window"])
+        XCTAssertEqual(main.items.map(\.title).dropFirst(), ["File", "Edit", "WindowScene"])
 
         let edit = try XCTUnwrap(main.item(withTitle: "Edit")?.submenu)
         let commands = edit.items.filter { !$0.isSeparatorItem }.map { item in

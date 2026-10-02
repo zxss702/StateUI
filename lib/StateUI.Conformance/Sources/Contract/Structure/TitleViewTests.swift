@@ -17,7 +17,7 @@
                 s.start {
                     NavigationStack(path.projectedValue) {
                         SessionPage { page, _ in page.titleView = TextField(query.projectedValue).id("query") }
-                    } destination: { _ in Label("Result") }
+                    } destination: { _ in Text("Result") }
                 }
                 let field = try s.element("query")
                 try s.settle { try s.held(VisualElementContract.isVisible, on: field) == true }

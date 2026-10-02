@@ -24,7 +24,7 @@ final class AppKitLayoutRegistrationTests: XCTestCase {
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "VStack", owner: "StackBase", member: "spacing")))
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "HStack", owner: "PaddingElement", member: "padding")))
+            HostRealizedMember(element: "HStack", owner: "PaddingElement", member: "contentPadding")))
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "Grid", owner: "Grid", member: "rows")))
 
@@ -47,7 +47,7 @@ final class AppKitLayoutRegistrationTests: XCTestCase {
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "ScrollView", owner: "ScrollView", member: "scrollOffset")))
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "ScrollView", owner: "PaddingElement", member: "padding")))
+            HostRealizedMember(element: "ScrollView", owner: "PaddingElement", member: "contentPadding")))
 
         XCTAssertNil(
             AppKitRegistrations.registry.makeView(
@@ -72,9 +72,9 @@ final class AppKitLayoutRegistrationTests: XCTestCase {
         XCTAssertTrue(resting.hasVerticalScroller, "which is a vertical scroller, described or not")
 
         var scroll = HostPatch(id: .manual("scroll"), type: .scrollView)
-        scroll.properties[.orientation] = .enumeration(ScrollOrientation.horizontal.rawValue)
-        scroll.properties[.padding] = .numbers([4, 8, 12, 16])
-        scroll.properties[.verticalScrollBarVisibility] = .enumeration(ScrollBarVisibility.never.rawValue)
+        scroll.properties[.orientation] = .enumeration(Axis.horizontal.rawValue)
+        scroll.properties[.contentPadding] = .numbers([4, 8, 12, 16])
+        scroll.properties[.verticalScrollIndicators] = .enumeration(ScrollIndicatorVisibility.never.rawValue)
         renderer.applyForTesting(tree(scroll))
 
         let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("scroll")) as? AppKitScrollView)
@@ -95,7 +95,7 @@ final class AppKitLayoutRegistrationTests: XCTestCase {
 
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.properties[.spacing] = .number(12)
-        stack.properties[.padding] = .numbers([4, 8, 12, 16])
+        stack.properties[.contentPadding] = .numbers([4, 8, 12, 16])
         renderer.applyForTesting(tree(stack))
 
         let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("stack")) as? AppKitStackView)

@@ -20,7 +20,7 @@ final class AppKitPickerViewTests: XCTestCase {
             writeSelection: true,
             title: "Size",
             font: .systemFont(ofSize: 15),
-            textColor: .systemPurple,
+            foregroundStyle: .systemPurple,
             tint: .systemOrange,
             alignment: .center,
             enabled: false,
@@ -45,7 +45,7 @@ final class AppKitPickerViewTests: XCTestCase {
             writeSelection: true,
             title: "Choose",
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             tint: .systemOrange,
             alignment: .natural,
             enabled: true,
@@ -69,7 +69,7 @@ final class AppKitPickerViewTests: XCTestCase {
             writeSelection: true,
             title: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             tint: nil,
             alignment: .natural,
             enabled: true,
@@ -90,7 +90,7 @@ final class AppKitPickerViewTests: XCTestCase {
             writeSelection: true,
             title: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             tint: nil,
             alignment: .natural,
             enabled: true,
@@ -103,7 +103,7 @@ final class AppKitPickerViewTests: XCTestCase {
             writeSelection: false,
             title: "Choose",
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             tint: nil,
             alignment: .natural,
             enabled: true,
@@ -222,7 +222,7 @@ final class AppKitPickerViewTests: XCTestCase {
         var picker = HostPatch(id: .manual("picker"), type: .picker)
         picker.properties = [
             .options: .strings(["One", "Two"]),
-            .horizontalTextAlignment: .enumeration(TextAlignment.center.rawValue),
+            .multilineTextAlignment: .enumeration(TextAlignment.center.rawValue),
         ]
         renderer.applyForTesting(tree(picker))
 

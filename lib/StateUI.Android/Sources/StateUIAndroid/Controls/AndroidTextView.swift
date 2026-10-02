@@ -17,7 +17,7 @@ class AndroidTextView: AndroidView {
     private(set) var fontFamily: String?
 
     /// The room around the words the tree describes; nil where the view keeps its own.
-    private var padding: Insets?
+    private var padding: EdgeInsets?
     private var madePadding: (left: Int32, top: Int32, right: Int32, bottom: Int32)?
 
     /// The words shown.
@@ -105,7 +105,7 @@ class AndroidTextView: AndroidView {
     }
 
     /// The room around the words, in points; nil puts back the platform's.
-    func setPadding(_ insets: Insets?) {
+    func setPadding(_ insets: EdgeInsets?) {
         if madePadding == nil {
             madePadding = (
                 Java.callInt(reference, JavaAPI.getPaddingLeft), Java.callInt(reference, JavaAPI.getPaddingTop),

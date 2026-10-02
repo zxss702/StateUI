@@ -9,20 +9,20 @@ import StateUIConformance
 import XCTest
 
 /// Two stacks offering a menu a button empties, the second hearing taps too.
-private struct MenuStacksPage: ContentView {
+private struct MenuStacksPage: View {
     @State private var entries = ["Open"]
 
-    var content: any View {
+    var body: some View {
         let entries = $entries
         return VStack {
-            HStack { Label("menu") }
-                .width(200)
-                .height(40)
+            HStack { Text("menu") }
+                .frame(width: 200)
+                .frame(height: 40)
                 .contextMenu { ForEach(entries.wrappedValue, id: \.self) { entry in MenuItem(entry) } }
-            HStack { Label("tapped") }
-                .width(200)
-                .height(40)
-                .onTapped {}
+            HStack { Text("tapped") }
+                .frame(width: 200)
+                .frame(height: 40)
+                .onTapGesture {}
                 .contextMenu { ForEach(entries.wrappedValue, id: \.self) { entry in MenuItem(entry) } }
             Button("Empty").onClicked { entries.wrappedValue = [] }
         }

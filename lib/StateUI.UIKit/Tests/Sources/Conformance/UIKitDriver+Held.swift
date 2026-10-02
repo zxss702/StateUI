@@ -27,7 +27,7 @@ extension UIKitDriver {
             return (!view.isAccessibilityElement && view.accessibilityElementsHidden).propValue
         case .accessibilityHeadingLevel:
             throw DriverCannot("read a heading's level", because: "UIKit marks a heading, not its level")
-        case .fontSize, .fontAttributes, .fontFamily, .textColor, .characterSpacing, .lineHeight, .textDecorations:
+        case .fontSize, .fontAttributes, .fontFamily, .foregroundStyle, .characterSpacing, .lineHeight, .textDecorations:
             return try words(property, view)
         case .background:
             if let held = try controlHolds(property, view) { return held }
@@ -62,9 +62,9 @@ extension UIKitDriver {
         let drawn: (font: UIFont?, color: UIColor?) = switch view {
         case let label as UILabel:
             (first?[.font] as? UIFont ?? label.font, first?[.foregroundColor] as? UIColor ?? label.textColor)
-        case let field as UITextField: (field.font, field.textColor)
-        case let editor as UITextView: (editor.font, editor.textColor)
-        case let button as UIButton: (button.titleLabel?.font, button.titleLabel?.textColor)
+        case let field as UITextField: (field.font, field.foregroundStyle)
+        case let editor as UITextView: (editor.font, editor.foregroundStyle)
+        case let button as UIButton: (button.titleLabel?.font, button.titleLabel?.foregroundStyle)
         default: (nil, nil)
         }
         guard let font = drawn.font else { throw DriverCannot("read the words of a \(type(of: view))") }
@@ -77,7 +77,7 @@ extension UIKitDriver {
             if traits.contains(.traitBold) { attributes.insert(.bold) }
             if traits.contains(.traitItalic) { attributes.insert(.italic) }
             return attributes.propValue
-        case .textColor: return drawn.color.map { color($0).propValue }
+        case .foregroundStyle: return drawn.color.map { color($0).propValue }
         case .characterSpacing:
             guard written != nil else { throw DriverCannot("read the spacing of a \(type(of: view))") }
             return ((first?[.kern] as? Double) ?? 0).propValue

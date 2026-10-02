@@ -6,7 +6,7 @@
 /// `Inspector`.
 ///
 ///     TitleBar().trailingContent { InspectorButton() }
-public struct InspectorButton: ContentView {
+public struct InspectorButton: View {
     /// The scene the button is in, whose inspector it shows.
     @Environment private var scene: SceneSession
 
@@ -14,14 +14,16 @@ public struct InspectorButton: ContentView {
     public init() {}
 
     /// The button, as a view.
-    public var content: any View {
+        public var body: some View { AnyView(content) }
+
+        private var content: any View {
         Button("ⓘ")
             .fontSize(16)
-            .textColor(Look.subtle)
+            .foregroundStyle(Look.subtle)
             .background(.transparent)
-            .padding(10, 2)
+            .contentPadding(10, 2)
+            .onClicked { Inspector.toggle(in: scene) }
             .accessibilityIdentifier("stateui.inspector")
             .accessibilityLabel("Inspector")
-            .onClicked { Inspector.toggle(in: scene) }
     }
 }

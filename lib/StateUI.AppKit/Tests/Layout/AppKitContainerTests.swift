@@ -115,11 +115,11 @@ final class AppKitContainerTests: XCTestCase {
     func testHStackGivesAPaddedLabelItsCompleteNativeTextWidth() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("One"),
             .fontSize: .number(13),
-            .padding: .numbers([14, 8, 14, 8]),
+            .contentPadding: .numbers([14, 8, 14, 8]),
         ]
         var stack = HostPatch(id: .manual("stack"), type: .hStack)
         stack.children = .arranged([label])
@@ -142,20 +142,20 @@ final class AppKitContainerTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
 
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string(String(repeating: "A line that must wrap inside its card. ", count: 8)),
             .fontSize: .number(13),
         ]
         var innerStack = HostPatch(id: .manual("inner"), type: .vStack)
-        innerStack.properties[.padding] = .numbers([16, 16, 16, 16])
+        innerStack.properties[.contentPadding] = .numbers([16, 16, 16, 16])
         innerStack.children = .arranged([label])
         var frame = HostPatch(id: .manual("frame"), type: .zStack)
         frame.children = .arranged([innerStack])
         var outerStack = HostPatch(id: .manual("outer"), type: .vStack)
         outerStack.children = .arranged([frame])
         var scroll = HostPatch(id: .manual("scroll"), type: .scrollView)
-        scroll.properties[.orientation] = .enumeration(ScrollOrientation.vertical.rawValue)
+        scroll.properties[.orientation] = .enumeration(Axis.vertical.rawValue)
         scroll.children = .arranged([outerStack])
         renderer.applyForTesting(scroll)
 
@@ -194,7 +194,7 @@ final class AppKitContainerTests: XCTestCase {
             value: [160],
             destination: [160],
             velocity: [0],
-            motion: .none,
+            animation: .none,
             completion: nil,
             stopped: 0)
         renderer.applyStateForTesting(71, value: HostBoundary.value(of: arrived))
@@ -221,7 +221,7 @@ final class AppKitContainerTests: XCTestCase {
     func testANegativeSizeRequestMeansNoExplicitNativeExtent() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("Measured by AppKit"),
             .width: .number(-1),
@@ -249,7 +249,7 @@ final class AppKitContainerTests: XCTestCase {
     func testAnExplicitExtentIsClampedToItsAuthoredBounds() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("Bounded"),
             .width: .number(200),
@@ -276,7 +276,7 @@ final class AppKitContainerTests: XCTestCase {
     func testAFillAlignmentStillRespectsAMaximumExtent() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("Maximum"),
             .maximumWidth: .number(80),
@@ -309,7 +309,7 @@ final class AppKitContainerTests: XCTestCase {
         for (container, origin) in expected {
             let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
             defer { renderer.closeForTesting() }
-            var box = HostPatch(id: .manual("box"), type: .colorBox)
+            var box = HostPatch(id: .manual("box"), type: .colorPicker)
             box.properties = [.width: .number(44), .height: .number(20)]
             var layout = HostPatch(id: .manual("layout"), type: container)
             layout.children = .arranged([box])
@@ -329,7 +329,7 @@ final class AppKitContainerTests: XCTestCase {
     func testAMinimumExtentRaisesTheNativeMeasuredSize() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("Minimum"),
             .minimumHeight: .number(44),
@@ -379,20 +379,20 @@ final class AppKitContainerTests: XCTestCase {
             properties.merging([.width: .number(width), .height: .number(10)]) { $1 }
         }
         var column = HostPatch(id: .manual("column"), type: .vStack)
-        column.properties = [.padding: .numbers([10, 8, 12, 6]), .spacing: .number(4)]
+        column.properties = [.contentPadding: .numbers([10, 8, 12, 6]), .spacing: .number(4)]
         column.children = .arranged([
             box("start", sized(30, [
-                .margin: .numbers([5, 2, 0, 3]),
+                .padding: .numbers([5, 2, 0, 3]),
                 .horizontalAlignment: .enumeration(Alignment.start.rawValue),
             ])),
             box("end", sized(30, [.horizontalAlignment: .enumeration(Alignment.end.rawValue)])),
             box("center", sized(30, [.horizontalAlignment: .enumeration(Alignment.center.rawValue)])),
         ])
         var row = HostPatch(id: .manual("row"), type: .hStack)
-        row.properties[.padding] = .numbers([6, 4, 6, 4])
+        row.properties[.contentPadding] = .numbers([6, 4, 6, 4])
         row.children = .arranged([
             box("bottom", sized(10, [
-                .margin: .numbers([3, 0, 0, 0]),
+                .padding: .numbers([3, 0, 0, 0]),
                 .verticalAlignment: .enumeration(Alignment.end.rawValue),
             ])),
             box("middle", sized(10, [.verticalAlignment: .enumeration(Alignment.center.rawValue)])),
@@ -449,7 +449,7 @@ final class AppKitContainerTests: XCTestCase {
         renderer.applyForTesting(changedTree(layers(front: "blue")))
         XCTAssertEqual(try drawn(), ["red", "bound", "blue"])
 
-        let raised = HostJourney(value: [5], destination: [5], velocity: [0], motion: .none, completion: nil, stopped: 0)
+        let raised = HostJourney(value: [5], destination: [5], velocity: [0], animation: .none, completion: nil, stopped: 0)
         renderer.applyStateForTesting(72, value: HostBoundary.value(of: raised))
         XCTAssertEqual(try drawn(), ["red", "blue", "bound"])
     }
@@ -463,7 +463,7 @@ final class AppKitContainerTests: XCTestCase {
             outer.properties = [.layoutDirection: .enumeration(direction.rawValue)]
             guard arranging else { return outer }
             var row = HostPatch(id: .manual("row"), type: .hStack)
-            row.properties = [.padding: .numbers([6, 0, 2, 0]), .spacing: .number(4)]
+            row.properties = [.contentPadding: .numbers([6, 0, 2, 0]), .spacing: .number(4)]
             row.children = .arranged([
                 box("first", [.width: .number(30), .height: .number(10)]),
                 box("second", [.width: .number(10), .height: .number(10)]),
@@ -548,7 +548,7 @@ final class AppKitContainerTests: XCTestCase {
             .columns: .values([track(0, 50), track(1, 1)]),
             .rowSpacing: .number(5),
             .columnSpacing: .number(10),
-            .padding: .numbers([4, 4, 4, 4]),
+            .contentPadding: .numbers([4, 4, 4, 4]),
         ]
         grid.children = .arranged([
             cell("corner", row: 0, column: 0),
@@ -598,7 +598,7 @@ final class AppKitContainerTests: XCTestCase {
     @MainActor
     func testAZStacksPaddingNarrowsItsRoom() throws {
         var layout = HostPatch(id: .manual("layout"), type: .zStack)
-        layout.properties = [.padding: .numbers([10, 5, 20, 15])]
+        layout.properties = [.contentPadding: .numbers([10, 5, 20, 15])]
         layout.children = .arranged([
             box("whole", [:]),
             box("fixed", [.area: Area.absolute(10, 20, 30, 40).propValue]),
@@ -652,11 +652,11 @@ final class AppKitContainerTests: XCTestCase {
     func testALayoutThatClipsCutsWhatItHoldsToItsShape() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                ZStack { ColorBox(Color("#FF0000")) }.shape(.roundedRectangle(16)).clipsContent(true)
-                    .width(100).height(100)
-                ZStack { ColorBox(Color("#FF0000")) }.shape(.ellipse).clipsContent(true).width(100).height(60)
-                ZStack { ColorBox(Color("#FF0000")) }.clipsContent(true).width(100).height(40)
-                ZStack { ColorBox(Color("#FF0000")) }.shape(.roundedRectangle(16)).width(100).height(40)
+                ZStack { ColorPicker(Color("#FF0000")) }.shape(.roundedRectangle(16)).clipsContent(true)
+                    .frame(width: 100).frame(height: 100)
+                ZStack { ColorPicker(Color("#FF0000")) }.shape(.ellipse).clipsContent(true).frame(width: 100).frame(height: 60)
+                ZStack { ColorPicker(Color("#FF0000")) }.clipsContent(true).frame(width: 100).frame(height: 40)
+                ZStack { ColorPicker(Color("#FF0000")) }.shape(.roundedRectangle(16)).frame(width: 100).frame(height: 40)
             }
         }
         defer { renderer.closeForTesting() }
@@ -688,13 +688,13 @@ final class AppKitContainerTests: XCTestCase {
     func testAScrollerOutlinesItselfAndCutsWhatItShowsToItsShape() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                ScrollView { Label("code") }
+                ScrollView { Text("code") }
                     .orientation(.horizontal)
                     .background(Color("#00FF00"))
                     .stroke(Color("#FF0000"))
                     .strokeWidth(2)
                     .shape(.roundedRectangle(12))
-                    .height(60)
+                    .frame(height: 60)
             }
         }
         defer { renderer.closeForTesting() }
@@ -722,7 +722,7 @@ final class AppKitContainerTests: XCTestCase {
     func testALayoutPadsWhatItHoldsAndStrokesItsOutline() throws {
         var layout = HostPatch(id: .manual("layout"), type: .zStack)
         layout.properties = [
-            .padding: .numbers([4, 6, 8, 10]),
+            .contentPadding: .numbers([4, 6, 8, 10]),
             .background: .color(red: 0, green: 0, blue: 255, alpha: 255),
             .stroke: Brush.solidColor(Color("#FF0000")).propValue,
             .strokeWidth: .number(6),
@@ -749,8 +749,8 @@ final class AppKitContainerTests: XCTestCase {
     func testAScrollViewKeepsItsPaddingAroundWhatItHolds() throws {
         var scroll = HostPatch(id: .manual("scroll"), type: .scrollView)
         scroll.properties = [
-            .orientation: .enumeration(ScrollOrientation.horizontal.rawValue),
-            .padding: .numbers([5, 3, 11, 7]),
+            .orientation: .enumeration(Axis.horizontal.rawValue),
+            .contentPadding: .numbers([5, 3, 11, 7]),
         ]
         scroll.children = .arranged([box("wide", [.width: .number(500), .height: .number(36)])])
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
@@ -764,7 +764,7 @@ final class AppKitContainerTests: XCTestCase {
     // MARK: - Helpers
 
     private func box(_ id: String, _ properties: [Prop: HostValue]) -> HostPatch {
-        var box = HostPatch(id: .manual(id), type: .colorBox)
+        var box = HostPatch(id: .manual(id), type: .colorPicker)
         box.properties = properties
         return box
     }

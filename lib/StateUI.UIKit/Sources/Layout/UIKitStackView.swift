@@ -15,7 +15,7 @@ final class UIKitStackView: UIKitLayoutView {
         didSet { if spacing != oldValue { invalidate() } }
     }
 
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidate() } }
     }
 

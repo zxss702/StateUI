@@ -18,7 +18,7 @@ class GTKTextView: GTKView {
     private var fillClass: String?
 
     /// Where the label's place travels: its words stand at that size meanwhile.
-    /// Design: docs/design/host/motion.md#words-at-their-destination
+    /// Design: docs/design/host/animation.md#words-at-their-destination
     private var bound: Rect?
 
     init() {

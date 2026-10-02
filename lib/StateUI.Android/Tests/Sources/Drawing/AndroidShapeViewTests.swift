@@ -23,8 +23,8 @@ final class AndroidShapeViewTests: XCTestCase {
         onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
-                    Rectangle().fill(.red).width(20).height(20).horizontalAlignment(.start)
-                    Ellipse().fill(.red).width(20).height(20).horizontalAlignment(.start)
+                    Rectangle().fill(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start)
+                    Ellipse().fill(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start)
                 }
             }
             host.layOut()
@@ -41,7 +41,7 @@ final class AndroidShapeViewTests: XCTestCase {
         try onMainActor {
             let host = AndroidRenderer.running {
                 Polygon([Point(0, 10), Point(5, 0), Point(10, 10)]).fill(.red)
-                    .width(40).height(20).horizontalAlignment(.start)
+                    .frame(width: 40).frame(height: 20).horizontalAlignment(.start)
             }
             host.layOut()
             let triangle = try XCTUnwrap(host.views(AndroidShapeView.self).first)
@@ -55,7 +55,7 @@ final class AndroidShapeViewTests: XCTestCase {
         try onMainActor {
             let host = AndroidRenderer.running {
                 Path("M 0 10 A 10 10 0 0 1 20 10 Z").fill(.red).aspect(.center)
-                    .width(20).height(20).horizontalAlignment(.start)
+                    .frame(width: 20).frame(height: 20).horizontalAlignment(.start)
             }
             host.layOut()
             let arc = try XCTUnwrap(host.views(AndroidShapeView.self).first)

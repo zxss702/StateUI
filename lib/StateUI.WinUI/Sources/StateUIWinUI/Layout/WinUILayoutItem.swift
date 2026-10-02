@@ -20,7 +20,7 @@ struct WinUILayoutItem: LayoutChild {
     var mount: UInt64 = 0
 
     /// Fades the view in as it joins a standing layout; nil for a view that simply appears.
-    var fadeIn: ((Motion) -> Void)?
+    var fadeIn: ((Animation) -> Void)?
 
     /// The view's size for the width offered it, margin taken out (`LayoutValues.offer`, `sized`).
     func size(offered width: Double?) -> LayoutSize {

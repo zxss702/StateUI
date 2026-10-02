@@ -12,10 +12,10 @@ import Glibc
 import CRT
 #endif
 
-// The two motion laws as numbers, in closed form in the time since an animation
+// The two animation laws as numbers, in closed form in the time since an animation
 // began. Every runtime animates with these; `MotionLawTests` holds them to
 // their promises.
-// Design: docs/design/core/journeys.md#motion-laws
+// Design: docs/design/core/journeys.md#animation-laws
 
 /// Where an animation stands at one instant of its law.
 @_spi(Host) public struct HostMotionSample: Equatable, Sendable {
@@ -29,9 +29,9 @@ import CRT
     public let rested: Bool
 }
 
-/// The two motion laws, evaluated from the time since an animation began.
+/// The two animation laws, evaluated from the time since an animation began.
 ///
-/// Time is in milliseconds, the unit of `Motion`'s numbers, so velocity is per
+/// Time is in milliseconds, the unit of `Animation`'s numbers, so velocity is per
 /// millisecond. A journey reports its velocity per second; an animator converts
 /// where it reports.
 @_spi(Host) public enum HostMotionLaw {
@@ -52,7 +52,7 @@ import CRT
     /// each lane on its own, and the animation rests when all of them have.
     ///
     /// - Parameters:
-    ///   - motion: The law and its numbers.
+    ///   - animation: The law and its numbers.
     ///   - elapsed: Milliseconds since the animation began.
     ///   - from: Where each lane began.
     ///   - destination: Where each lane is going.
@@ -61,7 +61,7 @@ import CRT
     /// - Returns: The value and velocity at that instant, and whether the
     ///   animation has arrived. Lanes that do not pair up land at once.
     public static func sample(
-        _ motion: Motion,
+        _ animation: Animation,
         elapsed: Double,
         from: [Double],
         destination: [Double],
@@ -71,19 +71,19 @@ import CRT
             return landed(destination)
         }
 
-        switch motion.law {
+        switch animation.law {
         case .eased:
             return eased(
-                length: Double(motion.millis),
-                curve: motion.curve,
+                length: Double(animation.millis),
+                curve: animation.curve,
                 elapsed: elapsed,
                 from: from,
                 destination: destination,
                 velocity: velocity)
         case .spring:
             return spring(
-                response: Double(max(motion.millis, 1)),
-                damping: max(motion.factor, 0.01),
+                response: Double(max(animation.millis, 1)),
+                damping: max(animation.factor, 0.01),
                 elapsed: elapsed,
                 from: from,
                 destination: destination,

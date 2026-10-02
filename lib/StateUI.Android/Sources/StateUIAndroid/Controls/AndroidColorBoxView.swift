@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// A ColorBox: a plain `android.view.View`, its colour a rounded shape drawn over its background.
+/// A ColorPicker: a plain `android.view.View`, its colour a rounded shape drawn over its background.
 @MainActor
 final class AndroidColorBoxView: AndroidView {
     private let drawing = AndroidShapeDrawable()

@@ -42,7 +42,7 @@ final class AndroidSwitchViewTests: XCTestCase {
             let heard = Received<Bool>()
             let host = AndroidRenderer.running {
                 VStack {
-                    Label(on.wrappedValue ? "on" : "off")
+                    Text(on.wrappedValue ? "on" : "off")
                     Switch(on.projectedValue).onToggled { heard.values.append($0) }
                 }
             }

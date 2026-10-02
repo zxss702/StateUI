@@ -7,7 +7,7 @@
 /// One report from a pinch - what `.onPinchUpdated` hands its handler.
 ///
 ///     Image("map.png")
-///         .scale(zoom)
+///         .scaleEffect(zoom)
 ///         .onPinchUpdated { pinch in zoom *= pinch.scale }
 ///
 /// `scale` is how much the fingers moved since the LAST report, so a handler

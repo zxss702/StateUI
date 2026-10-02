@@ -20,7 +20,7 @@ final class UIKitScrollView: UIKitLayoutView, UIScrollViewDelegate {
     /// Asks for the display's frames: the scroller moves, or has something to say.
     var onFramesWanted: (() -> Void)?
 
-    private(set) var orientation = ScrollOrientation.vertical
+    private(set) var orientation = Axis.vertical
 
     /// Where the scroller stands, as it last said.
     private(set) var offset = Point(x: 0, y: 0)
@@ -69,8 +69,8 @@ final class UIKitScrollView: UIKitLayoutView, UIScrollViewDelegate {
 
     /// The scroller's orientation, padding, bars, and an offset the tree moved it to.
     func apply(
-        orientation: ScrollOrientation, padding: Insets, verticalBar: ScrollBarVisibility,
-        horizontalBar: ScrollBarVisibility, offset: Point?
+        orientation: Axis, padding: EdgeInsets, verticalBar: ScrollIndicatorVisibility,
+        horizontalBar: ScrollIndicatorVisibility, offset: Point?
     ) {
         if orientation != self.orientation {
             self.orientation = orientation
@@ -135,7 +135,7 @@ final class UIKitScrollView: UIKitLayoutView, UIScrollViewDelegate {
         }
     }
 
-    private func configure(vertical: ScrollBarVisibility, horizontal: ScrollBarVisibility) {
+    private func configure(vertical: ScrollIndicatorVisibility, horizontal: ScrollIndicatorVisibility) {
         scroller.isScrollEnabled = orientation != .neither
         scroller.alwaysBounceVertical = orientation == .vertical || orientation == .both
         scroller.alwaysBounceHorizontal = orientation == .horizontal || orientation == .both

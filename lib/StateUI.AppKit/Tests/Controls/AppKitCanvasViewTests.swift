@@ -14,7 +14,7 @@ final class AppKitCanvasViewTests: XCTestCase {
         let element = Canvas {
             Draw.fillColor(.red)
             Draw.strokeColor(.blue)
-            Draw.textColor(.white)
+            Draw.foregroundStyle(.white)
             Draw.strokeWidth(2)
             Draw.fontSize(14)
             Draw.alpha(0.8)

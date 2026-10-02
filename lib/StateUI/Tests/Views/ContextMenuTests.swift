@@ -12,63 +12,63 @@ import XCTest
 @_spi(Host) @testable import StateUI
 
 /// A composed view with a menu written ON it - the case a slot is easiest to
-/// lose, because a ContentView has no node of its own to keep one in.
-private struct Card: ContentView {
-    var content: any View {
+/// lose, because a View has no node of its own to keep one in.
+private struct Card: View {
+    var body: some View {
         VStack {
-            Label("card")
+            Text("card")
         }
     }
 }
 
 final class ContextMenuTests: XCTestCase {
     private func menu(_ view: some View) -> Node? {
-        view.body.built.children.first { $0.type == "ContextMenu" }
+        view.node.built.children.first { $0.type == "ContextMenu" }
     }
 
     func testAMenuTravelsAsASlotAfterTheViewsOwnChildren() throws {
         let node = VStack {
-            Label("one")
-            Label("two")
+            Text("one")
+            Text("two")
         }
         .contextMenu {
             MenuItem("Rename")
-            MenuSeparator()
+            Divider()
             Menu("Move") { MenuItem("Up") }
         }
-        .body.built
+        .node.built
 
         // The view's own children keep the positions the differ gave them, and
         // the slot is appended - the rule a group's header and footer follow.
         XCTAssertEqual(node.children.map { $0.type },
-                       ["Label", "Label", "ContextMenu"])
+                       ["Text", "Text", "ContextMenu"])
 
         let flyout = try XCTUnwrap(node.children.last)
 
         XCTAssertEqual(flyout.children.map { $0.type },
-                       ["MenuItem", "MenuSeparator", "Menu"])
+                       ["MenuItem", "Divider", "Menu"])
         XCTAssertEqual(flyout.children.first?.props["text"], .string("Rename"))
         XCTAssertEqual(flyout.children.last?.children.first?.props["text"], .string("Up"))
     }
 
     /// A menu written on a COMPOSED view reaches what the view is made of.
     ///
-    /// A ContentView has no node of its own, so everything written on it lands
+    /// A View has no node of its own, so everything written on it lands
     /// on the built content - props, handlers, watches, and now the slot. Before
     /// `Stateful.expand` carried children, this modifier compiled, rendered
     /// nothing and said nothing.
     func testAMenuOnAComposedViewReachesWhatItIsMadeOf() throws {
         let node = Card()
             .contextMenu { MenuItem("Rename") }
-            .body.built
+            .node.built
 
         XCTAssertEqual(node.type, "VStack")
-        XCTAssertEqual(node.children.map { $0.type }, ["Label", "ContextMenu"])
+        XCTAssertEqual(node.children.map { $0.type }, ["Text", "ContextMenu"])
     }
 
     /// A leaf takes one too: any view can carry a menu.
     func testALeafViewTakesAMenu() throws {
-        let flyout = try XCTUnwrap(menu(Label("row").contextMenu { MenuItem("Copy") }))
+        let flyout = try XCTUnwrap(menu(Text("row").contextMenu { MenuItem("Copy") }))
 
         XCTAssertEqual(flyout.children.count, 1)
     }
@@ -80,13 +80,13 @@ final class ContextMenuTests: XCTestCase {
 
         func tree(_ caption: String) -> Node {
             VStack {
-                Label("row")
+                Text("row")
             }
             .contextMenu {
                 MenuItem("Rename")
                 MenuItem(caption)
             }
-            .body
+            .node
         }
 
         renders.render(tree("Delete"))
@@ -104,7 +104,7 @@ final class ContextMenuTests: XCTestCase {
         let renders = Renders()
 
         func tree(_ deletable: Bool) -> Node {
-            Label("row")
+            Text("row")
                 .contextMenu {
                     MenuItem("Rename")
 
@@ -112,7 +112,7 @@ final class ContextMenuTests: XCTestCase {
                         MenuItem("Delete")
                     }
                 }
-                .body
+                .node
         }
 
         renders.render(tree(true))
@@ -133,10 +133,10 @@ final class ContextMenuTests: XCTestCase {
 
         let patch = renders.render(
             VStack {
-                Label("one")
+                Text("one")
             }
             .contextMenu { MenuItem("Copy") }
-            .body)
+            .node)
 
         XCTAssertTrue(patch.arranged)
         XCTAssertEqual(patch.children.count, 2)

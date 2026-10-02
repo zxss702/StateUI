@@ -3,7 +3,7 @@
 
 // A colour, held as four 8-bit sRGB channels, and as a pair where the two
 // themes want different colours.
-// Design: docs/design/types/colour-and-theme.md#four-channels
+// Design: docs/design/types/colour-and-color-scheme.md#four-channels
 
 /// A colour.
 ///
@@ -24,11 +24,11 @@ public struct Color: Equatable, Sendable, HostRepresentable {
         let alpha: UInt8
     }
 
-    /// The colour in force unless the theme is dark and there is a dark half.
+    /// The colour in force unless the color scheme is dark and there is a dark half.
     let light: Rgba
 
-    /// The dark theme's half of a pair; the differ picks the half in force.
-    /// Design: docs/design/types/colour-and-theme.md#a-pair-for-each-theme
+    /// The dark color scheme's half of a pair; the differ picks the half in force.
+    /// Design: docs/design/types/colour-and-color-scheme.md#a-pair-for-each-color-scheme
     let dark: Rgba?
 
     /// A colour from hex: "#RGB", "#ARGB", "#RRGGBB" or "#AARRGGBB", with or
@@ -48,14 +48,14 @@ public struct Color: Equatable, Sendable, HostRepresentable {
         self.dark = nil
     }
 
-    /// The same color named twice, once for each theme.
+    /// The same color named twice, once for each color scheme.
     ///
     ///     static let surface = Color(light: .white, dark: AppColors.offBlack)
     ///
     /// It goes anywhere a colour goes - a `Style`, a control, a page's session,
-    /// a state - and follows the system theme wherever it is written.
+    /// a state - and follows the system color scheme wherever it is written.
     ///
-    /// Design: docs/design/types/colour-and-theme.md#a-pair-for-each-theme
+    /// Design: docs/design/types/colour-and-color-scheme.md#a-pair-for-each-color-scheme
     public init(light: Color, dark: Color) {
         self.light = light.light
         self.dark = dark.light

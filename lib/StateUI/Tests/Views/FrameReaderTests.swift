@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // `.onFrameChanged` hands its handler the four values its space means, out of
-// the one eight-number report the host sends - and a FrameReader builds its
+// the one eight-number report the host sends - and a GeometryReader builds its
 // content FROM that measurement, holding it in a @State of its own. See
-// FrameReader.swift.
+// GeometryReader.swift.
 
 import XCTest
 @_spi(Host) @testable import StateUI
@@ -28,10 +28,10 @@ final class FrameReaderTests: XCTestCase {
 
         let patch = renders.render(
             VStack {
-                Label("content")
+                Text("content")
             }
             .onFrameChanged(in: space) { heard.frames.append($0) }
-            .body)
+            .node)
 
         renders.fire(patch.events?["frameChanged"] ?? -1, with: payload)
         return heard.frames.last
@@ -56,7 +56,7 @@ final class FrameReaderTests: XCTestCase {
         let patch = renders.render(
             VStack {}
                 .onFrameChanged { heard.frames.append($0) }
-                .body)
+                .node)
 
         renders.fire(patch.events?["frameChanged"] ?? -1, with: payload)
 
@@ -73,7 +73,7 @@ final class FrameReaderTests: XCTestCase {
             VStack {}
                 .onFrameChanged { heard.frames.append($0) }
                 .onFrameChanged(in: .global) { heard.frames.append($0) }
-                .body)
+                .node)
 
         renders.fire(patch.events?["frameChanged"] ?? -1, with: payload)
 
@@ -92,7 +92,7 @@ final class FrameReaderTests: XCTestCase {
             VStack {}
                 .onFrameChanged { parents.frames.append($0) }
                 .onFrameChanged(in: .global) { windows.frames.append($0) }
-                .body)
+                .node)
 
         let id = patch.events?["frameChanged"] ?? -1
 
@@ -117,7 +117,7 @@ final class FrameReaderTests: XCTestCase {
         let patch = renders.render(
             VStack {}
                 .onFrameChanged { heard.frames.append($0) }
-                .body)
+                .node)
 
         let id = patch.events?["frameChanged"] ?? -1
 
@@ -139,7 +139,7 @@ final class FrameReaderTests: XCTestCase {
         let patch = renders.render(
             VStack {}
                 .onFrameChanged { width.wrappedValue = $0.width }
-                .body)
+                .node)
 
         Renderer.shared.clearInvalidation()
         renders.fire(patch.events?["frameChanged"] ?? -1, with: payload)
@@ -153,19 +153,19 @@ final class FrameReaderTests: XCTestCase {
 
     // MARK: - The container
 
-    /// A FrameReader's content is built FROM the measurement: zero before the
+    /// A GeometryReader's content is built FROM the measurement: zero before the
     /// first report, the measured frame after - the closure running again
     /// because the report wrote the reader's own `@State`.
     func testAReadersContentIsBuiltFromTheMeasurement() {
         let renders = Renders()
 
         func tree() -> Node {
-            Node(type: "Window", children: [
+            Node(type: "WindowScene", children: [
                 VStack {
-                    FrameReader { frame in
-                        Label("\(Int(frame.width)) wide")
+                    GeometryReader { frame in
+                        Text("\(Int(frame.width)) wide")
                     }
-                }.body,
+                }.node,
             ])
         }
 
@@ -196,14 +196,14 @@ final class FrameReaderTests: XCTestCase {
         let renders = Renders()
 
         func tree() -> Node {
-            Node(type: "Window", children: [
+            Node(type: "WindowScene", children: [
                 VStack {
-                    FrameReader { frame in
-                        Label("\(Int(frame.width)) wide")
+                    GeometryReader { frame in
+                        Text("\(Int(frame.width)) wide")
                     }
 
-                    Label("sibling")
-                }.body,
+                    Text("sibling")
+                }.node,
             ])
         }
 
@@ -222,7 +222,7 @@ final class FrameReaderTests: XCTestCase {
         }
 
         let touched = names(in: patch)
-        XCTAssertTrue(touched.contains("Label"), "the reader's content was not rebuilt")
+        XCTAssertTrue(touched.contains("Text"), "the reader's content was not rebuilt")
         XCTAssertFalse(
             patch.children.first?.children.contains { $0.props["text"] == .string("sibling") } ?? false,
             "the sibling was rebuilt for a measurement it never read")

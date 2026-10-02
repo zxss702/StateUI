@@ -13,19 +13,19 @@ final class AppKitLabelViewTests: XCTestCase {
     func testPlainLabelMapsTypographySpacingDecorationAndPadding() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [
             .text: .string("StateUI"),
             .textCase: .enumeration(TextCase.uppercase.rawValue),
-            .textColor: .color(red: 20, green: 40, blue: 60, alpha: 255),
+            .foregroundStyle: .color(red: 20, green: 40, blue: 60, alpha: 255),
             .fontSize: .number(18),
             .fontAttributes: .enumeration(FontAttributes.bold.rawValue),
             .characterSpacing: .number(2),
             .textDecorations: .enumeration(
                 TextDecorations.underline.union(.strikethrough).rawValue),
             .lineHeight: .number(1.5),
-            .padding: .numbers([4, 5, 6, 7]),
-            .horizontalTextAlignment: .enumeration(TextAlignment.center.rawValue),
+            .contentPadding: .numbers([4, 5, 6, 7]),
+            .multilineTextAlignment: .enumeration(TextAlignment.center.rawValue),
             .verticalTextAlignment: .enumeration(TextAlignment.end.rawValue),
         ]
 
@@ -43,7 +43,7 @@ final class AppKitLabelViewTests: XCTestCase {
         XCTAssertEqual(native.padding.left, 4)
         XCTAssertEqual(native.padding.bottom, 7)
         XCTAssertEqual(native.padding.right, 6)
-        XCTAssertEqual(native.horizontalTextAlignment, .center)
+        XCTAssertEqual(native.multilineTextAlignment, .center)
         XCTAssertEqual(native.verticalTextAlignment, .end)
     }
 
@@ -55,9 +55,9 @@ final class AppKitLabelViewTests: XCTestCase {
     func testALabelsTextAlignmentMovesTheWordsItDraws() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                Label("short").horizontalTextAlignment(.start)
-                Label("short").horizontalTextAlignment(.center)
-                Label("short").horizontalTextAlignment(.end)
+                Text("short").multilineTextAlignment(.start)
+                Text("short").multilineTextAlignment(.center)
+                Text("short").multilineTextAlignment(.end)
             }
         }
         defer { renderer.closeForTesting() }
@@ -88,9 +88,9 @@ final class AppKitLabelViewTests: XCTestCase {
     func testALabelsVerticalTextAlignmentMovesTheWordsItDraws() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                Label("short").verticalTextAlignment(.start).height(60)
-                Label("short").verticalTextAlignment(.center).height(60)
-                Label("short").verticalTextAlignment(.end).height(60)
+                Text("short").verticalTextAlignment(.start).frame(height: 60)
+                Text("short").verticalTextAlignment(.center).frame(height: 60)
+                Text("short").verticalTextAlignment(.end).frame(height: 60)
             }
         }
         defer { renderer.closeForTesting() }
@@ -120,7 +120,7 @@ final class AppKitLabelViewTests: XCTestCase {
         var first = HostPatch(id: .manual("first"), type: .span)
         first.properties = [
             .text: .string("let "),
-            .textColor: .color(red: 128, green: 0, blue: 128, alpha: 255),
+            .foregroundStyle: .color(red: 128, green: 0, blue: 128, alpha: 255),
             .fontAttributes: .enumeration(FontAttributes.bold.rawValue),
         ]
         var second = HostPatch(id: .manual("second"), type: .span)
@@ -131,7 +131,7 @@ final class AppKitLabelViewTests: XCTestCase {
         ]
         var formatted = HostPatch(id: .manual("formatted"), type: .spans)
         formatted.children = .arranged([first, second])
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties[.fontSize] = .number(15)
         label.children = .arranged([formatted])
 
@@ -154,23 +154,23 @@ final class AppKitLabelViewTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
         var first = HostPatch(id: .manual("first"), type: .span)
-        first.properties = [.text: .string("A"), .textColor: .color(
+        first.properties = [.text: .string("A"), .foregroundStyle: .color(
             red: 0, green: 0, blue: 0, alpha: 255)]
         var second = HostPatch(id: .manual("second"), type: .span)
-        second.properties = [.text: .string("B"), .textColor: .color(
+        second.properties = [.text: .string("B"), .foregroundStyle: .color(
             red: 0, green: 0, blue: 255, alpha: 255)]
         var formatted = HostPatch(id: .manual("formatted"), type: .spans)
         formatted.children = .arranged([first, second])
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.children = .arranged([formatted])
         renderer.applyForTesting(tree(label))
 
         var changedSecond = HostPatch(id: .manual("second"), type: .span)
-        changedSecond.properties[.textColor] = .color(
+        changedSecond.properties[.foregroundStyle] = .color(
             red: 255, green: 0, blue: 0, alpha: 255)
         var changedFormatted = HostPatch(id: .manual("formatted"), type: .spans)
         changedFormatted.children = .changed([changedSecond])
-        var changedLabel = HostPatch(id: .manual("label"), type: .label)
+        var changedLabel = HostPatch(id: .manual("label"), type: .text)
         changedLabel.children = .changed([changedFormatted])
         renderer.applyForTesting(changedTree(changedLabel))
 
@@ -248,7 +248,7 @@ final class AppKitLabelViewTests: XCTestCase {
     /// A label's font family reaches its native text.
     @MainActor
     func testALabelsFontFamilyComesThroughTheHost() throws {
-        let renderer = AppKitRenderer.running { Label("Ada").fontFamily("Menlo") }
+        let renderer = AppKitRenderer.running { Text("Ada").fontFamily("Menlo") }
         defer { renderer.closeForTesting() }
         let label = try XCTUnwrap(renderer.nativeViews(AppKitLabelView.self).first)
 
@@ -263,13 +263,13 @@ final class AppKitLabelViewTests: XCTestCase {
     func testALabelsLineBreakAndMaximumLinesReachItsNativeText() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                Label("Plain")
-                Label("Clip").lineBreak(.noWrap).maximumLines(3)
-                Label("Words").lineBreak(.wordWrap).maximumLines(3)
-                Label("Characters").lineBreak(.characterWrap).maximumLines(3)
-                Label("Head").lineBreak(.headTruncation).maximumLines(3)
-                Label("Tail").lineBreak(.tailTruncation).maximumLines(3)
-                Label("Middle").lineBreak(.middleTruncation).maximumLines(3)
+                Text("Plain")
+                Text("Clip").lineBreak(.noWrap).lineLimit(3)
+                Text("Words").lineBreak(.wordWrap).lineLimit(3)
+                Text("Characters").lineBreak(.characterWrap).lineLimit(3)
+                Text("Head").lineBreak(.headTruncation).lineLimit(3)
+                Text("Tail").lineBreak(.tailTruncation).lineLimit(3)
+                Text("Middle").lineBreak(.middleTruncation).lineLimit(3)
             }
         }
         defer { renderer.closeForTesting() }

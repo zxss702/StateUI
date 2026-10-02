@@ -52,6 +52,6 @@ public enum OnScreenKeyboard {
     ///   means the keyboard was already down - an answer, not a failure.
     @discardableResult
     public static nonisolated(nonsending) func hide() async throws -> Bool {
-        try await stateUICall(ApplicationContract.hideOnScreenKeyboard)
+        try await stateUICall(AppContract.hideOnScreenKeyboard)
     }
 }

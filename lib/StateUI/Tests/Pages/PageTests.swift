@@ -14,7 +14,7 @@
 // window session's, in WindowSession.swift - so the guards
 // below read both files and insist the two exhaustive values in this one
 // carry every key: the page for a page's, the window for a window's. A page
-// writes its session from its own `.onCreated`, and what that writes is in
+// writes its session from its own `.onAppear`, and what that writes is in
 // the message that brings the page - so what a page carries is read off
 // `Renders.settled`, which runs it the way the renderer does.
 
@@ -28,22 +28,22 @@ import XCTest
 /// navigation bar at once, which no real page would. What it is for is the
 /// guards below: a property nobody writes here is a property the host may
 /// quietly not apply.
-private struct EveryPropertyPage: ContentView {
+private struct EveryPropertyPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
-        Label("content").onCreated {
+    var body: some View {
+        Text("content").onAppear {
             // The page's own.
             page.title = "Everything"
             page.icon = ImageSource("tab.png")
-            page.padding = Insets(4, 8, 12, 16)
+            page.contentPadding = EdgeInsets(4, 8, 12, 16)
             page.background = .whiteSmoke
 
             // What it asks of a NavigationStack.
             page.hasNavigationBar = false
             page.hasBackButton = false
             page.backButtonTitle = "Back"
-            page.titleView = Label("stack title")
+            page.titleView = Text("stack title")
 
             // What hangs off it either way, each saying everything ITS type
             // can say - a page is the only place a toolbar item or a menu entry
@@ -55,7 +55,7 @@ private struct EveryPropertyPage: ContentView {
                     .placement(.overflow)
                     .priority(2)
                     .isDestructive(true)
-                    .isEnabled(false)
+                    .disabled(!false)
                     .onClicked {},
             ]
 
@@ -64,24 +64,24 @@ private struct EveryPropertyPage: ContentView {
                     MenuItem("Open")
                         .icon(ImageSource("mark.png"))
                         .isDestructive(true)
-                        .isEnabled(false)
+                        .disabled(!false)
                         .onClicked {}
 
                     Menu("Recent") {
                         MenuItem("Notes.txt")
                     }
-                    .isEnabled(true)
+                    .disabled(!true)
 
-                    MenuSeparator()
+                    Divider()
                 }
-                .isEnabled(true),
+                .disabled(!true),
             ]
         }
     }
 }
 
 /// A window whose session says everything a window can be told.
-private struct EveryPropertyWindow: Window {
+private struct EveryPropertyWindow: WindowScene {
     var page: any Page { EveryPropertyPage() }
 
     static var node: Node {
@@ -99,7 +99,7 @@ private struct EveryPropertyWindow: Window {
         session.isMinimizable = true
         session.isTranslucent = true
 
-        return EveryPropertyWindow().body(session: session).built
+        return EveryPropertyWindow().node(session: session).built
     }
 }
 
@@ -107,26 +107,26 @@ private struct EveryPropertyWindow: Window {
 /// property to another value - on a press. So the write that matters is made
 /// once the page is standing, and what the next message carries is what the
 /// page READ of its session, nothing else having moved.
-private struct KnobPage: ContentView {
+private struct KnobPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         Button("dress")
-            .onCreated { dress(false) }
             .onClicked { dress(true) }
+            .onAppear { dress(false) }
     }
 
     /// Writes every property of the page's session, each to one of two values.
     private func dress(_ on: Bool) {
         page.title = on ? "On" : "Off"
         page.icon = ImageSource(on ? "on.png" : "off.png")
-        page.padding = Insets(on ? 8 : 4)
+        page.contentPadding = EdgeInsets(on ? 8 : 4)
         page.background = on ? .red : .whiteSmoke
 
         page.hasNavigationBar = on
         page.hasBackButton = on
         page.backButtonTitle = on ? "Back" : "Return"
-        page.titleView = Label(on ? "on" : "off")
+        page.titleView = Text(on ? "on" : "off")
 
         page.toolbarItems = [ToolbarItem(on ? "On" : "Off")]
         page.menuBar = [Menu(on ? "On" : "Off") { MenuItem("Open") }]
@@ -134,17 +134,17 @@ private struct KnobPage: ContentView {
 }
 
 /// A view that says nothing about the page it is shown on.
-private struct Plain: ContentView {
-    var content: any View { Label("plain") }
+private struct Plain: View {
+    var body: some View { Text("plain") }
 }
 
 /// A view that names the page it is shown on, as it arrives.
-private struct Named: ContentView {
+private struct Named: View {
     @Environment private var page: PageSession
     let name: String
 
-    var content: any View {
-        Label(name).onCreated { page.title = name }
+    var body: some View {
+        Text(name).onAppear { page.title = name }
     }
 }
 
@@ -154,11 +154,11 @@ private final class Builds {
 }
 
 /// A view that renames its page on a press, counting its builds.
-private struct Renaming: ContentView {
+private struct Renaming: View {
     @Environment private var page: PageSession
     let builds: Builds
 
-    var content: any View {
+    var body: some View {
         builds.count += 1
         return Button("rename").onClicked { page.title = "Renamed" }
     }
@@ -223,8 +223,8 @@ final class PageTests: XCTestCase {
     /// the page in the next message.
     func testAPlainViewOnAPageFollowsItsParent() {
         let renders = Renders()
-        renders.settled(Node.page(Label("one")))
-        let second = renders.settled(Node.page(Label("two")))
+        renders.settled(Node.page(Text("one")))
+        let second = renders.settled(Node.page(Text("two")))
 
         XCTAssertEqual(second.children.first?.props[.text], .string("two"))
     }
@@ -235,7 +235,7 @@ final class PageTests: XCTestCase {
     func testWhatIsWrittenOnAViewStaysOnTheView() {
         let written: [any View] = [
             Plain().background(.red),
-            Label("plain").background(.red),
+            Text("plain").background(.red),
         ]
 
         for view in written {
@@ -264,7 +264,7 @@ final class PageTests: XCTestCase {
     ///
     /// A page's properties are written onto its node by its session, in
     /// PageSession.swift, and a window's by its own, in WindowSession.swift,
-    /// both nodes being built in Application.swift - so the two exhaustive
+    /// both nodes being built in App.swift - so the two exhaustive
     /// values above are read against all three files, a window property being
     /// no less covered for not being a page's.
     func testEveryPropertyAPageOrAWindowCanBeToldIsCarried() throws {
@@ -277,7 +277,7 @@ final class PageTests: XCTestCase {
         XCTAssertTrue(page.contains("title"), "the scan found nothing PageSession.swift writes")
         XCTAssertTrue(window.contains("width"), "the scan found nothing WindowSession.swift writes")
 
-        let declared = try page.union(window).union(SourceTree.propertyKeys(in: "Application.swift"))
+        let declared = try page.union(window).union(SourceTree.propertyKeys(in: "App.swift"))
         let missing = declared.subtracting(sent).sorted()
 
         XCTAssertTrue(missing.isEmpty, """
@@ -410,7 +410,7 @@ final class PageTests: XCTestCase {
             }
             .title("Home")
             .icon("house.png")
-            .body
+            .node
             .built
             .props
             .keys
@@ -437,7 +437,7 @@ final class PageTests: XCTestCase {
         let constructed = NavigationStack(path.projectedValue) { EveryPropertyPage() }
             destination: { _ in EveryPropertyPage() }
             .title("Everything")
-            .body
+            .node
             .built
             .props[.title]
 
@@ -453,7 +453,7 @@ final class PageTests: XCTestCase {
 
         XCTAssertEqual(
             slots,
-            ["Label", "TitleView", "ToolbarItems", "MenuBar"],
+            ["Text", "TitleView", "ToolbarItems", "MenuBar"],
             "the content first, then one node per slot, in a fixed order")
     }
 
@@ -466,7 +466,7 @@ final class PageTests: XCTestCase {
         let page = Self.arrived(EveryPropertyPage())
 
         XCTAssertEqual(page.props["title"], .string("Everything"))
-        XCTAssertEqual(page.props["padding"], .numbers([4, 8, 12, 16]))
+        XCTAssertEqual(page.props["contentPadding"], .numbers([4, 8, 12, 16]))
         XCTAssertEqual(page.props["background"], Color("#F5F5F5").propValue)
     }
 
@@ -490,7 +490,7 @@ final class PageTests: XCTestCase {
         XCTAssertEqual(page.children.count, 1, "the content, and no slot it did not ask for")
     }
 
-    /// What a page's first message carries - its `.onCreated` run, and what it
+    /// What a page's first message carries - its `.onAppear` run, and what it
     /// wrote walked in, the way the renderer sends it.
     private static func arrived(_ view: some View) -> HostPatch {
         Renders().settled(Node.page(view))
@@ -563,13 +563,13 @@ final class PageTests: XCTestCase {
     func testAPagesArrivalHandlerRuns() throws {
         let arrivals = State(0)
 
-        struct Watched: ContentView {
+        struct Watched: View {
             @Environment private var page: PageSession
             let arrivals: Binding<Int>
 
-            var content: any View {
-                Label("\(page.phase)")
-                    .onChanged(page.phase) {
+            var body: some View {
+                Text("\(page.phase)")
+                    .onChange(of: page.phase) {
                         if page.phase == .appearing { arrivals.wrappedValue += 1 }
                     }
             }
@@ -615,10 +615,10 @@ final class PageTests: XCTestCase {
         XCTAssertEqual(page.props, [
             "backButtonTitle": .string("Back"), "background": Color("#F5F5F5").propValue,
             "hasBackButton": .bool(false), "hasNavigationBar": .bool(false), "icon": .string("tab.png"),
-            "padding": .numbers([4, 8, 12, 16]), "title": .string("Everything"),
+            "contentPadding": .numbers([4, 8, 12, 16]), "title": .string("Everything"),
         ])
         XCTAssertEqual(page.eventNames, HostPatch.pageEvents)
-        XCTAssertEqual(page.children.map(\.type), [.label, .titleView, .toolbarItems, .menuBar])
+        XCTAssertEqual(page.children.map(\.type), [.text, .titleView, .toolbarItems, .menuBar])
 
         let item = try XCTUnwrap(page.at(.auto(5), .auto(6)))
         XCTAssertEqual(item.props, [
@@ -632,7 +632,7 @@ final class PageTests: XCTestCase {
         // A menu at any depth: the bar's File holds an entry, a menu of its
         // own and a line.
         let file = try XCTUnwrap(page.at(.auto(7), .auto(8)))
-        XCTAssertEqual(file.children.map(\.type), [.menuItem, .menu, .menuSeparator])
+        XCTAssertEqual(file.children.map(\.type), [.menuItem, .menu, .divider])
         XCTAssertEqual(file.at(.auto(10), .auto(11))?.props, ["text": .string("Notes.txt")])
     }
 

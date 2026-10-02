@@ -7,7 +7,7 @@
 /// One handler's subscription to a host event, made by `HostEvents.on`.
 ///
 /// Keep it and `cancel()` when the listener leaves, the way a view's
-/// `.onDestroying` ends what `.onCreated` started. A subscription nobody cancels
+/// `.onDisappear` ends what `.onAppear` started. A subscription nobody cancels
 /// goes on hearing raises for as long as the process lives; cancelling twice
 /// is harmless.
 public final class HostEventSubscription: @unchecked Sendable {

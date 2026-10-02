@@ -18,21 +18,21 @@ private final class Said {
 
 /// A body whose read sits in a NESTED container: the HStack's content reads
 /// `x`, the VStack's content and the body itself do not.
-private struct Outer: ContentView {
-    let body: Said
+private struct Outer: View {
+    let said: Said
     let inner: Said
 
     @State var x = 0
 
-    var content: any View {
-        body.count += 1
+    var body: some View {
+        said.count += 1
 
         return VStack {
-            Label("still")
+            Text("still")
 
             HStack {
-                Label("x \(x)")
-                Label(seen())
+                Text("x \(x)")
+                Text(seen())
             }
         }
     }
@@ -46,18 +46,18 @@ private struct Outer: ContentView {
 }
 
 /// A body that reads in the BODY ITSELF, outside every container.
-private struct Direct: ContentView {
-    let body: Said
+private struct Direct: View {
+    let said: Said
 
     @State var x = 0
 
-    var content: any View {
-        body.count += 1
+    var body: some View {
+        said.count += 1
 
         let title = "x \(x)"
 
         return VStack {
-            Label(title)
+            Text(title)
         }
     }
 }
@@ -75,10 +75,10 @@ final class ReaderTests: XCTestCase {
     /// it - which read nothing - is not.
     func testTheReaderIsTheClosureThatRead() {
         let body = Said(), inner = Said()
-        let view = Outer(body: body, inner: inner)
+        let view = Outer(said: body, inner: inner)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
         XCTAssertEqual(body.count, 1)
         XCTAssertEqual(inner.count, 1)
 
@@ -101,10 +101,10 @@ final class ReaderTests: XCTestCase {
     /// they are, counts the container, and says what it was built for.
     func testAReadingInsideTheRebuiltClosureNamesTheViewAndTheState() {
         let body = Said(), inner = Said()
-        let view = Outer(body: body, inner: inner)
+        let view = Outer(said: body, inner: inner)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
         XCTAssertEqual(inner.last, "Outer: 1 build, first time")
 
         view.$x.wrappedValue = 1
@@ -117,10 +117,10 @@ final class ReaderTests: XCTestCase {
     /// the body the reader, and the whole body is built again.
     func testAReadInTheBodyItselfRebuildsTheBody() {
         let body = Said()
-        let view = Direct(body: body)
+        let view = Direct(said: body)
         let renders = Renders()
 
-        renders.render(stack([view.body], id: "root"))
+        renders.render(stack([view.node], id: "root"))
 
         view.$x.wrappedValue = 1
         let patch = renders.revisit(changed: changed)

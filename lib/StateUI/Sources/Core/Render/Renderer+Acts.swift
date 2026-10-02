@@ -99,7 +99,7 @@ extension Renderer {
 
     /// Reports a handler that threw, as an ordinary act.
     func report(_ error: Error) {
-        send(ApplicationContract.handlerFailed, String(describing: error))
+        send(AppContract.handlerFailed, String(describing: error))
     }
 
     /// Hands the queued acts over typed; a Swift host answers each by its id.
@@ -107,7 +107,7 @@ extension Renderer {
         // Saves become acts here, one per key per take with the last value.
         // Design: docs/design/core/state.md#kept-state
         let saves = PersistentStore.shared.takeWaiting().map {
-            ActCall(ApplicationContract.persistValue, Name($0.name), $0.value)
+            ActCall(AppContract.persistValue, Name($0.name), $0.value)
         }
 
         let queued = guarded.withLock {

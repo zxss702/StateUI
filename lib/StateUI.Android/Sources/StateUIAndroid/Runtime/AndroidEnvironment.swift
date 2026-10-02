@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// What the device, its display, the application and the system's theme are, told to the core as the host
+/// What the device, its display, the application and the system's color scheme are, told to the core as the host
 /// starts and whenever the activity's configuration changes; the locale, the battery and the network whenever one
 /// changes too.
 /// Design: docs/design/platforms/android/runtime.md#the-environment
@@ -15,11 +15,11 @@ enum AndroidEnvironment {
     static let tabletWidth: Float = 600
 
     /// Tells `core` what the activity `activity` stands on, each group of facts read in one call; a context that
-    /// is no activity - a test's - stands in the light theme alone.
+    /// is no activity - a test's - stands in the light color scheme alone.
     static func report(to core: CoreLink, activity: jobject) {
         reportChanging(to: core, context: activity)
         guard Java.jni.IsInstanceOf(Java.env, activity, JavaAPI.androidActivity) != 0 else {
-            return core.setTheme(.light)
+            return core.setColorScheme(.light)
         }
 
         Java.frame {
@@ -43,7 +43,7 @@ enum AndroidEnvironment {
             core.setApplicationInfo(HostApplicationInfo(
                 name: application[0], packageName: application[1],
                 versionString: application[2], buildString: application[3]))
-            core.setTheme(display[6] == 1 ? .dark : .light)
+            core.setColorScheme(display[6] == 1 ? .dark : .light)
         }
     }
 

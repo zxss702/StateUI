@@ -26,13 +26,13 @@ extension GTKRegistrations {
             grid.applies([
                 GridContract.rows, GridContract.columns,
                 GridContract.rowSpacing, GridContract.columnSpacing,
-                PaddingElementContract.padding,
+                PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.rows = values[GridContract.rows] ?? []
                 view.columns = values[GridContract.columns] ?? []
                 view.rowSpacing = values[GridContract.rowSpacing] ?? 0
                 view.columnSpacing = values[GridContract.columnSpacing] ?? 0
-                view.padding = values[PaddingElementContract.padding] ?? Insets(0)
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
@@ -40,7 +40,7 @@ extension GTKRegistrations {
         }
 
         registry.add(ZStackContract.self, create: { _ in GTKZStackView() }) { layout in
-            layout.property(PaddingElementContract.padding) { view, padding in view.padding = padding ?? Insets(0) }
+            layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
             layout.applies(boxMembers) { view, values in applyBox(view, values) }
             layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
             layout.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
@@ -50,15 +50,15 @@ extension GTKRegistrations {
         // Design: docs/design/platforms/gtk/layout.md#scrolling
         registry.add(ScrollViewContract.self, create: { _ in GTKScrollView() }) { scroll in
             scroll.applies([
-                ScrollViewContract.orientation, ScrollViewContract.verticalScrollBarVisibility,
-                ScrollViewContract.horizontalScrollBarVisibility, ScrollViewContract.scrollOffset,
-                PaddingElementContract.padding,
+                ScrollViewContract.orientation, ScrollViewContract.verticalScrollIndicators,
+                ScrollViewContract.horizontalScrollIndicators, ScrollViewContract.scrollOffset,
+                PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.apply(
                     orientation: values[ScrollViewContract.orientation] ?? .vertical,
-                    padding: values[PaddingElementContract.padding] ?? Insets(0),
-                    verticalBar: values[ScrollViewContract.verticalScrollBarVisibility] ?? .default,
-                    horizontalBar: values[ScrollViewContract.horizontalScrollBarVisibility] ?? .default,
+                    padding: values[PaddingElementContract.contentPadding] ?? EdgeInsets(0),
+                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .default,
+                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .default,
                     offset: values.changed(ScrollViewContract.scrollOffset) ? values[ScrollViewContract.scrollOffset] : nil)
             }
             scroll.applies([
@@ -97,11 +97,11 @@ extension GTKRegistrations {
 
     /// What both stacks take: the space between their children, and the space inside their own edge.
     private static let stackMembers: [any ContractMember] = [
-        StackBaseContract.spacing, PaddingElementContract.padding,
+        StackBaseContract.spacing, PaddingElementContract.contentPadding,
     ]
 
     private static func applyStack<Realized: ElementContract>(_ view: GTKStackView, _ values: ElementValues<Realized>) {
         view.spacing = values[StackBaseContract.spacing] ?? 0
-        view.padding = values[PaddingElementContract.padding] ?? Insets(0)
+        view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
     }
 }

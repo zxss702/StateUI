@@ -16,7 +16,7 @@ extension Registry {
         everyElementRealizes(VisualElementContract.minimumHeight)
         everyElementRealizes(VisualElementContract.maximumWidth)
         everyElementRealizes(VisualElementContract.maximumHeight)
-        everyElementRealizes(ViewContract.margin)
+        everyElementRealizes(ViewContract.padding)
         everyElementRealizes(ViewContract.horizontalAlignment)
         everyElementRealizes(ViewContract.verticalAlignment)
         everyElementRealizes(ViewContract.gridRow)
@@ -57,7 +57,7 @@ extension Registry {
     public func everyElementHearsTheUser() {
         everyElementRealizes(VisualElementContract.frame)
         everyElementRaises(ViewContract.frameChanged)
-        everyElementRaises(ViewContract.tapped)
+        everyElementRaises(ViewContract.tapGesture)
         everyElementRealizes(ViewContract.tapCount)
         everyElementRealizes(ViewContract.panXChannel)
         everyElementRealizes(ViewContract.panYChannel)

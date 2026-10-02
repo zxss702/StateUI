@@ -25,7 +25,7 @@ extension TextEditorProperties {
 ///     …
 ///     TextEditor($notes)
 ///         .placeholder("Anything worth remembering")
-///         .height(120)
+///         .frame(height: 120)
 ///
 /// A `TextField` with room: the same two-way binding and `onTextChanged`, over
 /// a field that wraps and keeps the newlines the user types. A Return is

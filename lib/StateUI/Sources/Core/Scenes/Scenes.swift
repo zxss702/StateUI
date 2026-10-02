@@ -100,7 +100,7 @@ final class Scenes: @unchecked Sendable {
     func takeSaves() -> [ActCall] {
         _list.storage.value.flatMap { record in
             record.takeWaiting().map {
-                ActCall(ApplicationContract.persistSceneValue, Name(record.id), Name($0.name), $0.value)
+                ActCall(AppContract.persistSceneValue, Name(record.id), Name($0.name), $0.value)
             }
         }
     }
@@ -111,10 +111,10 @@ final class Scenes: @unchecked Sendable {
     }
 
     /// The application as the root of a message: one node per open scene.
-    func tree(of application: Application) -> Node {
+    func tree(of application: any App) -> Node {
         // One scene value per scene: a scene's `@State` boxes are its value's own.
         Node(
-            contract: ApplicationContract.self,
-            children: list.map { SceneElement(record: $0, scene: application.scene).body })
+            contract: AppContract.self,
+            children: list.map { SceneElement(record: $0, scene: application.body).node })
     }
 }

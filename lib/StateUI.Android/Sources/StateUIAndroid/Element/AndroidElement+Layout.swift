@@ -40,7 +40,7 @@ extension AndroidElement {
         var item = AndroidLayoutItem(view: view, values: element.layoutValues, isShown: isShown)
         item.mount = element.mount
         if fadesIn {
-            item.fadeIn = { [weak self] motion in self?.fadeIn(under: motion) }
+            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
         }
         return item
     }

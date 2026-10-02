@@ -120,8 +120,8 @@ class GTKView {
     }
 
     /// The room between the view's edge and its content, as a class of the host's style sheet; nil for none.
-    func setPadding(_ insets: Insets?) {
-        let wanted = insets.flatMap { $0 == Insets(0) ? nil : GTKStyleSheet.padding($0) }
+    func setPadding(_ insets: EdgeInsets?) {
+        let wanted = insets.flatMap { $0 == EdgeInsets(0) ? nil : GTKStyleSheet.padding($0) }
         guard wanted != paddingClass else { return }
         if let paddingClass { gtk_widget_remove_css_class(widget, paddingClass) }
         if let wanted { gtk_widget_add_css_class(widget, wanted) }

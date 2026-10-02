@@ -12,15 +12,15 @@ final class GTKGridViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 Grid {
-                    Label("A").width(50).height(20).horizontalAlignment(.start)
-                    Label("B").height(20).gridColumn(1)
-                    Label("C").width(30).height(40).gridRow(1).gridColumnSpan(2).horizontalAlignment(.end)
+                    Text("A").frame(width: 50).frame(height: 20).horizontalAlignment(.start)
+                    Text("B").frame(height: 20).gridColumn(1)
+                    Text("C").frame(width: 30).frame(height: 40).gridRow(1).gridColumnSpan(2).horizontalAlignment(.end)
                 }
                 .columns(.fixed(100), .fill)
                 .rows(.auto, .auto)
                 .rowSpacing(10)
                 .columnSpacing(5)
-                .padding(10)
+                .contentPadding(10)
             }
             let width = try XCTUnwrap(host.views(GTKGridView.self).first).frame.width
 
@@ -38,8 +38,8 @@ final class GTKGridViewTests: XCTestCase {
         onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    Grid { Label("Waiting for the first render of this scene") }
-                    Grid { Label("Waiting for the first render of this scene").margin(8, 4) }
+                    Grid { Text("Waiting for the first render of this scene") }
+                    Grid { Text("Waiting for the first render of this scene").padding(8, 4) }
                 }
                 .horizontalAlignment(.start)
             }
@@ -55,9 +55,9 @@ final class GTKGridViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 Grid {
-                    Label("head").height(30)
-                    ColorBox(.red).gridRow(1)
-                    Label("foot").height(20).gridRow(2)
+                    Text("head").frame(height: 30)
+                    ColorPicker(.red).gridRow(1)
+                    Text("foot").frame(height: 20).gridRow(2)
                 }
                 .rows(.auto, .fill, .auto)
             }
@@ -73,9 +73,9 @@ final class GTKGridViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 Grid {
-                    ColorBox(.red).gridRowSpan(2)
-                    Label("one").height(20).gridColumn(1)
-                    Label("two").height(30).gridRow(1).gridColumn(1)
+                    ColorPicker(.red).gridRowSpan(2)
+                    Text("one").frame(height: 20).gridColumn(1)
+                    Text("two").frame(height: 30).gridRow(1).gridColumn(1)
                 }
                 .columns(.fixed(20), .fill)
                 .rows(.auto, .auto)

@@ -367,7 +367,7 @@ enum JavaAPI {
     static let itemCell = Java.findClass("stateui/android/StateUIItemCell")
     static let newItemCell = Java.method(itemCell, "<init>", "(Landroid/content/Context;JZ)V")
 
-    static let itemsView = Java.findClass("stateui/android/StateUIItemsView")
+    static let list = Java.findClass("stateui/android/StateUIItemsView")
     static let newItemsView = Java.method(itemsView, "<init>", "(Landroid/content/Context;J)V")
     static let setItemsEntries = Java.method(itemsView, "setEntries", "([Ljava/lang/String;[I[I[I[I[IZ)V")
     static let setItemsPlacement = Java.method(itemsView, "setPlacement", "(II[I[I)V")

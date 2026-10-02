@@ -13,15 +13,18 @@ enum StandardEnvironment {
     nonisolated(unsafe) static let display = DeviceDisplay()
     nonisolated(unsafe) static let locale = LocaleInfo()
     nonisolated(unsafe) static let device = DeviceInfo()
-    nonisolated(unsafe) static let app = AppInfo()
+    nonisolated(unsafe) static let appInfo = AppInfo()
 
     /// The application's session: one per process, its phase pushed by the host.
-    nonisolated(unsafe) static let application = ApplicationSession()
+    nonisolated(unsafe) static let app = ApplicationSession()
 
     // What a view outside every scene, window or page reads; each of those offers its own, nearer.
     nonisolated(unsafe) static let scene = SceneSession()
-    nonisolated(unsafe) static let window = WindowSession()
+    nonisolated(unsafe) static let windowScene = WindowSession()
     nonisolated(unsafe) static let page = PageSession()
+
+    /// How a `Toggle` draws where nothing above it wrote `.toggleStyle`.
+    static let toggleStyle = ToggleStyle.automatic
 
     /// What every render starts its scope with, keyed as `.environment()` keys.
     nonisolated(unsafe) static let scope: [(key: ObjectIdentifier, object: AnyObject)] = [
@@ -30,11 +33,12 @@ enum StandardEnvironment {
         (key: ObjectIdentifier(DeviceDisplay.self), object: display),
         (key: ObjectIdentifier(LocaleInfo.self), object: locale),
         (key: ObjectIdentifier(DeviceInfo.self), object: device),
-        (key: ObjectIdentifier(AppInfo.self), object: app),
-        (key: ObjectIdentifier(ApplicationSession.self), object: application),
+        (key: ObjectIdentifier(AppInfo.self), object: appInfo),
+        (key: ObjectIdentifier(ApplicationSession.self), object: app),
         (key: ObjectIdentifier(SceneSession.self), object: scene),
-        (key: ObjectIdentifier(WindowSession.self), object: window),
+        (key: ObjectIdentifier(WindowSession.self), object: windowScene),
         (key: ObjectIdentifier(PageSession.self), object: page),
+        (key: ObjectIdentifier(ToggleStyle.self), object: toggleStyle),
     ]
 
     /// The standard provider of a type: what an unfilled `@Environment` slot answers,

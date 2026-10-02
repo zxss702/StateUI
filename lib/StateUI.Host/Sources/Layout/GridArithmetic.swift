@@ -11,7 +11,7 @@
     @MainActor
     public static func size<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
-        rowSpacing: Double, columnSpacing: Double, padding: Insets, width offered: Double? = nil
+        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, width offered: Double? = nil
     ) -> LayoutSize {
         let (rowCount, columnCount) = counts(items, rows: rows, columns: columns)
         let columnDefinitions = completed(columns, count: columnCount)
@@ -41,7 +41,7 @@
     @MainActor
     public static func places<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
-        rowSpacing: Double, columnSpacing: Double, padding: Insets, in bounds: Rect,
+        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, in bounds: Rect,
         direction: LayoutDirection
     ) -> [Rect?] {
         leftToRight(
@@ -54,7 +54,7 @@
     @MainActor
     private static func leftToRight<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
-        rowSpacing: Double, columnSpacing: Double, padding: Insets, in bounds: Rect
+        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, in bounds: Rect
     ) -> [Rect?] {
         let content = bounds.inset(padding)
         let (rowCount, columnCount) = counts(items, rows: rows, columns: columns)

@@ -3,7 +3,7 @@
 
 /// An inspector itself: what it can do, its scene's renders, and the one
 /// chosen.
-struct InspectorView: ContentView {
+struct InspectorView: View {
     /// The scene it looks at, by its number.
     let scene: String
 
@@ -13,7 +13,13 @@ struct InspectorView: ContentView {
     /// Whether there is room for the renders and the chosen one side by side.
     let wide: Bool
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         let model = InspectorModel.shared
 
         // Reading the revision rebuilds this view when a pass lands.
@@ -35,9 +41,9 @@ struct InspectorView: ContentView {
             Grid { head(model) }
                 .gridRow(0)
 
-            Label(summary(passes, all: all.count, at: index))
+            Text(summary(passes, all: all.count, at: index))
                 .fontSize(11)
-                .textColor(Look.subtle)
+                .foregroundStyle(Look.subtle)
                 .lineBreak(.tailTruncation)
                 .gridRow(1)
 
@@ -62,7 +68,7 @@ struct InspectorView: ContentView {
         }
         .rows(.auto, .auto, .fill)
         .rowSpacing(6)
-        .padding(10, 8)
+        .contentPadding(10, 8)
     }
 
     /// A scene's history: the renders that reached it, in the order given.
@@ -102,11 +108,11 @@ struct InspectorView: ContentView {
 
         let actions = ScrollView {
             HStack {
-                Label("Inspector")
+                Text("Inspector")
                     .fontSize(15)
                     .fontAttributes(.bold)
-                    .textColor(Look.ink)
-                    .margin(0, 0, 10, 4)
+                    .foregroundStyle(Look.ink)
+                    .padding(0, 0, 10, 4)
 
                 Look.action(model.paused ? "Record" : "Pause") { model.pause() }
                 Look.action("Clear") { model.clear() }
@@ -142,7 +148,7 @@ struct InspectorView: ContentView {
             .spacing(6)
         }
         .orientation(.horizontal)
-        .horizontalScrollBarVisibility(.never)
+        .horizontalScrollIndicators(.never)
 
         guard place == .bottom else { return actions }
 
@@ -187,7 +193,7 @@ struct InspectorView: ContentView {
                         scene: scene,
                         index: index,
                         chosen: model.selected == pass.number)
-                    .onTapped { model.selected = pass.number }
+                    .onTapGesture { model.selected = pass.number }
                 }
             }
         }
@@ -196,9 +202,9 @@ struct InspectorView: ContentView {
     /// The render chosen: its numbers, then its tree in this scene.
     private func detail(_ chosen: InspectedPass?, scene: ElementId, at index: Int?) -> Element {
         guard let pass = chosen else {
-            return Label("Choose a render to see what it built.")
+            return Text("Choose a render to see what it built.")
                 .fontSize(12)
-                .textColor(Look.subtle)
+                .foregroundStyle(Look.subtle)
                 .verticalAlignment(.start)
         }
 
@@ -212,10 +218,10 @@ struct InspectorView: ContentView {
                         Look.action("‹ Renders") { InspectorModel.shared.selected = nil }
                     }
 
-                    Label("Render #\(pass.number) · \(Look.road(pass.road))")
+                    Text("Render #\(pass.number) · \(Look.road(pass.road))")
                         .fontSize(13)
                         .fontAttributes(.bold)
-                        .textColor(Look.ink)
+                        .foregroundStyle(Look.ink)
                         .verticalAlignment(.center)
                 }
                 .spacing(8)
@@ -261,10 +267,16 @@ struct InspectorView: ContentView {
 }
 
 /// One composed view of the chosen render's tree.
-private struct Branch: ContentView {
+private struct Branch: View {
     let entry: InspectedEntry
 
-    var content: any View {
+    
+    /// The built content.
+    public var body: some View { AnyView(content) }
+
+
+    
+    private var content: any View {
         let (mark, said, colour): (String, String, Color) = {
             switch entry.outcome {
             case let .built(reason):
@@ -277,11 +289,11 @@ private struct Branch: ContentView {
             }
         }()
 
-        return Label("\(mark) \(entry.view) — \(said)")
+        return Text("\(mark) \(entry.view) — \(said)")
             .fontSize(12)
-            .textColor(colour)
+            .foregroundStyle(colour)
             .lineBreak(.tailTruncation)
-            .padding(Double(entry.depth) * 12 + 6, 2)
+            .contentPadding(Double(entry.depth) * 12 + 6, 2)
             .horizontalAlignment(.start)
     }
 }

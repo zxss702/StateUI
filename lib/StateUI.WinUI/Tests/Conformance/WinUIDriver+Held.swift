@@ -24,10 +24,10 @@ extension WinUIDriver {
         case .toolbarItem:
             if let held = try actionHolds(property.name, element) { return held }
             throw cannot
-        case .window:
+        case .windowScene:
             if let held = try windowHolds(property.name, element) { return held }
             throw cannot
-        case .page, .navigationStack, .splitView, .tabbedView:
+        case .page, .navigationStack, .navigationSplitView, .tabView:
             if let held = try pageHolds(property.name, element, view) { return held }
         default: break
         }
@@ -67,8 +67,8 @@ extension WinUIDriver {
     }
 
     /// The window of a kind of its own `element` is, as the host keeps it for the next start.
-    private func keptWindow(_ element: MountedElement) throws -> KeptScenes.Window {
-        let scenes = element.enclosing(type: .application)?.children.filter { $0.type == .scene } ?? []
+    private func keptWindow(_ element: MountedElement) throws -> KeptScenes.WindowScene {
+        let scenes = element.enclosing(type: .app)?.children.filter { $0.type == .scene } ?? []
         guard let scene = element.enclosing(type: .scene), let sceneIndex = scenes.firstIndex(where: { $0 === scene }),
               let index = scene.windows.filter({ $0.value(.windowType) != nil }).firstIndex(where: { $0 === element })
         else { throw DriverCannot("find what is kept of a window of no kind of its own") }
@@ -139,7 +139,7 @@ extension WinUIDriver {
             case let radio as WinUIRadioButtonView: return .string(radio.text)
             default: return nil
             }
-        case "textColor": return try Self.color(read(view, "foreground")).map { $0.propValue }
+        case "foregroundStyle": return try Self.color(read(view, "foreground")).map { $0.propValue }
         case "fontSize": return Double(try read(view, "fontSize"))?.propValue
         case "fontFamily": return Name(try read(view, "fontFamily")).propValue
         case "fontAttributes":
@@ -157,13 +157,13 @@ extension WinUIDriver {
             let size = Double(try read(view, "fontSize")) ?? 14
             return ((Double(try read(view, "lineHeight")) ?? 0) / (size * WinUITextView.lineHeightOfFont)).propValue
         case "textDecorations": return TextDecorations(rawValue: Int32(try read(view, "decorations")) ?? 0).propValue
-        case "maximumLines": return Int(try read(view, "maxLines"))?.propValue
+        case "lineLimit": return Int(try read(view, "maxLines"))?.propValue
         case "lineBreak":
             let wrapping = Int(try read(view, "wrapping")) ?? 2
             let trimming = Int(try read(view, "trimming")) ?? 0
             let broken: LineBreak = trimming != 0 ? .tailTruncation : wrapping == 1 ? .noWrap : .wordWrap
             return broken.propValue
-        case "horizontalTextAlignment":
+        case "multilineTextAlignment":
             if view is WinUIPickerView {
                 let across = Int(try read(view, "contentAlignment")) ?? 0
                 return (across == 1 ? TextAlignment.center : across == 2 ? .end : .start).propValue
@@ -174,7 +174,7 @@ extension WinUIDriver {
             // WinUI's VerticalAlignment: top 0, centre 1, bottom 2, stretched 3 - the words at its top.
             let down = Int(try read(view, "verticalAlignment")) ?? 3
             return (down == 1 ? TextAlignment.center : down == 2 ? .end : .start).propValue
-        case "padding" where !(view is WinUILayoutView): return try Self.insets(read(view, "padding"))?.propValue
+        case "contentPadding" where !(view is WinUILayoutView): return try Self.insets(read(view, "padding"))?.propValue
         default: return nil
         }
     }
@@ -190,7 +190,7 @@ extension WinUIDriver {
                 if try read(view, "box.ellipse") == "1" { return ContainerShape.ellipse.propValue }
                 let radius = Double(try read(view, "box.radius")) ?? 0
                 return (radius > 0 ? ContainerShape.roundedRectangle(radius) : .rectangle).propValue
-            case "padding": return nil
+            case "contentPadding": return nil
             default: return nil
             }
         }
@@ -244,7 +244,7 @@ extension WinUIDriver {
         case "isReadOnly": return (facts[0] != 0).propValue
         case "isSpellCheckEnabled": return (facts[1] != 0).propValue
         case "isTextPredictionEnabled": return (facts[2] != 0).propValue
-        case "inputPurpose": return InputPurpose(rawValue: Int32(try read(view, "purpose")) ?? 0)?.propValue
+        case "textContentType": return InputPurpose(rawValue: Int32(try read(view, "purpose")) ?? 0)?.propValue
         case "cursorPosition": return Int(facts[5]).propValue
         case "selectionLength": return Int(facts[6]).propValue
         default: return nil
@@ -281,17 +281,17 @@ extension WinUIDriver {
         case ("source", let image as WinUIImageView): return ImageSource(try read(image, "source")).propValue
         case ("aspect", let image as WinUIImageView):
             let stretch = Int(try read(image, "stretch")) ?? 2
-            let aspect: Aspect = stretch == 3 ? .fill : stretch == 1 ? .stretch : stretch == 0 ? .center : .fit
+            let aspect: ContentMode = stretch == 3 ? .fill : stretch == 1 ? .stretch : stretch == 0 ? .center : .fit
             return aspect.propValue
         case ("scrollOffset", let scroll as WinUIScrollView): return scroll.offset.propValue
-        case ("verticalScrollBarVisibility", let scroll as WinUIScrollView):
+        case ("verticalScrollIndicators", let scroll as WinUIScrollView):
             return Self.bar(try read(scroll.scroller, "verticalBar")).propValue
-        case ("horizontalScrollBarVisibility", let scroll as WinUIScrollView):
+        case ("horizontalScrollIndicators", let scroll as WinUIScrollView):
             return Self.bar(try read(scroll.scroller, "horizontalBar")).propValue
         case ("orientation", let scroll as WinUIScrollView):
             let down = try read(scroll.scroller, "verticalMode") != "0"
             let across = try read(scroll.scroller, "horizontalMode") != "0"
-            let orientation: ScrollOrientation = down && across ? .both : across ? .horizontal : down ? .vertical : .neither
+            let orientation: Axis = down && across ? .both : across ? .horizontal : down ? .vertical : .neither
             return orientation.propValue
         default: return nil
         }
@@ -321,8 +321,8 @@ extension WinUIDriver {
     /// The title shown for a page or an arrangement: its tab's, where a tabbed view presents it, else the window's.
     private func title(of element: MountedElement) throws -> String {
         var page = element
-        while let parent = page.parent, parent.type != .tabbedView, parent.type != .window { page = parent }
-        guard let tabbed = page.parent, tabbed.type == .tabbedView,
+        while let parent = page.parent, parent.type != .tabView, parent.type != .windowScene { page = parent }
+        guard let tabbed = page.parent, tabbed.type == .tabView,
               let index = tabbed.children.firstIndex(where: { $0 === page }),
               let tabs = (tabbed.native as? WinUIElement)?.view as? WinUITabbedView
         else { return try read(window().titleBar, "title") }
@@ -344,7 +344,7 @@ extension WinUIDriver {
         case "text":
             let words = try read(label, "runs").split(separator: "\u{1F}", omittingEmptySubsequences: false)
             return words.indices.contains(index) ? .string(String(words[index])) : nil
-        case "textColor": return run[0] == 0 ? nil : Self.color(UInt32(run[0])).propValue
+        case "foregroundStyle": return run[0] == 0 ? nil : Self.color(UInt32(run[0])).propValue
         case "background": return run[5] == 0 ? nil : Self.color(UInt32(run[5])).propValue
         case "fontSize": return run[1] == 0 ? nil : run[1].propValue
         case "fontAttributes":
@@ -439,9 +439,9 @@ extension WinUIDriver {
     }
 
     /// Four sides the reader writes as numbers apart by commas.
-    static func insets(_ words: String) -> Insets? {
+    static func insets(_ words: String) -> EdgeInsets? {
         let sides = words.split(separator: ",").compactMap { Double($0) }
-        return sides.count == 4 ? Insets(sides[0], sides[1], sides[2], sides[3]) : nil
+        return sides.count == 4 ? EdgeInsets(sides[0], sides[1], sides[2], sides[3]) : nil
     }
 
     /// A day the reader writes as year-month-day.
@@ -450,8 +450,8 @@ extension WinUIDriver {
         return parts.count == 3 ? CalendarDate(year: parts[0], month: parts[1], day: parts[2]) : nil
     }
 
-    /// A scroll bar's showing, as WinUI's ScrollBarVisibility says it: 1 as WinUI decides, 3 always, else never.
-    static func bar(_ words: String) -> ScrollBarVisibility {
+    /// A scroll bar's showing, as WinUI's ScrollIndicatorVisibility says it: 1 as WinUI decides, 3 always, else never.
+    static func bar(_ words: String) -> ScrollIndicatorVisibility {
         switch Int(words) {
         case 1: .default
         case 3: .always

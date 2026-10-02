@@ -14,7 +14,7 @@
         Specimens.wearing(LayoutContract.self).flatMap { element in
             [
                 clipped(element), throughIt(element),
-                Aspects.holds(LayoutContract.avoidsSafeArea, on: element, .uniform(.container), then: .uniform(.none)),
+                Aspects.holds(LayoutContract.ignoresSafeArea, on: element, .uniform(.container), then: .uniform(.none)),
                 Aspects.holds(LayoutContract.clipsContent, on: element, false, then: true),
                 Aspects.holds(LayoutContract.letsInputThrough, on: element, false, then: true),
             ]
@@ -32,11 +32,11 @@
                 VStack {
                     ZStack {
                         Holding.layout(element, clips: clips.wrappedValue, width: 40, height: 40) {
-                            ColorBox(.red).width(20).height(20).horizontalAlignment(.start).verticalAlignment(.start)
-                                .translationX(30).translationY(30)
+                            ColorPicker(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
+                                .offset(x: 30, y: 30)
                         }
                     }
-                    .width(100).height(100).id("room")
+                    .frame(width: 100).frame(height: 100).id("room")
                     Button("Clip").onClicked { clips.wrappedValue = true }.id("change")
                 }
                 .horizontalAlignment(.start)
@@ -62,12 +62,12 @@
             s.start {
                 VStack {
                     ZStack {
-                        ColorBox(.blue).id("beneath")
+                        ColorPicker(.blue).id("beneath")
                         Holding.layout(element, through: through.wrappedValue) {
-                            ColorBox(.red).width(20).height(20).horizontalAlignment(.start).verticalAlignment(.start)
+                            ColorPicker(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
                         }
                     }
-                    .width(100).height(100)
+                    .frame(width: 100).frame(height: 100)
                     Button("Through").onClicked { through.wrappedValue = true }.id("change")
                 }
                 .horizontalAlignment(.start)

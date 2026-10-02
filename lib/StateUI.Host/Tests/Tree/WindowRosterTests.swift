@@ -18,7 +18,7 @@ final class WindowRosterTests: XCTestCase {
         let runtime = HostRuntime.still()
         func scene(_ windows: [String]) {
             var scene = HostPatch(id: .manual("scene"), type: .scene)
-            scene.children = .arranged(windows.map { HostPatch(id: .manual($0), type: .window) })
+            scene.children = .arranged(windows.map { HostPatch(id: .manual($0), type: .windowScene) })
             runtime.tree.apply(scene, complete: false)
         }
         let roster = WindowRoster<Controller>()
@@ -62,7 +62,7 @@ final class WindowRosterTests: XCTestCase {
     /// the toolkit's.
     func testAWindowsTraitsAreSaidWhereTheyChange() throws {
         let runtime = HostRuntime.still()
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.properties = [.isMinimizable: .bool(false), .floatsOnTop: .bool(true)]
         runtime.tree.apply(window, complete: true)
         let presentation = WindowPresentation()

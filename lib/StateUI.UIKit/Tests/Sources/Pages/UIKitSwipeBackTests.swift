@@ -14,8 +14,8 @@ final class UIKitSwipeBackTests: XCTestCase {
     @MainActor
     func testAViewsDragComesBeforeTheStacksSwipeBack() throws {
         let host = UIKitRenderer.running(reducesMotion: true) {
-            NavigationStack(State(wrappedValue: [1]).projectedValue) { Label("Root") }
-                destination: { _ in Label("Drag me").onPanUpdated { _ in } }
+            NavigationStack(State(wrappedValue: [1]).projectedValue) { Text("Root") }
+                destination: { _ in Text("Drag me").onPanUpdated { _ in } }
         }
         defer { host.finish() }
         let label = try XCTUnwrap(host.views(UIKitLabelView.self).first { $0.window != nil && $0.gestureRecognizers?.isEmpty == false })

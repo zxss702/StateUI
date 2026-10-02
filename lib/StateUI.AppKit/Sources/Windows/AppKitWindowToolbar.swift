@@ -81,7 +81,7 @@ final class AppKitWindowToolbar: NSObject, NSToolbarDelegate {
 
     init(windowIdentifier: String) {
         toolbar = NSToolbar(identifier: NSToolbar.Identifier(
-            "StateUI.Window.\(windowIdentifier)"))
+            "StateUI.WindowScene.\(windowIdentifier)"))
         super.init()
 
         toolbar.delegate = self

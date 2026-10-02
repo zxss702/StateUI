@@ -7,25 +7,25 @@ import UIKit
 @testable import StateUIUIKit
 import XCTest
 
-/// What the application stands on, as UIKit tells it: the theme, the user's locale, the battery.
+/// What the application stands on, as UIKit tells it: the color scheme, the user's locale, the battery.
 final class UIKitEnvironmentTests: XCTestCase {
-    /// The theme is the one the user's scene stands in: turning dark tells it, and turning light again.
+    /// The color scheme is the one the user's scene stands in: turning dark tells it, and turning light again.
     @MainActor
     func testTheThemeIsTheScenes() throws {
         let scene = try XCTUnwrap(TestScene.scene)
-        let host = UIKitRenderer.running { Label("Themed") }
+        let host = UIKitRenderer.running { Text("Themed") }
         defer {
             scene.traitOverrides.remove(UITraitUserInterfaceStyle.self)
             host.finish()
         }
 
         scene.traitOverrides.userInterfaceStyle = .dark
-        host.settle { StandardEnvironment.app.requestedTheme == .dark }
-        XCTAssertEqual(StandardEnvironment.app.requestedTheme, .dark)
+        host.settle { StandardEnvironment.appInfo.colorScheme == .dark }
+        XCTAssertEqual(StandardEnvironment.appInfo.colorScheme, .dark)
 
         scene.traitOverrides.userInterfaceStyle = .light
-        host.settle { StandardEnvironment.app.requestedTheme == .light }
-        XCTAssertEqual(StandardEnvironment.app.requestedTheme, .light)
+        host.settle { StandardEnvironment.appInfo.colorScheme == .light }
+        XCTAssertEqual(StandardEnvironment.appInfo.colorScheme, .light)
     }
 
     /// The display is the screen as the scene stands on it now: turned a quarter, it is landscape, its width and

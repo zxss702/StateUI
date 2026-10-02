@@ -3,7 +3,7 @@
 
 /// Where a page stands in its native lifecycle.
 ///
-///     .onChanged(page.phase) {
+///     .onChange(of: page.phase) {
 ///         if page.phase == .appearing { try await refresh() }
 ///     }
 ///

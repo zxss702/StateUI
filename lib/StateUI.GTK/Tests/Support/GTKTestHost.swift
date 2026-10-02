@@ -13,7 +13,7 @@ import XCTest
 @MainActor
 enum GTKTestHost {
     /// The application every test's windows belong to.
-    static let application: UnsafeMutablePointer<GtkApplication> = {
+    static let app: UnsafeMutablePointer<GtkApplication> = {
         // Every test opens a window of its own; GTK's GL renderer takes 0.65 s to close one, the cairo one none.
         g_setenv("GSK_RENDERER", "cairo", 0)
         adw_init()
@@ -39,7 +39,7 @@ enum GTKTestHost {
     }()
 
     /// The window a bare host's root stands in, made once.
-    static let window = GTKWindow(application: application)
+    static let window = GTKWindow(application: app)
 
     /// Lays `window` out now, at its surface's size: the surface's `layout` signal, which the frame clock raises
     /// in a frame's layout. A window a test opens may stand behind another, where the desktop draws it no frames,
@@ -142,7 +142,7 @@ extension GTKRenderer {
         GTKTestHost.window.show(nil)
 
         let renderer = GTKRenderer(
-            application: GTKTestHost.application, clock: clock.map { clock in { clock.now } },
+            application: GTKTestHost.app, clock: clock.map { clock in { clock.now } },
             reducesMotion: { reducesMotion })
         shared = renderer
         return renderer

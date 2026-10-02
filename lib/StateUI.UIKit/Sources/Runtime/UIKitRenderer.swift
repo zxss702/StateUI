@@ -21,7 +21,7 @@ final class UIKitRenderer {
 
     let frameClock: UIKitFrameClock
 
-    /// Whether the user asked for less motion.
+    /// Whether the user asked for less animation.
     let reducesMotion: () -> Bool
 
     /// Whether each window has a scene of its own, which the host asks iOS for and lets go with the window; a host
@@ -39,7 +39,7 @@ final class UIKitRenderer {
     /// Where kept values stand between launches.
     let preferences: UserDefaults
 
-    /// What the application stands on - the theme, the locale, the battery, the network - as UIKit tells it.
+    /// What the application stands on - the color scheme, the locale, the battery, the network - as UIKit tells it.
     private(set) lazy var environment = UIKitEnvironment(core: runtime.core)
 
     /// UIKit's part of the acts every host performs, and the host layer's performer of them.
@@ -109,7 +109,7 @@ final class UIKitRenderer {
     /// A scene's lifecycle moved: the window standing in it is in front of the user and activated, off the screen
     /// once in the background, and neither between.
     func scene(_ scene: UIWindowScene, movedTo phase: ApplicationPhase) {
-        guard let shown = roster.windows.first(where: { $0.1.window?.windowScene === scene })?.0 else { return }
+        guard let shown = roster.windows.first(where: { $0.1.window?.window === scene })?.0 else { return }
         window(shown, movedTo: phase)
     }
 
@@ -123,7 +123,7 @@ final class UIKitRenderer {
     /// tells no move it made before the window stood in it.
     private func tellStandingPhases() {
         for (element, controller) in roster.windows where controller.toldPhase == nil {
-            switch controller.window?.windowScene?.activationState {
+            switch controller.window?.window?.activationState {
             case .foregroundActive?: window(element, movedTo: .active)
             case .background?: window(element, movedTo: .background)
             default: break
@@ -138,7 +138,7 @@ final class UIKitRenderer {
     }
 
     /// A scene iOS connected: a StateUI scene of its own, whose window stands in it, which says what the display
-    /// is and, the first, what theme the user chose.
+    /// is and, the first, what color scheme the user chose.
     func connect(_ scene: UIWindowScene) {
         environment.followTheme(of: scene)
         environment.reportDisplay(of: scene)
@@ -184,7 +184,7 @@ final class UIKitRenderer {
     /// Shows every StateUI window in a window scene of its own, the first waiting one; a window the tree no longer
     /// holds lets its scene go.
     func synchronizeWindows() {
-        guard let root = runtime.tree.root, root.type == .application else { return }
+        guard let root = runtime.tree.root, root.type == .app else { return }
 
         roster.update(root: root, make: { [unowned self] element in
             let scene = waitingScenes.isEmpty ? nil : waitingScenes.removeFirst()
@@ -207,7 +207,7 @@ final class UIKitRenderer {
     /// home screen once the scene in front goes.
     /// Design: docs/design/platforms/uikit/runtime.md#scenes
     private func bringBack(insteadOf closing: UIKitWindowController, staying: [MountedElement]) {
-        guard let state = closing.window?.windowScene?.activationState,
+        guard let state = closing.window?.window?.activationState,
               state == .foregroundActive || state == .foregroundInactive,
               let back = runtime.lifecycle.activatedLast(among: staying) ?? staying.first,
               let session = roster.windows.first(where: { $0.0 === back })?.1.session

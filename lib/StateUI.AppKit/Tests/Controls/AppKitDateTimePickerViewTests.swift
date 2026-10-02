@@ -20,7 +20,7 @@ final class AppKitDateTimePickerViewTests: XCTestCase {
             minimum: [2020, 1, 1],
             maximum: [2026, 12, 31],
             font: .systemFont(ofSize: 14),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: false)
 
         XCTAssertEqual(picker.valueLanesForTesting, [2026, 12, 31])
@@ -39,7 +39,7 @@ final class AppKitDateTimePickerViewTests: XCTestCase {
             minimum: nil,
             maximum: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: true)
 
         picker.apply(
@@ -48,7 +48,7 @@ final class AppKitDateTimePickerViewTests: XCTestCase {
             minimum: nil,
             maximum: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: true)
 
         XCTAssertEqual(picker.valueLanesForTesting, [2026, 2, 28])
@@ -63,7 +63,7 @@ final class AppKitDateTimePickerViewTests: XCTestCase {
             minimum: nil,
             maximum: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: true)
 
         XCTAssertEqual(picker.valueLanesForTesting, [21, 5, 0])
@@ -81,7 +81,7 @@ final class AppKitDateTimePickerViewTests: XCTestCase {
             minimum: nil,
             maximum: nil,
             font: .systemFont(ofSize: 13),
-            textColor: .labelColor,
+            foregroundStyle: .labelColor,
             enabled: true)
 
         XCTAssertTrue(reports.isEmpty)

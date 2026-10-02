@@ -3,10 +3,10 @@
 
 /// What is drawn behind a view: one colour, or a brush.
 ///
-///     Label("Total").background(.tomato)
+///     Text("Total").background(.tomato)
 ///     VStack { … }.background(.linearGradient([GradientStop(.gold, 0), GradientStop(.tomato, 1)]))
 ///
-/// Design: docs/design/types/colour-and-theme.md#a-background-is-a-colour-or-a-brush
+/// Design: docs/design/types/colour-and-color-scheme.md#a-background-is-a-colour-or-a-brush
 public enum Background: Equatable, Sendable, HostRepresentable {
     /// One colour.
     case color(Color)

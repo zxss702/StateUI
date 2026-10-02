@@ -159,7 +159,7 @@ final class AppKitSessionTests: XCTestCase {
         native.setContentSize(NSSize(width: 700, height: 550))
         native.setFrameOrigin(NSPoint(x: 137, y: 211))
 
-        var width = HostPatch(id: .manual("main"), type: .window)
+        var width = HostPatch(id: .manual("main"), type: .windowScene)
         width.properties[.width] = .number(820)
         renderer.applyForTesting(tree(scene("1", windows: [width])))
 
@@ -168,7 +168,7 @@ final class AppKitSessionTests: XCTestCase {
         XCTAssertEqual(contentSize.height, 550, accuracy: 0.001)
         XCTAssertEqual(native.frame.minX, 137, accuracy: 0.001)
 
-        var relinquishedWidth = HostPatch(id: .manual("main"), type: .window)
+        var relinquishedWidth = HostPatch(id: .manual("main"), type: .windowScene)
         relinquishedWidth.clearedProperties = [.width]
         native.setContentSize(NSSize(width: 910, height: 610))
         renderer.applyForTesting(tree(scene("1", windows: [relinquishedWidth])))
@@ -179,7 +179,7 @@ final class AppKitSessionTests: XCTestCase {
 
         let x = native.frame.minX
         let screen = try XCTUnwrap(native.screen ?? NSScreen.main)
-        var y = HostPatch(id: .manual("main"), type: .window)
+        var y = HostPatch(id: .manual("main"), type: .windowScene)
         y.properties[.y] = .number(73)
         renderer.applyForTesting(tree(scene("1", windows: [y])))
 
@@ -230,7 +230,7 @@ final class AppKitSessionTests: XCTestCase {
             native.delegate?.windowShouldZoom?(native, toFrame: native.frame) ?? true)
 
         let standingFrame = native.frame
-        var cleared = HostPatch(id: .manual("main"), type: .window)
+        var cleared = HostPatch(id: .manual("main"), type: .windowScene)
         cleared.clearedProperties = [
             .title, .x, .y, .width, .height,
             .minimumWidth, .minimumHeight, .maximumWidth, .maximumHeight,
@@ -290,7 +290,7 @@ final class AppKitSessionTests: XCTestCase {
         XCTAssertTrue(native.isExcludedFromWindowsMenu)
         XCTAssertEqual(native.level, .floating)
 
-        var cleared = HostPatch(id: .manual("tool"), type: .window)
+        var cleared = HostPatch(id: .manual("tool"), type: .windowScene)
         cleared.clearedProperties = [.windowValue, .hidesWhenInactive, .floatsOnTop]
         renderer.applyForTesting(tree(
             scene("1", windows: [window("main"), cleared]),
@@ -378,10 +378,10 @@ final class AppKitSessionTests: XCTestCase {
         renderer.openPlatformScene()
         XCTAssertEqual(renderer.sceneCountForTesting, 2)
 
-        try await StandardEnvironment.application.openScene()
+        try await StandardEnvironment.app.openScene()
         renderer.runtime.pump.turn()
         XCTAssertEqual(renderer.sceneCountForTesting, 3)
-        XCTAssertEqual(StandardEnvironment.application.scenes.count, 3)
+        XCTAssertEqual(StandardEnvironment.app.scenes.count, 3)
     }
 
     @MainActor
@@ -390,7 +390,7 @@ final class AppKitSessionTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
         renderer.startForTesting()
-        let scene = try XCTUnwrap(StandardEnvironment.application.scenes.first)
+        let scene = try XCTUnwrap(StandardEnvironment.app.scenes.first)
         try await scene.openWindow(.appKitTestTool)
         renderer.runtime.pump.turn()
         XCTAssertEqual(renderer.windowsForTesting.count, 2)
@@ -399,7 +399,7 @@ final class AppKitSessionTests: XCTestCase {
             Notification(name: NSWindow.willCloseNotification))
 
         XCTAssertEqual(renderer.sceneCountForTesting, 0)
-        XCTAssertTrue(StandardEnvironment.application.scenes.isEmpty)
+        XCTAssertTrue(StandardEnvironment.app.scenes.isEmpty)
         XCTAssertTrue(renderer.windowsForTesting.isEmpty)
     }
 
@@ -411,11 +411,11 @@ final class AppKitSessionTests: XCTestCase {
         defer {
             preferences.removePersistentDomain(forName: suite)
             PersistentStore.shared.forgetAll()
-            StandardEnvironment.application.persistentKeys = []
+            StandardEnvironment.app.persistentKeys = []
         }
-        let key = PersistentKey("theme", of: String.self)
+        let key = PersistentKey("colorScheme", of: String.self)
         let state = State(wrappedValue: "light", persistentKey: key)
-        StandardEnvironment.application.persistentKeys = [key]
+        StandardEnvironment.app.persistentKeys = [key]
         preferences.set("dark", forKey: key.name)
         let renderer = testRenderer(
             resourceDirectory: nil,
@@ -452,7 +452,7 @@ final class AppKitSessionTests: XCTestCase {
 
     @MainActor
     private func tree(_ scenes: HostPatch...) -> HostPatch {
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged(scenes)
         return application
     }
@@ -484,13 +484,13 @@ final class AppKitSessionTests: XCTestCase {
         kind: String? = nil,
         eventBase: Int32? = nil
     ) -> HostPatch {
-        var label = HostPatch(id: .manual("label-\(id)"), type: .label)
+        var label = HostPatch(id: .manual("label-\(id)"), type: .text)
         label.properties[.text] = .string(id)
 
         var page = HostPatch(id: .manual("page-\(id)"), type: .page)
         page.children = .arranged([label])
 
-        var window = HostPatch(id: .manual(id), type: .window)
+        var window = HostPatch(id: .manual(id), type: .windowScene)
         window.properties[.title] = .string(id)
         if let kind { window.properties[.windowType] = .name(kind) }
         if let eventBase {
@@ -512,16 +512,16 @@ private extension WindowType {
     static let appKitTestTool = WindowType("appkit.test.tool")
 }
 
-private struct AppKitSessionPage: ContentView {
+private struct AppKitSessionPage: View {
     let caption: String
-    var content: any View { Label(caption) }
+    var body: some View { Text(caption) }
 }
 
-private struct AppKitSessionMainWindow: Window {
+private struct AppKitSessionMainWindow: WindowScene {
     var page: any Page { AppKitSessionPage(caption: "Main") }
 }
 
-private struct AppKitSessionToolWindow: Window {
+private struct AppKitSessionToolWindow: WindowScene {
     var page: any Page { AppKitSessionPage(caption: "Tool") }
 }
 
@@ -535,8 +535,8 @@ private struct AppKitSessionScene: Scene {
     }
 }
 
-private struct AppKitSessionApp: Application {
-    var scene: any Scene { AppKitSessionScene() }
+private struct AppKitSessionApp: App {
+    var body: some Scene { AppKitSessionScene() }
 }
 
 #endif

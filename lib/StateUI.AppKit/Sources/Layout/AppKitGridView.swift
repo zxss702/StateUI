@@ -58,7 +58,7 @@ final class AppKitGridView: AppKitTravellingLayout, AppKitWidthConstrainedMeasur
     private func measuredContentSize(width: CGFloat?) -> NSSize {
         NSSize(GridArithmetic.size(
             of: items, rows: rows, columns: columns, rowSpacing: Double(rowSpacing),
-            columnSpacing: Double(columnSpacing), padding: Insets(padding), width: width.map(Double.init)))
+            columnSpacing: Double(columnSpacing), padding: EdgeInsets(padding), width: width.map(Double.init)))
     }
 
     override func layout() {
@@ -67,7 +67,7 @@ final class AppKitGridView: AppKitTravellingLayout, AppKitWidthConstrainedMeasur
         beginArrangement()
         let places = GridArithmetic.places(
             of: items, rows: rows, columns: columns, rowSpacing: Double(rowSpacing),
-            columnSpacing: Double(columnSpacing), padding: Insets(padding), in: bounds.placed,
+            columnSpacing: Double(columnSpacing), padding: EdgeInsets(padding), in: bounds.placed,
             direction: direction)
         for (item, place) in zip(items, places) {
             if let place { self.place(item, at: NSRect(placed: place)) }

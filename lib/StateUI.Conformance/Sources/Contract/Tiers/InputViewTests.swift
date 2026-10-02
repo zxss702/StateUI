@@ -16,7 +16,7 @@
                 Aspects.holds(InputViewContract.maximumLength, on: element, 10, then: 3),
                 Aspects.holds(InputViewContract.placeholder, on: element, "Name", then: "E-mail"),
                 Aspects.holds(InputViewContract.placeholderColor, on: element, .red, then: .blue),
-                Aspects.holds(InputViewContract.inputPurpose, on: element, .email, then: .url),
+                Aspects.holds(InputViewContract.textContentType, on: element, .email, then: .url),
                 Aspects.holds(InputViewContract.isReadOnly, on: element, false, then: true),
                 Aspects.holds(InputViewContract.isSpellCheckEnabled, on: element, true, then: false),
                 Aspects.holds(InputViewContract.isTextPredictionEnabled, on: element, true, then: false),
@@ -140,7 +140,7 @@
         case "SearchField": return dressing.dress(SearchField(words.projectedValue))
         case "TextEditor": return dressing.dress(TextEditor(words.projectedValue))
         case "TextField": return dressing.dress(TextField(words.projectedValue))
-        default: return Label("no field of \(element)")
+        default: return Text("no field of \(element)")
         }
     }
 }

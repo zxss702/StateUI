@@ -28,11 +28,11 @@ extension AndroidRegistrations {
             }
             picker.applies([
                 FontElementContract.fontSize, FontElementContract.fontFamily, FontElementContract.fontAttributes,
-                TextStyleElementContract.textColor, TextAlignmentElementContract.horizontalTextAlignment,
+                TextStyleElementContract.foregroundStyle, TextAlignmentElementContract.multilineTextAlignment,
             ]) { view, values in
                 view.setLook(
                     TextMembers.look(of: values),
-                    alignment: values[TextAlignmentElementContract.horizontalTextAlignment] ?? .start)
+                    alignment: values[TextAlignmentElementContract.multilineTextAlignment] ?? .start)
             }
             picker.property(TintElementContract.tint) { view, tint in view.setTint(tint?.propValue) }
             picker.property(VisualElementContract.isEnabled) { view, enabled in view.setEnabled(enabled ?? true) }

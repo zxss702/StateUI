@@ -17,26 +17,26 @@ extension UIKitDriver {
         if let layout = view as? UIKitLayoutView, let held = boxHolds(property, layout) { return held }
         if let button = view as? UIKitButtonView { return buttonHolds(property, button) }
         switch (property, view) {
-        case (.maximumLines, let label as UILabel): return label.numberOfLines.propValue
+        case (.lineLimit, let label as UILabel): return label.numberOfLines.propValue
         case (.lineBreak, let label as UILabel):
             return lineBreak(label.lineBreakMode).propValue
-        case (.horizontalTextAlignment, let label as UILabel): return alignment(label.textAlignment, in: label).propValue
-        case (.horizontalTextAlignment, let field as UITextField):
+        case (.multilineTextAlignment, let label as UILabel): return alignment(label.textAlignment, in: label).propValue
+        case (.multilineTextAlignment, let field as UITextField):
             return alignment(field.textAlignment, in: field).propValue
-        case (.horizontalTextAlignment, let editor as UITextView):
+        case (.multilineTextAlignment, let editor as UITextView):
             return alignment(editor.textAlignment, in: editor).propValue
         case (.placeholderColor, let field as UITextField):
             guard let placeholder = field.attributedPlaceholder, placeholder.length > 0 else { return nil }
             return (placeholder.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor)
                 .map { color($0).propValue }
         case (.placeholderColor, let editor as UIKitTextEditorView):
-            return editor.subviews.lazy.compactMap { $0 as? UILabel }.first?.textColor.map { color($0).propValue }
-        case (.inputPurpose, let field as UITextField):
+            return editor.subviews.lazy.compactMap { $0 as? UILabel }.first?.foregroundStyle.map { color($0).propValue }
+        case (.textContentType, let field as UITextField):
             return purpose(field.keyboardType, spelling: field.spellCheckingType).propValue
-        case (.inputPurpose, let editor as UITextView):
+        case (.textContentType, let editor as UITextView):
             return purpose(editor.keyboardType, spelling: editor.spellCheckingType).propValue
         case (.aspect, let image as UIImageView):
-            let aspects: [UIView.ContentMode: Aspect] = [
+            let aspects: [UIView.ContentMode: ContentMode] = [
                 .scaleAspectFit: .fit, .scaleAspectFill: .fill, .scaleToFill: .stretch, .center: .center,
             ]
             return aspects[image.contentMode]?.propValue

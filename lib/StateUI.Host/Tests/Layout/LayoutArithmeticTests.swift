@@ -36,9 +36,9 @@ final class LayoutArithmeticTests: XCTestCase {
         centred.values.horizontal = 1
         let items = [Child(width: 20, height: 10), Child(width: 20, height: 10, shown: false), centred]
 
-        let size = StackArithmetic.size(of: items, axis: .vertical, spacing: 5, padding: Insets(2), width: nil)
+        let size = StackArithmetic.size(of: items, axis: .vertical, spacing: 5, padding: EdgeInsets(2), width: nil)
         let places = StackArithmetic.places(
-            of: items, axis: .vertical, spacing: 5, padding: Insets(2), in: Rect(0, 0, 100, 50),
+            of: items, axis: .vertical, spacing: 5, padding: EdgeInsets(2), in: Rect(0, 0, 100, 50),
             direction: .leftToRight)
 
         XCTAssertEqual(size, LayoutSize(width: 24, height: 29))
@@ -54,11 +54,11 @@ final class LayoutArithmeticTests: XCTestCase {
     @MainActor
     func testARowRightToLeftFillsFromTheRight() {
         var first = Child(width: 20, height: 10)
-        first.values.margin = Insets(3, 0, 0, 0)
+        first.values.margin = EdgeInsets(3, 0, 0, 0)
         let items = [first, Child(width: 30, height: 10)]
 
         let places = StackArithmetic.places(
-            of: items, axis: .horizontal, spacing: 5, padding: Insets(2, 0, 0, 0), in: Rect(0, 0, 100, 10),
+            of: items, axis: .horizontal, spacing: 5, padding: EdgeInsets(2, 0, 0, 0), in: Rect(0, 0, 100, 10),
             direction: .rightToLeft)
 
         XCTAssertEqual(places[0], Rect(75, 0, 20, 10), "the first child against the right edge, inside padding and margin")
@@ -74,7 +74,7 @@ final class LayoutArithmeticTests: XCTestCase {
         end.values.horizontal = 2
 
         let places = StackArithmetic.places(
-            of: [start, end], axis: .vertical, spacing: 0, padding: Insets(0), in: Rect(0, 0, 100, 20),
+            of: [start, end], axis: .vertical, spacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 20),
             direction: .rightToLeft)
 
         XCTAssertEqual(places[0], Rect(80, 0, 20, 10))
@@ -91,7 +91,7 @@ final class LayoutArithmeticTests: XCTestCase {
 
         let places = GridArithmetic.places(
             of: [first, second], rows: [], columns: [.fixed(20), .fixed(30)],
-            rowSpacing: 0, columnSpacing: 0, padding: Insets(0), in: Rect(0, 0, 100, 10),
+            rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 10),
             direction: .rightToLeft)
 
         XCTAssertEqual(places.map { $0?.x }, [80, 50])
@@ -109,7 +109,7 @@ final class LayoutArithmeticTests: XCTestCase {
         half.values.area = .proportional(0, 0, 0.5, 1)
 
         let places = ZStackArithmetic.places(
-            of: [badge, half], in: Rect(0, 0, 100, 50), padding: Insets(0), direction: .rightToLeft)
+            of: [badge, half], in: Rect(0, 0, 100, 50), padding: EdgeInsets(0), direction: .rightToLeft)
 
         XCTAssertEqual(places[0], Rect(70, 5, 20, 10))
         XCTAssertEqual(places[1], Rect(50, 0, 50, 50), "a proportion from 0 is the right half")
@@ -123,10 +123,10 @@ final class LayoutArithmeticTests: XCTestCase {
 
         let room = Rect(0, 0, 100, 10)
         XCTAssertEqual(
-            SingleChildArithmetic.place(of: child, in: room, padding: Insets(4, 0, 0, 0), direction: .rightToLeft),
+            SingleChildArithmetic.place(of: child, in: room, padding: EdgeInsets(4, 0, 0, 0), direction: .rightToLeft),
             Rect(76, 0, 20, 10))
         XCTAssertEqual(
-            SingleChildArithmetic.place(of: child, in: room, padding: Insets(4, 0, 0, 0), direction: .leftToRight),
+            SingleChildArithmetic.place(of: child, in: room, padding: EdgeInsets(4, 0, 0, 0), direction: .leftToRight),
             Rect(4, 0, 20, 10))
     }
 
@@ -143,7 +143,7 @@ final class LayoutArithmeticTests: XCTestCase {
 
         let places = GridArithmetic.places(
             of: [fixed, automatic, shared], rows: [], columns: columns,
-            rowSpacing: 0, columnSpacing: 0, padding: Insets(0), in: Rect(0, 0, 100, 10), direction: .leftToRight)
+            rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 10), direction: .leftToRight)
 
         XCTAssertEqual(places.map { $0?.x }, [0, 20, 50])
         XCTAssertEqual(places.map { $0?.width }, [20, 30, 50])
@@ -161,10 +161,10 @@ final class LayoutArithmeticTests: XCTestCase {
 
         let places = GridArithmetic.places(
             of: [icon, words], rows: [.auto], columns: columns,
-            rowSpacing: 0, columnSpacing: 0, padding: Insets(0), in: Rect(0, 0, 120, 200), direction: .leftToRight)
+            rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 120, 200), direction: .leftToRight)
         let size = GridArithmetic.size(
             of: [icon, words], rows: [.auto], columns: columns,
-            rowSpacing: 0, columnSpacing: 0, padding: Insets(0), width: 120)
+            rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0), width: 120)
 
         XCTAssertEqual(places[1], Rect(20, 0, 100, 30), "three lines of words at the column's 100")
         XCTAssertEqual(size.height, 30)
@@ -187,7 +187,7 @@ final class LayoutArithmeticTests: XCTestCase {
         let items = [Child(width: 20, height: 10), corner, badge, half, Child(width: 20, height: 10, shown: false)]
 
         let places = ZStackArithmetic.places(
-            of: items, in: Rect(0, 0, 100, 50), padding: Insets(4), direction: .leftToRight)
+            of: items, in: Rect(0, 0, 100, 50), padding: EdgeInsets(4), direction: .leftToRight)
 
         XCTAssertEqual(places[0], Rect(4, 4, 92, 42), "the whole room within the padding")
         XCTAssertEqual(places[1], Rect(76, 36, 20, 10), "its natural size, at the room's far corner")
@@ -201,16 +201,16 @@ final class LayoutArithmeticTests: XCTestCase {
     @MainActor
     func testAZStackMeasuresAsItsNeediestChild() {
         var margined = Child(width: 30, height: 10)
-        margined.values.margin = Insets(5, 0, 5, 0)
+        margined.values.margin = EdgeInsets(5, 0, 5, 0)
         var badge = Child(width: 20, height: 10)
         badge.values.area = .absolute(10, 5, 40, 30)
         var half = Child(width: 30, height: 20)
         half.values.area = .proportional(0.5, 0, 0.5, 0.5)
 
-        XCTAssertEqual(ZStackArithmetic.size(of: [margined], padding: Insets(2), width: nil), LayoutSize(width: 44, height: 14))
-        XCTAssertEqual(ZStackArithmetic.size(of: [badge], padding: Insets(0), width: nil), LayoutSize(width: 50, height: 35))
+        XCTAssertEqual(ZStackArithmetic.size(of: [margined], padding: EdgeInsets(2), width: nil), LayoutSize(width: 44, height: 14))
+        XCTAssertEqual(ZStackArithmetic.size(of: [badge], padding: EdgeInsets(0), width: nil), LayoutSize(width: 50, height: 35))
         XCTAssertEqual(
-            ZStackArithmetic.size(of: [margined, badge, half], padding: Insets(0), width: nil),
+            ZStackArithmetic.size(of: [margined, badge, half], padding: EdgeInsets(0), width: nil),
             LayoutSize(width: 60, height: 40), "half of the room holds the child only in twice its size")
     }
 
@@ -218,7 +218,7 @@ final class LayoutArithmeticTests: XCTestCase {
     @MainActor
     func testASingleFillingChildTakesTheRoom() {
         let place = SingleChildArithmetic.place(
-            of: Child(width: 5, height: 5), in: Rect(0, 0, 100, 40), padding: Insets(10), direction: .leftToRight)
+            of: Child(width: 5, height: 5), in: Rect(0, 0, 100, 40), padding: EdgeInsets(10), direction: .leftToRight)
 
         XCTAssertEqual(place, Rect(10, 10, 80, 20))
     }
@@ -229,7 +229,7 @@ final class LayoutArithmeticTests: XCTestCase {
     func testEveryLayoutOffersAChildItsRoomLessItsMarginOnce() {
         let offers = Offers()
         var child = Child(width: 10, height: 10)
-        child.values.margin = Insets(8, 4)
+        child.values.margin = EdgeInsets(8, 4)
         child.values.horizontal = 0
         child.offers = offers
         var half = child
@@ -243,25 +243,25 @@ final class LayoutArithmeticTests: XCTestCase {
         }
 
         XCTAssertEqual(offered {
-            _ = StackArithmetic.size(of: [child], axis: .vertical, spacing: 0, padding: Insets(0), width: 100)
+            _ = StackArithmetic.size(of: [child], axis: .vertical, spacing: 0, padding: EdgeInsets(0), width: 100)
         }, [84], "a stack measured")
         XCTAssertEqual(offered {
             _ = StackArithmetic.places(
-                of: [child], axis: .vertical, spacing: 0, padding: Insets(0), in: room, direction: .leftToRight)
+                of: [child], axis: .vertical, spacing: 0, padding: EdgeInsets(0), in: room, direction: .leftToRight)
         }, [84], "a stack placing")
-        XCTAssertEqual(offered { _ = ZStackArithmetic.size(of: [child], padding: Insets(0), width: 100) }, [84], "a ZStack")
-        XCTAssertEqual(offered { _ = ZStackArithmetic.size(of: [half], padding: Insets(0), width: 100) }, [34], "its area")
-        XCTAssertEqual(offered { _ = SingleChildArithmetic.size(of: child, padding: Insets(0), width: 100) }, [84], "one child")
+        XCTAssertEqual(offered { _ = ZStackArithmetic.size(of: [child], padding: EdgeInsets(0), width: 100) }, [84], "a ZStack")
+        XCTAssertEqual(offered { _ = ZStackArithmetic.size(of: [half], padding: EdgeInsets(0), width: 100) }, [34], "its area")
+        XCTAssertEqual(offered { _ = SingleChildArithmetic.size(of: child, padding: EdgeInsets(0), width: 100) }, [84], "one child")
         XCTAssertEqual(offered {
-            _ = SingleChildArithmetic.place(of: child, in: room, padding: Insets(0), direction: .leftToRight)
+            _ = SingleChildArithmetic.place(of: child, in: room, padding: EdgeInsets(0), direction: .leftToRight)
         }, [84], "one child placed")
         XCTAssertEqual(offered {
             _ = GridArithmetic.places(
-                of: [child], rows: [.auto], columns: [], rowSpacing: 0, columnSpacing: 0, padding: Insets(0),
+                of: [child], rows: [.auto], columns: [], rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0),
                 in: room, direction: .leftToRight)
         }, [84, 84], "a grid's row and its place")
         XCTAssertEqual(offered {
-            _ = ScrollArithmetic.contentSize(of: child, padding: Insets(0), orientation: .vertical, width: 100)
+            _ = ScrollArithmetic.contentSize(of: child, padding: EdgeInsets(0), orientation: .vertical, width: 100)
         }, [84], "a scroller's document")
     }
 

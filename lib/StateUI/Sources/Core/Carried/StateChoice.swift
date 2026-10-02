@@ -6,7 +6,7 @@
 ///
 ///     @State private var side = Alignment.start
 ///
-///     Label("Where am I?").horizontalAlignment($side)
+///     Text("Where am I?").horizontalAlignment($side)
 ///
 ///     side = .center                  // the host moves it; nothing is rebuilt
 ///
@@ -31,7 +31,7 @@ extension StateChoice {
     /// One.
     public static var lanes: Int { 1 }
 
-    /// A choice is in no group of values a motion can be about: it has no
+    /// A choice is in no group of values a animation can be about: it has no
     /// half-way to be caught at.
-    public static var moving: MotionValues { [] }
+    public static var moving: AnimationValues { [] }
 }

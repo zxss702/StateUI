@@ -49,8 +49,7 @@ extension ButtonProperties {
 /// A handler runs on the main actor and may `await`; the interface goes on
 /// updating while it is suspended, so `.onClicked { items = try await load() }`
 /// needs nothing around it.
-public struct Button: View, TextElement, FontElement, PaddingElement, BorderElement, ImageElement,
-    ButtonProperties {
+public struct Button: VisualElement, TextElement, FontElement, PaddingElement, BorderElement, ImageElement, ButtonProperties{
     /// The node this control describes.
     public var node: Node
 

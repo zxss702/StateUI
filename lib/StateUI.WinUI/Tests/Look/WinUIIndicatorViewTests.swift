@@ -7,10 +7,10 @@
 import XCTest
 
 /// A spinner a click stops.
-private struct SpinnerPage: ContentView {
+private struct SpinnerPage: View {
     @State private var running = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             ActivityIndicator(running)
             Button("Stop").onClicked { running = false }
@@ -24,8 +24,8 @@ final class WinUIIndicatorViewTests: XCTestCase {
         onUIThread {
             let host = WinUIRenderer.running {
                 VStack {
-                    ProgressBar(0.5).tint(Color("#FF0000")).width(200).height(8)
-                    ProgressBar(1.5).width(200).height(8)
+                    ProgressBar(0.5).tint(Color("#FF0000")).frame(width: 200).frame(height: 8)
+                    ProgressBar(1.5).frame(width: 200).frame(height: 8)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)

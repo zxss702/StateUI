@@ -93,7 +93,7 @@ extension AppKitWindowController {
                 images: segments.map(\.image),
                 selected: tabs.selectedIndex,
                 select: { [weak tabs] index in tabs?.selectByUser(index) }),
-            split: tabbed.parent?.enclosing(type: .splitView)?.appKit.view as? AppKitSplitView)
+            split: tabbed.parent?.enclosing(type: .navigationSplitView)?.appKit.view as? AppKitSplitView)
     }
 
     /// The menus of the page the user sees - the top sheet's, else the arrangement's - as the host layer walks them.

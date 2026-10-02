@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/// Everything an `ItemsView` shows, in order, each named by its identity: the
+/// Everything an `List` shows, in order, each named by its identity: the
 /// list's header and footer, and each section's header, footer and items. A
 /// list with no groups is one section with neither.
 ///
-/// The ItemsView writes it; a host holds each identity in a cell of its own
+/// The List writes it; a host holds each identity in a cell of its own
 /// and asks for the subtree of the ones it holds.
 /// Design: docs/design/views/items.md#identities-in-order
 public struct ItemsEntries: Equatable, Sendable, HostRepresentable {

@@ -17,14 +17,14 @@ final class CoreLinkTests: XCTestCase {
     func testARuntimeRealizesTheLibrarysElementsButThoseItNames() {
         CoreLink().setRealization(
             HostRealization(
-                elements: ["Label", "Test.Lamp"],
-                members: [HostRealizedMember(element: "Application", owner: "Test", member: "Test.BatteryChanged")]),
+                elements: ["Text", "Test.Lamp"],
+                members: [HostRealizedMember(element: "App", owner: "Test", member: "Test.BatteryChanged")]),
             unrealized: ["Map"])
 
         XCTAssertNil(HostRealizations.unrealized(ButtonContract.nodeType))
         XCTAssertNil(HostRealizations.unrealized(PageContract.nodeType))
         XCTAssertNil(HostRealizations.unrealized("Test.Lamp"))
-        XCTAssertEqual(HostRealizations.unrealized(MapContract.nodeType), "the host realizes no `Map`.")
+        XCTAssertEqual(HostRealizations.unrealized(MapContract.nodeType), "the host realizes no `Map` (nearest: `App`).")
         XCTAssertNil(HostRealizations.unraised(owner: "Test", event: "Test.BatteryChanged"))
     }
 }

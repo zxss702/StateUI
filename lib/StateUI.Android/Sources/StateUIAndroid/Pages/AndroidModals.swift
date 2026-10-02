@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIAndroid
 
-/// The pages a window presents over its page, in order, the top one in front - each in a holder on the theme's
+/// The pages a window presents over its page, in order, the top one in front - each in a holder on the color scheme's
 /// window background, rising from the bottom as it comes and going down as it leaves. The pages hear it from the
 /// host layer (`WindowPresentation`).
 /// Design: docs/design/platforms/android/pages.md#a-modal-stack
@@ -64,7 +64,7 @@ final class AndroidModals {
             .long(duration))
     }
 
-    /// How long a page takes to rise or go, in milliseconds: none where the user asks for less motion.
+    /// How long a page takes to rise or go, in milliseconds: none where the user asks for less animation.
     private var duration: Int64 {
         reducesMotion() ? 0 : 250
     }

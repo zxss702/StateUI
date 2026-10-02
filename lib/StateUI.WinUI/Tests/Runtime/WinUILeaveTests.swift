@@ -7,13 +7,13 @@
 import XCTest
 
 /// A page whose note a click takes away.
-struct NotePage: ContentView {
+struct NotePage: View {
     @State private var shown = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             if shown {
-                Label("note")
+                Text("note")
             }
             Button("Hide")
                 .onClicked { shown = false }
@@ -46,7 +46,7 @@ final class WinUILeaveTests: XCTestCase {
             let host = WinUIRenderer.running {
                 VStack {
                     if shown.wrappedValue {
-                        ScrollView { VStack { Label("one"); Label("two") } }
+                        ScrollView { VStack { Text("one"); Text("two") } }
                     }
                     Button("Toggle").onClicked { shown.wrappedValue.toggle() }
                 }
@@ -73,7 +73,7 @@ final class WinUILeaveTests: XCTestCase {
             let host = WinUIRenderer.running {
                 VStack {
                     if shown.wrappedValue {
-                        ItemsView(0..<1_000) { Label("Item \($0)") }.height(300)
+                        List(0..<1_000) { Text("Item \($0)") }.frame(height: 300)
                     }
                     Button("Toggle").onClicked { shown.wrappedValue.toggle() }
                 }
@@ -114,8 +114,8 @@ final class WinUILeaveTests: XCTestCase {
 }
 
 /// An application whose main window opens a tool window of its scene and closes it again.
-private struct LeavingToolApplication: Application {
-    var scene: any Scene { LeavingToolScene() }
+private struct LeavingToolApplication: App {
+    var body: some Scene { LeavingToolScene() }
 }
 
 private struct LeavingToolScene: Scene {
@@ -124,14 +124,14 @@ private struct LeavingToolScene: Scene {
     }
 }
 
-private struct LeavingMainWindow: Window {
+private struct LeavingMainWindow: WindowScene {
     var page: any Page { LeavingOpeningPage() }
 }
 
-private struct LeavingOpeningPage: ContentView {
+private struct LeavingOpeningPage: View {
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let scene = self.scene
         return VStack {
             Button("Open").onClicked { try await scene.openWindow(WindowType("leave.tool")) }
@@ -140,6 +140,6 @@ private struct LeavingOpeningPage: ContentView {
     }
 }
 
-private struct LeavingToolWindow: Window {
-    var page: any Page { Label("A tool") }
+private struct LeavingToolWindow: WindowScene {
+    var page: any Page { Text("A tool") }
 }

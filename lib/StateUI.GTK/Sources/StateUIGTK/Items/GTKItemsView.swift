@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIGTK
 
-/// An ItemsView: a StateUI layout holding GTK's own list view - a `GtkListView` down or across, a `GtkGridView` in
+/// An List: a StateUI layout holding GTK's own list view - a `GtkListView` down or across, a `GtkGridView` in
 /// columns - in a scrolled window, over a string list of the list's identities; a cell holds each entry's subtree as
 /// the list binds it (`ItemsCells`). GTK scrolls, reuses its rows, chooses, activates and tells the screen reader;
 /// StateUI builds what a cell holds. The list is a room: it asks for none, and stands where it is put.

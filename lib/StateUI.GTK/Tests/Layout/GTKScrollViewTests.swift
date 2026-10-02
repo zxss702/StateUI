@@ -13,7 +13,7 @@ final class GTKScrollViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 ScrollView {
-                    VStack { Label("tall").height(2000) }.padding(10)
+                    VStack { Text("tall").frame(height: 2000) }.contentPadding(10)
                 }
             }
             let scroll = try XCTUnwrap(host.views(GTKScrollView.self).first).frame
@@ -29,9 +29,9 @@ final class GTKScrollViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 VStack {
-                    ScrollView { ColorBox(.red).height(2000) }.height(100)
+                    ScrollView { ColorPicker(.red).frame(height: 2000) }.frame(height: 100)
                 }
-                .height(300)
+                .frame(height: 300)
                 .verticalAlignment(.start)
             }
             let stack = try XCTUnwrap(host.views(GTKStackView.self).first)
@@ -44,10 +44,10 @@ final class GTKScrollViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 ScrollView {
-                    Label("wide").width(3000).height(40)
+                    Text("wide").frame(width: 3000).frame(height: 40)
                 }
                 .orientation(.horizontal)
-                .height(100)
+                .frame(height: 100)
             }
 
             let label = try XCTUnwrap(host.views(GTKLabelView.self).first)
@@ -64,10 +64,10 @@ final class GTKScrollViewTests: XCTestCase {
                 VStack {
                     Button("Down").onClicked { offset.wrappedValue = Point(0, 300) }
                     Button("Past").onClicked { offset.wrappedValue = Point(0, 5000) }
-                    ScrollView { Label("tall").height(2000) }
+                    ScrollView { Text("tall").frame(height: 2000) }
                         .scrollOffset(offset.projectedValue)
                         .onEvent(ScrollViewContract.scrollYChanged) { y in heard.values.append(y) }
-                        .height(500)
+                        .frame(height: 500)
                 }
             }
             let buttons = host.views(GTKButtonView.self)
@@ -94,11 +94,11 @@ final class GTKScrollViewTests: XCTestCase {
             let heard = Received<Double>()
             let rests = Received<Int>()
             let host = GTKRenderer.running(clock: clock) {
-                ScrollView { Label("tall").height(2000) }
+                ScrollView { Text("tall").frame(height: 2000) }
                     .scrollOffset(offset.projectedValue)
                     .onEvent(ScrollViewContract.scrollYChanged) { y in heard.values.append(y) }
                     .onScrollStopped { rests.values.append(1) }
-                    .height(500)
+                    .frame(height: 500)
             }
             let scroll = try XCTUnwrap(host.views(GTKScrollView.self).first)
 
@@ -133,7 +133,7 @@ final class GTKScrollViewTests: XCTestCase {
                 VStack {
                     Button("Hide").onClicked { shown.wrappedValue = false }
                     if shown.wrappedValue {
-                        ScrollView { Label("inside").height(400) }.height(100)
+                        ScrollView { Text("inside").frame(height: 400) }.frame(height: 100)
                     }
                 }
             }
@@ -154,14 +154,14 @@ final class GTKScrollViewTests: XCTestCase {
         try onUIThread {
             let host = GTKRenderer.running {
                 ScrollView {
-                    ColorBox(.red).height(400)
+                    ColorPicker(.red).frame(height: 400)
                 }
-                .padding(10)
+                .contentPadding(10)
                 .shape(.roundedRectangle(20))
                 .stroke(Color("#0000FF"))
                 .strokeWidth(2)
-                .width(100)
-                .height(80)
+                .frame(width: 100)
+                .frame(height: 80)
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
             }

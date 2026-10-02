@@ -7,7 +7,7 @@
 /// The native view: made, and given the element's properties.
 extension AndroidElement {
     func makeView() -> AndroidView? {
-        if type == .itemsView, let host {
+        if type == .list, let host {
             return AndroidItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false
             })
@@ -30,10 +30,10 @@ extension AndroidElement {
         case .navigationStack:
             return AndroidNavigationView()
 
-        case .splitView:
+        case .navigationSplitView:
             return AndroidSplitView()
 
-        case .tabbedView:
+        case .tabView:
             return AndroidTabbedView()
 
         default:
@@ -62,8 +62,8 @@ extension AndroidElement {
                 case .opacity: view.setOpacity(value(.opacity)?.number ?? 1)
                 case .isVisible: view.setShown(isShown)
                 case .background: view.setBackground(value(.background))
-                case .padding where type == .page:
-                    (view as? AndroidSingleChildView)?.padding = element.insets(.padding)
+                case .contentPadding where type == .page:
+                    (view as? AndroidSingleChildView)?.padding = element.insets(.contentPadding)
                 default: break
                 }
             }
@@ -90,7 +90,7 @@ extension AndroidElement {
     func invalidateMeasurements() {
         var element: AndroidElement? = self
         while let each = element {
-            // An entry of an ItemsView is measured by its cell; the list's own size never follows its items.
+            // An entry of an List is measured by its cell; the list's own size never follows its items.
             if let items = each.parent?.view as? AndroidItemsView {
                 items.remeasure(each.element)
                 break

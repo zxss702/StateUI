@@ -22,13 +22,13 @@ enum Look {
     static func action(_ caption: String, _ run: @escaping () -> Void) -> Element {
         Button(caption)
             .fontSize(12)
-            .textColor(ink)
+            .foregroundStyle(ink)
             .background(.transparent)
             .stroke(edge)
             .strokeWidth(1)
             .shape(.roundedRectangle(7))
-            .padding(10, 2)
-            .margin(0, 0, 6, 4)
+            .contentPadding(10, 2)
+            .padding(0, 0, 6, 4)
             .onClicked { run() }
     }
 
@@ -48,18 +48,18 @@ enum Look {
                 .stroke(ink)
                 .strokeWidth(1.5)
                 .strokeLineCap(.round)
-                .width(12)
-                .height(12)
+                .frame(width: 12)
+                .frame(height: 12)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
-                .ignoresInput(true)
+                .allowsHitTesting(!true)
         }
-        .width(28)
-        .height(24)
+        .frame(width: 28)
+        .frame(height: 24)
         .background(.transparent)
         .accessibilityLabel(words)
         .accessibilityIdentifier("stateui.inspector.\(words.lowercased())")
-        .onTapped { run() }
+        .onTapGesture { run() }
     }
 
     /// Opening a folded panel out: the square a window is enlarged with.
@@ -73,9 +73,9 @@ enum Look {
 
     /// One line of the chosen render's numbers.
     static func line(_ text: String) -> Element {
-        Label(text)
+        Text(text)
             .fontSize(11)
-            .textColor(subtle)
+            .foregroundStyle(subtle)
             .lineBreak(.tailTruncation)
     }
 

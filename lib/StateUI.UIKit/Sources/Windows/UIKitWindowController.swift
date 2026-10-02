@@ -57,7 +57,7 @@ final class UIKitWindowController {
         presentation.arrangement?.uiKit.composeChrome()
         presentation.sheets.forEach { $0.uiKit.composeChrome() }
         let title = presentation.arrangement?.titledPage?.value(.title)?.string
-        window?.windowScene?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
+        window?.window?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
     }
 
     /// The menus of the page the user sees - the top sheet's, else the arrangement's - as UIKit's main menu takes
@@ -72,7 +72,7 @@ final class UIKitWindowController {
 
     /// The tree let the window go: its scene goes with it.
     func close() {
-        let session = window?.windowScene?.session
+        let session = window?.window?.session
         hide()
         guard let session else { return }
         UIApplication.shared.requestSceneSessionDestruction(session, options: nil)
@@ -83,7 +83,7 @@ final class UIKitWindowController {
     func hide() {
         root.letGo()
         window?.isHidden = true
-        window?.windowScene = nil
+        window?.window = nil
     }
 }
 

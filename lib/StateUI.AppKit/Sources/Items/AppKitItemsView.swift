@@ -6,7 +6,7 @@ import AppKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// The collection view of an ItemsView: a double-click or Return opens the item, as on a Mac.
+/// The collection view of an List: a double-click or Return opens the item, as on a Mac.
 @MainActor
 final class AppKitCollection: NSCollectionView {
     var onActivated: ((IndexPath) -> Void)?
@@ -27,7 +27,7 @@ final class AppKitCollection: NSCollectionView {
     }
 }
 
-/// An ItemsView: AppKit's own collection view over the list's identities, a cell holding each entry's subtree as the
+/// An List: AppKit's own collection view over the list's identities, a cell holding each entry's subtree as the
 /// collection asks for it (`ItemsCells`). AppKit scrolls, reuses its cells, selects and tells VoiceOver; StateUI
 /// builds what a cell holds.
 /// Design: docs/design/platforms/appkit/items.md

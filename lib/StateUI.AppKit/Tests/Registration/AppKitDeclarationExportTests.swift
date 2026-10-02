@@ -53,8 +53,8 @@ final class AppKitDeclarationExportTests: XCTestCase {
 
         XCTAssertTrue(slider.members.isSuperset(of: ["value", "minimum", "maximum"]))
         XCTAssertTrue(slider.events.contains("valueChanged"))
-        XCTAssertTrue(declaration.shared.members.contains("margin"))
-        XCTAssertTrue(declaration.shared.events.contains("tapped"))
+        XCTAssertTrue(declaration.shared.members.contains("padding"))
+        XCTAssertTrue(declaration.shared.events.contains("tapGesture"))
         XCTAssertTrue(declaration.acts.isSuperset(of: ["focus", "unfocus", "persistValue"]))
     }
 

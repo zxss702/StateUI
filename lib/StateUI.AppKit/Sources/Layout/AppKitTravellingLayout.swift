@@ -8,7 +8,7 @@ import AppKit
 
 /// A layout whose children animate to the places a patch gives them.
 /// It begins each arrangement with `beginArrangement()` and hands every child's place to `place(_:at:)`.
-/// Design: docs/design/host/motion.md#layout-motion
+/// Design: docs/design/host/animation.md#layout-animation
 @MainActor
 class AppKitTravellingLayout: AppKitHitTestView, AppKitDirectedLayout {
     /// The direction the children are laid out in; a turn lays them out again.

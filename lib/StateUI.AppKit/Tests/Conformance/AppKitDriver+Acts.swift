@@ -17,7 +17,7 @@ extension AppKitDriver {
         let native = element.native as? AppKitElement
         let view = native?.view
         switch (act, view) {
-        case (.activate, _) where element.parent?.type == .itemsView:
+        case (.activate, _) where element.parent?.type == .list:
             guard let items = (element.parent?.native as? AppKitElement)?.view as? AppKitItemsView,
                   case .manual(let identity) = element.id
             else { throw DriverCannot(act, on: element) }
@@ -87,7 +87,7 @@ extension AppKitDriver {
             }
         case (.goBack, _) where element.type == .navigationStack: try controller(of: element).toolbarForTesting
             .performForTesting(AppKitWindowToolbar.back)
-        case (.goBack, _) where element.type == .window:
+        case (.goBack, _) where element.type == .windowScene:
             // A sheet's own way back is the user's taking it away; else the toolbar's way back.
             let controller = try controller(of: element)
             if controller.modalCountForTesting > 0 {
@@ -95,24 +95,24 @@ extension AppKitDriver {
             } else {
                 controller.toolbarForTesting.performForTesting(AppKitWindowToolbar.back)
             }
-        case (.switchAway, _) where element.type == .window:
+        case (.switchAway, _) where element.type == .windowScene:
             // Another application in front takes the keyboard from every window, which is all AppKit tells.
             for window in windows { tell(NSWindow.didResignKeyNotification, window) }
-        case (.switchBack, _) where element.type == .window:
+        case (.switchBack, _) where element.type == .windowScene:
             comeToTheFront(try window(of: element))
-        case (.bringToFront, _) where element.type == .window:
+        case (.bringToFront, _) where element.type == .windowScene:
             let front = try window(of: element)
             for window in windows where window !== front { tell(NSWindow.didResignKeyNotification, window) }
             comeToTheFront(front)
-        case (.minimize, _) where element.type == .window:
+        case (.minimize, _) where element.type == .windowScene:
             let window = try window(of: element)
             tell(NSWindow.didResignKeyNotification, window)
             tell(NSWindow.didMiniaturizeNotification, window)
-        case (.restore, _) where element.type == .window:
+        case (.restore, _) where element.type == .windowScene:
             let window = try window(of: element)
             tell(NSWindow.didDeminiaturizeNotification, window)
             comeToTheFront(window)
-        case (.close, _) where element.type == .window: try window(of: element).close()
+        case (.close, _) where element.type == .windowScene: try window(of: element).close()
         default: throw DriverCannot(act, on: element)
         }
     }
@@ -176,7 +176,7 @@ extension AppKitDriver {
 
     /// The controller of the window `element` stands in.
     func controller(of element: MountedElement) throws -> AppKitWindowController {
-        guard let window = element.type == .window ? element : element.enclosing(type: .window),
+        guard let window = element.type == .windowScene ? element : element.enclosing(type: .windowScene),
               let controller = renderer?.windowsForTesting.first(where: { $0.element === window })
         else { throw DriverCannot("find the window") }
         return controller

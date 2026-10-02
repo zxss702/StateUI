@@ -4,7 +4,7 @@
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A cell of an ItemsView: the relay's `StateUIItemCell`, which the recycler measures and places, holding one entry's
+/// A cell of an List: the relay's `StateUIItemCell`, which the recycler measures and places, holding one entry's
 /// subtree placed by the layer's arithmetic. A tap on an item's cell goes to its list.
 /// Design: docs/design/platforms/android/items.md#a-cell
 @MainActor

@@ -11,7 +11,7 @@ extension MountedElement {
     /// for a press dragged by one pointer; one asking for more is not recognized.
     public var hearing: Hearing {
         var hearing: Hearing = []
-        if handler(.tapped) != nil { hearing.insert(.taps) }
+        if handler(.tapGesture) != nil { hearing.insert(.taps) }
         if Self.pointerEvents.contains(where: { handler($0) != nil }) { hearing.insert(.pointer) }
         let drags = handler(.panUpdated) != nil || handler(.swiped) != nil
             || channel(.panXChannel) != nil || channel(.panYChannel) != nil
@@ -27,7 +27,7 @@ extension MountedElement {
         switch input {
         case .tap(let run):
             let count = max(1, Int(number(.tapCount) ?? 1))
-            if run == 0 || run % count == 0 { send(.tapped, [], in: runtime) }
+            if run == 0 || run % count == 0 { send(.tapGesture, [], in: runtime) }
         case .pointer(let event, let point):
             let said: [HostValue] = event == .pointerEntered || event == .pointerExited ? [] : [.numbers([point.x, point.y])]
             send(event, said, in: runtime)

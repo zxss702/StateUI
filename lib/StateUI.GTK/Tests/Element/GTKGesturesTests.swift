@@ -8,23 +8,23 @@ import CStateUIGTK
 import XCTest
 
 /// A row that counts its taps - `count` of them in a quick run make one - beside a stack that answers nothing.
-private struct TapsPage: ContentView {
+private struct TapsPage: View {
     let count: Int
     @State private var taps = 0
     @State private var shown = true
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("taps \(taps)")
+            Text("taps \(taps)")
             if shown {
-                HStack { Label("row") }
-                    .width(200)
-                    .height(40)
-                    .onTapped(count: count) { taps += 1 }
+                HStack { Text("row") }
+                    .frame(width: 200)
+                    .frame(height: 40)
+                    .onTapGesture(count: count) { taps += 1 }
             }
-            HStack { Label("plain") }
-                .width(200)
-                .height(40)
+            HStack { Text("plain") }
+                .frame(width: 200)
+                .frame(height: 40)
             Button("Hide").onClicked { shown = false }
         }
         .horizontalAlignment(.start)
@@ -33,16 +33,16 @@ private struct TapsPage: ContentView {
 }
 
 /// A box a press drags across, a swipe told apart, and what the pan, the pinch and the pointer said last.
-private struct DragPage: ContentView {
+private struct DragPage: View {
     @State private var x = 10.0
     @State private var said = ""
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("x \(Int(x)) \(said)")
-            ColorBox(.steelBlue)
-                .width(100)
-                .height(100)
+            Text("x \(Int(x)) \(said)")
+            ColorPicker(.steelBlue)
+                .frame(width: 100)
+                .frame(height: 100)
                 .panX($x)
                 .onPanUpdated { pan in said += "pan \(pan.phase.rawValue) \(Int(pan.totalX)); " }
                 .onSwiped(direction: [.left, .right]) { direction in said += "swiped \(direction.rawValue); " }

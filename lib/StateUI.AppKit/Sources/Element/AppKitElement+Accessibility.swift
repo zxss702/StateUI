@@ -38,7 +38,7 @@ extension AppKitElement {
             || headingLevel > 0
         // An element that answers a tap is a button to assistive technology,
         // pressed by the handler a click runs. See `AppKitHitTestView`.
-        let pressable = events[.tapped] != nil && view is AppKitHitTestView
+        let pressable = events[.tapGesture] != nil && view is AppKitHitTestView
         // The author says whether the view is hidden; an element is the opposite.
         let authoredElement = value(.isAccessibilityHidden)?.bool.map { !$0 }
         target.setAccessibilityElement(

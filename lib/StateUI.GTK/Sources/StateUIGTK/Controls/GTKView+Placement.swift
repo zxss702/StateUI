@@ -40,7 +40,7 @@ extension GTKView {
 
     /// The place's corner, then the view's own transform drawn under a placing run's (`HostDrawingTransform.under`):
     /// the core's matrix for the size allocated.
-    /// Design: docs/design/platforms/gtk/motion.md#moved-turned-and-scaled
+    /// Design: docs/design/platforms/gtk/animation.md#moved-turned-and-scaled
     private func allocation(at place: Rect, width: Double, height: Double) -> OpaquePointer? {
         var corner = graphene_point_t(x: Float(place.x), y: Float(place.y))
         let moved = gsk_transform_translate(nil, &corner)

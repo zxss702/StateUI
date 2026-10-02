@@ -49,7 +49,7 @@ extension AppKitRenderer {
     /// Shows every window element in an AppKit window of its own, in the tree's order - a window the tree no longer
     /// holds closes, the last first - each scene keeping what its windows are restored by.
     func synchronizeWindows() {
-        guard let root = runtime.tree.root, root.type == .application else { return }
+        guard let root = runtime.tree.root, root.type == .app else { return }
         windowSynchronizationCountForTesting += 1
 
         let scenes = root.children.filter { $0.type == .scene }
@@ -227,7 +227,7 @@ extension AppKitRenderer {
     }
 
     /// Replaces only commands contributed by the visible StateUI page. The
-    /// standard application, File and Window commands remain host-owned.
+    /// standard application, File and WindowScene commands remain host-owned.
     func installPageMenus(_ roots: [NSMenuItem]) {
         for insertion in pageMenuInsertions.reversed() {
             insertion.menu.removeItem(insertion.item)
@@ -253,7 +253,7 @@ extension AppKitRenderer {
                 }
             } else {
                 let item = cloneMenuItem(root)
-                let windowIndex = main.items.firstIndex(where: { $0.title == "Window" })
+                let windowIndex = main.items.firstIndex(where: { $0.title == "WindowScene" })
                     ?? main.items.count
                 main.insertItem(item, at: windowIndex)
                 pageMenuInsertions.append((main, item))

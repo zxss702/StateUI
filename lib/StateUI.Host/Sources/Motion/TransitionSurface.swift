@@ -4,8 +4,8 @@
 @_spi(Host) import StateUI
 
 /// The properties a host moves frame by frame, element by element: those its views present and whose values travel.
-/// Every other pair arrives at once, rather than keeping a motion alive that nothing shows.
-/// Design: docs/design/host/motion.md#what-travels
+/// Every other pair arrives at once, rather than keeping a animation alive that nothing shows.
+/// Design: docs/design/host/animation.md#what-travels
 @_spi(Host) public enum TransitionSurface {
     /// Whether a host moves `property` of an element of `type` frame by frame; `atRest` names, element type by
     /// element type, what the host's toolkit paints only at rest, which arrives at once there.
@@ -33,12 +33,12 @@
             return gridProperties.contains(property) || layoutBoxProperties.contains(property)
 
         case .zStack:
-            return property == .padding || layoutBoxProperties.contains(property)
+            return property == .contentPadding || layoutBoxProperties.contains(property)
 
         case .scrollView:
-            return property == .padding || layoutBoxProperties.contains(property)
+            return property == .contentPadding || layoutBoxProperties.contains(property)
 
-        case .label:
+        case .text:
             return labelProperties.contains(property)
 
         case .span:
@@ -60,7 +60,7 @@
         case .datePicker, .timePicker:
             return textControlProperties.contains(property)
 
-        case .colorBox:
+        case .colorPicker:
             return boxProperties.contains(property)
 
         case .checkBox:
@@ -75,7 +75,7 @@
         case .navigationStack:
             return navigationProperties.contains(property)
 
-        case .tabbedView:
+        case .tabView:
             return property == .barBackgroundColor
 
         case .titleBar:
@@ -90,7 +90,7 @@
         case .canvas:
             return property == .drawable
 
-        case .window:
+        case .windowScene:
             return windowProperties.contains(property)
 
         default:
@@ -99,9 +99,9 @@
     }
 
     private static let nativeViewTypes: Set<NodeType> = [
-        .activityIndicator, .colorBox, .button,
+        .activityIndicator, .colorPicker, .button,
         .checkBox, .datePicker, .textEditor, .ellipse, .textField, .canvas,
-        .grid, .hStack, .image, .itemsView, .label, .line,
+        .grid, .hStack, .image, .list, .text, .line,
         .path, .picker, .polygon, .polyline, .progressBar, .radioButton,
         .rectangle, .scrollView, .searchField, .slider,
         .stepper, .switch, .timePicker, .vStack, .zStack,
@@ -117,44 +117,44 @@
         .minimumWidth, .minimumHeight,
         .maximumWidth, .maximumHeight,
         .rotation, .scale, .scaleX, .scaleY, .translationX, .translationY,
-        .margin,
+        .padding,
     ]
 
     private static let contentPageProperties: Set<Prop> = [
-        .background, .padding,
+        .background, .contentPadding,
     ]
 
-    private static let stackProperties: Set<Prop> = [.padding, .spacing]
+    private static let stackProperties: Set<Prop> = [.contentPadding, .spacing]
 
     /// What a layout draws of its own box.
     private static let layoutBoxProperties: Set<Prop> = [.background, .stroke, .strokeWidth, .shape]
 
     private static let gridProperties: Set<Prop> = [
-        .padding, .rowSpacing, .columnSpacing, .rows, .columns,
+        .contentPadding, .rowSpacing, .columnSpacing, .rows, .columns,
     ]
 
     private static let labelProperties: Set<Prop> = [
-        .padding, .fontSize, .textColor, .characterSpacing, .lineHeight,
+        .contentPadding, .fontSize, .foregroundStyle, .characterSpacing, .lineHeight,
     ]
 
     private static let spanProperties: Set<Prop> = [
-        .background, .fontSize, .textColor, .characterSpacing, .lineHeight,
+        .background, .fontSize, .foregroundStyle, .characterSpacing, .lineHeight,
     ]
 
-    private static let textControlProperties: Set<Prop> = [.fontSize, .textColor]
+    private static let textControlProperties: Set<Prop> = [.fontSize, .foregroundStyle]
 
     private static let buttonProperties: Set<Prop> = [
-        .padding, .fontSize, .textColor, .stroke, .strokeWidth, .shape,
+        .contentPadding, .fontSize, .foregroundStyle, .stroke, .strokeWidth, .shape,
     ]
 
 
     private static let fieldProperties: Set<Prop> = [
-        .fontSize, .textColor, .placeholderColor,
+        .fontSize, .foregroundStyle, .placeholderColor,
     ]
 
-    private static let radioProperties: Set<Prop> = [.padding, .fontSize, .textColor]
+    private static let radioProperties: Set<Prop> = [.contentPadding, .fontSize, .foregroundStyle]
 
-    private static let pickerProperties: Set<Prop> = [.fontSize, .textColor, .tint]
+    private static let pickerProperties: Set<Prop> = [.fontSize, .foregroundStyle, .tint]
 
     private static let boxProperties: Set<Prop> = [.color, .cornerRadius]
 

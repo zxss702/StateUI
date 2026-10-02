@@ -8,7 +8,7 @@
 @_spi(Host) public enum SingleChildArithmetic {
     /// The room the child and the padding take for the width offered; the padding alone without a shown child.
     @MainActor
-    public static func size<Child: LayoutChild>(of item: Child?, padding: Insets, width offered: Double?) -> LayoutSize {
+    public static func size<Child: LayoutChild>(of item: Child?, padding: EdgeInsets, width offered: Double?) -> LayoutSize {
         guard let item, item.isShown else {
             return LayoutSize(width: padding.left + padding.right, height: padding.top + padding.bottom)
         }
@@ -25,14 +25,14 @@
     /// Where the child stands in `room`, within `padding`; right to left, turned about the room's middle.
     @MainActor
     public static func place<Child: LayoutChild>(
-        of item: Child, in room: Rect, padding: Insets, direction: LayoutDirection
+        of item: Child, in room: Rect, padding: EdgeInsets, direction: LayoutDirection
     ) -> Rect {
         direction.places(leftToRight(of: item, in: room, padding: padding), in: room)
     }
 
     /// The place as a layout written left to right has it.
     @MainActor
-    private static func leftToRight<Child: LayoutChild>(of item: Child, in room: Rect, padding: Insets) -> Rect {
+    private static func leftToRight<Child: LayoutChild>(of item: Child, in room: Rect, padding: EdgeInsets) -> Rect {
         let content = room.inset(padding)
         let values = item.values
         let margin = values.margin

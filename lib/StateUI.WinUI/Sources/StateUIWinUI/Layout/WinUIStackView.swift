@@ -16,7 +16,7 @@ final class WinUIStackView: WinUITravellingLayout {
     }
 
     /// The room inside the stack's own edge, in DIPs.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 

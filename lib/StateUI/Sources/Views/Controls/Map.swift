@@ -55,7 +55,7 @@ extension MapProperties {
 /// needs an API key in its manifest (`com.google.android.geo.API_KEY`) or the
 /// map stays a grey grid; a host with no map provider shows its
 /// unsupported-control marker instead.
-public struct Map: View, MapProperties {
+public struct Map: VisualElement, MapProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -68,7 +68,7 @@ public struct Map: View, MapProperties {
     ///
     ///     Map(latitude: 52.2479, longitude: 21.0155, radiusMeters: 1500)
     ///
-    /// Where a map opens belongs here, not in an act from `.onCreated`, which
+    /// Where a map opens belongs here, not in an act from `.onAppear`, which
     /// the platform's own opening region overwrites. Moving later is the act,
     /// `map.moveToRegion(latitude:longitude:radiusMeters:)`.
     ///
@@ -83,7 +83,7 @@ public struct Map: View, MapProperties {
 
     /// The pins on it, replacing whatever was pinned before. A `Pin` is not a
     /// view, and goes here and nowhere else.
-    public func pins(@ViewBuilder _ content: () -> [Element]) -> Self {
+    public func pins(@ViewBuilder _ content: () -> any View) -> Self {
         var copy = self
 
         // The pins go before the context menu's slot, which stays last.
@@ -91,7 +91,7 @@ public struct Map: View, MapProperties {
         copy.node.children.removeAll { $0.type == .pin }
         let slots = copy.node.children.filter { $0.type == .contextMenu }
         copy.node.children.removeAll { $0.type == .contextMenu }
-        copy.node.children += content().map { $0.body } + slots
+        copy.node.children += content().node.asChildren + slots
 
         return copy
     }
@@ -113,7 +113,7 @@ public struct Map: View, MapProperties {
 /// Tapping the pin shows its label and address in the platform's own
 /// callout; `.onPinClicked` is the tap on the pin, `.onPinDetailsClicked`
 /// the tap on that callout - its details.
-public struct Pin: Element {
+public struct Pin: View {
     /// The node this pin describes.
     public var node: Node
 
@@ -125,7 +125,6 @@ public struct Pin: Element {
     }
 
     /// The node, as every element answers it.
-    public var body: Node { node }
 
     /// The callout's first line, in bold. The initializer takes the same
     /// value and is where a pin usually gets it.

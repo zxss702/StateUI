@@ -26,9 +26,9 @@ extension MountedElement {
             // A stack whose window comes is navigated to; one whose window goes only disappears.
             let passed: PagePresentationReason = reason == .window ? (presented ? .navigation : .appearance) : reason
             children.last?.setPagePresented(presented, reason: passed)
-        case .tabbedView:
+        case .tabView:
             selectedTab?.setPagePresented(presented, reason: .appearance)
-        case .splitView:
+        case .navigationSplitView:
             children.dropFirst().first?.setPagePresented(presented, reason: .appearance)
             if sidebarIsVisible { children.first?.setPagePresented(presented, reason: .appearance) }
         default:

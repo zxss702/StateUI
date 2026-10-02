@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Where a picture comes from: one file, or one for each theme.
-// Design: docs/design/types/colour-and-theme.md#pictures-for-each-theme
+// Where a picture comes from: one file, or one for each color scheme.
+// Design: docs/design/types/colour-and-color-scheme.md#pictures-for-each-color-scheme
 
 /// A picture, by file name.
 ///
@@ -28,8 +28,8 @@ public struct ImageSource: Equatable, Sendable, ExpressibleByStringLiteral, Host
         self.dark = nil
     }
 
-    /// Two files, one for each theme; the element showing the picture follows
-    /// the system theme.
+    /// Two files, one for each color scheme; the element showing the picture follows
+    /// the system color scheme.
     ///
     ///     ImageSource(light: "logo.png", dark: "logo_dark.png")
     ///

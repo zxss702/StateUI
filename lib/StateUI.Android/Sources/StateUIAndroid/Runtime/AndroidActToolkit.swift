@@ -141,7 +141,7 @@ final class AndroidActToolkit: ActToolkit {
     }
 
     /// A web view's own acts - stepping back or forward, loading again, running a script, which answers by ticket -
-    /// and an ItemsView's scroll to an item.
+    /// and an List's scroll to an item.
     func performOwn(_ call: HostActCall) -> Bool {
         guard [.goBack, .goForward, .reload, .evaluateJavaScript, .scrollTo].contains(call.act) else { return false }
         let element: MountedElement
@@ -153,7 +153,7 @@ final class AndroidActToolkit: ActToolkit {
         }
         if call.act == .scrollTo {
             guard let items = (element.native as? AndroidElement)?.view as? AndroidItemsView else {
-                core.fail(call, "scrollTo is an act of an ItemsView", log: { AndroidRenderer.log.error($0) })
+                core.fail(call, "scrollTo is an act of an List", log: { AndroidRenderer.log.error($0) })
                 return true
             }
             items.scroll(

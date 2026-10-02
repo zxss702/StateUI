@@ -15,7 +15,7 @@ extension ImageProperties {
 ///
 ///     Image("tab_list.png")
 ///         .aspect(.fit)
-///         .height(20)
+///         .frame(height: 20)
 ///
 /// The name is a file among the application's image resources, and artwork
 /// kept as an SVG is asked for by its PNG name: `tab_list.svg` is asked for as
@@ -24,12 +24,12 @@ extension ImageProperties {
 /// A file, never an address: a name that looks like a url is looked for among
 /// the resources like any other, and is not found.
 ///
-/// Artwork that reads on one theme and not the other is drawn twice:
+/// Artwork that reads on one color scheme and not the other is drawn twice:
 ///
 ///     Image(light: "tab_list.png", dark: "tab_list_dark.png")
 ///
-/// and the picture follows the system theme.
-public struct Image: View, ImageElement, ImageProperties {
+/// and the picture follows the system color scheme.
+public struct Image: VisualElement, ImageElement, ImageProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -45,7 +45,7 @@ public struct Image: View, ImageElement, ImageProperties {
         node.write(ImageContract.source, source)
     }
 
-    /// One picture per theme, following the system theme.
+    /// One picture per color scheme, following the system color scheme.
     public init(light: String, dark: String) {
         self.init(ImageSource(light: light, dark: dark))
     }

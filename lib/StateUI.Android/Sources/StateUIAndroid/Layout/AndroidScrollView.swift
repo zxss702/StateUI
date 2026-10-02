@@ -19,7 +19,7 @@ final class AndroidScrollView: AndroidLayoutView {
     /// Asks for the display's frames: the scroller moves, or has something to say.
     var onFramesWanted: (() -> Void)?
 
-    private(set) var orientation = ScrollOrientation.vertical
+    private(set) var orientation = Axis.vertical
 
     /// Where the scroller stands, in points, as it was last seen.
     private(set) var offset = Point(x: 0, y: 0)
@@ -84,8 +84,8 @@ final class AndroidScrollView: AndroidLayoutView {
 
     /// The scroller's orientation, padding, bars, and an offset the tree moved it to.
     func apply(
-        orientation: ScrollOrientation, padding: Insets, verticalBar: ScrollBarVisibility,
-        horizontalBar: ScrollBarVisibility, offset: Point?
+        orientation: Axis, padding: EdgeInsets, verticalBar: ScrollIndicatorVisibility,
+        horizontalBar: ScrollIndicatorVisibility, offset: Point?
     ) {
         if orientation != self.orientation {
             self.orientation = orientation

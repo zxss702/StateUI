@@ -10,7 +10,7 @@ import UIKit
 /// takes here, by the host layer's reading of it.
 extension UIKitElement {
     func makeView() -> UIView? {
-        if type == .itemsView, let host {
+        if type == .list, let host {
             return UIKitItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false
             })
@@ -58,11 +58,11 @@ extension UIKitElement {
                 case .background:
                     view.backgroundColor = value(.background).flatMap(UIColor.init(stateUI:))
                     (controller as? UIKitPageController)?.showBackground()
-                case .avoidsSafeArea:
+                case .ignoresSafeArea:
                     // A page's content standing against the safe area otherwise: its page stands again.
                     (parent?.controller as? UIKitPageController)?.view.setNeedsLayout()
-                case .padding where type == .page:
-                    (view as? UIKitSingleChildView)?.padding = element.insets(.padding)
+                case .contentPadding where type == .page:
+                    (view as? UIKitSingleChildView)?.padding = element.insets(.contentPadding)
                 default: break
                 }
             }
@@ -82,7 +82,7 @@ extension UIKitElement {
     func invalidateMeasurements() {
         var each: UIKitElement? = self
         while let element = each {
-            // An entry of an ItemsView is measured by its cell; the list's own size never follows its items.
+            // An entry of an List is measured by its cell; the list's own size never follows its items.
             if let items = element.parent?.view as? UIKitItemsView {
                 element.view.map { _ in items.remeasure(element.element) }
                 return

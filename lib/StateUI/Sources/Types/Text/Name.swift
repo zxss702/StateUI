@@ -5,7 +5,7 @@
 /// a kept value's key: words an application chose, repeated across a tree and
 /// meaning the same thing every time.
 ///
-///     static let theme = ElementProperty<Self, Name>("theme")
+///     static let color scheme = ElementProperty<Self, Name>("color scheme")
 ///
 /// Declare a member as `Name` for such words, and as `String` for text an
 /// author wrote: the two cross to a host differently.

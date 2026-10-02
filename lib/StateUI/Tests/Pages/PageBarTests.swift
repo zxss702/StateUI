@@ -15,11 +15,11 @@ import XCTest
 /// A page with a toolbar and a menu, which are lists of things that are not
 /// views and hang BESIDE the content - written into the page's session as it
 /// comes into the tree.
-private struct BarredPage: ContentView {
+private struct BarredPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
-        Label("one").onCreated {
+    var body: some View {
+        Text("one").onAppear {
             page.title = "Notes"
 
             page.toolbarItems = [
@@ -28,7 +28,7 @@ private struct BarredPage: ContentView {
                     .text("Save")
                     .icon("nav_media.png")
                     .priority(1)
-                    .isEnabled(true)
+                    .disabled(!true)
                     .onClicked {},
 
                 ToolbarItem("Delete")
@@ -44,24 +44,24 @@ private struct BarredPage: ContentView {
                         .text("New")
                         .icon("nav_media.png")
                         .isDestructive(false)
-                        .isEnabled(true)
+                        .disabled(!true)
                         .onClicked {}
-                    MenuSeparator().id("sep")
+                    Divider().id("sep")
                     Menu("Recent") {
                         MenuItem("a.txt").id("a")
                     }
                     .id("recent")
-                    .isEnabled(true)
+                    .disabled(!true)
                 }
                 .id("file")
-                .isEnabled(true),
+                .disabled(!true),
             ]
         }
     }
 }
 
 final class PageBarTests: XCTestCase {
-    /// What the page's first message carries - its `.onCreated` run, and what
+    /// What the page's first message carries - its `.onAppear` run, and what
     /// it wrote walked in.
     private static func arrived() -> HostPatch {
         Renders().settled(Node.page(BarredPage()))
@@ -73,7 +73,7 @@ final class PageBarTests: XCTestCase {
     func testAPagePutsItsToolbarAndMenusBesideItsContent() throws {
         let page = Self.arrived()
 
-        XCTAssertEqual(page.children.map { $0.type }, ["Label", "ToolbarItems", "MenuBar"])
+        XCTAssertEqual(page.children.map { $0.type }, ["Text", "ToolbarItems", "MenuBar"])
 
         let toolbar = try XCTUnwrap(page.children.first { $0.type == "ToolbarItems" })
         XCTAssertEqual(toolbar.children.map { $0.id }, [.manual("save"), .manual("delete")])
@@ -87,7 +87,7 @@ final class PageBarTests: XCTestCase {
 
         XCTAssertEqual(file.type, "Menu")
         XCTAssertEqual(file.children.map { $0.type },
-                       ["MenuItem", "MenuSeparator", "Menu"])
+                       ["MenuItem", "Divider", "Menu"])
         XCTAssertEqual(file.children[2].children[0].props["text"], .string("a.txt"))
     }
 
@@ -124,10 +124,10 @@ final class PageBarTests: XCTestCase {
     /// A page with neither says nothing about them, so a host that has none is
     /// not told to empty one.
     func testAPageWithNoToolbarSendsNoSlot() {
-        struct Plain: ContentView {
-            var content: any View { Label("one") }
+        struct Plain: View {
+            var body: some View { Text("one") }
         }
 
-        XCTAssertEqual(Node.page(Plain()).built.children.map { $0.type }, ["Label"])
+        XCTAssertEqual(Node.page(Plain()).built.children.map { $0.type }, ["Text"])
     }
 }

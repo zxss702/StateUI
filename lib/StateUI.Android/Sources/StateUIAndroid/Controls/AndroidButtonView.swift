@@ -37,7 +37,7 @@ final class AndroidButtonView: AndroidTextView {
         listen(JavaAPI.setOnClickListener, JavaAPI.setOnTouchListener)
     }
 
-    /// The least pixels the button takes, in place of its theme's: a button is its words and its padding.
+    /// The least pixels the button takes, in place of its color scheme's: a button is its words and its padding.
     /// Design: docs/design/platforms/android/controls.md#a-buttons-size
     func setLeastSize(width: Int32, height: Int32) {
         Java.call(reference, JavaAPI.setMinWidth, .int(width))
@@ -65,7 +65,7 @@ final class AndroidButtonView: AndroidTextView {
     }
 
     /// The button's outline and shape, the width in points and one where none is said; no outline, a plain
-    /// rectangle and no fill keep the theme's look.
+    /// rectangle and no fill keep the color scheme's look.
     func setOutline(stroke: HostValue?, width: Double?, shape: HostValue?) {
         look.stroke = stroke
         look.strokeWidth = width
@@ -73,11 +73,11 @@ final class AndroidButtonView: AndroidTextView {
         drawLook()
     }
 
-    /// The shape its look is drawn in, and the one its pressed ripple is kept within; none while the theme's
+    /// The shape its look is drawn in, and the one its pressed ripple is kept within; none while the color scheme's
     /// look shows.
     private var drawn: (shape: AndroidShapeDrawable, mask: AndroidShapeDrawable)?
 
-    /// One shape under the platform's pressed ripple, or the theme's background where nothing is said.
+    /// One shape under the platform's pressed ripple, or the color scheme's background where nothing is said.
     /// Design: docs/design/platforms/android/controls.md#a-buttons-look
     private func drawLook() {
         guard look.fill != nil || look.stroke != nil || look.shape != .rectangle else {
@@ -108,7 +108,7 @@ final class AndroidButtonView: AndroidTextView {
 
     /// The picture beside the words `spacing` points away - the platform's gap for nil - or alone where
     /// there are none, filling its room as `aspect` says.
-    func setIcon(_ source: ImageSource?, position: IconPosition, spacing: Double?, aspect: Aspect) {
+    func setIcon(_ source: ImageSource?, position: IconPosition, spacing: Double?, aspect: ContentMode) {
         let file = source?.file ?? ""
         if file != icon.file {
             letGoOfIcon()
@@ -142,7 +142,7 @@ final class AndroidButtonView: AndroidTextView {
     }
 
     /// The padding is the icon's room too.
-    override func setPadding(_ insets: Insets?) {
+    override func setPadding(_ insets: EdgeInsets?) {
         super.setPadding(insets)
         showIcon(room: placedSize)
     }
@@ -220,7 +220,7 @@ final class AndroidButtonView: AndroidTextView {
         var file = ""
         var position: IconPosition = .leading
         var spacing: Double?
-        var aspect: Aspect = .fit
+        var aspect: ContentMode = .fit
         var picture: JavaObject?
 
         /// What an icon shows as: its picture, where, and its size alone in pixels.

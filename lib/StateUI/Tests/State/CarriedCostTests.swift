@@ -13,34 +13,34 @@ private final class Builds {
 }
 
 /// A composed view over one value, counting its builds.
-private struct Inner: ContentView {
+private struct Inner: View {
     let shown: Int
     let builds: Builds
 
-    var content: any View {
+    var body: some View {
         builds.count += 1
-        return VStack { Label("shown \(shown)") }
+        return VStack { Text("shown \(shown)") }
     }
 }
 
 /// A composed view that reads its own state.
-private struct Reader: ContentView {
+private struct Reader: View {
     let builds: Builds
     @State var n = 0
 
-    var content: any View {
+    var body: some View {
         builds.count += 1
-        return Label("n\(n)")
+        return Text("n\(n)")
     }
 }
 
 /// A composed view that reads nothing and shows nothing that moves.
-private struct Blank: ContentView {
+private struct Blank: View {
     let builds: Builds
 
-    var content: any View {
+    var body: some View {
         builds.count += 1
-        return Label("blank")
+        return Text("blank")
     }
 }
 
@@ -50,11 +50,11 @@ final class CarriedCostTests: XCTestCase {
         let shown: Int
         let builds: Builds
 
-        var body: Node {
+        var node: Node {
             VStack {
-                Label("chosen \(chosen)")
+                Text("chosen \(chosen)")
                 Grid { Inner(shown: shown, builds: builds) }
-            }.body
+            }.node
         }
     }
 
@@ -70,9 +70,9 @@ final class CarriedCostTests: XCTestCase {
         let renders = Renders()
         let builds = Builds()
 
-        _ = renders.render(Page(chosen: 1, shown: 7, builds: builds).body)
-        _ = renders.render(Page(chosen: 2, shown: 7, builds: builds).body)
-        _ = renders.render(Page(chosen: 3, shown: 7, builds: builds).body)
+        _ = renders.render(Page(chosen: 1, shown: 7, builds: builds).node)
+        _ = renders.render(Page(chosen: 2, shown: 7, builds: builds).node)
+        _ = renders.render(Page(chosen: 3, shown: 7, builds: builds).node)
         XCTAssertEqual(
             builds.count, 1,
             "built once; the page and the grid around it were described three times")
@@ -82,8 +82,8 @@ final class CarriedCostTests: XCTestCase {
         let renders = Renders()
         let builds = Builds()
 
-        _ = renders.render(Page(chosen: 1, shown: 7, builds: builds).body)
-        let patch = renders.render(Page(chosen: 2, shown: 7, builds: builds).body)
+        _ = renders.render(Page(chosen: 1, shown: 7, builds: builds).node)
+        let patch = renders.render(Page(chosen: 2, shown: 7, builds: builds).node)
         XCTAssertEqual(
             patch.children.count, 1,
             "only the label outside the carried view travels")
@@ -93,8 +93,8 @@ final class CarriedCostTests: XCTestCase {
         let renders = Renders()
         let builds = Builds()
 
-        _ = renders.render(Page(chosen: 1, shown: 1, builds: builds).body)
-        let patch = renders.render(Page(chosen: 2, shown: 2, builds: builds).body)
+        _ = renders.render(Page(chosen: 1, shown: 1, builds: builds).node)
+        let patch = renders.render(Page(chosen: 2, shown: 2, builds: builds).node)
         XCTAssertEqual(builds.count, 2, "what it was built with moved, so it was built again")
 
         // The grid's own child carries the new text.
@@ -112,16 +112,16 @@ final class CarriedCostTests: XCTestCase {
             @State private var count = 0
             let bump: Int
 
-            var body: Node {
+            var node: Node {
                 Grid {
-                    Label("held \(count) bumped \(bump)")
-                }.body
+                    Text("held \(count) bumped \(bump)")
+                }.node
             }
         }
 
         let renders = Renders()
-        _ = renders.render(Holder(bump: 1).body)
-        let patch = renders.render(Holder(bump: 2).body)
+        _ = renders.render(Holder(bump: 1).node)
+        let patch = renders.render(Holder(bump: 2).node)
         let text = patch.children.compactMap { $0.props[.text] }
         XCTAssertEqual(
             text.first, .string("held 0 bumped 2"),
@@ -129,7 +129,7 @@ final class CarriedCostTests: XCTestCase {
     }
 
     func testAnEnvironmentReachesALazilyDescribedChild() {
-        final class Theme: @unchecked Sendable {
+        final class ColorScheme: @unchecked Sendable {
             let name: String
             init(_ name: String) { self.name = name }
         }
@@ -137,23 +137,23 @@ final class CarriedCostTests: XCTestCase {
         // Written the way an application writes views - `content`, not a raw
         // `body` - because that is what gives a view its placeholder, and the
         // placeholder is where `@Environment` is resolved.
-        struct Deep: ContentView {
-            @Environment var theme: Theme
-            var content: any View { Label(theme.name) }
+        struct Deep: View {
+            @Environment var colorScheme: ColorScheme
+            var body: some View { Text(colorScheme.name) }
         }
 
-        struct Above: ContentView {
-            let theme: Theme
-            var content: any View {
+        struct Above: View {
+            let colorScheme: ColorScheme
+            var body: some View {
                 VStack {
                     Grid { Deep() }
                 }
-                .environment(theme)
+                .environment(colorScheme)
             }
         }
 
         let renders = Renders()
-        let patch = renders.render(Above(theme: Theme("dark")).body)
+        let patch = renders.render(Above(colorScheme: ColorScheme("dark")).node)
         XCTAssertEqual(
             texts(in: patch).first, .string("dark"),
             "the provider above was in scope where the child was described")
@@ -173,7 +173,7 @@ final class CarriedCostTests: XCTestCase {
                 VStack {
                     reader
                     Blank(builds: blanks)
-                }.id("row").body,
+                }.id("row").node,
             ])
         }
 

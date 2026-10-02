@@ -21,13 +21,13 @@ final class AndroidLabelViewTests: XCTestCase {
         onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
-                    Label()
+                    Text()
                         .spans {
-                            TextSpan("small ").textColor(.red).fontSize(12)
+                            TextSpan("small ").foregroundStyle(.red).fontSize(12)
                             TextSpan("large").fontSize(36).fontAttributes(.bold)
                         }
                         .horizontalAlignment(.start)
-                    Label("small large").fontSize(12).horizontalAlignment(.start)
+                    Text("small large").fontSize(12).horizontalAlignment(.start)
                 }
             }
             host.layOut()
@@ -45,9 +45,9 @@ final class AndroidLabelViewTests: XCTestCase {
             let words = "one two three four five six seven eight nine ten eleven twelve"
             let host = AndroidRenderer.running {
                 VStack {
-                    Label(words).width(100)
-                    Label(words).width(100).maximumLines(2)
-                    Label(words).width(100).lineBreak(.tailTruncation)
+                    Text(words).frame(width: 100)
+                    Text(words).frame(width: 100).lineLimit(2)
+                    Text(words).frame(width: 100).lineBreak(.tailTruncation)
                 }
             }
             host.layOut()
@@ -64,7 +64,7 @@ final class AndroidLabelViewTests: XCTestCase {
     func testALabelsCaseAndLetterSpacingAreItsOwn() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                Label("Hello").textCase(.uppercase).fontSize(20).characterSpacing(2)
+                Text("Hello").textCase(.uppercase).fontSize(20).characterSpacing(2)
             }
 
             let label = try XCTUnwrap(host.views(AndroidLabelView.self).first)
@@ -78,13 +78,13 @@ final class AndroidLabelViewTests: XCTestCase {
     func testABackgroundBrushIsDrawnAcrossTheView() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                Label("")
+                Text("")
                     .background(Brush.linearGradient(
                         [GradientStop(Color("#FF0000"), 0), GradientStop(Color("#0000FF"), 1)],
                         startPoint: Point(0, 0),
                         endPoint: Point(1, 0)))
-                    .width(100)
-                    .height(20)
+                    .frame(width: 100)
+                    .frame(height: 20)
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
             }

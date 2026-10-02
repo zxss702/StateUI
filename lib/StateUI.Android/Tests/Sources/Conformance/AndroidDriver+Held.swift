@@ -33,7 +33,7 @@ extension AndroidDriver {
         case (.fontAttributes, let text as AndroidTextView):
             return FontAttributes(rawValue: Java.callStaticInt(Self.testText, Self.style, .object(text.reference)) & 3)
                 .propValue
-        case (.textColor, let text as AndroidTextView):
+        case (.foregroundStyle, let text as AndroidTextView):
             return Self.color(UInt32(bitPattern: Java.callInt(text.reference, Self.getCurrentTextColor))).propValue
         case (.background, let view?):
             let held = Java.callStaticLong(Self.testPixels, Self.background, .object(view.reference))

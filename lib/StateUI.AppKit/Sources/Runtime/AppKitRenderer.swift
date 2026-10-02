@@ -200,7 +200,7 @@ final class AppKitRenderer: @unchecked Sendable {
     }
 }
 
-/// An element's view, placed by the layout motion of the layout it stands in - a label at the size its place
+/// An element's view, placed by the layout animation of the layout it stands in - a label at the size its place
 /// travels to, its words standing there meanwhile.
 extension AppKitElement: PlacedView {
     var placedFrame: Rect {
@@ -213,7 +213,7 @@ extension AppKitElement: PlacedView {
     }
 
     func travels(to destination: Rect?) {
-        if type == .label { wordsRoom = destination }
+        if type == .text { wordsRoom = destination }
     }
 }
 

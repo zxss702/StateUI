@@ -18,7 +18,7 @@ extension AndroidDriver {
         let read = { (what: String) in Self.read(reference, what) }
         let number = { (what: String) in read(what).flatMap(Double.init) }
         switch property {
-        case .maximumLines: return number("maxLines").map { Int($0).propValue }
+        case .lineLimit: return number("maxLines").map { Int($0).propValue }
         case .lineBreak:
             switch read("ellipsize") {
             case "START": return LineBreak.headTruncation.propValue
@@ -27,7 +27,7 @@ extension AndroidDriver {
             case nil: return nil
             default: return (read("scrollsAcross") == "1" ? LineBreak.noWrap : .wordWrap).propValue
             }
-        case .horizontalTextAlignment:
+        case .multilineTextAlignment:
             // Gravity's horizontal bits: centre 1, start or left 3, end or right 5.
             guard let gravity = number("gravity").map(Int.init) else { return nil }
             return (gravity & 7 == 1 ? TextAlignment.center : gravity & 7 == 5 ? .end : .start).propValue
@@ -54,20 +54,20 @@ extension AndroidDriver {
             return Int(end - start).propValue
         case .isPassword where view is AndroidTextFieldView:
             return number("inputType").map { (Int($0) & 0x80 != 0).propValue }
-        case .padding where !(view is AndroidLayoutView):
+        case .contentPadding where !(view is AndroidLayoutView):
             // Whole pixels on Android: a fraction of a point off, back to the whole points the tree gives.
             let sides = read("padding")?.split(separator: ",").compactMap { Double($0) } ?? []
             guard sides.count == 4 else { return nil }
             let points = sides.map { ($0 / view.density).rounded() }
-            return Insets(points[0], points[1], points[2], points[3]).propValue
+            return EdgeInsets(points[0], points[1], points[2], points[3]).propValue
         case .clipsContent where view is AndroidLayoutView: return (read("clipToOutline") == "1").propValue
-        case .verticalScrollBarVisibility, .horizontalScrollBarVisibility:
+        case .verticalScrollIndicators, .horizontalScrollIndicators:
             guard let scroller = (view as? AndroidScrollView)?.scrollers.first else { return nil }
-            let bar = Self.read(scroller.reference, property == .verticalScrollBarVisibility ? "verticalBar" : "horizontalBar")
-            let bars: [String: ScrollBarVisibility] = ["never": .never, "always": .always, "default": .default]
+            let bar = Self.read(scroller.reference, property == .verticalScrollIndicators ? "verticalBar" : "horizontalBar")
+            let bars: [String: ScrollIndicatorVisibility] = ["never": .never, "always": .always, "default": .default]
             return bar.flatMap { bars[$0] }?.propValue
         case .aspect where view is AndroidImageView:
-            let aspects: [String: Aspect] = ["FIT_CENTER": .fit, "CENTER_CROP": .fill, "FIT_XY": .stretch, "CENTER": .center]
+            let aspects: [String: ContentMode] = ["FIT_CENTER": .fit, "CENTER_CROP": .fill, "FIT_XY": .stretch, "CENTER": .center]
             return read("scaleType").flatMap { aspects[$0] }?.propValue
         case .tint:
             return number("tint").map { color(UInt32(bitPattern: Int32(truncatingIfNeeded: Int($0)))).propValue }

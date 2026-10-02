@@ -20,10 +20,10 @@
                 s.start {
                     VStack {
                         ScrollView {
-                            ColorBox(.red).height(2000).onEvent(ViewContract.frameChanged) { frames.values.append($0) }
+                            ColorPicker(.red).frame(height: 2000).onEvent(ViewContract.frameChanged) { frames.values.append($0) }
                         }
                         .orientation(.vertical)
-                        .width(200).height(100)
+                        .frame(width: 200).frame(height: 100)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -39,11 +39,11 @@
                 s.start {
                     VStack {
                         ScrollView {
-                            ColorBox(.red).width(3000).height(40)
+                            ColorPicker(.red).frame(width: 3000).frame(height: 40)
                                 .onEvent(ViewContract.frameChanged) { frames.values.append($0) }
                         }
                         .orientation(.horizontal)
-                        .width(200).height(100)
+                        .frame(width: 200).frame(height: 100)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -61,10 +61,10 @@
                     VStack {
                         Button("Down").onClicked { offset.wrappedValue = Point(0, 300) }.id("down")
                         Button("Past").onClicked { offset.wrappedValue = Point(0, 5000) }.id("past")
-                        ScrollView { ColorBox(.red).height(2000) }
+                        ScrollView { ColorPicker(.red).frame(height: 2000) }
                             .scrollOffset(offset.projectedValue)
                             .onEvent(ScrollViewContract.scrollYChanged) { heard.values.append($0) }
-                            .width(200).height(500).id("scroller")
+                            .frame(width: 200).frame(height: 500).id("scroller")
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -90,11 +90,11 @@
                 let rests = Received<Int>()
                 s.start(clock: clock) {
                     VStack {
-                        ScrollView { ColorBox(.red).height(2000) }
+                        ScrollView { ColorPicker(.red).frame(height: 2000) }
                             .scrollOffset(offset.projectedValue)
                             .onEvent(ScrollViewContract.scrollYChanged) { heard.values.append($0) }
                             .onScrollStopped { rests.values.append(1) }
-                            .width(200).height(500).id("scroller")
+                            .frame(width: 200).frame(height: 500).id("scroller")
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -119,10 +119,10 @@
                 let heard = Received<Double>()
                 s.start(clock: clock) {
                     VStack {
-                        ScrollView { ColorBox(.red).width(3000).height(40) }
+                        ScrollView { ColorPicker(.red).frame(width: 3000).frame(height: 40) }
                             .orientation(.horizontal)
                             .onEvent(ScrollViewContract.scrollXChanged) { heard.values.append($0) }
-                            .width(200).height(100).id("scroller")
+                            .frame(width: 200).frame(height: 100).id("scroller")
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -138,9 +138,9 @@
 
                 s.expect(heard.values, [300])
             },
-            Aspects.holds(ScrollViewContract.verticalScrollBarVisibility, on: "ScrollView", .always, then: .never),
-            Aspects.holds(ScrollViewContract.horizontalScrollBarVisibility, on: "ScrollView", .always, then: .never,
-                          with: [Write(ScrollViewContract.orientation, ScrollOrientation.horizontal)]),
+            Aspects.holds(ScrollViewContract.verticalScrollIndicators, on: "ScrollView", .always, then: .never),
+            Aspects.holds(ScrollViewContract.horizontalScrollIndicators, on: "ScrollView", .always, then: .never,
+                          with: [Write(ScrollViewContract.orientation, Axis.horizontal)]),
         ]
     }
 }

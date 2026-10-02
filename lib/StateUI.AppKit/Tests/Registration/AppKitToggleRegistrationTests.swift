@@ -120,7 +120,7 @@ final class AppKitToggleRegistrationTests: XCTestCase {
         XCTAssertEqual(native.state, .on, "nothing carries the value, so nothing answers the user")
 
         var moved = HostPatch(id: .manual("toggle"), type: .switch)
-        moved.properties[.margin] = .numbers([4, 4, 4, 4])
+        moved.properties[.contentPadding] = .numbers([4, 4, 4, 4])
         renderer.applyForTesting(changedTree(moved))
 
         XCTAssertEqual(native.state, .on, "another member changing does not put the old value back")
@@ -146,7 +146,7 @@ final class AppKitToggleRegistrationTests: XCTestCase {
         XCTAssertTrue(realization.members.contains(
             HostRealizedMember(element: "RadioButton", owner: "TextElement", member: "text")))
         XCTAssertTrue(realization.members.contains(
-            HostRealizedMember(element: "RadioButton", owner: "TextStyleElement", member: "textColor")))
+            HostRealizedMember(element: "RadioButton", owner: "TextStyleElement", member: "foregroundStyle")))
     }
 
     /// A radio button draws the caption the tree describes, in the case it

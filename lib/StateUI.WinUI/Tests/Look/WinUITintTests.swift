@@ -7,10 +7,10 @@
 import XCTest
 
 /// A ticked box whose tint a click turns from red to blue.
-private struct TintedPage: ContentView {
+private struct TintedPage: View {
     @State private var blue = false
 
-    var content: any View {
+    var body: some View {
         VStack {
             CheckBox(true).tint(blue ? Color("#0000FF") : Color("#FF0000"))
             Button("Blue").onClicked { blue = true }
@@ -31,7 +31,7 @@ final class WinUITintTests: XCTestCase {
                 VStack {
                     CheckBox(true).tint(Color("#FF0000"))
                     Switch(true).tint(Color("#FF0000"))
-                    Slider(0.5).tint(Color("#FF0000")).width(200)
+                    Slider(0.5).tint(Color("#FF0000")).frame(width: 200)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)

@@ -49,7 +49,7 @@
         container.children.compactMap { entry in
             switch entry.type {
             case .menuItem: MenuEntry(entry, kind: .item, entries: [])
-            case .menuSeparator: MenuEntry(nil, kind: .separator, entries: [])
+            case .divider: MenuEntry(nil, kind: .separator, entries: [])
             case .menu: MenuEntry(entry, kind: .submenu, entries: entries(of: entry))
             default: nil
             }

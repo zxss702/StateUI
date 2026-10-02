@@ -15,7 +15,7 @@ public enum InputViewContract: Contract {
         "cursorPosition", layer: .native, travels: false)
 
     /// What the text is for, which picks the on-screen keyboard.
-    public static let inputPurpose = ElementProperty<Self, InputPurpose>("inputPurpose", layer: .adaptive)
+    public static let textContentType = ElementProperty<Self, InputPurpose>("textContentType", layer: .adaptive)
 
     /// Whether the text can be selected and copied but not changed.
     public static let isReadOnly = ElementProperty<Self, Bool>("isReadOnly", layer: .native)
@@ -46,7 +46,7 @@ public enum InputViewContract: Contract {
 
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        cursorPosition, inputPurpose, isReadOnly, isSpellCheckEnabled, isTextPredictionEnabled,
+        cursorPosition, textContentType, isReadOnly, isSpellCheckEnabled, isTextPredictionEnabled,
         maximumLength, placeholder, placeholderColor, selectionLength, textChanged,
     ]
 }

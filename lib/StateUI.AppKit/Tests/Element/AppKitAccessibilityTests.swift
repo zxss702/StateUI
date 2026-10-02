@@ -13,7 +13,7 @@ final class AppKitAccessibilityTests: XCTestCase {
     func testAuthoredIdentityWordsAndHeadingReachTheNativeElement() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var label = HostPatch(id: .manual("heading"), type: .label)
+        var label = HostPatch(id: .manual("heading"), type: .text)
         label.properties = [
             .text: .string("Visible title"),
             .accessibilityIdentifier: .string("semantics.heading"),
@@ -44,7 +44,7 @@ final class AppKitAccessibilityTests: XCTestCase {
         let originalElement = untouched.isAccessibilityElement()
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var box = HostPatch(id: .manual("box"), type: .colorBox)
+        var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.properties = [
             .accessibilityIdentifier: .string("decoration"),
             .accessibilityLabel: .string("Temporary"),
@@ -55,7 +55,7 @@ final class AppKitAccessibilityTests: XCTestCase {
         renderer.applyForTesting(tree(box))
         let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("box")))
 
-        var cleared = HostPatch(id: .manual("box"), type: .colorBox)
+        var cleared = HostPatch(id: .manual("box"), type: .colorPicker)
         cleared.clearedProperties = [
             .accessibilityIdentifier,
             .accessibilityLabel,
@@ -76,7 +76,7 @@ final class AppKitAccessibilityTests: XCTestCase {
     func testExplicitExclusionWinsOverWordsAndCanHideAWholeNativeSubtree() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var child = HostPatch(id: .manual("child"), type: .label)
+        var child = HostPatch(id: .manual("child"), type: .text)
         child.properties[.text] = .string("Skipped child")
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.properties = [
@@ -99,12 +99,12 @@ final class AppKitAccessibilityTests: XCTestCase {
             resourceDirectory: nil,
             presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var caption = HostPatch(id: .manual("caption"), type: .label)
-        caption.properties[.text] = .string("Motion")
-        caption.events = .replace([.tapped: 301])
+        var caption = HostPatch(id: .manual("caption"), type: .text)
+        caption.properties[.text] = .string("Animation")
+        caption.events = .replace([.tapGesture: 301])
         var card = HostPatch(id: .manual("card"), type: .vStack)
-        card.properties[.accessibilityLabel] = .string("Motion sample")
-        card.events = .replace([.tapped: 300])
+        card.properties[.accessibilityLabel] = .string("Animation sample")
+        card.events = .replace([.tapGesture: 300])
         card.children = .arranged([caption])
 
         renderer.applyForTesting(tree(card))
@@ -215,7 +215,7 @@ final class AppKitAccessibilityTests: XCTestCase {
     func testAHiddenViewIsNoElementAndAnUnhiddenContainerIsOne() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var hidden = HostPatch(id: .manual("hidden"), type: .colorBox)
+        var hidden = HostPatch(id: .manual("hidden"), type: .colorPicker)
         hidden.properties = [
             .accessibilityLabel: .string("Decoration"),
             .isAccessibilityHidden: .bool(true),

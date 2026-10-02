@@ -392,7 +392,7 @@ struct ControlDictionary {
             // them it counts the parts rather than the controls.
             "dictionary": "### Controls\n\n"
                 + summary(of: split.controls, heading: "Control", linking: "controls/")
-                + "\n\n### Application structure\n\n"
+                + "\n\n### App structure\n\n"
                 + summary(of: split.structure, heading: "Part", linking: "controls/"),
             "creation": creationTable(),
             "members": memberTable(),
@@ -675,7 +675,7 @@ struct ControlDictionary {
     }
 
     /// The verdicts the runs of the host whose folder is `folder` wrote, file by file: the family's name - a part's
-    /// file, `ItemsView-2.txt`, is its family's - what the file holds, and its verdicts.
+    /// file, `List-2.txt`, is its family's - what the file holds, and its verdicts.
     static func verdicts(_ folder: String) throws -> [(family: String, text: String, verdicts: [HostVerdict])] {
         let url = SourceTree.repository.appendingPathComponent("exports/marks/\(folder)")
         guard FileManager.default.fileExists(atPath: url.path) else { return [] }
@@ -691,7 +691,7 @@ struct ControlDictionary {
         return files
     }
 
-    /// The family a verdict file is of: its name, a part's number dropped - `ItemsView-2.txt` is `ItemsView`'s.
+    /// The family a verdict file is of: its name, a part's number dropped - `List-2.txt` is `List`'s.
     static func family(ofFile file: String) -> String {
         let name = file.hasSuffix(".txt") ? String(file.dropLast(4)) : file
         guard let dash = name.lastIndex(of: "-"), name[name.index(after: dash)...].allSatisfy(\.isNumber),

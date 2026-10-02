@@ -11,8 +11,8 @@
     /// around them.
     public static let members: [any ContractMember] = [
         TextElementContract.text, TextElementContract.textCase, FontElementContract.fontSize,
-        FontElementContract.fontAttributes, FontElementContract.fontFamily, TextStyleElementContract.textColor,
-        PaddingElementContract.padding,
+        FontElementContract.fontAttributes, FontElementContract.fontFamily, TextStyleElementContract.foregroundStyle,
+        PaddingElementContract.contentPadding,
     ]
 
     /// The words in their case, where the words or their case changed; nil where neither did.
@@ -27,7 +27,7 @@
     /// The look the font and the colour give the words, where one of them changed; nil where none did.
     public static func look<Realized>(_ values: ElementValues<Realized>) -> TextLook? {
         guard values.changed(FontElementContract.fontSize) || values.changed(FontElementContract.fontAttributes)
-            || values.changed(FontElementContract.fontFamily) || values.changed(TextStyleElementContract.textColor)
+            || values.changed(FontElementContract.fontFamily) || values.changed(TextStyleElementContract.foregroundStyle)
         else { return nil }
         return look(of: values)
     }
@@ -38,7 +38,7 @@
         look.size = values[FontElementContract.fontSize]
         look.attributes = values[FontElementContract.fontAttributes] ?? .none
         look.family = values[FontElementContract.fontFamily]?.text
-        look.color = values[TextStyleElementContract.textColor]?.propValue
+        look.color = values[TextStyleElementContract.foregroundStyle]?.propValue
         return look
     }
 }

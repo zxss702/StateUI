@@ -85,7 +85,7 @@ final class AppKitPickerView: NSView, NSMenuDelegate {
         writeSelection: Bool,
         title: String?,
         font: NSFont,
-        textColor: NSColor,
+        foregroundStyle: NSColor,
         tint: NSColor?,
         alignment: NSTextAlignment,
         enabled: Bool,
@@ -104,7 +104,7 @@ final class AppKitPickerView: NSView, NSMenuDelegate {
             button.alignment = alignment
             button.isEnabled = enabled
             button.contentTintColor = tint
-            styleItems(font: font, color: textColor, alignment: alignment)
+            styleItems(font: font, color: foregroundStyle, alignment: alignment)
 
             if write.writesChoice {
                 if let chosen = write.chosen { button.selectItem(at: chosen) } else { button.select(nil) }

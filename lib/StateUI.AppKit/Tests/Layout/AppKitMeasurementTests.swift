@@ -33,9 +33,9 @@ final class AppKitMeasurementTests: XCTestCase {
         scroll.layoutSubtreeIfNeeded()
         let measuredBeforeMotion = code.nativeMeasurementCountForTesting
 
-        var growing = HostPatch(id: .manual("box"), type: .colorBox)
+        var growing = HostPatch(id: .manual("box"), type: .colorPicker)
         growing.properties[.width] = .number(300)
-        growing.transitions[.width] = HostTransition(motion: .eased(200, .linear))
+        growing.transitions[.width] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(path(to: growing))
         scroll.layoutSubtreeIfNeeded()
 
@@ -52,13 +52,13 @@ final class AppKitMeasurementTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
 
-        var card = HostPatch(id: .manual("card"), type: .colorBox)
+        var card = HostPatch(id: .manual("card"), type: .colorPicker)
         card.properties[.width] = .number(120)
         card.properties[.height] = .number(60)
         card.driven = .replace([
             .translationX: HostStateBinding(state: 91, mode: .inOut, kind: .property),
         ])
-        var caption = HostPatch(id: .manual("caption"), type: .label)
+        var caption = HostPatch(id: .manual("caption"), type: .text)
         caption.properties[.text] = .string("A card that slides sideways")
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
         stack.children = .arranged([card, caption])
@@ -83,7 +83,7 @@ final class AppKitMeasurementTests: XCTestCase {
             value: [40],
             destination: [60],
             velocity: [0],
-            motion: .eased(400, .linear),
+            animation: .eased(400, .linear),
             completion: nil,
             stopped: 0)))
         nativeOuter.layoutSubtreeIfNeeded()
@@ -109,7 +109,7 @@ final class AppKitMeasurementTests: XCTestCase {
         scroll.layoutSubtreeIfNeeded()
         let shortHeight = frame.frame.height
 
-        var longer = HostPatch(id: .manual("notes"), type: .label)
+        var longer = HostPatch(id: .manual("notes"), type: .text)
         longer.properties[.text] = .string(
             String(repeating: "Press Size and watch the panel grow smoothly. ", count: 30))
         renderer.applyForTesting(path(to: longer, through: Array(route.dropLast())))
@@ -132,19 +132,19 @@ final class AppKitMeasurementTests: XCTestCase {
 
         var span = HostPatch(id: .manual("span"), type: .span)
         span.properties[.text] = .string("Sold out")
-        span.properties[.textColor] = .color(red: 0, green: 0, blue: 0, alpha: 255)
+        span.properties[.foregroundStyle] = .color(red: 0, green: 0, blue: 0, alpha: 255)
         var formatted = HostPatch(id: .manual("formatted"), type: .spans)
         formatted.children = .arranged([span])
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.children = .arranged([formatted])
         renderer.applyForTesting(label)
 
         var red = HostPatch(id: .manual("span"), type: .span)
-        red.properties[.textColor] = .color(red: 255, green: 0, blue: 0, alpha: 255)
-        red.transitions[.textColor] = HostTransition(motion: .eased(200, .linear))
+        red.properties[.foregroundStyle] = .color(red: 255, green: 0, blue: 0, alpha: 255)
+        red.transitions[.foregroundStyle] = HostTransition(animation: .eased(200, .linear))
         var formattedPath = HostPatch(id: .manual("formatted"), type: .spans)
         formattedPath.children = .changed([red])
-        var labelPath = HostPatch(id: .manual("label"), type: .label)
+        var labelPath = HostPatch(id: .manual("label"), type: .text)
         labelPath.children = .changed([formattedPath])
         renderer.applyForTesting(labelPath)
 
@@ -196,7 +196,7 @@ final class AppKitMeasurementTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var card = HostPatch(id: .manual("card"), type: .colorBox)
+        var card = HostPatch(id: .manual("card"), type: .colorPicker)
         card.properties[.opacity] = .number(1)
         var layout = HostPatch(id: .manual("layout"), type: .zStack)
         layout.driven = .replace([
@@ -214,9 +214,9 @@ final class AppKitMeasurementTests: XCTestCase {
         let placed = try XCTUnwrap(nativeCard.layer).affineTransform()
         XCTAssertEqual(placed.b, sin(30 * .pi / 180), accuracy: 0.001)
 
-        var fading = HostPatch(id: .manual("card"), type: .colorBox)
+        var fading = HostPatch(id: .manual("card"), type: .colorPicker)
         fading.properties[.opacity] = .number(0.4)
-        fading.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        fading.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         var path = HostPatch(id: .manual("layout"), type: .zStack)
         path.children = .changed([fading])
         renderer.applyForTesting(path)
@@ -242,7 +242,7 @@ final class AppKitMeasurementTests: XCTestCase {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
 
-        var card = HostPatch(id: .manual("card"), type: .colorBox)
+        var card = HostPatch(id: .manual("card"), type: .colorPicker)
         card.properties[.opacity] = .number(1)
         var layout = HostPatch(id: .manual("layout"), type: .zStack)
         layout.properties[.height] = .number(120)
@@ -250,7 +250,7 @@ final class AppKitMeasurementTests: XCTestCase {
             .area: HostStateBinding(state: 96, mode: .out, kind: .placement),
         ])
         layout.children = .arranged([card])
-        var caption = HostPatch(id: .manual("caption"), type: .label)
+        var caption = HostPatch(id: .manual("caption"), type: .text)
         caption.properties[.text] = .string("The card in front")
         var outer = HostPatch(id: .manual("outer"), type: .vStack)
         outer.children = .arranged([layout, caption])
@@ -456,7 +456,7 @@ final class AppKitMeasurementTests: XCTestCase {
 
     private func samplePage() -> HostPatch {
         func label(_ id: String, _ text: String) -> HostPatch {
-            var label = HostPatch(id: .manual(id), type: .label)
+            var label = HostPatch(id: .manual(id), type: .text)
             label.properties[.text] = .string(text)
             label.properties[.fontSize] = .number(13)
             return label
@@ -474,7 +474,7 @@ final class AppKitMeasurementTests: XCTestCase {
             return node
         }
 
-        var box = HostPatch(id: .manual("box"), type: .colorBox)
+        var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.properties[.width] = .number(120)
         box.properties[.height] = .number(56)
         box.properties[.horizontalAlignment] = .enumeration(Alignment.start.rawValue)
@@ -482,21 +482,21 @@ final class AppKitMeasurementTests: XCTestCase {
         button.properties[.text] = .string("Size")
 
         let listing = (1...80)
-            .map { "        let line\($0) = panel.width(wide ? 300 : 120) // \($0)" }
+            .map { "        let line\($0) = panel.frame(width: wide ? 300 : 120) // \($0)" }
             .joined(separator: "\n")
 
         return node("page", .scrollView, [
-            .orientation: .enumeration(ScrollOrientation.vertical.rawValue),
+            .orientation: .enumeration(Axis.vertical.rawValue),
         ], [
             node("content", .vStack, [
-                .padding: .numbers([24, 24, 24, 24]),
+                .contentPadding: .numbers([24, 24, 24, 24]),
                 .spacing: .number(16),
             ], [
                 node("part", .vStack, [.spacing: .number(16)], [
                     label("title", "EXAMPLE"),
                     node("frame", .zStack, [:], [
                         node("boxed", .vStack, [
-                            .padding: .numbers([16, 16, 16, 16]),
+                            .contentPadding: .numbers([16, 16, 16, 16]),
                             .spacing: .number(10),
                         ], [
                             node("sample", .vStack, [.spacing: .number(10)], [
@@ -511,7 +511,7 @@ final class AppKitMeasurementTests: XCTestCase {
                     label("heading", "IN SWIFT"),
                     node("codeFrame", .zStack, [:], [
                         node("codeScroll", .scrollView, [
-                            .orientation: .enumeration(ScrollOrientation.horizontal.rawValue),
+                            .orientation: .enumeration(Axis.horizontal.rawValue),
                         ], [
                             node("codeStack", .vStack, [:], [label("code", listing)]),
                         ]),

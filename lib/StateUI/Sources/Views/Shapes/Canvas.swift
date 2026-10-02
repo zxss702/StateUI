@@ -26,19 +26,19 @@ extension CanvasProperties {
 ///         Draw.fillColor(.cornflowerBlue)
 ///         Draw.fillRoundedRectangle(x: 0, y: 0, width: 160, height: 48, cornerRadius: 8)
 ///
-///         Draw.textColor(.white)
+///         Draw.foregroundStyle(.white)
 ///         Draw.fontSize(15)
 ///         Draw.drawText(
 ///             "Drawn, not built",
 ///             x: 0, y: 0, width: 160, height: 48,
 ///             horizontalAlignment: .center, verticalAlignment: .center)
 ///     }
-///     .height(48)
+///     .frame(height: 48)
 ///
 /// The drawing travels as data - the canvas calls `Draw` offers, in order -
 /// and the host replays them on the platform's own canvas. A drawing that
 /// reads a state is drawn again when the state changes.
-public struct Canvas: View, CanvasProperties {
+public struct Canvas: VisualElement, CanvasProperties{
     /// The node this control describes.
     public var node: Node
 

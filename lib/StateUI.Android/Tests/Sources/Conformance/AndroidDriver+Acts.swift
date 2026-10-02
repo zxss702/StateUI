@@ -9,14 +9,14 @@ import CStateUIAndroid
 @_spi(Host) import StateUIConformance
 
 /// What the Android driver does as the user: a click, a toggle, words typed, a dialog answered, the activity's
-/// lifecycle, and a finger's or a mouse's input as the view's own touches and hovering take it - motion events
+/// lifecycle, and a finger's or a mouse's input as the view's own touches and hovering take it - animation events
 /// dispatched to the view, in its pixels.
 /// Design: docs/design/platforms/android/conformance.md#what-the-driver-does
 extension AndroidDriver {
     func perform(_ act: UserAct, on element: MountedElement) throws {
         let view = (element.native as? AndroidElement)?.view
         switch (act, view) {
-        case (.activate, _) where element.parent?.type == .itemsView:
+        case (.activate, _) where element.parent?.type == .list:
             // A tap on the cell showing the item: its click, as the recycler's cell takes it.
             guard let items = (element.parent?.native as? AndroidElement)?.view as? AndroidItemsView,
                   case .manual(let identity) = element.id, let cell = items.cellForTesting(identity)
@@ -59,13 +59,13 @@ extension AndroidDriver {
             TestTouches.hover(view, action: Self.hoverEnter, x: Self.pixels(point.x), y: Self.pixels(point.y))
             TestTouches.hover(view, action: Self.hoverMove, x: Self.pixels(point.x), y: Self.pixels(point.y))
         case (.leave, let view?): TestTouches.hover(view, action: Self.hoverExit, x: 0, y: 0)
-        case (.switchAway, _) where element.type == .window: renderer?.setPhase(.inactive)
-        case (.switchBack, _) where element.type == .window: renderer?.setPhase(.active)
-        case (.minimize, _) where element.type == .window:
+        case (.switchAway, _) where element.type == .windowScene: renderer?.setPhase(.inactive)
+        case (.switchBack, _) where element.type == .windowScene: renderer?.setPhase(.active)
+        case (.minimize, _) where element.type == .windowScene:
             renderer?.setPhase(.inactive)
             renderer?.setPhase(.background)
-        case (.restore, _) where element.type == .window: renderer?.setPhase(.active)
-        case (.close, _) where element.type == .window:
+        case (.restore, _) where element.type == .windowScene: renderer?.setPhase(.active)
+        case (.close, _) where element.type == .windowScene:
             renderer?.setPhase(.inactive)
             renderer?.setPhase(.background)
             renderer?.destroying()
@@ -103,7 +103,7 @@ extension AndroidDriver {
     static let getSelectedItemPosition = Java.method(
         Java.findClass("android/widget/AdapterView"), "getSelectedItemPosition", "()I")
 
-    /// A motion event's actions, as Android numbers them.
+    /// A animation event's actions, as Android numbers them.
     private static let (down, up, move) = (Int32(0), Int32(1), Int32(2))
     private static let (hoverMove, hoverEnter, hoverExit) = (Int32(7), Int32(9), Int32(10))
 

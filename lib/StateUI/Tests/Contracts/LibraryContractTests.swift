@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // The library's contracts, held to what they stand beside: the members of one
-// name share their layer, travel, clearing and motion, which the differ and the
+// name share their layer, travel, clearing and animation, which the differ and the
 // hosts read by the name; every member's name is a token the library declares
 // and the name of the static member holding it; every declared member is on its
 // contract's list; and no contract wears two members of one name.
@@ -35,7 +35,7 @@ final class LibraryContractTests: XCTestCase {
     // MARK: - The facts
 
     /// The members of one name say the same of their layer, travel, clearing
-    /// and motion: the differ and the hosts hold a token, which is a name, and
+    /// and animation: the differ and the hosts hold a token, which is a name, and
     /// read what it says by the name - two members of one name that disagreed
     /// would each be half wrong.
     func testTheMembersOfOneNameShareTheirFacts() {
@@ -60,7 +60,7 @@ final class LibraryContractTests: XCTestCase {
 
     /// A token's facts are its members': what the differ reads by a name is
     /// what the contracts declare under it - and a name no contract declares,
-    /// an application's own, travels, is cleared and says nothing of motion.
+    /// an application's own, travels, is cleared and says nothing of animation.
     func testATokensFactsAreItsMembers() {
         var wrong: [String] = []
 
@@ -112,8 +112,8 @@ final class LibraryContractTests: XCTestCase {
         XCTAssertEqual(wrong, [])
     }
 
-    /// An element contract's node type is its own name - `LabelContract`
-    /// declares "Label" - so the name a host resolves is the contract's, and
+    /// An element contract's node type is its own name - `TextContract`
+    /// declares "Text" - so the name a host resolves is the contract's, and
     /// nothing is left to look up.
     func testEveryNodeTypeIsItsContractsName() {
         let wrong = LibraryContracts.elements.compactMap { contract -> String? in

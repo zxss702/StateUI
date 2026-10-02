@@ -25,7 +25,7 @@ extension StyleBag: InputViewProperties where Target: InputView {}
 // And each control's own properties.
 
 extension StyleBag: ActivityIndicatorProperties where Target == ActivityIndicator {}
-extension StyleBag: ColorBoxProperties where Target == ColorBox {}
+extension StyleBag: ColorPickerProperties where Target == ColorPicker {}
 extension StyleBag: ButtonProperties where Target == Button {}
 extension StyleBag: CheckBoxProperties where Target == CheckBox {}
 extension StyleBag: DatePickerProperties where Target == DatePicker {}
@@ -35,7 +35,7 @@ extension StyleBag: CanvasProperties where Target == Canvas {}
 extension StyleBag: GridProperties where Target == Grid {}
 extension StyleBag: ImageProperties where Target == Image {}
 extension StyleBag: PositionIndicatorProperties where Target == PositionIndicator {}
-extension StyleBag: LabelProperties where Target == Label {}
+extension StyleBag: TextProperties where Target == Text {}
 extension StyleBag: LineProperties where Target == Line {}
 extension StyleBag: MapProperties where Target == Map {}
 extension StyleBag: PathProperties where Target == Path {}

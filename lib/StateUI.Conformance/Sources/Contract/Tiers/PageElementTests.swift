@@ -29,15 +29,15 @@
         ], needs: [Covered(ButtonContract.clicked)]) { s in
             let value = State(wrappedValue: first)
             s.start {
-                TabbedView([0, 1]) { tab -> any Page in
-                    guard tab == 0 else { return Label("Other") }
+                TabView([0, 1]) { tab -> any Page in
+                    guard tab == 0 else { return Text("Other") }
                     return Presented.page(element, member, value.wrappedValue, beside: [
                         Button("Change").onClicked { value.wrappedValue = second }.id("change"),
                     ])
                 }
             }
             let kind = s.elements(ofType: NodeType(element))
-            let presented = element == "TabbedView" ? kind.last : kind.first
+            let presented = element == "TabView" ? kind.last : kind.first
             guard let specimen = element == "Page" ? try tabPage(s) : presented else {
                 return s.fail("no \(element) presented")
             }
@@ -52,7 +52,7 @@
 
     /// The page of the tabbed view's first tab.
     @MainActor static func tabPage(_ s: Session) throws -> MountedElement {
-        guard let tabs = s.elements(ofType: TabbedViewContract.nodeType).first,
+        guard let tabs = s.elements(ofType: TabViewContract.nodeType).first,
               let page = tabs.children.first(where: { $0.type == PageContract.nodeType })
         else { throw DriverCannot("find the tab's page") }
         return page
@@ -65,8 +65,8 @@
         ]) { s in
             s.start { SessionPage { page, _ in page.title = "Notes" } }
 
-            try s.settle { try s.held(WindowContract.title, on: s.element(ofType: WindowContract.nodeType)) == "Notes" }
-            s.expect(try s.held(WindowContract.title, on: s.element(ofType: WindowContract.nodeType)), "Notes")
+            try s.settle { try s.held(WindowSceneContract.title, on: s.element(ofType: WindowSceneContract.nodeType)) == "Notes" }
+            s.expect(try s.held(WindowSceneContract.title, on: s.element(ofType: WindowSceneContract.nodeType)), "Notes")
         }
     }
 }
@@ -82,14 +82,14 @@ enum Presented {
         switch element {
         case "NavigationStack":
             return written.worn(by: NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
-                VStack { [Label("Root")] + others }
-            } destination: { _ in Label("Pushed") })
-        case "SplitView":
-            return written.worn(by: SplitView(State(wrappedValue: true).projectedValue) {
-                Label("Sidebar")
-            } detail: { VStack { [Label("Detail")] + others } })
-        case "TabbedView":
-            return written.worn(by: TabbedView([0]) { _ in VStack { [Label("Inner")] + others } })
+                VStack { [Text("Root")] + others }
+            } destination: { _ in Text("Pushed") })
+        case "NavigationSplitView":
+            return written.worn(by: NavigationSplitView(State(wrappedValue: true).projectedValue) {
+                Text("Sidebar")
+            } detail: { VStack { [Text("Detail")] + others } })
+        case "TabView":
+            return written.worn(by: TabView([0]) { _ in VStack { [Text("Inner")] + others } })
         default:
             return SessionPage(beside: others, key: "\(value)") { page, _ in
                 if let title = value as? String, member.name == PageElementContract.title.name { page.title = title }

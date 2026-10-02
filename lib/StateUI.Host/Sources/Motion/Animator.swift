@@ -34,8 +34,8 @@
 }
 
 /// One running animation of a value, pure in the time handed to it.
-/// Design: docs/design/host/motion.md#one-animator
-@_spi(Host) public struct Animation: Equatable {
+/// Design: docs/design/host/animation.md#one-animator
+@_spi(Host) public struct RunningAnimation: Equatable {
     /// Where each lane began.
     public let from: [Double]
 
@@ -46,24 +46,24 @@
     public let velocity: [Double]
 
     /// The timing it runs under.
-    public let motion: Motion
+    public let animation: Animation
 
     /// When it began, in the frame clock's milliseconds.
     public let began: Double
 
     /// A animation from `from` to `destination`, begun at `began`.
-    public init(from: [Double], destination: [Double], velocity: [Double], motion: Motion, began: Double) {
+    public init(from: [Double], destination: [Double], velocity: [Double], animation: Animation, began: Double) {
         self.from = from
         self.destination = destination
         self.velocity = velocity
-        self.motion = motion
+        self.animation = animation
         self.began = began
     }
 
     /// Each lane's value and speed at `now`, and whether it has arrived.
     public func position(at now: Double) -> (value: [Double], velocity: [Double], rested: Bool) {
         let sample = HostMotionLaw.sample(
-            motion, elapsed: max(0, now - began), from: from, destination: destination, velocity: velocity)
+            animation, elapsed: max(0, now - began), from: from, destination: destination, velocity: velocity)
         return (sample.value, sample.velocity, sample.rested)
     }
 
@@ -90,9 +90,9 @@
 }
 
 /// The runtime's one animator: every animation, advanced together in target order.
-/// Design: docs/design/host/motion.md#one-animator
+/// Design: docs/design/host/animation.md#one-animator
 @_spi(Host) @MainActor public final class Animator {
-    private var animations: [AnimationTarget: Animation] = [:]
+    private var animations: [AnimationTarget: RunningAnimation] = [:]
 
     /// A animator with no animation under way.
     public init() {}
@@ -101,15 +101,15 @@
     public var isMoving: Bool { !animations.isEmpty }
 
     /// The animation under way for `target`.
-    public func animation(for target: AnimationTarget) -> Animation? { animations[target] }
+    public func animation(for target: AnimationTarget) -> RunningAnimation? { animations[target] }
 
     /// Starts `animation` for `target`, in place of any animation it had.
-    public func start(_ animation: Animation, for target: AnimationTarget) { animations[target] = animation }
+    public func start(_ animation: RunningAnimation, for target: AnimationTarget) { animations[target] = animation }
 
     /// Ends `target`'s animation where it stands.
     public func halt(_ target: AnimationTarget) { animations[target] = nil }
 
-    /// Advances every animation to `now` in target order; with less motion, each one arrives.
+    /// Advances every animation to `now` in target order; with less animation, each one arrives.
     public func advance(to now: Double, reducesMotion: Bool = false) -> [AnimationStep] {
         var steps: [AnimationStep] = []
 

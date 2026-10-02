@@ -15,7 +15,7 @@ struct JourneyLanes<Value: Walked>: StateValue {
     var velocity: Value
 
     /// The law an animation runs under (`StateLaw`).
-    var motion: Motion
+    var animation: Animation
 
     /// The negative id a waiter is registered under, or nought for nobody.
     var completion: Double = 0
@@ -25,11 +25,11 @@ struct JourneyLanes<Value: Walked>: StateValue {
     var stopped: Double = 0
 
     /// A value standing still where it says, under the element's law unless said.
-    init(_ value: Value, motion: Motion = .inherited) {
+    init(_ value: Value, animation: Animation = .inherited) {
         self.value = value
         self.destination = value
         self.velocity = JourneyLanes.still
-        self.motion = motion
+        self.animation = animation
     }
 
     /// A value of this type at nought - a speed before anything moved.
@@ -48,7 +48,7 @@ struct JourneyLanes<Value: Walked>: StateValue {
             JourneyLanes.numbers(of: value)
                 + JourneyLanes.numbers(of: destination)
                 + JourneyLanes.numbers(of: velocity)
-                + StateLaw.lanes(of: motion)
+                + StateLaw.lanes(of: animation)
                 + [completion, stopped])
     }
 
@@ -68,7 +68,7 @@ struct JourneyLanes<Value: Walked>: StateValue {
         self.value = value
         self.destination = destination
         self.velocity = velocity
-        self.motion = StateLaw.motion(of: Array(lanes[(width * 3)..<(width * 3 + StateLaw.lanes)]))
+        self.animation = StateLaw.animation(of: Array(lanes[(width * 3)..<(width * 3 + StateLaw.lanes)]))
         self.completion = lanes[width * 3 + StateLaw.lanes]
         self.stopped = lanes[width * 3 + StateLaw.lanes + 1]
     }
@@ -77,7 +77,7 @@ struct JourneyLanes<Value: Walked>: StateValue {
     static var lanes: Int { Value.lanes * 3 + StateLaw.lanes + 2 }
 
     /// Whatever the value it carries is in - an animated colour is a colour.
-    static var moving: MotionValues { Value.moving }
+    static var moving: AnimationValues { Value.moving }
 
     /// The numbers a value lies as - an animated value's lanes.
     private static func numbers(of value: Value) -> [Double] {
@@ -97,7 +97,7 @@ struct JourneyLanes<Value: Walked>: StateValue {
         case .value: range = 0..<width
         case .destination: range = width..<(width * 2)
         case .velocity: range = (width * 2)..<(width * 3)
-        case .motion: range = (width * 3)..<(width * 3 + StateLaw.lanes)
+        case .animation: range = (width * 3)..<(width * 3 + StateLaw.lanes)
         case .completion: range = (width * 3 + StateLaw.lanes)..<(width * 3 + StateLaw.lanes + 1)
         case .stopped: range = (width * 3 + StateLaw.lanes + 1)..<(width * 3 + StateLaw.lanes + 2)
         }
@@ -111,7 +111,7 @@ enum JourneyPart {
     case value
     case destination
     case velocity
-    case motion
+    case animation
     case completion
     case stopped
 }

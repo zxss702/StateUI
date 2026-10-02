@@ -44,7 +44,7 @@ final class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeas
     }
 
     private func measuredContentSize(width: CGFloat?) -> NSSize {
-        NSSize(ZStackArithmetic.size(of: items, padding: Insets(padding), width: width.map(Double.init)))
+        NSSize(ZStackArithmetic.size(of: items, padding: EdgeInsets(padding), width: width.map(Double.init)))
     }
 
     override func layout() {
@@ -58,7 +58,7 @@ final class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeas
         beginArrangement()
         for item in items { drawUnplaced(item) }
         let places = ZStackArithmetic.places(
-            of: items, in: bounds.placed, padding: Insets(padding), direction: direction)
+            of: items, in: bounds.placed, padding: EdgeInsets(padding), direction: direction)
         for (item, place) in zip(items, places) {
             if let place { self.place(item, at: NSRect(placed: place)) }
         }

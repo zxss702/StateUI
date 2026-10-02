@@ -12,9 +12,9 @@ struct SceneElement: Element {
     let record: SceneRecord
 
     /// What the application says a scene is.
-    let scene: Scene
+    let scene: any Scene
 
-    var body: Node {
+    var node: Node {
         let authored = SceneElement.unwrapped(scene)
 
         var node = Node.composed(
@@ -34,7 +34,7 @@ struct SceneElement: Element {
 
     /// The scene's node: its main window first, then the windows it has open
     /// beside it, and the reports the host makes about them.
-    static func build(_ record: SceneRecord, _ scene: Scene) -> Node {
+    static func build(_ record: SceneRecord, _ scene: any Scene) -> Node {
         let windows = scene.windows
 
         var declared: [WindowType: GroupShape] = [:]
@@ -45,7 +45,7 @@ struct SceneElement: Element {
 
         record.declared = declared
 
-        var main = windows.main.body(session: record.windowSession(SceneElement.mainKey))
+        var main = windows.main.node(session: record.windowSession(SceneElement.mainKey))
         main.id = SceneElement.mainKey
 
         var children = [main]
@@ -56,15 +56,15 @@ struct SceneElement: Element {
                 continue
             }
 
-            var window = group.make(opened, record).body(session: record.windowSession(opened.key))
+            var window = group.make(opened, record).node(session: record.windowSession(opened.key))
             window.id = opened.key
 
             // Written either way, so none of them is ever cleared off a window.
             // Design: docs/design/core/scenes.md#opening-windows
-            window.write(WindowContract.windowType, opened.type)
-            window.describe(WindowContract.windowValue, opened.text)
-            window.write(WindowContract.hidesWhenInactive, group.hides)
-            window.write(WindowContract.floatsOnTop, group.floats)
+            window.write(WindowSceneContract.windowType, opened.type)
+            window.describe(WindowSceneContract.windowValue, opened.text)
+            window.write(WindowSceneContract.hidesWhenInactive, group.hides)
+            window.write(WindowSceneContract.floatsOnTop, group.floats)
 
             children.append(window)
         }
@@ -107,13 +107,13 @@ struct SceneElement: Element {
     static let mainKey = "main"
 
     /// The scene the application wrote, under whatever it offered it.
-    static func unwrapped(_ scene: Scene) -> Scene {
+    static func unwrapped(_ scene: any Scene) -> any Scene {
         (scene as? OfferingScene).map { unwrapped($0.base) } ?? scene
     }
 
     /// What `.environment(_:)` offered the scene, outermost first - so the one
     /// written last is nearest, the way it is on a view.
-    static func offered(by scene: Scene) -> [(key: ObjectIdentifier, object: AnyObject)] {
+    static func offered(by scene: any Scene) -> [(key: ObjectIdentifier, object: AnyObject)] {
         guard let offering = scene as? OfferingScene else { return [] }
 
         return offered(by: offering.base) + [(key: offering.key, object: offering.object)]

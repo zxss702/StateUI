@@ -14,7 +14,7 @@ final class AppKitGestureTests: XCTestCase {
     func testRemovingPointerEventsDetachesTheNativeRecognizer() throws {
         let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
         defer { renderer.closeForTesting() }
-        var box = HostPatch(id: .manual("box"), type: .colorBox)
+        var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.events = .replace([.pointerEntered: 20])
         renderer.applyForTesting(tree(box))
         let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("box")))
@@ -22,7 +22,7 @@ final class AppKitGestureTests: XCTestCase {
             native.gestureRecognizers.compactMap { $0 as? AppKitPointerRecognizer }.count,
             1)
 
-        var changed = HostPatch(id: .manual("box"), type: .colorBox)
+        var changed = HostPatch(id: .manual("box"), type: .colorPicker)
         changed.events = .replace([:])
         renderer.applyForTesting(changedTree(changed))
 
@@ -38,8 +38,8 @@ final class AppKitGestureTests: XCTestCase {
         let totals = Received<Double>()
         let renderer = AppKitRenderer.running {
             VStack {
-                ColorBox(.red).onPanUpdated(touchCount: 1) { totals.values.append($0.totalX) }
-                ColorBox(.blue).onPanUpdated(touchCount: 2) { totals.values.append($0.totalX) }
+                ColorPicker(.red).onPanUpdated(touchCount: 1) { totals.values.append($0.totalX) }
+                ColorPicker(.blue).onPanUpdated(touchCount: 2) { totals.values.append($0.totalX) }
             }
         }
         defer { renderer.closeForTesting() }
@@ -65,8 +65,8 @@ final class AppKitGestureTests: XCTestCase {
     func testAViewThatAnswersATapTakesTheFirstClick() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                HStack { Label("Fundamentals") }.onTapped {}
-                HStack { Label("Plain") }
+                HStack { Text("Fundamentals") }.onTapGesture {}
+                HStack { Text("Plain") }
             }
         }
         defer { renderer.closeForTesting() }

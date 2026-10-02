@@ -17,12 +17,12 @@ extension AppKitElement {
         if let label = view as? AppKitLabelView {
             label.apply(
                 attributedText: attributedLabelText(),
-                padding: insets(.padding),
-                horizontalAlignment: textAlignment(enumeration(.horizontalTextAlignment)),
+                padding: insets(.contentPadding),
+                horizontalAlignment: textAlignment(enumeration(.multilineTextAlignment)),
                 verticalAlignment: AppKitVerticalTextAlignment(
                     rawValue: enumeration(.verticalTextAlignment) ?? 0) ?? .start,
                 breaking: lineBreak,
-                maximumNumberOfLines: maximumLines())
+                maximumNumberOfLines: lineLimit())
             return
         }
 
@@ -74,7 +74,7 @@ extension AppKitElement {
         item.mount = mount
         item.placed = presentableNode
         if fadesIn {
-            item.fadeIn = { [weak self] motion in self?.fadeIn(under: motion) }
+            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
         }
         return item
     }

@@ -12,7 +12,7 @@
 ///     @Environment private var page: PageSession
 ///
 ///     VStack { … }
-///         .onCreated {
+///         .onAppear {
 ///             page.title = "Settings"
 ///         }
 ///
@@ -22,7 +22,7 @@
 /// the native host to choose its default. See `ApplicationSession` for what a
 /// session is.
 ///
-/// An arrangement - a `NavigationStack`, a `TabbedView`, a `SplitView` - is a
+/// An arrangement - a `NavigationStack`, a `TabView`, a `NavigationSplitView` - is a
 /// page already and has none: it is told what it is by modifier, from
 /// `PageElement`.
 public final class PageSession {
@@ -40,7 +40,7 @@ public final class PageSession {
     ///
     ///     page.icon = "house.png"
     ///
-    /// A tab's icon, in practice - a `TabbedView` draws it above or beside the
+    /// A tab's icon, in practice - a `TabView` draws it above or beside the
     /// caption. A page that is not shown as an item of something else has
     /// nowhere to draw it, and platforms ignore it there.
     @State public var icon: ImageSource? = nil
@@ -48,7 +48,7 @@ public final class PageSession {
     /// The space kept between the page's edge and its content.
     ///
     /// A page has no margin to go with it: nothing is outside a page.
-    @State public var padding: Insets? = nil
+    @State public var contentPadding: EdgeInsets? = nil
 
     /// What is drawn behind the page.
     ///
@@ -95,7 +95,7 @@ public final class PageSession {
     ///
     /// What the bar offers is what was written: a button whose caption follows
     /// the page's state is written again when that state moves -
-    /// `.onChanged(editing) { page.toolbarItems = … }`.
+    /// `.onChange(of: editing) { page.toolbarItems = … }`.
     @State public var toolbarItems: [ToolbarItem] = []
 
     /// The menus active while this page is showing on a host with a menu bar.
@@ -119,7 +119,7 @@ public final class PageSession {
 
         props.describe(PageElementContract.title, title)
         props.describe(PageElementContract.icon, icon)
-        props.describe(PageContract.padding, padding)
+        props.describe(PageContract.contentPadding, contentPadding)
         props.describe(PageContract.background, background)
         props.describe(PageContract.hasNavigationBar, hasNavigationBar)
         props.describe(PageContract.hasBackButton, hasBackButton)
@@ -133,17 +133,17 @@ public final class PageSession {
         var slots: [Node] = []
 
         if let titleView = titleView {
-            slots.append(Node(contract: TitleViewContract.self, children: [titleView.body]))
+            slots.append(Node(contract: TitleViewContract.self, children: [titleView.node]))
         }
 
         // One node per collection, a parent the host's list is matched against.
         // Design: docs/design/types/sessions.md#collections-hang-as-one-node
         if !toolbarItems.isEmpty {
-            slots.append(Node(contract: ToolbarItemsContract.self, children: toolbarItems.map { $0.body }))
+            slots.append(Node(contract: ToolbarItemsContract.self, children: toolbarItems.map { $0.node }))
         }
 
         if !menuBar.isEmpty {
-            slots.append(Node(contract: MenuBarContract.self, children: menuBar.map { $0.body }))
+            slots.append(Node(contract: MenuBarContract.self, children: menuBar.map { $0.node }))
         }
 
         return slots

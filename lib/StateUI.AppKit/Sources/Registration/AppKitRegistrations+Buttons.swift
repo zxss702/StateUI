@@ -27,7 +27,7 @@ extension AppKitRegistrations {
                 TextElementContract.text, TextElementContract.textCase, ButtonContract.icon,
                 ButtonContract.iconPosition,
                 ImageElementContract.aspect, ButtonContract.lineBreak,
-                TextStyleElementContract.textColor, VisualElementContract.background,
+                TextStyleElementContract.foregroundStyle, VisualElementContract.background,
                 BorderElementContract.shape, BorderElementContract.stroke,
                 BorderElementContract.strokeWidth, VisualElementContract.isEnabled,
                 FontElementContract.fontFamily, FontElementContract.fontSize,
@@ -45,7 +45,7 @@ extension AppKitRegistrations {
                     : Self.imagePosition(values[ButtonContract.iconPosition] ?? .leading)
                 let scaling: NSImageScaling = Self.imageScaling(
                     values[ImageElementContract.aspect] ?? .fit)
-                let textColor: NSColor = values[TextStyleElementContract.textColor]
+                let foregroundStyle: NSColor = values[TextStyleElementContract.foregroundStyle]
                     .flatMap { nsColor($0.propValue) } ?? .controlTextColor
                 let background: NSColor? = values[VisualElementContract.background]
                     .flatMap { nsColor($0.propValue) }
@@ -61,7 +61,7 @@ extension AppKitRegistrations {
                     imagePosition: position,
                     imageScaling: scaling,
                     font: Self.font(values),
-                    textColor: textColor,
+                    foregroundStyle: foregroundStyle,
                     backgroundColor: background,
                     strokeColor: strokeColor,
                     strokeWidth: strokeWidth,
@@ -90,7 +90,7 @@ extension AppKitRegistrations {
     /// `.fit` and `.fill` come out the same: a native button has no covering
     /// scale, which is what this host's declaration says about `aspect` on a
     /// button.
-    private static func imageScaling(_ aspect: Aspect) -> NSImageScaling {
+    private static func imageScaling(_ aspect: ContentMode) -> NSImageScaling {
         switch aspect {
         case .stretch: .scaleAxesIndependently
         case .center: .scaleNone

@@ -22,7 +22,7 @@ public final class TestRead {
             if (held != null) return held;
         }
         switch (what) {
-            case "padding":
+            case "contentPadding":
                 return view.getPaddingLeft() + "," + view.getPaddingTop() + ","
                         + view.getPaddingRight() + "," + view.getPaddingBottom();
             case "clipToOutline": return view.getClipToOutline() ? "1" : "0";

@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIGTK
 
-/// A ColorBox: a panel painting one colour, which takes the room its layout gives it and asks for none.
+/// A ColorPicker: a panel painting one colour, which takes the room its layout gives it and asks for none.
 @MainActor
 final class GTKColorBoxView: GTKPanelView {
     private var color: GdkRGBA?

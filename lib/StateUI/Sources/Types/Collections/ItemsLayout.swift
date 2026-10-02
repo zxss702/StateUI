@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/// How an `ItemsView` lays its items out: one under another, one beside
+/// How an `List` lays its items out: one under another, one beside
 /// another, or in columns as many as its width holds.
 ///
-///     ItemsView(photos, id: \.name) { PhotoTile($0) }
+///     List(photos, id: \.name) { PhotoTile($0) }
 ///         .itemsLayout(.grid(minimumItemWidth: 120, spacing: 8))
 ///
 /// An item is as tall as it measures in a list, as wide as it measures in a

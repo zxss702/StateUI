@@ -38,7 +38,7 @@
 /// an axis nothing constrains - inside a scroller - keep the answer bounded:
 /// placements that grow with the room grow the room, and the layout never
 /// settles.
-public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: ContentView {
+public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: View {
     /// One view being placed: its identity, its index and its item.
     private struct Slot {
         let identity: String
@@ -51,7 +51,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     /// Design: docs/design/views/composition.md#items-held-behind-a-class
     private let source: Source
 
-    private var travel = Motion.inherited
+    private var travel = Animation.inherited
 
     /// What is drawn over each placed view at its placement's `shade`, if any.
     private var mask: Element?
@@ -71,7 +71,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     public init(
         _ items: Items,
         id: KeyPath<Items.Element, Id>,
-        content: @escaping (Items.Element) -> Element
+        content: @escaping (Items.Element) -> any View
     ) {
         self.source = Source(items: items, path: id, view: content)
     }
@@ -83,7 +83,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     /// One placement a view, in order; a run shorter than the views leaves the
     /// rest where they were. `PlacedRun(placements)` puts the views there at
     /// once, which arithmetic re-run every frame wants, and
-    /// `PlacedRun(placements, motion:)` animates them there.
+    /// `PlacedRun(placements, animation:)` animates them there.
     ///
     /// - Parameter number: the run of placements.
     /// - Returns: the layout, placed by that state.
@@ -93,19 +93,19 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
         return copy
     }
 
-    /// How a run written with `motion: .inherited` animates the views to their
+    /// How a run written with `animation: .inherited` animates the views to their
     /// new places - their turn and fade with them. A run that states its own
-    /// motion is unmoved by it.
+    /// animation is unmoved by it.
     ///
     ///     PlacedLayout(cards, id: \.self) { … }
     ///         .placement($run)
-    ///         .motion(.eased(300, .cubicOut))
+    ///         .animation(.eased(300, .cubicOut))
     ///
-    /// - Parameter motion: how a run written `.inherited` animates.
+    /// - Parameter animation: how a run written `.inherited` animates.
     /// - Returns: the layout, moving that way.
-    public func motion(_ motion: Motion) -> PlacedLayout {
+    public func animation(_ animation: Animation) -> PlacedLayout {
         var copy = self
-        copy.travel = motion
+        copy.travel = animation
         return copy
     }
 
@@ -114,7 +114,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     ///
     ///     PlacedLayout(cards, id: \.name) { face($0) }
     ///         .placement($run)
-    ///         .shade(ColorBox(.black).cornerRadius(14))
+    ///         .shade(ColorPicker(.black).cornerRadius(14))
     ///
     /// Give it the corners the views have. Where views overlap, a shade darkens
     /// a far view without showing the one behind it, as fading it would.
@@ -128,7 +128,9 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     }
 
     /// The views, each wrapped for the host to place from the run.
-    public var content: any View {
+        public var body: some View { AnyView(content) }
+
+        private var content: any View {
         let held = source
 
         let slots = held.items.enumerated().map { offset, item in
@@ -147,7 +149,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
                 PlacedLayout.wrapped(build(slot.item), under: over)
             }
         }
-        .motion(travel)
+        .animation(travel)
 
         guard let number = run else {
             // With no placement state the views lie over one another: said out
@@ -170,13 +172,13 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
         let path: KeyPath<Items.Element, Id>
 
         /// The view for one item.
-        let view: (Items.Element) -> Element
+        let view: (Items.Element) -> any View
 
         /// What the initializer was handed.
         init(
             items: Items,
             path: KeyPath<Items.Element, Id>,
-            view: @escaping (Items.Element) -> Element
+            view: @escaping (Items.Element) -> any View
         ) {
             self.items = items
             self.path = path
@@ -188,12 +190,12 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: Content
     /// the author's own properties on the view are never overwritten; a shade
     /// is the container's second child.
     /// Design: docs/design/views/measured-layouts.md#placed-layout
-    private static func wrapped(_ view: Element, under mask: Element?) -> Element {
-        guard let mask else { return Grid { view } }
+    private static func wrapped(_ view: any View, under mask: Element?) -> any View {
+        guard let mask else { return Grid { AnyView(view) } }
 
         return Grid {
-            view
-            ModifiedContent(node: mask.body)
+            AnyView(view)
+            ModifiedContent(node: mask.node)
         }
     }
 }

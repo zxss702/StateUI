@@ -9,7 +9,7 @@
 ///
 /// Phones and tablets have such strips, and a desktop window may have one
 /// under its toolbar; where a platform has none, this does nothing. A layout
-/// defaults to `.container` - see `avoidsSafeArea`.
+/// defaults to `.container` - see `ignoresSafeArea`.
 public enum SafeArea: Int32, Sendable {
     /// Edge to edge: content may run under the notch, the bars and the
     /// keyboard.

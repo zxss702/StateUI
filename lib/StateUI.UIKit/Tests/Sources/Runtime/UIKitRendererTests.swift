@@ -9,18 +9,18 @@ import UIKit
 import XCTest
 
 /// A page that counts clicks and greets whoever types a name.
-private struct Greeting: ContentView {
+private struct Greeting: View {
     @Environment private var page: PageSession
     @State private var count = 0
     @State private var name = ""
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(name.isEmpty ? "Hello" : "Hello, \(name)")
+            Text(name.isEmpty ? "Hello" : "Hello, \(name)")
             TextField($name).maximumLength(5)
             Button("Clicked \(count)").onClicked { count += 1 }
         }
-        .onCreated { page.title = "Greeting" }
+        .onAppear { page.title = "Greeting" }
     }
 }
 
@@ -41,7 +41,7 @@ final class UIKitRendererTests: XCTestCase {
         host.settle { TestScene.scene?.title == "Greeting" }
 
         let window = try XCTUnwrap(host.roster.windows.first?.1.window)
-        XCTAssertTrue(window.windowScene === TestScene.scene)
+        XCTAssertTrue(window.window === TestScene.scene)
         XCTAssertFalse(window.isHidden)
         XCTAssertEqual(TestScene.scene?.title, "Greeting")
     }
@@ -53,7 +53,7 @@ final class UIKitRendererTests: XCTestCase {
         let window = try XCTUnwrap(host.roster.windows.first?.1.window)
         host.finish()
 
-        XCTAssertNil(window.windowScene)
+        XCTAssertNil(window.window)
         XCTAssertTrue(window.isHidden)
         XCTAssertNotEqual(TestScene.scene?.activationState, .unattached, "the scene stays connected")
     }
@@ -70,7 +70,7 @@ final class UIKitRendererTests: XCTestCase {
         host.runtime.userClosed(element)
         host.settle { false }
 
-        XCTAssertNil(controller.window?.windowScene, "the window left the scene")
+        XCTAssertNil(controller.window?.window, "the window left the scene")
         XCTAssertTrue(UIApplication.shared.openSessions.contains(session), "the scene's session stays open")
         XCTAssertNotEqual(TestScene.scene?.activationState, .unattached, "the scene stays connected")
     }
@@ -91,7 +91,7 @@ final class UIKitRendererTests: XCTestCase {
         XCTAssertEqual(host.roster.windows.count, 1, "the window the application launches with")
         host.connect(try XCTUnwrap(TestScene.scene))
 
-        XCTAssertTrue(host.roster.windows.first?.1.window?.windowScene === TestScene.scene)
+        XCTAssertTrue(host.roster.windows.first?.1.window?.window === TestScene.scene)
         XCTAssertEqual(logged.lines, [], "nothing asked of iOS")
     }
 

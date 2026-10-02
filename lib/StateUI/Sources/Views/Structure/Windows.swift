@@ -19,7 +19,7 @@ public struct Windows {
     let groups: [WindowGroup]
 
     /// The main window.
-    let main: Window
+    let main: WindowScene
 
     /// What `.environment(_:)` offered every window of the scene.
     var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
@@ -33,7 +33,7 @@ public struct Windows {
     ///     and swaps what the one window shows.
     public init(
         @WindowGroupBuilder _ groups: () -> [WindowGroup],
-        @WindowBuilder main: () -> Window
+        @WindowBuilder main: () -> WindowScene
     ) {
         self.groups = groups()
         self.main = main()
@@ -42,7 +42,7 @@ public struct Windows {
     /// A main window and nothing to open beside it.
     ///
     /// - Parameter main: the main window.
-    public init(@WindowBuilder main: () -> Window) {
+    public init(@WindowBuilder main: () -> WindowScene) {
         self.init({}, main: main)
     }
 
@@ -60,4 +60,11 @@ public struct Windows {
         copy.environments.append((key: ObjectIdentifier(Value.self), object: object))
         return copy
     }
+}
+
+/// A `Windows` value written where a scene is asked for: an app's `body` can
+/// be built straight from its windows.
+extension Windows: Scene {
+    /// The scene of these windows: this value itself.
+    public var windows: Windows { self }
 }

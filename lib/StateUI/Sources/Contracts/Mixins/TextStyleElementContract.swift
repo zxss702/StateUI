@@ -15,8 +15,8 @@ public enum TextStyleElementContract: Contract {
         "characterSpacing", layer: .native, moves: .text)
 
     /// The colour the text is drawn in.
-    public static let textColor = ElementProperty<Self, Color>("textColor", layer: .native)
+    public static let foregroundStyle = ElementProperty<Self, Color>("foregroundStyle", layer: .native)
 
     /// The tier's own members.
-    public static let members: [any ContractMember] = [characterSpacing, textColor]
+    public static let members: [any ContractMember] = [characterSpacing, foregroundStyle]
 }

@@ -27,7 +27,7 @@ final class UIKitZStackView: UIKitLayoutView {
     }
 
     /// The room inside the ZStack's own edge.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet {
             guard padding != oldValue else { return }
             forgetMeasurements()

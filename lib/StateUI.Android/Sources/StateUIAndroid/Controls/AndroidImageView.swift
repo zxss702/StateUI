@@ -12,7 +12,7 @@ final class AndroidImageView: AndroidView {
     private(set) var file = ""
 
     /// How the picture fills the view.
-    private var aspect: Aspect = .fit
+    private var aspect: ContentMode = .fit
 
     /// The picture's size in pixels, at the display's density; zero for none.
     private var pictureSize: (width: Int32, height: Int32) = (0, 0)
@@ -27,7 +27,7 @@ final class AndroidImageView: AndroidView {
 
     /// Shows the picture `source` names, filling its room as `aspect` says; it is read once the view's
     /// size is known.
-    func apply(source: ImageSource?, aspect: Aspect) {
+    func apply(source: ImageSource?, aspect: ContentMode) {
         let file = source?.file ?? ""
         if file != self.file {
             letGoOfPicture()
@@ -69,7 +69,7 @@ final class AndroidImageView: AndroidView {
     }
 
     /// Holds the picture at the fewest pixels a view `shown` big needs, reading it again only for more:
-    /// a size in motion does not read it every frame.
+    /// a size in animation does not read it every frame.
     /// Design: docs/design/platforms/android/drawing.md#pictures
     private func show(at shown: (width: Int32, height: Int32)) {
         guard !file.isEmpty, pictureSize.width > 0, shown.width > 0, shown.height > 0 else { return }
@@ -108,7 +108,7 @@ final class AndroidImageView: AndroidView {
     }
 
     /// Android's scaling for each of StateUI's four.
-    private static let scaleTypes: [Aspect: JavaObject] = [
+    private static let scaleTypes: [ContentMode: JavaObject] = [
         .fit: Java.staticObject(JavaAPI.scaleType, "FIT_CENTER", "Landroid/widget/ImageView$ScaleType;"),
         .fill: Java.staticObject(JavaAPI.scaleType, "CENTER_CROP", "Landroid/widget/ImageView$ScaleType;"),
         .stretch: Java.staticObject(JavaAPI.scaleType, "FIT_XY", "Landroid/widget/ImageView$ScaleType;"),

@@ -20,8 +20,8 @@
                 s.start {
                     VStack {
                         HStack {
-                            if both.wrappedValue { ColorBox(.red).width(30).height(20).id("first") }
-                            ColorBox(.blue).width(40).height(20)
+                            if both.wrappedValue { ColorPicker(.red).frame(width: 30).frame(height: 20).id("first") }
+                            ColorPicker(.blue).frame(width: 40).frame(height: 20)
                                 .onEvent(ViewContract.frameChanged) { second.values.append($0) }
                                 .id("second")
                         }

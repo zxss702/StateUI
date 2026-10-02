@@ -59,14 +59,14 @@ extension AppKitRegistrations {
             }
         }
 
-        registry.add(ColorBoxContract.self, create: { _ in AppKitColorBoxView() }) { box in
+        registry.add(ColorPickerContract.self, create: { _ in AppKitColorBoxView() }) { box in
             box.applies([
-                ColorBoxContract.color, ColorBoxContract.cornerRadius, VisualElementContract.background,
+                ColorPickerContract.color, ColorPickerContract.cornerRadius, VisualElementContract.background,
             ]) { view, values in
                 view.apply(
                     background: values[VisualElementContract.background].flatMap { nsColor($0.propValue) },
-                    fill: values[ColorBoxContract.color].flatMap { nsColor($0.propValue) },
-                    corners: values[ColorBoxContract.cornerRadius])
+                    fill: values[ColorPickerContract.color].flatMap { nsColor($0.propValue) },
+                    corners: values[ColorPickerContract.cornerRadius])
             }
         }
     }

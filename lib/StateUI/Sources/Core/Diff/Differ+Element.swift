@@ -274,6 +274,59 @@ extension Differ {
             readings.append(image.sample(into: into, every: asks.window, take: take))
         }
 
+        // A fragment - a `TupleView`, `Group`, `ForEach` or `EmptyView` - is
+        // transparent: it keeps no element of its own. What was written on it
+        // lands on each child, and its children stand in their parent's list as
+        // though written there; this node stays only to anchor the views above it.
+        if node.type == .fragment {
+            var grouped = node
+            grouped.children = node.children.flatMap(\.asChildren).map { child in
+                var child = child
+                child.props.merge(node.props) { _, wrote in wrote }
+                child.driven.merge(node.driven) { _, wrote in wrote }
+                child.animation = AnimationPlan.merged(child.animation, under: node.animation)
+
+                for (name, handler) in node.events.sorted(by: { $0.key < $1.key }) {
+                    child.addHandler(name, handler)
+                }
+
+                child.watches += node.watches
+                child.created += node.created
+                child.destroying += node.destroying
+                child.engines += node.engines
+                if child.session == nil { child.session = node.session }
+                if child.aim == nil { child.aim = node.aim }
+                return child
+            }
+
+            // What stood here was a plain element: nothing of it carries over.
+            if let rendered, rendered.type != .fragment {
+                forget(rendered)
+            }
+
+            var patch = HostPatch(id: id, type: .fragment)
+            let children = reconcileChildren(
+                of: rendered?.type == .fragment ? rendered : nil,
+                node: grouped, into: &patch, sizesArrive: sizesArrive)
+
+            let result = RenderedNode(
+                id: id,
+                type: .fragment,
+                props: [:],
+                events: [:],
+                key: key,
+                views: views,
+                placeholder: placeholder,
+                view: within?.view,
+                reads: reads,
+                builds: builds,
+                provided: Array(scope.suffix(pushed)),
+                seen: seen,
+                children: children)
+            result.session = session
+            return (result, patch)
+        }
+
         // The style is applied here, so a host receives every value already on the
         // control (Style.swift).
         node = styled(node, with: styles)
@@ -292,11 +345,11 @@ extension Differ {
             }
         }
 
-        // Themed values are picked here, which makes this element the theme's reader.
+        // Themed values are picked here, which makes this element the color scheme's reader.
         // Design: docs/design/core/identity-and-diffing.md#themes
         if node.props.values.contains(where: \.isThemed) {
             node.props = ReadScope.collect(into: &reads) {
-                node.props.mapValues { $0.isThemed ? $0.resolvingTheme() : $0 }
+                node.props.mapValues { $0.isThemed ? $0.resolvingColorScheme() : $0 }
             }
 
             if placeholder == nil {
@@ -332,32 +385,32 @@ extension Differ {
         patch.fresh = describeAll || previous == nil
 
         // How this element's values animate: its own plan, or the application's.
-        let plan = node.motion
-        let standing = motion
-        let travel = { (values: MotionValues) in
-            (plan?.motion(for: values) ?? .inherited).resolved(against: standing)
+        let plan = node.animation
+        let standing = animation
+        let travel = { (values: AnimationValues) in
+            (plan?.animation(for: values) ?? .inherited).resolved(against: standing)
         }
 
         // What values with no kind of their own animate at.
         let travels = travel(.all)
 
-        // An element that places children or answered `.motion(_:)` for itself says how
+        // An element that places children or answered `.animation(_:)` for itself says how
         // its children animate; `.inherited`, the default on both sides, is never said.
-        // Design: docs/design/core/identity-and-diffing.md#layout-motion
+        // Design: docs/design/core/identity-and-diffing.md#layout-animation
         if NodeType.saysMotion.contains(node.type)
             || plan?.base != nil {
-            let mine = node.type == .application
-                ? motion
-                : (plan?.motion(for: .place).map { $0.isInherited ? .inherited : $0 }
+            let mine = node.type == .app
+                ? animation
+                : (plan?.animation(for: .place).map { $0.isInherited ? .inherited : $0 }
                     ?? .inherited)
 
             // Inherited until told otherwise; the application says its own once.
-            let was: Motion? = node.type == .application
-                ? (describeAll ? nil : previous?.motion)
-                : (describeAll ? .inherited : (previous?.motion ?? .inherited))
+            let was: Animation? = node.type == .app
+                ? (describeAll ? nil : previous?.animation)
+                : (describeAll ? .inherited : (previous?.animation ?? .inherited))
 
             // Which parts of a child's place animate.
-            var lanes = MotionLanes.all
+            var lanes = AnimationLanes.all
 
             if travel(.place).isNothing { lanes.subtract(.place) }
             if travel(.width).isNothing { lanes.subtract(.width) }
@@ -366,10 +419,10 @@ extension Differ {
             // A measured layout's children take their sizes at once.
             if node.childSizesArrive { lanes.subtract([.width, .height]) }
 
-            let stood = describeAll ? MotionLanes.all : (previous?.lanes ?? .all)
+            let stood = describeAll ? AnimationLanes.all : (previous?.lanes ?? .all)
 
             if was != mine || stood != lanes {
-                patch.motion = HostLayoutMotion(motion: mine, lanes: lanes)
+                patch.animation = HostLayoutMotion(animation: mine, lanes: lanes)
             }
         }
 
@@ -391,7 +444,7 @@ extension Differ {
             }
         }
 
-        // `.onCreated` for an element that was not here.
+        // `.onAppear` for an element that was not here.
         // Design: docs/design/core/identity-and-diffing.md#created-and-destroying
         if previous == nil {
             fired.append(contentsOf: node.created)
@@ -424,7 +477,7 @@ extension Differ {
 
                 if moves.isNothing { continue }
 
-                patch.transitions[property] = HostTransition(motion: moves)
+                patch.transitions[property] = HostTransition(animation: moves)
             }
         }
 
@@ -500,8 +553,8 @@ extension Differ {
             type: node.type,
             props: node.props,
             events: events,
-            motion: patch.motion?.motion ?? previous?.motion ?? .inherited,
-            lanes: patch.motion?.lanes ?? previous?.lanes ?? .all,
+            animation: patch.animation?.animation ?? previous?.animation ?? .inherited,
+            lanes: patch.animation?.lanes ?? previous?.lanes ?? .all,
             key: key,
             views: views,
             placeholder: placeholder,
@@ -593,7 +646,7 @@ extension Differ {
     /// Design: docs/design/core/identity-and-diffing.md#what-the-parent-wrote
     private func sameWriting(_ node: Node, as kept: Node) -> Bool {
         guard node.props == kept.props,
-            node.motion == kept.motion,
+            node.animation == kept.animation,
             node.children.isEmpty, kept.children.isEmpty,
             node.engines.isEmpty, kept.engines.isEmpty,
             node.samples.isEmpty, kept.samples.isEmpty,
@@ -642,7 +695,7 @@ extension Differ {
             }
         }
 
-        // Its `.onDestroying`: its body's last ones, then the parent's, taken fresh.
+        // Its `.onDisappear`: its body's last ones, then the parent's, taken fresh.
         rendered.destroying =
             Array(rendered.destroying.dropLast(node.destroying.count)) + node.destroying
 

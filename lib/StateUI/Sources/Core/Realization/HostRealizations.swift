@@ -40,7 +40,7 @@ enum HostRealizations {
               !realization.members.contains(where: { $0.owner == owner && $0.member == event })
         else { return nil }
 
-        let raised = Set(realization.members.filter { $0.element == ApplicationContract.name }.map(\.member))
+        let raised = Set(realization.members.filter { $0.element == AppContract.name }.map(\.member))
 
         return "the host raises no `\(event)`" + nearMisses(event, among: raised) + ": the handler will not hear it."
     }

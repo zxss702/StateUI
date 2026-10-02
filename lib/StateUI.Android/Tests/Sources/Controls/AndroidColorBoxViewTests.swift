@@ -19,11 +19,11 @@ final class AndroidColorBoxViewTests: XCTestCase {
     func testABoxDrawsItsColourWithinItsCornersOverItsBackground() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                ColorBox(Color("#FF0000"))
+                ColorPicker(Color("#FF0000"))
                     .cornerRadius(topLeft: 0, topRight: 0, bottomLeft: 20, bottomRight: 0)
                     .background(Color("#00FF00"))
-                    .width(100)
-                    .height(100)
+                    .frame(width: 100)
+                    .frame(height: 100)
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
             }
@@ -41,11 +41,11 @@ final class AndroidColorBoxViewTests: XCTestCase {
     func testACornerRoundsNoMoreThanHalfTheSideItRounds() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                ColorBox(Color("#FF0000"))
+                ColorPicker(Color("#FF0000"))
                     .cornerRadius(100)
                     .background(Color("#00FF00"))
-                    .width(200)
-                    .height(40)
+                    .frame(width: 200)
+                    .frame(height: 40)
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
             }
@@ -62,7 +62,7 @@ final class AndroidColorBoxViewTests: XCTestCase {
         try onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
-                    ColorBox(.red).height(10).horizontalAlignment(.start)
+                    ColorPicker(.red).frame(height: 10).horizontalAlignment(.start)
                 }
             }
             host.layOut()

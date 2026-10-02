@@ -10,24 +10,23 @@ extension View {
     /// Runs when the view is tapped by the platform's native recognizer.
     ///
     ///     HStack { … }
-    ///         .onTapped { path.append(.details(id)) }
+    ///         .onTapGesture { path.append(.details(id)) }
     ///
     /// The whole view answers, not a button inside it.
-    public func onTapped(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.tapped, handler)
+    public func onTapGesture(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.tapGesture, handler)
     }
 
     /// The same, for a double tap or more: `count` taps in a row.
     ///
-    ///     Label("Reset").onTapped(count: 2) { taps = 0 }
-    public func onTapped(
+    ///     Text("Reset").onTapGesture(count: 2) { taps = 0 }
+    public func onTapGesture(
         count: Int,
         _ handler: @escaping EventHandler
-    ) -> Modified {
-        // One `modified`: chaining would return `Modified.Modified`.
-        modified {
+    ) -> ModifiedContent {
+        revised {
             $0.write(ViewContract.tapCount, count)
-            $0.addHandler(ViewContract.tapped.token, handler)
+            $0.addHandler(ViewContract.tapGesture.token, handler)
         }
     }
 
@@ -48,8 +47,8 @@ extension View {
         direction: SwipeDirection = .all,
         threshold: Double? = nil,
         _ handler: @escaping ValueEventHandler<SwipeDirection>
-    ) -> Modified {
-        modified {
+    ) -> ModifiedContent {
+        revised {
             $0.write(ViewContract.swipeDirection, direction)
             $0.describe(ViewContract.swipeThreshold, threshold)
             $0.addHandler(ViewContract.swiped.token) {
@@ -68,34 +67,32 @@ extension View {
     ///
     ///     @State private var turn = 0.0
     ///
-    ///     ColorBox(.transparent).panX($turn)
+    ///     ColorPicker(.transparent).panX($turn)
     ///
     /// The distance `onPanUpdated` reports, for an `.engine(following:)` to
     /// follow frame by frame. A drag moves the value on from where it stood, so
     /// a second drag carries on where the first left off.
     ///
     /// - Parameter value: the state the distance is written into.
-    /// - Returns: the view, reporting there.
-    public func panX(_ value: Binding<Double>) -> Modified {
-        driven(ViewContract.panXChannel.token, by: value)
+    public func panX(_ value: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveNumber(ViewContract.panXChannel.token, by: value) }
     }
 
     /// Writes how far the view has been dragged down into a state, with no view
     /// rebuilt as it moves; see `panX(_:)`.
     ///
-    ///     ColorBox(.transparent).panY($turn)
+    ///     ColorPicker(.transparent).panY($turn)
     ///
     /// - Parameter value: the state the distance is written into.
-    /// - Returns: the view, reporting there.
-    public func panY(_ value: Binding<Double>) -> Modified {
-        driven(ViewContract.panYChannel.token, by: value)
+    public func panY(_ value: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveNumber(ViewContract.panYChannel.token, by: value) }
     }
 
     /// Runs as the view is dragged, from the moment it starts until it is let
     /// go.
     ///
-    ///     ColorBox(.cornflowerBlue)
-    ///         .translationX(offsetX)
+    ///     ColorPicker(.cornflowerBlue)
+    ///         .offset(x: offsetX)
     ///         .onPanUpdated { pan in
     ///             if pan.phase == .running { offsetX = pan.totalX }
     ///         }
@@ -108,8 +105,8 @@ extension View {
     public func onPanUpdated(
         touchCount: Int? = nil,
         _ handler: @escaping ValueEventHandler<PanUpdate>
-    ) -> Modified {
-        modified {
+    ) -> ModifiedContent {
+        revised {
             $0.describe(ViewContract.panTouchCount, touchCount)
             $0.addHandler(ViewContract.panUpdated.token) {
                 if let (phase, totalX, totalY) = MemberValues.carried(
@@ -127,8 +124,8 @@ extension View {
     ///
     /// `scale` is relative - the change since the last report, not since the
     /// pinch began - so a view being pinched multiplies rather than assigns.
-    public func onPinchUpdated(_ handler: @escaping ValueEventHandler<PinchUpdate>) -> Modified {
-        onEvent(ViewContract.pinchUpdated) { phase, scale, origin in
+    public func onPinchUpdated(_ handler: @escaping ValueEventHandler<PinchUpdate>) -> ModifiedContent {
+        hearing(ViewContract.pinchUpdated) { phase, scale, origin in
             try await handler(PinchUpdate(phase: phase, scale: scale, scaleOrigin: origin))
         }
     }
@@ -139,20 +136,20 @@ extension View {
     ///
     /// A pointer is a mouse, a trackpad or a pen; on a touch-only device these
     /// never fire.
-    public func onPointerEntered(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.pointerEntered, handler)
+    public func onPointerEntered(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.pointerEntered, handler)
     }
 
     /// Runs when a pointer leaves the view - the other half of a hover.
-    public func onPointerExited(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.pointerExited, handler)
+    public func onPointerExited(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.pointerExited, handler)
     }
 
     /// Runs as the pointer moves over the view, with where it is in the view's
     /// own coordinates; a move the platform gives no position for does not run
     /// it.
-    public func onPointerMoved(_ handler: @escaping ValueEventHandler<Point>) -> Modified {
-        onEvent(ViewContract.pointerMoved) { point in
+    public func onPointerMoved(_ handler: @escaping ValueEventHandler<Point>) -> ModifiedContent {
+        hearing(ViewContract.pointerMoved) { point in
             if let point {
                 try await handler(point)
             }
@@ -161,8 +158,8 @@ extension View {
 
     /// Runs when a pointer button goes down over the view, with where it went
     /// down in the view's own coordinates.
-    public func onPointerPressed(_ handler: @escaping ValueEventHandler<Point>) -> Modified {
-        onEvent(ViewContract.pointerPressed) { point in
+    public func onPointerPressed(_ handler: @escaping ValueEventHandler<Point>) -> ModifiedContent {
+        hearing(ViewContract.pointerPressed) { point in
             if let point {
                 try await handler(point)
             }
@@ -170,8 +167,8 @@ extension View {
     }
 
     /// Runs when the pointer button comes back up, with where it came up.
-    public func onPointerReleased(_ handler: @escaping ValueEventHandler<Point>) -> Modified {
-        onEvent(ViewContract.pointerReleased) { point in
+    public func onPointerReleased(_ handler: @escaping ValueEventHandler<Point>) -> ModifiedContent {
+        hearing(ViewContract.pointerReleased) { point in
             if let point {
                 try await handler(point)
             }
@@ -182,7 +179,7 @@ extension View {
 
     /// Makes the view draggable, carrying `text` with it.
     ///
-    ///     Label(item)
+    ///     Text(item)
     ///         .draggable(text: item)
     ///
     /// Text is the portable drag payload. `onDragStarting` runs when the drag
@@ -192,8 +189,8 @@ extension View {
         text: String,
         canDrag: Bool = true,
         onDragStarting: EventHandler? = nil
-    ) -> Modified {
-        modified {
+    ) -> ModifiedContent {
+        revised {
             $0.write(ViewContract.dragText, text)
             $0.write(ViewContract.canDrag, canDrag)
 
@@ -204,16 +201,16 @@ extension View {
     }
 
     /// Runs when a drag that started here ends, wherever it ended.
-    public func onDropCompleted(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.dropCompleted, handler)
+    public func onDropCompleted(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.dropCompleted, handler)
     }
 
     /// Accepts what is dropped on the view, with the text it carried.
     ///
     ///     VStack { … }
     ///         .onDrop { text in items.append(text) }
-    public func onDrop(_ handler: @escaping ValueEventHandler<String>) -> Modified {
-        modified {
+    public func onDrop(_ handler: @escaping ValueEventHandler<String>) -> ModifiedContent {
+        revised {
             $0.write(ViewContract.allowDrop, true)
             $0.addHandler(ViewContract.drop.token) {
                 if let text = MemberValues.carried(
@@ -225,13 +222,13 @@ extension View {
     }
 
     /// Runs while a drag is over the view, before it is let go.
-    public func onDragOver(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.dragOver, handler)
+    public func onDragOver(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.dragOver, handler)
     }
 
     /// Runs when a drag leaves the view without being let go - the mirror of
     /// `onDragOver`, and where a highlight put up there is taken down.
-    public func onDragLeave(_ handler: @escaping EventHandler) -> Modified {
-        onEvent(ViewContract.dragLeave, handler)
+    public func onDragLeave(_ handler: @escaping EventHandler) -> ModifiedContent {
+        hearing(ViewContract.dragLeave, handler)
     }
 }

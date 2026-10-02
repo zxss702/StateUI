@@ -6,7 +6,7 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A SplitView: UIKit's own split view controller, its sidebar the first column and its detail the second - a page
+/// A NavigationSplitView: UIKit's own split view controller, its sidebar the first column and its detail the second - a page
 /// standing alone in a column gets the column's own bar. In a narrow room, as on a phone, the sidebar slides over the
 /// detail; in a wide one it stands beside it. The sidebar showing or hiding on screen is told, whoever moved it.
 /// Design: docs/design/platforms/uikit/pages.md#a-split-view
@@ -72,7 +72,7 @@ final class UIKitSplitViewController: UISplitViewController, UISplitViewControll
 
     /// The room's width class: the split view's own always says wide.
     private var roomIsNarrow: Bool? {
-        guard let room = parent?.traitCollection ?? view.window?.windowScene?.traitCollection,
+        guard let room = parent?.traitCollection ?? view.window?.window?.traitCollection,
               room.horizontalSizeClass != .unspecified
         else { return nil }
         return room.horizontalSizeClass == .compact

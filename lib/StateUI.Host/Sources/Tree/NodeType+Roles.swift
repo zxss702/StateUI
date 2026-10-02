@@ -7,12 +7,12 @@
 /// Design: docs/design/host/tree.md#the-native-half
 @_spi(Host) extension NodeType {
     /// The arrangements of pages a window shows: a page, a stack of them, tabs, a split view.
-    public static let pageTypes: Set<NodeType> = [.page, .navigationStack, .tabbedView, .splitView]
+    public static let pageTypes: Set<NodeType> = [.page, .navigationStack, .tabView, .navigationSplitView]
 
     /// The entries that have no view of their own: structure, and the parts of another's view.
     public static let viewlessTypes: Set<NodeType> = [
-        .application, .scene, .window, .modalStack, .titleBar, .content, .leadingContent, .trailingContent,
-        .titleView, .toolbarItems, .toolbarItem, .menuBar, .contextMenu, .menu, .menuItem, .menuSeparator, .spans,
+        .app, .scene, .windowScene, .modalStack, .titleBar, .content, .leadingContent, .trailingContent,
+        .titleView, .toolbarItems, .toolbarItem, .menuBar, .contextMenu, .menu, .menuItem, .divider, .spans,
         .span,
     ]
 

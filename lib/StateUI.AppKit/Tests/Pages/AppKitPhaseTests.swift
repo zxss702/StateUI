@@ -34,30 +34,38 @@ private final class PhaseStack {
 }
 
 /// A page that writes down every phase it sees.
-private struct PhasePage: ContentView {
+private struct PhasePage: View {
     @Environment private var page: PageSession
     let stack: PhaseStack
 
-    var content: any View {
-        Label("pushed").onChanged(page.phase) { stack.seen.append(page.phase) }
+    var body: some View {
+        Text("pushed").onChange(of: page.phase) { stack.seen.append(page.phase) }
     }
 }
 
-private struct PhaseWindow: Window {
+private struct PhaseWindow: WindowScene {
     let stack: PhaseStack
 
     var page: any Page {
         NavigationStack(stack.$path) {
-            Label("root")
+            Text("root")
         } destination: { _ in
             PhasePage(stack: stack)
         }
     }
 }
 
-private struct PhaseApp: Application {
+private struct PhaseApp: App {
     let stack: PhaseStack
 
-    var scene: any Scene { PhaseWindow(stack: stack) }
+    init() {
+        stack = PhaseStack()
+    }
+
+    init(stack: PhaseStack) {
+        self.stack = stack
+    }
+
+    var body: some Scene { PhaseWindow(stack: stack) }
 }
 #endif

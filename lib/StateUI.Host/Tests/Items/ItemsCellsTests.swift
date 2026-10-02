@@ -12,24 +12,24 @@ private enum Heard {
     nonisolated(unsafe) static var opened: [Int] = []
 }
 
-private struct ListApplication: Application {
-    var scene: any Scene { ListWindow() }
+private struct ListApplication: App {
+    var body: some Scene { ListWindow() }
 }
 
-private struct ListWindow: Window {
+private struct ListWindow: WindowScene {
     var page: any Page { ListPage() }
 }
 
 /// A hundred numbered items, one chosen at a time, more asked for near the end.
-private struct ListPage: ContentView {
+private struct ListPage: View {
     @State private var chosen: Int?
 
-    var content: any View {
-        ItemsView(0..<100) { Label("\($0)") }
+    var body: some View {
+        List(0..<100) { Text("\($0)") }
             .selection($chosen)
             .onItemActivated { Heard.opened.append($0) }
             .onEndReached(within: 5) { Heard.ends += 1 }
-            .onChanged(chosen) { Heard.chosen.append(chosen) }
+            .onChange(of: chosen) { Heard.chosen.append(chosen) }
     }
 }
 
@@ -65,7 +65,7 @@ final class ItemsCellsTests: XCTestCase {
         runtime = HostRuntime.still()
         runtime.core.connectScene()
         runtime.pump.turn()
-        let list = try XCTUnwrap(runtime.tree.root?.first(type: .itemsView))
+        let list = try XCTUnwrap(runtime.tree.root?.first(type: .list))
         cells = ItemsCells(list, in: runtime)
         cells.takeEntries()
     }
@@ -84,7 +84,7 @@ final class ItemsCellsTests: XCTestCase {
         let cell = Cell()
         cells.hold("42", in: cell)
         let item = try XCTUnwrap(cell.shown, "built while the cell waits")
-        XCTAssertEqual(item.type, .label)
+        XCTAssertEqual(item.type, .text)
         XCTAssertEqual(item.value(.text), .string("42"))
         XCTAssertNotNil(cells.item("34"))
         XCTAssertNotNil(cells.item("50"))

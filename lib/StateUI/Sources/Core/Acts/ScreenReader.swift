@@ -18,6 +18,6 @@ public enum ScreenReader {
     ///
     /// - Parameter text: what to say, in the user's own language.
     public static nonisolated(nonsending) func announce(_ text: String) async throws {
-        try await stateUICall(ApplicationContract.announce, text)
+        try await stateUICall(AppContract.announce, text)
     }
 }

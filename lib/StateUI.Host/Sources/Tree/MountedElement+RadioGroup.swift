@@ -15,7 +15,7 @@ extension MountedElement {
         var scope = self
         while let ancestor = scope.parent {
             scope = ancestor
-            if scope.type == .window { break }
+            if scope.type == .windowScene { break }
         }
         return scope.radioButtons(named: group).filter { $0 !== self }
     }

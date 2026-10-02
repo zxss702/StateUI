@@ -69,7 +69,7 @@ extension WinUIRenderer {
     /// is given.
     static func running(
         clock: TestClock? = nil, reducesMotion: Bool = false, room: LayoutSize = WinUITestHost.room,
-        application: @escaping @Sendable () -> any Application
+        application: @escaping @Sendable () -> any App
     ) -> WinUIRenderer {
         stateUIUseApp(application())
         let renderer = replacing(clock: clock, reducesMotion: reducesMotion)

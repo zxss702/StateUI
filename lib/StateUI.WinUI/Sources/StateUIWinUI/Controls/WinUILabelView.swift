@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIWinUI
 
-/// A Label: a `TextBlock` - its words, or runs of them each in its own colour, size, weight, family, letter spacing
+/// A Text: a `TextBlock` - its words, or runs of them each in its own colour, size, weight, family, letter spacing
 /// and background - standing in a `Border`, which draws what the label is drawn over and stands the words across its
 /// height.
 /// Design: docs/design/platforms/winui/controls.md#runs-of-words

@@ -16,13 +16,13 @@ final class AppKitConformanceTests: XCTestCase {
     @MainActor func testButton() { conform(ButtonTests.self) }
     @MainActor func testCanvas() { conform(CanvasTests.self) }
     @MainActor func testCheckBox() { conform(CheckBoxTests.self) }
-    @MainActor func testColorBox() { conform(ColorBoxTests.self) }
+    @MainActor func testColorPicker() { conform(ColorPickerTests.self) }
     @MainActor func testDatePicker() { conform(DatePickerTests.self) }
     @MainActor func testEllipse() { conform(EllipseTests.self) }
     @MainActor func testGrid() { conform(GridTests.self) }
     @MainActor func testHStack() { conform(HStackTests.self) }
     @MainActor func testImage() { conform(ImageTests.self) }
-    @MainActor func testLabel() { conform(LabelTests.self) }
+    @MainActor func testText() { conform(TextTests.self) }
     @MainActor func testLine() { conform(LineTests.self) }
     @MainActor func testMap() { conform(MapTests.self) }
     @MainActor func testPath() { conform(PathTests.self) }
@@ -34,7 +34,7 @@ final class AppKitConformanceTests: XCTestCase {
     @MainActor func testRadioButton() { conform(RadioButtonTests.self) }
     @MainActor func testRectangle() { conform(RectangleTests.self) }
     @MainActor func testScrollView() { conform(ScrollViewTests.self) }
-    @MainActor func testItemsView() { conform(ItemsViewTests.self) }
+    @MainActor func testList() { conform(ListTests.self) }
     @MainActor func testSearchField() { conform(SearchFieldTests.self) }
     @MainActor func testSlider() { conform(SliderTests.self) }
     @MainActor func testStepper() { conform(StepperTests.self) }
@@ -62,8 +62,8 @@ final class AppKitConformanceTests: XCTestCase {
     @MainActor func testScene() { conform(SceneTests.self) }
     @MainActor func testSpan() { conform(SpanTests.self) }
     @MainActor func testSpans() { conform(SpansTests.self) }
-    @MainActor func testSplitView() { conform(SplitViewTests.self) }
-    @MainActor func testTabbedView() { conform(TabbedViewTests.self) }
+    @MainActor func testNavigationSplitView() { conform(NavigationSplitViewTests.self) }
+    @MainActor func testTabView() { conform(TabViewTests.self) }
     @MainActor func testTitleView() { conform(TitleViewTests.self) }
     @MainActor func testToolbarItem() { conform(ToolbarItemTests.self) }
     @MainActor func testToolbarItems() { conform(ToolbarItemsTests.self) }

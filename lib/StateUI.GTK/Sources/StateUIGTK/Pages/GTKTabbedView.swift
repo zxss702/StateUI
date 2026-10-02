@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIGTK
 
-/// A TabbedView: a `GtkStack` of its tabs, chosen by a `GtkStackSwitcher` - its tabs' captions joined in one
+/// A TabView: a `GtkStack` of its tabs, chosen by a `GtkStackSwitcher` - its tabs' captions joined in one
 /// control - which stands beneath the header bar of the frame the tabbed view stands in.
 /// Design: docs/design/platforms/gtk/pages.md#tabs
 @MainActor

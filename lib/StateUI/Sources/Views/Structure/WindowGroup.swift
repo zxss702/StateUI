@@ -26,7 +26,7 @@ public struct WindowGroup {
     let valueType: Any.Type?
 
     /// The window for one that is open, in the scene that has it open.
-    let make: (_ opened: OpenedWindow, _ record: SceneRecord) -> Window
+    let make: (_ opened: OpenedWindow, _ record: SceneRecord) -> WindowScene
 
     /// A value read back from its text: what a restored window is opened for.
     let restore: (_ text: String) -> AnyHashable?
@@ -44,7 +44,7 @@ public struct WindowGroup {
     /// - Parameters:
     ///   - type: what a session's `openWindow` opens it by.
     ///   - window: the window.
-    public init(_ type: WindowType, @WindowBuilder window: @escaping () -> Window) {
+    public init(_ type: WindowType, @WindowBuilder window: @escaping () -> WindowScene) {
         self.type = type
         valueType = nil
         make = { _, _ in window() }
@@ -68,7 +68,7 @@ public struct WindowGroup {
     public init<Value: Codable & Hashable & SendableMetatype>(
         _ type: WindowType,
         for value: Value.Type,
-        @WindowBuilder window: @escaping (Binding<Value>) -> Window
+        @WindowBuilder window: @escaping (Binding<Value>) -> WindowScene
     ) {
         self.type = type
         valueType = Value.self

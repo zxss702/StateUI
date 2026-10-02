@@ -18,7 +18,7 @@
     /// The room a stack's shown children take, each measured once for the width offered.
     @MainActor
     public static func size<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: Insets, width offered: Double?
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, width offered: Double?
     ) -> LayoutSize {
         let visible = items.filter(\.isShown)
         let gaps = spacing * Double(max(visible.count - 1, 0))
@@ -55,7 +55,7 @@
     /// are turned about the middle of `bounds`.
     @MainActor
     public static func places<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: Insets, in bounds: Rect,
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect,
         direction: LayoutDirection
     ) -> [Rect?] {
         leftToRight(of: items, axis: axis, spacing: spacing, padding: padding, in: bounds)
@@ -65,7 +65,7 @@
     /// The places as a layout written left to right has them.
     @MainActor
     private static func leftToRight<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: Insets, in bounds: Rect
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect
     ) -> [Rect?] {
         let content = bounds.inset(padding)
         var offset = axis == .vertical ? content.y : content.x
@@ -121,7 +121,7 @@ extension LayoutDirection {
 
 extension Rect {
     /// This rectangle with `insets` taken off each side, never below no room.
-    func inset(_ insets: Insets) -> Rect {
+    func inset(_ insets: EdgeInsets) -> Rect {
         Rect(
             x: x + insets.left,
             y: y + insets.top,

@@ -7,7 +7,7 @@
 
 /// A mutable piece of state, owned by whoever declares it.
 ///
-///     struct CounterPage: ContentView {
+///     struct CounterPage: View {
 ///         @State private var counter = 0
 ///         …
 ///     }
@@ -132,7 +132,7 @@ public final class State<Value>: @unchecked Sendable {
     /// Reads the value, recording the dependency exactly as the wrapper does.
     ///
     ///     let counter = State(0)          // at file scope
-    ///     Label("Count: \(counter.get())")
+    ///     Text("Count: \(counter.get())")
     ///
     /// For state held WITHOUT the wrapper - at file scope, where Swift allows
     /// no property wrapper at all. On `@State private var counter = 0` the
@@ -163,21 +163,21 @@ extension State where Value: Walked {
     /// State declared with its journey's law - how this value animates wherever it
     /// is shown, and who animates it.
     ///
-    ///     @State(motion: .spring()) private var lift = 1.0    // a spring, wherever it is shown
-    ///     @State(motion: .none) private var box = Rect.zero    // lands at once, wherever it is written
-    ///     @State(motion: .custom) private var ball = 0.0       // an engine of your own animates it
+    ///     @State(animation: .spring()) private var lift = 1.0    // a spring, wherever it is shown
+    ///     @State(animation: .none) private var box = Rect.zero    // lands at once, wherever it is written
+    ///     @State(animation: .custom) private var ball = 0.0       // an engine of your own animates it
     ///
-    /// The value's own law comes ahead of the element's `.motion(_:)`, the
+    /// The value's own law comes ahead of the element's `.animation(_:)`, the
     /// application's and the library's. It can be changed later through
-    /// `$x.journey.motion`, except `.custom`, which is settled here.
+    /// `$x.journey.animation`, except `.custom`, which is settled here.
     ///
     /// - Parameters:
     ///   - wrappedValue: what the state holds, and where the journey starts.
-    ///   - motion: the law the value animates under.
-    public convenience init(wrappedValue: @autoclosure @escaping () -> Value, motion: Motion) {
+    ///   - animation: the law the value animates under.
+    public convenience init(wrappedValue: @autoclosure @escaping () -> Value, animation: Animation) {
         self.init(making: wrappedValue)
 
-        storage.law = motion
+        storage.law = animation
     }
 }
 

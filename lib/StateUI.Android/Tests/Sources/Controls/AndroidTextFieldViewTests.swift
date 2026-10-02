@@ -10,7 +10,7 @@ import XCTest
 /// A greeting over a field, as HelloWorld's page has it.
 func greeting(name: State<String>, submitted: Received<Int> = Received(), maximumLength: Int = 40) -> any Page {
     VStack {
-        Label(name.wrappedValue.isEmpty ? "Hello!" : "Hello, \(name.wrappedValue)!")
+        Text(name.wrappedValue.isEmpty ? "Hello!" : "Hello, \(name.wrappedValue)!")
         TextField(name.projectedValue)
             .placeholder("Type your name")
             .maximumLength(maximumLength)
@@ -145,7 +145,7 @@ final class AndroidTextFieldViewTests: XCTestCase {
             let host = AndroidRenderer.running {
                 VStack {
                     TextField("")
-                    TextField("").returnKey(.next)
+                    TextField("").submitLabel(.next)
                     SearchField("")
                 }
             }
@@ -182,7 +182,7 @@ final class AndroidTextFieldViewTests: XCTestCase {
                 VStack {
                     TextEditor(draft.projectedValue).horizontalAlignment(.start)
                     TextEditor(draft.projectedValue).growsWithText(true).horizontalAlignment(.start)
-                    TextEditor(draft.projectedValue).height(100).horizontalAlignment(.start)
+                    TextEditor(draft.projectedValue).frame(height: 100).horizontalAlignment(.start)
                 }
             }
             host.layOut()

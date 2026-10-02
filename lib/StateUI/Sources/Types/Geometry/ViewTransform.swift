@@ -16,7 +16,7 @@ import CRT
 /// How a view is moved, turned and sized: one transform about the view's
 /// centre, its parts applied in the order written.
 ///
-///     Card(item).transform(.rotate(45).scale(2).translate(100, 100))
+///     Card(item).transformEffect(.rotate(45).scale(2).translate(100, 100))
 ///
 /// Read it left to right: the card is turned 45 degrees, then doubled in size,
 /// then moved 100 along and 100 down, each part applying to what the parts
@@ -24,9 +24,9 @@ import CRT
 /// the right, while `.translate(100, 0).rotate(45)` swings the move round with
 /// the turn.
 ///
-/// A view wears it through `.transform(_:)` as five properties that animate
+/// A view wears it through `.transformEffect(_:)` as five properties that animate
 /// like any other - `translationX`, `translationY`, `rotation`, `scaleX` and
-/// `scaleY` - and its own `.scale(_:)` multiplies on top. A `Path` takes it
+/// `scaleY` - and its own `.scaleEffect(_:)` multiplies on top. A `Path` takes it
 /// through `.renderTransform(_:)`, where the whole matrix draws. A view cannot
 /// show a shear: after a turn, a sizing along one axis
 /// (`.rotate(45).scaleX(2)`) keeps the turn, the move and both sizes, and
@@ -197,7 +197,7 @@ public struct ViewTransform: Equatable, Sendable {
     /// Turns the view away about its vertical axis, in degrees - the side
     /// swinging back, which is what puts a gallery's cards on a wheel.
     ///
-    ///     .transform(.turn(-40).scale(0.86))
+    ///     .transformEffect(.turn(-40).scale(0.86))
     ///
     /// Drawn flat, as a rectangle `cos(angle)` as wide, so it is the same
     /// picture on every platform; `.rotationY` is a three-dimensional turn each

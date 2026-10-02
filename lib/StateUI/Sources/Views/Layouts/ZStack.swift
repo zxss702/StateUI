@@ -4,16 +4,16 @@
 /// Lays its children one over another, each in the whole room or in the area it names.
 ///
 ///     ZStack {
-///         ColorBox(.cornflowerBlue)
+///         ColorPicker(.cornflowerBlue)
 ///
-///         Label("Bottom right")
+///         Text("Bottom right")
 ///             .horizontalAlignment(.end)
 ///             .verticalAlignment(.end)
 ///
-///         Label("Right half")
+///         Text("Right half")
 ///             .area(.proportional(0.5, 0, 0.5, 1))
 ///     }
-///     .height(160)
+///     .frame(height: 160)
 ///
 /// A child stands in its area by its own `horizontalAlignment` and
 /// `verticalAlignment`, as in any layout, and fills it unless it says
@@ -29,8 +29,8 @@ public struct ZStack: Layout {
     }
 
     /// A stack of the layers the closure describes, the first at the back.
-    public init(@ViewBuilder content: @escaping () -> [Element]) {
+    public init(@ViewBuilder content: @escaping () -> any View) {
         node = Node(contract: ZStackContract.self)
-        node.producer = { content().map { $0.body } }
+        node.producer = { content().node.asChildren }
     }
 }

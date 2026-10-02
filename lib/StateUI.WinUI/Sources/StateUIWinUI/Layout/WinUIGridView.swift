@@ -25,7 +25,7 @@ final class WinUIGridView: WinUITravellingLayout {
     }
 
     /// The room inside the grid's own edge, in DIPs.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 

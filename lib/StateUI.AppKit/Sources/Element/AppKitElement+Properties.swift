@@ -27,7 +27,7 @@ extension AppKitElement {
         }
 
         switch type {
-        case .application, .scene, .window:
+        case .app, .scene, .windowScene:
             return nil
 
         case .page:
@@ -38,19 +38,19 @@ extension AppKitElement {
         case .modalStack, .titleBar, .content, .leadingContent, .trailingContent,
              .titleView, .toolbarItems, .menuBar, .contextMenu,
              .menu, .menuItem,
-             .menuSeparator, .spans, .span:
+             .divider, .spans, .span:
             return nil
 
         case .navigationStack:
             return AppKitNavigationView()
 
-        case .tabbedView:
+        case .tabView:
             return AppKitTabbedView()
 
-        case .splitView:
+        case .navigationSplitView:
             return AppKitSplitView()
 
-        case .itemsView:
+        case .list:
             guard let host else { return nil }
             return AppKitItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false
@@ -72,7 +72,7 @@ extension AppKitElement {
             }
             return scroll
 
-        case .label:
+        case .text:
             return AppKitLabelView()
 
         case .toolbarItem:
@@ -116,7 +116,7 @@ extension AppKitElement {
 
             let foreground = value(.isDestructive)?.bool == true
                 ? NSColor.systemRed
-                : (color(.textColor) ?? .controlTextColor)
+                : (color(.foregroundStyle) ?? .controlTextColor)
             button.attributedTitle = NSAttributedString(
                 string: button.title,
                 attributes: [.font: buttonFont, .foregroundColor: foreground])
@@ -141,7 +141,7 @@ extension AppKitElement {
 
         if let layers = view as? AppKitZStackView {
             layers.placement = placement(.area)
-            layers.padding = insets(.padding)
+            layers.padding = insets(.contentPadding)
         }
 
         if let layout = view as? AppKitTravellingLayout {
@@ -185,7 +185,7 @@ extension AppKitElement {
             make: { view.heightAnchor.constraint(lessThanOrEqualToConstant: $0).stated })
 
         if let button = view as? NSButton,
-           let padding = value(.padding)?.numbers, padding.count >= 4 {
+           let padding = value(.contentPadding)?.numbers, padding.count >= 4 {
             let intrinsic = button.intrinsicContentSize
             buttonWidthConstraint = reconciledConstraint(
                 buttonWidthConstraint,
@@ -220,7 +220,7 @@ extension AppKitElement {
 
     /// Keeps the native constraint identity stable while a host channel moves
     /// its constant. Creating and tearing down the Auto Layout graph on every
-    /// display frame is both unnecessary work and visible as uneven motion.
+    /// display frame is both unnecessary work and visible as uneven animation.
     func reconciledConstraint(
         _ existing: NSLayoutConstraint?,
         value: CGFloat?,
@@ -280,8 +280,8 @@ extension AppKitElement {
     }
 
     /// The most lines a label's words stand on, by the host layer's rule; none for no bound.
-    func maximumLines() -> Int {
-        lineBreak.lines(maximum: whole(.maximumLines)) ?? 0
+    func lineLimit() -> Int {
+        lineBreak.lines(maximum: whole(.lineLimit)) ?? 0
     }
 
     func color(_ property: Prop) -> NSColor? {

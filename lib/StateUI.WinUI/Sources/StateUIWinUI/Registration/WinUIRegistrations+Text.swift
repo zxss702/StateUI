@@ -5,17 +5,17 @@
 @_spi(Host) import StateUIHost
 
 extension WinUIRegistrations {
-    /// A Label: a `TextBlock` in a `Border` - its words, how they break and stand across it and down it, the space
+    /// A Text: a `TextBlock` in a `Border` - its words, how they break and stand across it and down it, the space
     /// between the letters and the lines, and what it is drawn over.
     static func text(_ registry: Registry<WinUIView>) {
-        registry.add(LabelContract.self, create: { _ in WinUILabelView() }) { label in
+        registry.add(TextContract.self, create: { _ in WinUILabelView() }) { label in
             label.applies(TextMembers.members) { view, values in applyText(view, values) }
-            label.applies([LabelContract.lineBreak, LabelContract.maximumLines]) { view, values in
+            label.applies([TextContract.lineBreak, TextContract.lineLimit]) { view, values in
                 view.setLines(
-                    breaking: values[LabelContract.lineBreak] ?? .wordWrap,
-                    maximum: values[LabelContract.maximumLines])
+                    breaking: values[TextContract.lineBreak] ?? .wordWrap,
+                    maximum: values[TextContract.lineLimit])
             }
-            label.property(TextAlignmentElementContract.horizontalTextAlignment) { view, alignment in
+            label.property(TextAlignmentElementContract.multilineTextAlignment) { view, alignment in
                 view.setAlignment(horizontal: alignment ?? .start)
             }
             label.property(TextAlignmentElementContract.verticalTextAlignment) { view, alignment in
@@ -46,8 +46,8 @@ extension WinUIRegistrations {
             }
             view.setForeground(look.color)
         }
-        if values.changed(PaddingElementContract.padding) {
-            view.setPadding(values[PaddingElementContract.padding])
+        if values.changed(PaddingElementContract.contentPadding) {
+            view.setPadding(values[PaddingElementContract.contentPadding])
         }
     }
 }

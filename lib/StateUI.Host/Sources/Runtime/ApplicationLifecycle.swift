@@ -115,7 +115,7 @@
             let last = heard.firstIndex { $0.element === element }
             guard last.map({ heard[$0].event }) != event else { continue }
 
-            if last.map({ heard[$0].event }) == .stopped, element.type == .window {
+            if last.map({ heard[$0].event }) == .stopped, element.type == .windowScene {
                 resumed.append(Told(element: element, event: .resumed))
             }
             if event == .activated {

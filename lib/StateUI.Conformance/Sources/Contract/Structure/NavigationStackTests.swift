@@ -12,13 +12,13 @@
     public static var cases: [ConformanceCase] {
         [
             ConformanceCase("standsAloneShowingItsRoot", proves: [
-                Covered(NavigationStackContract.self), Covered(ViewContract.frameChanged, on: "Label"),
+                Covered(NavigationStackContract.self), Covered(ViewContract.frameChanged, on: "Text"),
             ]) { s in
                 let frames = Received<[Double]>()
                 s.start {
                     NavigationStack(State(wrappedValue: [Int]()).projectedValue) {
-                        Label("Root").onEvent(ViewContract.frameChanged) { frames.values.append($0) }
-                    } destination: { _ in Label("Pushed") }
+                        Text("Root").onEvent(ViewContract.frameChanged) { frames.values.append($0) }
+                    } destination: { _ in Text("Pushed") }
                 }
                 s.settle { Aspects.laidOut(frames) }
                 s.expect(Aspects.laidOut(frames), true, "its root laid out in the window")
@@ -32,13 +32,13 @@
                         PhasePage(title: "Root", log: Received())
                     } destination: { number in PhasePage(title: "Detail \(number)", log: Received()) }
                 }
-                let window = try s.element(ofType: WindowContract.nodeType)
-                try s.settle { try s.held(WindowContract.title, on: window) == "Root" }
-                s.expect(try s.held(WindowContract.title, on: window), "Root", "the root names the window")
+                let window = try s.element(ofType: WindowSceneContract.nodeType)
+                try s.settle { try s.held(WindowSceneContract.title, on: window) == "Root" }
+                s.expect(try s.held(WindowSceneContract.title, on: window), "Root", "the root names the window")
 
                 path.wrappedValue = [7]
-                try s.settle { try s.held(WindowContract.title, on: window) == "Detail 7" }
-                s.expect(try s.held(WindowContract.title, on: window), "Detail 7", "the pushed page names it")
+                try s.settle { try s.held(WindowSceneContract.title, on: window) == "Detail 7" }
+                s.expect(try s.held(WindowSceneContract.title, on: window), "Detail 7", "the pushed page names it")
             },
             ConformanceCase("theUsersWayBackIsHeardAndShortensThePath", proves: [
                 Covered(NavigationStackContract.popped),
@@ -46,8 +46,8 @@
                 let path = State(wrappedValue: [1, 2])
                 s.start {
                     NavigationStack(path.projectedValue) {
-                        Label("Root")
-                    } destination: { number in Label("Page \(number)") }
+                        Text("Root")
+                    } destination: { number in Text("Page \(number)") }
                 }
                 let stack = try s.element(ofType: NavigationStackContract.nodeType)
 

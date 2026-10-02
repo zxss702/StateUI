@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIGTK
 
-/// A cell of an ItemsView: a StateUI panel set as a list item's child, holding one entry's subtree placed by the
+/// A cell of an List: a StateUI panel set as a list item's child, holding one entry's subtree placed by the
 /// layer's arithmetic; GTK measures it, and it answers with the room its entry takes. Its margins are the room the
 /// host layer gives its entry (`ItemsPlacement`).
 /// Design: docs/design/platforms/gtk/items.md#a-cell

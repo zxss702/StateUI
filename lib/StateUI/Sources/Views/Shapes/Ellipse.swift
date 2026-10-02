@@ -5,8 +5,8 @@
 ///
 ///     Ellipse()
 ///         .fill(.tomato)
-///         .width(48)
-///         .height(48)
+///         .frame(width: 48)
+///         .frame(height: 48)
 ///
 /// An outline needs a `.stroke`, 1 unit wide unless `.strokeWidth` says
 /// otherwise.

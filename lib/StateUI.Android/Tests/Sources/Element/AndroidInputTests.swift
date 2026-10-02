@@ -22,7 +22,7 @@ final class AndroidInputTests: XCTestCase {
             let taps = Received<Int>()
             let host = AndroidRenderer.running {
                 VStack {
-                    ZStack { Label("card") }.onTapped { taps.values.append(1) }
+                    ZStack { Text("card") }.onTapGesture { taps.values.append(1) }
                 }
             }
             let card = try XCTUnwrap(host.views(AndroidZStackView.self).first)
@@ -46,12 +46,12 @@ final class AndroidInputTests: XCTestCase {
                 Grid {
                     Button("behind").onClicked {}
                     VStack {
-                        ZStack { Label("over") }.onTapped {}
+                        ZStack { Text("over") }.onTapGesture {}
                     }
-                    .ignoresInput(true)
+                    .allowsHitTesting(!true)
                 }
-                .width(200)
-                .height(100)
+                .frame(width: 200)
+                .frame(height: 100)
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
             }

@@ -10,7 +10,7 @@ import XCTest
 /// These guards read the layer and every Swift host's sources as text.
 final class RuntimeArchitectureTests: XCTestCase {
     /// One animator animates every value: no other file of a runtime samples a
-    /// motion law, so a state channel and a described property cannot animate
+    /// animation law, so a state channel and a described property cannot animate
     /// the same kind of value two ways.
     func testOnlyTheAnimatorSamplesALaw() throws {
         var found: [String] = []

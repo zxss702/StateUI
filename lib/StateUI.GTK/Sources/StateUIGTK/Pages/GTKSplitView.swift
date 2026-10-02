@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIGTK
 
-/// A SplitView: libadwaita's `AdwOverlaySplitView` - the sidebar beside the detail where the window is wide, over
+/// A NavigationSplitView: libadwaita's `AdwOverlaySplitView` - the sidebar beside the detail where the window is wide, over
 /// it where it is narrow - each pane a page in a frame with its own header bar, or an arrangement carrying its own.
 /// Whether the sidebar shows is StateUI's binding, which the detail's toggle changes and which follows what GTK
 /// shows. A window wide enough for both panes opens with the sidebar shown.

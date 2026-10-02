@@ -14,8 +14,8 @@ extension UIKitElement {
     func makeController() -> UIViewController? {
         switch type {
         case .navigationStack: UIKitNavigationController()
-        case .tabbedView: UIKitTabBarController()
-        case .splitView: UIKitSplitViewController()
+        case .tabView: UIKitTabBarController()
+        case .navigationSplitView: UIKitSplitViewController()
         default: nil
         }
     }
@@ -37,7 +37,7 @@ extension UIKitElement {
     /// layer names it (`titledPage`) - tabs on a stack by their own title, else by the page beneath.
     /// Design: docs/design/platforms/uikit/pages.md#the-bar
     var chrome: UIKitPageChrome {
-        if type == .tabbedView {
+        if type == .tabView {
             var chrome = element.selectedTab?.visiblePage?.uiKit.chrome ?? UIKitPageChrome()
             chrome.title = element.titledPage?.value(.title)?.string ?? ""
             return chrome
@@ -69,11 +69,11 @@ extension UIKitElement {
         switch type {
         case .page:
             if let controller { chrome.show(on: controller.navigationItem) }
-        case .tabbedView:
+        case .tabView:
             if let controller { chrome.show(on: controller.navigationItem) }
             (controller as? UIKitTabBarController)?.showsTheStacksBar = element.showsTheStacksBar
             children.forEach { $0.composeChrome() }
-        case .navigationStack, .splitView:
+        case .navigationStack, .navigationSplitView:
             children.forEach { $0.composeChrome() }
         default:
             break
@@ -93,7 +93,7 @@ extension UIKitElement {
                 self?.children.first { $0.controller === shown }?.element.showsTheStacksBar ?? true
             }
             navigation.setPages(children.compactMap(\.controller), animated: !(host?.reducesMotion() ?? true))
-        case .tabbedView:
+        case .tabView:
             guard let tabs = controller as? UIKitTabBarController else { return }
             tabs.show(
                 children.compactMap { tab in
@@ -102,7 +102,7 @@ extension UIKitElement {
                 requested: value(.currentPage)?.number.map { Int($0) })
             tabs.onSelection = { [weak self] previous, selected in self?.tabChosen(from: previous, to: selected) }
             tabs.showColors(background: element.barColors.background, foreground: element.barColors.foreground)
-        case .splitView:
+        case .navigationSplitView:
             guard let split = controller as? UIKitSplitViewController else { return }
             split.show(sidebar: children.first?.controller, detail: children.dropFirst().first?.controller)
             split.onPresentationChanged = { [weak self] presented in self?.sidebarChanged(to: presented) }

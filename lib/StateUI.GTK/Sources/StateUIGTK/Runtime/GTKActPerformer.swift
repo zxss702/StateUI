@@ -56,7 +56,7 @@ final class GTKActPerformer {
             reply(call, [])
         case .scrollTo:
             guard let view = aimed(call, in: tree) else { return }
-            guard let items = view as? GTKItemsView else { return fail(call, "scrollTo is an act of an ItemsView") }
+            guard let items = view as? GTKItemsView else { return fail(call, "scrollTo is an act of an List") }
             items.scroll(
                 to: call.arguments.value(1)?.string ?? "",
                 anchor: call.arguments.value(2).flatMap(ScrollAnchor.init(propValue:)) ?? .nearest)

@@ -5,7 +5,7 @@
 @_spi(Host) import StateUIHost
 import CStateUIWinUI
 
-/// An ItemsView: a StateUI layout holding WinUI's own ItemsView over the list's identities, a cell holding each
+/// An List: a StateUI layout holding WinUI's own List over the list's identities, a cell holding each
 /// entry's subtree as the list asks for it (`ItemsCells`). WinUI scrolls, reuses its containers, chooses, invokes and
 /// tells Narrator; StateUI builds what a cell holds. The list is a room: it asks for none, and stands where it is put.
 /// Design: docs/design/platforms/winui/items.md
@@ -25,7 +25,7 @@ final class WinUIItemsView: WinUILayoutView {
     /// Whether the list left the tree: what WinUI still says is heard by nobody.
     private var released = false
 
-    /// Whether the motion of a scroll the tree asks for is left out.
+    /// Whether the animation of a scroll the tree asks for is left out.
     private let reducesMotion: () -> Bool
 
     private struct Choice: Equatable {
@@ -214,7 +214,7 @@ final class WinUIItemsView: WinUILayoutView {
     }
 }
 
-/// WinUI's own ItemsView, which the relay's callbacks name by its number and which hands them to its list.
+/// WinUI's own List, which the relay's callbacks name by its number and which hands them to its list.
 @MainActor
 final class WinUIItemsList: WinUIView {
     weak var owner: WinUIItemsView?
@@ -223,7 +223,7 @@ final class WinUIItemsList: WinUIView {
         super.init { number in stateui_winui_items_make(number) }
     }
 
-    /// The ItemsView holding the list a callback names; nil once it has left.
+    /// The List holding the list a callback names; nil once it has left.
     static func owner(of number: Int64) -> WinUIItemsView? {
         (WinUIView.find(number) as? WinUIItemsList)?.owner
     }

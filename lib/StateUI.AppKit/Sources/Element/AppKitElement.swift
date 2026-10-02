@@ -34,7 +34,7 @@ final class AppKitElement: NSObject, NativeElement {
     var isPlaced = false
 
     /// Where a label's place travels: its words stand at that size meanwhile.
-    /// Design: docs/design/host/motion.md#words-at-their-destination
+    /// Design: docs/design/host/animation.md#words-at-their-destination
     var wordsRoom: Rect?
 
     /// The focus this element last reported, where it follows its focus.
@@ -70,7 +70,7 @@ final class AppKitElement: NSObject, NativeElement {
     var children: [AppKitElement] { element.children.map(\.appKit) }
     var events: [Event: Int32] { element.events }
     var driven: [Prop: HostStateBinding] { element.driven }
-    var motion: HostLayoutMotion? { element.motion }
+    var animation: HostLayoutMotion? { element.animation }
     var framesRead: Bool { element.framesRead }
     func value(_ property: Prop) -> HostValue? { element.value(property) }
     func resolvedValue(_ property: Prop) -> HostValue? { element.resolvedValue(property) }
@@ -85,7 +85,7 @@ final class AppKitElement: NSObject, NativeElement {
     var presentsView: Bool { view != nil }
 
     func standingValue(_ property: Prop) -> HostValue? {
-        if type == .window, let value = host?.standingWindowValue(for: self, property: property) {
+        if type == .windowScene, let value = host?.standingWindowValue(for: self, property: property) {
             return value
         }
 
@@ -195,7 +195,7 @@ final class AppKitElement: NSObject, NativeElement {
     func configureLayoutMotion() {
         guard let layout = view as? AppKitTravellingLayout else { return }
         layout.places.layoutMotion = host?.runtime.layoutMotion
-        layout.places.motion = motion
+        layout.places.animation = animation
         layout.places.framesRead = framesRead
         layout.places.patchArrived()
     }
@@ -206,9 +206,9 @@ final class AppKitElement: NSObject, NativeElement {
     }
 
     /// Fades this element in as it joins a layout already standing, by the host layer's rule.
-    func fadeIn(under motion: Motion) {
+    func fadeIn(under animation: Animation) {
         guard fadesIn else { return }
-        element.fadeIn(self, under: motion)
+        element.fadeIn(self, under: animation)
     }
 
     /// Presents one display frame of this element's own changed properties.

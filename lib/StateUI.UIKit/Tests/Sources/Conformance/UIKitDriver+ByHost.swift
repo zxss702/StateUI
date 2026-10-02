@@ -21,7 +21,7 @@ extension UIKitDriver {
             return "the host told the scene's phase, no scene moved"
         case "endContent":
             return "the navigation delegate told, no web process ended"
-        case "choose" where taken.element == "ItemsView", "activate" where taken.element == "an item of ItemsView":
+        case "choose" where taken.element == "List", "activate" where taken.element == "an item of List":
             return "the collection's delegate told, no touch"
         default: break
         }
@@ -30,7 +30,7 @@ extension UIKitDriver {
             return "the host's own flag, not the button's state"
         case "read selectedIndex of Picker", "read options of Picker", "read title of Picker":
             return "the host's own choice, not the menu's"
-        case "read the menu of Window": return "the host's menu bar entries, not UIKit's main menu"
+        case "read the menu of WindowScene": return "the host's menu bar entries, not UIKit's main menu"
         case "read what the screen reader said": return "the host's own list of what it announced"
         case "read a question": return "the buttons' captions the host keeps"
         default: break

@@ -8,7 +8,7 @@
 @MainActor
 class GTKSingleChildView: GTKLayoutView {
     /// The room inside the view's own edge.
-    var padding = Insets(0) {
+    var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 

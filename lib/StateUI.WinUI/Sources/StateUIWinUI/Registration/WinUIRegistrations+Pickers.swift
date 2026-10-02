@@ -31,8 +31,8 @@ extension WinUIRegistrations {
                     size: values[FontElementContract.fontSize], attributes: values[FontElementContract.fontAttributes],
                     family: values[FontElementContract.fontFamily]?.text)
             }
-            picker.property(TextStyleElementContract.textColor) { view, color in view.setForeground(color?.propValue) }
-            picker.property(TextAlignmentElementContract.horizontalTextAlignment) { view, alignment in
+            picker.property(TextStyleElementContract.foregroundStyle) { view, color in view.setForeground(color?.propValue) }
+            picker.property(TextAlignmentElementContract.multilineTextAlignment) { view, alignment in
                 view.setAlignment(alignment ?? .start)
             }
             picker.property(TintElementContract.tint) { view, tint in view.setTint(tint?.propValue) }

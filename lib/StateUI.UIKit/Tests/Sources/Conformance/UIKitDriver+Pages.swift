@@ -17,7 +17,7 @@ extension UIKitDriver {
             throw DriverCannot(reading: property, of: element)
         }
         switch property {
-        case .title: return (window.windowScene?.title ?? "").propValue
+        case .title: return (window.window?.title ?? "").propValue
         default: throw DriverCannot(reading: property, of: element)
         }
     }
@@ -70,7 +70,7 @@ extension UIKitDriver {
     func performOnPages(_ act: UserAct, on element: MountedElement) throws {
         let native = element.native as? UIKitElement
         switch act {
-        case .goBack where element.type == .window:
+        case .goBack where element.type == .windowScene:
             try goBack(in: element)
         case .goBack:
             guard let navigation = native?.controller as? UIKitNavigationController, navigation.viewControllers.count > 1

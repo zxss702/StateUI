@@ -6,7 +6,7 @@
 
 /// Where text sits inside the space its own control was given.
 ///
-/// What `.horizontalTextAlignment` and `.verticalTextAlignment` take. NOT
+/// What `.multilineTextAlignment` and `.verticalTextAlignment` take. NOT
 /// `.horizontalAlignment`, which moves the whole control inside its layout: a
 /// label centred with this one still occupies the same box.
 public enum TextAlignment: Int32, Sendable {

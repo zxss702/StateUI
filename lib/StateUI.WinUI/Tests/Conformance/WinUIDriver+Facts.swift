@@ -10,7 +10,7 @@ import CStateUIWinUI
 /// The facts the WinUI driver reads besides a member: a menu as WinUI holds it, the keyboard, where a press lands,
 /// the dialog showing, what the screen reader was told, what is drawn, the log, and what is kept.
 extension WinUIDriver {
-    func start(clock: TestClock?, application: @escaping @Sendable () -> any Application) throws -> MountedTree {
+    func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree {
         written.listen()
         let renderer = WinUIRenderer.running(clock: clock, application: application)
         self.renderer = renderer
@@ -18,7 +18,7 @@ extension WinUIDriver {
     }
 
     func menu(of element: MountedElement) throws -> String {
-        if element.type == .window { return try window().menuBar.menus }
+        if element.type == .windowScene { return try window().menuBar.menus }
         guard let view = (element.native as? WinUIElement)?.view else { throw DriverCannot("read the menu of \(element.type.name)") }
         return view.menus
     }

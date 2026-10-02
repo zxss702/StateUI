@@ -21,11 +21,11 @@
 ///     }
 ///
 /// A window is a scene of one window - what an application with nothing to
-/// open beside it writes: `var scene: any Scene { MainWindow() }`.
+/// open beside it writes: `var body: some Scene { MainWindow() }`.
 ///
-/// A scene holds `@State` once per session: a second *File ▸ New Window* is a
+/// A scene holds `@State` once per session: a second *File ▸ New WindowScene* is a
 /// second instance with state of its own. What every session shares belongs
-/// to the `Application` and reaches a scene through `.environment(_:)`.
+/// to the `App` and reaches a scene through `.environment(_:)`.
 /// Opening and closing its windows is its `SceneSession`'s, in the
 /// environment of every view in it.
 public protocol Scene {
@@ -38,7 +38,7 @@ extension Scene {
     /// Offers an object to every window of every session of this scene,
     /// resolved by type the way `.environment` on a view is.
     ///
-    ///     var scene: any Scene { GalleryScene().environment(library) }
+    ///     var body: some Scene { GalleryScene().environment(library) }
     ///
     /// A nearer `.environment()` of the same type - on `Windows`, or on a
     /// view inside - overrides it for its own branch.
@@ -50,7 +50,7 @@ extension Scene {
 /// A scene with an object offered to everything in it.
 struct OfferingScene: Scene {
     /// The scene the object is offered to.
-    let base: Scene
+    let base: any Scene
 
     /// The type the object answers for.
     let key: ObjectIdentifier

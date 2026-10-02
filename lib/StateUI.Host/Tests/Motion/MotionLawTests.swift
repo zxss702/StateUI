@@ -6,7 +6,7 @@ import XCTest
 @_spi(Host) @testable import StateUI
 @_spi(Host) @testable import StateUIHost
 
-/// The two motion laws every runtime animates with, as numbers - and the
+/// The two animation laws every runtime animates with, as numbers - and the
 /// promises every animation of the table below keeps.
 final class MotionLawTests: XCTestCase {
     func testAnEasedAnimationIsAFunctionOfElapsedTime() {
@@ -21,13 +21,13 @@ final class MotionLawTests: XCTestCase {
     }
 
     func testAnAnimationThatBeganMovingStartsAtItsSpeedAndLandsStill() {
-        let motion = Motion.eased(300, .cubicOut)
+        let animation = Animation.eased(300, .cubicOut)
         let start = HostMotionLaw.sample(
-            motion, elapsed: 0, from: [20], destination: [80], velocity: [0.3])
+            animation, elapsed: 0, from: [20], destination: [80], velocity: [0.3])
         let late = HostMotionLaw.sample(
-            motion, elapsed: 299.9, from: [20], destination: [80], velocity: [0.3])
+            animation, elapsed: 299.9, from: [20], destination: [80], velocity: [0.3])
         let landed = HostMotionLaw.sample(
-            motion, elapsed: 300, from: [20], destination: [80], velocity: [0.3])
+            animation, elapsed: 300, from: [20], destination: [80], velocity: [0.3])
 
         XCTAssertEqual(start.value[0], 20, accuracy: 1e-12)
         XCTAssertEqual(start.velocity[0], 0.3, accuracy: 1e-12)
@@ -89,7 +89,7 @@ final class MotionLawTests: XCTestCase {
                 }
             }
 
-            let landed = Self.sample(animation, at: motion.law == .eased ? Double(motion.millis) : HostMotionLaw.longest)
+            let landed = Self.sample(animation, at: animation.motion.law == .eased ? Double(animation.motion.millis) : HostMotionLaw.longest)
             XCTAssertEqual(
                 landed,
                 HostMotionSample(
@@ -99,8 +99,8 @@ final class MotionLawTests: XCTestCase {
 
             for instant in animation.instants {
                 let sample = Self.sample(animation, at: instant)
-                if motion.law == .eased {
-                    XCTAssertEqual(sample.rested, instant >= Double(motion.millis), "\(named) at \(instant)")
+                if animation.motion.law == .eased {
+                    XCTAssertEqual(sample.rested, instant >= Double(animation.motion.millis), "\(named) at \(instant)")
                 }
                 if sample.rested {
                     XCTAssertEqual(sample.value, animation.destination, "\(named) stays at rest")
@@ -130,7 +130,7 @@ final class MotionLawTests: XCTestCase {
     }
 
     /// Where one animation of the table stands at an elapsed time.
-    private static func sample(_ animation: Animation, at elapsed: Double) -> HostMotionSample {
+    private static func sample(_ animation: Run, at elapsed: Double) -> HostMotionSample {
         HostMotionLaw.sample(
             animation.motion, elapsed: elapsed,
             from: animation.from, destination: animation.destination, velocity: animation.velocity)
@@ -139,23 +139,23 @@ final class MotionLawTests: XCTestCase {
     // MARK: - The table
 
     /// One animation: a law, where each lane began, and the instants it is read at.
-    private struct Animation {
-        let motion: Motion
+    private struct Run {
+        let motion: StateUI.Animation
         let from: [Double]
         let destination: [Double]
         let velocity: [Double]
         let instants: [Double]
     }
 
-    private static var animations: [Animation] {
-        var animations: [Animation] = []
+    private static var animations: [Run] {
+        var animations: [Run] = []
 
         // Every curve, from a standstill. `Easing` lists no cases, so its raw
         // values are walked until one is missing - a curve appended later is
         // in the table the day it arrives.
         var raw: Int32 = 0
         while let curve = Easing(rawValue: raw) {
-            animations.append(Animation(
+            animations.append(Run(
                 motion: .eased(400, curve),
                 from: [0, 20], destination: [1, -40], velocity: [0, 0],
                 instants: [0, 40, 100, 200, 300, 360, 399, 400, 480]))
@@ -164,38 +164,38 @@ final class MotionLawTests: XCTestCase {
 
         // An animation that began moving: the Hermite on a lane with speed, the
         // curve on a lane without.
-        animations.append(Animation(
+        animations.append(Run(
             motion: .eased(300, .cubicOut),
             from: [20, -4], destination: [80, 10], velocity: [0.3, 0],
             instants: [0, 30, 75, 150, 225, 290, 300]))
-        animations.append(Animation(
+        animations.append(Run(
             motion: .eased(250, .sineInOut),
             from: [1], destination: [0], velocity: [-0.004],
             instants: [0, 25, 125, 249, 250]))
 
         // Springs: critically damped from rest and moving, ringing, crawling.
         let spring: [Double] = [0, 16, 50, 100, 200, 400, 800, 1_600, 3_200]
-        animations.append(Animation(
+        animations.append(Run(
             motion: .spring(response: 260),
             from: [0], destination: [100], velocity: [0], instants: spring))
-        animations.append(Animation(
+        animations.append(Run(
             motion: .spring(response: 260),
             from: [0, 50], destination: [100, 50], velocity: [0.5, -0.2], instants: spring))
-        animations.append(Animation(
+        animations.append(Run(
             motion: .spring(response: 400, damping: 0.5),
             from: [0], destination: [1], velocity: [0], instants: spring + [6_400]))
-        animations.append(Animation(
+        animations.append(Run(
             motion: .spring(response: 200, damping: 1.8),
             from: [10, 0], destination: [0, 5], velocity: [0, 0.01], instants: spring))
 
         // A spring too loose to settle is over at the longest walk anyway.
-        animations.append(Animation(
+        animations.append(Run(
             motion: .spring(response: 100_000, damping: 0.05),
             from: [0], destination: [1], velocity: [0],
             instants: [0, 5_000, 9_999, 10_000]))
 
-        // No motion: the animation has arrived before it starts.
-        animations.append(Animation(
+        // No animation: the animation has arrived before it starts.
+        animations.append(Run(
             motion: .none, from: [3], destination: [7], velocity: [0], instants: [0]))
 
         return animations

@@ -18,12 +18,12 @@
     func letGo()
 }
 
-/// What a platform's collection holds of one ItemsView, and what it tells the tree - alike on every host: the
+/// What a platform's collection holds of one List, and what it tells the tree - alike on every host: the
 /// entries in order, the ones held in cells and built for them, the user's choice and opening in the list's order,
 /// and the end reached.
 /// Design: docs/design/host/items.md
 @_spi(Host) @MainActor public final class ItemsCells {
-    /// The ItemsView, while it stands in the tree: the toolkit may call its collection back after it left.
+    /// The List, while it stands in the tree: the toolkit may call its collection back after it left.
     public private(set) weak var element: MountedElement?
 
     private weak var runtime: HostRuntime?

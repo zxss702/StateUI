@@ -9,12 +9,12 @@
 /// Property values for every control of a type.
 ///
 ///     Style<Button>()
-///         .textColor(.white)
+///         .foregroundStyle(.white)
 ///         .background(AppColors.primary)
 ///         .shape(.roundedRectangle(8))
-///         .padding(14, 10)
+///         .contentPadding(14, 10)
 ///         .visualState(.disabled) { $0
-///             .textColor(AppColors.gray950)
+///             .foregroundStyle(AppColors.gray950)
 ///             .background(AppColors.gray200)
 ///         }
 ///
@@ -107,7 +107,7 @@ extension StyleBag where Context == StyleBase {
     ///
     ///     Style<Button>()
     ///         .visualState(.normal)
-    ///         .visualState(.disabled) { $0.textColor(.gray) }
+    ///         .visualState(.disabled) { $0.foregroundStyle(.gray) }
     ///
     /// - Parameter state: the state, changing nothing.
     public func visualState(_ state: VisualState<Target>) -> Self {
@@ -131,7 +131,7 @@ extension StyleBag where Context == StyleBase {
 }
 
 /// A style whose target type has been forgotten - what a `StyleSheet`
-/// collects, made from a `Style<Label>()` and never by hand.
+/// collects, made from a `Style<Text>()` and never by hand.
 public struct AnyStyle {
     /// The node type this style is for - the target's own.
     let target: NodeType

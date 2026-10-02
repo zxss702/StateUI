@@ -8,14 +8,14 @@ import UIKit
 import XCTest
 
 /// A page whose window presents numbered sheets from one state.
-private struct Sheets: ContentView {
+private struct Sheets: View {
     let sheets: State<[Int]>
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         let (sheets, window) = (self.sheets, self.window)
-        return Label("beneath").onCreated {
-            window.modalStack = ModalStack(sheets.projectedValue) { number in Label("On sheet \(number)") }
+        return Text("beneath").onAppear {
+            window.modalStack = ModalStack(sheets.projectedValue) { number in Text("On sheet \(number)") }
         }
     }
 }

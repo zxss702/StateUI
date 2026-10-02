@@ -45,12 +45,12 @@ public enum StateUIAppKit {
         delegate: AppDelegate
     ) {
         let main = mainMenu(newScene: delegate)
-        application.windowsMenu = main.item(withTitle: "Window")?.submenu
+        application.windowsMenu = main.item(withTitle: "WindowScene")?.submenu
         application.mainMenu = main
     }
 
     /// The menu bar every StateUI application stands with: the application's own, File with a new window for
-    /// `newScene`, Edit with the text commands a field answers through the responder chain, and Window. A page's
+    /// `newScene`, Edit with the text commands a field answers through the responder chain, and WindowScene. A page's
     /// menus join it as it shows.
     /// Design: docs/design/platforms/appkit/runtime.md#the-menu-bar
     static func mainMenu(newScene: AnyObject?) -> NSMenu {
@@ -63,7 +63,7 @@ public enum StateUIAppKit {
         main.addItem(submenu: applicationMenu, titled: name)
 
         let fileMenu = NSMenu(title: "File")
-        let newWindow = NSMenuItem(title: "New Window", action: #selector(AppDelegate.newScene(_:)), keyEquivalent: "n")
+        let newWindow = NSMenuItem(title: "New WindowScene", action: #selector(AppDelegate.newScene(_:)), keyEquivalent: "n")
         newWindow.target = newScene
         fileMenu.addItem(newWindow)
         main.addItem(submenu: fileMenu, titled: "File")
@@ -80,12 +80,12 @@ public enum StateUIAppKit {
         editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         main.addItem(submenu: editMenu, titled: "Edit")
 
-        let windowMenu = NSMenu(title: "Window")
+        let windowMenu = NSMenu(title: "WindowScene")
         windowMenu.addItem(
             withTitle: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
         windowMenu.addItem(
             withTitle: "Bring All to Front", action: #selector(NSApplication.arrangeInFront(_:)), keyEquivalent: "")
-        main.addItem(submenu: windowMenu, titled: "Window")
+        main.addItem(submenu: windowMenu, titled: "WindowScene")
         return main
     }
 }

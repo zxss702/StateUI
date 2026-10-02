@@ -28,12 +28,12 @@ extension TitleBarProperties {
 /// Hosts with native window chrome place this content according to their own
 /// title-area conventions. Hosts without an authored title area may ignore it.
 ///
-///     struct HomePage: ContentView {
+///     struct HomePage: View {
 ///         @Environment private var window: WindowSession
 ///
 ///         var content: any View {
 ///             VStack { … }
-///                 .onCreated {
+///                 .onAppear {
 ///                     window.titleBar = TitleBar("StateUI Gallery")
 ///                         .subtitle("Fundamentals")
 ///                         .trailingContent {
@@ -57,7 +57,7 @@ extension TitleBarProperties {
 ///
 /// Each slot presents one root view. Put several controls in a layout and use
 /// that layout as the root.
-public struct TitleBar: View, TitleBarProperties {
+public struct TitleBar: VisualElement, TitleBarProperties{
     /// The node this control describes.
     public var node: Node
 
@@ -83,7 +83,7 @@ public struct TitleBar: View, TitleBarProperties {
     ///
     /// A closure producing nothing empties the slot, which is what an `if` in
     /// one is for.
-    public func leadingContent(@ViewBuilder _ content: () -> [Element]) -> Self {
+    public func leadingContent(@ViewBuilder _ content: () -> any View) -> Self {
         slot(LeadingContentContract.self, content())
     }
 
@@ -91,29 +91,29 @@ public struct TitleBar: View, TitleBarProperties {
     ///
     ///     TitleBar("Notes")
     ///         .content {
-    ///             SearchField($query).width(320)
+    ///             SearchField($query).frame(width: 320)
     ///         }
     ///
     /// A closure producing nothing empties the slot.
-    public func content(@ViewBuilder _ content: () -> [Element]) -> Self {
+    public func content(@ViewBuilder _ content: () -> any View) -> Self {
         slot(ContentContract.self, content())
     }
 
     /// Places one root view at the far end of the title area.
     ///
     /// A closure producing nothing empties the slot.
-    public func trailingContent(@ViewBuilder _ content: () -> [Element]) -> Self {
+    public func trailingContent(@ViewBuilder _ content: () -> any View) -> Self {
         slot(TrailingContentContract.self, content())
     }
 
     /// Replaces one named slot while keeping structural children last.
-    private func slot<Slot: ElementContract>(_ slot: Slot.Type, _ views: [Element]) -> Self {
+    private func slot<Slot: ElementContract>(_ slot: Slot.Type, _ views: any View) -> Self {
         var copy = self
         copy.node.children.removeAll { $0.type == Slot.nodeType }
         let slots = copy.node.children.filter { $0.type == .contextMenu }
         copy.node.children.removeAll { $0.type == .contextMenu }
 
-        let filled = views.first.map { [Node(contract: Slot.self, children: [$0.body])] } ?? []
+        let filled = views.node.asChildren.first.map { [Node(contract: Slot.self, children: [$0])] } ?? []
 
         copy.node.children += filled + slots
         return copy

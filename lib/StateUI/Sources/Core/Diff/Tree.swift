@@ -84,7 +84,7 @@ final class RenderedNode {
     /// only; the closures belong to their render.
     var watched: [Any]
 
-    /// What `.onDestroying` runs as it leaves: its last build's closures.
+    /// What `.onDisappear` runs as it leaves: its last build's closures.
     var destroying: [EventHandler] = []
 
     /// What the element holds for its life, where it asked for one.
@@ -109,10 +109,10 @@ final class RenderedNode {
     var children: [RenderedNode]
 
     /// How its children were last told to animate; nil until said.
-    var motion: Motion?
+    var animation: Animation?
 
     /// And which parts of a child's place animated.
-    var lanes: MotionLanes = .all
+    var lanes: AnimationLanes = .all
 
     /// What the user is doing to it that its visual states follow, and the state it is in; nil for an element that
     /// declares none.
@@ -125,8 +125,8 @@ final class RenderedNode {
         type: NodeType,
         props: [Prop: PropValue],
         events: [Event: Int],
-        motion: Motion? = nil,
-        lanes: MotionLanes = .all,
+        animation: Animation? = nil,
+        lanes: AnimationLanes = .all,
         key: String? = nil,
         views: [(
             type: String,
@@ -144,7 +144,7 @@ final class RenderedNode {
         readings: [Sampling] = [],
         children: [RenderedNode]
     ) {
-        self.motion = motion
+        self.animation = animation
         self.lanes = lanes
         self.views = views
         self.placeholder = placeholder
@@ -189,7 +189,7 @@ extension HostPatch {
     /// Design: docs/design/core/identity-and-diffing.md#merging-patches
     var isEmpty: Bool {
         !replace
-            && motion == nil
+            && animation == nil
             && properties.isEmpty
             && clearedProperties.isEmpty
             && events == nil
@@ -226,7 +226,7 @@ extension HostPatch {
 
         merged.clearedProperties.sort()
 
-        merged.motion = later.motion ?? motion
+        merged.animation = later.animation ?? animation
         merged.driven = later.driven ?? driven
         merged.events = later.events ?? events
         merged.children = HostChildrenUpdate.merging(children, with: later.children)

@@ -4,8 +4,8 @@
 /// The part of a `ZStack`'s room a child stands in: x, y, width and height,
 /// in device units or in fractions of the room.
 ///
-///     Label("Badge").area(.absolute(16, 16, 120, 40))
-///     ColorBox(.red).area(.proportional(0.5, 0, 0.5, 1))
+///     Text("Badge").area(.absolute(16, 16, 120, 40))
+///     ColorPicker(.red).area(.proportional(0.5, 0, 0.5, 1))
 ///
 /// A child that names no area stands in the whole room.
 public enum Area: Equatable, Sendable, HostRepresentable {

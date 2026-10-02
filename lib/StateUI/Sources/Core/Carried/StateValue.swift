@@ -22,12 +22,12 @@ public protocol StateValue: Equatable, Sendable {
 
     /// Which of a view's values this one is where the property alone cannot say - a
     /// colour. Everything else answers nothing.
-    static var moving: MotionValues { get }
+    static var moving: AnimationValues { get }
 }
 
 extension StateValue {
     /// Nothing: the property this value drives says which group it is in.
-    public static var moving: MotionValues { [] }
+    public static var moving: AnimationValues { [] }
 }
 
 /// The lane counts that are not a count. This library's own.
@@ -111,11 +111,11 @@ extension Rect: StateValue {
     public static var lanes: Int { 4 }
 }
 
-extension Insets: StateValue {
+extension EdgeInsets: StateValue {
     /// Left, top, right, bottom.
     public var carried: StateCarried { .lanes([left, top, right, bottom]) }
 
-    /// Insets from those four lanes.
+    /// EdgeInsets from those four lanes.
     public init?(carried: StateCarried) {
         guard case .lanes(let lanes) = carried, lanes.count == 4 else { return nil }
 
@@ -130,7 +130,7 @@ extension Color: StateValue {
     /// Red, green, blue and alpha, each from nought to one. A colour pair crosses as
     /// the half in force (`State.Storage.wearThemedPair()`).
     public var carried: StateCarried {
-        let half = dark.flatMap { StandardEnvironment.app.$requestedTheme.standing == .dark ? $0 : nil } ?? light
+        let half = dark.flatMap { StandardEnvironment.appInfo.$colorScheme.standing == .dark ? $0 : nil } ?? light
 
         return .lanes([
             Double(half.red) / 255,
@@ -160,7 +160,7 @@ extension Color: StateValue {
     public static var lanes: Int { 4 }
 
     /// A colour, which is what only the value can say.
-    public static var moving: MotionValues { .colour }
+    public static var moving: AnimationValues { .colour }
 }
 
 extension String: StateValue {

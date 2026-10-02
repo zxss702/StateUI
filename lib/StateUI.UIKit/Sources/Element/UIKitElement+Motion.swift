@@ -6,15 +6,15 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// The element's part in its layout's motion: its children travelling to their places, fading in as it joins, and
+/// The element's part in its layout's animation: its children travelling to their places, fading in as it joins, and
 /// a change of visibility crossed - each by the host layer's rule.
-/// Design: docs/design/platforms/uikit/motion.md
+/// Design: docs/design/platforms/uikit/animation.md
 extension UIKitElement {
     /// Hands a layout what its children travel under, and tells it a patch reached it.
     func configureLayoutMotion() {
         guard let layout = view as? UIKitLayoutView else { return }
         layout.places.layoutMotion = host?.runtime.layoutMotion
-        layout.places.motion = element.motion
+        layout.places.animation = element.animation
         layout.places.framesRead = element.framesRead
         layout.places.patchArrived()
     }
@@ -25,9 +25,9 @@ extension UIKitElement {
     }
 
     /// Fades the element in as it joins a layout already standing, by the host layer's rule.
-    func fadeIn(under motion: Motion) {
+    func fadeIn(under animation: Animation) {
         guard fadesIn, let drawing else { return }
-        element.fadeIn(drawing, under: motion)
+        element.fadeIn(drawing, under: animation)
     }
 
     /// Crosses a change of visibility by the host layer's rule; as a fade out ends, the layout closes over it.

@@ -19,7 +19,7 @@
                     VStack {
                         Map(latitude: 52.23, longitude: 21.01, radiusMeters: 5_000).pins {
                             Pin("Home").address("Nowy Świat 1").type(.place).location(latitude: 52.23, longitude: 21.02)
-                        }.height(300)
+                        }.frame(height: 300)
                     }
                 }
                 let pin = try s.element(ofType: PinContract.nodeType)
@@ -39,7 +39,7 @@
                             Pin("Home").location(latitude: 52.23, longitude: 21.02)
                                 .onPinClicked { heard.values.append("pin") }
                                 .onPinDetailsClicked { heard.values.append("details") }
-                        }.height(300)
+                        }.frame(height: 300)
                     }
                 }
                 let pin = try s.element(ofType: PinContract.nodeType)

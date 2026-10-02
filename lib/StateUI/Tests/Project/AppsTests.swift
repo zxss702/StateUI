@@ -12,7 +12,7 @@
 // directory names the file that still points at the old place.
 //
 // The scaffolder - .scripts/new-app.sh, .scripts/new-app.ps1, and the StateUI
-// extension's "New Application in apps/" that runs them - makes an application by copying
+// extension's "New App in apps/" that runs them - makes an application by copying
 // apps/HelloWorld under another name. The bash half runs here for real, into a
 // temporary directory, and what it made is read back; the PowerShell half
 // cannot run where these tests run, so it is held to agreement with the bash

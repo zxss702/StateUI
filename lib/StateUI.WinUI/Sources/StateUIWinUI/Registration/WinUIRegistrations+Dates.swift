@@ -43,13 +43,13 @@ extension WinUIRegistrations {
     /// The font and the colour a day or a time is written in.
     private static let dayMembers: [any ContractMember] = [
         FontElementContract.fontSize, FontElementContract.fontAttributes, FontElementContract.fontFamily,
-        TextStyleElementContract.textColor,
+        TextStyleElementContract.foregroundStyle,
     ]
 
     private static func applyDayWords<Realized: ElementContract>(_ view: WinUIView, _ values: ElementValues<Realized>) {
         view.setFont(
             size: values[FontElementContract.fontSize], attributes: values[FontElementContract.fontAttributes],
             family: values[FontElementContract.fontFamily]?.text)
-        view.setForeground(values[TextStyleElementContract.textColor]?.propValue)
+        view.setForeground(values[TextStyleElementContract.foregroundStyle]?.propValue)
     }
 }

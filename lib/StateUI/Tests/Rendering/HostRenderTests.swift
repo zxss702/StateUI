@@ -15,7 +15,7 @@ final class HostRenderTests: XCTestCase {
     }
 
     func testAHostPatchCarriesTheWholeSparseChange() throws {
-        var child = HostPatch(id: .auto(8), type: .label)
+        var child = HostPatch(id: .auto(8), type: .text)
         child.fresh = true
         child.properties[.text] = .string("Ready")
 
@@ -23,11 +23,11 @@ final class HostRenderTests: XCTestCase {
         patch.replace = true
         patch.fresh = true
         patch.properties[.text] = .string("Save")
-        patch.clearedProperties = [.margin]
-        patch.motion = HostLayoutMotion(
-            motion: .spring(response: 240, damping: 0.8),
+        patch.clearedProperties = [.padding]
+        patch.animation = HostLayoutMotion(
+            animation: .spring(response: 240, damping: 0.8),
             lanes: [.x, .height])
-        patch.transitions[.opacity] = HostTransition(motion: .eased(120, .linear))
+        patch.transitions[.opacity] = HostTransition(animation: .eased(120, .linear))
         patch.driven = .replace([
             .opacity: HostStateBinding(state: 17, mode: .inOut, kind: .property),
         ])
@@ -38,12 +38,12 @@ final class HostRenderTests: XCTestCase {
         XCTAssertEqual(patch.type, .button)
         XCTAssertTrue(patch.replace)
         XCTAssertEqual(patch.properties[.text], .string("Save"))
-        XCTAssertEqual(patch.clearedProperties, [.margin])
-        XCTAssertEqual(patch.motion?.motion.law, .spring)
-        XCTAssertEqual(patch.motion?.motion.millis, 240)
-        XCTAssertEqual(patch.motion?.motion.factor, 0.8)
-        XCTAssertEqual(patch.motion?.lanes, [.x, .height])
-        XCTAssertEqual(patch.transitions[.opacity]?.motion.millis, 120)
+        XCTAssertEqual(patch.clearedProperties, [.padding])
+        XCTAssertEqual(patch.animation?.animation.law, .spring)
+        XCTAssertEqual(patch.animation?.animation.millis, 240)
+        XCTAssertEqual(patch.animation?.animation.factor, 0.8)
+        XCTAssertEqual(patch.animation?.lanes, [.x, .height])
+        XCTAssertEqual(patch.transitions[.opacity]?.animation.millis, 120)
 
         guard case .replace(let driven)? = patch.driven else {
             return XCTFail("expected a complete driven-state replacement")
@@ -62,7 +62,7 @@ final class HostRenderTests: XCTestCase {
         }
         let carriedChild = try XCTUnwrap(children.first)
         XCTAssertEqual(carriedChild.id, .auto(8))
-        XCTAssertEqual(carriedChild.type, .label)
+        XCTAssertEqual(carriedChild.type, .text)
         XCTAssertEqual(carriedChild.properties[.text], .string("Ready"))
     }
 
@@ -96,7 +96,7 @@ final class HostRenderTests: XCTestCase {
         XCTAssertTrue(children.isEmpty)
 
         var sparse = HostPatch(id: .auto(1), type: .button)
-        sparse.children = .changed([HostPatch(id: .auto(2), type: .label)])
+        sparse.children = .changed([HostPatch(id: .auto(2), type: .text)])
 
         guard case .changed(let changed) = sparse.children else {
             return XCTFail("expected only the changed descendant")
@@ -107,7 +107,7 @@ final class HostRenderTests: XCTestCase {
     func testANativeHostReadsAndReportsTwoWayText() throws {
         let name = State("Ada")
         let renders = Renders()
-        let patch = renders.render(TextField(name.projectedValue).body)
+        let patch = renders.render(TextField(name.projectedValue).node)
 
         guard case .replace(let driven)? = patch.driven else {
             return XCTFail("expected the TextField's state attachment")
@@ -123,10 +123,10 @@ final class HostRenderTests: XCTestCase {
     func testANativeHostRefusesAReportThroughAnOutOnlyAttachment() throws {
         let caption = State("Waiting")
         let renders = Renders()
-        let patch = renders.render(Label().text(caption.projectedValue).body)
+        let patch = renders.render(Text().text(caption.projectedValue).node)
 
         guard case .replace(let driven)? = patch.driven else {
-            return XCTFail("expected the Label's state attachment")
+            return XCTFail("expected the Text's state attachment")
         }
 
         let binding = try XCTUnwrap(driven[.text])
@@ -139,10 +139,10 @@ final class HostRenderTests: XCTestCase {
     func testANativeHostCyclePublishesAnApplicationStateWrite() throws {
         let caption = State("Waiting")
         let renders = Renders()
-        let patch = renders.render(Label().text(caption.projectedValue).body)
+        let patch = renders.render(Text().text(caption.projectedValue).node)
 
         guard case .replace(let driven)? = patch.driven else {
-            return XCTFail("expected the Label's state attachment")
+            return XCTFail("expected the Text's state attachment")
         }
 
         let binding = try XCTUnwrap(driven[.text])
@@ -171,25 +171,25 @@ final class HostRenderTests: XCTestCase {
 
     func testANativeHostMovesTheApplicationSessionPhase() {
         HostBoundary.setApplicationPhase(.background)
-        XCTAssertEqual(StandardEnvironment.application.phase, .background)
+        XCTAssertEqual(StandardEnvironment.app.phase, .background)
 
         HostBoundary.setApplicationPhase(.inactive)
-        XCTAssertEqual(StandardEnvironment.application.phase, .inactive)
+        XCTAssertEqual(StandardEnvironment.app.phase, .inactive)
     }
 
     func testANativeHostReadsTheApplicationsPersistencePlanAndHydratesIt() {
         PersistentStore.shared.forgetAll()
         defer {
             PersistentStore.shared.forgetAll()
-            StandardEnvironment.application.persistentKeys = []
+            StandardEnvironment.app.persistentKeys = []
         }
-        let key = PersistentKey("host.theme", of: String.self)
+        let key = PersistentKey("host.colorScheme", of: String.self)
         let state = State(wrappedValue: "light", persistentKey: key)
-        StandardEnvironment.application.persistentKeys = [key]
+        StandardEnvironment.app.persistentKeys = [key]
 
-        XCTAssertEqual(HostBoundary.persistentKeys.map(\.name), ["host.theme"])
+        XCTAssertEqual(HostBoundary.persistentKeys.map(\.name), ["host.colorScheme"])
 
-        HostBoundary.restorePersistent(["host.theme": .string("dark")])
+        HostBoundary.restorePersistent(["host.colorScheme": .string("dark")])
         XCTAssertEqual(state.get(), "dark")
     }
 
@@ -198,7 +198,7 @@ final class HostRenderTests: XCTestCase {
             value: [0.25, 0.5, 0.75, 1],
             destination: [1, 0.75, 0.5, 0.25],
             velocity: [4, 3, 2, 1],
-            motion: .spring(response: 260, damping: 0.82),
+            animation: .spring(response: 260, damping: 0.82),
             completion: -17,
             stopped: 3)
 
@@ -223,9 +223,9 @@ final class HostRenderTests: XCTestCase {
     }
 
     func testANativeHostReportsOnlyTheJourneyGroupsItWalked() throws {
-        let fade = State(wrappedValue: 0.0, motion: .eased(400, .linear))
+        let fade = State(wrappedValue: 0.0, animation: .eased(400, .linear))
         let renders = Renders()
-        let patch = renders.render(Label("moving").opacity(fade.projectedValue).body)
+        let patch = renders.render(Text("moving").opacity(fade.projectedValue).node)
 
         guard case .replace(let driven)? = patch.driven else {
             return XCTFail("expected the opacity state attachment")
@@ -238,7 +238,7 @@ final class HostRenderTests: XCTestCase {
             value: [0.4],
             destination: [0.9],
             velocity: [2.5],
-            motion: journey.motion,
+            animation: journey.animation,
             completion: journey.completion,
             stopped: journey.stopped)
 

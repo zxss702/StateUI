@@ -194,14 +194,14 @@
         property: Prop,
         standing: HostValue?,
         target: HostValue?,
-        motion: Motion?,
+        animation: Animation?,
         landed: (() -> Void)? = nil
     ) -> Bool {
         let started = describedMotion.receive(
             key: DescribedKey(mount: mount, property: property),
             standing: standing,
             target: target,
-            motion: motion,
+            animation: animation,
             landed: landed,
             now: patchTime ?? now(),
             reducesMotion: patchReducesMotion ?? reducesMotion())

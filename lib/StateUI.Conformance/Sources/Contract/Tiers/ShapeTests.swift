@@ -86,7 +86,7 @@
                 : [Write(ShapeContract.fill, Brush.solidColor(.red))]
             s.start {
                 Specimens.page(element, small(element) + paint + [
-                    Write(ShapeContract.aspect, stretched.wrappedValue ? Aspect.stretch : .fit),
+                    Write(ShapeContract.aspect, stretched.wrappedValue ? ContentMode.stretch : .fit),
                     Write(VisualElementContract.width, 80), Write(VisualElementContract.height, 40),
                     Write(ViewContract.horizontalAlignment, Alignment.start),
                 ], beside: [Button("Stretch").onClicked { stretched.wrappedValue = true }.id("change")])
@@ -156,7 +156,7 @@
         case "Polyline":
             [Write(PolylineContract.points, [Point(0, 0), Point(40, 0), Point(40, 40), Point(0, 40), Point(0, 0)])]
         case "Path":
-            [Write(PathContract.data, "M 0 0 L 40 0 L 40 40 L 0 40 Z"), Write(ShapeContract.aspect, Aspect.stretch)]
+            [Write(PathContract.data, "M 0 0 L 40 0 L 40 40 L 0 40 Z"), Write(ShapeContract.aspect, ContentMode.stretch)]
         default:
             []
         }

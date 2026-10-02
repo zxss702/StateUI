@@ -1,25 +1,38 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// The modifiers every drawn view shares, on the tier a `Style` can also
+// wear: the property half writes `Modified`, keeping an element's own type
+// through a chain, and the `@_disfavoredOverload` twins on `View` answer the
+// same names for a composed view, whose result is opaque.
+
 extension VisualElementProperties {
-    /// Whether the view is shown.
+    /// Whether the view responds to the user. Disabling a container disables
+    /// everything in it.
+    ///
+    ///     Button("Save").disabled(!form.isValid)
+    public func disabled(_ disabled: Bool = true) -> Modified {
+        setValue(VisualElementContract.isEnabled, !disabled)
+    }
+
+    /// Hides the view without unbuilding it.
     ///
     /// Showing and hiding animate: a view being hidden fades out before it
     /// goes, one being shown fades in, so two views swapped in one place
     /// cross-fade. A view on its way out answers no touch. A view described for
-    /// the first time is simply shown or not; `.motion(.none)` makes the change
-    /// immediate.
-    public func isVisible(_ value: Bool) -> Modified { setValue(VisualElementContract.isVisible, value) }
-
-    /// Whether the view responds to the user. Disabling a container disables
-    /// everything in it.
-    public func isEnabled(_ value: Bool) -> Modified { setValue(VisualElementContract.isEnabled, value) }
+    /// the first time is simply shown or not; `.animation(.none)` makes the
+    /// change immediate.
+    public func hidden(_ hidden: Bool = true) -> Modified {
+        setValue(VisualElementContract.isVisible, !hidden)
+    }
 
     /// Whether the view and everything in it ignore input: a tap or a click
     /// goes through to whatever is behind it. Not the same as disabled - a
     /// disabled view still takes the touch and does nothing with it. A layout
     /// whose children should still answer says `letsInputThrough` instead.
-    public func ignoresInput(_ value: Bool) -> Modified { setValue(VisualElementContract.ignoresInput, value) }
+    public func allowsHitTesting(_ allows: Bool = true) -> Modified {
+        setValue(VisualElementContract.ignoresInput, !allows)
+    }
 
     /// Which way the view lays its content out - and, for a language written
     /// right to left, the edge everything starts from.
@@ -28,14 +41,20 @@ extension VisualElementProperties {
     ///
     /// It is INHERITED: a view left at `.inherited` takes whatever the view
     /// above it has, so an application usually says it once at the top.
-    public func layoutDirection(_ value: LayoutDirection) -> Modified { setValue(VisualElementContract.layoutDirection, value) }
+    public func layoutDirection(_ value: LayoutDirection) -> Modified {
+        setValue(VisualElementContract.layoutDirection, value)
+    }
 
     /// How opaque the view is, from 0 to 1.
-    public func opacity(_ value: Double) -> Modified { setValue(VisualElementContract.opacity, value) }
+    public func opacity(_ value: Double) -> Modified {
+        setValue(VisualElementContract.opacity, value)
+    }
 
     /// What is drawn behind the view. A view's own background replaces its
-    /// style's, and a `Color(light:dark:)` follows the system theme.
-    public func background(_ value: Color) -> Modified { setValue(VisualElementContract.background, .color(value)) }
+    /// style's, and a `Color(light:dark:)` follows the system color scheme.
+    public func background(_ value: Color) -> Modified {
+        setValue(VisualElementContract.background, .color(value))
+    }
 
     /// What is drawn behind the view, when one colour will not do.
     ///
@@ -45,97 +64,239 @@ extension VisualElementProperties {
     ///     ]))
     ///
     /// The same property as a colour background: the one written last wins.
-    public func background(_ value: Brush) -> Modified { setValue(VisualElementContract.background, .brush(value)) }
+    public func background(_ value: Brush) -> Modified {
+        setValue(VisualElementContract.background, .brush(value))
+    }
 
-    /// How wide the view asks to be, in device units. A request: the layout has
+    /// The size the view asks for, in device units. A request: the layout has
     /// the last word.
-    public func width(_ value: Double) -> Modified { setValue(VisualElementContract.width, value) }
+    ///
+    ///     Image(source).frame(width: 64, height: 64)
+    ///     Text(title).frame(maxWidth: .infinity)
+    ///
+    /// `min*` and `max*` are the bounds it asks not to cross; `ideal*` the size
+    /// it prefers within them, the view's own without them. `alignment` is where
+    /// it sits inside the frame it was given.
+    public func frame(
+        width: Double? = nil,
+        height: Double? = nil,
+        minWidth: Double? = nil,
+        idealWidth: Double? = nil,
+        maxWidth: Double? = nil,
+        minHeight: Double? = nil,
+        idealHeight: Double? = nil,
+        maxHeight: Double? = nil,
+        alignment: Alignment = .center
+    ) -> Modified {
+        modified { node in
+            if let width { node.write(VisualElementContract.width, width) }
+            if let height { node.write(VisualElementContract.height, height) }
+            if let minWidth { node.write(VisualElementContract.minimumWidth, minWidth) }
+            if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
+            if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
+            if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
+            if alignment != .center { node.write(ViewContract.horizontalAlignment, alignment) }
+        }
+    }
 
-    /// How tall the view asks to be.
-    public func height(_ value: Double) -> Modified { setValue(VisualElementContract.height, value) }
+    /// Turns the view, about its pivot.
+    ///
+    ///     Image(icon).rotationEffect(.degrees(45))
+    public func rotationEffect(_ angle: Angle) -> Modified {
+        setValue(VisualElementContract.rotation, angle)
+    }
 
-    /// The width below which the view asks not to be squeezed.
-    public func minimumWidth(_ value: Double) -> Modified { setValue(VisualElementContract.minimumWidth, value) }
-
-    /// The height below which the view asks not to be squeezed.
-    public func minimumHeight(_ value: Double) -> Modified { setValue(VisualElementContract.minimumHeight, value) }
-
-    /// The width above which the view asks not to be stretched.
-    public func maximumWidth(_ value: Double) -> Modified { setValue(VisualElementContract.maximumWidth, value) }
-
-    /// The height above which the view asks not to be stretched.
-    public func maximumHeight(_ value: Double) -> Modified { setValue(VisualElementContract.maximumHeight, value) }
-
-    /// Turns the view, in degrees clockwise, about its pivot.
-    public func rotation(_ value: Double) -> Modified { setValue(VisualElementContract.rotation, value) }
+    /// Tips the view about its horizontal axis - the top going away as the
+    /// bottom comes forward - and about its vertical axis.
+    ///
+    /// Each platform projects a turn out of the screen's plane through its own
+    /// camera, so the same angle draws differently; for the same picture
+    /// everywhere, write a `scaleY` of `cos(angle)` instead.
+    public func rotation3DEffect(x: Angle = .zero, y: Angle = .zero) -> Modified {
+        modified { node in
+            node.write(VisualElementContract.rotationX, x)
+            node.write(VisualElementContract.rotationY, y)
+        }
+    }
 
     /// How this view is moved, turned and sized: one transform about the view's
     /// own centre, the same picture on every platform.
     ///
-    ///     Card(item).transform(.rotate(14).scale(0.9).translate(100, 200))
+    ///     Card(item).transformEffect(.rotate(14).scale(0.9).translate(100, 200))
     ///
     /// The parts apply in the order written, each to what the parts before it
-    /// made; see `ViewTransform`. It writes `translationX`, `translationY`,
-    /// `rotation`, `scaleX` and `scaleY`, so use it or those five, not both.
-    ///
-    /// - Parameter transform: how the view is moved, turned and sized - a value
-    ///   that can be held in `@State`.
-    /// - Returns: the view, transformed.
-    public func transform(_ transform: ViewTransform) -> Modified {
+    /// made; see `ViewTransform`. It writes `offset`, `rotation` and `scale`, so
+    /// use it or those, not both.
+    public func transformEffect(_ transform: ViewTransform) -> Modified {
         modified {
             $0.write(VisualElementContract.translationX, transform.x)
             $0.write(VisualElementContract.translationY, transform.y)
-            $0.write(VisualElementContract.rotation, transform.rotation)
+            $0.write(VisualElementContract.rotation, Angle(degrees: transform.rotation))
             $0.write(VisualElementContract.scaleX, transform.width)
             $0.write(VisualElementContract.scaleY, transform.height)
         }
     }
 
-    /// Tips the view about its horizontal axis, in degrees - the top going away
-    /// as the bottom comes forward.
-    ///
-    /// Each platform projects a turn out of the screen's plane through its own
-    /// camera, so the same angle draws differently; for the same picture
-    /// everywhere, write a `scaleY` of `cos(angle)` instead.
-    public func rotationX(_ value: Double) -> Modified { setValue(VisualElementContract.rotationX, value) }
-
-    /// Turns the view about its vertical axis, in degrees - one side going away
-    /// as the other comes forward.
-    ///
-    /// Each platform projects a turn out of the screen's plane through its own
-    /// camera, so the same angle draws differently; for the same picture
-    /// everywhere, write a `scaleX` of `cos(angle)` instead.
-    public func rotationY(_ value: Double) -> Modified { setValue(VisualElementContract.rotationY, value) }
-
     /// Resizes the view about its pivot, 1 being its natural size. Drawing
     /// only: the space the layout gave it does not change.
-    public func scale(_ value: Double) -> Modified { setValue(VisualElementContract.scale, value) }
+    public func scaleEffect(_ scale: Double) -> Modified {
+        setValue(VisualElementContract.scale, scale)
+    }
 
-    /// Scales the view sideways only.
-    public func scaleX(_ value: Double) -> Modified { setValue(VisualElementContract.scaleX, value) }
+    /// Scales the view on each axis apart, about its pivot.
+    public func scaleEffect(x: Double, y: Double) -> Modified {
+        modified { node in
+            node.write(VisualElementContract.scaleX, x)
+            node.write(VisualElementContract.scaleY, y)
+        }
+    }
 
-    /// Scales the view up and down only.
-    public func scaleY(_ value: Double) -> Modified { setValue(VisualElementContract.scaleY, value) }
+    /// Scales the view on the x axis alone, about its pivot.
+    public func scaleEffect(x: Double) -> Modified {
+        setValue(VisualElementContract.scaleX, x)
+    }
 
-    /// Moves the view sideways from where the layout put it, in device units.
-    public func translationX(_ value: Double) -> Modified { setValue(VisualElementContract.translationX, value) }
+    /// Scales the view on the y axis alone, about its pivot.
+    public func scaleEffect(y: Double) -> Modified {
+        setValue(VisualElementContract.scaleY, y)
+    }
 
-    /// Moves the view up or down from where the layout put it.
-    public func translationY(_ value: Double) -> Modified { setValue(VisualElementContract.translationY, value) }
+    /// Moves the view from where the layout put it, in device units.
+    public func offset(x: Double = 0, y: Double = 0) -> Modified {
+        modified { node in
+            node.write(VisualElementContract.translationX, x)
+            node.write(VisualElementContract.translationY, y)
+        }
+    }
 
     /// Where rotation and scaling pivot, sideways: 0 the left edge, 1 the right,
     /// 0.5 the middle.
-    public func pivotX(_ value: Double) -> Modified { setValue(VisualElementContract.pivotX, value) }
+    public func pivotX(_ value: Double) -> Modified {
+        setValue(VisualElementContract.pivotX, value)
+    }
 
     /// The same, vertically: 0 the top edge, 1 the bottom.
-    public func pivotY(_ value: Double) -> Modified { setValue(VisualElementContract.pivotY, value) }
+    public func pivotY(_ value: Double) -> Modified {
+        setValue(VisualElementContract.pivotY, value)
+    }
 
-    /// Who is drawn on top where a grid's or an absolute layout's children overlap,
-    /// higher being nearer the front; equals are drawn in the order written.
-    public func zIndex(_ value: Int) -> Modified { setValue(VisualElementContract.zIndex, value) }
+    /// Who is drawn on top where a grid's or an absolute layout's children
+    /// overlap, higher being nearer the front; equals are drawn in the order
+    /// written.
+    public func zIndex(_ value: Int) -> Modified {
+        setValue(VisualElementContract.zIndex, value)
+    }
 }
 
-extension VisualElement {
+extension VisualElementProperties {
+    /// `opacity` from a state, `$x`: the host animates the property to each new
+    /// value, and no view is rebuilt for it.
+    public func opacity(_ state: Binding<Double>) -> Modified {
+        journey(VisualElementContract.opacity, by: state)
+    }
+
+    /// `layoutDirection` from a state, `$x`: the host sets each new value as it
+    /// stands, and no view is rebuilt for it.
+    public func layoutDirection(_ state: Binding<LayoutDirection>) -> Modified {
+        plain(VisualElementContract.layoutDirection, by: state)
+    }
+
+    /// `background` from a state, `$x`: the host animates the property to each
+    /// new value, and no view is rebuilt for it.
+    public func background(_ state: Binding<Color>) -> Modified {
+        journey(VisualElementContract.background.token, by: state)
+    }
+
+    /// `width` from a state, `$x`: the host animates the property to each new
+    /// value, and no view is rebuilt for it.
+    public func frame(width: Binding<Double>) -> Modified {
+        journey(VisualElementContract.width, by: width)
+    }
+
+    /// `height` from a state, `$x`: the host animates the property to each new
+    /// value, and no view is rebuilt for it.
+    public func frame(height: Binding<Double>) -> Modified {
+        journey(VisualElementContract.height, by: height)
+    }
+
+    /// `minimumWidth` from a state, `$x`: the host animates the property to
+    /// each new value, and no view is rebuilt for it.
+    public func frame(minWidth: Binding<Double>) -> Modified {
+        journey(VisualElementContract.minimumWidth, by: minWidth)
+    }
+
+    /// `maximumWidth` from a state, `$x`: the host animates the property to
+    /// each new value, and no view is rebuilt for it.
+    public func frame(maxWidth: Binding<Double>) -> Modified {
+        journey(VisualElementContract.maximumWidth, by: maxWidth)
+    }
+
+    /// `minimumHeight` from a state, `$x`: the host animates the property to
+    /// each new value, and no view is rebuilt for it.
+    public func frame(minHeight: Binding<Double>) -> Modified {
+        journey(VisualElementContract.minimumHeight, by: minHeight)
+    }
+
+    /// `maximumHeight` from a state, `$x`: the host animates the property to
+    /// each new value, and no view is rebuilt for it.
+    public func frame(maxHeight: Binding<Double>) -> Modified {
+        journey(VisualElementContract.maximumHeight, by: maxHeight)
+    }
+
+    /// `rotation` from a state, `$x`: the host animates the property to each
+    /// new value, and no view is rebuilt for it.
+    public func rotationEffect(_ state: Binding<Angle>) -> Modified {
+        journey(VisualElementContract.rotation, by: state)
+    }
+
+    /// `rotation` from a state of degrees, `$x`: the host animates it, and no
+    /// view is rebuilt for it.
+    public func rotationEffect(_ state: Binding<Double>) -> Modified {
+        journey(VisualElementContract.rotation.token, by: state)
+    }
+
+    /// `rotationX` and `rotationY` from states, `$x`: the host animates them,
+    /// and no view is rebuilt for it.
+    public func rotation3DEffect(x: Binding<Angle>? = nil, y: Binding<Angle>? = nil) -> Modified {
+        modified { node in
+            if let x { node.driveJourney(VisualElementContract.rotationX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.rotationY, by: y) }
+        }
+    }
+
+    /// `rotationX` and `rotationY` from states of degrees, `$x`: the host
+    /// animates them, and no view is rebuilt for it.
+    public func rotation3DEffect(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> Modified {
+        modified { node in
+            if let x { node.driveJourney(VisualElementContract.rotationX.token, by: x) }
+            if let y { node.driveJourney(VisualElementContract.rotationY.token, by: y) }
+        }
+    }
+
+    /// `scale` from a state, `$x`: the host animates the property to each new
+    /// value, and no view is rebuilt for it.
+    public func scaleEffect(_ state: Binding<Double>) -> Modified {
+        journey(VisualElementContract.scale, by: state)
+    }
+
+    /// `scaleX` and `scaleY` from states, `$x`: the host animates them, and no
+    /// view is rebuilt for it.
+    public func scaleEffect(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> Modified {
+        modified { node in
+            if let x { node.driveJourney(VisualElementContract.scaleX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.scaleY, by: y) }
+        }
+    }
+
+    /// `offset` from states, `$x`: the host animates them, and no view is
+    /// rebuilt for it.
+    public func offset(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> Modified {
+        modified { node in
+            if let x { node.driveJourney(VisualElementContract.translationX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.translationY, by: y) }
+        }
+    }
+
     /// `pivotX` from a state, `$x`: the host animates the property to each new
     /// value, and no view is rebuilt for it.
     public func pivotX(_ state: Binding<Double>) -> Modified {
@@ -148,129 +309,333 @@ extension VisualElement {
         journey(VisualElementContract.pivotY, by: state)
     }
 
-    /// `background` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
-    public func background(_ state: Binding<Color>) -> Modified {
-        journey(VisualElementContract.background.token, by: state)
-    }
-
-    /// `layoutDirection` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func layoutDirection(_ state: Binding<LayoutDirection>) -> Modified {
-        plain(VisualElementContract.layoutDirection, by: state)
-    }
-
-    /// `height` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func height(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.height, by: state)
-    }
-
-    /// `ignoresInput` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func ignoresInput(_ state: Binding<Bool>) -> Modified {
-        plain(VisualElementContract.ignoresInput, by: state)
-    }
-
-    /// `isEnabled` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func isEnabled(_ state: Binding<Bool>) -> Modified {
-        plain(VisualElementContract.isEnabled, by: state)
-    }
-
-    /// `isVisible` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func isVisible(_ state: Binding<Bool>) -> Modified {
-        plain(VisualElementContract.isVisible, by: state)
-    }
-
-    /// `maximumHeight` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func maximumHeight(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.maximumHeight, by: state)
-    }
-
-    /// `maximumWidth` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func maximumWidth(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.maximumWidth, by: state)
-    }
-
-    /// `minimumHeight` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func minimumHeight(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.minimumHeight, by: state)
-    }
-
-    /// `minimumWidth` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func minimumWidth(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.minimumWidth, by: state)
-    }
-
-    /// `opacity` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func opacity(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.opacity, by: state)
-    }
-
-    /// `rotation` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
-    public func rotation(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.rotation, by: state)
-    }
-
-    /// `rotationX` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
-    public func rotationX(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.rotationX, by: state)
-    }
-
-    /// `rotationY` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
-    public func rotationY(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.rotationY, by: state)
-    }
-
-    /// `scale` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func scale(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.scale, by: state)
-    }
-
-    /// `scaleX` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func scaleX(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.scaleX, by: state)
-    }
-
-    /// `scaleY` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func scaleY(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.scaleY, by: state)
-    }
-
-    /// `translationX` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func translationX(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.translationX, by: state)
-    }
-
-    /// `translationY` from a state, `$x`: the host animates the property to
-    /// each new value, and no view is rebuilt for it.
-    public func translationY(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.translationY, by: state)
-    }
-
-    /// `width` from a state, `$x`: the host animates the property to each new
-    /// value, and no view is rebuilt for it.
-    public func width(_ state: Binding<Double>) -> Modified {
-        journey(VisualElementContract.width, by: state)
-    }
-
     /// `zIndex` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
     public func zIndex(_ state: Binding<Int>) -> Modified {
         plain(VisualElementContract.zIndex, by: state)
+    }
+}
+
+extension VisualElementProperties {
+    /// `isVisible` from a state, `$x`, inverted as `.hidden` reads it: the host
+    /// shows the view where the state stands false, and no view is rebuilt for
+    /// it. The state drives the property through a conversion - the derived
+    /// state the host carries - so the modifier's direction is the author's.
+    public func hidden(_ state: Binding<Bool>) -> Modified {
+        plain(VisualElementContract.isVisible, by: state.convert { !$0 })
+    }
+
+    /// `isEnabled` from a state, `$x`, inverted.
+    public func disabled(_ state: Binding<Bool>) -> Modified {
+        plain(VisualElementContract.isEnabled, by: state.convert { !$0 })
+    }
+
+    /// `ignoresInput` from a state, `$x`, inverted.
+    public func allowsHitTesting(_ state: Binding<Bool>) -> Modified {
+        plain(VisualElementContract.ignoresInput, by: state.convert { !$0 })
+    }
+}
+
+extension View {
+    /// Whether the view responds to the user. Disabling a container disables
+    /// everything in it.
+    ///
+    ///     Button("Save").disabled(!form.isValid)
+    @_disfavoredOverload
+    public func disabled(_ disabled: Bool = true) -> ModifiedContent {
+        setting(VisualElementContract.isEnabled, !disabled)
+    }
+
+    /// Hides the view without unbuilding it.
+    @_disfavoredOverload
+    public func hidden(_ hidden: Bool = true) -> ModifiedContent {
+        setting(VisualElementContract.isVisible, !hidden)
+    }
+
+    /// Whether the view and everything in it ignore input: a tap or a click
+    /// goes through to whatever is behind it.
+    @_disfavoredOverload
+    public func allowsHitTesting(_ allows: Bool = true) -> ModifiedContent {
+        setting(VisualElementContract.ignoresInput, !allows)
+    }
+
+    /// `isEnabled` from a state, `$x`, inverted as `.disabled` reads it.
+    @_disfavoredOverload
+    public func disabled(_ state: Binding<Bool>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.isEnabled, by: state.convert { !$0 }) }
+    }
+
+    /// `isVisible` from a state, `$x`, inverted as `.hidden` reads it.
+    @_disfavoredOverload
+    public func hidden(_ state: Binding<Bool>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.isVisible, by: state.convert { !$0 }) }
+    }
+
+    /// `ignoresInput` from a state, `$x`, inverted.
+    @_disfavoredOverload
+    public func allowsHitTesting(_ state: Binding<Bool>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.ignoresInput, by: state.convert { !$0 }) }
+    }
+
+    /// Which way the view lays its content out - and, for a language written
+    /// right to left, the edge everything starts from.
+    @_disfavoredOverload
+    public func layoutDirection(_ value: LayoutDirection) -> ModifiedContent {
+        setting(VisualElementContract.layoutDirection, value)
+    }
+
+    /// How opaque the view is, from 0 to 1.
+    @_disfavoredOverload
+    public func opacity(_ value: Double) -> ModifiedContent {
+        setting(VisualElementContract.opacity, value)
+    }
+
+    /// What is drawn behind the view.
+    @_disfavoredOverload
+    public func background(_ value: Color) -> ModifiedContent {
+        setting(VisualElementContract.background, .color(value))
+    }
+
+    /// What is drawn behind the view, when one colour will not do.
+    @_disfavoredOverload
+    public func background(_ value: Brush) -> ModifiedContent {
+        setting(VisualElementContract.background, .brush(value))
+    }
+
+    /// The size the view asks for, in device units. A request: the layout has
+    /// the last word.
+    @_disfavoredOverload
+    public func frame(
+        width: Double? = nil,
+        height: Double? = nil,
+        minWidth: Double? = nil,
+        idealWidth: Double? = nil,
+        maxWidth: Double? = nil,
+        minHeight: Double? = nil,
+        idealHeight: Double? = nil,
+        maxHeight: Double? = nil,
+        alignment: Alignment = .center
+    ) -> ModifiedContent {
+        revised { node in
+            if let width { node.write(VisualElementContract.width, width) }
+            if let height { node.write(VisualElementContract.height, height) }
+            if let minWidth { node.write(VisualElementContract.minimumWidth, minWidth) }
+            if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
+            if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
+            if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
+            if alignment != .center { node.write(ViewContract.horizontalAlignment, alignment) }
+        }
+    }
+
+    /// Turns the view, about its pivot.
+    @_disfavoredOverload
+    public func rotationEffect(_ angle: Angle) -> ModifiedContent {
+        setting(VisualElementContract.rotation, angle)
+    }
+
+    /// Tips the view about its horizontal and vertical axes.
+    @_disfavoredOverload
+    public func rotation3DEffect(x: Angle = .zero, y: Angle = .zero) -> ModifiedContent {
+        revised { node in
+            node.write(VisualElementContract.rotationX, x)
+            node.write(VisualElementContract.rotationY, y)
+        }
+    }
+
+    /// How this view is moved, turned and sized: one transform about the view's
+    /// own centre.
+    @_disfavoredOverload
+    public func transformEffect(_ transform: ViewTransform) -> ModifiedContent {
+        revised {
+            $0.write(VisualElementContract.translationX, transform.x)
+            $0.write(VisualElementContract.translationY, transform.y)
+            $0.write(VisualElementContract.rotation, Angle(degrees: transform.rotation))
+            $0.write(VisualElementContract.scaleX, transform.width)
+            $0.write(VisualElementContract.scaleY, transform.height)
+        }
+    }
+
+    /// Resizes the view about its pivot, 1 being its natural size.
+    @_disfavoredOverload
+    public func scaleEffect(_ scale: Double) -> ModifiedContent {
+        setting(VisualElementContract.scale, scale)
+    }
+
+    /// Scales the view on each axis apart, about its pivot.
+    @_disfavoredOverload
+    public func scaleEffect(x: Double, y: Double) -> ModifiedContent {
+        revised { node in
+            node.write(VisualElementContract.scaleX, x)
+            node.write(VisualElementContract.scaleY, y)
+        }
+    }
+
+    /// Scales the view on the x axis alone, about its pivot.
+    @_disfavoredOverload
+    public func scaleEffect(x: Double) -> ModifiedContent {
+        setting(VisualElementContract.scaleX, x)
+    }
+
+    /// Scales the view on the y axis alone, about its pivot.
+    @_disfavoredOverload
+    public func scaleEffect(y: Double) -> ModifiedContent {
+        setting(VisualElementContract.scaleY, y)
+    }
+
+    /// Moves the view from where the layout put it, in device units.
+    @_disfavoredOverload
+    public func offset(x: Double = 0, y: Double = 0) -> ModifiedContent {
+        revised { node in
+            node.write(VisualElementContract.translationX, x)
+            node.write(VisualElementContract.translationY, y)
+        }
+    }
+
+    /// Where rotation and scaling pivot, sideways.
+    @_disfavoredOverload
+    public func pivotX(_ value: Double) -> ModifiedContent {
+        setting(VisualElementContract.pivotX, value)
+    }
+
+    /// The same, vertically.
+    @_disfavoredOverload
+    public func pivotY(_ value: Double) -> ModifiedContent {
+        setting(VisualElementContract.pivotY, value)
+    }
+
+    /// Who is drawn on top where a grid's or an absolute layout's children
+    /// overlap.
+    @_disfavoredOverload
+    public func zIndex(_ value: Int) -> ModifiedContent {
+        setting(VisualElementContract.zIndex, value)
+    }
+}
+
+extension View {
+    /// `opacity` from a state, `$x`: the host animates the property to each new
+    /// value, and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func opacity(_ state: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.opacity, by: state) }
+    }
+
+    /// `layoutDirection` from a state, `$x`.
+    @_disfavoredOverload
+    public func layoutDirection(_ state: Binding<LayoutDirection>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.layoutDirection, by: state) }
+    }
+
+    /// `background` from a state, `$x`.
+    @_disfavoredOverload
+    public func background(_ state: Binding<Color>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.background.token, by: state) }
+    }
+
+    /// `width` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(width: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.width, by: width) }
+    }
+
+    /// `height` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(height: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.height, by: height) }
+    }
+
+    /// `minimumWidth` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(minWidth: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.minimumWidth, by: minWidth) }
+    }
+
+    /// `maximumWidth` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(maxWidth: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.maximumWidth, by: maxWidth) }
+    }
+
+    /// `minimumHeight` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(minHeight: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.minimumHeight, by: minHeight) }
+    }
+
+    /// `maximumHeight` from a state, `$x`.
+    @_disfavoredOverload
+    public func frame(maxHeight: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.maximumHeight, by: maxHeight) }
+    }
+
+    /// `rotation` from a state, `$x`.
+    @_disfavoredOverload
+    public func rotationEffect(_ state: Binding<Angle>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.rotation, by: state) }
+    }
+
+    /// `rotation` from a state of degrees, `$x`.
+    @_disfavoredOverload
+    public func rotationEffect(_ state: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.rotation.token, by: state) }
+    }
+
+    /// `rotationX` and `rotationY` from states, `$x`.
+    @_disfavoredOverload
+    public func rotation3DEffect(x: Binding<Angle>? = nil, y: Binding<Angle>? = nil) -> ModifiedContent {
+        revised { node in
+            if let x { node.driveJourney(VisualElementContract.rotationX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.rotationY, by: y) }
+        }
+    }
+
+    /// `rotationX` and `rotationY` from states of degrees, `$x`.
+    @_disfavoredOverload
+    public func rotation3DEffect(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> ModifiedContent {
+        revised { node in
+            if let x { node.driveJourney(VisualElementContract.rotationX.token, by: x) }
+            if let y { node.driveJourney(VisualElementContract.rotationY.token, by: y) }
+        }
+    }
+
+    /// `scale` from a state, `$x`.
+    @_disfavoredOverload
+    public func scaleEffect(_ state: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.scale, by: state) }
+    }
+
+    /// `scaleX` and `scaleY` from states, `$x`.
+    @_disfavoredOverload
+    public func scaleEffect(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> ModifiedContent {
+        revised { node in
+            if let x { node.driveJourney(VisualElementContract.scaleX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.scaleY, by: y) }
+        }
+    }
+
+    /// `offset` from states, `$x`.
+    @_disfavoredOverload
+    public func offset(x: Binding<Double>? = nil, y: Binding<Double>? = nil) -> ModifiedContent {
+        revised { node in
+            if let x { node.driveJourney(VisualElementContract.translationX, by: x) }
+            if let y { node.driveJourney(VisualElementContract.translationY, by: y) }
+        }
+    }
+
+    /// `pivotX` from a state, `$x`.
+    @_disfavoredOverload
+    public func pivotX(_ state: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.pivotX, by: state) }
+    }
+
+    /// `pivotY` from a state, `$x`.
+    @_disfavoredOverload
+    public func pivotY(_ state: Binding<Double>) -> ModifiedContent {
+        revised { $0.driveJourney(VisualElementContract.pivotY, by: state) }
+    }
+
+    /// `zIndex` from a state, `$x`.
+    @_disfavoredOverload
+    public func zIndex(_ state: Binding<Int>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.zIndex, by: state) }
     }
 }

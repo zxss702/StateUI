@@ -187,8 +187,8 @@ private func collectStateParts(
     // apart, and the type of the view inside.
     if let keyed = value as? Keyed {
         collectStateParts(
-            in: keyed.element,
-            at: "\(path).\(keyed.segment)\(storedViewType(of: keyed.element))",
+            in: keyed.raw,
+            at: "\(path).\(keyed.segment)\(storedViewType(of: keyed.raw))",
             boxes: &boxes,
             slots: &slots,
             inputs: &inputs)
@@ -270,17 +270,31 @@ extension Node {
             }
         }
 
-        /// Builds the subtree and lands what the author wrote on the view onto its root.
+        /// Builds the subtree and lands what the author wrote on the view onto its
+        /// root - or onto each of them, when the body is a fragment of several.
         func expand(over written: Node) -> Node {
             var node = build()
+
+            // A fragment keeps no element of its own to write on: what the author
+            // wrote on the view lands on each child the body splices in.
+            if node.type == .fragment {
+                node.environments = written.environments + node.environments
+                node.children = node.children.map { landing($0, written: written) }
+
+                // A body of one view is that view: it stands in the view's place.
+                if node.children.count == 1 {
+                    var child = node.children[0]
+                    child.environments = node.environments + child.environments
+                    node = child
+                }
+
+                return node
+            }
+
             node.props.merge(written.props) { _, wrote in wrote }
-
-            // The states driven to it, for the same reason: a registration left on the
-            // placeholder names a control nothing holds.
+            node.environments = written.environments + node.environments
             node.driven.merge(written.driven) { _, wrote in wrote }
-
-            // And how it animates: `.motion(_:)` on a composed view is about the view.
-            node.motion = MotionPlan.merged(node.motion, under: written.motion)
+            node.animation = AnimationPlan.merged(node.animation, under: written.animation)
 
             for (name, handler) in written.events.sorted(by: { $0.key < $1.key }) {
                 node.addHandler(name, handler)
@@ -302,6 +316,31 @@ extension Node {
             node.id = written.id ?? node.id
             node.key = written.key ?? node.key
             return node
+        }
+
+        /// `written` landed on one child of a fragment: the same merge `expand`
+        /// runs on a single root, except the view's key scopes the child's.
+        private func landing(_ child: Node, written: Node) -> Node {
+            var child = child
+            child.props.merge(written.props) { _, wrote in wrote }
+            child.driven.merge(written.driven) { _, wrote in wrote }
+            child.animation = AnimationPlan.merged(child.animation, under: written.animation)
+
+            for (name, handler) in written.events.sorted(by: { $0.key < $1.key }) {
+                child.addHandler(name, handler)
+            }
+
+            child.watches += written.watches
+            child.created += written.created
+            child.destroying += written.destroying
+            child.engines += written.engines
+            child.children += written.children
+            if child.session == nil { child.session = written.session }
+            child.id = written.id ?? child.id
+            child.key = written.key.map { scope in
+                child.key.map { "\(scope).\($0)" } ?? scope
+            } ?? child.key
+            return child
         }
     }
 
@@ -359,4 +398,17 @@ extension NodeType {
     /// The differ's placeholder for a composed view. It never crosses to a host, so
     /// no contract declares it.
     static let composed = NodeType("Composed")
+
+    /// A transparent group - a `TupleView`, `Group`, `ForEach` or `EmptyView`: the
+    /// differ splices its children into the parent element's own, so it never
+    /// crosses to a host either.
+    static let fragment = NodeType("Fragment")
+}
+
+extension Node {
+    /// This node spliced into a parent's child list: a fragment's children, any
+    /// other node itself.
+    var asChildren: [Node] {
+        type == .fragment ? children : [self]
+    }
 }

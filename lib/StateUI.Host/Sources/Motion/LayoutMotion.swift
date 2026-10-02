@@ -10,7 +10,7 @@
 
     /// Where the view's place travels, told as it sets out, and nil once it stands: a view laying out words lays
     /// them out at that size while its place travels, never at the sizes it passes through.
-    /// Design: docs/design/host/motion.md#words-at-their-destination
+    /// Design: docs/design/host/animation.md#words-at-their-destination
     func travels(to destination: Rect?)
 }
 
@@ -22,16 +22,16 @@ extension PlacedView {
 /// How one arrangement of a layout places its children.
 @_spi(Host) public struct Arrangement {
     /// The timing children animate and fade in under.
-    public var law: Motion
+    public var law: Animation
 
     /// Which sides of a changed place animate; none where every child arrives.
-    public var lanes: MotionLanes
+    public var lanes: AnimationLanes
 
     /// Whether a child that joins the layout fades in.
     public var fades: Bool
 
     /// An arrangement that animates `lanes` under `law`, fading in a joining child when `fades`.
-    public init(law: Motion = .none, lanes: MotionLanes = [], fades: Bool = false) {
+    public init(law: Animation = .none, lanes: AnimationLanes = [], fades: Bool = false) {
         self.law = law
         self.lanes = lanes
         self.fades = fades
@@ -39,7 +39,7 @@ extension PlacedView {
 }
 
 /// The places layouts give their children, animated there instead of jumped to.
-/// Design: docs/design/host/motion.md#layout-motion
+/// Design: docs/design/host/animation.md#layout-animation
 @_spi(Host) @MainActor public final class LayoutMotion {
     /// The place a layout gave one child; the view is held weakly.
     private struct Seat {
@@ -52,13 +52,13 @@ extension PlacedView {
     private let reducesMotion: () -> Bool
     private var seats: [UInt64: Seat] = [:]
 
-    /// The application's motion, which a layout that says nothing of its own animates under.
-    public var applicationMotion: Motion = .none
+    /// The application's animation, which a layout that says nothing of its own animates under.
+    public var applicationMotion: Animation = .none
 
     /// Called when an animation starts, so the frame clock is held while it runs.
     public var onStart: () -> Void = {}
 
-    /// Layout motion whose animations `animator` advances, on `now`'s time.
+    /// Layout animation whose animations `animator` advances, on `now`'s time.
     public init(animator: Animator, now: @escaping () -> Double, reducesMotion: @escaping () -> Bool) {
         self.animator = animator
         self.now = now
@@ -67,17 +67,17 @@ extension PlacedView {
 
     /// How an arrangement places a layout's children: `said` when a patch reached the layout,
     /// `resized` when its own width changed, `framesRead` when a frame under it is read.
-    public func arrangement(said: Bool, resized: Bool, motion: HostLayoutMotion?, framesRead: Bool) -> Arrangement {
-        let lanes = motion?.lanes ?? .all
+    public func arrangement(said: Bool, resized: Bool, animation: HostLayoutMotion?, framesRead: Bool) -> Arrangement {
+        let lanes = animation?.lanes ?? .all
 
-        guard said, !lanes.isEmpty, let law = law(of: motion) else { return Arrangement() }
+        guard said, !lanes.isEmpty, let law = law(of: animation) else { return Arrangement() }
 
         return Arrangement(law: law, lanes: resized || framesRead ? [] : lanes, fades: true)
     }
 
-    /// The timing `motion` resolves to, or nil where nothing animates.
-    public func law(of motion: HostLayoutMotion?) -> Motion? {
-        let law = motion.map { $0.motion.isInherited ? applicationMotion : $0.motion } ?? applicationMotion
+    /// The timing `animation` resolves to, or nil where nothing animates.
+    public func law(of animation: HostLayoutMotion?) -> Animation? {
+        let law = animation.map { $0.animation.isInherited ? applicationMotion : $0.animation } ?? applicationMotion
         return Self.moves(law) && !reducesMotion() ? law : nil
     }
 
@@ -86,8 +86,8 @@ extension PlacedView {
         _ view: any PlacedView,
         mount: UInt64,
         at target: Rect,
-        stated: MotionLanes,
-        fadeIn: ((Motion) -> Void)?,
+        stated: AnimationLanes,
+        fadeIn: ((Animation) -> Void)?,
         in arrangement: Arrangement
     ) {
         guard mount != 0 else {
@@ -132,7 +132,7 @@ extension PlacedView {
             velocity[index] = 0
         }
 
-        let animation = Animation(from: start, destination: destination, velocity: velocity, motion: arrangement.law, began: now())
+        let animation = RunningAnimation(from: start, destination: destination, velocity: velocity, animation: arrangement.law, began: now())
 
         guard !animation.arrives else {
             arrive(view, at: target, mount: mount)
@@ -173,9 +173,9 @@ extension PlacedView {
     }
 
     /// Whether a timing animates anything: neither a snap nor an engine's own.
-    private static func moves(_ motion: Motion) -> Bool {
-        !motion.isInherited && !motion.isCustom && motion.factor.isFinite
-            && !(motion.law == .eased && motion.millis == 0)
+    private static func moves(_ animation: Animation) -> Bool {
+        !animation.isInherited && !animation.isCustom && animation.factor.isFinite
+            && !(animation.law == .eased && animation.millis == 0)
     }
 
     private static func isReal(_ rect: Rect) -> Bool {
@@ -183,7 +183,7 @@ extension PlacedView {
     }
 
     /// A place's lanes in animation order: across, down, wide, tall.
-    private static let order: [MotionLanes] = [.x, .y, .width, .height]
+    private static let order: [AnimationLanes] = [.x, .y, .width, .height]
 
     private static func lanes(_ rect: Rect) -> [Double] {
         [rect.x, rect.y, rect.width, rect.height]

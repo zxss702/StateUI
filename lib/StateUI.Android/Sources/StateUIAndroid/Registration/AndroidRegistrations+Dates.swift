@@ -56,7 +56,7 @@ extension AndroidRegistrations {
     /// The look of a field's words, for a field that has no words of the tree's.
     private static let fontMembers: [any ContractMember] = [
         FontElementContract.fontSize, FontElementContract.fontAttributes, FontElementContract.fontFamily,
-        TextStyleElementContract.textColor,
+        TextStyleElementContract.foregroundStyle,
     ]
 
     private static func applyFont<Realized: ElementContract>(_ view: AndroidTextView, _ values: ElementValues<Realized>) {

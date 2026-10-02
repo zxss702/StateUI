@@ -7,23 +7,23 @@ import AppKit
 @_spi(Host) import StateUIHost
 
 extension AppKitRegistrations {
-    /// An ItemsView: AppKit's collection view, which the host makes itself - its cells ask the tree for what they
+    /// An List: AppKit's collection view, which the host makes itself - its cells ask the tree for what they
     /// hold (`ItemsCells`). Its entries, layout and choice; the user's choosing, opening and reaching the end; the
     /// cells it holds; and scrolling to an item.
     static func items(_ registry: Registry<NSView>) {
-        registry.add(ItemsViewContract.self, madeByHost: AppKitItemsView.self) { list in
+        registry.add(ListContract.self, madeByHost: AppKitItemsView.self) { list in
             list.applies([
-                ItemsViewContract.items, ItemsViewContract.itemsLayout, ItemsViewContract.selectionMode,
-                ItemsViewContract.selectedItems, ItemsViewContract.endReachedWithin,
+                ListContract.items, ListContract.itemsLayout, ListContract.selectionMode,
+                ListContract.selectedItems, ListContract.endReachedWithin,
             ]) { view, values in
                 view.apply(
-                    layout: values[ItemsViewContract.itemsLayout] ?? .list(),
-                    mode: values[ItemsViewContract.selectionMode] ?? .none)
+                    layout: values[ListContract.itemsLayout] ?? .list(),
+                    mode: values[ListContract.selectionMode] ?? .none)
             }
-            list.raises(ItemsViewContract.selectionChanged)
-            list.raises(ItemsViewContract.itemActivated)
-            list.raises(ItemsViewContract.endReached)
-            list.raises(ItemsViewContract.realizedChanged)
+            list.raises(ListContract.selectionChanged)
+            list.raises(ListContract.itemActivated)
+            list.raises(ListContract.endReached)
+            list.raises(ListContract.realizedChanged)
         }
     }
 }

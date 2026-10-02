@@ -5,23 +5,23 @@
 @_spi(Host) import StateUIHost
 
 extension GTKRegistrations {
-    /// An ItemsView: GTK's own list view or grid view, which the host makes itself - its rows ask the tree for what
+    /// An List: GTK's own list view or grid view, which the host makes itself - its rows ask the tree for what
     /// they hold (`ItemsCells`). Its entries, layout and choice; the user's choosing, activating and reaching the
     /// end; and the cells it holds.
     static func items(_ registry: Registry<GTKView>) {
-        registry.add(ItemsViewContract.self, madeByHost: GTKItemsView.self) { list in
+        registry.add(ListContract.self, madeByHost: GTKItemsView.self) { list in
             list.applies([
-                ItemsViewContract.items, ItemsViewContract.itemsLayout, ItemsViewContract.selectionMode,
-                ItemsViewContract.selectedItems, ItemsViewContract.endReachedWithin,
+                ListContract.items, ListContract.itemsLayout, ListContract.selectionMode,
+                ListContract.selectedItems, ListContract.endReachedWithin,
             ]) { view, values in
                 view.apply(
-                    layout: values[ItemsViewContract.itemsLayout] ?? .list(),
-                    mode: values[ItemsViewContract.selectionMode] ?? .none)
+                    layout: values[ListContract.itemsLayout] ?? .list(),
+                    mode: values[ListContract.selectionMode] ?? .none)
             }
-            list.raises(ItemsViewContract.selectionChanged)
-            list.raises(ItemsViewContract.itemActivated)
-            list.raises(ItemsViewContract.endReached)
-            list.raises(ItemsViewContract.realizedChanged)
+            list.raises(ListContract.selectionChanged)
+            list.raises(ListContract.itemActivated)
+            list.raises(ListContract.endReached)
+            list.raises(ListContract.realizedChanged)
         }
     }
 }

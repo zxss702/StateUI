@@ -19,13 +19,13 @@ enum Styled {
             dimmed(Button.self)
             dimmed(Canvas.self)
             dimmed(CheckBox.self)
-            dimmed(ColorBox.self)
+            dimmed(ColorPicker.self)
             dimmed(DatePicker.self)
             dimmed(Ellipse.self)
             dimmed(Grid.self)
             dimmed(HStack.self)
             dimmed(Image.self)
-            dimmed(Label.self)
+            dimmed(Text.self)
             dimmed(Line.self)
             dimmed(Map.self)
             dimmed(Path.self)
@@ -59,13 +59,13 @@ enum Styled {
 }
 
 /// A page whose application wears `Styled.sheet`, holding `inner`.
-struct StyledPage: ContentView {
+struct StyledPage: View {
     let inner: any View
 
     @Environment private var application: ApplicationSession
 
-    var content: any View {
+    var body: some View {
         let (inner, application) = (self.inner, self.application)
-        return VStack { inner }.onCreated { application.styles = Styled.sheet }
+        return VStack { inner }.onAppear { application.styles = Styled.sheet }
     }
 }

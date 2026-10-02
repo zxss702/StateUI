@@ -50,5 +50,5 @@ extension HostPlacement {
     public let placements: [HostPlacement]
 
     /// How a changed arrangement animates to its new positions.
-    public let motion: Motion
+    public let animation: Animation
 }

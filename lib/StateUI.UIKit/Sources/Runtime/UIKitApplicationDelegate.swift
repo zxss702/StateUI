@@ -27,7 +27,7 @@ final class UIKitApplicationDelegate: UIResponder, UIApplicationDelegate {
         return configuration
     }
 
-    /// The main menu - on an iPad the menu bar - holds the menus of the page the user sees, before UIKit's Window
+    /// The main menu - on an iPad the menu bar - holds the menus of the page the user sees, before UIKit's WindowScene
     /// menu.
     override func buildMenu(with builder: any UIMenuBuilder) {
         super.buildMenu(with: builder)

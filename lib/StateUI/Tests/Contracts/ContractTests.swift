@@ -157,7 +157,7 @@ final class ContractTests: XCTestCase {
             Brush.linearGradient([GradientStop(.gold, 0), GradientStop(.tomato, 1)]),
             Brush.radialGradient([GradientStop(.white, 0), GradientStop(.steelBlue, 1)], radius: 0.8),
             Background.color(.tomato), Background.brush(.linearGradient([GradientStop(.gold, 0)])),
-            Insets(1, 2, 3, 4), Rect(1, 2, 3, 4), Point(5, 6),
+            EdgeInsets(1, 2, 3, 4), Rect(1, 2, 3, 4), Point(5, 6), Angle.degrees(45),
             [Point(1, 2), Point(3, 4)] as [Point], [1, 2.5] as [Double], ["a", "b"] as [String],
             ImageSource("logo.png"), ImageSource(light: "logo.png", dark: "logo_dark.png"),
             ViewTransform.rotate(15).scaleX(1.2),
@@ -176,9 +176,9 @@ final class ContractTests: XCTestCase {
             FontAttributes([.bold, .italic]), TextDecorations(rawValue: 1),
             Area.absolute(0, 0, 120, 40), Area.proportional(0.5, 0, 0.5, 1), SwipeDirection.all,
             Alignment(rawValue: 1)!, TextAlignment.center, LineBreak(rawValue: 1)!, TextCase(rawValue: 1)!,
-            InputPurpose(rawValue: 1)!, ReturnKey(rawValue: 1)!, ScrollOrientation(rawValue: 1)!,
-            PinType(rawValue: 1)!, Aspect(rawValue: 1)!, LayoutDirection(rawValue: 1)!,
-            HeadingLevel(rawValue: 1)!, ScrollBarVisibility(rawValue: 1)!,
+            InputPurpose(rawValue: 1)!, ReturnKey(rawValue: 1)!, Axis(rawValue: 1)!,
+            PinType(rawValue: 1)!, ContentMode(rawValue: 1)!, LayoutDirection(rawValue: 1)!,
+            HeadingLevel(rawValue: 1)!, ScrollIndicatorVisibility(rawValue: 1)!,
             LineCap(rawValue: 1)!, LineJoin(rawValue: 1)!,
             FillRule(rawValue: 1)!, IndicatorShape(rawValue: 1)!, ToolbarItemPlacement(rawValue: 1)!,
             SafeArea(rawValue: 1)!, IconPosition(rawValue: 1)!, MapType(rawValue: 1)!,
@@ -231,7 +231,7 @@ final class ContractTests: XCTestCase {
             .onEvent(LampContract.tapped) { index in heard.lines.append("tapped \(index)") }
             .onEvent(LampContract.dimmed) { level, on in heard.lines.append("dimmed \(level) \(on)") }
             .onEvent(LampContract.poked) { heard.lines.append("poked") }
-            .body)
+            .node)
 
         renders.fire(try XCTUnwrap(patch.events?["tapped"]), with: [.number(2)])
         renders.fire(try XCTUnwrap(patch.events?["dimmed"]), with: [.number(0.5), .bool(true)])
@@ -249,7 +249,7 @@ final class ContractTests: XCTestCase {
 
         let patch = renders.render(Lamp()
             .onEvent(LampContract.tapped) { index in heard.lines.append("tapped \(index)") }
-            .body)
+            .node)
 
         let id = try XCTUnwrap(patch.events?["tapped"])
         renders.fire(id, with: [.string("2")])
@@ -309,7 +309,7 @@ final class ContractTests: XCTestCase {
         let renders = Renders()
         let lamp = Aim(Lamp.self)
 
-        renders.render(stack([Lamp().aim(lamp).body], id: "root"))
+        renders.render(stack([Lamp().aim(lamp).node], id: "root"))
         _ = drainedActs()
 
         let asked = await Self.begin { try await lamp.call(LampContract.flash, 3) }
@@ -404,6 +404,6 @@ private enum TestDevice: ApplicationTier {
 }
 
 /// The lamp's view: its node from its contract.
-private struct Lamp: View {
+private struct Lamp: VisualElement {
     var node = Node(contract: LampContract.self)
 }

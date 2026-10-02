@@ -43,7 +43,7 @@ final class AndroidPickerView: AndroidView {
         }
     }
 
-    /// How the words look (`TextMembers.look`) - each the theme's where it says nothing - and where they stand across
+    /// How the words look (`TextMembers.look`) - each the color scheme's where it says nothing - and where they stand across
     /// the field.
     func setLook(_ look: TextLook, alignment: TextAlignment) {
         let (size, color) = (look.size, look.color)

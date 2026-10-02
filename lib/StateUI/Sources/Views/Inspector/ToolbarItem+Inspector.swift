@@ -9,7 +9,7 @@ extension ToolbarItem {
     ///     @Environment private var page: PageSession
     ///
     ///     VStack { … }
-    ///         .onCreated { page.toolbarItems = [.inspector(scene)] }
+    ///         .onAppear { page.toolbarItems = [.inspector(scene)] }
     ///
     /// - Parameter scene: the scene whose inspector it shows - the page's own.
     public static func inspector(_ scene: SceneSession) -> ToolbarItem {

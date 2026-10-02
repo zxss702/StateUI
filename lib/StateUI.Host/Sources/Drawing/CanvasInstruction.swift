@@ -12,7 +12,7 @@
     /// The colour outlines are drawn in from here.
     case strokeColor(HostValue)
     /// The colour text is drawn in from here.
-    case textColor(HostValue)
+    case foregroundStyle(HostValue)
     /// An outline's width from here.
     case strokeWidth(Double)
     /// The text's size in points from here.
@@ -76,7 +76,7 @@
         switch kind {
         case 0: guard let color = values.first, color.color != nil else { return nil }; self = .fillColor(color)
         case 1: guard let color = values.first, color.color != nil else { return nil }; self = .strokeColor(color)
-        case 2: guard let color = values.first, color.color != nil else { return nil }; self = .textColor(color)
+        case 2: guard let color = values.first, color.color != nil else { return nil }; self = .foregroundStyle(color)
         case 3: guard let n = numbers(1) else { return nil }; self = .strokeWidth(n[0])
         case 4: guard let n = numbers(1) else { return nil }; self = .fontSize(n[0])
         case 5: guard let n = numbers(1) else { return nil }; self = .alpha(n[0])

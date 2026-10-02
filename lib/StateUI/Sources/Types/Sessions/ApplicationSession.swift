@@ -28,31 +28,31 @@ public final class ApplicationSession {
     /// read like any state, so a view that shows them is built again as a
     /// scene opens or closes.
     ///
-    ///     Label("\(application.scenes.count) open")
+    ///     Text("\(application.scenes.count) open")
     public var scenes: [SceneSession] { Scenes.shared.list.map(\.session) }
 
     /// The styles every control in the application can be given.
     ///
     ///     init() {
     ///         application.styles = StyleSheet {
-    ///             Style<Label>().fontSize(14)
+    ///             Style<Text>().fontSize(14)
     ///         }
     ///     }
     ///
     /// A style resolves into the controls it applies to, and a colour pair in
-    /// it follows the theme. A sheet written again is the next render's.
+    /// it follows the color scheme. A sheet written again is the next render's.
     @State public var styles: StyleSheet? = nil
 
     /// How every value in the application animates when it changes.
     ///
-    ///     application.motion = .spring(response: 260)
+    ///     application.animation = .spring(response: 260)
     ///
     /// A colour animates to its new colour, a view that grew to its new size.
     /// `.none` turns animation off everywhere, for an application that draws
-    /// its own. A view overrides it with `.motion(_:)`, a state with
-    /// `@State(motion:)`, and one write with `$state.journey.snap(to:)` or
+    /// its own. A view overrides it with `.animation(_:)`, a state with
+    /// `@State(animation:)`, and one write with `$state.journey.snap(to:)` or
     /// `$state.journey.move(to:_:)`.
-    @State public var motion: Motion = .standard
+    @State public var animation: Animation = .standard
 
     /// Every key the application keeps between launches. Write it in the
     /// application's `init`: the host reads exactly these keys from the store
@@ -73,7 +73,7 @@ public final class ApplicationSession {
     public init() {}
 
     /// Opens another session of the application: a new scene, its main window
-    /// first - what *File ▸ New Window* does, asked from the interface.
+    /// first - what *File ▸ New WindowScene* does, asked from the interface.
     ///
     /// - Throws: `WindowError.unsupported` where the platform opens no second
     ///   window - a phone.
@@ -85,7 +85,7 @@ public final class ApplicationSession {
     /// a second one inherits none of the first one's styles or keys.
     func forget() {
         styles = nil
-        motion = .standard
+        animation = .standard
         persistentKeys = []
     }
 }

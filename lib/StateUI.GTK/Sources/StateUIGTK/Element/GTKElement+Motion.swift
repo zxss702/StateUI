@@ -4,16 +4,16 @@
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// The element's part in its layout's motion: fading in as it joins, and a change of visibility crossed,
+/// The element's part in its layout's animation: fading in as it joins, and a change of visibility crossed,
 /// both by the host layer's rule.
-/// Design: docs/design/host/motion.md#layout-motion
+/// Design: docs/design/host/animation.md#layout-animation
 extension GTKElement {
     /// Hands a travelling layout what its children travel under, and tells it a patch reached it.
     func configureLayoutMotion() {
         guard let layout = view as? GTKTravellingLayout else { return }
 
         layout.places.layoutMotion = host?.runtime.layoutMotion
-        layout.places.motion = element.motion
+        layout.places.animation = element.animation
         layout.places.framesRead = element.framesRead
         layout.places.patchArrived()
     }
@@ -24,9 +24,9 @@ extension GTKElement {
     }
 
     /// Fades the element in as it joins a layout already standing, by the host layer's rule.
-    func fadeIn(under motion: Motion) {
+    func fadeIn(under animation: Animation) {
         guard fadesIn, let view else { return }
-        element.fadeIn(view, under: motion)
+        element.fadeIn(view, under: animation)
     }
 
     /// Crosses a change of visibility by the host layer's rule; as a fade out ends, the layout closes over it.

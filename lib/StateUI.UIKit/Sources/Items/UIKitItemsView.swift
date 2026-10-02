@@ -6,7 +6,7 @@ import UIKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// An ItemsView: UIKit's own collection view over the list's identities, a cell holding each entry's subtree as the
+/// An List: UIKit's own collection view over the list's identities, a cell holding each entry's subtree as the
 /// collection asks for it (`ItemsCells`). UIKit scrolls, reuses its cells, selects and tells VoiceOver; StateUI
 /// builds what a cell holds.
 /// Design: docs/design/platforms/uikit/items.md
@@ -22,7 +22,7 @@ final class UIKitItemsView: UIView, UICollectionViewDelegate {
     private var framed = (header: false, footer: false)
 
 
-    /// Whether the motion of a scroll the tree asks for is left out.
+    /// Whether the animation of a scroll the tree asks for is left out.
     private let reducesMotion: () -> Bool
 
     init(cells: ItemsCells, reducesMotion: @escaping () -> Bool) {

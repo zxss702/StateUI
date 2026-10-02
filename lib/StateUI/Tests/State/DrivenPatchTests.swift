@@ -27,7 +27,7 @@ final class DrivenPatchTests: XCTestCase {
     /// the scene's main window and a page - so the patch is a whole render
     /// rather than a fragment.
     private func rooted(_ content: Node) -> Node {
-        var main = Node(type: "Window", children: [
+        var main = Node(type: "WindowScene", children: [
             Node(type: "Page", children: [content]),
         ])
         main.id = SceneElement.mainKey
@@ -35,7 +35,7 @@ final class DrivenPatchTests: XCTestCase {
         var scene = Node(type: "Scene", children: [main])
         scene.id = "1"
 
-        return Node(type: "Application", children: [scene])
+        return Node(type: "App", children: [scene])
     }
 
     /// The page of a first render of `content`: what stands under it is the
@@ -71,12 +71,12 @@ final class DrivenPatchTests: XCTestCase {
 
         func card(enabled: Bool) throws -> (patch: HostPatch, card: HostPatch) {
             let page = try page(
-                ZStack { Label("dimmed") }
+                ZStack { Text("dimmed") }
                     .opacity(0.5)
                     .opacity(fade.projectedValue)
-                    .isEnabled(enabled)
+                    .disabled(!enabled)
                     .visualState(.disabled) { $0.opacity(0.1) }
-                    .body)
+                    .node)
             return (page, try XCTUnwrap(page.at(.auto(3))))
         }
 
@@ -98,7 +98,7 @@ final class DrivenPatchTests: XCTestCase {
     /// landing each of them.
     func testEveryShapeOfABoundPropertyRegistersItsChannel() throws {
         let size = State(wrappedValue: 14.0)
-        let shown = State(wrappedValue: true)
+        let hidden = State(wrappedValue: false)
         let hint = State(wrappedValue: "Type here")
         let choice = State(wrappedValue: 1)
         let on = State(wrappedValue: false)
@@ -106,9 +106,9 @@ final class DrivenPatchTests: XCTestCase {
 
         let page = try page(
             VStack {
-                Label("bound")
+                Text("bound")
                     .fontSize(size.projectedValue)
-                    .isVisible(shown.projectedValue)
+                    .hidden(hidden.projectedValue)
                     .horizontalAlignment(side.projectedValue)
                 TextField()
                     .placeholder(hint.projectedValue)
@@ -116,7 +116,7 @@ final class DrivenPatchTests: XCTestCase {
                     .selectedIndex(choice.projectedValue)
                 Switch(on.projectedValue)
             }
-            .body)
+            .node)
 
         // Numbered in the walk, and within one element in the names' order.
         XCTAssertEqual(
@@ -135,34 +135,35 @@ final class DrivenPatchTests: XCTestCase {
     func testEveryDrivenModifierRegistersItsProperty() throws {
         let number = State(wrappedValue: 0.5)
         let colour = State(wrappedValue: Color("#102030"))
-        let inset = State(wrappedValue: Insets(4))
+        let inset = State(wrappedValue: EdgeInsets(4))
+        let turn = State(wrappedValue: Angle.zero)
 
         let card = ZStack {
-            Label("words")
+            Text("words")
                 .fontSize(number.projectedValue)
-                .textColor(colour.projectedValue)
+                .foregroundStyle(colour.projectedValue)
                 .characterSpacing(number.projectedValue)
         }
         .opacity(number.projectedValue)
         .background(colour.projectedValue)
-        .width(number.projectedValue)
-        .height(number.projectedValue)
-        .minimumWidth(number.projectedValue)
-        .minimumHeight(number.projectedValue)
-        .maximumWidth(number.projectedValue)
-        .maximumHeight(number.projectedValue)
-        .rotation(number.projectedValue)
-        .rotationX(number.projectedValue)
-        .rotationY(number.projectedValue)
-        .scale(number.projectedValue)
-        .scaleX(number.projectedValue)
-        .scaleY(number.projectedValue)
-        .translationX(number.projectedValue)
-        .translationY(number.projectedValue)
+        .frame(width: number.projectedValue)
+        .frame(height: number.projectedValue)
+        .frame(minWidth: number.projectedValue)
+        .frame(minHeight: number.projectedValue)
+        .frame(maxWidth: number.projectedValue)
+        .frame(maxHeight: number.projectedValue)
+        .rotationEffect(turn.projectedValue)
+        .rotation3DEffect(x: turn.projectedValue)
+        .rotation3DEffect(y: turn.projectedValue)
+        .scaleEffect(number.projectedValue)
+        .scaleEffect(x: number.projectedValue)
+        .scaleEffect(y: number.projectedValue)
+        .offset(x: number.projectedValue)
+        .offset(y: number.projectedValue)
         .pivotX(number.projectedValue)
         .pivotY(number.projectedValue)
-        .margin(inset.projectedValue)
         .padding(inset.projectedValue)
+        .contentPadding(inset.projectedValue)
         .strokeWidth(number.projectedValue)
 
         let shape = Rectangle()
@@ -178,9 +179,9 @@ final class DrivenPatchTests: XCTestCase {
         let entry = TextField("").placeholderColor(colour.projectedValue)
 
         // And the one modifier that is a control's own rather than a tier's.
-        let box = ColorBox().color(colour.projectedValue)
+        let box = ColorPicker().color(colour.projectedValue)
 
-        let page = try page(VStack { card; shape; button; entry; box }.spacing(number.projectedValue).body)
+        let page = try page(VStack { card; shape; button; entry; box }.spacing(number.projectedValue).node)
 
         // The number is state 1, the colour 2 and the insets 3, in the walk.
         XCTAssertEqual(ties(page, .auto(3)), tied(["spacing"], to: 1, .inOut, .property))
@@ -188,15 +189,16 @@ final class DrivenPatchTests: XCTestCase {
             ties(page, .auto(3), .auto(4)),
             tied([
                 "height", "maximumHeight", "maximumWidth", "minimumHeight", "minimumWidth", "opacity",
-                "pivotX", "pivotY", "rotation", "rotationX", "rotationY", "scale", "scaleX", "scaleY",
+                "pivotX", "pivotY", "scale", "scaleX", "scaleY",
                 "strokeWidth", "translationX", "translationY", "width",
             ], to: 1, .inOut, .property)
                 .merging(tied(["background"], to: 2, .inOut, .property)) { $1 }
-                .merging(tied(["margin", "padding"], to: 3, .inOut, .property)) { $1 })
+                .merging(tied(["padding", "contentPadding"], to: 3, .inOut, .property)) { $1 }
+                .merging(tied(["rotation", "rotationX", "rotationY"], to: 4, .inOut, .property)) { $1 })
         XCTAssertEqual(
             ties(page, .auto(3), .auto(4), .auto(5)),
             tied(["characterSpacing", "fontSize"], to: 1, .inOut, .property)
-                .merging(tied(["textColor"], to: 2, .inOut, .property)) { $1 })
+                .merging(tied(["foregroundStyle"], to: 2, .inOut, .property)) { $1 })
         XCTAssertEqual(
             ties(page, .auto(3), .auto(6)),
             tied(["strokeDashOffset", "strokeMiterLimit", "strokeWidth"], to: 1, .inOut, .property))
@@ -212,7 +214,7 @@ final class DrivenPatchTests: XCTestCase {
     func testDrivenTextRegistersTheTextChannel() throws {
         let caption = State(wrappedValue: "60%")
 
-        let page = try page(VStack { Label().text(caption.projectedValue); Button().text(caption.projectedValue) }.body)
+        let page = try page(VStack { Text().text(caption.projectedValue); Button().text(caption.projectedValue) }.node)
 
         XCTAssertEqual(ties(page, .auto(3), .auto(4)), tied(["text"], to: 1, .out, .text))
         XCTAssertEqual(ties(page, .auto(3), .auto(5)), tied(["text"], to: 1, .out, .text))
@@ -229,7 +231,7 @@ final class DrivenPatchTests: XCTestCase {
             TextField(name.projectedValue).onTextChanged { _ in }
             TextEditor(name.projectedValue)
             SearchField(name.projectedValue)
-        }.body)
+        }.node)
 
         for field in [ElementId.auto(4), .auto(5), .auto(6)] {
             XCTAssertEqual(ties(page, .auto(3), field), tied(["text"], to: 1, .inOut, .text))
@@ -245,7 +247,7 @@ final class DrivenPatchTests: XCTestCase {
         let page = try page(VStack {
             DatePicker(due.projectedValue).onDateChanged { _ in }
             TimePicker(alarm.projectedValue)
-        }.body)
+        }.node)
 
         XCTAssertEqual(ties(page, .auto(3), .auto(4)), tied(["date"], to: 1, .inOut, .plain))
         XCTAssertEqual(page.at(.auto(3), .auto(4))?.eventNames, ["dateChanged"])
@@ -260,7 +262,7 @@ final class DrivenPatchTests: XCTestCase {
         let page = try page(VStack {
             Slider().value(level.projectedValue)
             Stepper().value(steps.projectedValue)
-        }.body)
+        }.node)
 
         XCTAssertEqual(ties(page, .auto(3), .auto(4)), tied(["value"], to: 1, .inOut, .property))
         XCTAssertEqual(ties(page, .auto(3), .auto(5)), tied(["value"], to: 2, .inOut, .property))
@@ -277,8 +279,8 @@ final class DrivenPatchTests: XCTestCase {
 
         let page = try page(VStack {
             Slider().value(level.projectedValue)
-            ColorBox().width(level.projectedValue)
-        }.body)
+            ColorPicker().frame(width: level.projectedValue)
+        }.node)
 
         XCTAssertEqual(ties(page, .auto(3), .auto(4)), tied(["value"], to: 1, .inOut, .property))
         XCTAssertEqual(ties(page, .auto(3), .auto(5)), tied(["width"], to: 1, .inOut, .property))
@@ -296,11 +298,11 @@ final class DrivenPatchTests: XCTestCase {
         let room = State(wrappedValue: Rect(0, 0, 0, 0))
 
         let page = try page(
-            PlacedLayout(["a", "b"], id: \.self) { Label($0) }
-                .shade(ColorBox(.black))
+            PlacedLayout(["a", "b"], id: \.self) { Text($0) }
+                .shade(ColorPicker(.black))
                 .placement(run.projectedValue)
                 .frame(room.projectedValue)
-                .body)
+                .node)
         let layout = try XCTUnwrap(page.at(.auto(3)))
 
         XCTAssertEqual(
@@ -330,7 +332,7 @@ final class DrivenPatchTests: XCTestCase {
 
         _ = differ.reconcile(
             nil,
-            with: rooted(Label("x").translationX(moved.projectedValue).opacity(faded.projectedValue).body))
+            with: rooted(Text("x").offset(x: moved.projectedValue).opacity(faded.projectedValue).node))
 
         XCTAssertEqual(faded.number, 1, "opacity sorts before translationX")
         XCTAssertEqual(moved.number, 2)
@@ -363,6 +365,14 @@ final class DrivenPatchTests: XCTestCase {
 
                 values.formUnion(written.occurrences(between: "public func ", and: "(_ value:"))
 
+                // A value modifier whose signature does not start `_ value:` - a
+                // `frame(width:)` or an `offset(x:y:)`, where the parameter names
+                // say which property the value is for.
+                if !written.contains("Binding<"),
+                   let name = written.occurrences(between: "public func ", and: "(").first {
+                    values.insert(name)
+                }
+
                 if let name = written.occurrences(between: "public func ", and: "(").first,
                    let type = written.occurrences(between: "Binding<", and: ">").first {
                     signature = (name, type)
@@ -383,7 +393,7 @@ final class DrivenPatchTests: XCTestCase {
         // two lanes the host carries by the scroller's own key rather than by
         // a property's type, the platform declaring no settable property for
         // it.
-        let carried: Set<String> = ["Double", "Color", "Insets", "Point"]
+        let carried: Set<String> = ["Double", "Color", "EdgeInsets", "Point", "Angle"]
 
         // THE ONE WALKED MODIFIER WITH NO DESCRIBED TWIN. A scroller's offset
         // is a property the platform keeps read-only - a scroller reports

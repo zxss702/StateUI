@@ -23,10 +23,10 @@ final class WinUIBrushTests: XCTestCase {
         try onUIThread {
             let host = WinUIRenderer.running {
                 VStack {
-                    ZStack {}.background(circle).width(200).height(100)
-                    Rectangle().fill(circle).width(200).height(100)
-                    Label("").background(circle).width(200).height(100)
-                    Button("").background(circle).width(200).height(100)
+                    ZStack {}.background(circle).frame(width: 200).frame(height: 100)
+                    Rectangle().fill(circle).frame(width: 200).frame(height: 100)
+                    Text("").background(circle).frame(width: 200).frame(height: 100)
+                    Button("").background(circle).frame(width: 200).frame(height: 100)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)
@@ -48,7 +48,7 @@ final class WinUIBrushTests: XCTestCase {
             let tall = State(wrappedValue: false)
             let host = WinUIRenderer.running {
                 VStack {
-                    ZStack {}.background(circle).width(tall.wrappedValue ? 100 : 200).height(tall.wrappedValue ? 200 : 100)
+                    ZStack {}.background(circle).frame(width: tall.wrappedValue ? 100 : 200).frame(height: tall.wrappedValue ? 200 : 100)
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)

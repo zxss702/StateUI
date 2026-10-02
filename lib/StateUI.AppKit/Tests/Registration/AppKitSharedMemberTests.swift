@@ -52,7 +52,7 @@ final class AppKitSharedMemberTests: XCTestCase {
     @MainActor
     func testEveryTextControlSetsItsTextInTheWrittenFont() throws {
         let controls: [(NodeType, [Prop: HostValue], @MainActor (NSView) -> NSFont?)] = [
-            (.label, [.text: .string("Text")], {
+            (.text, [.text: .string("Text")], {
                 ($0 as? AppKitLabelView)?.attributedStringValue
                     .attribute(.font, at: 0, effectiveRange: nil) as? NSFont
             }),
@@ -87,14 +87,14 @@ final class AppKitSharedMemberTests: XCTestCase {
         }
     }
 
-    /// A control that sets text sets it in the colour `textColor` says.
+    /// A control that sets text sets it in the colour `foregroundStyle` says.
     @MainActor
     func testEveryTextControlSetsItsTextInTheWrittenColour() throws {
         func foreground(_ text: NSAttributedString?) -> NSColor? {
             text?.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? NSColor
         }
         let controls: [(NodeType, [Prop: HostValue], @MainActor (NSView) -> NSColor?)] = [
-            (.label, [.text: .string("Text")], {
+            (.text, [.text: .string("Text")], {
                 foreground(($0 as? AppKitLabelView)?.attributedStringValue)
             }),
             (.button, [.text: .string("Text")], { foreground(($0 as? NSButton)?.attributedTitle) }),
@@ -115,7 +115,7 @@ final class AppKitSharedMemberTests: XCTestCase {
             defer { renderer.closeForTesting() }
             var control = HostPatch(id: .manual("control"), type: type)
             control.properties = properties
-            control.properties[.textColor] = .color(red: 51, green: 102, blue: 153, alpha: 255)
+            control.properties[.foregroundStyle] = .color(red: 51, green: 102, blue: 153, alpha: 255)
             renderer.applyForTesting(tree(control))
 
             let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("control")), type.name)
@@ -129,12 +129,12 @@ final class AppKitSharedMemberTests: XCTestCase {
     func testABackgroundColourPaintsEveryView() throws {
         let layered: [NodeType] = [
             .activityIndicator, .button, .canvas, .checkBox, .datePicker,
-            .ellipse, .grid, .hStack, .image, .label, .line, .path, .picker, .polygon,
+            .ellipse, .grid, .hStack, .image, .text, .line, .path, .picker, .polygon,
             .polyline, .progressBar, .radioButton, .rectangle, .scrollView, .searchField,
             .slider, .stepper, .switch, .textEditor, .textField, .timePicker, .vStack, .zStack,
         ]
 
-        for type in layered + [.colorBox] {
+        for type in layered + [.colorPicker] {
             let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
             defer { renderer.closeForTesting() }
             var view = HostPatch(id: .manual("view"), type: type)
@@ -142,7 +142,7 @@ final class AppKitSharedMemberTests: XCTestCase {
             renderer.applyForTesting(tree(view))
 
             let native = try XCTUnwrap(renderer.viewForTesting(id: .manual("view")), type.name)
-            let painted = type == .colorBox
+            let painted = type == .colorPicker
                 ? channels((native as? AppKitColorBoxView)?.backgroundColor)
                 : channels(native.layer?.backgroundColor)
             assertChannels(painted, [0.2, 0.4, 0.6, 1], type.name)
@@ -154,8 +154,8 @@ final class AppKitSharedMemberTests: XCTestCase {
     @MainActor
     func testAViewThatIgnoresInputIsNotHit() throws {
         let views: [NodeType] = [
-            .canvas, .colorBox, .ellipse, .grid, .hStack, .image,
-            .label, .line, .path, .polygon, .polyline, .rectangle, .vStack, .zStack,
+            .canvas, .colorPicker, .ellipse, .grid, .hStack, .image,
+            .text, .line, .path, .polygon, .polyline, .rectangle, .vStack, .zStack,
         ]
 
         for type in views {
@@ -199,7 +199,7 @@ final class AppKitSharedMemberTests: XCTestCase {
         for type in [NodeType.vStack, .hStack, .grid, .zStack] {
             let renderer = testRenderer(resourceDirectory: nil, presentsWindows: false)
             defer { renderer.closeForTesting() }
-            var child = HostPatch(id: .manual("child"), type: .colorBox)
+            var child = HostPatch(id: .manual("child"), type: .colorPicker)
             child.properties = [
                 .width: .number(20),
                 .height: .number(20),

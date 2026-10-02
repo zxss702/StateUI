@@ -12,7 +12,7 @@
     public static var cases: [ConformanceCase] {
         [
             ConformanceCase("aViewOffersItsMenuAsTheTreeSaysIt", proves: [
-                Covered(ContextMenuContract.self), Covered(MenuContract.text), Covered(MenuSeparatorContract.self),
+                Covered(ContextMenuContract.self), Covered(MenuContract.text), Covered(DividerContract.self),
                 Covered(MenuItemElementContract.text, on: "MenuItem"), Covered(MenuItemElementContract.isEnabled, on: "MenuItem"),
             ]) { s in
                 s.start { MenuPage(heard: Received()) }
@@ -39,7 +39,7 @@
                 let entries = State(wrappedValue: ["Open"])
                 s.start {
                     VStack {
-                        Label("Row").contextMenu {
+                        Text("Row").contextMenu {
                             ForEach(entries.wrappedValue, id: \.self) { entry in MenuItem(entry) }
                         }.id("row")
                         Button("Empty").onClicked { entries.wrappedValue = [] }.id("empty")
@@ -57,19 +57,19 @@
 }
 
 /// A row with a context menu whose entries follow the page's states, saying what the user chose.
-struct MenuPage: ContentView {
+struct MenuPage: View {
     let heard: Received<String>
 
     @State private var canPaste = false
     @State private var shares = ["Mail"]
 
-    var content: any View {
+    var body: some View {
         let (heard, canPaste, shares) = (self.heard, $canPaste, $shares)
         return VStack {
-            Label("Row").contextMenu {
+            Text("Row").contextMenu {
                 MenuItem("Copy").onClicked { heard.values.append("copy") }.id("copy")
-                MenuSeparator().id("separator")
-                MenuItem("Paste").isEnabled(canPaste.wrappedValue).onClicked { heard.values.append("paste") }.id("paste")
+                Divider().id("separator")
+                MenuItem("Paste").disabled(!canPaste.wrappedValue).onClicked { heard.values.append("paste") }.id("paste")
                 Menu("Share") {
                     ForEach(shares.wrappedValue, id: \.self) { share in
                         MenuItem(share).onClicked { heard.values.append("share \(share)") }.id("share \(share)")

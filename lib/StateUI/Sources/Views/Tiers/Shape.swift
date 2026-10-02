@@ -5,7 +5,7 @@
 public protocol ShapeProperties: ViewProperties {}
 
 /// A drawn outline.
-public protocol Shape: View, ShapeProperties {}
+public protocol Shape: VisualElement, ShapeProperties {}
 
 extension ShapeProperties {
     /// A transform applied to the shape's geometry before it is drawn, in the
@@ -13,9 +13,9 @@ extension ShapeProperties {
     /// transformed path, and a `skew` draws exactly.
     ///
     ///     Line().x2(56).y2(0)
-    ///         .renderTransform(.rotate(15).scaleX(1.2))
+    ///         .renderTransform(.rotate(15).scaleEffect(x: 1.2))
     ///
-    /// `.transform(_:)` instead moves what was drawn, about the view's centre.
+    /// `.transformEffect(_:)` instead moves what was drawn, about the view's centre.
     public func renderTransform(_ value: ViewTransform) -> Modified {
         setValue(ShapeContract.renderTransform, value)
     }
@@ -72,16 +72,16 @@ extension ShapeProperties {
         setValue(ShapeContract.strokeMiterLimit, value)
     }
 
-    /// What the shape does with the room it is given - the `Aspect` an Image
+    /// What the shape does with the room it is given - the `ContentMode` an Image
     /// takes too. `.fit`, the default, scales the drawing to fit and keeps its
     /// proportions; `.center` keeps the size its own numbers say.
-    public func aspect(_ value: Aspect) -> Modified { setValue(ShapeContract.aspect, value) }
+    public func aspect(_ value: ContentMode) -> Modified { setValue(ShapeContract.aspect, value) }
 }
 
 extension Shape {
     /// `aspect` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func aspect(_ state: Binding<Aspect>) -> Modified {
+    public func aspect(_ state: Binding<ContentMode>) -> Modified {
         plain(ShapeContract.aspect, by: state)
     }
 

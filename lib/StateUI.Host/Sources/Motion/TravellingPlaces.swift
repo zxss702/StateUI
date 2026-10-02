@@ -6,13 +6,13 @@
 /// One layout's children travelling to their places, the same on every host: as an arrangement begins, it decides
 /// once for every child whether the places a patch or a new width gave them animate, and each child then stands at
 /// its place or on its way there.
-/// Design: docs/design/host/motion.md#layout-motion
+/// Design: docs/design/host/animation.md#layout-animation
 @_spi(Host) @MainActor public final class TravellingPlaces {
     /// Where the children's places animate; nil places them at once.
     public weak var layoutMotion: LayoutMotion?
 
-    /// The layout's own motion, as its patches said it; nil while it says nothing of its own.
-    public var motion: HostLayoutMotion?
+    /// The layout's own animation, as its patches said it; nil while it says nothing of its own.
+    public var animation: HostLayoutMotion?
 
     /// Whether this layout's frame, or any frame under it, is read.
     public var framesRead = false
@@ -42,20 +42,20 @@
         arrangedWidth = width
 
         arrangement = layoutMotion?.arrangement(
-            said: said, resized: resized, motion: motion, framesRead: framesRead) ?? Arrangement()
+            said: said, resized: resized, animation: animation, framesRead: framesRead) ?? Arrangement()
     }
 
     /// Stands `view`, the mounted element `mount`'s, at `place`, or on its way there; its `values` say which sides
     /// it sizes itself, and `fadeIn` fades it in as it joins a standing layout.
     public func place(
-        _ view: any PlacedView, mount: UInt64, at place: Rect, values: LayoutValues, fadeIn: ((Motion) -> Void)?
+        _ view: any PlacedView, mount: UInt64, at place: Rect, values: LayoutValues, fadeIn: ((Animation) -> Void)?
     ) {
         guard let layoutMotion else {
             view.placedFrame = place
             return
         }
 
-        var stated: MotionLanes = []
+        var stated: AnimationLanes = []
         if values.width != nil { stated.insert(.width) }
         if values.height != nil { stated.insert(.height) }
         layoutMotion.place(view, mount: mount, at: place, stated: stated, fadeIn: fadeIn, in: arrangement)

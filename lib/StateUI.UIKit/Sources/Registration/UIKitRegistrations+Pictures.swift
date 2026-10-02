@@ -7,7 +7,7 @@ import UIKit
 @_spi(Host) import StateUIHost
 
 extension UIKitRegistrations {
-    /// An Image - one of the application's pictures, filling its room as its aspect says - and a ColorBox: one colour
+    /// An Image - one of the application's pictures, filling its room as its aspect says - and a ColorPicker: one colour
     /// with its corners rounded.
     static func pictures(_ registry: Registry<UIView>) {
         registry.add(ImageContract.self, create: { _ in UIKitImageView() }) { image in
@@ -15,11 +15,11 @@ extension UIKitRegistrations {
                 view.apply(source: values[ImageContract.source], aspect: values[ImageElementContract.aspect] ?? .fit)
             }
         }
-        registry.add(ColorBoxContract.self, create: { _ in UIKitColorBoxView() }) { box in
-            box.applies([ColorBoxContract.color, ColorBoxContract.cornerRadius]) { view, values in
+        registry.add(ColorPickerContract.self, create: { _ in UIKitColorBoxView() }) { box in
+            box.applies([ColorPickerContract.color, ColorPickerContract.cornerRadius]) { view, values in
                 view.apply(
-                    color: values[ColorBoxContract.color]?.propValue,
-                    corners: values[ColorBoxContract.cornerRadius]?.propValue)
+                    color: values[ColorPickerContract.color]?.propValue,
+                    corners: values[ColorPickerContract.cornerRadius]?.propValue)
             }
         }
     }

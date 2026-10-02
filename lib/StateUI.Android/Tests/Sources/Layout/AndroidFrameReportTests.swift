@@ -24,7 +24,7 @@ final class AndroidFrameReportTests: XCTestCase {
             let heard = Received<[Double]>()
             let host = AndroidRenderer.running {
                 VStack {
-                    ColorBox(.steelBlue).width(120).height(60)
+                    ColorPicker(.steelBlue).frame(width: 120).frame(height: 60)
                         .onEvent(ViewContract.frameChanged) { heard.values.append($0) }
                 }
                 .horizontalAlignment(.start)
@@ -49,9 +49,9 @@ final class AndroidFrameReportTests: XCTestCase {
             let shown = State(wrappedValue: false)
             let host = AndroidRenderer.running {
                 VStack {
-                    Label("above").height(20)
+                    Text("above").frame(height: 20)
                     if shown.wrappedValue {
-                        ColorBox(.steelBlue).width(120).height(60)
+                        ColorPicker(.steelBlue).frame(width: 120).frame(height: 60)
                             .onEvent(ViewContract.frameChanged) { heard.values.append($0) }
                     }
                 }

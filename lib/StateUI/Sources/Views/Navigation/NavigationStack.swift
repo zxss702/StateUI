@@ -11,7 +11,7 @@
 ///         case details(String)
 ///     }
 ///
-///     struct MainWindow: Window {
+///     struct MainWindow: WindowScene {
 ///         @State private var path: [Route] = []
 ///
 ///         var page: any Page {
@@ -25,14 +25,14 @@
 ///         }
 ///     }
 ///
-///     struct HomePage: ContentView {
+///     struct HomePage: View {
 ///         @Binding var path: [Route]
 ///         @Environment private var page: PageSession
 ///
 ///         var content: any View {
 ///             Button("Open the first")
 ///                 .onClicked { path.append(.details("first")) }
-///                 .onCreated { page.title = "Home" }
+///                 .onAppear { page.title = "Home" }
 ///         }
 ///     }
 ///
@@ -60,15 +60,14 @@
 /// `.level(2)` pages. A route must be a value whose distinct values describe
 /// differently (`String(describing:)`), so a class does not qualify.
 ///
-/// `.onChanged(path)` observes every committed arrival and departure. The
+/// `.onChange(of: path)` observes every committed arrival and departure. The
 /// title on the bar belongs to the top page; `.title` and `.icon` on the
 /// stack name the whole stack where another container presents it.
-public struct NavigationStack: Page, ModifiableElement, BarElement, PageElement, PageArrangement {
+public struct NavigationStack: VisualElement, BarElement, PageElement, PageArrangement {
     /// The node this page describes.
     public var node: Node
 
     /// The node, as every element answers it.
-    public var body: Node { node }
 
     /// A stack over `path`, with `root` under it and `destination` above.
     ///

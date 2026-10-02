@@ -22,13 +22,13 @@ extension AppKitDriver {
         case (.scrollOffset, let scroll as NSScrollView):
             let origin = scroll.contentView.bounds.origin
             return Point(x: Double(origin.x), y: Double(origin.y)).propValue
-        case (.verticalScrollBarVisibility, let scroll as NSScrollView):
+        case (.verticalScrollIndicators, let scroll as NSScrollView):
             return bar(shown: scroll.hasVerticalScroller, hides: scroll.autohidesScrollers).propValue
-        case (.horizontalScrollBarVisibility, let scroll as NSScrollView):
+        case (.horizontalScrollIndicators, let scroll as NSScrollView):
             return bar(shown: scroll.hasHorizontalScroller, hides: scroll.autohidesScrollers).propValue
         case (.isAnimating, let image as AppKitImageView): return image.animationPlaying.propValue
         case (.aspect, let image as AppKitImageView): return aspect(of: image).propValue
-        case (.horizontalTextAlignment, let picker as AppKitPickerView):
+        case (.multilineTextAlignment, let picker as AppKitPickerView):
             return alignment(picker.presentedControl as? NSControl).propValue
         default: return nil
         }
@@ -40,12 +40,12 @@ extension AppKitDriver {
         let words = field.attributedStringValue
         let attributes = words.length > 0 ? words.attributes(at: 0, effectiveRange: nil) : [:]
         switch property {
-        case .maximumLines: return field.maximumNumberOfLines.propValue
+        case .lineLimit: return field.maximumNumberOfLines.propValue
         case .lineBreak:
             let wraps = field.cell?.wraps ?? true
             let all: [LineBreak] = [.noWrap, .wordWrap, .characterWrap, .headTruncation, .tailTruncation, .middleTruncation]
             return all.first { NSLineBreakMode($0) == field.lineBreakMode && $0.wraps == wraps }?.propValue
-        case .horizontalTextAlignment: return alignment(field).propValue
+        case .multilineTextAlignment: return alignment(field).propValue
         case .characterSpacing: return Double((attributes[.kern] as? NSNumber)?.doubleValue ?? 0).propValue
         case .lineHeight:
             guard let font = attributes[.font] as? NSFont,
@@ -57,11 +57,11 @@ extension AppKitDriver {
             if (attributes[.underlineStyle] as? Int ?? 0) != 0 { decorations.insert(.underline) }
             if (attributes[.strikethroughStyle] as? Int ?? 0) != 0 { decorations.insert(.strikethrough) }
             return decorations.propValue
-        case .padding:
+        case .contentPadding:
             // The words stand their padding in from the label's edges; a label is as tall as its words.
             let frame = field.frame
             let bounds = label.bounds
-            return Insets(
+            return EdgeInsets(
                 Double(frame.minX - bounds.minX), Double(frame.minY - bounds.minY),
                 Double(bounds.maxX - frame.maxX), Double(bounds.maxY - frame.maxY)).propValue
         default: return nil
@@ -77,7 +77,7 @@ extension AppKitDriver {
             switch property {
             case .placeholder: return placeholder?.stringValue.propValue
             case .placeholderColor: return placeholder?.textColor.map { color($0).propValue }
-            case .horizontalTextAlignment: return alignment(text.alignment).propValue
+            case .multilineTextAlignment: return alignment(text.alignment).propValue
             case .isSpellCheckEnabled: return text.isContinuousSpellCheckingEnabled.propValue
             case .isTextPredictionEnabled: return text.isAutomaticTextCompletionEnabled.propValue
             case .cursorPosition: return text.selectedRange().location.propValue
@@ -94,7 +94,7 @@ extension AppKitDriver {
             guard let placeholder = field.placeholderAttributedString, placeholder.length > 0 else { return nil }
             return (placeholder.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? NSColor).map { color($0).propValue }
         case .isPassword: return (field is NSSecureTextField).propValue
-        case .horizontalTextAlignment: return alignment(field).propValue
+        case .multilineTextAlignment: return alignment(field).propValue
         default: return nil
         }
     }
@@ -136,7 +136,7 @@ extension AppKitDriver {
     }
 
     /// How a picture fills its room: by the image view's scaling, and covering where the view stands past it.
-    private static func aspect(of image: AppKitImageView) -> Aspect {
+    private static func aspect(of image: AppKitImageView) -> ContentMode {
         switch image.nativeImageScaling {
         case .scaleProportionallyUpOrDown: .fit
         case .scaleNone: .center
@@ -159,7 +159,7 @@ extension AppKitDriver {
     }
 
     /// A scroll bar's showing: none, always, or as AppKit decides it - hidden until the user scrolls.
-    private static func bar(shown: Bool, hides: Bool) -> ScrollBarVisibility {
+    private static func bar(shown: Bool, hides: Bool) -> ScrollIndicatorVisibility {
         !shown ? .never : hides ? .default : .always
     }
 }

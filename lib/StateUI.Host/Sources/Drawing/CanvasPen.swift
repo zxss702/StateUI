@@ -35,7 +35,7 @@
         switch instruction {
         case .fillColor(let color): fill = color
         case .strokeColor(let color): stroke = color
-        case .textColor(let color): text = color
+        case .foregroundStyle(let color): text = color
         case .strokeWidth(let width): strokeWidth = max(0, width)
         case .fontSize(let size): fontSize = max(0, size)
         case .alpha(let value): alpha = min(max(value, 0), 1)

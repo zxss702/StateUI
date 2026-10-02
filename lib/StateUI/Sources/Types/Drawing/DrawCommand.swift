@@ -14,7 +14,7 @@ public struct DrawCommand: Equatable, Sendable {
         // What the canvas draws with.
         case fillColor = 0
         case strokeColor = 1
-        case textColor = 2
+        case foregroundStyle = 2
         case strokeWidth = 3
         case fontSize = 4
         case alpha = 5

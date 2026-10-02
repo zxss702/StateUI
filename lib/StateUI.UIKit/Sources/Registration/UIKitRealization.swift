@@ -31,10 +31,10 @@ enum UIKitRealization {
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own
-        .unrealized("ItemsView", "style", why: "No style can name an ItemsView: a style names its control by an "
+        .unrealized("List", "style", why: "No style can name an List: a style names its control by an "
             + "initializer that sets nothing, which a list of some items has not."),
         .partial("Menu", "isEnabled", missing: "UIKit holds no menu out of reach itself: each of its entries is."),
-        .partial("Layout", "avoidsSafeArea", missing: "UIKit lets a page's own layout under the bars and the notch; "
+        .partial("Layout", "ignoresSafeArea", missing: "UIKit lets a page's own layout under the bars and the notch; "
             + "a layout deeper in stands where its page puts it, and none stands clear of the keyboard."),
         .partial("View", "panTouchCount", missing: "The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off."),
         .complete("Menu", "text"),
@@ -64,23 +64,23 @@ enum UIKitRealization {
         .complete("Span", "fontSize"),
         .complete("Span", "text"),
         .complete("Span", "textCase"),
-        .complete("Span", "textColor"),
+        .complete("Span", "foregroundStyle"),
         .complete("Span", "textDecorations"),
-        .complete("SplitView", "isSidebarVisible"),
-        .complete("SplitView", "isSidebarVisibleChanged"),
-        .complete("TabbedView", "currentPage"),
-        .complete("TabbedView", "currentPageChanged"),
+        .complete("NavigationSplitView", "isSidebarVisible"),
+        .complete("NavigationSplitView", "isSidebarVisibleChanged"),
+        .complete("TabView", "currentPage"),
+        .complete("TabView", "currentPageChanged"),
         .complete("ToolbarItem", "isDestructive"),
         .complete("ToolbarItem", "placement"),
         .complete("ToolbarItem", "priority"),
-        .complete("Window", "activated"),
-        .complete("Window", "created"),
-        .complete("Window", "deactivated"),
-        .complete("Window", "destroying"),
-        .complete("Window", "modalPopped"),
-        .complete("Window", "resumed"),
-        .complete("Window", "stopped"),
-        .complete("Window", "title"),
+        .complete("WindowScene", "activated"),
+        .complete("WindowScene", "created"),
+        .complete("WindowScene", "deactivated"),
+        .complete("WindowScene", "destroying"),
+        .complete("WindowScene", "modalPopped"),
+        .complete("WindowScene", "resumed"),
+        .complete("WindowScene", "stopped"),
+        .complete("WindowScene", "title"),
     ]
 
     /// What UIKit's registry says it realizes: the export's content.

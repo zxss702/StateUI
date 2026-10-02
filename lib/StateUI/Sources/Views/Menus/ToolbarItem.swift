@@ -3,12 +3,12 @@
 
 /// An action in the page's native navigation or toolbar surface.
 ///
-///     struct NotesPage: ContentView {
+///     struct NotesPage: View {
 ///         @Environment private var page: PageSession
 ///
 ///         var content: any View {
 ///             VStack { … }
-///                 .onCreated {
+///                 .onAppear {
 ///                     page.title = "Notes"
 ///                     page.toolbarItems = [
 ///                         ToolbarItem("Save")
@@ -26,7 +26,7 @@
 /// A toolbar item is page furniture rather than a layout view. It carries a
 /// caption, an optional image, presentation policy and a handler, and is
 /// written into the page's session whenever that collection changes.
-public struct ToolbarItem: Element, MenuItemElement {
+public struct ToolbarItem: View, MenuItemElement {
     /// The node this item describes.
     public var node: Node
 
@@ -38,7 +38,6 @@ public struct ToolbarItem: Element, MenuItemElement {
     }
 
     /// The node this item describes.
-    public var body: Node { node }
 
     /// Who this item is among the page's others, so an item inserted in the
     /// middle is matched to itself rather than to whichever item stood there.

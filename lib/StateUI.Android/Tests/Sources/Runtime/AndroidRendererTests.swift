@@ -8,12 +8,12 @@ import StateUIConformance
 import XCTest
 
 /// A page and its counter: a click raises the count, and the caption reads it.
-struct CounterPage: ContentView {
+struct CounterPage: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("count \(count)")
+            Text("count \(count)")
             Button("Add")
                 .onClicked { count += 1 }
         }
@@ -21,16 +21,16 @@ struct CounterPage: ContentView {
 }
 
 /// What the host reported of the device's locale, battery and network, one label each.
-struct EnvironmentPage: ContentView {
+struct EnvironmentPage: View {
     @Environment var locale: LocaleInfo
     @Environment var battery: Battery
     @Environment var connectivity: Connectivity
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("locale \(locale.name) \(locale.timeZone)")
-            Label("battery \(battery.state)")
-            Label("network \(connectivity.networkAccess)")
+            Text("locale \(locale.name) \(locale.timeZone)")
+            Text("battery \(battery.state)")
+            Text("network \(connectivity.networkAccess)")
         }
     }
 }
@@ -103,7 +103,7 @@ final class AndroidRendererTests: XCTestCase {
 
             _ = AndroidRenderer.start(context: TestContext.context, root: TestJava.root(), density: 2)
 
-            XCTAssertTrue(HostBoundary.realizes(LabelContract.self))
+            XCTAssertTrue(HostBoundary.realizes(TextContract.self))
             XCTAssertTrue(HostBoundary.realizes(ButtonContract.self))
             XCTAssertFalse(HostBoundary.realizes(MapContract.self))
         }
@@ -134,13 +134,13 @@ extension AndroidRendererTests {
 }
 
 /// A page that names its window.
-private struct TitledWindowPage: ContentView {
+private struct TitledWindowPage: View {
     @Environment private var window: WindowSession
     let title: String
 
-    var content: any View {
+    var body: some View {
         let window = self.window
         let title = self.title
-        return Label(title).onCreated { window.title = title }
+        return Text(title).onAppear { window.title = title }
     }
 }

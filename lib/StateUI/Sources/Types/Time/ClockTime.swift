@@ -94,7 +94,7 @@ public struct ClockTime: Equatable, Hashable, Comparable, Sendable, HostRepresen
     }
 
     /// `09:30:00` - the time as a line of text, for putting one in a label:
-    /// `Label("Alarm at \(alarm.text)")`.
+    /// `Text("Alarm at \(alarm.text)")`.
     ///
     /// One fixed shape, 24-hour and without the millisecond, never a display
     /// format: a `TimePicker` writes a time for the user with `.format(…)`,
@@ -134,7 +134,7 @@ public struct ClockTime: Equatable, Hashable, Comparable, Sendable, HostRepresen
     ///
     /// - Returns: the host's local time of day.
     public static nonisolated(nonsending) func now() async throws -> ClockTime {
-        let numbers = try await stateUICall(ApplicationContract.currentTime)
+        let numbers = try await stateUICall(AppContract.currentTime)
 
         guard numbers.count == 4 else {
             throw StateUIError(

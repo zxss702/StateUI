@@ -1,0 +1,139 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/// How a `Toggle` draws: the platform's usual control, or the one a
+/// `.toggleStyle` above it chooses.
+///
+/// The automatic choice follows the device: a checkbox where windows stand
+/// beside each other, a switch where one screen is shown at a time.
+public final class ToggleStyle: @unchecked Sendable {
+    /// The shape the toggle takes - one of `checkbox`, `switch` or automatic.
+    enum Kind: Int32 {
+        case automatic = 0
+        case checkbox = 1
+        case `switch` = 2
+    }
+
+    /// The shape named.
+    let kind: Kind
+
+    private init(_ kind: Kind) { self.kind = kind }
+
+    /// What the device calls for - a checkbox on a desktop, a switch elsewhere.
+    public static let automatic = ToggleStyle(.automatic)
+
+    /// A tick box, the shape a form uses.
+    public static let checkbox = ToggleStyle(.checkbox)
+
+    /// A sliding switch.
+    public static let `switch` = ToggleStyle(.switch)
+}
+
+/// An on/off control and the words beside it - a `CheckBox` where the desktop
+/// is, a `Switch` on a phone or tablet, the choice overridable for a whole
+/// branch with `.toggleStyle`:
+///
+///     Toggle("Sound", isOn: $soundOn)
+///     Toggle(isOn: $quiet) { Image(.bellSlash) }
+///
+///     PreferencesView().toggleStyle(.checkbox)
+///
+/// Given a binding it shows the value and writes every flip back. Given a
+/// plain `Bool` it only shows - a flip that must reach somewhere without a
+/// binding is a `Switch` or `CheckBox` and its `.onToggled`.
+public struct Toggle: View {
+    /// The two-way state, or none for a control that only shows.
+    let isOn: Binding<Bool>?
+
+    /// What it shows where no binding is given.
+    let initial: Bool
+
+    /// The words, or `EmptyView` for a control alone.
+    let label: any View
+
+    /// The shape written above it with `.toggleStyle`, or automatic.
+    @Environment private var style: ToggleStyle
+
+    /// A toggle with its label made by the closure.
+    public init(isOn: Binding<Bool>, @ViewBuilder label: () -> any View) {
+        self.isOn = isOn
+        self.initial = false
+        self.label = label()
+    }
+
+    /// A toggle that only shows `isOn` - the flip reaches `.onToggled` on a
+    /// `Switch` or `CheckBox`.
+    public init(_ isOn: Bool, @ViewBuilder label: () -> any View) {
+        self.isOn = nil
+        self.initial = isOn
+        self.label = label()
+    }
+
+    /// A toggle showing as unset, with its label - the flip reaches
+    /// `.onToggled` on a `Switch` or `CheckBox`.
+    public init(@ViewBuilder label: () -> any View) {
+        self.init(false, label: label)
+    }
+
+    /// A toggle with its words - `Toggle("Sound", isOn: $soundOn)`.
+    public init(_ title: String, isOn: Binding<Bool>) {
+        self.init(isOn: isOn) { Text(title) }
+    }
+
+    /// A one-way toggle with its words.
+    public init(_ title: String, isOn: Bool) {
+        self.init(isOn) { Text(title) }
+    }
+
+    /// A one-way toggle with its words, showing as unset.
+    public init(_ title: String) {
+        self.init(false) { Text(title) }
+    }
+
+    /// The control alone, two-way.
+    public init(isOn: Binding<Bool>) {
+        self.init(isOn: isOn) { EmptyView() }
+    }
+
+    /// The control alone, showing `isOn`.
+    public init(_ isOn: Bool) {
+        self.init(isOn) { EmptyView() }
+    }
+
+    /// The control and its label: the device or the `.toggleStyle` above
+    /// decides which control that is.
+    public var body: some View {
+        let kind = style.kind == .automatic
+            ? (StandardEnvironment.device.formFactor == .phone
+                || StandardEnvironment.device.formFactor == .tablet ? .switch : .checkbox)
+            : style.kind
+
+        return Group {
+            if kind == .switch {
+                HStack {
+                    label
+                    if let isOn { Switch(isOn) } else { Switch(initial) }
+                }
+                .spacing(8)
+            } else {
+                HStack {
+                    if let isOn { CheckBox(isOn) } else { CheckBox(initial) }
+                    label
+                }
+                .spacing(8)
+            }
+        }
+    }
+}
+
+extension View {
+    /// How every `Toggle` in this branch draws - `.checkbox` or `.switch`,
+    /// or back to `.automatic`, the device's own choice:
+    ///
+    ///     SettingsPane().toggleStyle(.checkbox)
+    ///
+    /// Written on a view above the toggles it shapes; the nearest one wins.
+    public func toggleStyle(_ style: ToggleStyle) -> ModifiedContent {
+        environment(style)
+    }
+}

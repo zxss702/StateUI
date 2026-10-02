@@ -14,8 +14,8 @@ public enum LayoutContract: Contract {
 
     /// What each edge of the layout stays clear of on the screen's unsafe
     /// strip.
-    public static let avoidsSafeArea = ElementProperty<Self, SafeAreaEdges>(
-        "avoidsSafeArea", layer: .adaptive)
+    public static let ignoresSafeArea = ElementProperty<Self, SafeAreaEdges>(
+        "ignoresSafeArea", layer: .adaptive)
 
     /// Whether children are cut off at the layout's edges.
     public static let clipsContent = ElementProperty<Self, Bool>("clipsContent", layer: .native)
@@ -25,5 +25,5 @@ public enum LayoutContract: Contract {
     public static let letsInputThrough = ElementProperty<Self, Bool>("letsInputThrough", layer: .native)
 
     /// The tier's own members.
-    public static let members: [any ContractMember] = [avoidsSafeArea, clipsContent, letsInputThrough]
+    public static let members: [any ContractMember] = [ignoresSafeArea, clipsContent, letsInputThrough]
 }

@@ -43,10 +43,10 @@ final class StateCostTests: XCTestCase {
     /// what stops one expensive view from costing every render of an
     /// application that merely holds a list of them.
     func testAViewNobodyDescribesWorksNothingOut() {
-        struct Costly: ContentView {
+        struct Costly: View {
             @State private var items = StateCostTests.counted()
 
-            var content: any View { Label("\(items)") }
+            var body: some View { Text("\(items)") }
         }
 
         _ = Costly()
@@ -59,17 +59,17 @@ final class StateCostTests: XCTestCase {
     /// hands its fresh box the storage the old one held, so the expression
     /// beside the declaration answers for the FIRST render and no other.
     func testAnAdoptedStateWorksItsInitialValueOutOnce() {
-        // A ContentView, because that is what carries state across renders:
+        // A View, because that is what carries state across renders:
         // the differ hands a rebuilt view's boxes the storage their
         // predecessors held, and a plain Element has no such placeholder.
-        struct Costly: ContentView {
+        struct Costly: View {
             let shown: Int
             @State private var items = StateCostTests.counted()
 
-            var content: any View {
+            var body: some View {
                 VStack {
-                    Label("shown \(shown)")
-                    Label("items \(items)")
+                    Text("shown \(shown)")
+                    Text("items \(items)")
                 }
             }
         }
@@ -77,14 +77,14 @@ final class StateCostTests: XCTestCase {
         struct Page: Element {
             let shown: Int
 
-            var body: Node { VStack { Costly(shown: shown) }.body }
+            var node: Node { VStack { Costly(shown: shown) }.node }
         }
 
         let renders = Renders()
 
-        _ = renders.render(Page(shown: 1).body)
-        _ = renders.render(Page(shown: 2).body)
-        _ = renders.render(Page(shown: 3).body)
+        _ = renders.render(Page(shown: 1).node)
+        _ = renders.render(Page(shown: 2).node)
+        _ = renders.render(Page(shown: 3).node)
 
         XCTAssertEqual(Self.made, 1, "one storage, one initial value")
     }
@@ -150,7 +150,7 @@ final class StateCostTests: XCTestCase {
             _ name: KeyPath<Items.Element, String>
         ) -> Int {
             stateParts(in: PlacedLayout(items, id: name) { item in
-                Label(item[keyPath: name])
+                Text(item[keyPath: name])
             }).boxes.count
         }
 
@@ -163,7 +163,7 @@ final class StateCostTests: XCTestCase {
             _ name: KeyPath<Items.Element, String>
         ) -> Int {
             stateParts(in: GalleryView(items, id: name) { item in
-                Label(item[keyPath: name])
+                Text(item[keyPath: name])
             }).boxes.count
         }
 

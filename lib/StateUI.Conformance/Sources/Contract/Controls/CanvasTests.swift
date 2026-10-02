@@ -23,7 +23,7 @@
                             Draw.fillColor(.blue)
                             Draw.fillRectangle(x: 50, y: 0, width: 20, height: 40)
                         }
-                        .width(100).height(40).id("canvas")
+                        .frame(width: 100).frame(height: 40).id("canvas")
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -45,7 +45,7 @@
                             Draw.fillArc(
                                 x: 50, y: 0, width: 40, height: 40, startAngle: 90, endAngle: -270, clockwise: true)
                         }
-                        .width(90).height(40).id("canvas")
+                        .frame(width: 90).frame(height: 40).id("canvas")
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -68,7 +68,7 @@
                             Draw.fillColor(blue.wrappedValue ? .blue : .red)
                             Draw.fillRectangle(x: 0, y: 0, width: 40, height: 40)
                         }
-                        .width(40).height(40).id("canvas")
+                        .frame(width: 40).frame(height: 40).id("canvas")
                         Button("Blue").onClicked { blue.wrappedValue = true }.id("change")
                     }
                     .horizontalAlignment(.start)
@@ -91,7 +91,7 @@
                             .onPressed { heard.values.append("pressed \(Int($0.x)),\(Int($0.y))") }
                             .onDragged { heard.values.append("dragged \(Int($0.x)),\(Int($0.y))") }
                             .onReleased { heard.values.append("released \(Int($0.x)),\(Int($0.y))") }
-                            .width(100).height(40).id("canvas")
+                            .frame(width: 100).frame(height: 40).id("canvas")
                     }
                     .horizontalAlignment(.start)
                 }

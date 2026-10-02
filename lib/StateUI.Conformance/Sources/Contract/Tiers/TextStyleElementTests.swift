@@ -12,7 +12,7 @@
     public static var cases: [ConformanceCase] {
         Specimens.wearing(TextStyleElementContract.self).flatMap { element in
             [
-                Aspects.holds(TextStyleElementContract.textColor, on: element, .red, then: .blue, with: Words.on(element)),
+                Aspects.holds(TextStyleElementContract.foregroundStyle, on: element, .red, then: .blue, with: Words.on(element)),
                 Aspects.holds(TextStyleElementContract.characterSpacing, on: element, 0, then: 2, with: Words.on(element)),
             ]
         }

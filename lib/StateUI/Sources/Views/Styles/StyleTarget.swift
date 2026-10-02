@@ -11,7 +11,7 @@ public protocol StyleTarget: VisualElement {
     init()
 }
 
-extension Label: StyleTarget {}
+extension Text: StyleTarget {}
 extension Button: StyleTarget {}
 extension TextField: StyleTarget {}
 extension TextEditor: StyleTarget {}
@@ -27,7 +27,7 @@ extension SearchField: StyleTarget {}
 extension ActivityIndicator: StyleTarget {}
 extension ProgressBar: StyleTarget {}
 extension Image: StyleTarget {}
-extension ColorBox: StyleTarget {}
+extension ColorPicker: StyleTarget {}
 extension Grid: StyleTarget {}
 extension ScrollView: StyleTarget {}
 extension VStack: StyleTarget {}

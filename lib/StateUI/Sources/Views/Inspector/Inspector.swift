@@ -11,7 +11,7 @@
 ///     @Environment private var page: PageSession
 ///
 ///     VStack { … }
-///         .onCreated { page.toolbarItems = [.inspector(scene)] }
+///         .onAppear { page.toolbarItems = [.inspector(scene)] }
 ///
 /// Each render is listed as it happens - its cause, its road, the time Swift
 /// took to describe it and the host to apply it, and how many composed views

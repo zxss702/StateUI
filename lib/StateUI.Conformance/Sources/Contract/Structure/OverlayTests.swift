@@ -38,23 +38,23 @@ extension OverlayKey {
 }
 
 /// A page that lays a notice over its window while a state says so.
-struct OverlaidPage: ContentView {
+struct OverlaidPage: View {
     let notice: State<Bool>
 
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         let (notice, window) = (self.notice, self.window)
         return VStack {
             Button("Show").onClicked { notice.wrappedValue = true }.id("show")
             Button("Hide").onClicked { notice.wrappedValue = false }.id("hide")
-            ColorBox(.red).height(300).id("beneath")
+            ColorPicker(.red).frame(height: 300).id("beneath")
         }
         .horizontalAlignment(.start)
         .verticalAlignment(.start)
-        .onChanged(notice.wrappedValue) {
+        .onChange(of: notice.wrappedValue) {
             window.overlays[.notice] = notice.wrappedValue
-                ? Label("Offline").width(80).height(20).horizontalAlignment(.end).verticalAlignment(.start).id("notice")
+                ? Text("Offline").frame(width: 80).frame(height: 20).horizontalAlignment(.end).verticalAlignment(.start).id("notice")
                 : nil
         }
     }

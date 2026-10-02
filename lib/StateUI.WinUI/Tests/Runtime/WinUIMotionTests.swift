@@ -9,41 +9,41 @@ import StateUIConformance
 import XCTest
 
 /// A red box cut to its outline, which a click moves.
-private struct CutPage: ContentView {
+private struct CutPage: View {
     @State private var moved = false
 
-    var content: any View {
+    var body: some View {
         VStack {
-            VStack { Label("cut") }
-                .width(40)
-                .height(40)
+            VStack { Text("cut") }
+                .frame(width: 40)
+                .frame(height: 40)
                 .background(Color("#FF0000"))
                 .clipsContent(true)
                 .horizontalAlignment(.start)
-                .translationX(moved ? 50 : 0)
+                .offset(x: moved ? 50 : 0)
             Button("Move").onClicked { moved = true }
         }
-        .width(100)
+        .frame(width: 100)
         .horizontalAlignment(.start)
         .verticalAlignment(.start)
     }
 }
 
 final class WinUIMotionTests: XCTestCase {
-    /// A colour box whose colour and width change under a motion stands halfway at half its time, and lands - the
-    /// Gallery's Motion sample: what travels is the host layer's list.
+    /// A colour box whose colour and width change under a animation stands halfway at half its time, and lands - the
+    /// Gallery's Animation sample: what travels is the host layer's list.
     func testAColourAndAWidthTravelHalfwayAndLand() throws {
         try onUIThread {
             let clock = TestClock()
             let wide = State(wrappedValue: false)
             let host = WinUIRenderer.running(clock: clock) {
                 VStack {
-                    ColorBox()
+                    ColorPicker()
                         .color(wide.wrappedValue ? Color(red: 255, green: 0, blue: 0) : Color(red: 0, green: 0, blue: 255))
-                        .width(wide.wrappedValue ? 300 : 100)
-                        .height(60)
+                        .frame(width: wide.wrappedValue ? 300 : 100)
+                        .frame(height: 60)
                         .horizontalAlignment(.start)
-                        .motion(.eased(1000, .linear))
+                        .animation(.eased(1000, .linear))
                         .id("box")
                 }
             }
@@ -70,13 +70,13 @@ final class WinUIMotionTests: XCTestCase {
         try onUIThread {
             let clock = TestClock()
             let host = WinUIRenderer.bare(clock: clock)
-            var initial = HostPatch(id: .manual("label"), type: .label)
+            var initial = HostPatch(id: .manual("label"), type: .text)
             initial.properties[.opacity] = .number(0.25)
             host.apply(initial)
 
-            var changed = HostPatch(id: .manual("label"), type: .label)
+            var changed = HostPatch(id: .manual("label"), type: .text)
             changed.properties[.opacity] = .number(0.75)
-            changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+            changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
             host.apply(changed)
 
             let label = try XCTUnwrap(host.view(id: .manual("label")))
@@ -96,13 +96,13 @@ final class WinUIMotionTests: XCTestCase {
     func testLessMotionPutsThePropertyAtItsValueAtOnce() throws {
         try onUIThread {
             let host = WinUIRenderer.bare(clock: TestClock(), reducesMotion: true)
-            var initial = HostPatch(id: .manual("label"), type: .label)
+            var initial = HostPatch(id: .manual("label"), type: .text)
             initial.properties[.opacity] = .number(0.25)
             host.apply(initial)
 
-            var changed = HostPatch(id: .manual("label"), type: .label)
+            var changed = HostPatch(id: .manual("label"), type: .text)
             changed.properties[.opacity] = .number(0.75)
-            changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+            changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
             host.apply(changed)
 
             XCTAssertEqual(try XCTUnwrap(host.view(id: .manual("label"))).drawnOpacity, 0.75, accuracy: 1e-6)
@@ -147,7 +147,7 @@ final class WinUIMotionTests: XCTestCase {
             let arrived = State(wrappedValue: false)
             let host = WinUIRenderer.running(clock: clock) {
                 VStack {
-                    Label(arrived.wrappedValue ? "arrived" : "away")
+                    Text(arrived.wrappedValue ? "arrived" : "away")
                     Slider(level.projectedValue)
                     Slider(level.projectedValue)
                     Button("Go").onClicked {
@@ -178,13 +178,13 @@ final class WinUIMotionTests: XCTestCase {
         try onUIThread {
             let host = WinUIRenderer.running {
                 VStack {
-                    Label("turned")
-                        .width(100)
-                        .height(40)
-                        .translationX(10)
-                        .rotation(30)
-                        .scale(2)
-                        .scaleX(1.5)
+                    Text("turned")
+                        .frame(width: 100)
+                        .frame(height: 40)
+                        .offset(x: 10)
+                        .rotationEffect(30)
+                        .scaleEffect(2)
+                        .scaleEffect(x: 1.5)
                         .pivotX(0)
                 }
             }
@@ -207,7 +207,7 @@ final class WinUIMotionTests: XCTestCase {
             let offset = State(wrappedValue: 0.0)
             let host = WinUIRenderer.running(clock: clock) {
                 VStack {
-                    Label("moving").translationX(offset.projectedValue)
+                    Text("moving").offset(x: offset.projectedValue)
                     Button("Go").onClicked {
                         try await offset.projectedValue.journey.move(to: 100, .eased(200, .linear))
                     }

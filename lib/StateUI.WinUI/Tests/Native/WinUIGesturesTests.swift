@@ -8,23 +8,23 @@ import CStateUIWinUI
 import XCTest
 
 /// A row that counts its taps - `count` of them in a quick run make one - beside a stack that answers nothing.
-private struct TapsPage: ContentView {
+private struct TapsPage: View {
     let count: Int
     @State private var taps = 0
     @State private var shown = true
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("taps \(taps)")
+            Text("taps \(taps)")
             if shown {
-                HStack { Label("row") }
-                    .width(200)
-                    .height(40)
-                    .onTapped(count: count) { taps += 1 }
+                HStack { Text("row") }
+                    .frame(width: 200)
+                    .frame(height: 40)
+                    .onTapGesture(count: count) { taps += 1 }
             }
-            HStack { Label("plain") }
-                .width(200)
-                .height(40)
+            HStack { Text("plain") }
+                .frame(width: 200)
+                .frame(height: 40)
             Button("Hide").onClicked { shown = false }
         }
         .horizontalAlignment(.start)

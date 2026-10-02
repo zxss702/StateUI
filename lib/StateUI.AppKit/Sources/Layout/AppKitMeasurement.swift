@@ -44,7 +44,7 @@ extension Point {
     }
 }
 
-extension Insets {
+extension EdgeInsets {
     /// Native edge insets as StateUI's.
     init(_ insets: NSEdgeInsets) {
         self.init(Double(insets.left), Double(insets.top), Double(insets.right), Double(insets.bottom))

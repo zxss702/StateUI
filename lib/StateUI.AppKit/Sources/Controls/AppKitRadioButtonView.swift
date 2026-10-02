@@ -31,7 +31,7 @@ final class AppKitRadioButtonView: NSButton {
         checked: Bool,
         text: String,
         font: NSFont,
-        textColor: NSColor,
+        foregroundStyle: NSColor,
         enabled: Bool
     ) {
         ProgramWrite.perform {
@@ -40,7 +40,7 @@ final class AppKitRadioButtonView: NSButton {
             self.font = font
             attributedTitle = NSAttributedString(
                 string: text,
-                attributes: [.font: font, .foregroundColor: textColor])
+                attributes: [.font: font, .foregroundColor: foregroundStyle])
             isEnabled = enabled
         }
     }

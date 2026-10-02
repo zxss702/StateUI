@@ -18,13 +18,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0.25)
         renderer.applyForTesting(initial)
 
-        var changed = HostPatch(id: .manual("label"), type: .label)
+        var changed = HostPatch(id: .manual("label"), type: .text)
         changed.properties[.opacity] = .number(0.75)
-        changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
@@ -55,11 +55,11 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        renderer.applyForTesting(HostPatch(id: .manual("label"), type: .label))
+        renderer.applyForTesting(HostPatch(id: .manual("label"), type: .text))
 
-        var changed = HostPatch(id: .manual("label"), type: .label)
+        var changed = HostPatch(id: .manual("label"), type: .text)
         changed.properties[.opacity] = .number(0)
-        changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
@@ -80,13 +80,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        renderer.applyForTesting(HostPatch(id: .manual("label"), type: .label))
+        renderer.applyForTesting(HostPatch(id: .manual("label"), type: .text))
 
-        var changed = HostPatch(id: .manual("label"), type: .label)
+        var changed = HostPatch(id: .manual("label"), type: .text)
         changed.properties[.translationX] = .number(10)
         changed.properties[.scale] = .number(2)
-        changed.transitions[.translationX] = HostTransition(motion: .eased(200, .linear))
-        changed.transitions[.scale] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.translationX] = HostTransition(animation: .eased(200, .linear))
+        changed.transitions[.scale] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
@@ -114,10 +114,10 @@ final class AppKitMotionTests: XCTestCase {
         renderer.applyForTesting(HostPatch(id: .manual("stack"), type: .vStack))
 
         var changed = HostPatch(id: .manual("stack"), type: .vStack)
-        changed.properties[.padding] = .numbers([20, 40, 60, 80])
+        changed.properties[.contentPadding] = .numbers([20, 40, 60, 80])
         changed.properties[.spacing] = .number(10)
-        changed.transitions[.padding] = HostTransition(motion: .eased(200, .linear))
-        changed.transitions[.spacing] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.contentPadding] = HostTransition(animation: .eased(200, .linear))
+        changed.transitions[.spacing] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let stack = try XCTUnwrap(
@@ -147,26 +147,26 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties[.opacity] = .number(0)
         label.properties[.translationX] = .number(0)
         var initial = HostPatch(id: .manual("stack"), type: .vStack)
-        initial.properties[.padding] = .numbers([0, 0, 0, 0])
+        initial.properties[.contentPadding] = .numbers([0, 0, 0, 0])
         initial.properties[.spacing] = .number(0)
         initial.children = .arranged([label])
         renderer.applyForTesting(initial)
 
-        var movingLabel = HostPatch(id: .manual("label"), type: .label)
+        var movingLabel = HostPatch(id: .manual("label"), type: .text)
         movingLabel.properties[.opacity] = .number(1)
         movingLabel.properties[.translationX] = .number(10)
-        movingLabel.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        movingLabel.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         movingLabel.transitions[.translationX] = HostTransition(
-            motion: .eased(200, .linear))
+            animation: .eased(200, .linear))
         var moving = HostPatch(id: .manual("stack"), type: .vStack)
-        moving.properties[.padding] = .numbers([20, 40, 60, 80])
+        moving.properties[.contentPadding] = .numbers([20, 40, 60, 80])
         moving.properties[.spacing] = .number(10)
-        moving.transitions[.padding] = HostTransition(motion: .eased(200, .linear))
-        moving.transitions[.spacing] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.contentPadding] = HostTransition(animation: .eased(200, .linear))
+        moving.transitions[.spacing] = HostTransition(animation: .eased(200, .linear))
         moving.children = .changed([movingLabel])
         renderer.applyForTesting(moving)
 
@@ -206,19 +206,19 @@ final class AppKitMotionTests: XCTestCase {
             stack.children = children
             var page = HostPatch(id: .manual("page"), type: .page)
             page.children = .arranged([stack])
-            var window = HostPatch(id: .manual("window"), type: .window)
+            var window = HostPatch(id: .manual("window"), type: .windowScene)
             window.children = .arranged([page])
             return windowTree(window)
         }
 
-        var initialBox = HostPatch(id: .manual("box"), type: .colorBox)
+        var initialBox = HostPatch(id: .manual("box"), type: .colorPicker)
         initialBox.properties[.width] = .number(120)
         renderer.applyForTesting(tree(children: .arranged([initialBox])))
 
-        var changedBox = HostPatch(id: .manual("box"), type: .colorBox)
+        var changedBox = HostPatch(id: .manual("box"), type: .colorPicker)
         changedBox.properties[.width] = .number(300)
         changedBox.transitions[.width] = HostTransition(
-            motion: .eased(200, .linear))
+            animation: .eased(200, .linear))
         renderer.applyForTesting(tree(children: .changed([changedBox])))
         let synchronizationsBeforeFrame = renderer.windowSynchronizationCountForTesting
 
@@ -240,14 +240,14 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("box"), type: .colorBox)
+        var initial = HostPatch(id: .manual("box"), type: .colorPicker)
         initial.properties[.width] = .number(120)
         renderer.applyForTesting(initial)
 
-        var changed = HostPatch(id: .manual("box"), type: .colorBox)
+        var changed = HostPatch(id: .manual("box"), type: .colorPicker)
         changed.properties[.width] = .number(300)
         changed.transitions[.width] = HostTransition(
-            motion: .eased(200, .linear))
+            animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let box = try XCTUnwrap(renderer.viewForTesting(id: .manual("box")))
@@ -272,7 +272,7 @@ final class AppKitMotionTests: XCTestCase {
         defer { renderer.closeForTesting() }
 
         func child(_ id: String, state: Int32) -> HostPatch {
-            var child = HostPatch(id: .manual(id), type: .colorBox)
+            var child = HostPatch(id: .manual(id), type: .colorPicker)
             child.properties[.height] = .number(40)
             child.driven = .replace([
                 .height: HostStateBinding(
@@ -296,7 +296,7 @@ final class AppKitMotionTests: XCTestCase {
                 value: [value],
                 destination: [value],
                 velocity: [0],
-                motion: .none,
+                animation: .none,
                 completion: nil,
                 stopped: 0))
         }
@@ -318,13 +318,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         renderer.applyForTesting(initial)
 
-        var moving = HostPatch(id: .manual("label"), type: .label)
+        var moving = HostPatch(id: .manual("label"), type: .text)
         moving.properties[.opacity] = .number(1)
-        moving.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(moving)
 
         now = 50
@@ -332,7 +332,7 @@ final class AppKitMotionTests: XCTestCase {
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
         XCTAssertEqual(label.alphaValue, 0.25, accuracy: 0.000_001)
 
-        var unrelated = HostPatch(id: .manual("label"), type: .label)
+        var unrelated = HostPatch(id: .manual("label"), type: .text)
         unrelated.properties[.text] = .string("still moving")
         renderer.applyForTesting(unrelated)
         XCTAssertTrue(renderer.describedMotionActiveForTesting)
@@ -352,11 +352,11 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var content = HostPatch(id: .manual("content"), type: .colorBox)
+        var content = HostPatch(id: .manual("content"), type: .colorPicker)
         content.properties[.width] = .number(100)
         content.properties[.height] = .number(500)
         var initial = HostPatch(id: .manual("scroll"), type: .scrollView)
-        initial.properties[.orientation] = .enumeration(ScrollOrientation.vertical.rawValue)
+        initial.properties[.orientation] = .enumeration(Axis.vertical.rawValue)
         initial.properties[.scrollOffset] = .numbers([0, 0])
         initial.properties[.opacity] = .number(0)
         initial.children = .arranged([content])
@@ -372,7 +372,7 @@ final class AppKitMotionTests: XCTestCase {
 
         var moving = HostPatch(id: .manual("scroll"), type: .scrollView)
         moving.properties[.opacity] = .number(1)
-        moving.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(moving)
         XCTAssertEqual(scroll.offset.y, 120, accuracy: 0.001)
 
@@ -383,7 +383,7 @@ final class AppKitMotionTests: XCTestCase {
 
     @MainActor
     func testReducedMotionAssignsThePropertyTargetImmediately() throws {
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         let renderer = testRenderer(
             resourceDirectory: nil,
@@ -393,9 +393,9 @@ final class AppKitMotionTests: XCTestCase {
         defer { renderer.closeForTesting() }
         renderer.applyForTesting(initial)
 
-        var changed = HostPatch(id: .manual("label"), type: .label)
+        var changed = HostPatch(id: .manual("label"), type: .text)
         changed.properties[.opacity] = .number(1)
-        changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
@@ -414,13 +414,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { reduced })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         renderer.applyForTesting(initial)
 
-        var changed = HostPatch(id: .manual("label"), type: .label)
+        var changed = HostPatch(id: .manual("label"), type: .text)
         changed.properties[.opacity] = .number(1)
-        changed.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         now = 50
@@ -446,13 +446,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         renderer.applyForTesting(initial)
 
-        var moving = HostPatch(id: .manual("label"), type: .label)
+        var moving = HostPatch(id: .manual("label"), type: .text)
         moving.properties[.opacity] = .number(1)
-        moving.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(moving)
 
         now = 100
@@ -460,7 +460,7 @@ final class AppKitMotionTests: XCTestCase {
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
         XCTAssertEqual(label.alphaValue, 0.5, accuracy: 0.000_001)
 
-        var snapped = HostPatch(id: .manual("label"), type: .label)
+        var snapped = HostPatch(id: .manual("label"), type: .text)
         snapped.properties[.opacity] = .number(0.25)
         renderer.applyForTesting(snapped)
         XCTAssertEqual(label.alphaValue, 0.25, accuracy: 0.000_001)
@@ -481,13 +481,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0.2)
         renderer.applyForTesting(initial)
 
-        var moving = HostPatch(id: .manual("label"), type: .label)
+        var moving = HostPatch(id: .manual("label"), type: .text)
         moving.properties[.opacity] = .number(0.8)
-        moving.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(moving)
 
         now = 100
@@ -495,7 +495,7 @@ final class AppKitMotionTests: XCTestCase {
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
         XCTAssertEqual(label.alphaValue, 0.5, accuracy: 0.000_001)
 
-        var cleared = HostPatch(id: .manual("label"), type: .label)
+        var cleared = HostPatch(id: .manual("label"), type: .text)
         cleared.clearedProperties = [.opacity]
         renderer.applyForTesting(cleared)
         XCTAssertEqual(label.alphaValue, 1, accuracy: 0.000_001)
@@ -516,13 +516,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         renderer.applyForTesting(initial)
 
-        var first = HostPatch(id: .manual("label"), type: .label)
+        var first = HostPatch(id: .manual("label"), type: .text)
         first.properties[.opacity] = .number(1)
-        first.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        first.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(first)
 
         now = 100
@@ -530,9 +530,9 @@ final class AppKitMotionTests: XCTestCase {
         let label = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
         XCTAssertEqual(label.alphaValue, 0.5, accuracy: 0.000_001)
 
-        var second = HostPatch(id: .manual("label"), type: .label)
+        var second = HostPatch(id: .manual("label"), type: .text)
         second.properties[.opacity] = .number(0.2)
-        second.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        second.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(second)
         XCTAssertEqual(label.alphaValue, 0.5, accuracy: 0.000_001)
 
@@ -557,7 +557,7 @@ final class AppKitMotionTests: XCTestCase {
         defer { renderer.closeForTesting() }
 
         func label(opacity: Double) -> HostPatch {
-            var label = HostPatch(id: .manual("same"), type: .label)
+            var label = HostPatch(id: .manual("same"), type: .text)
             label.properties[.opacity] = .number(opacity)
             return label
         }
@@ -576,9 +576,9 @@ final class AppKitMotionTests: XCTestCase {
         renderer.applyForTesting(initial)
 
         func changedLabel(opacity: Double) -> HostPatch {
-            var label = HostPatch(id: .manual("same"), type: .label)
+            var label = HostPatch(id: .manual("same"), type: .text)
             label.properties[.opacity] = .number(opacity)
-            label.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+            label.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
             return label
         }
 
@@ -612,15 +612,15 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties[.opacity] = .number(0)
         var initial = HostPatch(id: .manual("root"), type: .vStack)
         initial.children = .arranged([label])
         renderer.applyForTesting(initial)
 
-        var movingLabel = HostPatch(id: .manual("label"), type: .label)
+        var movingLabel = HostPatch(id: .manual("label"), type: .text)
         movingLabel.properties[.opacity] = .number(1)
-        movingLabel.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        movingLabel.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         var moving = HostPatch(id: .manual("root"), type: .vStack)
         moving.children = .changed([movingLabel])
         renderer.applyForTesting(moving)
@@ -641,18 +641,18 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("label"), type: .label)
+        var initial = HostPatch(id: .manual("label"), type: .text)
         initial.properties[.opacity] = .number(0)
         renderer.applyForTesting(initial)
         let original = try XCTUnwrap(renderer.viewForTesting(id: .manual("label")))
 
-        var moving = HostPatch(id: .manual("label"), type: .label)
+        var moving = HostPatch(id: .manual("label"), type: .text)
         moving.properties[.opacity] = .number(1)
-        moving.transitions[.opacity] = HostTransition(motion: .eased(200, .linear))
+        moving.transitions[.opacity] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(moving)
         XCTAssertTrue(renderer.describedMotionActiveForTesting)
 
-        var replacement = HostPatch(id: .manual("label"), type: .label)
+        var replacement = HostPatch(id: .manual("label"), type: .text)
         replacement.replace = true
         replacement.properties[.opacity] = .number(0.4)
         renderer.applyForTesting(replacement)
@@ -673,13 +673,13 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        var initial = HostPatch(id: .manual("box"), type: .colorBox)
+        var initial = HostPatch(id: .manual("box"), type: .colorPicker)
         initial.properties[.cornerRadius] = .numbers([0, 10, 20, 30])
         renderer.applyForTesting(initial)
 
-        var changed = HostPatch(id: .manual("box"), type: .colorBox)
+        var changed = HostPatch(id: .manual("box"), type: .colorPicker)
         changed.properties[.cornerRadius] = .numbers([20, 30, 40, 50])
-        changed.transitions[.cornerRadius] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.cornerRadius] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         now = 100
@@ -699,11 +699,11 @@ final class AppKitMotionTests: XCTestCase {
             reducesMotion: { false })
         defer { renderer.closeForTesting() }
 
-        renderer.applyForTesting(HostPatch(id: .manual("box"), type: .colorBox))
+        renderer.applyForTesting(HostPatch(id: .manual("box"), type: .colorPicker))
 
-        var changed = HostPatch(id: .manual("box"), type: .colorBox)
+        var changed = HostPatch(id: .manual("box"), type: .colorPicker)
         changed.properties[.cornerRadius] = .numbers([10, 20, 30, 40])
-        changed.transitions[.cornerRadius] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.cornerRadius] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let box = try XCTUnwrap(
@@ -735,7 +735,7 @@ final class AppKitMotionTests: XCTestCase {
 
         var changed = HostPatch(id: .manual("slider"), type: .slider)
         changed.properties[.value] = .number(1)
-        changed.transitions[.value] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.value] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
         XCTAssertEqual(slider.doubleValue, 0.8, accuracy: 0.000_001)
 
@@ -760,7 +760,7 @@ final class AppKitMotionTests: XCTestCase {
 
         var changed = HostPatch(id: .manual("progress"), type: .progressBar)
         changed.properties[.progress] = .number(1)
-        changed.transitions[.progress] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.progress] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let progress = try XCTUnwrap(
@@ -790,9 +790,9 @@ final class AppKitMotionTests: XCTestCase {
         let window = try XCTUnwrap(renderer.windowsForTesting.first?.window)
         window.setContentSize(NSSize(width: 800, height: 500))
 
-        var changed = HostPatch(id: .manual("window"), type: .window)
+        var changed = HostPatch(id: .manual("window"), type: .windowScene)
         changed.properties[.width] = .number(1_000)
-        changed.transitions[.width] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.width] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(windowChange(changed))
 
         XCTAssertEqual(window.contentRect(forFrameRect: window.frame).size.width, 800, accuracy: 0.001)
@@ -819,9 +819,9 @@ final class AppKitMotionTests: XCTestCase {
         window.setFrameOrigin(NSPoint(x: 100, y: 200))
         let standingTop = window.frame.maxY
 
-        var changed = HostPatch(id: .manual("window"), type: .window)
+        var changed = HostPatch(id: .manual("window"), type: .windowScene)
         changed.properties[.x] = .number(300)
-        changed.transitions[.x] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.x] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(windowChange(changed))
         XCTAssertEqual(window.frame.minX, 100, accuracy: 0.001)
         XCTAssertEqual(window.frame.maxY, standingTop, accuracy: 0.001)
@@ -854,12 +854,12 @@ final class AppKitMotionTests: XCTestCase {
         initial.properties[.y1] = .number(2)
         initial.properties[.x2] = .number(21)
         initial.properties[.y2] = .number(12)
-        initial.properties[.aspect] = .enumeration(Aspect.center.rawValue)
+        initial.properties[.aspect] = .enumeration(ContentMode.center.rawValue)
         renderer.applyForTesting(initial)
 
         var changed = HostPatch(id: .manual("line"), type: .line)
         changed.properties[.renderTransform] = transform(x: 10, y: 20)
-        changed.transitions[.renderTransform] = HostTransition(motion: .eased(200, .linear))
+        changed.transitions[.renderTransform] = HostTransition(animation: .eased(200, .linear))
         renderer.applyForTesting(changed)
 
         let shape = try XCTUnwrap(
@@ -890,7 +890,7 @@ final class AppKitMotionTests: XCTestCase {
         defer { renderer.closeForTesting() }
 
         var initial = HostPatch(id: .manual("line"), type: .line)
-        initial.properties[.aspect] = .enumeration(Aspect.center.rawValue)
+        initial.properties[.aspect] = .enumeration(ContentMode.center.rawValue)
         initial.properties[.stroke] = Brush.solidColor(Color("#000000")).propValue
         initial.properties[.strokeDashPattern] = .numbers([1, 1])
         renderer.applyForTesting(initial)
@@ -904,7 +904,7 @@ final class AppKitMotionTests: XCTestCase {
         for property in [
             Prop.x2, .y2, .strokeWidth, .strokeDashOffset, .strokeMiterLimit,
         ] {
-            changed.transitions[property] = HostTransition(motion: .eased(200, .linear))
+            changed.transitions[property] = HostTransition(animation: .eased(200, .linear))
         }
         renderer.applyForTesting(changed)
 
@@ -929,7 +929,7 @@ final class AppKitMotionTests: XCTestCase {
     private func testWindow() -> HostPatch {
         var page = HostPatch(id: .manual("page"), type: .page)
         page.children = .arranged([])
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([page])
         return window
     }
@@ -938,7 +938,7 @@ final class AppKitMotionTests: XCTestCase {
     private func windowTree(_ window: HostPatch) -> HostPatch {
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
@@ -947,7 +947,7 @@ final class AppKitMotionTests: XCTestCase {
     private func windowChange(_ window: HostPatch) -> HostPatch {
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .changed([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .changed([scene])
         return application
     }

@@ -40,10 +40,9 @@ extension PickerProperties {
 ///
 /// The choice comes back through the binding as an index into the list, `-1`
 /// while nothing is chosen; `sizes[size]` turns it back into a value, which is
-/// why the list is worth holding. The picker takes `.textColor` but has no
+/// why the list is worth holding. The picker takes `.foregroundStyle` but has no
 /// `.text`: the field shows the chosen item or the title.
-public struct Picker: View, TextStyleElement, FontElement, TextAlignmentElement, TintElement,
-    PickerProperties {
+public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmentElement, TintElement, PickerProperties{
     /// The node this control describes.
     public var node: Node
 

@@ -9,20 +9,20 @@ import AppKit
 import XCTest
 
 /// A layout's children travel to the places a patch gives them, under the
-/// layout's motion, and follow a room that moves with no patch behind it.
+/// layout's animation, and follow a room that moves with no patch behind it.
 final class AppKitLayoutMotionTests: XCTestCase {
     /// A vertical stack of 100-wide boxes, 40 tall unless `heights` says
     /// otherwise, in `order`.
     private func stack(
         _ order: [String],
-        motion: Motion? = .eased(200, .linear),
+        animation: Animation? = .eased(200, .linear),
         heights: [String: Double] = [:],
         watched: String? = nil
     ) -> HostPatch {
         var stack = HostPatch(id: .manual("stack"), type: .vStack)
-        if let motion { stack.motion = HostLayoutMotion(motion: motion, lanes: .all) }
+        if let animation { stack.animation = HostLayoutMotion(animation: animation, lanes: .all) }
         stack.children = .arranged(order.map { name in
-            var box = HostPatch(id: .manual(name), type: .colorBox)
+            var box = HostPatch(id: .manual(name), type: .colorPicker)
             box.properties[.width] = .number(100)
             box.properties[.height] = .number(heights[name] ?? 40)
             if name == watched { box.events = .replace([.frameChanged: 7]) }
@@ -46,8 +46,8 @@ final class AppKitLayoutMotionTests: XCTestCase {
 
         func caption(_ text: String) -> HostPatch {
             var stack = HostPatch(id: .manual("stack"), type: .vStack)
-            stack.motion = HostLayoutMotion(motion: .eased(200, .linear), lanes: .all)
-            var label = HostPatch(id: .manual("caption"), type: .label)
+            stack.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
+            var label = HostPatch(id: .manual("caption"), type: .text)
             label.properties = [.text: .string(text), .horizontalAlignment: .enumeration(Alignment.start.rawValue)]
             stack.children = .arranged([label])
             return stack
@@ -122,8 +122,8 @@ final class AppKitLayoutMotionTests: XCTestCase {
         defer { renderer.closeForTesting() }
 
         var layout = HostPatch(id: .manual("layout"), type: .zStack)
-        layout.motion = HostLayoutMotion(motion: .eased(200, .linear), lanes: .all)
-        var box = HostPatch(id: .manual("box"), type: .colorBox)
+        layout.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
+        var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.properties[.width] = .number(50)
         box.properties[.height] = .number(50)
         box.properties[.horizontalAlignment] = .enumeration(Alignment.end.rawValue)

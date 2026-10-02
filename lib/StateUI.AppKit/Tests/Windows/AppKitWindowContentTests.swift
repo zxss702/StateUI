@@ -113,13 +113,13 @@ final class AppKitWindowContentTests: XCTestCase {
     }
 
     private func tree(withOverlay: Bool) -> HostPatch {
-        let body = HostPatch(id: .manual("body"), type: .colorBox)
+        let body = HostPatch(id: .manual("body"), type: .colorPicker)
         var page = HostPatch(id: .manual("page"), type: .page)
         page.children = .arranged([body])
 
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         if withOverlay {
-            var panel = HostPatch(id: .manual("panel"), type: .colorBox)
+            var panel = HostPatch(id: .manual("panel"), type: .colorPicker)
             panel.properties[.width] = .number(60)
             panel.properties[.horizontalAlignment] = .enumeration(2)
             var overlay = HostPatch(id: .manual("overlay"), type: .overlay)
@@ -131,20 +131,20 @@ final class AppKitWindowContentTests: XCTestCase {
 
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }
 
     private func tree(overlay: HostPatch) -> HostPatch {
-        let body = HostPatch(id: .manual("body"), type: .colorBox)
+        let body = HostPatch(id: .manual("body"), type: .colorPicker)
         var page = HostPatch(id: .manual("page"), type: .page)
         page.children = .arranged([body])
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.children = .arranged([page, overlay])
         var scene = HostPatch(id: .manual("scene"), type: .scene)
         scene.children = .arranged([window])
-        var application = HostPatch(id: .manual("application"), type: .application)
+        var application = HostPatch(id: .manual("application"), type: .app)
         application.children = .arranged([scene])
         return application
     }

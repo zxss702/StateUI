@@ -12,7 +12,7 @@
     public static var cases: [ConformanceCase] {
         Specimens.wearing(TextAlignmentElementContract.self).flatMap { element in
             [
-                Aspects.holds(TextAlignmentElementContract.horizontalTextAlignment, on: element, .start, then: .center,
+                Aspects.holds(TextAlignmentElementContract.multilineTextAlignment, on: element, .start, then: .center,
                               with: Words.on(element)),
                 Aspects.holds(TextAlignmentElementContract.verticalTextAlignment, on: element, .start, then: .end,
                               with: Words.on(element)),

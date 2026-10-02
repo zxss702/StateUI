@@ -6,7 +6,7 @@
 ///
 ///     VStack {
 ///         ForEach(names) { name in
-///             Label(name)
+///             Text(name)
 ///         }
 ///     }
 ///
@@ -18,28 +18,29 @@
 ///
 /// A plain `for` does not compile inside a view builder, so this is where
 /// repetition is written.
-public struct ForEach {
-    /// The views, one per item, each wearing its item's identity.
-    let elements: [Element]
+public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View>: View {
+    /// The views, one per item, each wearing its item's identity - a fragment
+    /// whose children the differ splices into the parent element's list.
+    public var node: Node
 
     /// One view per item, the item its identity.
     ///
     ///     ForEach(0..<5) { turn in
-    ///         Label("Turn \(turn)")
+    ///         Text("Turn \(turn)")
     ///     }
     ///
     /// A range works: its numbers are the items.
-    public init<Items: RandomAccessCollection>(
+    public init(
         _ items: Items,
-        content: (Items.Element) -> Element
-    ) where Items.Element: Hashable {
+        @ViewBuilder content: (Items.Element) -> Content
+    ) where Items.Element == Id {
         self.init(items, id: \.self, content: content)
     }
 
     /// One view per item, identified by the part of it `id` names.
     ///
     ///     ForEach(files, id: \.path) { file in
-    ///         Label(file.name)
+    ///         Text(file.name)
     ///     }
     ///
     /// For items that are not `Hashable` whole, or that repeat - an enumerated
@@ -51,14 +52,14 @@ public struct ForEach {
     ///
     /// - Parameter id: which part of an item is its identity - distinct
     ///   across the items, stable while the item means the same row.
-    public init<Items: RandomAccessCollection, Id: Hashable>(
+    public init(
         _ items: Items,
         id: KeyPath<Items.Element, Id>,
-        content: (Items.Element) -> Element
+        @ViewBuilder content: (Items.Element) -> Content
     ) {
-        elements = items.map { item in
-            Identified(identity: String(describing: item[keyPath: id]), element: content(item))
-        }
+        node = Node(type: .fragment, children: items.map { item in
+            Identified(identity: String(describing: item[keyPath: id]), element: content(item)).node
+        })
     }
 }
 
@@ -72,14 +73,35 @@ struct Identified: Element {
     /// The view as the author wrote it, modifiers and all.
     let element: Element
 
-    /// The element's own node, identified.
-    var body: Node {
-        var node = element.body
+    /// The element's own node, identified. A row that is a fragment carries
+    /// its identity on its only child - or scopes each child's path by it -
+    /// since the fragment itself splices away.
+    var node: Node {
+        var node = element.node
 
-        if node.id == nil {
-            node.id = identity
+        guard node.type == .fragment else {
+            if node.id == nil {
+                node.id = identity
+            }
+
+            return node
         }
 
+        if node.children.count == 1 {
+            if node.children[0].id == nil {
+                node.children[0].id = identity
+            }
+
+            return node
+        }
+
+        node.children = node.children.map { child in
+            var child = child
+            if child.id == nil {
+                child.key = child.key.map { "\(identity).\($0)" } ?? identity
+            }
+            return child
+        }
         return node
     }
 }

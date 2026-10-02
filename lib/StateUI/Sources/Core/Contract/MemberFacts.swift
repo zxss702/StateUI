@@ -24,9 +24,9 @@ struct MemberFacts: Equatable {
     let cleared: Bool
 
     /// Which of a view's values it is, where the value cannot say.
-    let moves: MotionValues
+    let moves: AnimationValues
 
-    /// What an application's own property says: it travels, it is cleared, no motion.
+    /// What an application's own property says: it travels, it is cleared, no animation.
     static let undeclared = MemberFacts(kind: .property, layer: nil, travels: true, cleared: true, moves: [])
 }
 

@@ -7,10 +7,10 @@
 import XCTest
 
 /// A page whose second button goes when the first is clicked.
-struct LeavingPage: ContentView {
+struct LeavingPage: View {
     @State private var shown = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             Button("Hide")
                 .onClicked { shown = false }

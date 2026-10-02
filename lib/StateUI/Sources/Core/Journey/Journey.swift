@@ -7,7 +7,7 @@
 ///
 ///     @State private var fade = 1.0
 ///
-///     ColorBox().opacity($fade)
+///     ColorPicker().opacity($fade)
 ///
 ///     fade = 0.2                                         // the destination: the box animates there
 ///     try await $fade.journey.move(to: 0.2, .eased(400, .cubicOut))   // the same, awaited
@@ -18,7 +18,7 @@
 /// The state's own value is the destination: reading it answers where the value
 /// is going, writing it sends it there. The host animates a state handed to a
 /// driven modifier, a two-way control or a scroller; an engine of your own
-/// animates one declared `@State(motion: .custom)`; a state nobody wears lands
+/// animates one declared `@State(animation: .custom)`; a state nobody wears lands
 /// where it is sent. A part of a state and a binding made from closures stand at
 /// their value.
 public struct Journey<Value: Walked> {
@@ -102,13 +102,13 @@ public struct Journey<Value: Walked> {
 
     /// The law this value animates under, wherever it is shown.
     ///
-    ///     $rotation.journey.motion = .spring()
+    ///     $rotation.journey.animation = .spring()
     ///
-    /// On the value rather than the view: `.motion(_:)` says how an element animates,
+    /// On the value rather than the view: `.animation(_:)` says how an element animates,
     /// this says how this value does. `.inherited` is the element's own. `.custom` is
     /// not set here: who animates a value is settled at its declaration.
-    public var motion: Motion {
-        get { lanes()?.motion ?? storage?.law ?? .inherited }
+    public var animation: Animation {
+        get { lanes()?.animation ?? storage?.law ?? .inherited }
 
         nonmutating set {
             guard let storage else { return }
@@ -120,14 +120,14 @@ public struct Journey<Value: Walked> {
 
             var lanes = standing
 
-            guard !newValue.isCustom, !lanes.motion.isCustom else {
+            guard !newValue.isCustom, !lanes.animation.isCustom else {
                 complain("`\(storage.origin ?? "a state")` was given a law after it was declared "
                     + "that would change who walks it. `.custom` is said at the declaration - "
-                    + "`@State(motion: .custom)` - and a value declared so keeps it.")
+                    + "`@State(animation: .custom)` - and a value declared so keeps it.")
                 return
             }
 
-            lanes.motion = newValue
+            lanes.animation = newValue
             storage.lay(lanes)
             storage.askJourneyReaders()
         }
@@ -146,23 +146,23 @@ public struct Journey<Value: Walked> {
         state.land(value)
     }
 
-    /// Sends the value there under `motion`, and suspends until it arrives.
+    /// Sends the value there under `animation`, and suspends until it arrives.
     ///
     ///     try await $fade.journey.move(to: 0.1, .eased(400, .cubicOut))
     ///
     /// True means it got there; false means something else ended the journey - a
     /// newer destination, a value written over it, or `stop()`. With nothing to
-    /// animate - already there, the user asked for less motion, or nothing wears the
+    /// animate - already there, the user asked for less animation, or nothing wears the
     /// state yet - it answers true at once. A law given here stays on the value;
     /// without one, the value's own law stands.
     ///
     /// - Parameters:
     ///   - target: where to send it.
-    ///   - motion: the law to animate under, or nothing for the value's own.
+    ///   - animation: the law to animate under, or nothing for the value's own.
     /// - Returns: whether it ran to the end.
     /// - Throws: whatever the host answers when it cannot carry the value at all.
     @discardableResult
-    public nonisolated(nonsending) func move(to target: Value, _ motion: Motion? = nil) async throws -> Bool {
+    public nonisolated(nonsending) func move(to target: Value, _ animation: Animation? = nil) async throws -> Bool {
         guard let (storage, image, lanes) = walking() else {
             complain("`move` was called on a part of a state, a binding made from closures, "
                 + "or a state the host carries as the value itself, none of which it can "
@@ -173,7 +173,7 @@ public struct Journey<Value: Walked> {
         // Nothing animates it, or an engine does: the destination is written through the
         // state and the answer is at once.
         // Design: docs/design/core/journeys.md#moving-and-waiting
-        if image.number == nil || lanes.motion.isCustom {
+        if image.number == nil || lanes.animation.isCustom {
             state.wrappedValue = target
             return true
         }
@@ -185,7 +185,7 @@ public struct Journey<Value: Walked> {
             travelling.destination = target
             travelling.completion = Double(waiter)
 
-            if let motion { travelling.motion = motion }
+            if let animation { travelling.animation = animation }
 
             // The waiter forces the destination: a fresh journey even to where it is going.
             Renderer.shared.board(of: image).write(

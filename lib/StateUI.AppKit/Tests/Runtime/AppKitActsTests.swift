@@ -73,12 +73,12 @@ final class AppKitActsTests: XCTestCase {
 }
 
 /// A field aimed at by three buttons, and what the last act answered.
-private struct Focusing: ContentView {
+private struct Focusing: View {
     @State private var name = ""
     @State private var answer = "-"
     @Aim(TextField.self) private var field
 
-    var content: any View {
+    var body: some View {
         VStack {
             TextField($name).aim(field)
             Button("Focus").onClicked { answer = try await field.focus() ? "took" : "refused" }
@@ -89,26 +89,26 @@ private struct Focusing: ContentView {
             Button("Hide").onClicked {
                 answer = try await OnScreenKeyboard.hide() ? "hid" : "nothing"
             }
-            Label(answer)
+            Text(answer)
         }
     }
 }
 
 /// A disabled field, and a button that enables it and focuses it in one breath.
-private struct EnablingAndFocusing: ContentView {
+private struct EnablingAndFocusing: View {
     @State private var name = ""
     @State private var enabled = false
     @State private var answer = "-"
     @Aim(TextField.self) private var field
 
-    var content: any View {
+    var body: some View {
         VStack {
-            TextField($name).aim(field).isEnabled(enabled)
+            TextField($name).aim(field).disabled(!enabled)
             Button("Enable and focus").onClicked {
                 enabled = true
                 answer = try await field.focus() ? "took" : "refused"
             }
-            Label(answer)
+            Text(answer)
         }
     }
 }

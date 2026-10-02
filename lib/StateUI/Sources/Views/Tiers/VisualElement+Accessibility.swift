@@ -24,7 +24,7 @@ extension VisualElementProperties {
 
     /// Whether a screen reader skips this view.
     ///
-    ///     ColorBox(.silver).isAccessibilityHidden(true)
+    ///     ColorPicker(.silver).isAccessibilityHidden(true)
     ///
     /// For decoration: a rule, a shadow, a picture repeating the words beside
     /// it. Left unsaid, the platform decides, which is nearly always right; say
@@ -42,14 +42,14 @@ extension VisualElementProperties {
 
     /// That this view is a heading, and how deep.
     ///
-    ///     Label("Settings").fontSize(24).accessibilityHeadingLevel(.level1)
+    ///     Text("Settings").fontSize(24).accessibilityHeadingLevel(.level1)
     ///
-    /// A screen-reader user moves through a long page by its headings; a Label
+    /// A screen-reader user moves through a long page by its headings; a Text
     /// drawn big is not one until this says so.
     public func accessibilityHeadingLevel(_ value: HeadingLevel) -> Modified { setValue(VisualElementContract.accessibilityHeadingLevel, value) }
 }
 
-extension VisualElement {
+extension VisualElementProperties {
     /// `accessibilityIdentifier` from a state, `$x`: the host writes each new
     /// text, and no view is rebuilt for it.
     public func accessibilityIdentifier(_ state: Binding<String>) -> Modified {
@@ -84,5 +84,77 @@ extension VisualElement {
     /// and no view is rebuilt for it.
     public func accessibilityHint(_ state: Binding<String>) -> Modified {
         words(VisualElementContract.accessibilityHint, by: state)
+    }
+}
+
+extension View {
+    /// The name an automation test or the inspector finds this view by.
+    ///
+    ///     Button("Save").accessibilityIdentifier("save")
+    @_disfavoredOverload
+    public func accessibilityIdentifier(_ value: String) -> ModifiedContent { setting(PropertyContainerContract.accessibilityIdentifier, value) }
+
+    /// What a screen reader says this view is.
+    @_disfavoredOverload
+    public func accessibilityLabel(_ value: String) -> ModifiedContent { setting(VisualElementContract.accessibilityLabel, value) }
+
+    /// What a screen reader says using the view does, after saying what it is.
+    @_disfavoredOverload
+    public func accessibilityHint(_ value: String) -> ModifiedContent { setting(VisualElementContract.accessibilityHint, value) }
+
+    /// Whether a screen reader skips this view.
+    @_disfavoredOverload
+    public func isAccessibilityHidden(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.isAccessibilityHidden, value) }
+
+    /// Whether a screen reader skips this view and everything inside it.
+    @_disfavoredOverload
+    public func automationExcludedWithChildren(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.automationExcludedWithChildren, value) }
+
+    /// That this view is a heading, and how deep.
+    @_disfavoredOverload
+    public func accessibilityHeadingLevel(_ value: HeadingLevel) -> ModifiedContent { setting(VisualElementContract.accessibilityHeadingLevel, value) }
+}
+
+extension View {
+    /// `accessibilityIdentifier` from a state, `$x`: the host writes each new
+    /// text, and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func accessibilityIdentifier(_ state: Binding<String>) -> ModifiedContent {
+        revised { $0.driveWords(PropertyContainerContract.accessibilityIdentifier, by: state) }
+    }
+
+    /// `automationExcludedWithChildren` from a state, `$x`: the host sets each
+    /// new value as it stands, and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func automationExcludedWithChildren(_ state: Binding<Bool>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.automationExcludedWithChildren, by: state) }
+    }
+
+    /// `isAccessibilityHidden` from a state, `$x`: the host sets each new value
+    /// as it stands, and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func isAccessibilityHidden(_ state: Binding<Bool>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.isAccessibilityHidden, by: state) }
+    }
+
+    /// `accessibilityLabel` from a state, `$x`: the host writes each new text,
+    /// and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func accessibilityLabel(_ state: Binding<String>) -> ModifiedContent {
+        revised { $0.driveWords(VisualElementContract.accessibilityLabel, by: state) }
+    }
+
+    /// `accessibilityHeadingLevel` from a state, `$x`: the host sets each new
+    /// value as it stands, and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> ModifiedContent {
+        revised { $0.drivePlain(VisualElementContract.accessibilityHeadingLevel, by: state) }
+    }
+
+    /// `accessibilityHint` from a state, `$x`: the host writes each new text,
+    /// and no view is rebuilt for it.
+    @_disfavoredOverload
+    public func accessibilityHint(_ state: Binding<String>) -> ModifiedContent {
+        revised { $0.driveWords(VisualElementContract.accessibilityHint, by: state) }
     }
 }

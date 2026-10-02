@@ -7,17 +7,17 @@
 import XCTest
 
 /// A row of two labels under a column whose direction a button turns.
-struct TurningRow: ContentView {
+struct TurningRow: View {
     @State private var rightToLeft = true
 
-    var content: any View {
+    var body: some View {
         VStack {
             HStack {
-                Label("A").width(30).height(10)
-                Label("B").width(10).height(10)
+                Text("A").frame(width: 30).frame(height: 10)
+                Text("B").frame(width: 10).frame(height: 10)
             }
             .spacing(4)
-            .padding(6, 0)
+            .contentPadding(6, 0)
 
             Button("Turn")
                 .onClicked { rightToLeft.toggle() }
@@ -42,11 +42,11 @@ final class AndroidStackViewTests: XCTestCase {
         onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
-                    Label("A").width(100).height(40).horizontalAlignment(.start)
-                    Label("B").width(80).height(60).horizontalAlignment(.end)
+                    Text("A").frame(width: 100).frame(height: 40).horizontalAlignment(.start)
+                    Text("B").frame(width: 80).frame(height: 60).horizontalAlignment(.end)
                 }
                 .spacing(10)
-                .padding(20)
+                .contentPadding(20)
             }
 
             host.layOut(width: 1080, height: 1920)
@@ -62,7 +62,7 @@ final class AndroidStackViewTests: XCTestCase {
         try onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
-                    Label("A").width(100).height(40)
+                    Text("A").frame(width: 100).frame(height: 40)
                 }
                 .verticalAlignment(.center)
             }
@@ -77,7 +77,7 @@ final class AndroidStackViewTests: XCTestCase {
     /// A child on its way, turned or moved, is drawn past its layout's edges: a layout cuts off only where told to.
     func testALayoutDoesNotCutItsChildrenOff() throws {
         try onMainActor {
-            let host = AndroidRenderer.running { VStack { Label("moving").translationX(500) } }
+            let host = AndroidRenderer.running { VStack { Text("moving").offset(x: 500) } }
             let stack = try XCTUnwrap(host.views(AndroidStackView.self).first)
 
             XCTAssertFalse(Java.callBool(stack.reference, TestJava.getClipChildren))

@@ -121,7 +121,7 @@ public struct Dressing: Sendable {
     }
 
     /// `control` dressed, and found by the id.
-    public func dress<Control: View>(_ control: Control) -> any View where Control.Modified == Control {
+    public func dress<Control: VisualElement>(_ control: Control) -> any View where Control.Modified == Control {
         wear(control).id(id)
     }
 

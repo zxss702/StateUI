@@ -21,7 +21,7 @@
 //   testEveryControlHasACase        a new control with no case fails HERE
 //   testTheSharedTierIsCoveredOnce  the protocol tiers, on one tree
 //
-// The tier modifiers - padding, margin, fontSize, horizontalAlignment - are
+// The tier modifiers - padding, contentPadding, fontSize, horizontalAlignment - are
 // deliberately NOT repeated per control. They live on protocols and are applied
 // by one shared host path, so covering them once per control would prove one
 // rule two dozen times. That is what the protocol tiers are for; the `Elements`
@@ -48,13 +48,13 @@ private struct ControlCase {
     init(_ name: String, sources: [String], _ element: any Element) {
         self.name = name
         self.sources = sources
-        self.node = element.body
+        self.node = element.node
     }
 }
 
 final class ControlTests: XCTestCase {
     /// A turn, a sizing, a lean and a move, STATED rather than computed: a
-    /// chain like `.rotate(15).scaleX(1.5).skew(10, 5)` puts a libm result in
+    /// chain like `.rotate(15).scaleEffect(x: 1.5).skew(10, 5)` puts a libm result in
     /// the patch, and the host's maths library is not part of this library's
     /// contract. The six numbers are binary fractions, which every platform
     /// holds to the bit, and they are still a SHEAR - the two axes are not at a
@@ -88,19 +88,18 @@ final class ControlTests: XCTestCase {
         let hasForward = State(false)
         let chosen = State<String?>(wrappedValue: "two")
 
-        return [
-            ControlCase("Label", source: "Label.swift",
-                Label("Total")
+        let case0 =             ControlCase("Text", source: "Text.swift",
+                Text("Total")
                     .lineBreak(.tailTruncation)
                     .lineHeight(1.5)
-                    .maximumLines(2)
+                    .lineLimit(2)
                     .textDecorations([.underline, .strikethrough])
                     // The runs go here rather than in a case of their own: a
-                    // Span is not a view, so it has no case, and Label.swift
+                    // Span is not a view, so it has no case, and Text.swift
                     // is the file that declares it.
                     .spans {
                         TextSpan("let ")
-                            .textColor(.purple)
+                            .foregroundStyle(.purple)
                             .background(.whiteSmoke)
                             .fontSize(13)
                             .fontFamily("Menlo")
@@ -110,10 +109,9 @@ final class ControlTests: XCTestCase {
                             .lineHeight(1.2)
                             .textDecorations(.underline)
 
-                        TextSpan("counter").textColor(.steelBlue)
-                    }),
-
-            ControlCase("Button", source: "Button.swift",
+                        TextSpan("counter").foregroundStyle(.steelBlue)
+                    })
+        let case1 =             ControlCase("Button", source: "Button.swift",
                 Button("Increment")
                     .stroke(.gray)
                     .strokeWidth(1)
@@ -124,33 +122,27 @@ final class ControlTests: XCTestCase {
                     .iconSpacing(8)
                     .onClicked {}
                     .onPressed {}
-                    .onReleased {}),
-
-            ControlCase("IconButton", source: "Button.swift",
+                    .onReleased {})
+        let case2 =             ControlCase("IconButton", source: "Button.swift",
                 Button(icon: "tab_list.png")
                     .aspect(.fit)
-                    .onClicked {}),
-
-            ControlCase("TextField", source: "TextField.swift",
+                    .onClicked {})
+        let case3 =             ControlCase("TextField", source: "TextField.swift",
                 TextField("Ada")
                     .isPassword(false)
-                    .returnKey(.done)
+                    .submitLabel(.done)
                     .showsClearButton(true)
                     .onTextChanged { _ in }
-                    .onSubmitted {}),
-
-            ControlCase("TextEditor", source: "TextEditor.swift",
+                    .onSubmitted {})
+        let case4 =             ControlCase("TextEditor", source: "TextEditor.swift",
                 TextEditor("Notes")
                     .growsWithText(true)
-                    .onTextChanged { _ in }),
-
-            ControlCase("Image", source: "Image.swift",
+                    .onTextChanged { _ in })
+        let case5 =             ControlCase("Image", source: "Image.swift",
                 Image("tab_list.png")
                     .aspect(.fill)
-                    .isAnimating(true)),
-
-
-            ControlCase("Picker", source: "Picker.swift",
+                    .isAnimating(true))
+        let case6 =             ControlCase("Picker", source: "Picker.swift",
                 Picker(["Small", "Medium", "Large"])
                     .selectedIndex(1)
                     .title("Size")
@@ -158,9 +150,8 @@ final class ControlTests: XCTestCase {
                     .isOpen(false)
                     .onSelectedIndexChanged { _ in }
                     .onOpened {}
-                    .onClosed {}),
-
-            ControlCase("DatePicker", source: "DatePicker.swift",
+                    .onClosed {})
+        let case7 =             ControlCase("DatePicker", source: "DatePicker.swift",
                 DatePicker(CalendarDate(year: 2026, month: 8, day: 2))
                     .date(CalendarDate(year: 2026, month: 8, day: 9))
                     .minimumDate(CalendarDate(year: 2026, month: 1, day: 1))
@@ -169,30 +160,26 @@ final class ControlTests: XCTestCase {
                     .isOpen(false)
                     .onDateChanged { _ in }
                     .onOpened {}
-                    .onClosed {}),
-
-            ControlCase("TimePicker", source: "TimePicker.swift",
+                    .onClosed {})
+        let case8 =             ControlCase("TimePicker", source: "TimePicker.swift",
                 TimePicker(ClockTime(hour: 9, minute: 30))
                     .time(ClockTime(hour: 21, minute: 5, second: 30))
                     .format("t")
                     .isOpen(false)
                     .onTimeChanged { _ in }
                     .onOpened {}
-                    .onClosed {}),
-
-            ControlCase("Switch", source: "Switch.swift",
+                    .onClosed {})
+        let case9 =             ControlCase("Switch", source: "Switch.swift",
                 Switch(true)
                     .isOn(true)
                     .tint(.green)
-                    .onToggled { _ in }),
-
-            ControlCase("CheckBox", source: "CheckBox.swift",
+                    .onToggled { _ in })
+        let case10 =             ControlCase("CheckBox", source: "CheckBox.swift",
                 CheckBox(true)
                     .isOn(true)
                     .tint(.firebrick)
-                    .onToggled { _ in }),
-
-            ControlCase("RadioButton", source: "RadioButton.swift",
+                    .onToggled { _ in })
+        let case11 =             ControlCase("RadioButton", source: "RadioButton.swift",
                 RadioButton("Medium")
                     .text("Medium")
                     .isOn(true)
@@ -201,47 +188,40 @@ final class ControlTests: XCTestCase {
                     .stroke(.gray)
                     .strokeWidth(1)
                     .shape(.roundedRectangle(8))
-                    .onToggled { _ in }),
-
-            ControlCase("Slider", source: "Slider.swift",
+                    .onToggled { _ in })
+        let case12 =             ControlCase("Slider", source: "Slider.swift",
                 Slider(40)
                     .minimum(0)
                     .maximum(100)
                     .tint(.cornflowerBlue)
                     .onValueChanged { _ in }
                     .onDragStarted {}
-                    .onDragCompleted {}),
-
-            ControlCase("Stepper", source: "Stepper.swift",
+                    .onDragCompleted {})
+        let case13 =             ControlCase("Stepper", source: "Stepper.swift",
                 Stepper(4)
                     .value(4)
                     .minimum(1)
                     .maximum(12)
                     .step(2)
-                    .onValueChanged { _ in }),
-
-            ControlCase("SearchField", source: "SearchField.swift",
+                    .onValueChanged { _ in })
+        let case14 =             ControlCase("SearchField", source: "SearchField.swift",
                 SearchField("al")
-                    .returnKey(.search)
+                    .submitLabel(.search)
                     .tint(.gray)
                     .onTextChanged { _ in }
-                    .onSubmitted {}),
-
-            ControlCase("ActivityIndicator", source: "ActivityIndicator.swift",
+                    .onSubmitted {})
+        let case15 =             ControlCase("ActivityIndicator", source: "ActivityIndicator.swift",
                 ActivityIndicator(true)
                     .isRunning(true)
-                    .tint(.cornflowerBlue)),
-
-            ControlCase("ProgressBar", source: "ProgressBar.swift",
+                    .tint(.cornflowerBlue))
+        let case16 =             ControlCase("ProgressBar", source: "ProgressBar.swift",
                 ProgressBar(0.4)
                     .progress(0.4)
-                    .tint(.cornflowerBlue)),
-
-            ControlCase("ColorBox", source: "ColorBox.swift",
-                ColorBox(.cornflowerBlue)
-                    .cornerRadius(8)),
-
-            ControlCase("PositionIndicator", source: "PositionIndicator.swift",
+                    .tint(.cornflowerBlue))
+        let case17 =             ControlCase("ColorPicker", source: "ColorPicker.swift",
+                ColorPicker(.cornflowerBlue)
+                    .cornerRadius(8))
+        let case18 =             ControlCase("PositionIndicator", source: "PositionIndicator.swift",
                 PositionIndicator()
                     .count(3)
                     .position(1)
@@ -250,85 +230,77 @@ final class ControlTests: XCTestCase {
                     .indicatorSize(8)
                     .maximumVisible(5)
                     .indicatorsShape(.square)
-                    .hideSingle(false)),
-
-            // The dots as VIEWS - the second shape the same control takes:
-            // the items run the template here, and the host counts them itself.
-            ControlCase("IndicatorDots", source: "PositionIndicator.swift",
+                    .hideSingle(false))
+        // The dots as VIEWS - the second shape the same control takes:
+        // the items run the template here, and the host counts them itself.
+        let case19 =             ControlCase("IndicatorDots", source: "PositionIndicator.swift",
                 PositionIndicator(["one", "two", "three"]) { name in
-                    Label("*").id(name)
+                    Text("*").id(name)
                 }
-                .position(1)),
-
-            ControlCase("Grid", source: "Grid.swift",
+                .position(1))
+        let case20 =             ControlCase("Grid", source: "Grid.swift",
                 Grid {
-                    Label("Top left")
+                    Text("Top left")
 
-                    Label("Spanning both")
+                    Text("Spanning both")
                         .gridRow(1)
                         .gridColumnSpan(2)
                 }
                 .rows(.fixed(70), .auto)
                 .columns(.fill, .proportional(2))
                 .rowSpacing(12)
-                .columnSpacing(8)),
-
-            ControlCase("VStack", source: "StackLayouts.swift",
+                .columnSpacing(8))
+        let case21 =             ControlCase("VStack", source: "StackLayouts.swift",
                 VStack {
-                    Label("One")
+                    Text("One")
                 }
-                .spacing(12)),
-
-            ControlCase("HStack", source: "StackLayouts.swift",
+                .spacing(12))
+        let case22 =             ControlCase("HStack", source: "StackLayouts.swift",
                 HStack {
-                    Label("One")
+                    Text("One")
                 }
-                .spacing(6)),
-
-            ControlCase("ZStack", source: "ZStack.swift",
+                .spacing(6))
+        let case23 =             ControlCase("ZStack", source: "ZStack.swift",
                 ZStack {
-                    ColorBox(.cornflowerBlue)
+                    ColorPicker(.cornflowerBlue)
                         .area(.proportional(0, 0, 1, 0.5))
 
-                    Label("Bottom right")
+                    Text("Bottom right")
                         .horizontalAlignment(.end)
                         .verticalAlignment(.end)
                 }
                 .stroke(.lightGray)
                 .strokeWidth(1)
                 .shape(.roundedRectangle(12))
-                .clipsContent(true)),
-
-            ControlCase("ScrollView", source: "ScrollView.swift",
+                .clipsContent(true))
+        let case24 =             ControlCase("ScrollView", source: "ScrollView.swift",
                 ScrollView {
-                    Label("content")
+                    Text("content")
                 }
                 .orientation(.both)
-                .verticalScrollBarVisibility(.never)
-                .horizontalScrollBarVisibility(.always)
+                .verticalScrollIndicators(.never)
+                .horizontalScrollIndicators(.always)
                 // The offset is ONE POINT - both axes on one state - written
                 // by the host on its own frames and walked by it on a write.
                 .scrollOffset(offset.projectedValue)
-                .onScrollStopped {}),
-
-            // The collection as its view writes it: every entry's identity, the
-            // layout, the choice, and what choosing, opening and scrolling to the
-            // end raise. A composed view, so the case is its body built.
-            ControlCase("ItemsView", source: "ItemsView.swift",
-                ItemsView(["one", "two"]) { Label($0) }
-                    .header(Label("Words"))
+                .onScrollStopped {})
+        // The collection as its view writes it: every entry's identity, the
+        // layout, the choice, and what choosing, opening and scrolling to the
+        // end raise. A composed view, so the case is its body built.
+        let case25 =             ControlCase("List", source: "List.swift",
+                List(["one", "two"]) { Text($0) }
+                    .header(Text("Words"))
                     .itemsLayout(.grid(minimumItemWidth: 120, spacing: 8))
                     .selection(chosen.projectedValue)
                     .onItemActivated { _ in }
                     .onEndReached(within: 5) {}
-                    .body.built),
-
-            // Both halves of a map: the control, and the pins on it. A Pin is
-            // not a control of its own - it is a marker on the map - so this
-            // case is where its modifiers are exercised as well. Where the
-            // map LOOKS is an act (moveToRegion), checked with the other acts
-            // in ActCallShapeTests rather than here.
-            ControlCase("Map", source: "Map.swift",
+                    .node.built)
+        // Both halves of a map: the control, and the pins on it. A Pin is
+        // not a control of its own - it is a marker on the map - so this
+        // case is where its modifiers are exercised as well. Where the
+        // map LOOKS is an act (moveToRegion), checked with the other acts
+        // in ActCallShapeTests rather than here.
+        let case26 =             ControlCase("Map", source: "Map.swift",
                 Map(latitude: 52.2297, longitude: 21.0122, radiusMeters: 3000)
                     .mapType(.hybrid)
                     .isScrollEnabled(true)
@@ -347,79 +319,70 @@ final class ControlTests: XCTestCase {
                             .label("Lazienki Park")
                             .location(latitude: 52.2151, longitude: 21.0355)
                     }
-                    .onMapClicked { _ in }),
-
-            // The case's source is the URL form; HTML written in place
-            // travels as a list under the same name - the brush rule, one
-            // level up. The canGoBack and canGoForward bindings are watches
-            // rather than events.
-            ControlCase("WebView", source: "WebView.swift",
+                    .onMapClicked { _ in })
+        // The case's source is the URL form; HTML written in place
+        // travels as a list under the same name - the brush rule, one
+        // level up. The canGoBack and canGoForward bindings are watches
+        // rather than events.
+        let case27 =             ControlCase("WebView", source: "WebView.swift",
                 WebView("https://example.com/docs")
                     .userAgent("StateUI/1.0")
                     .canGoBack(hasBack.projectedValue)
                     .canGoForward(hasForward.projectedValue)
                     .onNavigating { _ in }
                     .onNavigated { _ in }
-                    .onProcessTerminated {}),
-
-            // The window's authored title area. Its three slots are structural
-            // children whose root views retain ordinary identity and events.
-            ControlCase("TitleBar", source: "TitleBar.swift",
+                    .onProcessTerminated {})
+        // The window's authored title area. Its three slots are structural
+        // children whose root views retain ordinary identity and events.
+        let case28 =             ControlCase("TitleBar", source: "TitleBar.swift",
                 TitleBar("StateUI Gallery")
                     .subtitle("Fundamentals")
                     .icon("stateui_mark.png")
                     .barForegroundColor(.white)
                     .leadingContent {
-                        Label("lead")
+                        Text("lead")
                     }
                     .content {
-                        Label("mid")
+                        Text("mid")
                     }
                     .trailingContent {
                         Button("act")
-                    }),
-
-            // The shapes. What they share is the Shape tier, covered once by the
-            // Elements case below; each of these carries only its own.
-            ControlCase("Rectangle", source: "Rectangle.swift",
+                    })
+        // The shapes. What they share is the Shape tier, covered once by the
+        // Elements case below; each of these carries only its own.
+        let case29 =             ControlCase("Rectangle", source: "Rectangle.swift",
                 Rectangle()
-                    .cornerRadius(topLeft: 16, topRight: 16, bottomLeft: 0, bottomRight: 0)),
-
-            ControlCase("Ellipse", source: "Ellipse.swift", Ellipse()),
-
-            ControlCase("Line", source: "Line.swift",
+                    .cornerRadius(topLeft: 16, topRight: 16, bottomLeft: 0, bottomRight: 0))
+        let case30 =             ControlCase("Ellipse", source: "Ellipse.swift", Ellipse())
+        let case31 =             ControlCase("Line", source: "Line.swift",
                 Line()
                     .x1(0)
                     .y1(0)
                     .x2(240)
-                    .y2(40)),
-
-            ControlCase("Path", source: "Path.swift",
+                    .y2(40))
+        let case32 =             ControlCase("Path", source: "Path.swift",
                 Path("M 0,40 L 20,0 L 40,40 Z")
                     .data("M 0,40 L 20,0 L 40,40 Z")
                     // The one transform, sent as its whole matrix: a matrix
                     // with a lean in it exercises the part only a geometry
                     // can draw.
-                    .renderTransform(Self.leaned)),
-
-            ControlCase("Polygon", source: "Polygon.swift",
+                    .renderTransform(Self.leaned))
+        let case33 =             ControlCase("Polygon", source: "Polygon.swift",
                 Polygon([Point(20, 0), Point(40, 40), Point(0, 40)])
                     .points([Point(20, 0), Point(40, 40), Point(0, 40)])
-                    .fillRule(.nonzero)),
-
-            ControlCase("Polyline", source: "Polyline.swift",
+                    .fillRule(.nonzero))
+        let case34 =             ControlCase("Polyline", source: "Polyline.swift",
                 Polyline([Point(0, 30), Point(20, 5), Point(40, 25)])
                     .points([Point(0, 30), Point(20, 5), Point(40, 25)])
-                    .fillRule(.evenOdd)),
-
-            // A canvas, and the instructions it draws - every one of them, since
-            // the format they travel in is read in one place by a host.
-            ControlCase("Canvas", source: "Canvas.swift",
+                    .fillRule(.evenOdd))
+        // A canvas, and the instructions it draws - every one of them, since
+        // the format they travel in is read in one place by a host.
+        let case35 =             ControlCase("Canvas", source: "Canvas.swift",
                 Canvas {
                     Draw.fillColor(.cornflowerBlue)
                     Draw.strokeColor(Color(light: .black, dark: .white))
                     Draw.strokeWidth(2)
-                    Draw.textColor(.white)
+                    Draw.foregroundStyle(.white)
                     Draw.fontSize(14)
                     Draw.alpha(0.9)
 
@@ -454,125 +417,193 @@ final class ControlTests: XCTestCase {
                 }
                 .onPressed { _ in }
                 .onDragged { _ in }
-                .onReleased { _ in }),
+                .onReleased { _ in })
+        // The protocol tiers, once, on the three controls it takes to reach all
+        // of them: a stack for spacing and padding, a label for text, font and
+        // alignment, and a shape for what a shape is drawn with. The grid
+        // placement is on the label because that is where a placement
+        // lives - on the child, not the grid.
+        // The Shape tier, which all seven shapes share - so it is
+        // checked here rather than in each of their cases, exactly
+        // as the font tier is.
+        let el0 =                     Ellipse()
 
-            // The protocol tiers, once, on the three controls it takes to reach all
-            // of them: a stack for spacing and padding, a label for text, font and
-            // alignment, and a shape for what a shape is drawn with. The grid
-            // placement is on the label because that is where a placement
-            // lives - on the child, not the grid.
-            ControlCase("Elements", sources: SourceTree.sharedTier,
-                VStack {
-                    // The Shape tier, which all seven shapes share - so it is
-                    // checked here rather than in each of their cases, exactly
-                    // as the font tier is.
-                    Ellipse()
                         .fill(.radialGradient([
+
                             GradientStop(.white, 0),
+
                             GradientStop(.steelBlue, 1),
+
                         ], center: Point(0.3, 0.3), radius: 0.8))
+
                         .stroke(.linearGradient([
+
                             GradientStop(.gold, 0),
+
                             GradientStop(.tomato, 1),
+
                         ], startPoint: Point(0, 0), endPoint: Point(1, 1)))
+
                         .strokeWidth(2)
+
                         .strokeDashPattern([4, 2])
+
                         .strokeDashOffset(1)
+
                         .strokeLineCap(.round)
+
                         .strokeLineJoin(.bevel)
+
                         .strokeMiterLimit(4)
+
                         .aspect(.fill)
+
                         // The one transform, on the geometry: a matrix with a
+
                         // lean in it exercises the part only a geometry draws.
+
                         .renderTransform(Self.leaned)
+
                         // A gradient behind a view, which is what a Brush is for
+
                         // everywhere else.
+
                         .background(.solidColor(Color(light: .whiteSmoke, dark: .black)))
 
-                    Label("Tiers")
-                        .textColor(.firebrick)
-                        .characterSpacing(1.5)
-                        .textCase(.uppercase)
-                        .fontSize(20)
-                        .fontFamily("OpenSansRegular")
-                        .fontAttributes(.bold)
-                        .fontAutoScalingEnabled(false)
-                        .horizontalTextAlignment(.center)
-                        .verticalTextAlignment(.end)
-                        // What the view says about itself: a handle for a
-                        // driver, and three things a screen reader says.
-                        .accessibilityIdentifier("tiers")
-                        .accessibilityLabel("The shared tier")
-                        .accessibilityHint("Everything every view can be told")
-                        .accessibilityHeadingLevel(.level2)
-                        .isAccessibilityHidden(false)
-                        .automationExcludedWithChildren(false)
-                        .gridRow(1)
-                        .gridColumn(2)
-                        .gridRowSpan(3)
-                        .gridColumnSpan(4)
-                        // The other layout that asks a child where it goes.
-                        // Harmless on a view in none: an area means something
-                        // only to the layout that asks for it.
-                        .area(.absolute(0, 0, 120, 40))
-                        // A drag written into states rather than reported -
-                        // the path that describes nothing.
-                        .panX(followed.projectedValue)
-                        .panY(followed.projectedValue)
-                        .padding(8, 4)
+        let el1 =                     Text("Tiers")
 
-                    // The input tier, which TextField, TextEditor and SearchField all
-                    // share - checked here rather than in each of their cases,
-                    // exactly as the shape tier is.
-                    TextField("Ada")
+                        .foregroundStyle(.firebrick)
+
+                        .characterSpacing(1.5)
+
+                        .textCase(.uppercase)
+
+                        .fontSize(20)
+
+                        .fontFamily("OpenSansRegular")
+
+                        .fontAttributes(.bold)
+
+                        .fontAutoScalingEnabled(false)
+
+                        .multilineTextAlignment(.center)
+
+                        .verticalTextAlignment(.end)
+
+                        // What the view says about itself: a handle for a
+
+                        // driver, and three things a screen reader says.
+
+                        .accessibilityIdentifier("tiers")
+
+                        .accessibilityLabel("The shared tier")
+
+                        .accessibilityHint("Everything every view can be told")
+
+                        .accessibilityHeadingLevel(.level2)
+
+                        .isAccessibilityHidden(false)
+
+                        .automationExcludedWithChildren(false)
+
+                        .gridRow(1)
+
+                        .gridColumn(2)
+
+                        .gridRowSpan(3)
+
+                        .gridColumnSpan(4)
+
+                        // The other layout that asks a child where it goes.
+
+                        // Harmless on a view in none: an area means something
+
+                        // only to the layout that asks for it.
+
+                        .area(.absolute(0, 0, 120, 40))
+
+                        // A drag written into states rather than reported -
+
+                        // the path that describes nothing.
+
+                        .panX(followed.projectedValue)
+
+                        .panY(followed.projectedValue)
+
+                        .contentPadding(8, 4)
+
+        // The input tier, which TextField, TextEditor and SearchField all
+        // share - checked here rather than in each of their cases,
+        // exactly as the shape tier is.
+        let el2 =                     TextField("Ada")
+
                         .placeholder("Name")
+
                         .placeholderColor(.lightGray)
+
                         .isReadOnly(false)
-                        .inputPurpose(.email)
+
+                        .textContentType(.email)
+
                         .maximumLength(40)
+
                         .isSpellCheckEnabled(false)
+
                         .isTextPredictionEnabled(false)
+
                         .cursorPosition(1)
+
                         .selectionLength(2)
-                }
+
+        let elv1 = VStack {
+            el0
+
+            el1
+
+            el2
+
+        }
+
                 .spacing(12)
                 // The safe strip is the LAYOUT tier's one property of its own;
                 // the four-value form pins its full spelling in the patch.
-                .avoidsSafeArea(.none, .keyboard, .container, .all)
+                .ignoresSafeArea(.none, .keyboard, .container, .all)
                 .clipsContent(true)
                 .letsInputThrough(true)
                 .style("Card")
-                .padding(24, 16, 24, 16)
-                .margin(4, 8, 4, 8)
+                .contentPadding(24, 16, 24, 16)
+                .padding(4, 8, 4, 8)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.fill)
-                .isVisible(true)
-                .isEnabled(false)
-                .ignoresInput(false)
+                .hidden(!true)
+                .disabled(!false)
+                .allowsHitTesting(!false)
                 .layoutDirection(.rightToLeft)
-                .opacity(0.5)
+
+        let elv2 = elv1                .opacity(0.5)
                 .background(.whiteSmoke)
-                .width(200)
-                .height(100)
-                .minimumWidth(50)
-                .minimumHeight(25)
-                .maximumWidth(400)
-                .maximumHeight(300)
-                .rotation(15)
-                .rotationX(30)
-                .rotationY(45)
-                .scale(1.5)
-                .scaleX(2)
-                .scaleY(3)
-                .translationX(10)
-                .translationY(20)
+                .frame(width: 200)
+                .frame(height: 100)
+                .frame(minWidth: 50)
+                .frame(minHeight: 25)
+                .frame(maxWidth: 400)
+                .frame(maxHeight: 300)
+
+        let elv3 = elv2                .rotationEffect(15)
+                .rotation3DEffect(x: 30)
+                .rotation3DEffect(y: 45)
+                .scaleEffect(1.5)
+                .scaleEffect(x: 2)
+                .scaleEffect(y: 3)
+                .offset(x: 10)
+                .offset(y: 20)
                 .pivotX(0.25)
                 .pivotY(0.75)
                 .zIndex(3)
                 // Every gesture StateUI has, on one view - which is legal, and the
                 // only way to check that each recognizer is asked for on its
                 // own terms.
-                .onTapped(count: 2) {}
+                .onTapGesture(count: 2) {}
                 .onSwiped(direction: [.left, .up], threshold: 60) { _ in }
                 .onPanUpdated(touchCount: 1) { _ in }
                 .onPinchUpdated { _ in }
@@ -585,7 +616,11 @@ final class ControlTests: XCTestCase {
                 .onDropCompleted {}
                 .onDrop { _ in }
                 .onDragOver {}
-                .onDragLeave {}),
+                .onDragLeave {}
+        let case36 = ControlCase("Elements", sources: SourceTree.sharedTier, elv3)
+
+        return [
+            case0, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36,
         ]
     }
 
@@ -603,6 +638,12 @@ final class ControlTests: XCTestCase {
             let patch = Differ().reconcile(nil, with: control.node).patch
 
             for element in patch.subtree {
+                // A fragment is transparent: it mounts no element and declares
+                // no contract - its children stand in the parent's list.
+                if element.type == .fragment {
+                    continue
+                }
+
                 guard let contract = LibraryContracts.elements.first(where: { $0.nodeType == element.type }) else {
                     XCTFail("\(control.name): \(element.type.name) has no contract")
                     continue
@@ -735,12 +776,14 @@ final class ControlTests: XCTestCase {
             "background", "fill", "stroke", "icon", "icon",
             "icon", "maximumDate",
             "minimumDate", "strokeDashPattern", "points", "options", "columns",
-            "rows", "shape", "renderTransform", "transform", "motion", "id",
+            "rows", "shape", "renderTransform", "transformEffect", "animation", "id",
             "assign", "area",
+            // An environment object, not a host property.
+            "toggleStyle",
             // Tiers no view wears.
             "barBackgroundColor", "barForegroundColor", "isScrollEnabled", "isZoomEnabled",
             "isTrafficEnabled", "showsUserLocation", "isDestructive", "title", "subtitle",
-            "mapType", "avoidsSafeArea",
+            "mapType", "ignoresSafeArea",
         ]
         var values: Set<String> = []
         var twins: Set<String> = []
@@ -763,7 +806,11 @@ final class ControlTests: XCTestCase {
                 else { continue }
 
                 let name = String(line[line.index(line.startIndex, offsetBy: 12)..<open])
-                let type = String(inside[inside.index(after: colon)...].drop(while: { $0 == " " }))
+                // A default is the caller's convenience, not the type:
+                // `disabled(_ disabled: Bool = true)` is a Bool either way.
+                let type = inside[inside.index(after: colon)...]
+                    .drop(while: { $0 == " " })
+                    .components(separatedBy: " =").first.map { String($0) } ?? ""
 
                 guard !name.contains("<") else { continue }
 
@@ -781,7 +828,7 @@ final class ControlTests: XCTestCase {
             .filter { !twins.contains($0) && !allowed.contains(String($0.split(separator: ":")[0])) }
             .sorted()
 
-        XCTAssertGreaterThan(values.count, 140, "the scan read almost nothing")
+        XCTAssertGreaterThan(values.count, 120, "the scan read almost nothing")
         XCTAssertEqual(missing, [], """
             These value modifiers have no binding twin - write one beside \
             its value form, with the other twins of its type:
@@ -946,17 +993,17 @@ final class ControlTests: XCTestCase {
         // Rendered for the numbers the states are issued, which is what the
         // host's writes below are addressed by.
         _ = renders.render(Node(type: "VStack", children: [
-            TextField(text.projectedValue).body,
-            TextEditor(text.projectedValue).id("editor").body,
-            Switch(toggled.projectedValue).body,
-            Slider(volume.projectedValue).body,
-            Picker(["S", "M", "L"]).selectedIndex(size.projectedValue).body,
-            DatePicker(due.projectedValue).body,
-            CheckBox(ticked.projectedValue).id("checkBox").body,
-            RadioButton("Medium").isOn(chosen.projectedValue).id("radio").body,
-            Stepper(servings.projectedValue).id("stepper").body,
-            SearchField(query.projectedValue).id("search").body,
-            TimePicker(alarm.projectedValue).id("time").body,
+            TextField(text.projectedValue).node,
+            TextEditor(text.projectedValue).id("editor").node,
+            Switch(toggled.projectedValue).node,
+            Slider(volume.projectedValue).node,
+            Picker(["S", "M", "L"]).selectedIndex(size.projectedValue).node,
+            DatePicker(due.projectedValue).node,
+            CheckBox(ticked.projectedValue).id("checkBox").node,
+            RadioButton("Medium").isOn(chosen.projectedValue).id("radio").node,
+            Stepper(servings.projectedValue).id("stepper").node,
+            SearchField(query.projectedValue).id("search").node,
+            TimePicker(alarm.projectedValue).id("time").node,
         ]))
 
         // What the user TYPES is the HOST's own write onto the text state,
@@ -1002,7 +1049,7 @@ final class ControlTests: XCTestCase {
             RadioButton("Medium")
                 .isOn(chosen.projectedValue)
                 .groupName("size")
-                .body)
+                .node)
 
         moved(chosen.number, to: 0)
 
@@ -1088,7 +1135,7 @@ final class ControlTests: XCTestCase {
         let patch = renders.render(
             TextField(text.projectedValue)
                 .onTextChanged { seen.append($0) }
-                .body)
+                .node)
 
         // The host lands the typed words on the state first and raises the
         // event after, which is the order a handler relies on.
@@ -1117,7 +1164,7 @@ final class ControlTests: XCTestCase {
                     stateAsTheHandlerRan.append(size.wrappedValue)
                 }
                 .selectedIndex(size.projectedValue)
-                .body)
+                .node)
 
         // The choice is the HOST's write onto the plain tie, landed before the
         // event it raises beside it - so the handler reads the state already
@@ -1141,7 +1188,7 @@ final class ControlTests: XCTestCase {
             Button("Save")
                 .onClicked { seen.append("first") }
                 .onClicked { seen.append("second") }
-                .body)
+                .node)
 
         renders.fire(handler(patch, "clicked"))
 
@@ -1162,7 +1209,7 @@ final class ControlTests: XCTestCase {
             ToolbarItem("Save")
                 .onClicked { seen.append("first") }
                 .onClicked { seen.append("second") }
-                .body)
+                .node)
 
         renders.fire(handler(bar, "clicked"))
 
@@ -1173,7 +1220,7 @@ final class ControlTests: XCTestCase {
             Pin("Office")
                 .onPinClicked { seen.append("first") }
                 .onPinClicked { seen.append("second") }
-                .body)
+                .node)
 
         renders.fire(handler(pin, "pinClicked"))
 
@@ -1194,7 +1241,7 @@ final class ControlTests: XCTestCase {
             Picker(["S", "M", "L"])
                 .selectedIndex(size.projectedValue)
                 .onSelectedIndexChanged { seen.append($0) }
-                .body)
+                .node)
 
         renders.fire(handler(patch, "selectedIndexChanged"), with: [.string("not-a-number")])
 
@@ -1221,13 +1268,13 @@ final class ControlTests: XCTestCase {
 
         let renders = Renders()
         let patch = renders.render(Node(type: "VStack", children: [
-            Switch(closure).body,
-            Picker(["S", "M", "L"]).selectedIndex(Binding(get: { Int(room.wrappedValue.width) }, set: { room.wrappedValue.width = Double($0) })).body,
-            TextField(text).body,
-            TextEditor(profile.projectedValue.name).id("editor").body,
-            SearchField(text).id("search").body,
-            DatePicker(date).id("date").body,
-            TimePicker(time).id("time").body,
+            Switch(closure).node,
+            Picker(["S", "M", "L"]).selectedIndex(Binding(get: { Int(room.wrappedValue.width) }, set: { room.wrappedValue.width = Double($0) })).node,
+            TextField(text).node,
+            TextEditor(profile.projectedValue.name).id("editor").node,
+            SearchField(text).id("search").node,
+            DatePicker(date).id("date").node,
+            TimePicker(time).id("time").node,
         ]))
 
         XCTAssertEqual(patch.children[0].props[.isOn], .bool(false), "described: the value is written at build")
@@ -1271,10 +1318,10 @@ final class ControlTests: XCTestCase {
         let renders = Renders()
         renders.render(
             ScrollView {
-                Label("content")
+                Text("content")
             }
             .scrollOffset(scrolled.projectedValue)
-            .body)
+            .node)
 
         slid(scrolled.number, to: Point(0, 120))
 
@@ -1294,7 +1341,7 @@ final class ControlTests: XCTestCase {
         let patch = renders.render(
             Slider(volume.projectedValue)
                 .onValueChanged { seen.append($0) }
-                .body)
+                .node)
 
         renders.fire(handler(patch, "valueChanged"), with: [.string("12,5")])
 
@@ -1319,7 +1366,7 @@ final class ControlTests: XCTestCase {
         let patch = renders.render(
             WebView("https://example.com")
                 .onNavigated { seen.append($0) }
-                .body)
+                .node)
 
         renders.fire(handler(patch, "navigated"), with: [
             .enumeration(WebNavigationResult.success.rawValue),
@@ -1354,7 +1401,7 @@ final class ControlTests: XCTestCase {
         let patch = renders.render(
             WebView("https://example.com")
                 .onNavigating { seen.append($0) }
-                .body)
+                .node)
 
         // The reason as a plain NUMBER where a member is wanted - what a host
         // that stopped translating would send.

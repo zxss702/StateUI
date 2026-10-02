@@ -11,7 +11,7 @@ final class VisibilityCrossingTests: XCTestCase {
     /// A hidden element fades out, standing shown the while; as the fade lands it hides, and its layout closes over
     /// it, once.
     func testAHiddenElementFadesOutThenHidesAndItsLayoutCloses() throws {
-        let (runtime, clock, element) = Self.label(visible: true)
+        let (runtime, clock, element) = Self.text(visible: true)
         let view = Faded()
         var closed = 0
 
@@ -34,7 +34,7 @@ final class VisibilityCrossingTests: XCTestCase {
 
     /// An element shown again as it fades out comes back from the opacity it stands at, and its layout never closes.
     func testAnElementShownAgainMidFadeComesBackFromWhereItStands() throws {
-        let (runtime, clock, element) = Self.label(visible: true)
+        let (runtime, clock, element) = Self.text(visible: true)
         let view = Faded()
         var closed = 0
         Self.show(false, in: runtime)
@@ -57,7 +57,7 @@ final class VisibilityCrossingTests: XCTestCase {
     /// An element shown from nothing fades in from no opacity; a child joining a standing layout fades in unless a
     /// state owns its opacity or it is already on its way.
     func testAnElementShownFromNothingFadesIn() throws {
-        let (runtime, _, element) = Self.label(visible: true)
+        let (runtime, _, element) = Self.text(visible: true)
         let view = Faded()
         view.isShown = false
 
@@ -74,7 +74,7 @@ final class VisibilityCrossingTests: XCTestCase {
 
     /// Where nothing moves, nothing crosses: the host shows or hides the view itself.
     func testWhereNothingMovesNothingCrosses() throws {
-        let (runtime, _, element) = Self.label(visible: true)
+        let (runtime, _, element) = Self.text(visible: true)
         runtime.layoutMotion.applicationMotion = .none
         let view = Faded()
         var closed = 0
@@ -87,12 +87,12 @@ final class VisibilityCrossingTests: XCTestCase {
         XCTAssertEqual(closed, 0)
     }
 
-    /// A runtime on a clock the test winds, its application's motion a linear 200 ms, holding one label.
-    private static func label(visible: Bool) -> (HostRuntime, WoundClock, MountedElement) {
+    /// A runtime on a clock the test winds, its application's animation a linear 200 ms, holding one label.
+    private static func text(visible: Bool) -> (HostRuntime, WoundClock, MountedElement) {
         let clock = WoundClock()
         let runtime = HostRuntime(clock: clock, reducesMotion: { false }, makeNative: { _ in NoView() }, log: { _ in })
         runtime.layoutMotion.applicationMotion = .eased(200, .linear)
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [.isVisible: .bool(visible)]
         runtime.tree.apply(label, complete: true)
         return (runtime, clock, runtime.tree.root!)
@@ -100,7 +100,7 @@ final class VisibilityCrossingTests: XCTestCase {
 
     /// The label shown or hidden, as a patch says.
     private static func show(_ visible: Bool, in runtime: HostRuntime) {
-        var label = HostPatch(id: .manual("label"), type: .label)
+        var label = HostPatch(id: .manual("label"), type: .text)
         label.properties = [.isVisible: .bool(visible)]
         runtime.tree.apply(label, complete: false)
     }

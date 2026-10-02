@@ -22,7 +22,7 @@ final class AndroidGestureTests: XCTestCase {
     func testTapsAreCountedToTheCountAsked() throws {
         try onMainActor {
             let heard = Received<String>()
-            let (host, box) = try Self.box { $0.onTapped(count: 2) { heard.values.append("double") } }
+            let (host, box) = try Self.box { $0.onTapGesture(count: 2) { heard.values.append("double") } }
 
             box.touch(0, x: 50, y: 50, at: 0)
             box.touch(1, x: 50, y: 50, at: 50)
@@ -131,9 +131,9 @@ final class AndroidGestureTests: XCTestCase {
 
     /// A box of 100 points - 200 pixels - at the top left, listening as `listens` has it.
     @MainActor
-    private static func box(_ listens: @escaping @Sendable (ColorBox) -> any View) throws -> (AndroidRenderer, AndroidView) {
+    private static func box(_ listens: @escaping @Sendable (ColorPicker) -> any View) throws -> (AndroidRenderer, AndroidView) {
         let host = AndroidRenderer.running {
-            listens(ColorBox(.red).width(100).height(100).horizontalAlignment(.start).verticalAlignment(.start))
+            listens(ColorPicker(.red).frame(width: 100).frame(height: 100).horizontalAlignment(.start).verticalAlignment(.start))
         }
         host.layOut()
         return (host, try XCTUnwrap(host.views(AndroidColorBoxView.self).first))

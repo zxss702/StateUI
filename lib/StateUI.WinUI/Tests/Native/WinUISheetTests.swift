@@ -13,42 +13,42 @@ private enum Sheet: Hashable {
 }
 
 /// A page that presents sheets over its window, saying where it stands.
-private struct SheetsPage: ContentView {
+private struct SheetsPage: View {
     let log: Received<String>
     @State private var sheets: [Sheet] = []
     @Environment private var window: WindowSession
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let log = log
         let window = window
         let page = page
         let sheets = $sheets
         return VStack {
-            Label("beneath")
+            Text("beneath")
             Button("Present").onClicked { sheets.wrappedValue.append(.first) }
         }
-        .onCreated {
+        .onAppear {
             window.modalStack = ModalStack(sheets) { sheet in SheetPage(name: "\(sheet)", sheets: sheets) }
         }
-        .onChanged(page.phase) { log.values.append("beneath \(page.phase)") }
+        .onChange(of: page.phase) { log.values.append("beneath \(page.phase)") }
     }
 }
 
 /// A page presented on a sheet, which presents another.
-private struct SheetPage: ContentView {
+private struct SheetPage: View {
     let name: String
     @Binding var sheets: [Sheet]
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let page = page
         let name = name
         return VStack {
-            Label("on \(name)")
+            Text("on \(name)")
             Button("Another").onClicked { sheets.append(.second) }
         }
-        .onCreated { page.title = name }
+        .onAppear { page.title = name }
     }
 }
 

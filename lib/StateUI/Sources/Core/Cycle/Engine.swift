@@ -45,7 +45,7 @@ public struct EngineCycle: Sendable {
     /// How many cycles this board has run, this one included.
     public let count: UInt64
 
-    /// Whether the user asked for less motion, which every engine that draws motion
+    /// Whether the user asked for less animation, which every engine that draws animation
     /// answers.
     public let reducesMotion: Bool
 }
@@ -166,7 +166,7 @@ extension Binding: Followable {}
 
 // MARK: - Attaching one
 
-extension ModifiableElement {
+extension View {
     /// Arithmetic the host runs on its own frames, whenever a state it follows has
     /// been written.
     ///
@@ -198,7 +198,7 @@ extension ModifiableElement {
         sync: Sync = .display,
         priority: Double = 0,
         _ run: @escaping (EngineCycle) -> Void
-    ) -> Modified {
+    ) -> ModifiedContent {
         let named = [first] + more
         let follows = named.compactMap(\.followed)
 
@@ -208,7 +208,7 @@ extension ModifiableElement {
                 + "Follow the whole state.")
         }
 
-        return modified {
+        return revised {
             $0.engines.append(EngineDeclaration(
                 follows: follows,
                 sync: sync,
@@ -229,7 +229,7 @@ extension ModifiableElement {
     ///
     /// `.again` holds the frame clock and runs next cycle; `.wait` lets it go until a
     /// followed state is written - so `following:` may be left out here, for a
-    /// motion moved by time alone. Nothing bounds how long `.again` holds the clock.
+    /// animation moved by time alone. Nothing bounds how long `.again` holds the clock.
     /// A sequence is a state the engine follows and writes: a handler moving it wakes
     /// the engine, and the engine's own write wakes nothing.
     ///
@@ -246,7 +246,7 @@ extension ModifiableElement {
         sync: Sync = .display,
         priority: Double = 0,
         _ run: @escaping (EngineCycle) -> EngineAnswer
-    ) -> Modified {
+    ) -> ModifiedContent {
         var follows: [any FollowedState] = []
         var named = 0
 
@@ -262,7 +262,7 @@ extension ModifiableElement {
                 + "Follow the whole state.")
         }
 
-        return modified {
+        return revised {
             $0.engines.append(EngineDeclaration(
                 follows: follows,
                 sync: sync,

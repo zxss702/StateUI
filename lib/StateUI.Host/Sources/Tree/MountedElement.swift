@@ -35,7 +35,7 @@
     public private(set) var events: [Event: Int32] = [:]
 
     /// How this element's children animate, as its patches said; nil while it says nothing.
-    public private(set) var motion: HostLayoutMotion?
+    public private(set) var animation: HostLayoutMotion?
 
     /// Whether this element's frame, or any frame under it, is read.
     public private(set) var framesRead = false
@@ -117,10 +117,10 @@
             drivenValues[property] = tree.core.value(for: binding)
         }
 
-        if let motion = patch.motion {
-            self.motion = motion
-            // The application says its motion once; every layout that says none animates under it.
-            if type == .application { tree.layoutMotion.applicationMotion = motion.motion }
+        if let animation = patch.animation {
+            self.animation = animation
+            // The application says its animation once; every layout that says none animates under it.
+            if type == .app { tree.layoutMotion.applicationMotion = animation.animation }
         }
 
         switch patch.children {
@@ -159,9 +159,9 @@
                 property: property,
                 standing: standing[property],
                 target: resolvedValue(property),
-                motion: hasDrivenPresentation || !native.animates(property)
+                animation: hasDrivenPresentation || !native.animates(property)
                     ? nil
-                    : patch.transitions[property]?.motion)
+                    : patch.transitions[property]?.animation)
         }
 
         restack()
@@ -285,13 +285,13 @@
 
     /// The window elements in this subtree, in the tree's order; a window holds none.
     public var windows: [MountedElement] {
-        type == .window ? [self] : children.flatMap(\.windows)
+        type == .windowScene ? [self] : children.flatMap(\.windows)
     }
 
     /// The window this one belongs to: its scene's main window, where it is a window of a kind of its own; nil for a
     /// main window, and for any other element.
     public var ownerWindow: MountedElement? {
-        guard type == .window, value(.windowType) != nil else { return nil }
+        guard type == .windowScene, value(.windowType) != nil else { return nil }
 
         return enclosing(type: .scene)?.windows.first { $0.value(.windowType) == nil }
     }
@@ -322,7 +322,7 @@
 
         if !created {
             created = true
-            if type != .window, let handler = events[.created] {
+            if type != .windowScene, let handler = events[.created] {
                 handlers.append(handler)
             }
         }
@@ -409,9 +409,9 @@
     public func bool(_ property: Prop) -> Bool? { value(property)?.bool }
 
     /// The four sides `property` gives - leading, top, trailing, bottom - or nothing all round where it gives none.
-    public func insets(_ property: Prop) -> Insets {
-        guard let sides = value(property)?.numbers, sides.count >= 4 else { return Insets(0) }
-        return Insets(sides[0], sides[1], sides[2], sides[3])
+    public func insets(_ property: Prop) -> EdgeInsets {
+        guard let sides = value(property)?.numbers, sides.count >= 4 else { return EdgeInsets(0) }
+        return EdgeInsets(sides[0], sides[1], sides[2], sides[3])
     }
 
     /// The handler of `event`, when the tree listens to it.
@@ -432,8 +432,8 @@
     /// Design: docs/design/host/layout.md#the-layout-arithmetic
     public var layoutValues: LayoutValues {
         var values = LayoutValues()
-        if let sides = value(.margin)?.numbers, sides.count >= 4 {
-            values.margin = insets(.margin)
+        if let sides = value(.padding)?.numbers, sides.count >= 4 {
+            values.margin = insets(.padding)
         }
         values.horizontal = value(.horizontalAlignment)?.enumeration ?? 3
         values.vertical = value(.verticalAlignment)?.enumeration ?? 3
@@ -508,7 +508,7 @@
         guard native.animates(property) else { return nil }
 
         switch property {
-        case .margin, .padding:
+        case .padding, .contentPadding:
             return .numbers([0, 0, 0, 0])
         case .spacing, .rowSpacing, .columnSpacing:
             return .number(0)
@@ -571,7 +571,7 @@
 
     private static let colorProperties: Set<Prop> = [
         .background, .barBackgroundColor, .barForegroundColor, .color,
-        .indicatorColor, .placeholderColor, .selectedIndicatorColor, .textColor, .tint,
+        .indicatorColor, .placeholderColor, .selectedIndicatorColor, .foregroundStyle, .tint,
     ]
 
     private static let booleanProperties: Set<Prop> = [
@@ -587,9 +587,9 @@
 
     private static let enumerationProperties: Set<Prop> = [
         .aspect, .layoutDirection, .fontAttributes,
-        .horizontalAlignment, .horizontalScrollBarVisibility,
-        .horizontalTextAlignment, .inputPurpose,
-        .lineBreak, .orientation, .returnKey, .textDecorations, .textCase,
-        .verticalAlignment, .verticalScrollBarVisibility, .verticalTextAlignment,
+        .horizontalAlignment, .horizontalScrollIndicators,
+        .multilineTextAlignment, .textContentType,
+        .lineBreak, .orientation, .submitLabel, .textDecorations, .textCase,
+        .verticalAlignment, .verticalScrollIndicators, .verticalTextAlignment,
     ]
 }

@@ -4,7 +4,7 @@
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// A TabbedView: the chosen tab's page, under a row of tabs - WinUI's `SelectorBar` - of its own, or under the
+/// A TabView: the chosen tab's page, under a row of tabs - WinUI's `SelectorBar` - of its own, or under the
 /// window's where its tabs are the window's.
 /// Design: docs/design/platforms/winui/pages.md#tabs
 @MainActor
@@ -68,7 +68,7 @@ final class WinUITabbedView: WinUILayoutView {
 
     override func contentSize(width: Double?) -> LayoutSize {
         RowEdge.size(
-            page: SingleChildArithmetic.size(of: selectedItem, padding: Insets(0), width: width),
+            page: SingleChildArithmetic.size(of: selectedItem, padding: EdgeInsets(0), width: width),
             row: rowHeight(width: width))
     }
 
@@ -78,7 +78,7 @@ final class WinUITabbedView: WinUILayoutView {
         if !tabsShownByWindow { row.layout(rowRoom) }
         guard let page = selectedItem else { return }
 
-        page.view.layout(SingleChildArithmetic.place(of: page, in: room, padding: Insets(0), direction: direction))
+        page.view.layout(SingleChildArithmetic.place(of: page, in: room, padding: EdgeInsets(0), direction: direction))
     }
 
     /// The own row's height for `width` DIPs; none where the window shows the tabs.

@@ -34,7 +34,7 @@ final class JourneyTests: XCTestCase {
         XCTAssertEqual(journey.value, 2)
         XCTAssertEqual(journey.destination, 2, "a value standing still is going where it is")
         XCTAssertEqual(journey.velocity, 0)
-        XCTAssertEqual(journey.motion, .inherited, "the element's, until said")
+        XCTAssertEqual(journey.animation, .inherited, "the element's, until said")
     }
 
     /// The state IS the destination: `rotation` and
@@ -96,7 +96,7 @@ final class JourneyTests: XCTestCase {
         XCTAssertEqual(journey.value, 0.2, "nobody walks it, so it is there")
         XCTAssertEqual(journey.destination, 0.2)
 
-        renders.render(ColorBox().opacity(fade.projectedValue).body)
+        renders.render(ColorPicker().opacity(fade.projectedValue).node)
 
         fade.wrappedValue = 0.9
 
@@ -104,22 +104,22 @@ final class JourneyTests: XCTestCase {
         XCTAssertEqual(journey.value, 0.2, "and the value waits for the host to walk it")
     }
 
-    /// THE LAW RIDES THE VALUE, not the view showing it. `.motion(_:)` on an
-    /// element says how everything that element does travels; `@State(motion:)`
+    /// THE LAW RIDES THE VALUE, not the view showing it. `.animation(_:)` on an
+    /// element says how everything that element does travels; `@State(animation:)`
     /// says how THIS value travels wherever it is shown, and it survives on the
     /// image like every other lane.
     func testAValueCarriesItsOwnLaw() {
-        let stated = State(wrappedValue: 0.0, motion: .spring())
+        let stated = State(wrappedValue: 0.0, animation: .spring())
         let plain = State(wrappedValue: 0.0)
 
-        XCTAssertEqual(stated.projectedValue.journey.motion, .spring(), "the law is the value's own")
-        XCTAssertEqual(plain.projectedValue.journey.motion, .inherited, "the element's, until said")
+        XCTAssertEqual(stated.projectedValue.journey.animation, .spring(), "the law is the value's own")
+        XCTAssertEqual(plain.projectedValue.journey.animation, .inherited, "the element's, until said")
 
         stated.wrappedValue = 10
-        XCTAssertEqual(stated.projectedValue.journey.motion, .spring(), "and sending it kept the law")
+        XCTAssertEqual(stated.projectedValue.journey.animation, .spring(), "and sending it kept the law")
 
-        plain.projectedValue.journey.motion = .eased(90, .linear)
-        XCTAssertEqual(plain.projectedValue.journey.motion, .eased(90, .linear), "written later, it is the value's too")
+        plain.projectedValue.journey.animation = .eased(90, .linear)
+        XCTAssertEqual(plain.projectedValue.journey.animation, .eased(90, .linear), "written later, it is the value's too")
     }
 
     /// THE VALUE'S OWN LAW OVERRIDES THE ELEMENT'S, per property. `.inherited`
@@ -131,7 +131,7 @@ final class JourneyTests: XCTestCase {
     func testAValuesOwnLawSurvivesTheCrossingAndInheritedDoesNot() {
         let asked = HostStorage(StateImage.bytes(of: JourneyLanes(0.0).carried))
         let stated = HostStorage(
-            StateImage.bytes(of: JourneyLanes(0.0, motion: .spring()).carried))
+            StateImage.bytes(of: JourneyLanes(0.0, animation: .spring()).carried))
 
         for image in [asked, stated] {
             image.door = .property
@@ -150,7 +150,7 @@ final class JourneyTests: XCTestCase {
     /// it out means `.inherited`, which the element answers.
     func testALawStatedAtTheDeclarationIsOnTheImageFromBirth() throws {
         let plain = State(wrappedValue: 0.0)
-        let stated = State(wrappedValue: 0.0, motion: .spring())
+        let stated = State(wrappedValue: 0.0, animation: .spring())
 
         let images = try [plain, stated].map { try XCTUnwrap($0.projectedValue.journeyImage) }
 
@@ -172,11 +172,11 @@ final class JourneyTests: XCTestCase {
     /// destination that is wherever the engine wrote the value, so it wears
     /// every frame as it comes and walks nothing.
     func testACustomLawLeavesTheValueToTheEngine() throws {
-        let ball = State(wrappedValue: 0.0, motion: .custom)
+        let ball = State(wrappedValue: 0.0, animation: .custom)
         let journey = ball.projectedValue.journey
         let renders = Renders()
 
-        renders.render(ColorBox().translationY(ball.projectedValue).body)
+        renders.render(ColorPicker().offset(y: ball.projectedValue).node)
 
         ball.wrappedValue = 100
 
@@ -197,10 +197,10 @@ final class JourneyTests: XCTestCase {
 
         let crossed = image.crossing()
 
-        XCTAssertEqual(law(crossing: image), Motion.none, "the host is told not to walk")
+        XCTAssertEqual(law(crossing: image), Animation.none, "the host is told not to walk")
         XCTAssertEqual(StateImage.lane(0, of: crossed), 40, "and where the engine put the value")
         XCTAssertEqual(StateImage.lane(1, of: crossed), 40, "is where it is told the value is going")
-        XCTAssertEqual(journey.motion, .custom, "while the image itself goes on saying whose the walk is")
+        XCTAssertEqual(journey.animation, .custom, "while the image itself goes on saying whose the walk is")
     }
 
     /// WHO WALKS THE VALUE IS SETTLED AT THE DECLARATION: `.custom` cannot be
@@ -209,27 +209,27 @@ final class JourneyTests: XCTestCase {
     /// crossing and cannot be told again.
     func testTheWalkerIsNotChangedAfterTheDeclaration() {
         let hosted = State(wrappedValue: 0.0)
-        let own = State(wrappedValue: 0.0, motion: .custom)
+        let own = State(wrappedValue: 0.0, animation: .custom)
 
         _ = hosted.projectedValue.journeyImage
         _ = own.projectedValue.journeyImage
 
-        hosted.projectedValue.journey.motion = .custom
-        XCTAssertEqual(hosted.projectedValue.journey.motion, .inherited, "refused, and said")
+        hosted.projectedValue.journey.animation = .custom
+        XCTAssertEqual(hosted.projectedValue.journey.animation, .inherited, "refused, and said")
 
-        own.projectedValue.journey.motion = .spring()
-        XCTAssertEqual(own.projectedValue.journey.motion, .custom, "refused the other way too")
+        own.projectedValue.journey.animation = .spring()
+        XCTAssertEqual(own.projectedValue.journey.animation, .custom, "refused the other way too")
     }
 
     /// A `move` awaited on a `.custom` value writes the destination and answers
     /// at once: the walk is the engine's, and the engine is the only one that
     /// knows when it is done.
     func testAMoveUnderACustomLawAnswersAtOnce() async throws {
-        let ball = State(wrappedValue: 0.0, motion: .custom)
+        let ball = State(wrappedValue: 0.0, animation: .custom)
         let binding = ball.projectedValue
         let renders = Renders()
 
-        renders.render(ColorBox().translationY(binding).body)
+        renders.render(ColorPicker().offset(y: binding).node)
 
         let arrived = try await withThrowingTaskGroup(of: Bool?.self) { group in
             group.addTask { try await binding.journey.move(to: 50) }
@@ -275,7 +275,7 @@ final class JourneyTests: XCTestCase {
         let walking = fade.projectedValue.journey.convert { "at \(Int($0.value * 100))" }
         let going = fade.projectedValue.convert { "going to \(Int($0 * 100))" }
 
-        renders.render(ColorBox().opacity(fade.projectedValue).body)
+        renders.render(ColorPicker().opacity(fade.projectedValue).node)
 
         moved(fade.number, to: [0.5, 1, 0, 0, 0, 0, 0, 0], mask: 0b1)
 
@@ -289,14 +289,14 @@ final class JourneyTests: XCTestCase {
     }
 
     /// The law lying in a crossing's bytes, read the way the host reads it.
-    private func law(crossing image: HostStorage) -> Motion? {
+    private func law(crossing image: HostStorage) -> Animation? {
         let bytes = image.crossing()
 
         guard let door = image.door,
               let at = StateLaw.within(door, lanes: bytes.count / 8)
         else { return nil }
 
-        return StateLaw.motion(
+        return StateLaw.animation(
             of: (0..<StateLaw.lanes).map { StateImage.lane(at + $0, of: bytes) })
     }
 }

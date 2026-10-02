@@ -25,24 +25,24 @@ private final class Palette {
 }
 
 /// The session's accent, as a view reads it.
-private struct Accent: ContentView {
+private struct Accent: View {
     @Environment private var palette: Palette
 
-    var content: any View { Label(palette.accent) }
+    var body: some View { Text(palette.accent) }
 }
 
 /// The session's main page: its accent and the value it keeps, and a button
 /// for each thing a test does from inside the scene - through the scene's
 /// session, which is in the environment of everything in it.
-private struct Home: ContentView {
+private struct Home: View {
     @Environment private var palette: Palette
     @Environment private var scene: SceneSession
     @Binding var shade: String
 
-    var content: any View {
+    var body: some View {
         VStack {
             Accent()
-            Label(shade)
+            Text(shade)
             Button("teal").onClicked { palette.accent = "teal" }
             Button("fonts").onClicked { try await scene.openWindow(.fonts) }
             Button("document").onClicked { try await scene.openWindow(.document, value: 42) }
@@ -52,37 +52,37 @@ private struct Home: ContentView {
 }
 
 /// The session's main window.
-private struct MainWindow: Window {
+private struct MainWindow: WindowScene {
     @Binding var shade: String
 
     var page: any Page { Home(shade: $shade) }
 }
 
 /// A page showing the session's accent.
-private struct Showing: ContentView {
-    var content: any View { Accent() }
+private struct Showing: View {
+    var body: some View { Accent() }
 }
 
 /// The one fonts window a session may open.
-private struct FontsWindow: Window {
+private struct FontsWindow: WindowScene {
     var page: any Page { Showing() }
 }
 
 /// A page that says which document its window is for, and makes the window
 /// about another.
-private struct Retargeting: ContentView {
+private struct Retargeting: View {
     @Binding var number: Int
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("Document \(number)")
+            Text("Document \(number)")
             Button("seven").onClicked { number = 7 }
         }
     }
 }
 
 /// A window per document number.
-private struct DocumentWindow: Window {
+private struct DocumentWindow: WindowScene {
     @Binding var number: Int
 
     var page: any Page { Retargeting(number: $number) }
@@ -107,34 +107,34 @@ private struct Session: Scene {
     }
 }
 
-private struct Studio: Application {
-    var scene: any Scene { Session() }
+private struct Studio: App {
+    var body: some Scene { Session() }
 }
 
 /// A page with nothing on it.
-private struct Blank: ContentView {
-    var content: any View { Label("blank") }
+private struct Blank: View {
+    var body: some View { Text("blank") }
 }
 
 /// A window and nothing else.
-private struct PlainWindow: Window {
+private struct PlainWindow: WindowScene {
     var page: any Page { Blank() }
 }
 
 /// An application whose scene is a window alone.
-private struct Alone: Application {
-    var scene: any Scene { PlainWindow() }
+private struct Alone: App {
+    var body: some Scene { PlainWindow() }
 }
 
 /// A page that says loading is over.
-private struct Waiting: ContentView {
+private struct Waiting: View {
     @Binding var loading: Bool
 
-    var content: any View { Button("ready").onClicked { loading = false } }
+    var body: some View { Button("ready").onClicked { loading = false } }
 }
 
 /// What shows while a session is getting ready.
-private struct LoadingWindow: Window {
+private struct LoadingWindow: WindowScene {
     @Binding var loading: Bool
 
     var page: any Page { Waiting(loading: $loading) }
@@ -156,71 +156,71 @@ private struct Starting: Scene {
     }
 }
 
-private struct StartingApp: Application {
-    var scene: any Scene { Starting() }
+private struct StartingApp: App {
+    var body: some Scene { Starting() }
 }
 
 /// A page showing what its window counted, and counting one more.
-private struct Counting: ContentView {
+private struct Counting: View {
     @Binding var opened: Int
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\(opened)")
+            Text("\(opened)")
             Button("more").onClicked { opened += 1 }
         }
     }
 }
 
 /// A window holding state of its own.
-private struct CountingWindow: Window {
+private struct CountingWindow: WindowScene {
     @State private var opened = 0
 
     var page: any Page { Counting(opened: $opened) }
 }
 
-private struct CountingApp: Application {
-    var scene: any Scene { CountingWindow() }
+private struct CountingApp: App {
+    var body: some Scene { CountingWindow() }
 }
 
 /// A page that names its window and sizes it as it comes into the tree, and
 /// renames it on a press - through the window's session.
-private struct Naming: ContentView {
+private struct Naming: View {
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         VStack {
             Button("rename").onClicked { window.title = "Renamed" }
         }
-        .onCreated {
+        .onAppear {
             window.title = "Named"
             window.width = 640
         }
     }
 }
 
-private struct NamingWindow: Window {
+private struct NamingWindow: WindowScene {
     var page: any Page { Naming() }
 }
 
-private struct NamingApp: Application {
-    var scene: any Scene { NamingWindow() }
+private struct NamingApp: App {
+    var body: some Scene { NamingWindow() }
 }
 
 /// A page that says how many scenes are open and what its own has open.
-private struct Listing: ContentView {
+private struct Listing: View {
     @Environment private var application: ApplicationSession
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\(application.scenes.count) scenes")
-            Label(scene.windows.map(\.key).joined(separator: ", "))
+            Text("\(application.scenes.count) scenes")
+            Text(scene.windows.map(\.key).joined(separator: ", "))
         }
     }
 }
 
-private struct ListingWindow: Window {
+private struct ListingWindow: WindowScene {
     var page: any Page { Listing() }
 }
 
@@ -235,8 +235,8 @@ private struct ListingScene: Scene {
     }
 }
 
-private struct ListingApp: Application {
-    var scene: any Scene { ListingScene() }
+private struct ListingApp: App {
+    var body: some Scene { ListingScene() }
 }
 
 final class SceneTests: XCTestCase {
@@ -252,7 +252,7 @@ final class SceneTests: XCTestCase {
     }
 
     /// The application's tree, the way `Renderer.root` builds it.
-    private func tree(_ application: Application = Studio()) -> Node {
+    private func tree(_ application: any App = Studio()) -> Node {
         Scenes.shared.tree(of: application)
     }
 
@@ -274,7 +274,7 @@ final class SceneTests: XCTestCase {
 
     /// Every label's text under a patch, in walk order.
     private func texts(in patch: HostPatch) -> [String] {
-        let own = patch.type == .label ? [patch.props[.text]?.string].compactMap { $0 } : []
+        let own = patch.type == .text ? [patch.props[.text]?.string].compactMap { $0 } : []
         return own + patch.children.flatMap { texts(in: $0) }
     }
 
@@ -296,10 +296,10 @@ final class SceneTests: XCTestCase {
     func testTheApplicationHoldsItsScenesAndASceneItsWindows() {
         let patch = Renders().render(tree())
 
-        XCTAssertEqual(patch.type, .application)
+        XCTAssertEqual(patch.type, .app)
         XCTAssertEqual(patch.children.map(\.type), [.scene])
         XCTAssertEqual(patch.children.map(\.id), [.manual("1")])
-        XCTAssertEqual(patch.children[0].children.map(\.type), [.window])
+        XCTAssertEqual(patch.children[0].children.map(\.type), [.windowScene])
         XCTAssertEqual(patch.children[0].children.map(\.id), [.manual("main")])
     }
 
@@ -320,9 +320,9 @@ final class SceneTests: XCTestCase {
         let dump = PatchDump.text(Renderer.shared.renderHost(baseline: 0).root)
         let lines = dump.split(separator: "\n").map(String.init)
 
-        let application = try XCTUnwrap(lines.firstIndex { $0.contains("Application ") })
+        let application = try XCTUnwrap(lines.firstIndex { $0.contains("App ") })
         let scene = try XCTUnwrap(lines.firstIndex { $0.contains("Scene ") })
-        let window = try XCTUnwrap(lines.firstIndex { $0.contains("Window ") })
+        let window = try XCTUnwrap(lines.firstIndex { $0.contains("WindowScene ") })
 
         XCTAssertEqual(application, 0, "the root is the application:\n\(dump)")
         XCTAssertLessThan(application, scene, "with a scene under it:\n\(dump)")
@@ -408,7 +408,7 @@ final class SceneTests: XCTestCase {
 
     /// Another session is the APPLICATION's to open.
     func testTheApplicationOpensAnotherScene() async throws {
-        try await StandardEnvironment.application.openScene()
+        try await StandardEnvironment.app.openScene()
 
         XCTAssertEqual(Scenes.shared.list.map(\.id), ["1", "2"])
         XCTAssertEqual(
@@ -463,15 +463,15 @@ final class SceneTests: XCTestCase {
         let first = Scenes.shared.list[0]
         try await first.session.openWindow(.fonts)
 
-        XCTAssertEqual(StandardEnvironment.application.scenes.map(\.id), ["1", "2"])
-        XCTAssertTrue(StandardEnvironment.application.scenes[0] === first.session)
+        XCTAssertEqual(StandardEnvironment.app.scenes.map(\.id), ["1", "2"])
+        XCTAssertTrue(StandardEnvironment.app.scenes[0] === first.session)
         XCTAssertEqual(first.session.windows.map(\.key), ["main", "fonts 1"])
         XCTAssertTrue(first.session.windows[1] === first.windowSession("fonts 1"))
 
         let ending = Scenes.shared.list[1].session
         try await ending.close()
 
-        XCTAssertEqual(StandardEnvironment.application.scenes.map(\.id), ["1"])
+        XCTAssertEqual(StandardEnvironment.app.scenes.map(\.id), ["1"])
         XCTAssertTrue(ending.windows.isEmpty)
         XCTAssertTrue(SceneSession().windows.isEmpty)
     }
@@ -488,7 +488,7 @@ final class SceneTests: XCTestCase {
             tree(ListingApp()), changed: Renderer.shared.pendingChanges)
         XCTAssertTrue(texts(in: opened).contains("main, fonts 1"), "\(texts(in: opened))")
 
-        try await StandardEnvironment.application.openScene()
+        try await StandardEnvironment.app.openScene()
 
         let another = renders.render(
             tree(ListingApp()), changed: Renderer.shared.pendingChanges)
@@ -503,7 +503,7 @@ final class SceneTests: XCTestCase {
         let renders = Renders()
         let first = renders.render(tree(NamingApp()))
 
-        // `.onCreated` ran after that render, so the next one carries it.
+        // `.onAppear` ran after that render, so the next one carries it.
         let named = renders.render(tree(NamingApp()), changed: Renderer.shared.pendingChanges)
         let window = try XCTUnwrap(named.children.first?.children.first)
 
@@ -595,14 +595,14 @@ final class SceneTests: XCTestCase {
         // What each kind of type is told through its session, by the names it
         // could once answer them under.
         let held: [(kind: String, names: [String])] = [
-            ("Application", ["styles", "motion", "persistentKeys"]),
-            ("Window", [
+            ("App", ["styles", "animation", "persistentKeys"]),
+            ("WindowScene", [
                 "title", "x", "y", "width", "height",
                 "minimumWidth", "minimumHeight", "maximumWidth", "maximumHeight",
                 "isMaximizable", "isMinimizable", "isTranslucent", "titleBar", "modalStack", "environment",
                 "onCreated", "onActivated", "onDeactivated", "onStopped", "onResumed", "onDestroying",
             ]),
-            ("ContentView", onPage + [
+            ("View", onPage + [
                 "onAppearing", "onDisappearing", "onNavigatedTo", "onNavigatingFrom", "onNavigatedFrom",
             ]),
         ]
@@ -634,12 +634,12 @@ final class SceneTests: XCTestCase {
         XCTAssertTrue(
             found.isEmpty,
             "a type says what its session holds - write it on the session, in " +
-            ".onCreated or a handler, or watch its phase:\n" +
+            ".onAppear or a handler, or watch its phase:\n" +
             found.joined(separator: "\n"))
     }
 
-    /// The direct members of every type declared a `kind` - `Window`,
-    /// `ContentView`, `Application` - as text: what stands one level inside
+    /// The direct members of every type declared a `kind` - `WindowScene`,
+    /// `View`, `App` - as text: what stands one level inside
     /// its braces, nested types left out.
     private func bodies(of kind: String, in text: String) -> [String] {
         var bodies: [String] = []

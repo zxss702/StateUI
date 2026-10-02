@@ -13,7 +13,7 @@ final class WindowPresentationTests: XCTestCase {
     func testAWindowSaysWhatItShowsOnlyAsItChanges() throws {
         let runtime = HostRuntime.still()
         func window(_ children: [HostPatch]) -> HostPatch {
-            var window = HostPatch(id: .manual("window"), type: .window)
+            var window = HostPatch(id: .manual("window"), type: .windowScene)
             window.events = .replace([.created: 5])
             window.children = .arranged(children)
             return window
@@ -39,13 +39,13 @@ final class WindowPresentationTests: XCTestCase {
     /// takes away, moves nothing.
     func testAWindowsFrameIsFourRequestsEachAlone() throws {
         let runtime = HostRuntime.still()
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.properties = [.x: .number(40), .width: .number(640)]
         runtime.tree.apply(window, complete: true)
         let presentation = WindowPresentation()
         let root = try XCTUnwrap(runtime.tree.root)
         func change(_ properties: [Prop: HostValue], clearing cleared: [Prop] = []) -> WindowFrame? {
-            var patch = HostPatch(id: .manual("window"), type: .window)
+            var patch = HostPatch(id: .manual("window"), type: .windowScene)
             patch.properties = properties
             patch.clearedProperties = cleared
             runtime.tree.apply(patch, complete: false)
@@ -64,7 +64,7 @@ final class WindowPresentationTests: XCTestCase {
     /// A window's bounds are said the first time and where they change; a greatest below the least is the least.
     func testAWindowsGreatestSizeNeverStandsBelowItsLeast() throws {
         let runtime = HostRuntime.still()
-        var window = HostPatch(id: .manual("window"), type: .window)
+        var window = HostPatch(id: .manual("window"), type: .windowScene)
         window.properties = [.minimumWidth: .number(400), .maximumWidth: .number(300), .maximumHeight: .number(900)]
         runtime.tree.apply(window, complete: true)
         let presentation = WindowPresentation()
@@ -82,10 +82,10 @@ final class WindowPresentationTests: XCTestCase {
     /// time, whatever it is, and then only where it changes.
     func testAWindowOfItsOwnBelongsToItsScenesMainWindow() throws {
         let runtime = HostRuntime.still()
-        var tool = HostPatch(id: .manual("tool"), type: .window)
+        var tool = HostPatch(id: .manual("tool"), type: .windowScene)
         tool.properties = [.windowType: .name("tool")]
         var scene = HostPatch(id: .manual("scene"), type: .scene)
-        scene.children = .arranged([tool, HostPatch(id: .manual("main"), type: .window)])
+        scene.children = .arranged([tool, HostPatch(id: .manual("main"), type: .windowScene)])
         runtime.tree.apply(scene, complete: true)
         let main = try XCTUnwrap(runtime.tree.root?.first(id: .manual("main")))
         let owned = try XCTUnwrap(runtime.tree.root?.first(id: .manual("tool")))

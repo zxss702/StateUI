@@ -30,11 +30,11 @@ private enum InteropTestContract: ApplicationTier {
 
 /// A page that calls the acts and listens for the event, writing whatever
 /// came back where a test can read it.
-private struct Calling: ContentView {
+private struct Calling: View {
     @State private var answer = "-"
     @State private var heard: [HostEventSubscription] = []
 
-    var content: any View {
+    var body: some View {
         VStack {
             Button("Ask")
                 .onClicked {
@@ -56,14 +56,14 @@ private struct Calling: ContentView {
                     }
                 }
 
-            Label(answer)
+            Text(answer)
         }
-        .onCreated {
+        .onAppear {
             heard = [
                 HostEvents.on(InteropTestContract.spoke) { said in answer = "heard \(said)" },
             ]
         }
-        .onDestroying {
+        .onDisappear {
             heard.forEach { $0.cancel() }
             heard = []
         }
@@ -157,7 +157,7 @@ final class AppKitInteropTests: XCTestCase {
         let renderer = AppKitRenderer.running { Calling() }
         defer { renderer.closeForTesting() }
 
-        XCTAssertTrue(HostBoundary.realizes(LabelContract.self))
+        XCTAssertTrue(HostBoundary.realizes(TextContract.self))
         XCTAssertTrue(HostBoundary.realizes(ButtonContract.self))
         XCTAssertFalse(HostBoundary.realizes(MapContract.self))
         XCTAssertNil(HostRealizations.unraised(owner: InteropTestContract.name, event: InteropTestContract.spoke.name))

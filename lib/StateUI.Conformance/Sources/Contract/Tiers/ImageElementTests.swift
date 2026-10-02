@@ -35,12 +35,12 @@
     /// An image's picture placed as `aspect` says in a room of `size` covers the points `filled` and leaves the points
     /// `empty` empty.
     static func placed(
-        _ aspect: Aspect, in size: (Double, Double), filled: [(Double, Double)], empty: [(Double, Double)]
+        _ aspect: ContentMode, in size: (Double, Double), filled: [(Double, Double)], empty: [(Double, Double)]
     ) -> ConformanceCase {
         ConformanceCase("Image.\(aspect).placesItsPictureSo", proves: [Covered(ImageElementContract.aspect, on: "Image")]) { s in
             s.start {
                 VStack {
-                    Image("test_wide.svg").aspect(aspect).width(size.0).height(size.1).id("image")
+                    Image("test_wide.svg").aspect(aspect).frame(width: size.0).frame(height: size.1).id("image")
                 }
                 .horizontalAlignment(.start)
                 .verticalAlignment(.start)

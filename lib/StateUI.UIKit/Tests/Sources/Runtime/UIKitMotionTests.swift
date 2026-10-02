@@ -19,10 +19,10 @@ final class UIKitMotionTests: XCTestCase {
         let long = State(wrappedValue: false)
         let host = UIKitRenderer.running(clock: clock) {
             VStack {
-                Label(long.wrappedValue ? "Text & typing" : "Text").horizontalAlignment(.start).id("caption")
+                Text(long.wrappedValue ? "Text & typing" : "Text").horizontalAlignment(.start).id("caption")
             }
-            .motion(.eased(200, .linear))
-            .width(300)
+            .animation(.eased(200, .linear))
+            .frame(width: 300)
             .horizontalAlignment(.start)
             .verticalAlignment(.start)
         }
@@ -45,20 +45,20 @@ final class UIKitMotionTests: XCTestCase {
         XCTAssertEqual(midway, label.bounds.width, accuracy: 0.5, "its words at the width it is bound for")
     }
 
-    /// A colour box whose colour and width change under a motion stands halfway at half its time, and lands - the
-    /// Gallery's Motion sample.
+    /// A colour box whose colour and width change under a animation stands halfway at half its time, and lands - the
+    /// Gallery's Animation sample.
     @MainActor
     func testAColourAndAWidthTravelHalfwayAndLand() throws {
         let clock = TestClock()
         let wide = State(wrappedValue: false)
         let host = UIKitRenderer.running(clock: clock) {
             VStack {
-                ColorBox()
+                ColorPicker()
                     .color(wide.wrappedValue ? Color(red: 255, green: 0, blue: 0) : Color(red: 0, green: 0, blue: 255))
-                    .width(wide.wrappedValue ? 300 : 100)
-                    .height(60)
+                    .frame(width: wide.wrappedValue ? 300 : 100)
+                    .frame(height: 60)
                     .horizontalAlignment(.start)
-                    .motion(.eased(1000, .linear))
+                    .animation(.eased(1000, .linear))
                     .id("box")
             }
         }
@@ -92,11 +92,11 @@ final class UIKitMotionTests: XCTestCase {
         let host = UIKitRenderer.running(clock: clock) {
             VStack {
                 if joined.wrappedValue {
-                    ColorBox().color(Color(red: 255, green: 0, blue: 0)).height(40).id("joining")
+                    ColorPicker().color(Color(red: 255, green: 0, blue: 0)).frame(height: 40).id("joining")
                 }
-                ColorBox().color(Color(red: 0, green: 0, blue: 255)).height(40).id("below")
+                ColorPicker().color(Color(red: 0, green: 0, blue: 255)).frame(height: 40).id("below")
             }
-            .motion(.eased(1000, .linear))
+            .animation(.eased(1000, .linear))
         }
         defer { host.finish() }
         let below = try XCTUnwrap(Self.view(of: "below", in: host))

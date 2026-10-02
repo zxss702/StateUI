@@ -7,7 +7,7 @@
 /// The widget: made, and given the element's properties.
 extension GTKElement {
     func makeView() -> GTKView? {
-        if type == .itemsView, let host { return GTKItemsView(cells: ItemsCells(element, in: host.runtime)) }
+        if type == .list, let host { return GTKItemsView(cells: ItemsCells(element, in: host.runtime)) }
         if let registered = GTKRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },
@@ -26,8 +26,8 @@ extension GTKElement {
             overlay.passesBeside = true
             return overlay
         case .navigationStack: return GTKNavigationView()
-        case .splitView: return GTKSplitView()
-        case .tabbedView: return GTKTabbedView()
+        case .navigationSplitView: return GTKSplitView()
+        case .tabView: return GTKTabbedView()
         default: return GTKUnsupportedView(type)
         }
     }
@@ -60,8 +60,8 @@ extension GTKElement {
             case .isEnabled: view.setEnabled(value(.isEnabled)?.bool ?? true)
             case .isVisible: view.setShown(isShown)
             case .background: (view as? GTKLayoutView)?.setBackground(value(.background))
-            case .padding where type == .page:
-                (view as? GTKSingleChildView)?.padding = element.insets(.padding)
+            case .contentPadding where type == .page:
+                (view as? GTKSingleChildView)?.padding = element.insets(.contentPadding)
             default: break
             }
         }
@@ -80,7 +80,7 @@ extension GTKElement {
     func invalidateMeasurements() {
         var element: GTKElement? = self
         while let each = element {
-            // An entry of an ItemsView is measured by its cell; the list's own size never follows its items.
+            // An entry of an List is measured by its cell; the list's own size never follows its items.
             if let items = each.parent?.view as? GTKItemsView {
                 items.remeasure(each.element)
                 break

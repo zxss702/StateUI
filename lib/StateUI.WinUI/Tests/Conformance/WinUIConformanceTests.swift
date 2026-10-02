@@ -15,13 +15,13 @@ final class WinUIConformanceTests: XCTestCase {
     func testButton() { conform(ButtonTests.self) }
     func testCanvas() { conform(CanvasTests.self) }
     func testCheckBox() { conform(CheckBoxTests.self) }
-    func testColorBox() { conform(ColorBoxTests.self) }
+    func testColorPicker() { conform(ColorPickerTests.self) }
     func testDatePicker() { conform(DatePickerTests.self) }
     func testEllipse() { conform(EllipseTests.self) }
     func testGrid() { conform(GridTests.self) }
     func testHStack() { conform(HStackTests.self) }
     func testImage() { conform(ImageTests.self) }
-    func testLabel() { conform(LabelTests.self) }
+    func testText() { conform(TextTests.self) }
     func testLine() { conform(LineTests.self) }
     func testMap() { conform(MapTests.self) }
     func testPath() { conform(PathTests.self) }
@@ -33,7 +33,7 @@ final class WinUIConformanceTests: XCTestCase {
     func testRadioButton() { conform(RadioButtonTests.self) }
     func testRectangle() { conform(RectangleTests.self) }
     func testScrollView() { conform(ScrollViewTests.self) }
-    func testItemsView() { conform(ItemsViewTests.self) }
+    func testList() { conform(ListTests.self) }
     func testSearchField() { conform(SearchFieldTests.self) }
     func testSlider() { conform(SliderTests.self) }
     func testStepper() { conform(StepperTests.self) }
@@ -61,8 +61,8 @@ final class WinUIConformanceTests: XCTestCase {
     func testScene() { conform(SceneTests.self) }
     func testSpan() { conform(SpanTests.self) }
     func testSpans() { conform(SpansTests.self) }
-    func testSplitView() { conform(SplitViewTests.self) }
-    func testTabbedView() { conform(TabbedViewTests.self) }
+    func testNavigationSplitView() { conform(NavigationSplitViewTests.self) }
+    func testTabView() { conform(TabViewTests.self) }
     func testTitleView() { conform(TitleViewTests.self) }
     func testToolbarItem() { conform(ToolbarItemTests.self) }
     func testToolbarItems() { conform(ToolbarItemsTests.self) }

@@ -79,8 +79,8 @@ final class WinUIActsTests: XCTestCase {
 }
 
 /// An application whose main window opens a tool window, which asks the user something.
-private struct AskingApplication: Application {
-    var scene: any Scene { AskingScene() }
+private struct AskingApplication: App {
+    var body: some Scene { AskingScene() }
 }
 
 private struct AskingScene: Scene {
@@ -89,20 +89,20 @@ private struct AskingScene: Scene {
     }
 }
 
-private struct AskingMainWindow: Window {
+private struct AskingMainWindow: WindowScene {
     var page: any Page { AskingOpeningPage() }
 }
 
-private struct AskingOpeningPage: ContentView {
+private struct AskingOpeningPage: View {
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let scene = self.scene
         return Button("Tool").onClicked { try await scene.openWindow(WindowType("acts.tool")) }
     }
 }
 
-private struct AskingToolWindow: Window {
+private struct AskingToolWindow: WindowScene {
     var page: any Page {
         Button("Ask").onClicked { try await Dialogs.alert("Saved", message: "The draft is safe") }
     }

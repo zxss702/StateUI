@@ -13,21 +13,21 @@ extension OverlayKey {
 }
 
 /// A page filled by a button, laying a notice over its window from a state, which tells its scene.
-private struct OverlaidPage: ContentView {
+private struct OverlaidPage: View {
     let scenes: Received<SceneSession>
     var notice = State(wrappedValue: false)
     @Environment private var window: WindowSession
     @Environment private var scene: SceneSession
 
-    var content: any View {
+    var body: some View {
         let (scenes, notice, window, scene) = (self.scenes, self.notice, self.window, self.scene)
         return Button("Beneath")
             .horizontalAlignment(.fill)
             .verticalAlignment(.fill)
-            .onCreated { scenes.values.append(scene) }
-            .onChanged(notice.wrappedValue) {
+            .onAppear { scenes.values.append(scene) }
+            .onChange(of: notice.wrappedValue) {
                 window.overlays[.notice] = notice.wrappedValue
-                    ? Label("Offline").horizontalAlignment(.center).verticalAlignment(.start) : nil
+                    ? Text("Offline").horizontalAlignment(.center).verticalAlignment(.start) : nil
             }
     }
 }

@@ -16,7 +16,7 @@ final class AppKitScrollViewTests: XCTestCase {
         scroll.setItems([AppKitLayoutItem(
             view: FixedScrollTestView(width: 500, height: 36))])
         scroll.apply(
-            orientation: ScrollOrientation.horizontal.rawValue,
+            orientation: Axis.horizontal.rawValue,
             padding: NSEdgeInsets(top: 3, left: 5, bottom: 7, right: 11),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 2,
@@ -56,7 +56,7 @@ final class AppKitScrollViewTests: XCTestCase {
         scroll.onOffsetChanged = { changes.append(($0, $1)) }
 
         scroll.apply(
-            orientation: ScrollOrientation.vertical.rawValue,
+            orientation: Axis.vertical.rawValue,
             padding: NSEdgeInsets(),
             verticalBarVisibility: 0,
             horizontalBarVisibility: 0,
@@ -83,7 +83,7 @@ final class AppKitScrollViewTests: XCTestCase {
             view: FixedScrollTestView(width: 80, height: 500))])
 
         scroll.apply(
-            orientation: ScrollOrientation.vertical.rawValue,
+            orientation: Axis.vertical.rawValue,
             padding: NSEdgeInsets(),
             verticalBarVisibility: 0,
             horizontalBarVisibility: 0,
@@ -97,7 +97,7 @@ final class AppKitScrollViewTests: XCTestCase {
     func testOrientationAndBarVisibilityMapToNativeScrolling() {
         let scroll = AppKitScrollView()
         scroll.apply(
-            orientation: ScrollOrientation.horizontal.rawValue,
+            orientation: Axis.horizontal.rawValue,
             padding: NSEdgeInsets(top: 2, left: 3, bottom: 4, right: 5),
             verticalBarVisibility: 1,
             horizontalBarVisibility: 2,
@@ -118,7 +118,7 @@ final class AppKitScrollViewTests: XCTestCase {
         defer { renderer.closeForTesting() }
         var scroll = HostPatch(id: .manual("scroll"), type: .scrollView)
         scroll.properties = [
-            .orientation: .enumeration(ScrollOrientation.horizontal.rawValue),
+            .orientation: .enumeration(Axis.horizontal.rawValue),
         ]
         renderer.applyForTesting(tree(scroll))
 
@@ -142,7 +142,7 @@ final class AppKitScrollViewTests: XCTestCase {
         inner.setItems([AppKitLayoutItem(
             view: FixedScrollTestView(width: 500, height: 36))])
         inner.apply(
-            orientation: ScrollOrientation.horizontal.rawValue,
+            orientation: Axis.horizontal.rawValue,
             padding: NSEdgeInsets(),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 0,
@@ -214,7 +214,7 @@ final class AppKitScrollViewTests: XCTestCase {
         inner.setItems([AppKitLayoutItem(
             view: FixedScrollTestView(width: 500, height: 36))])
         inner.apply(
-            orientation: ScrollOrientation.horizontal.rawValue,
+            orientation: Axis.horizontal.rawValue,
             padding: NSEdgeInsets(),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 0,
@@ -250,9 +250,9 @@ final class AppKitScrollViewTests: XCTestCase {
     func testAVerticalScrollersBarVisibilityReachesItsNativeScroller() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                ScrollView { Label("Default") }
-                ScrollView { Label("Never") }.verticalScrollBarVisibility(.never)
-                ScrollView { Label("Always") }.verticalScrollBarVisibility(.always)
+                ScrollView { Text("Default") }
+                ScrollView { Text("Never") }.verticalScrollIndicators(.never)
+                ScrollView { Text("Always") }.verticalScrollIndicators(.always)
             }
         }
         defer { renderer.closeForTesting() }
@@ -268,14 +268,14 @@ final class AppKitScrollViewTests: XCTestCase {
     func testAHorizontalScrollersBarVisibilityReachesItsNativeScroller() throws {
         let renderer = AppKitRenderer.running {
             VStack {
-                ScrollView { Label("Default") }
+                ScrollView { Text("Default") }
                     .orientation(.horizontal)
-                ScrollView { Label("Never") }
+                ScrollView { Text("Never") }
                     .orientation(.horizontal)
-                    .horizontalScrollBarVisibility(.never)
-                ScrollView { Label("Always") }
+                    .horizontalScrollIndicators(.never)
+                ScrollView { Text("Always") }
                     .orientation(.horizontal)
-                    .horizontalScrollBarVisibility(.always)
+                    .horizontalScrollIndicators(.always)
             }
         }
         defer { renderer.closeForTesting() }
@@ -318,7 +318,7 @@ final class AppKitScrollViewTests: XCTestCase {
     func testATrackpadPushPastHalfACardTurnsTheRun() throws {
         let positions = Received<Int>()
         let renderer = AppKitRenderer.running {
-            GalleryView(0..<7) { number in Label("\(number)") }
+            GalleryView(0..<7) { number in Text("\(number)") }
                 .onPositionChanged { positions.values.append($0) }
                 .onItemTapped { _ in }
         }
@@ -435,30 +435,30 @@ private final class ScrollWheelSpyView: NSScrollView {
 
 /// A run the user can scroll 300 points beyond its room, answering a tap on
 /// its first hundred.
-private struct TappedRun: ContentView {
+private struct TappedRun: View {
     @State private var across = Point.zero
 
-    var content: any View {
-        ScrollReader(across: 300) {
-            ColorBox(Color("#3366FF"))
+    var body: some View {
+        ScrollViewReader(across: 300) {
+            ColorPicker(Color("#3366FF"))
         }
         .scrollOffset($across)
-        .onTapped(within: { room in Rect(0, 0, 100, room.height) }) {}
+        .onTapGesture(within: { room in Rect(0, 0, 100, room.height) }) {}
     }
 }
 /// A tall strip whose offset a state carries, read back by a label.
-private struct BoundStrip: ContentView {
+private struct BoundStrip: View {
     @State private var offset = Point.zero
 
-    var content: any View {
+    var body: some View {
         VStack {
             ScrollView {
-                ColorBox(Color("#3366FF")).height(2_000)
+                ColorPicker(Color("#3366FF")).frame(height: 2_000)
             }
             .scrollOffset($offset)
-            .height(300)
+            .frame(height: 300)
 
-            Label("\(Int($offset.journey.value.y)) down")
+            Text("\(Int($offset.journey.value.y)) down")
         }
     }
 }

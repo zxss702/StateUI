@@ -7,8 +7,8 @@ public protocol TextAlignmentElement: VisualElementProperties {}
 
 extension TextAlignmentElement {
     /// Where the text sits within the control's own width.
-    public func horizontalTextAlignment(_ value: TextAlignment) -> Modified {
-        setValue(TextAlignmentElementContract.horizontalTextAlignment, value)
+    public func multilineTextAlignment(_ value: TextAlignment) -> Modified {
+        setValue(TextAlignmentElementContract.multilineTextAlignment, value)
     }
 
     /// Where the text sits within the control's own height.
@@ -18,10 +18,10 @@ extension TextAlignmentElement {
 }
 
 extension TextAlignmentElement where Self: VisualElement {
-    /// `horizontalTextAlignment` from a state, `$x`: the host sets each new
+    /// `multilineTextAlignment` from a state, `$x`: the host sets each new
     /// value as it stands, and no view is rebuilt for it.
-    public func horizontalTextAlignment(_ state: Binding<TextAlignment>) -> Modified {
-        plain(TextAlignmentElementContract.horizontalTextAlignment, by: state)
+    public func multilineTextAlignment(_ state: Binding<TextAlignment>) -> Modified {
+        plain(TextAlignmentElementContract.multilineTextAlignment, by: state)
     }
 
     /// `verticalTextAlignment` from a state, `$x`: the host sets each new value

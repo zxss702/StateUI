@@ -12,7 +12,7 @@
     public static var cases: [ConformanceCase] {
         [
             ConformanceCase("aWindowsPageShowsItsContent", proves: [Covered(PageContract.self)]) { s in
-                s.start { VStack { Label("On the page").id("label") } }
+                s.start { VStack { Text("On the page").id("label") } }
 
                 _ = try s.element(ofType: PageContract.nodeType)
                 s.expect(try s.held(VisualElementContract.isVisible, on: s.element("label")), true)
@@ -73,17 +73,17 @@
             pushedHolds(PageContract.hasNavigationBar, false, then: true) { $0.hasNavigationBar = $1 },
             pushedHolds(PageContract.background, .red, then: .blue) { $0.background = $1 },
             ConformanceCase("aPagesPaddingKeepsItsContentIn", proves: [
-                Covered(PageContract.padding),
+                Covered(PageContract.contentPadding),
             ], needs: [Covered(ButtonContract.clicked)]) { s in
                 let wide = State(wrappedValue: false)
                 let frames = Received<[Double]>()
                 s.start {
                     SessionPage(beside: [
-                        ColorBox(.red).width(20).height(20).horizontalAlignment(.start)
+                        ColorPicker(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start)
                             .onEvent(ViewContract.frameChanged) { frames.values.append($0) },
                         Button("Wider").onClicked { wide.wrappedValue = true }.id("change"),
                     ], key: "\(wide.wrappedValue)") { page, _ in
-                        page.padding = wide.wrappedValue ? Insets(30) : Insets(10)
+                        page.contentPadding = wide.wrappedValue ? EdgeInsets(30) : EdgeInsets(10)
                     }
                     .horizontalAlignment(.start)
                     .verticalAlignment(.start)
@@ -109,7 +109,7 @@
             let value = State(wrappedValue: first)
             s.start {
                 NavigationStack(State(wrappedValue: [1]).projectedValue) {
-                    Label("Root")
+                    Text("Root")
                 } destination: { _ in
                     SessionPage(beside: [Button("Change").onClicked { value.wrappedValue = second }.id("change")],
                                 key: "\(value.wrappedValue)") { page, _ in write(page, value.wrappedValue) }
@@ -135,16 +135,16 @@
 }
 
 /// A page saying each phase of its life, as its title and the phase.
-struct PhasePage: ContentView {
+struct PhasePage: View {
     let title: String
     let log: Received<String>
 
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         let (title, log, page) = (self.title, self.log, self.page)
-        return Label(title)
-            .onCreated { page.title = title }
-            .onChanged(page.phase) { log.values.append("\(title) \(page.phase)") }
+        return Text(title)
+            .onAppear { page.title = title }
+            .onChange(of: page.phase) { log.values.append("\(title) \(page.phase)") }
     }
 }

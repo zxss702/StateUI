@@ -15,14 +15,14 @@ extension AppKitRegistrations {
         registry.add(VStackContract.self, create: { _ in AppKitStackView(axis: .vertical) }) { stack in
             stack.applies(Self.stackMembers) { view, values in
                 view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
-                view.padding = Self.edgeInsets(values[PaddingElementContract.padding])
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
         }
 
         registry.add(HStackContract.self, create: { _ in AppKitStackView(axis: .horizontal) }) { stack in
             stack.applies(Self.stackMembers) { view, values in
                 view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
-                view.padding = Self.edgeInsets(values[PaddingElementContract.padding])
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
         }
 
@@ -31,10 +31,10 @@ extension AppKitRegistrations {
         registry.add(ScrollViewContract.self, madeByHost: AppKitScrollView.self) { scroll in
             scroll.applies([
                 ScrollViewContract.orientation,
-                ScrollViewContract.verticalScrollBarVisibility,
-                ScrollViewContract.horizontalScrollBarVisibility,
+                ScrollViewContract.verticalScrollIndicators,
+                ScrollViewContract.horizontalScrollIndicators,
                 ScrollViewContract.scrollOffset,
-                PaddingElementContract.padding,
+                PaddingElementContract.contentPadding,
             ]) { view, values in
                 // The offset is written only where the tree moved it.
                 // Design: docs/design/platforms/appkit/input.md#scrolling
@@ -44,11 +44,11 @@ extension AppKitRegistrations {
 
                 view.apply(
                     orientation: (values[ScrollViewContract.orientation] ?? .vertical).rawValue,
-                    padding: Self.edgeInsets(values[PaddingElementContract.padding]),
+                    padding: Self.edgeInsets(values[PaddingElementContract.contentPadding]),
                     verticalBarVisibility:
-                        (values[ScrollViewContract.verticalScrollBarVisibility] ?? .default).rawValue,
+                        (values[ScrollViewContract.verticalScrollIndicators] ?? .default).rawValue,
                     horizontalBarVisibility:
-                        (values[ScrollViewContract.horizontalScrollBarVisibility] ?? .default).rawValue,
+                        (values[ScrollViewContract.horizontalScrollIndicators] ?? .default).rawValue,
                     offset: offset)
             }
             scroll.applies([
@@ -65,13 +65,13 @@ extension AppKitRegistrations {
             grid.applies([
                 GridContract.rows, GridContract.columns,
                 GridContract.rowSpacing, GridContract.columnSpacing,
-                PaddingElementContract.padding,
+                PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.rows = Self.gridLengths(values[GridContract.rows])
                 view.columns = Self.gridLengths(values[GridContract.columns])
                 view.rowSpacing = CGFloat(values[GridContract.rowSpacing] ?? 0)
                 view.columnSpacing = CGFloat(values[GridContract.columnSpacing] ?? 0)
-                view.padding = Self.edgeInsets(values[PaddingElementContract.padding])
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
         }
     }
@@ -79,7 +79,7 @@ extension AppKitRegistrations {
     /// What both stacks take: the space between their children, and the space
     /// kept inside their own edge.
     private static let stackMembers: [any ContractMember] = [
-        StackBaseContract.spacing, PaddingElementContract.padding,
+        StackBaseContract.spacing, PaddingElementContract.contentPadding,
     ]
 
     /// A row or a column is a kind and an amount, and travels as the two of

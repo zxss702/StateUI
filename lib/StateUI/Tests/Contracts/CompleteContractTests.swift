@@ -62,6 +62,11 @@ final class CompleteContractTests: XCTestCase {
         let allowed: [(path: String, construction: String)] = [
             ("Stateful.swift", "Node(type: .composed)"),
             ("Style.swift", "Node(type: Target().node.type)"),
+            // Transparent composition: a fragment keeps no element of its own,
+            // so no contract declares it (Stateful.swift's `fragment`).
+            ("ForEach.swift", "Node(type: .fragment,"),
+            ("TupleView.swift", "Node(type: .fragment,"),
+            ("TupleView.swift", "Node(type: .fragment)"),
         ]
         var byType: [String] = []
 
@@ -123,8 +128,8 @@ final class CompleteContractTests: XCTestCase {
         let coreAPI: Set<String> = [
             // Identity, aiming and reactions every element has, which no host realizes.
             "id", "aim", "onChanged", "samples", "engine",
-            // Motion, which the differ writes beside the values it moves.
-            "motion", "MotionValues", "MotionLanes",
+            // Animation, which the differ writes beside the values it moves.
+            "animation", "AnimationValues", "AnimationLanes",
             // The focus feed, a state the element's focus event keeps.
             "isFocused",
         ]
@@ -217,8 +222,8 @@ final class CompleteContractTests: XCTestCase {
     /// composition over a `ZStack` placing its children, and every
     /// visual element's style key, which the style sheet reads and takes off.
     private static let describing: [String: [String]] = [
-        "SceneElement.swift": ["Window"],
-        "WindowSession.swift": ["Window"],
+        "SceneElement.swift": ["WindowScene"],
+        "WindowSession.swift": ["WindowScene"],
         "PageSession.swift": ["Page"],
         "PlacedLayout.swift": ["ZStack"],
         "StyleSheet.swift": ["VisualElement"],

@@ -37,9 +37,9 @@ enum AppKitRegistrations {
     /// the scene's kept values, which a Mac keeps in the window it restores. The host layer's performer
     /// (`HostActPerformer`) answers exactly these and the application's own; every other act it refuses by name.
     static let acts: [any ContractMember] =
-        HostActs.performed + [ApplicationContract.persistSceneValue, ItemsViewContract.scrollTo]
+        HostActs.performed + [AppContract.persistSceneValue, ListContract.scrollTo]
 
-    static func edgeInsets(_ value: Insets?) -> NSEdgeInsets {
+    static func edgeInsets(_ value: EdgeInsets?) -> NSEdgeInsets {
         guard let numbers = value?.propValue.numbers, numbers.count >= 4 else { return NSEdgeInsets() }
 
         return NSEdgeInsets(

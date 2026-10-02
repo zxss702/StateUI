@@ -13,7 +13,7 @@ final class WinUIPathViewTests: XCTestCase {
     /// A rectangle fills its room, its corners rounded away.
     func testARectangleFillsItsRoomItsCornersRounded() throws {
         let colours = try drawn(width: 100, height: 60, at: [(50, 30), (50, 1), (1, 1)]) {
-            Rectangle().fill(Color("#FF0000")).cornerRadius(20).width(100).height(60)
+            Rectangle().fill(Color("#FF0000")).cornerRadius(20).frame(width: 100).frame(height: 60)
         }
         XCTAssertEqual(colours, [Self.red, Self.red, 0])
     }
@@ -22,7 +22,7 @@ final class WinUIPathViewTests: XCTestCase {
     /// an outline nobody sees (`BoxArithmetic.outlineWidth`).
     func testAShapeWithNoOutlineColourIsFilledToItsEdge() throws {
         let colours = try drawn(width: 100, height: 60, at: [(0.25, 30), (99.75, 30), (50, 0.25)]) {
-            Rectangle().fill(Color("#FF0000")).width(100).height(60)
+            Rectangle().fill(Color("#FF0000")).frame(width: 100).frame(height: 60)
         }
         XCTAssertEqual(colours, [Self.red, Self.red, Self.red])
     }
@@ -30,7 +30,7 @@ final class WinUIPathViewTests: XCTestCase {
     /// An ellipse fills its room, and nothing beyond its curve.
     func testAnEllipseFillsItsRoom() throws {
         let colours = try drawn(width: 100, height: 60, at: [(50, 30), (5, 30), (3, 3)]) {
-            Ellipse().fill(Color("#FF0000")).width(100).height(60)
+            Ellipse().fill(Color("#FF0000")).frame(width: 100).frame(height: 60)
         }
         XCTAssertEqual(colours, [Self.red, Self.red, 0])
     }
@@ -39,12 +39,12 @@ final class WinUIPathViewTests: XCTestCase {
     /// room.
     func testAPathIsPlacedByItsAspect() throws {
         let fitted = try drawn(width: 40, height: 40, at: [(35, 5), (5, 35)]) {
-            Path("M 0 0 L 10 0 L 10 10 Z").fill(Color("#FF0000")).width(40).height(40)
+            Path("M 0 0 L 10 0 L 10 10 Z").fill(Color("#FF0000")).frame(width: 40).frame(height: 40)
         }
         XCTAssertEqual(fitted, [Self.red, 0])
 
         let stretched = try drawn(width: 80, height: 40, at: [(75, 5), (70, 20), (5, 35)]) {
-            Path("M 0 0 L 10 0 L 10 10 Z").fill(Color("#FF0000")).aspect(.stretch).width(80).height(40)
+            Path("M 0 0 L 10 0 L 10 10 Z").fill(Color("#FF0000")).aspect(.stretch).frame(width: 80).frame(height: 40)
         }
         XCTAssertEqual(stretched, [Self.red, Self.red, 0])
     }
@@ -52,12 +52,12 @@ final class WinUIPathViewTests: XCTestCase {
     /// A polygon is filled inside its points, and a line outlined from end to end, in the middle of its room.
     func testAPolygonAndALineAreDrawnFromTheirPoints() throws {
         let polygon = try drawn(width: 20, height: 20, at: [(10, 10)]) {
-            Polygon([Point(0, 0), Point(10, 0), Point(10, 10), Point(0, 10)]).fill(Color("#0000FF")).width(20).height(20)
+            Polygon([Point(0, 0), Point(10, 0), Point(10, 10), Point(0, 10)]).fill(Color("#0000FF")).frame(width: 20).frame(height: 20)
         }
         XCTAssertEqual(polygon, [Self.blue])
 
         let line = try drawn(width: 40, height: 10, at: [(20, 5), (20, 0.5)]) {
-            Line().x1(0).y1(0).x2(40).y2(0).stroke(Color("#FF0000")).strokeWidth(4).width(40).height(10)
+            Line().x1(0).y1(0).x2(40).y2(0).stroke(Color("#FF0000")).strokeWidth(4).frame(width: 40).frame(height: 10)
         }
         XCTAssertEqual(line, [Self.red, 0])
     }
@@ -67,10 +67,10 @@ final class WinUIPathViewTests: XCTestCase {
     func testAFigureMovedPastItsRoomIsDrawnWhole() throws {
         let colours = try drawn(width: 80, height: 40, at: [(48, 36), (5, 36), (20, 4)]) {
             ZStack {
-                Rectangle().fill(Color("#FF0000")).renderTransform(.skew(20, 0)).width(40).height(40)
+                Rectangle().fill(Color("#FF0000")).renderTransform(.skew(20, 0)).frame(width: 40).frame(height: 40)
                     .horizontalAlignment(.start).verticalAlignment(.start)
             }
-            .width(80).height(40)
+            .frame(width: 80).frame(height: 40)
         }
         XCTAssertEqual(colours, [Self.red, 0, Self.red])
     }
@@ -80,7 +80,7 @@ final class WinUIPathViewTests: XCTestCase {
         let colours = try drawn(width: 100, height: 20, at: [(1, 10), (99, 10)]) {
             Rectangle().fill(.linearGradient(
                 [GradientStop(Color("#FF0000"), 0), GradientStop(Color("#0000FF"), 1)],
-                startPoint: Point(0, 0), endPoint: Point(1, 0))).width(100).height(20)
+                startPoint: Point(0, 0), endPoint: Point(1, 0))).frame(width: 100).frame(height: 20)
         }
         XCTAssertGreaterThan(colours[0] >> 16 & 0xFF, 0xE0, "red at the start")
         XCTAssertGreaterThan(colours[1] & 0xFF, 0xE0, "blue at the end")
@@ -90,7 +90,7 @@ final class WinUIPathViewTests: XCTestCase {
     /// a geometry given the identity for a transform.
     func testAGeometryAtItsOwnSizeIsDrawn() throws {
         let colours = try drawn(width: 56, height: 56, at: [(28, 40), (5, 5)]) {
-            Path("M 28,0 L 56,56 L 0,56 Z").fill(Color("#FF0000")).width(56).height(56)
+            Path("M 28,0 L 56,56 L 0,56 Z").fill(Color("#FF0000")).frame(width: 56).frame(height: 56)
         }
         XCTAssertEqual(colours, [Self.red, 0])
     }
@@ -99,13 +99,13 @@ final class WinUIPathViewTests: XCTestCase {
     func testDashesAreOutlineWidths() throws {
         let plain = try drawn(width: 200, height: 8, at: [(6, 4), (16, 4), (26, 4)]) {
             Line().x1(0).y1(4).x2(200).y2(4).stroke(Color("#FF0000")).strokeWidth(4)
-                .strokeDashPattern([3, 2]).width(200).height(8)
+                .strokeDashPattern([3, 2]).frame(width: 200).frame(height: 8)
         }
         XCTAssertEqual(plain, [Self.red, 0, Self.red], "a dash of 12, a gap of 8")
 
         let shifted = try drawn(width: 200, height: 8, at: [(6, 4), (16, 4)]) {
             Line().x1(0).y1(4).x2(200).y2(4).stroke(Color("#FF0000")).strokeWidth(4)
-                .strokeDashPattern([3, 2]).strokeDashOffset(2.5).width(200).height(8)
+                .strokeDashPattern([3, 2]).strokeDashOffset(2.5).frame(width: 200).frame(height: 8)
         }
         XCTAssertEqual(shifted, [0, Self.red], "half a pattern on")
     }

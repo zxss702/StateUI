@@ -23,9 +23,9 @@ extension AndroidElement {
         switch type {
         case .navigationStack:
             refreshBar()
-        case .tabbedView:
+        case .tabView:
             refreshTabs()
-        case .splitView:
+        case .navigationSplitView:
             guard let split = view as? AndroidSplitView else { return }
             split.onScrimTapped = { [weak self] in self?.changeSidebarVisibility(to: false) }
             split.onAdapted = { [weak self] in self?.sidebarShown(true) }
@@ -75,13 +75,13 @@ extension AndroidElement {
     /// The way back a sidebar offers before any other: where it slides over the page and shows, it closes.
     var drawerBack: (() -> Void)? {
         switch type {
-        case .splitView:
+        case .navigationSplitView:
             if let split = view as? AndroidSplitView, split.overlays, split.isPresented {
                 return { [weak self] in self?.changeSidebarVisibility(to: false) }
             }
             return children.dropFirst().first?.drawerBack
         case .navigationStack: return children.last?.drawerBack
-        case .tabbedView: return element.selectedTab?.android.drawerBack
+        case .tabView: return element.selectedTab?.android.drawerBack
         default: return nil
         }
     }
@@ -89,7 +89,7 @@ extension AndroidElement {
     /// The user showed or hid a split view's sidebar: it shows as they said, and the host layer tells its page and
     /// the state.
     func changeSidebarVisibility(to presented: Bool) {
-        guard type == .splitView, let split = view as? AndroidSplitView, split.isPresented != presented else { return }
+        guard type == .navigationSplitView, let split = view as? AndroidSplitView, split.isPresented != presented else { return }
 
         split.present(presented)
         sidebarShown(presented)
@@ -159,7 +159,7 @@ extension AndroidElement {
     private var enclosingSplit: AndroidElement? {
         var child: AndroidElement = self
         while let parent = child.parent {
-            if parent.type == .splitView { return parent.children.first === child ? nil : parent }
+            if parent.type == .navigationSplitView { return parent.children.first === child ? nil : parent }
             guard NodeType.pageTypes.contains(parent.type) else { return nil }
             child = parent
         }

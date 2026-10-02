@@ -13,8 +13,8 @@ final class WinUIGridViewTests: XCTestCase {
         onUIThread {
             let host = WinUIRenderer.running {
                 VStack {
-                    Grid { Label("Waiting for the first render of this scene") }
-                    Grid { Label("Waiting for the first render of this scene").margin(8, 4) }
+                    Grid { Text("Waiting for the first render of this scene") }
+                    Grid { Text("Waiting for the first render of this scene").padding(8, 4) }
                 }
                 .horizontalAlignment(.start)
             }

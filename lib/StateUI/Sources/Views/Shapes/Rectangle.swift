@@ -6,9 +6,9 @@
 ///     Rectangle()
 ///         .fill(.cornflowerBlue)
 ///         .cornerRadius(8)
-///         .height(60)
+///         .frame(height: 60)
 ///
-/// A `ColorBox` says the same thing in one line and takes one colour; this is the
+/// A `ColorPicker` says the same thing in one line and takes one colour; this is the
 /// shape, so it takes a Brush, an outline and everything else the shape tier
 /// declares.
 ///

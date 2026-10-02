@@ -17,7 +17,7 @@ final class WinUIRenderer {
 
     let frameClock: WinUIFrameClock
 
-    /// Whether the user asked for less motion: every animation arrives at once.
+    /// Whether the user asked for less animation: every animation arrives at once.
     private let reducesMotion: () -> Bool
 
     /// The parts every host holds alike - the core's link, the motions, the display cycle, the mounted tree and
@@ -57,7 +57,7 @@ final class WinUIRenderer {
     }
 
     /// A runtime on the performance counter and WinUI's frames, or on `clock` and the frames its owner gives, with
-    /// the motion `reducesMotion` allows.
+    /// the animation `reducesMotion` allows.
     init(clock: (() -> Double)? = nil, reducesMotion: @escaping () -> Bool = { !stateui_winui_animations_enabled() }) {
         frameClock = clock.map { WinUIFrameClock(now: $0, ticksWithWinUI: false) } ?? WinUIFrameClock()
         self.reducesMotion = reducesMotion
@@ -97,7 +97,7 @@ final class WinUIRenderer {
         actToolkit.answered(ticket: ticket, accepted: accepted, words: words)
     }
 
-    /// Windows said the theme, the power, the network or a screen changed: the core hears it, and renders what it
+    /// Windows said the color scheme, the power, the network or a screen changed: the core hears it, and renders what it
     /// changed.
     func environmentChanged() {
         runtime.environmentChanged {

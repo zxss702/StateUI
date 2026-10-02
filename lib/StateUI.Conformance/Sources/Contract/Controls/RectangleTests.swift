@@ -14,7 +14,7 @@
             ConformanceCase("aRectangleFillsItsRoom", proves: [
                 Covered(ShapeContract.fill, on: "Rectangle"),
             ]) { s in
-                s.start { VStack { Rectangle().fill(.red).width(100).height(60).id("shape") }.horizontalAlignment(.start) }
+                s.start { VStack { Rectangle().fill(.red).frame(width: 100).frame(height: 60).id("shape") }.horizontalAlignment(.start) }
                 let shape = try s.element("shape")
 
                 try s.settle { try s.color(of: shape, at: Point(50, 30)) == .red }
@@ -27,7 +27,7 @@
                 let square = State(wrappedValue: false)
                 s.start {
                     VStack {
-                        Rectangle().fill(.red).cornerRadius(square.wrappedValue ? 0 : 20).width(100).height(60).id("shape")
+                        Rectangle().fill(.red).cornerRadius(square.wrappedValue ? 0 : 20).frame(width: 100).frame(height: 60).id("shape")
                         Button("Square").onClicked { square.wrappedValue = true }.id("change")
                     }
                     .horizontalAlignment(.start)

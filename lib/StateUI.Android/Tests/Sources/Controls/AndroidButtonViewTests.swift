@@ -21,19 +21,19 @@ final class AndroidButtonViewTests: XCTestCase {
         ]
     }
 
-    /// A button is its words and its padding: the least size is the author's, never the platform theme's.
+    /// A button is its words and its padding: the least size is the author's, never the platform color scheme's.
     func testAButtonIsAsBigAsItsWordsAndItsRoom() throws {
         try onMainActor {
             let host = AndroidRenderer.running(reducesMotion: true) {
                 VStack {
                     Button("Go").horizontalAlignment(.center)
-                    Button("Go").minimumWidth(120).horizontalAlignment(.center)
+                    Button("Go").frame(minWidth: 120).horizontalAlignment(.center)
                 }
             }
             host.layOut()
             let buttons = host.views(AndroidButtonView.self)
             let words = try XCTUnwrap(Self.words(of: buttons[0]))
-            let room = Self.padding(of: buttons[0])
+            let room = Self.contentPadding(of: buttons[0])
 
             XCTAssertEqual(buttons[0].frame.width, words.width + room.width, accuracy: 1)
             XCTAssertEqual(buttons[0].frame.height, words.height + room.height, accuracy: 1)
@@ -46,7 +46,7 @@ final class AndroidButtonViewTests: XCTestCase {
     func testAnIconAloneFitsTheRoomInsideThePadding() throws {
         try onMainActor {
             let host = AndroidRenderer.running {
-                Button(icon: "test_wide.png").width(40).height(40).padding(8).horizontalAlignment(.start)
+                Button(icon: "test_wide.png").frame(width: 40).frame(height: 40).contentPadding(8).horizontalAlignment(.start)
             }
             host.layOut()
             let button = try XCTUnwrap(host.views(AndroidButtonView.self).first)
@@ -75,7 +75,7 @@ final class AndroidButtonViewTests: XCTestCase {
     }
 
     /// A fill, an outline and a shape are one shape under Android's own pressed ripple - an outline alone draws
-    /// one too; nothing said keeps the theme's.
+    /// one too; nothing said keeps the color scheme's.
     func testALookIsOneShapeUnderThePlatformsRipple() {
         onMainActor {
             let host = AndroidRenderer.running {
@@ -94,13 +94,13 @@ final class AndroidButtonViewTests: XCTestCase {
         }
     }
 
-    /// A button drawn by its own look dims while it is disabled, as the theme's controls do.
+    /// A button drawn by its own look dims while it is disabled, as the color scheme's controls do.
     func testADisabledLookDimsAsTheThemesControlsDo() {
         onMainActor {
             let host = AndroidRenderer.running {
                 VStack {
                     Button("On").background(.firebrick).horizontalAlignment(.start)
-                    Button("Off").background(.firebrick).isEnabled(false).horizontalAlignment(.start)
+                    Button("Off").background(.firebrick).disabled(!false).horizontalAlignment(.start)
                 }
             }
             host.layOut()
@@ -108,7 +108,7 @@ final class AndroidButtonViewTests: XCTestCase {
             let alpha = buttons.map { ($0.pixels(at: [(2, 2)]).first ?? 0) >> 24 }
 
             XCTAssertEqual(alpha[0], 255)
-            XCTAssertLessThan(alpha[1], 200, "the disabled one drawn at the theme's disabled opacity")
+            XCTAssertLessThan(alpha[1], 200, "the disabled one drawn at the colorScheme's disabled opacity")
             XCTAssertGreaterThan(alpha[1], 0)
         }
     }

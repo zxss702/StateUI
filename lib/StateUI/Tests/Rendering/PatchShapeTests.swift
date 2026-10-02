@@ -22,7 +22,7 @@ final class PatchShapeTests: XCTestCase {
         var scene = Node(type: "Scene", children: [main])
         scene.id = "1"
 
-        return Node(type: "Application", children: [scene])
+        return Node(type: "App", children: [scene])
     }
 
     /// The counting label, which says how big it is and how it is spaced
@@ -37,12 +37,12 @@ final class PatchShapeTests: XCTestCase {
             props["characterSpacing"] = .number(1.5)
         }
 
-        return Node(type: "Label", props: props)
+        return Node(type: "Text", props: props)
     }
 
     /// The window of that page, with the tree under it.
     private func window(count: Int, items: [String], sized: Bool = true) -> Node {
-        Node(type: "Window", props: ["title": .string("StateUI")], children: [
+        Node(type: "WindowScene", props: ["title": .string("StateUI")], children: [
             Node(type: "Page", props: ["title": .string("Counter")], children: [
                 Node(type: "VStack", props: ["spacing": .number(20)], children: [
                     counter(count: count, sized: sized),
@@ -131,11 +131,11 @@ final class PatchShapeTests: XCTestCase {
     /// the ids the host's window reports each moment of its life with.
     func testTheWindowsLifetimeIsTheWindowsEvents() throws {
         let window = Node(
-            type: "Window",
+            type: "WindowScene",
             props: ["title": .string("StateUI")],
             children: [
                 Node(type: "Page", props: ["title": .string("Home")], children: [
-                    Node(type: "Label", props: ["text": .string("one")]),
+                    Node(type: "Text", props: ["text": .string("one")]),
                 ]),
             ],
             events: [
@@ -151,7 +151,7 @@ final class PatchShapeTests: XCTestCase {
         var scene = Node(type: "Scene", children: [main])
         scene.id = "1"
 
-        let patch = Differ().reconcile(nil, with: Node(type: "Application", children: [scene])).patch
+        let patch = Differ().reconcile(nil, with: Node(type: "App", children: [scene])).patch
         let handlers = try XCTUnwrap(patch.at(.manual("1"), .manual(SceneElement.mainKey))?.events?.handlers)
 
         XCTAssertEqual(

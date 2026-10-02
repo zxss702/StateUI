@@ -10,15 +10,15 @@
 ///     @State private var ticker = Ticker(every: .seconds(1), limit: 30)
 ///
 ///     VStack {
-///         Label("\((ticker.limit ?? 0) - ticker.ticks)")
+///         Text("\((ticker.limit ?? 0) - ticker.ticks)")
 ///
 ///         Button(ticker.isRunning ? "Stop" : "Start")
 ///             .onClicked { ticker.isRunning ? ticker.stop() : ticker.start() }
 ///     }
-///     .onDestroying { ticker.stop() }
+///     .onDisappear { ticker.stop() }
 ///
 /// A tick asks for a render, so a view reading `ticks` follows it with nothing
-/// subscribed. Hold it in a `@State`, and stop it in `.onDestroying` when it
+/// subscribed. Hold it in a `@State`, and stop it in `.onDisappear` when it
 /// should not outlive the view. Every method is safe from any thread. It sleeps
 /// to a deadline, so a minute of seconds is a minute.
 public final class Ticker: @unchecked Sendable {
@@ -95,7 +95,7 @@ public final class Ticker: @unchecked Sendable {
     ///     @State private var poll = Ticker(every: .seconds(5), isRepeating: false)
     ///
     ///     VStack { … }
-    ///         .onCreated {
+    ///         .onAppear {
     ///             poll.onTick = { status = await Server.check() }
     ///             poll.start()
     ///         }

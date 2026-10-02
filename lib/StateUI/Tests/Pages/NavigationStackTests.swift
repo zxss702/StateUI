@@ -20,32 +20,32 @@ private enum Route: Hashable {
 
 /// The root, named as it comes into the tree - which is the message that brings
 /// it, so a stack arrives with its titles.
-private struct Root: ContentView {
+private struct Root: View {
     @Environment private var page: PageSession
 
-    var content: any View {
-        ModifiedContent(node: label("home")).onCreated { page.title = "Home" }
+    var body: some View {
+        ModifiedContent(node: label("home")).onAppear { page.title = "Home" }
     }
 }
 
 /// A pushed page, named for the route it stands for.
-private struct Destination: ContentView {
+private struct Destination: View {
     @Environment private var page: PageSession
     let name: String
 
-    var content: any View {
-        ModifiedContent(node: label(name)).onCreated { page.title = name }
+    var body: some View {
+        ModifiedContent(node: label(name)).onAppear { page.title = name }
     }
 }
 
 /// A pushed page that asks the STACK for everything a page can ask of it,
 /// written into its session as it comes into the tree.
-private struct DressedDestination: ContentView {
+private struct DressedDestination: View {
     @Environment private var page: PageSession
     let depth: Int
 
-    var content: any View {
-        ModifiedContent(node: label("level \(depth)")).onCreated {
+    var body: some View {
+        ModifiedContent(node: label("level \(depth)")).onAppear {
             page.title = "Level \(depth)"
 
             // Non-default values prove that the host must apply the branch;
@@ -77,7 +77,7 @@ final class NavigationStackTests: XCTestCase {
     /// else says where the application is, so there is nothing to disagree.
     func testTheStackIsTheChildrenOfTheNode() {
         let path = State<[Route]>([.detail("first"), .level(2)])
-        let patch = Renders().settled(stack(path.projectedValue).body)
+        let patch = Renders().settled(stack(path.projectedValue).node)
 
         XCTAssertEqual(patch.type, "NavigationStack")
         XCTAssertEqual(patch.children.count, 3, "the root and the two routes")
@@ -89,7 +89,7 @@ final class NavigationStackTests: XCTestCase {
     /// NavigationStack cannot be talked out of having.
     func testAnEmptyPathIsTheRootAlone() {
         let path = State<[Route]>([])
-        let node = stack(path.projectedValue).body.built
+        let node = stack(path.projectedValue).node.built
 
         XCTAssertEqual(node.children.count, 1)
         XCTAssertEqual(node.children.first?.id, "root")
@@ -101,7 +101,7 @@ final class NavigationStackTests: XCTestCase {
     /// `.level(2)` pages apart.
     func testAPageIsIdentifiedByItsDepthAndItsRoute() {
         let repeated = State<[Route]>([.level(2), .level(2)])
-        let ids = stack(repeated.projectedValue).body.built.children.map { $0.id }
+        let ids = stack(repeated.projectedValue).node.built.children.map { $0.id }
 
         XCTAssertEqual(Set(ids).count, ids.count,
                        "a route may repeat on a stack, and each page is its own")
@@ -110,8 +110,8 @@ final class NavigationStackTests: XCTestCase {
         let second = State<[Route]>([.detail("b")])
 
         XCTAssertNotEqual(
-            stack(first.projectedValue).body.built.children.last?.id,
-            stack(second.projectedValue).body.built.children.last?.id,
+            stack(first.projectedValue).node.built.children.last?.id,
+            stack(second.projectedValue).node.built.children.last?.id,
             "a different route at the same depth is a different page")
     }
 
@@ -121,12 +121,12 @@ final class NavigationStackTests: XCTestCase {
     func testTheSameRouteAtTheSameDepthIsTheSamePage() {
         let path = State<[Route]>([.detail("a")])
 
-        let before = stack(path.projectedValue).body.built.children.last?.id
+        let before = stack(path.projectedValue).node.built.children.last?.id
 
         path.wrappedValue.append(.level(9))
         path.wrappedValue.removeLast()
 
-        XCTAssertEqual(stack(path.projectedValue).body.built.children.last?.id, before)
+        XCTAssertEqual(stack(path.projectedValue).node.built.children.last?.id, before)
     }
 
     /// Pushing is appending, and what the host is told is one arranged list -
@@ -136,10 +136,10 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a")])
         let renders = Renders()
 
-        renders.settled(stack(path.projectedValue).body)
+        renders.settled(stack(path.projectedValue).node)
 
         path.wrappedValue.append(.level(2))
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
 
         XCTAssertTrue(patch.arranged, "the stack changed, so the arrangement is described")
         XCTAssertEqual(patch.children.count, 3)
@@ -154,10 +154,10 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a"), .level(2), .level(3)])
         let renders = Renders()
 
-        renders.settled(stack(path.projectedValue).body)
+        renders.settled(stack(path.projectedValue).node)
 
         path.wrappedValue = []
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
 
         XCTAssertTrue(patch.arranged)
         XCTAssertEqual(patch.children.count, 1, "the root, and nothing over it")
@@ -173,7 +173,7 @@ final class NavigationStackTests: XCTestCase {
         let node = stack(path.projectedValue)
             .barBackgroundColor(Color("#512BD4"))
             .barForegroundColor(.white)
-            .body
+            .node
             .built
 
         XCTAssertEqual(node.props["barBackgroundColor"], Color("#512BD4").propValue)
@@ -192,7 +192,7 @@ final class NavigationStackTests: XCTestCase {
             stack(path.projectedValue)
                 .barBackgroundColor(.black)
                 .barForegroundColor(.white)
-                .body
+                .node
                 .built
                 .props
                 .keys
@@ -230,7 +230,7 @@ final class NavigationStackTests: XCTestCase {
         }
         .barBackgroundColor(Color("#512BD4"))
         .barForegroundColor(.white)
-        .body
+        .node
 
         // As the message that brings the pages carries them - with what each
         // wrote into its session on the way in.
@@ -249,7 +249,7 @@ final class NavigationStackTests: XCTestCase {
         XCTAssertEqual(page.props["backButtonTitle"], .string("Up"))
         XCTAssertEqual(page.props["hasBackButton"], .bool(false))
         XCTAssertEqual(page.props["hasNavigationBar"], .bool(false))
-        XCTAssertEqual(page.children.map(\.type), [.label, .titleView])
+        XCTAssertEqual(page.children.map(\.type), [.text, .titleView])
         XCTAssertEqual(page.children.last?.children.first?.props["text"], .string("on the bar"))
     }
 
@@ -261,7 +261,7 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a"), .level(2)])
         let renders = Renders()
 
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
 
         XCTAssertTrue(renders.fire(patch.events?["popped"] ?? -1, with: [.number(1)]))
         XCTAssertEqual(path.wrappedValue, [.detail("a")])
@@ -273,7 +273,7 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a"), .level(2)])
         let renders = Renders()
 
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
 
         XCTAssertTrue(renders.fire(patch.events?["popped"] ?? -1, with: [.number(0)]))
         XCTAssertEqual(path.wrappedValue, [])
@@ -286,7 +286,7 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a")])
         let renders = Renders()
 
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
         let popped = patch.events?["popped"] ?? -1
 
         XCTAssertTrue(renders.fire(popped, with: [.number(1)]))
@@ -302,7 +302,7 @@ final class NavigationStackTests: XCTestCase {
         let path = State<[Route]>([.detail("a"), .level(2)])
         let renders = Renders()
 
-        let patch = renders.settled(stack(path.projectedValue).body)
+        let patch = renders.settled(stack(path.projectedValue).node)
 
         XCTAssertTrue(renders.fire(patch.events?["popped"] ?? -1, with: [.string("one")]))
         XCTAssertEqual(path.wrappedValue, [.detail("a"), .level(2)])
