@@ -7,10 +7,6 @@ DatePicker.fontAttributes: not realized
 DatePicker.fontAutoScalingEnabled: not realized
 DatePicker.fontFamily: not realized
 DatePicker.fontSize: not realized
-Label.fontAttributes: cannot read fontAttributes of Label - GTK's driver has no path for it yet
-Label.fontAutoScalingEnabled: not realized
-Label.fontFamily: cannot read fontFamily of Label - GTK's driver has no path for it yet
-Label.fontSize: cannot read fontSize of Label - GTK's driver has no path for it yet
 Picker.fontAttributes: not realized
 Picker.fontAutoScalingEnabled: not realized
 Picker.fontFamily: not realized
@@ -27,6 +23,10 @@ Span.fontAttributes: cannot read fontAttributes of Span - GTK's driver has no pa
 Span.fontAutoScalingEnabled: not realized
 Span.fontFamily: not realized
 Span.fontSize: cannot read fontSize of Span - GTK's driver has no path for it yet
+Text.fontAttributes: cannot read fontAttributes of Text - GTK's driver has no path for it yet
+Text.fontAutoScalingEnabled: not realized
+Text.fontFamily: cannot read fontFamily of Text - GTK's driver has no path for it yet
+Text.fontSize: cannot read fontSize of Text - GTK's driver has no path for it yet
 TextEditor.fontAttributes: cannot read fontAttributes of TextEditor - GTK's driver has no path for it yet
 TextEditor.fontAutoScalingEnabled: not realized
 TextEditor.fontFamily: cannot read fontFamily of TextEditor - GTK's driver has no path for it yet

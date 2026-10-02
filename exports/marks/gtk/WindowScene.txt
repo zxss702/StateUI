@@ -1,0 +1,26 @@
+# revision 1.1
+ModalStack: not realized
+WindowScene: waits on WindowScene.created
+WindowScene.activated: not realized
+WindowScene.created: not realized
+WindowScene.deactivated: not realized
+WindowScene.destroying: not realized
+WindowScene.floatsOnTop: not realized
+WindowScene.height: not realized
+WindowScene.hidesWhenInactive: not realized
+WindowScene.isMaximizable: not realized
+WindowScene.isMinimizable: not realized
+WindowScene.isTranslucent: not realized
+WindowScene.maximumHeight: not realized
+WindowScene.maximumWidth: not realized
+WindowScene.minimumHeight: not realized
+WindowScene.minimumWidth: not realized
+WindowScene.modalPopped: not realized
+WindowScene.resumed: not realized
+WindowScene.stopped: not realized
+WindowScene.title: not realized
+WindowScene.width: not realized
+WindowScene.windowType: not realized
+WindowScene.windowValue: not realized
+WindowScene.x: not realized
+WindowScene.y: not realized

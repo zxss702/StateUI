@@ -6,6 +6,7 @@ Button
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   icon
   iconPosition
   isEnabled
@@ -15,7 +16,6 @@ Button
   strokeWidth
   text
   textCase
-  textColor
   clicked()
   pressed()
   released()
@@ -29,7 +29,7 @@ CheckBox
   isOn
   tint
   toggled()
-ColorBox
+ColorPicker
   background
   color
   cornerRadius
@@ -38,10 +38,10 @@ DatePicker
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
   maximumDate
   minimumDate
-  textColor
   dateChanged()
 Ellipse
   aspect
@@ -57,26 +57,16 @@ Ellipse
 Grid
   columnSpacing
   columns
-  padding
+  contentPadding
   rowSpacing
   rows
 HStack
-  padding
+  contentPadding
   spacing
 Image
   aspect
   isAnimating
   source
-ItemsView
-  endReachedWithin
-  items
-  itemsLayout
-  selectedItems
-  selectionMode
-  endReached()
-  itemActivated()
-  realizedChanged()
-  selectionChanged()
 Line
   aspect
   fill
@@ -92,8 +82,20 @@ Line
   x2
   y1
   y2
+List
+  endReachedWithin
+  items
+  itemsLayout
+  selectedItems
+  selectionMode
+  endReached()
+  itemActivated()
+  realizedChanged()
+  selectionChanged()
+NavigationSplitView
+  isSidebarVisible
 Page
-  padding
+  contentPadding
 Path
   aspect
   data
@@ -110,12 +112,12 @@ Picker
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  foregroundStyle
   isEnabled
   isOpen
+  multilineTextAlignment
   options
   selectedIndex
-  textColor
   tint
   title
   closed()
@@ -153,11 +155,11 @@ RadioButton
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
   isOn
   text
   textCase
-  textColor
   toggled()
 Rectangle
   aspect
@@ -172,32 +174,32 @@ Rectangle
   strokeMiterLimit
   strokeWidth
 ScrollView
-  horizontalScrollBarVisibility
+  contentPadding
+  horizontalScrollIndicators
   orientation
-  padding
   scrollOffset
   shape
   stroke
   strokeWidth
-  verticalScrollBarVisibility
+  verticalScrollIndicators
 SearchField
   background
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  foregroundStyle
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  textColor
   submitted()
   textChanged()
 Slider
@@ -209,8 +211,6 @@ Slider
   dragCompleted()
   dragStarted()
   valueChanged()
-SplitView
-  isSidebarVisible
 Stepper
   isEnabled
   maximum
@@ -228,19 +228,19 @@ TextEditor
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   growsWithText
-  horizontalTextAlignment
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  textColor
   textChanged()
 TextField
   background
@@ -248,31 +248,31 @@ TextField
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  foregroundStyle
   isEnabled
   isPassword
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  textColor
   submitted()
   textChanged()
 TimePicker
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
-  textColor
   time
   timeChanged()
 VStack
-  padding
+  contentPadding
   spacing
 (every element)
   accessibilityHeadingLevel
@@ -292,12 +292,12 @@ VStack
   isAccessibilityHidden
   isVisible
   letsInputThrough
-  margin
   maximumHeight
   maximumWidth
   minimumHeight
   minimumWidth
   opacity
+  padding
   panTouchCount
   panXChannel
   panYChannel
@@ -326,7 +326,7 @@ VStack
   pointerPressed()
   pointerReleased()
   swiped()
-  tapped()
+  tapGesture()
 (acts)
   alert()
   announce()

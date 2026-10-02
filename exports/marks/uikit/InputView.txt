@@ -1,6 +1,6 @@
 # revision 1.1
 SearchField.cursorPosition: ✅
-SearchField.inputPurpose: ✅
+SearchField.textContentType: ✅
 SearchField.isEnabled: ✅
 SearchField.isReadOnly: ✅
 SearchField.isSpellCheckEnabled: ✅
@@ -12,7 +12,7 @@ SearchField.selectionLength: ✅
 SearchField.text: ✅
 SearchField.textChanged: ✅
 TextEditor.cursorPosition: ✅
-TextEditor.inputPurpose: ✅
+TextEditor.textContentType: ✅
 TextEditor.isEnabled: ✅
 TextEditor.isReadOnly: ✅
 TextEditor.isSpellCheckEnabled: ✅
@@ -24,7 +24,7 @@ TextEditor.selectionLength: ✅
 TextEditor.text: ✅
 TextEditor.textChanged: ✅
 TextField.cursorPosition: ✅
-TextField.inputPurpose: ✅
+TextField.textContentType: ✅
 TextField.isEnabled: ✅
 TextField.isReadOnly: ✅
 TextField.isSpellCheckEnabled: ✅

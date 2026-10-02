@@ -24,19 +24,19 @@ design notes beside them.
 ## Concepts
 
 - [Architecture](concepts/architecture.md) defines StateUI's two reactive
-  paths, `Journey`, host-side motion, engines, and ownership split.
+  paths, `Journey`, host-side animation, engines, and ownership split.
 - [State and reactivity](concepts/state-and-reactivity.md) is the practical
   guide to `@State`, `@Binding`, persistence, conversions, sampling, and
   engines.
-- [Motion and journeys](concepts/motion-and-journeys.md) defines motion laws,
-  precedence, value journeys, interruption, visibility, and layout motion.
+- [Animation and journeys](concepts/animation-and-journeys.md) defines animation laws,
+  precedence, value journeys, interruption, visibility, and layout animation.
 - [Environment](concepts/environment.md) covers application models, standard
   provider domains, dates, time, locale, and values supplied by a host.
 
 ## Build an interface
 
 - [Applications and sessions](interface/application-and-sessions.md) covers
-  `Application -> Scene -> Window -> page`, restoration, scene-local state,
+  `App -> Scene -> WindowScene -> page`, restoration, scene-local state,
   window groups, lifecycle, and geometry.
 - [Navigation and presentation](interface/navigation-and-presentation.md)
   covers stacks, tabs, split views, modal pages, toolbars, menu bars, and

@@ -3,7 +3,7 @@ ActivityIndicator.scaleX: 🔌 read scaleX of ActivityIndicator: the host's own 
 Button.rotationX: 🔌 read rotationX of Button: the host's own transform, checked against the layer it composed itself
 Canvas.pivotX: 🔌 read pivotX of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.automationExcludedWithChildren: ✅
-ColorBox.accessibilityHint: ✅
+ColorPicker.accessibilityHint: ✅
 DatePicker.focus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
 DatePicker.isFocusedChanged: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
 DatePicker.unfocus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
@@ -16,8 +16,8 @@ Grid.opacity: ✅
 Grid.translationY: 🔌 read translationY of Grid: the host's own transform, checked against the layer it composed itself
 HStack.scaleX: 🔌 read scaleX of HStack: the host's own transform, checked against the layer it composed itself
 Image.rotationX: 🔌 read rotationX of Image: the host's own transform, checked against the layer it composed itself
-ItemsView.pivotX: 🔌 read pivotX of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.automationExcludedWithChildren: ✅
+List.pivotX: 🔌 read pivotX of List: the host's own transform, checked against the layer it composed itself
+Text.automationExcludedWithChildren: ✅
 Line.accessibilityHint: ✅
 Map.focus: not realized
 Map.isFocusedChanged: not realized

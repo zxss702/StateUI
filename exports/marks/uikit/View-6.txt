@@ -1,6 +1,6 @@
 # revision 1.1
 ActivityIndicator.tapCount: 🔌 tap on ActivityIndicator: the view's listening handed the recognizer's states, no touch sent
-ActivityIndicator.tapped: 🔌 tap on ActivityIndicator: the view's listening handed the recognizer's states, no touch sent
+ActivityIndicator.tapGesture: 🔌 tap on ActivityIndicator: the view's listening handed the recognizer's states, no touch sent
 Button.frameChanged: ✅
 Button.gridColumn: ✅
 Button.gridRow: ✅
@@ -16,9 +16,9 @@ CheckBox.pointerExited: 🔌 hover on CheckBox: the view's listening handed the 
 CheckBox.pointerMoved: 🔌 hover on CheckBox: the view's listening handed the recognizer's states, no touch sent
 CheckBox.pointerPressed: 🔌 hover on CheckBox: the view's listening handed the recognizer's states, no touch sent
 CheckBox.pointerReleased: 🔌 hover on CheckBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.swipeDirection: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.swipeThreshold: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.swiped: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.swipeDirection: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.swipeThreshold: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.swiped: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.panTouchCount: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.panUpdated: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.panXChannel: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
@@ -32,11 +32,11 @@ HStack.dragStarting: not realized
 HStack.dragText: not realized
 HStack.dropCompleted: not realized
 HStack.frameChanged: ✅
-HStack.margin: ✅
+HStack.padding: ✅
 Image.pinchUpdated: 🔌 pinch on Image: the view's listening handed the recognizer's states, no touch sent
-ItemsView.panYChannel: 🔌 pan on ItemsView: the view's listening handed the recognizer's states, no touch sent
-Label.tapCount: 🔌 tap on Label: the view's listening handed the recognizer's states, no touch sent
-Label.tapped: 🔌 tap on Label: the view's listening handed the recognizer's states, no touch sent
+List.panYChannel: 🔌 pan on List: the view's listening handed the recognizer's states, no touch sent
+Text.tapCount: 🔌 tap on Text: the view's listening handed the recognizer's states, no touch sent
+Text.tapGesture: 🔌 tap on Text: the view's listening handed the recognizer's states, no touch sent
 Line.frameChanged: ✅
 Line.gridColumn: ✅
 Line.gridRow: ✅
@@ -68,11 +68,11 @@ ProgressBar.dragStarting: not realized
 ProgressBar.dragText: not realized
 ProgressBar.dropCompleted: not realized
 ProgressBar.frameChanged: ✅
-ProgressBar.margin: ✅
+ProgressBar.padding: ✅
 RadioButton.pinchUpdated: 🔌 pinch on RadioButton: the view's listening handed the recognizer's states, no touch sent
 Rectangle.panYChannel: 🔌 pan on Rectangle: the view's listening handed the recognizer's states, no touch sent
 ScrollView.tapCount: 🔌 tap on ScrollView: the view's listening handed the recognizer's states, no touch sent
-ScrollView.tapped: 🔌 tap on ScrollView: the view's listening handed the recognizer's states, no touch sent
+ScrollView.tapGesture: 🔌 tap on ScrollView: the view's listening handed the recognizer's states, no touch sent
 SearchField.frameChanged: ✅
 SearchField.gridColumn: ✅
 SearchField.gridRow: ✅
@@ -104,8 +104,8 @@ TitleBar.dragStarting: not realized
 TitleBar.dragText: not realized
 TitleBar.dropCompleted: not realized
 TitleBar.frameChanged: not realized
-TitleBar.margin: not realized
+TitleBar.padding: not realized
 VStack.pinchUpdated: 🔌 pinch on VStack: the view's listening handed the recognizer's states, no touch sent
 WebView.panYChannel: 🔌 pan on WebView: the view's listening handed the recognizer's states, no touch sent
 ZStack.tapCount: 🔌 tap on ZStack: the view's listening handed the recognizer's states, no touch sent
-ZStack.tapped: 🔌 tap on ZStack: the view's listening handed the recognizer's states, no touch sent
+ZStack.tapGesture: 🔌 tap on ZStack: the view's listening handed the recognizer's states, no touch sent

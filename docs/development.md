@@ -31,7 +31,7 @@ apps/HelloWorld/Platforms/GTK/     HelloWorld GTK head
 ```
 
 The core and the host layer never import Foundation or a platform UI
-framework. Application code may import Foundation. Platform frameworks remain inside host packages and
+framework. App code may import Foundation. Platform frameworks remain inside host packages and
 platform entry points.
 
 Swift written for one host alone stands under the condition named for it:
@@ -69,7 +69,7 @@ Across the catalog, applicable examples prove:
 
 - a state read rebuilding only its reader;
 - a host-carried binding updating without that rebuild;
-- `Journey` and host-side motion.
+- `Journey` and host-side animation.
 
 Detailed teaching belongs in the Markdown documentation and public `///`
 comments. A sample outside the active contract does not remain in the catalog.

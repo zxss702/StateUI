@@ -27,8 +27,8 @@ See [the dictionary](README.md) for how a mark is given.
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 6 ✅ | `NSApplication` / structure |  |
 | UIKit | ✅ | 4 ✅ | `UIApplication` / `UIWindowScene` |  |
-| Android Views | ✅ | 4 ✅ | `Application` / structure |  |
-| WinUI 3 | ✅ | 6 ✅ | `Application` / structure |  |
+| Android Views | ✅ | 4 ✅ | `App` / structure |  |
+| WinUI 3 | ✅ | 6 ✅ | `App` / structure |  |
 | GTK 4 | ✅ |  | `GtkApplication` / structure |  |
 | Web |  |  | `document` / structure | no host yet |
 
@@ -42,5 +42,5 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/SceneContract.swif
 | `deactivated` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `destroying` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `stopped` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `windowClosed` | event | `String` | adaptive | ✅ | ⏸ |  | ✅ |  |  | UIKit: waits on Window.windowType, not realized yet; Android Views: not realized; GTK 4: not realized |
+| `windowClosed` | event | `String` | adaptive | ✅ | ⏸ |  | ✅ |  |  | UIKit: waits on WindowScene.windowType, not realized yet; Android Views: not realized; GTK 4: not realized |
 | `windowRestored` | event | `(String, String?)` | adaptive | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |

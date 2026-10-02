@@ -16,7 +16,7 @@ enum Route: Hashable {
     case settings
 }
 
-struct MainWindow: Window {
+struct MainWindow: WindowScene {
     @State private var path: [Route] = []
 
     var page: any Page {
@@ -50,7 +50,7 @@ only its value can read where it is, but cannot navigate on its owner's behalf.
 
 ## Tabs
 
-`TabbedView` is built from a distinct collection of application values. A
+`TabView` is built from a distinct collection of application values. A
 selection binding says which one is showing:
 
 ```swift quote
@@ -60,7 +60,7 @@ enum Tab: Hashable, CaseIterable {
 
 @State private var selected = Tab.notes
 
-TabbedView(Tab.allCases) { tab in
+TabView(Tab.allCases) { tab in
     switch tab {
     case .notes: NotesPage()
     case .search: SearchPage()
@@ -81,13 +81,13 @@ not to the tab host.
 
 ## Split view
 
-`SplitView` owns two pages - a sidebar and a detail - and a two-way binding
+`NavigationSplitView` owns two pages - a sidebar and a detail - and a two-way binding
 saying whether the sidebar shows:
 
 ```swift quote
 @State private var menuOpen = false
 
-SplitView($menuOpen, sidebar: {
+NavigationSplitView($menuOpen, sidebar: {
     MenuPage(isSidebarVisible: $menuOpen)
 }, detail: {
     MainPage()
@@ -125,7 +125,7 @@ enum Sheet: Hashable {
 @State private var sheets: [Sheet] = []
 @Environment private var window: WindowSession
 
-.onCreated {
+.onAppear {
     window.modalStack = ModalStack($sheets) { sheet in
         switch sheet {
         case .settings: SettingsPage(sheets: $sheets)
@@ -155,12 +155,12 @@ extension OverlayKey {
     static let offline = OverlayKey("offline")
 }
 
-struct OfflineNotice: ContentView {
+struct OfflineNotice: View {
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         HStack {
-            Label("Working offline")
+            Text("Working offline")
             Button("Dismiss").onClicked { window.overlays[.offline] = nil }
         }
         .spacing(12)
@@ -169,13 +169,13 @@ struct OfflineNotice: ContentView {
     }
 }
 
-struct LibraryPage: ContentView {
+struct LibraryPage: View {
     @Environment private var window: WindowSession
     @State private var offline = false
 
-    var content: any View {
+    var body: some View {
         Switch($offline)
-            .onChanged(offline) { window.overlays[.offline] = offline ? OfflineNotice() : nil }
+            .onChange(of: offline) { window.overlays[.offline] = offline ? OfflineNotice() : nil }
     }
 }
 ```
@@ -215,7 +215,7 @@ slot:
 @Environment private var page: PageSession
 @State private var query = ""
 
-.onCreated {
+.onAppear {
     page.titleView = SearchField($query)
         .placeholder("Search")
 }
@@ -274,7 +274,7 @@ Desktop menu bars are also stored on `PageSession`:
 page.menuBar = [
     Menu("File") {
         MenuItem("Save").onClicked { try await save() }
-        MenuSeparator()
+        Divider()
         Menu("Recent") {
             ForEach(recent) { file in
                 MenuItem(file.name)
@@ -290,7 +290,7 @@ page.menuBar = [
 The same item vocabulary can be attached to any view as a context menu:
 
 ```swift quote
-Label(document.title)
+Text(document.title)
     .contextMenu {
         MenuItem("Duplicate").onClicked { duplicate(document) }
         MenuItem("Delete")

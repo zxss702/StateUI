@@ -6,7 +6,7 @@ child an engine places, and the application's pictures.
 
 ## A shape and its brush
 
-A layout's own box, a ColorBox and any background that is not one plain colour are
+A layout's own box, a ColorPicker and any background that is not one plain colour are
 drawn by one drawable of the host's, `StateUIShapeDrawable`: a rectangle, a
 rectangle with rounded corners, or an ellipse, filled with a brush and
 outlined in one colour. The Swift host tells it every part as the host layer
@@ -88,7 +88,7 @@ height it has not settled yet, so the size a view is placed at is the one
 that decides; a size given whole by a parent of Android's decides as well.
 The bitmap says the density a whole one would have, so Android draws it at
 the picture's own size. It is read again only for more pixels, never for
-fewer, so a size in motion does not read it every frame, and a picture
+fewer, so a size in animation does not read it every frame, and a picture
 shown centred, at its own size, is read whole. Views showing the same
 picture at the same thinning share one bitmap, and the last to leave lets it
 go; only a bar's and a tab's icons are kept for as long as the host runs.

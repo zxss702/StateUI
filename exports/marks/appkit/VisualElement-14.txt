@@ -9,23 +9,18 @@ CheckBox.maximumHeight: ✅
 CheckBox.maximumWidth: ✅
 CheckBox.minimumHeight: ✅
 CheckBox.minimumWidth: ✅
-ColorBox.opacity: ✅
-ColorBox.translationY: 🔌 read translationY of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.opacity: ✅
+ColorPicker.translationY: 🔌 read translationY of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.scaleX: 🔌 read scaleX of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.rotationX: 🔌 read rotationX of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.pivotX: 🔌 read pivotX of Grid: the host's own transform, checked against the layer it composed itself
 HStack.automationExcludedWithChildren: ✅
 Image.accessibilityHint: ✅
-ItemsView.focus: ✅
-ItemsView.isFocusedChanged: ✅
-ItemsView.unfocus: ✅
-Label.frameChanged: ✅
-Label.maximumHeight: ✅
-Label.maximumWidth: ✅
-Label.minimumHeight: ✅
-Label.minimumWidth: ✅
 Line.opacity: ✅
 Line.translationY: 🔌 read translationY of Line: the host's own transform, checked against the layer it composed itself
+List.focus: ✅
+List.isFocusedChanged: ✅
+List.unfocus: ✅
 Map.scaleX: not realized
 Path.rotationX: 🔌 read rotationX of Path: the host's own transform, checked against the layer it composed itself
 Picker.pivotX: 🔌 read pivotX of Picker: the host's own transform, checked against the layer it composed itself
@@ -49,6 +44,11 @@ Stepper.accessibilityHint: ✅
 Switch.focus: ✅
 Switch.isFocusedChanged: ✅
 Switch.unfocus: ✅
+Text.frameChanged: ✅
+Text.maximumHeight: ✅
+Text.maximumWidth: ✅
+Text.minimumHeight: ✅
+Text.minimumWidth: ✅
 TextEditor.frameChanged: ✅
 TextEditor.maximumHeight: ✅
 TextEditor.maximumWidth: ✅

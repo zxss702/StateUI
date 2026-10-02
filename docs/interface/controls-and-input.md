@@ -10,19 +10,19 @@ in [Platform contract](../platform-contract.md).
 The value that gives a control its purpose belongs in its initializer:
 
 ```swift
-Label("Account")
+Text("Account")
 Button("Save")
 Button(icon: "trash.png")
 Image("avatar.png")
-ColorBox(.cornflowerBlue)
+ColorPicker(.cornflowerBlue)
 ```
 
 Optional capabilities are modifiers:
 
 ```swift
 Button("Save")
-    .isEnabled(true)
-    .padding(18, 10)
+    .disabled(!(true))
+    .contentPadding(18, 10)
     .shape(.roundedRectangle(8))
     .onClicked { }
 ```
@@ -35,10 +35,10 @@ Common view modifiers are grouped by meaning:
 
 - identity and aiming;
 - visibility, enabled state, opacity, and hit testing;
-- size, margin, alignment, clipping, and drawing order;
+- size, padding, alignment, clipping, and drawing order;
 - planar transform;
 - accessibility and automation;
-- gestures, frame feeds, focus feeds, and motion.
+- gestures, frame feeds, focus feeds, and animation.
 
 The matrix is authoritative for the exact members and host evidence.
 
@@ -63,7 +63,7 @@ A plain value is described when the body builds:
 @State var enabled = true
 
 Button(enabled ? "Enabled" : "Disabled")
-    .isEnabled(enabled)
+    .disabled(!(enabled))
 ```
 
 The two reads make this description depend on `enabled`. A binding overload
@@ -73,7 +73,7 @@ hands the state channel to the host instead:
 @State var volume = 0.5
 
 Slider($volume)
-ColorBox(.cornflowerBlue).scaleX($volume)
+ColorPicker(.cornflowerBlue).scaleEffect(x: $volume)
 ```
 
 Passing `$volume` does not make the body a reader. Native input and program
@@ -111,12 +111,12 @@ caused by the user. Do not duplicate the assignment in the handler.
 
 ## Text display
 
-`Label` displays either one text value or a formatted sequence of runs:
+`Text` displays either one text value or a formatted sequence of runs:
 
 ```swift
-Label()
+Text()
     .spans {
-        TextSpan("let ").textColor(.purple)
+        TextSpan("let ").foregroundStyle(.purple)
         TextSpan("count").fontAttributes(.bold)
         TextSpan(" = 0")
     }
@@ -124,7 +124,7 @@ Label()
 
 `TextSpan` is structural text content, not a `View`. It can carry text, font,
 decoration, line-height, foreground, and run background properties, but it has
-no independent frame, margin, or gesture surface.
+no independent frame, padding, or gesture surface.
 
 Plain text and formatted text are mutually exclusive descriptions of one
 label. Do not rely on modifier order to keep both.
@@ -258,7 +258,7 @@ not authorize production use on an unmarked host.
 
 ## Collections
 
-`ItemsView` shows items with the platform's own collection. StateUI says
+`List` shows items with the platform's own collection. StateUI says
 which items there are and builds an item only when the platform shows it;
 the platform scrolls, reuses its cells, shows the user's choice and tells
 assistive technology about the items:
@@ -269,20 +269,20 @@ struct Contact: Hashable {
     let phone: String
 }
 
-struct ContactsPage: ContentView {
+struct ContactsPage: View {
     @State private var chosen: String?
-    @Aim(ItemsViewContract.self) private var list
+    @Aim(ListContract.self) private var list
 
     let contacts: [Contact]
 
-    var content: any View {
+    var body: some View {
         Grid {
-            ItemsView(contacts, id: \.name) { contact in
+            List(contacts, id: \.name) { contact in
                 VStack {
-                    Label(contact.name).fontAttributes(.bold)
-                    Label(contact.phone)
+                    Text(contact.name).fontAttributes(.bold)
+                    Text(contact.phone)
                 }
-                .padding(14, 10)
+                .contentPadding(14, 10)
             }
             .selection($chosen)
             .onItemActivated { name in chosen = name }
@@ -314,7 +314,7 @@ An item is as tall as it asks in a list and as wide as it asks in a row; a
 size written on its view is kept. A list has no height of its own: give it
 one, or a row of a grid that fills.
 
-`ItemsView(groups:)` takes `ItemsGroup`s, each named with `.id` - so two
+`List(groups:)` takes `ItemsGroup`s, each named with `.id` - so two
 groups may hold equal items - and each with a `.header` and a `.footer`;
 `.header` and `.footer` on the list stand before and after everything.
 `.onEndReached(within:)` hears the user come within so many items of the
@@ -324,6 +324,6 @@ end - once, until they scroll away or the list gains items - and
 ## Choosing a control
 
 Prefer the smallest accepted native primitive that expresses the behavior.
-Compose richer application controls as `ContentView`s. Add a base control only
+Compose richer application controls as `View`s. Add a base control only
 when the capability has one coherent meaning across target toolkits or belongs
 to a clearly optional provider package.

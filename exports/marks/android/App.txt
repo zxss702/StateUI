@@ -1,0 +1,14 @@
+# revision 1.1
+App: ✅
+App.alert: 🔌 read a question: what the relay keeps of the dialog it showed
+App.announce: cannot read what the screen reader said - Android's driver has no path for it yet
+App.chooseAction: 🔌 read a question: what the relay keeps of the dialog it showed
+App.confirm: 🔌 read a question: what the relay keeps of the dialog it showed
+App.currentTime: ✅
+App.currentTimeZone: ✅
+App.handlerFailed: ✅
+App.hideOnScreenKeyboard: cannot focus on TextField - Android's driver has no path for it yet
+App.persistSceneValue: not realized
+App.persistValue: cannot read what is kept - Android's driver has no path for it yet
+App.prompt: 🔌 read a question: what the relay keeps of the dialog it showed
+App.utcOffset: ✅

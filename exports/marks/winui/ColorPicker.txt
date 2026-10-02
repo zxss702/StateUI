@@ -1,0 +1,5 @@
+# revision 1.1
+ColorPicker: ✅
+ColorPicker.color: ✅
+ColorPicker.cornerRadius: ✅
+ColorPicker.frameChanged: ✅

@@ -32,7 +32,7 @@ A declaration says what the host does, not what a tier offers:
   only, which only a record with its note can say.
 - `allowDrop`, `canDrag` and `dragText` are absent: AppKit realizes no
   dragging.
-- `clipsContent` and `avoidsSafeArea` are absent: this host reads neither.
+- `clipsContent` and `ignoresSafeArea` are absent: this host reads neither.
 - `background` and `isEnabled` are taken by the registrations of the controls
   that have them. A background is a partial realization on this host, which
   only a record with its note can say.

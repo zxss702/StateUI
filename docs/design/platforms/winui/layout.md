@@ -44,7 +44,7 @@ and the layout's arrangement gives the child the place it keeps.
 
 A label whose place travels is arranged at its place's corner but at the size
 the place is bound for ([words at their
-destination](../../host/motion.md#words-at-their-destination)). WinUI would
+destination](../../host/animation.md#words-at-their-destination)). WinUI would
 keep its words on the one line the destination gives them anyway - it
 arranges nothing smaller than it measured - but it cuts an element to the
 place it is arranged in, so the words' ends would not be drawn until the

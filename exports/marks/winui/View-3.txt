@@ -26,15 +26,15 @@ CheckBox.gridRow: ✅
 CheckBox.swipeDirection: ✅
 CheckBox.swipeThreshold: ✅
 CheckBox.swiped: ✅
-ColorBox.frameChanged: ✅
-ColorBox.margin: ✅
-ColorBox.pointerEntered: ✅
-ColorBox.pointerExited: ✅
-ColorBox.pointerMoved: ✅
-ColorBox.pointerPressed: ✅
-ColorBox.pointerReleased: ✅
-ColorBox.tapCount: ✅
-ColorBox.tapped: ✅
+ColorPicker.frameChanged: ✅
+ColorPicker.padding: ✅
+ColorPicker.pointerEntered: ✅
+ColorPicker.pointerExited: ✅
+ColorPicker.pointerMoved: ✅
+ColorPicker.pointerPressed: ✅
+ColorPicker.pointerReleased: ✅
+ColorPicker.tapCount: ✅
+ColorPicker.tapGesture: ✅
 DatePicker.allowDrop: not realized
 DatePicker.area: ✅
 DatePicker.dragLeave: not realized
@@ -63,25 +63,25 @@ HStack.swipeDirection: ✅
 HStack.swipeThreshold: ✅
 HStack.swiped: ✅
 Image.frameChanged: ✅
-Image.margin: ✅
+Image.padding: ✅
 Image.pointerEntered: ✅
 Image.pointerExited: ✅
 Image.pointerMoved: ✅
 Image.pointerPressed: ✅
 Image.pointerReleased: ✅
 Image.tapCount: ✅
-Image.tapped: ✅
-ItemsView.allowDrop: not realized
-ItemsView.area: ✅
-ItemsView.dragLeave: not realized
-ItemsView.dragOver: not realized
-ItemsView.drop: not realized
-ItemsView.frameChanged: ✅
-ItemsView.panYChannel: ✅
-Label.frameChanged: ✅
-Label.gridColumnSpan: ✅
-Label.gridRowSpan: ✅
-Label.pinchUpdated: ✅
+Image.tapGesture: ✅
+List.allowDrop: not realized
+List.area: ✅
+List.dragLeave: not realized
+List.dragOver: not realized
+List.drop: not realized
+List.frameChanged: ✅
+List.panYChannel: ✅
+Text.frameChanged: ✅
+Text.gridColumnSpan: ✅
+Text.gridRowSpan: ✅
+Text.pinchUpdated: ✅
 Line.canDrag: not realized
 Line.dragStarting: not realized
 Line.dragText: not realized
@@ -99,14 +99,14 @@ Map.swipeDirection: not realized
 Map.swipeThreshold: not realized
 Map.swiped: not realized
 Path.frameChanged: ✅
-Path.margin: ✅
+Path.padding: ✅
 Path.pointerEntered: ✅
 Path.pointerExited: ✅
 Path.pointerMoved: ✅
 Path.pointerPressed: ✅
 Path.pointerReleased: ✅
 Path.tapCount: ✅
-Path.tapped: ✅
+Path.tapGesture: ✅
 Picker.allowDrop: not realized
 Picker.area: ✅
 Picker.dragLeave: not realized
@@ -135,14 +135,14 @@ PositionIndicator.swipeDirection: not realized
 PositionIndicator.swipeThreshold: not realized
 PositionIndicator.swiped: not realized
 ProgressBar.frameChanged: ✅
-ProgressBar.margin: ✅
+ProgressBar.padding: ✅
 ProgressBar.pointerEntered: ✅
 ProgressBar.pointerExited: ✅
 ProgressBar.pointerMoved: ✅
 ProgressBar.pointerPressed: ✅
 ProgressBar.pointerReleased: ✅
 ProgressBar.tapCount: ✅
-ProgressBar.tapped: ✅
+ProgressBar.tapGesture: ✅
 RadioButton.allowDrop: not realized
 RadioButton.area: ✅
 RadioButton.dragLeave: not realized
@@ -171,14 +171,14 @@ SearchField.swipeDirection: ✅
 SearchField.swipeThreshold: ✅
 SearchField.swiped: ✅
 Slider.frameChanged: ✅
-Slider.margin: ✅
+Slider.padding: ✅
 Slider.pointerEntered: ✅
 Slider.pointerExited: ✅
 Slider.pointerMoved: ✅
 Slider.pointerPressed: ✅
 Slider.pointerReleased: ✅
 Slider.tapCount: ✅
-Slider.tapped: ✅
+Slider.tapGesture: ✅
 Stepper.allowDrop: not realized
 Stepper.area: ✅
 Stepper.dragLeave: not realized
@@ -207,14 +207,14 @@ TextField.swipeDirection: ✅
 TextField.swipeThreshold: ✅
 TextField.swiped: ✅
 TimePicker.frameChanged: ✅
-TimePicker.margin: ✅
+TimePicker.padding: ✅
 TimePicker.pointerEntered: ✅
 TimePicker.pointerExited: ✅
 TimePicker.pointerMoved: ✅
 TimePicker.pointerPressed: ✅
 TimePicker.pointerReleased: ✅
 TimePicker.tapCount: ✅
-TimePicker.tapped: ✅
+TimePicker.tapGesture: ✅
 TitleBar.allowDrop: not realized
 TitleBar.area: not realized
 TitleBar.dragLeave: not realized

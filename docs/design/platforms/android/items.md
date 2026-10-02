@@ -1,6 +1,6 @@
 # Items
 
-An ItemsView is AndroidX's `RecyclerView` in the relay's
+An List is AndroidX's `RecyclerView` in the relay's
 `StateUIItemsView`, its adapter over the list's identities. The recycler
 scrolls, reuses its cells and tells TalkBack; each cell holds one entry's
 subtree, which it asks the tree for through the host layer's `ItemsCells`
@@ -18,8 +18,8 @@ call.
 The recycler holds no choice of its own and hears a tap and nothing more,
 so a tap on an item's cell goes to the host layer's rule
 ([a tap](../../host/items.md#a-tap)). A chosen item is drawn on a band of
-the theme's accent, the cell activated; TalkBack hears it selected, or
-checked where many may be chosen. An item takes a touch - the theme's
+the color scheme's accent, the cell activated; TalkBack hears it selected, or
+checked where many may be chosen. An item takes a touch - the color scheme's
 ripple - only where a tap does something: where items may be chosen, or
 something hears one opened.
 
@@ -56,14 +56,14 @@ the layout or the choice may change. So the relay applies what the Swift
 view says at once when it can, and otherwise once the recycler is done, in
 the order said. The entries and their room change together, and the
 changes are told as runs (`ItemsChanges.removedRuns`, `insertedRuns`),
-animated unless the list was empty or motion is reduced. The items in view
+animated unless the list was empty or animation is reduced. The items in view
 are told once a scroll or a layout is over, never from inside the
 recycler's scroll callback: a list that loads more there would change the
 recycler while it scrolls.
 
 ## Scrolling to an item
 
-With motion, the recycler's smooth scroller glides to the item and asks
+With animation, the recycler's smooth scroller glides to the item and asks
 the host layer's rule where it stands ([scrolling to an
 item](../../host/items.md#scrolling-to-an-item)). Without, an item laid out
 is moved there at once; one far off is brought to the start first and

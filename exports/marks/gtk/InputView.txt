@@ -1,6 +1,5 @@
 # revision 1.1
 SearchField.cursorPosition: cannot read cursorPosition of SearchField - GTK's driver has no path for it yet
-SearchField.inputPurpose: cannot read inputPurpose of SearchField - GTK's driver has no path for it yet
 SearchField.isEnabled: ✅
 SearchField.isReadOnly: ◐ cannot read isReadOnly of SearchField - GTK's driver has no path for it yet
 SearchField.isSpellCheckEnabled: cannot read isSpellCheckEnabled of SearchField - GTK's driver has no path for it yet
@@ -11,8 +10,8 @@ SearchField.placeholderColor: cannot read placeholderColor of SearchField - GTK'
 SearchField.selectionLength: cannot read selectionLength of SearchField - GTK's driver has no path for it yet
 SearchField.text: ✅
 SearchField.textChanged: ✅
+SearchField.textContentType: cannot read textContentType of SearchField - GTK's driver has no path for it yet
 TextEditor.cursorPosition: cannot read cursorPosition of TextEditor - GTK's driver has no path for it yet
-TextEditor.inputPurpose: cannot read inputPurpose of TextEditor - GTK's driver has no path for it yet
 TextEditor.isEnabled: ✅
 TextEditor.isReadOnly: ◐ cannot read isReadOnly of TextEditor - GTK's driver has no path for it yet
 TextEditor.isSpellCheckEnabled: cannot read isSpellCheckEnabled of TextEditor - GTK's driver has no path for it yet
@@ -23,8 +22,8 @@ TextEditor.placeholderColor: cannot read placeholderColor of TextEditor - GTK's 
 TextEditor.selectionLength: cannot read selectionLength of TextEditor - GTK's driver has no path for it yet
 TextEditor.text: ✅
 TextEditor.textChanged: ✅
+TextEditor.textContentType: cannot read textContentType of TextEditor - GTK's driver has no path for it yet
 TextField.cursorPosition: cannot read cursorPosition of TextField - GTK's driver has no path for it yet
-TextField.inputPurpose: cannot read inputPurpose of TextField - GTK's driver has no path for it yet
 TextField.isEnabled: ✅
 TextField.isReadOnly: ◐ cannot read isReadOnly of TextField - GTK's driver has no path for it yet
 TextField.isSpellCheckEnabled: cannot read isSpellCheckEnabled of TextField - GTK's driver has no path for it yet
@@ -35,3 +34,4 @@ TextField.placeholderColor: cannot read placeholderColor of TextField - GTK's dr
 TextField.selectionLength: cannot read selectionLength of TextField - GTK's driver has no path for it yet
 TextField.text: ✅
 TextField.textChanged: ✅
+TextField.textContentType: cannot read textContentType of TextField - GTK's driver has no path for it yet

@@ -10,7 +10,7 @@ Canvas.minimumHeight: ✅
 Canvas.minimumWidth: ✅
 CheckBox.opacity: ✅
 CheckBox.translationY: 🔌 read translationY of CheckBox: the host's own transform, checked against the layer it composed itself
-ColorBox.scaleX: 🔌 read scaleX of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.scaleX: 🔌 read scaleX of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.rotationX: 🔌 read rotationX of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.pivotX: 🔌 read pivotX of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.automationExcludedWithChildren: ✅
@@ -18,14 +18,12 @@ HStack.accessibilityHint: ✅
 Image.focus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
 Image.isFocusedChanged: – Image takes no keyboard focus here: it refuses it, and nothing is heard
 Image.unfocus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
-ItemsView.frameChanged: ✅
-ItemsView.maximumHeight: ✅
-ItemsView.maximumWidth: ✅
-ItemsView.minimumHeight: ✅
-ItemsView.minimumWidth: ✅
-Label.opacity: ✅
-Label.translationY: 🔌 read translationY of Label: the host's own transform, checked against the layer it composed itself
 Line.scaleX: 🔌 read scaleX of Line: the host's own transform, checked against the layer it composed itself
+List.frameChanged: ✅
+List.maximumHeight: ✅
+List.maximumWidth: ✅
+List.minimumHeight: ✅
+List.minimumWidth: ✅
 Map.rotationX: not realized
 Path.pivotX: 🔌 read pivotX of Path: the host's own transform, checked against the layer it composed itself
 Picker.automationExcludedWithChildren: ✅
@@ -53,6 +51,8 @@ Switch.maximumHeight: ✅
 Switch.maximumWidth: ✅
 Switch.minimumHeight: ✅
 Switch.minimumWidth: ✅
+Text.opacity: ✅
+Text.translationY: 🔌 read translationY of Text: the host's own transform, checked against the layer it composed itself
 TextEditor.opacity: ✅
 TextEditor.translationY: 🔌 read translationY of TextEditor: the host's own transform, checked against the layer it composed itself
 TextField.scaleX: 🔌 read scaleX of TextField: the host's own transform, checked against the layer it composed itself

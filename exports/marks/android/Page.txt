@@ -9,4 +9,4 @@ Page.hasNavigationBar: cannot read hasNavigationBar of Page - Android's driver h
 Page.navigatedFrom: ✅
 Page.navigatedTo: ✅
 Page.navigatingFrom: ✅
-Page.padding: ✅
+Page.contentPadding: ✅

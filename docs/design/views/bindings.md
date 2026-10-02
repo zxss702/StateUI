@@ -13,8 +13,8 @@ What the host does with a carried state follows from the value:
 
 ```text
   journey   a number, a colour, a thickness,     the host animates the property there under the
-            an inset, a point                    element's motion; $x.journey is the animation,
-                                                 and .motion(.none) lands it at once. Reading the
+            an inset, a point                    element's animation; $x.journey is the animation,
+                                                 and .animation(.none) lands it at once. Reading the
                                                  state answers where the value is going.
 
   plain     a Bool, an Int, a member of a        the host sets the property as the value stands,
@@ -59,7 +59,7 @@ The twins sit on the element-side tiers - `VisualElement`, `View`, `Layout`,
 `StackBase`, `Shape`, `InputView`, and the control itself where the property is
 one control's own - and never on the `…Properties` protocols the value forms
 sit on. A `StyleBag` wears every property protocol there is, so a twin written
-there would appear inside `Style<Label>`, where it would compile and mean
+there would appear inside `Style<Text>`, where it would compile and mean
 nothing: a style is driven by nothing. The mixins have no element half, so
 their twins are written `where Self: VisualElement`.
 
@@ -94,7 +94,7 @@ following it, a label - for no render at all. What it costs is measuring the
 label again on the frame the words change, which any changed caption costs.
 
 There is no driven `text` on the `TextElement` tier, though the value form sits
-there. A Label's and a Button's text is `.out`, written by the host and
+there. A Text's and a Button's text is `.out`, written by the host and
 reported by nobody. The text of a `TextField`, a `TextEditor` and a
 `SearchField` goes both ways: the user types into it, and the typed words land
 on the state whole as the host's own write. The two directions differ per
@@ -176,8 +176,8 @@ into several states at several rates; each reading has its own window.
 ## A finger takes a moving thumb
 
 A slider or a stepper carries its `Double` as a journey. An assignment
-(`volume = 1`) sends the thumb there under the element's motion, and
-`.motion(.none)` on the slider lands it at once. A drag is written onto the
+(`volume = 1`) sends the thumb there under the element's animation, and
+`.animation(.none)` on the slider lands it at once. A drag is written onto the
 journey's value and destination together, so nothing aims the thumb out from
 under the hand holding it; a report raised inside the host's own write is the
 host hearing itself, and is dropped. A finger that takes a thumb already moving

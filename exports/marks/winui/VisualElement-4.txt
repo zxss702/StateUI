@@ -12,9 +12,9 @@ Canvas.rotationX: not realized
 CheckBox.isAccessibilityHidden: ✅
 CheckBox.isEnabled: ✅
 CheckBox.scaleX: ✅
-ColorBox.ignoresInput: not realized
-ColorBox.layoutDirection: not realized
-ColorBox.translationY: ✅
+ColorPicker.ignoresInput: not realized
+ColorPicker.layoutDirection: not realized
+ColorPicker.translationY: ✅
 DatePicker.rotation: ✅
 DatePicker.style: ✅
 Ellipse.accessibilityHeadingLevel: ✅
@@ -34,16 +34,13 @@ HStack.unfocus: – HStack takes no keyboard focus here: it refuses it, and noth
 Image.accessibilityHint: ✅
 Image.isVisible: ✅
 Image.rotationY: not realized
-ItemsView.automationExcludedWithChildren: ✅
-ItemsView.frameChanged: ✅
-ItemsView.height: ✅
-ItemsView.scaleY: ✅
-ItemsView.width: ✅
-Label.frame: ✅
-Label.pivotX: ✅
-Label.zIndex: not realized
 Line.accessibilityLabel: ✅
 Line.rotationX: not realized
+List.automationExcludedWithChildren: ✅
+List.frameChanged: ✅
+List.height: ✅
+List.scaleY: ✅
+List.width: ✅
 Map.isAccessibilityHidden: not realized
 Map.isEnabled: not realized
 Map.scaleX: not realized
@@ -90,6 +87,9 @@ Stepper.style: ✅
 Switch.accessibilityHeadingLevel: ✅
 Switch.opacity: ✅
 Switch.scale: ✅
+Text.frame: ✅
+Text.pivotX: ✅
+Text.zIndex: not realized
 TextEditor.background: not realized
 TextEditor.frameChanged: ✅
 TextEditor.maximumHeight: ✅

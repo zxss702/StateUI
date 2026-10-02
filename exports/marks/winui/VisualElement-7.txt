@@ -10,8 +10,8 @@ Canvas.scaleX: ✅
 CheckBox.ignoresInput: not realized
 CheckBox.layoutDirection: not realized
 CheckBox.translationY: ✅
-ColorBox.rotation: ✅
-ColorBox.style: ✅
+ColorPicker.rotation: ✅
+ColorPicker.style: ✅
 DatePicker.accessibilityHeadingLevel: ✅
 DatePicker.opacity: ✅
 DatePicker.scale: ✅
@@ -34,11 +34,11 @@ Image.frameChanged: ✅
 Image.height: ✅
 Image.scaleY: ✅
 Image.width: ✅
-ItemsView.frame: ✅
-ItemsView.pivotX: ✅
-ItemsView.zIndex: not realized
-Label.accessibilityLabel: ✅
-Label.rotationX: not realized
+List.frame: ✅
+List.pivotX: ✅
+List.zIndex: not realized
+Text.accessibilityLabel: ✅
+Text.rotationX: not realized
 Line.isAccessibilityHidden: ✅
 Line.isEnabled: not realized
 Line.scaleX: ✅

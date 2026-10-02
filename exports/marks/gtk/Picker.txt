@@ -1,5 +1,4 @@
 # revision 1.1
-Label.text: ✅
 Picker: ✅
 Picker.closed: not realized
 Picker.frameChanged: ✅
@@ -9,3 +8,4 @@ Picker.options: ✅
 Picker.selectedIndex: ✅
 Picker.selectedIndexChanged: ✅
 Picker.title: not realized
+Text.text: ✅

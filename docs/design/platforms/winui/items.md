@@ -1,6 +1,6 @@
 # Items
 
-An ItemsView is a StateUI layout holding WinUI's own `ItemsView`, its
+An List is a StateUI layout holding WinUI's own `List`, its
 source an observable vector of the list's identities and its item template
 an element factory of the relay's: each entry's cell is a panel of the
 host's, stood in an `ItemContainer`, holding the entry's subtree it asks the
@@ -34,7 +34,7 @@ WinUI a moment later, and no view change says it.
 
 ## Its room
 
-WinUI's `ScrollView`, the one an `ItemsView` holds, takes its viewport from
+WinUI's `ScrollView`, the one an `List` holds, takes its viewport from
 the room it is MEASURED in, not the one it is arranged in: measured with no
 room the way it scrolls - as a ScrollView's `ScrollViewer` is
 ([scrolling](layout.md#scrolling)) - it stands 400 tall with a viewport of

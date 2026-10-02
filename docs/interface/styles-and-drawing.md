@@ -1,6 +1,6 @@
 # Styles and drawing
 
-StateUI resolves styles, theme variants, and visual-state setters in Swift
+StateUI resolves styles, color scheme variants, and visual-state setters in Swift
 before a host receives a control patch. The host sees the effective semantic
 properties it must apply; it does not run a second style cascade.
 
@@ -13,12 +13,12 @@ every control of its target type. A keyed style is selected with `.style(...)`:
 enum HandbookStyles {
     static var sheet: StyleSheet {
         StyleSheet {
-            Style<Label>()
+            Style<Text>()
                 .fontSize(15)
-                .textColor(Color(light: .black, dark: .white))
+                .foregroundStyle(Color(light: .black, dark: .white))
 
             Style<Button>("Primary")
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .background(.cornflowerBlue)
                 .shape(.roundedRectangle(8))
 
@@ -33,14 +33,14 @@ enum HandbookStyles {
 Install the sheet on `ApplicationSession` when the application is made:
 
 ```swift quote
-struct NotesApp: Application {
+struct NotesApp: App {
     @Environment private var application: ApplicationSession
 
     init() {
         application.styles = HandbookStyles.sheet
     }
 
-    var scene: any Scene { MainWindow() }
+    var body: some Scene { MainWindow() }
 }
 ```
 
@@ -72,7 +72,7 @@ The style's generic target is a compile-time boundary. It offers only the
 property modifiers valid for that control; events, gestures, identity, and
 driven bindings are not style values.
 
-## Theme values
+## ColorScheme values
 
 `Color` stores exact sRGB channels and optionally a light and dark variant:
 
@@ -88,19 +88,19 @@ when it is written. Named colors are static members checked by the compiler.
 `Color(red:green:blue:alpha:)` takes whole-number channels from 0 through 255;
 the alpha is 255, opaque, unless it is given.
 
-`ImageSource` follows the same theme rule:
+`ImageSource` follows the same color scheme rule:
 
 ```swift
 let icon = ImageSource(light: "edit.png", dark: "edit-dark.png")
 Image(icon)
 ```
 
-The differ resolves the theme variant for the element wearing it. A system
-theme change invalidates those resolved uses. The host therefore receives one
-concrete color or resource name and needs no parallel theme binding model.
+The differ resolves the color scheme variant for the element wearing it. A system
+color scheme change invalidates those resolved uses. The host therefore receives one
+concrete color or resource name and needs no parallel color scheme binding model.
 
 Use `@Environment var app: AppInfo` only when application logic needs the
-theme as a value. A themed color or image follows the theme without an
+color scheme as a value. A themed color or image follows the color scheme without an
 application branch.
 
 ## Visual states
@@ -117,7 +117,7 @@ Style<Button>()
     .visualState(.disabled) { state in
         state
             .background(.gray)
-            .textColor(.darkGray)
+            .foregroundStyle(.darkGray)
     }
     .visualState(.pressed) { state in
         state.opacity(0.75)
@@ -139,7 +139,7 @@ two of them set. A disabled switch that is on is dimmed, and green:
 @State var isOn = true
 
 Switch($isOn)
-    .isEnabled(false)
+    .disabled(!(false))
     .visualState(.disabled) { $0.opacity(0.5) }
     .visualState(.on) { $0.background(.green) }
 ```
@@ -147,8 +147,8 @@ Switch($isOn)
 Normal's values show only when no other state holds.
 
 Leaving a state gives the control its own values back. A state's values are
-ordinary property changes: they move under the control's `.motion(_:)` like
-any other value, and `.motion(.none)` makes them change at once.
+ordinary property changes: they move under the control's `.animation(_:)` like
+any other value, and `.animation(.none)` makes them change at once.
 
 A control can override or add states locally. Its values merge with its
 style's by state and property, so a local change does not erase the
@@ -170,7 +170,7 @@ hears every state the control declares, normal included:
 @State private var scale = 1.0
 
 Button("Hold")
-    .scale($scale)
+    .scaleEffect($scale)
     .onVisualStateChanged(.pressed, .normal) { state in
         try await $scale.journey.move(
             to: state == .pressed ? 0.96 : 1,
@@ -198,15 +198,15 @@ let wash = Brush.linearGradient(
     endPoint: Point(1, 1))
 
 VStack {
-    Label("Gradient")
-        .textColor(.white)
+    Text("Gradient")
+        .foregroundStyle(.white)
 }
 .background(wash)
 ```
 
 Gradient points are fractions of the painted bounds. Offsets run from zero at
 the start to one at the end. A radial gradient supplies a fractional center
-and radius. Theme-aware colors inside gradient stops resolve with the element
+and radius. ColorScheme-aware colors inside gradient stops resolve with the element
 that uses the brush.
 
 Brush interpolation is valid only when the standing and destination values
@@ -236,7 +236,7 @@ Rectangle()
         endPoint: Point(1, 0)))
     .stroke(.solidColor(.white))
     .strokeWidth(2)
-    .height(80)
+    .frame(height: 80)
 ```
 
 The host maps this description to its native path and paint types. Path data
@@ -258,7 +258,7 @@ Canvas {
         height: 48,
         cornerRadius: 8)
 
-    Draw.textColor(.white)
+    Draw.foregroundStyle(.white)
     Draw.fontSize(15)
     Draw.drawText(
         "Ready",
@@ -269,7 +269,7 @@ Canvas {
         horizontalAlignment: .center,
         verticalAlignment: .center)
 }
-.height(48)
+.frame(height: 48)
 ```
 
 Commands execute in order. Color, stroke, font, alpha, and transform commands

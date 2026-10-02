@@ -12,13 +12,13 @@ Button
   iconSpacing
   isEnabled
   lineBreak
-  padding
+  contentPadding
   shape
   stroke
   strokeWidth
   text
   textCase
-  textColor
+  foregroundStyle
   clicked()
   pressed()
   released()
@@ -31,7 +31,7 @@ CheckBox
   isEnabled
   isOn
   toggled()
-ColorBox
+ColorPicker
   color
   cornerRadius
 DatePicker
@@ -58,7 +58,7 @@ Grid
   columns
   ignoresInput
   letsInputThrough
-  padding
+  contentPadding
   rowSpacing
   rows
   shape
@@ -69,7 +69,7 @@ HStack
   clipsContent
   ignoresInput
   letsInputThrough
-  padding
+  contentPadding
   shape
   spacing
   stroke
@@ -77,7 +77,7 @@ HStack
 Image
   aspect
   source
-ItemsView
+List
   endReachedWithin
   items
   itemsLayout
@@ -87,21 +87,21 @@ ItemsView
   itemActivated()
   realizedChanged()
   selectionChanged()
-Label
+Text
   background
   characterSpacing
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  multilineTextAlignment
   isEnabled
   lineBreak
   lineHeight
-  maximumLines
-  padding
+  lineLimit
+  contentPadding
   text
   textCase
-  textColor
+  foregroundStyle
   textDecorations
   verticalTextAlignment
 Line
@@ -174,10 +174,10 @@ RadioButton
   fontSize
   isEnabled
   isOn
-  padding
+  contentPadding
   text
   textCase
-  textColor
+  foregroundStyle
   toggled()
 Rectangle
   aspect
@@ -193,14 +193,14 @@ Rectangle
   strokeWidth
 ScrollView
   background
-  horizontalScrollBarVisibility
+  horizontalScrollIndicators
   orientation
-  padding
+  contentPadding
   scrollOffset
   shape
   stroke
   strokeWidth
-  verticalScrollBarVisibility
+  verticalScrollIndicators
   scrollStopped()
   scrollXChanged()
   scrollYChanged()
@@ -209,8 +209,8 @@ SearchField
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
-  inputPurpose
+  multilineTextAlignment
+  textContentType
   isEnabled
   isReadOnly
   isSpellCheckEnabled
@@ -221,7 +221,7 @@ SearchField
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   submitted()
   textChanged()
 Slider
@@ -250,8 +250,8 @@ TextEditor
   fontFamily
   fontSize
   growsWithText
-  horizontalTextAlignment
-  inputPurpose
+  multilineTextAlignment
+  textContentType
   isEnabled
   isReadOnly
   isSpellCheckEnabled
@@ -262,15 +262,15 @@ TextEditor
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   textChanged()
 TextField
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
-  inputPurpose
+  multilineTextAlignment
+  textContentType
   isEnabled
   isPassword
   isReadOnly
@@ -282,7 +282,7 @@ TextField
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   submitted()
   textChanged()
 TimePicker
@@ -294,7 +294,7 @@ VStack
   clipsContent
   ignoresInput
   letsInputThrough
-  padding
+  contentPadding
   shape
   spacing
   stroke
@@ -312,7 +312,7 @@ ZStack
   clipsContent
   ignoresInput
   letsInputThrough
-  padding
+  contentPadding
   shape
   stroke
   strokeWidth
@@ -332,7 +332,7 @@ ZStack
   horizontalAlignment
   isAccessibilityHidden
   isVisible
-  margin
+  padding
   maximumHeight
   maximumWidth
   minimumHeight
@@ -366,7 +366,7 @@ ZStack
   pointerPressed()
   pointerReleased()
   swiped()
-  tapped()
+  tapGesture()
 (acts)
   alert()
   announce()

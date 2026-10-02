@@ -17,9 +17,9 @@ Canvas.pointerReleased: 🔌 hover on Canvas: the view's listening handed the re
 CheckBox.swipeDirection: 🔌 pan on CheckBox: the view's listening handed the recognizer's states, no touch sent
 CheckBox.swipeThreshold: 🔌 pan on CheckBox: the view's listening handed the recognizer's states, no touch sent
 CheckBox.swiped: 🔌 pan on CheckBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.panTouchCount: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.panUpdated: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.panXChannel: 🔌 pan on ColorBox: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.panTouchCount: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.panUpdated: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.panXChannel: 🔌 pan on ColorPicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.frameChanged: ✅
 DatePicker.gridColumnSpan: ✅
 DatePicker.gridRowSpan: ✅
@@ -30,14 +30,14 @@ Grid.dragStarting: not realized
 Grid.dragText: not realized
 Grid.dropCompleted: not realized
 Grid.frameChanged: ✅
-Grid.margin: ✅
+Grid.padding: ✅
 HStack.pinchUpdated: 🔌 pinch on HStack: the view's listening handed the recognizer's states, no touch sent
 Image.panYChannel: 🔌 pan on Image: the view's listening handed the recognizer's states, no touch sent
-ItemsView.tapCount: 🔌 tap on ItemsView: the view's listening handed the recognizer's states, no touch sent
-ItemsView.tapped: 🔌 tap on ItemsView: the view's listening handed the recognizer's states, no touch sent
-Label.frameChanged: ✅
-Label.gridColumn: ✅
-Label.gridRow: ✅
+List.tapCount: 🔌 tap on List: the view's listening handed the recognizer's states, no touch sent
+List.tapGesture: 🔌 tap on List: the view's listening handed the recognizer's states, no touch sent
+Text.frameChanged: ✅
+Text.gridColumn: ✅
+Text.gridRow: ✅
 Line.allowDrop: not realized
 Line.dragLeave: not realized
 Line.dragOver: not realized
@@ -66,11 +66,11 @@ PositionIndicator.dragStarting: not realized
 PositionIndicator.dragText: not realized
 PositionIndicator.dropCompleted: not realized
 PositionIndicator.frameChanged: not realized
-PositionIndicator.margin: not realized
+PositionIndicator.padding: not realized
 ProgressBar.pinchUpdated: 🔌 pinch on ProgressBar: the view's listening handed the recognizer's states, no touch sent
 RadioButton.panYChannel: 🔌 pan on RadioButton: the view's listening handed the recognizer's states, no touch sent
 Rectangle.tapCount: 🔌 tap on Rectangle: the view's listening handed the recognizer's states, no touch sent
-Rectangle.tapped: 🔌 tap on Rectangle: the view's listening handed the recognizer's states, no touch sent
+Rectangle.tapGesture: 🔌 tap on Rectangle: the view's listening handed the recognizer's states, no touch sent
 ScrollView.frameChanged: ✅
 ScrollView.gridColumn: ✅
 ScrollView.gridRow: ✅
@@ -102,11 +102,11 @@ TimePicker.dragStarting: not realized
 TimePicker.dragText: not realized
 TimePicker.dropCompleted: not realized
 TimePicker.frameChanged: ✅
-TimePicker.margin: ✅
+TimePicker.padding: ✅
 TitleBar.pinchUpdated: not realized
 VStack.panYChannel: 🔌 pan on VStack: the view's listening handed the recognizer's states, no touch sent
 WebView.tapCount: 🔌 tap on WebView: the view's listening handed the recognizer's states, no touch sent
-WebView.tapped: 🔌 tap on WebView: the view's listening handed the recognizer's states, no touch sent
+WebView.tapGesture: 🔌 tap on WebView: the view's listening handed the recognizer's states, no touch sent
 ZStack.frameChanged: ✅
 ZStack.gridColumn: ✅
 ZStack.gridRow: ✅

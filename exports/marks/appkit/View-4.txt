@@ -17,9 +17,9 @@ Canvas.pointerReleased: 🔌 hover on Canvas: handed to the host's recognizer or
 CheckBox.swipeDirection: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.swipeThreshold: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.swiped: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.panTouchCount: 🔌 pan on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.panUpdated: 🔌 pan on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.panXChannel: 🔌 pan on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
+ColorPicker.panTouchCount: 🔌 pan on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
+ColorPicker.panUpdated: 🔌 pan on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
+ColorPicker.panXChannel: 🔌 pan on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
 DatePicker.frameChanged: ✅
 DatePicker.gridColumnSpan: ✅
 DatePicker.gridRowSpan: ✅
@@ -30,14 +30,9 @@ Grid.dragStarting: not realized
 Grid.dragText: not realized
 Grid.dropCompleted: not realized
 Grid.frameChanged: ✅
-Grid.margin: ✅
+Grid.padding: ✅
 HStack.pinchUpdated: 🔌 pinch on HStack: handed to the host's recognizer or handler, no NSEvent sent
 Image.panYChannel: 🔌 pan on Image: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.tapCount: 🔌 tap on ItemsView: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.tapped: 🔌 tap on ItemsView: handed to the host's recognizer or handler, no NSEvent sent
-Label.frameChanged: ✅
-Label.gridColumn: ✅
-Label.gridRow: ✅
 Line.allowDrop: not realized
 Line.dragLeave: not realized
 Line.dragOver: not realized
@@ -45,6 +40,8 @@ Line.drop: not realized
 Line.frameChanged: ✅
 Line.horizontalAlignment: ✅
 Line.verticalAlignment: ✅
+List.tapCount: 🔌 tap on List: handed to the host's recognizer or handler, no NSEvent sent
+List.tapGesture: 🔌 tap on List: handed to the host's recognizer or handler, no NSEvent sent
 Map.pointerEntered: not realized
 Map.pointerExited: not realized
 Map.pointerMoved: not realized
@@ -66,11 +63,11 @@ PositionIndicator.dragStarting: not realized
 PositionIndicator.dragText: not realized
 PositionIndicator.dropCompleted: not realized
 PositionIndicator.frameChanged: not realized
-PositionIndicator.margin: not realized
+PositionIndicator.padding: not realized
 ProgressBar.pinchUpdated: 🔌 pinch on ProgressBar: handed to the host's recognizer or handler, no NSEvent sent
 RadioButton.panYChannel: 🔌 pan on RadioButton: handed to the host's recognizer or handler, no NSEvent sent
 Rectangle.tapCount: 🔌 tap on Rectangle: handed to the host's recognizer or handler, no NSEvent sent
-Rectangle.tapped: 🔌 tap on Rectangle: handed to the host's recognizer or handler, no NSEvent sent
+Rectangle.tapGesture: 🔌 tap on Rectangle: handed to the host's recognizer or handler, no NSEvent sent
 ScrollView.frameChanged: ✅
 ScrollView.gridColumn: ✅
 ScrollView.gridRow: ✅
@@ -92,6 +89,9 @@ Stepper.swiped: 🔌 pan on Stepper: handed to the host's recognizer or handler,
 Switch.panTouchCount: 🔌 pan on Switch: handed to the host's recognizer or handler, no NSEvent sent
 Switch.panUpdated: 🔌 pan on Switch: handed to the host's recognizer or handler, no NSEvent sent
 Switch.panXChannel: 🔌 pan on Switch: handed to the host's recognizer or handler, no NSEvent sent
+Text.frameChanged: ✅
+Text.gridColumn: ✅
+Text.gridRow: ✅
 TextEditor.frameChanged: ✅
 TextEditor.gridColumnSpan: ✅
 TextEditor.gridRowSpan: ✅
@@ -102,11 +102,11 @@ TimePicker.dragStarting: not realized
 TimePicker.dragText: not realized
 TimePicker.dropCompleted: not realized
 TimePicker.frameChanged: ✅
-TimePicker.margin: ✅
+TimePicker.padding: ✅
 TitleBar.pinchUpdated: not realized
 VStack.panYChannel: 🔌 pan on VStack: handed to the host's recognizer or handler, no NSEvent sent
 WebView.tapCount: not realized
-WebView.tapped: not realized
+WebView.tapGesture: not realized
 ZStack.frameChanged: ✅
 ZStack.gridColumn: ✅
 ZStack.gridRow: ✅

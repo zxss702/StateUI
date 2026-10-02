@@ -15,9 +15,9 @@ CheckBox.focus: ✅
 CheckBox.isFocusedChanged: ✅
 CheckBox.pivotY: ✅
 CheckBox.unfocus: ✅
-ColorBox.accessibilityHint: ✅
-ColorBox.isVisible: ✅
-ColorBox.rotationY: not realized
+ColorPicker.accessibilityHint: ✅
+ColorPicker.isVisible: ✅
+ColorPicker.rotationY: not realized
 DatePicker.automationExcludedWithChildren: ✅
 DatePicker.frameChanged: ✅
 DatePicker.height: ✅
@@ -34,11 +34,11 @@ HStack.scaleX: ✅
 Image.ignoresInput: not realized
 Image.layoutDirection: not realized
 Image.translationY: ✅
-ItemsView.rotation: ✅
-ItemsView.style: not realized
-Label.accessibilityHeadingLevel: ✅
-Label.opacity: ✅
-Label.scale: ✅
+List.rotation: ✅
+List.style: not realized
+Text.accessibilityHeadingLevel: ✅
+Text.opacity: ✅
+Text.scale: ✅
 Line.background: not realized
 Line.frameChanged: ✅
 Line.maximumHeight: ✅

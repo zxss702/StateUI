@@ -47,13 +47,13 @@ than the system's own pictures beside it.
 A NavigationStack is UIKit's navigation controller over its pages, the top
 one showing, and the bar hidden where the top page hides it. A page coming or
 going is pushed or popped as UIKit does it, unless the user asked for less
-motion. The user taking pages away - the back button, the edge swipe, the
+animation. The user taking pages away - the back button, the edge swipe, the
 back button's menu - is told to the stack as how many stay, as the index of
 its top; where the application keeps its pages, the stack stays as it is.
 
 ## Tabs
 
-A TabbedView is UIKit's tab bar controller, each tab named by its page's
+A TabView is UIKit's tab bar controller, each tab named by its page's
 title and picture. Which tab shows is the host layer's rule: none chosen
 until the tree or the user chooses one, a tab the tree asks for anew chosen,
 the user's choice standing where it is a tab there is. The user's choice is
@@ -61,7 +61,7 @@ told as the tab before and the tab now; one the program makes is not.
 
 ## A split view
 
-A SplitView is UIKit's split view controller: its sidebar the first column,
+A NavigationSplitView is UIKit's split view controller: its sidebar the first column,
 its detail the second, a page standing alone in a column under the column's
 own bar. It is never one column. In a narrow room - a phone, upright or on
 its side - the sidebar slides over the detail from the leading edge, the
@@ -107,4 +107,4 @@ A view's context menu is UIKit's context menu interaction, which asks for
 the menu as the user holds the view; it is built then from what the tree says
 now. The menus the page the user sees puts on its menu bar are the
 application's main menu - on an iPad its menu bar - standing before UIKit's
-own Window menu, built again whenever they say something else.
+own WindowScene menu, built again whenever they say something else.

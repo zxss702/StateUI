@@ -10,13 +10,13 @@ Canvas.style: ✅
 CheckBox.accessibilityHeadingLevel: ✅
 CheckBox.opacity: ✅
 CheckBox.scale: ✅
-ColorBox.background: not realized
-ColorBox.frameChanged: ✅
-ColorBox.maximumHeight: ✅
-ColorBox.maximumWidth: ✅
-ColorBox.minimumHeight: ✅
-ColorBox.minimumWidth: ✅
-ColorBox.translationX: ✅
+ColorPicker.background: not realized
+ColorPicker.frameChanged: ✅
+ColorPicker.maximumHeight: ✅
+ColorPicker.maximumWidth: ✅
+ColorPicker.minimumHeight: ✅
+ColorPicker.minimumWidth: ✅
+ColorPicker.translationX: ✅
 DatePicker.focus: ✅
 DatePicker.isFocusedChanged: ✅
 DatePicker.pivotY: ✅
@@ -34,14 +34,11 @@ HStack.pivotX: ✅
 HStack.zIndex: not realized
 Image.accessibilityLabel: ✅
 Image.rotationX: not realized
-ItemsView.isAccessibilityHidden: ✅
-ItemsView.isEnabled: not realized
-ItemsView.scaleX: ✅
-Label.ignoresInput: not realized
-Label.layoutDirection: not realized
-Label.translationY: ✅
 Line.rotation: ✅
 Line.style: ✅
+List.isAccessibilityHidden: ✅
+List.isEnabled: not realized
+List.scaleX: ✅
 Map.accessibilityHeadingLevel: not realized
 Map.opacity: not realized
 Map.scale: not realized
@@ -94,6 +91,9 @@ Stepper.unfocus: ✅
 Switch.accessibilityHint: ✅
 Switch.isVisible: ✅
 Switch.rotationY: not realized
+Text.ignoresInput: not realized
+Text.layoutDirection: not realized
+Text.translationY: ✅
 TextEditor.automationExcludedWithChildren: ✅
 TextEditor.frameChanged: ✅
 TextEditor.height: ✅

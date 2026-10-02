@@ -9,9 +9,9 @@ Canvas.layoutDirection: not realized
 Canvas.translationY: ✅
 CheckBox.rotation: ✅
 CheckBox.style: ✅
-ColorBox.accessibilityHeadingLevel: ✅
-ColorBox.opacity: ✅
-ColorBox.scale: ✅
+ColorPicker.accessibilityHeadingLevel: ✅
+ColorPicker.opacity: ✅
+ColorPicker.scale: ✅
 DatePicker.background: not realized
 DatePicker.frameChanged: ✅
 DatePicker.maximumHeight: ✅
@@ -34,14 +34,11 @@ HStack.width: ✅
 Image.frame: ✅
 Image.pivotX: ✅
 Image.zIndex: not realized
-ItemsView.accessibilityLabel: ✅
-ItemsView.rotationX: not realized
-Label.isAccessibilityHidden: ✅
-Label.isEnabled: not realized
-Label.scaleX: ✅
 Line.ignoresInput: not realized
 Line.layoutDirection: not realized
 Line.translationY: ✅
+List.accessibilityLabel: ✅
+List.rotationX: not realized
 Map.rotation: not realized
 Map.style: not realized
 Path.accessibilityHeadingLevel: ✅
@@ -93,6 +90,9 @@ Switch.focus: ✅
 Switch.isFocusedChanged: ✅
 Switch.pivotY: ✅
 Switch.unfocus: ✅
+Text.isAccessibilityHidden: ✅
+Text.isEnabled: not realized
+Text.scaleX: ✅
 TextEditor.accessibilityHint: ✅
 TextEditor.isVisible: ✅
 TextEditor.rotationY: not realized

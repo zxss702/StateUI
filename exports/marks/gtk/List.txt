@@ -1,0 +1,13 @@
+# revision 1.1
+List: ✅
+List.endReached: ✅
+List.endReachedWithin: ✅
+List.frameChanged: ✅
+List.itemActivated: cannot activate on Text - GTK's driver has no path for it yet
+List.items: ✅
+List.itemsLayout: cannot read where Text stands - GTK's driver has no path for it yet
+List.realizedChanged: ✅
+List.scrollTo: cannot read where List stands - GTK's driver has no path for it yet
+List.selectedItems: cannot read selectionMode of List - GTK's driver has no path for it yet
+List.selectionChanged: cannot read selectionMode of List - GTK's driver has no path for it yet
+List.selectionMode: cannot read selectionMode of List - GTK's driver has no path for it yet

@@ -8,14 +8,14 @@ leaves.
 
 ```text
   application.styles = StyleSheet {             a value in the application session
-      Style<Label>().fontSize(14)               implicit: every Label
-      Style<Label>("Headline").fontSize(32)     keyed: asked for with .style("Headline")
+      Style<Text>().fontSize(14)               implicit: every Text
+      Style<Text>("Headline").fontSize(32)     keyed: asked for with .style("Headline")
   }
 
-  Label("Welcome").style("Headline")
+  Text("Welcome").style("Headline")
         │
         ▼  the differ, for every element it builds: styled(_:with:)
-  Label with the style's values under its own, and the states of both
+  Text with the style's values under its own, and the states of both
         │
         ▼
   the patch: a control with every value already on it; no style crosses
@@ -34,7 +34,7 @@ node, the host having no dictionary to look one up in.
 A style is written with the modifiers its control has, chained on the style
 itself. It conforms to the property half of its target's tiers and to nothing
 else (tiers.md, two halves), so after the dot an author is offered exactly what
-a style can carry: `Style<Label>().onTapped { }` and `Style<Label>().id("x")` do
+a style can carry: `Style<Text>().onTapGesture { }` and `Style<Text>().id("x")` do
 not compile. The conformances are one line per tier and one per control's own
 properties, and the modifiers themselves are written once for both.
 
@@ -97,7 +97,7 @@ is on shows Disabled's values and On's where Disabled sets none. Normal's
 values show only where no other state holds. Leaving a state is its values
 stopping: the control's own come back, and a value only the state set is
 cleared to the platform's. The values are ordinary
-properties, so they cross under the control's motion: `.motion(.none)`
+properties, so they cross under the control's animation: `.animation(.none)`
 changes them at once.
 
 A bound value is read as the element is described, which makes the element
@@ -112,7 +112,7 @@ reports: a button's `pressed` and `released`, a view's `pointerEntered` and
 differ hears them with handlers of its own beside the author's, and only
 those a declared state follows. What they say is kept in the element's
 `VisualInput` across its builds and read as a state, so a press describes that
-element again from what its parent last wrote - the road a theme change takes
+element again from what its parent last wrote - the road a color scheme change takes
 - and nothing else.
 
 ## Arranging states
@@ -137,7 +137,7 @@ style does not have joins after the style's.
 state, which is where a state can animate rather than only be set: a style's
 values change with the render, and a handler can take as long as it likes. It
 runs for a state entered, never for the one the control arrives in, as
-`.onChanged` does not. The states it names are declared without values,
+`.onChange` does not. The states it names are declared without values,
 merged into the style's without changing how the control looks, and only
 they are heard; naming none hears every state the control declares, and
 Normal.
@@ -164,17 +164,17 @@ properties of every node in the tree, styled or not.
 
 ## What can be styled
 
-Every control in `Views/` but the ItemsView is a `StyleTarget`, the list
+Every control in `Views/` but the List is a `StyleTarget`, the list
 kept in one place - `StyleTarget.swift` - so it can be read at a glance and a
 test can insist on it. A style target is any control that can be made with
 nothing set, and each of them can: the initializer taking the value that
 gives a control its purpose is one of several, never the only one.
 
-An ItemsView is none. It exists only with its items, and it is generic: a
+An List is none. It exists only with its items, and it is generic: a
 style would have to name one kind of list while it styled every list, and
 its own layout is a method of the list rather than a property a style can
 carry. A list's look is its own modifiers', shared across an application as
 any Swift is - an extension or a composed view - and every host records its
 `style` member unrealized, with that reason. Were lists ever styled, the one
 spelling that keeps every control alike is a style naming a contract
-(`Style<ItemsViewContract>`) rather than a view.
+(`Style<ListContract>`) rather than a view.

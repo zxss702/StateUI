@@ -6,11 +6,11 @@ Button.dragStarting: not realized
 Button.dragText: not realized
 Button.dropCompleted: not realized
 Button.frameChanged: ✅
-Button.margin: ✅
+Button.padding: ✅
 Canvas.pinchUpdated: 🔌 pinch on Canvas: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.panYChannel: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.tapCount: 🔌 tap on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.tapped: 🔌 tap on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
+ColorPicker.tapCount: 🔌 tap on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
+ColorPicker.tapGesture: 🔌 tap on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
 DatePicker.frameChanged: ✅
 DatePicker.gridColumn: ✅
 DatePicker.gridRow: ✅
@@ -32,21 +32,19 @@ HStack.swiped: 🔌 pan on HStack: handed to the host's recognizer or handler, n
 Image.panTouchCount: 🔌 pan on Image: handed to the host's recognizer or handler, no NSEvent sent
 Image.panUpdated: 🔌 pan on Image: handed to the host's recognizer or handler, no NSEvent sent
 Image.panXChannel: 🔌 pan on Image: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.frameChanged: ✅
-ItemsView.gridColumnSpan: ✅
-ItemsView.gridRowSpan: ✅
-Label.area: ✅
-Label.frameChanged: ✅
 Line.canDrag: not realized
 Line.dragStarting: not realized
 Line.dragText: not realized
 Line.dropCompleted: not realized
 Line.frameChanged: ✅
-Line.margin: ✅
+Line.padding: ✅
+List.frameChanged: ✅
+List.gridColumnSpan: ✅
+List.gridRowSpan: ✅
 Map.pinchUpdated: not realized
 Path.panYChannel: 🔌 pan on Path: handed to the host's recognizer or handler, no NSEvent sent
 Picker.tapCount: 🔌 tap on Picker: handed to the host's recognizer or handler, no NSEvent sent
-Picker.tapped: 🔌 tap on Picker: handed to the host's recognizer or handler, no NSEvent sent
+Picker.tapGesture: 🔌 tap on Picker: handed to the host's recognizer or handler, no NSEvent sent
 Polygon.frameChanged: ✅
 Polygon.gridColumn: ✅
 Polygon.gridRow: ✅
@@ -78,11 +76,13 @@ SearchField.dragStarting: not realized
 SearchField.dragText: not realized
 SearchField.dropCompleted: not realized
 SearchField.frameChanged: ✅
-SearchField.margin: ✅
+SearchField.padding: ✅
 Slider.pinchUpdated: 🔌 pinch on Slider: handed to the host's recognizer or handler, no NSEvent sent
 Stepper.panYChannel: 🔌 pan on Stepper: handed to the host's recognizer or handler, no NSEvent sent
 Switch.tapCount: 🔌 tap on Switch: handed to the host's recognizer or handler, no NSEvent sent
-Switch.tapped: 🔌 tap on Switch: handed to the host's recognizer or handler, no NSEvent sent
+Switch.tapGesture: 🔌 tap on Switch: handed to the host's recognizer or handler, no NSEvent sent
+Text.area: ✅
+Text.frameChanged: ✅
 TextEditor.frameChanged: ✅
 TextEditor.gridColumn: ✅
 TextEditor.gridRow: ✅

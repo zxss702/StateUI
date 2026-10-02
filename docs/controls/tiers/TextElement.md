@@ -6,7 +6,7 @@ What every element showing words has: the words, and the case they are drawn in.
 
 Wears: [TextStyleElement](TextStyleElement.md)
 
-Worn by: [Button](../Button.md) · [Label](../Label.md) · [RadioButton](../RadioButton.md) · [SearchField](../SearchField.md) · [Span](../Span.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md)
+Worn by: [Button](../Button.md) · [RadioButton](../RadioButton.md) · [SearchField](../SearchField.md) · [Span](../Span.md) · [Text](../Text.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Mixins/TextElementContract.swift`.
 

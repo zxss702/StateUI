@@ -11,7 +11,7 @@ runtime](runtime.md) draws where the tree sits in a turn and a frame.
     |
     MountedElement  (host layer)      key, type, children,
     |   |                             described properties, bound states,
-    |   |                             event handlers, layout motion,
+    |   |                             event handlers, layout animation,
     |   |                             drift, leaving, the frame walk
     |   |
     |   native: NativeElement  ---->  AppKitElement (toolkit half)
@@ -52,7 +52,7 @@ An animation starts where the value stands, never where the tree last said it
 was. A running animation's value comes first; then what the toolkit reads off
 the control - a window's live frame, a slider's position, a view's opacity;
 then the bound or described value. Where none exists but the toolkit animates
-the property, the property's resting value is the start: no margin, no turn,
+the property, the property's resting value is the start: no padding, no turn,
 a scale of one, a corner radius of the target's shape.
 
 ## Leaving

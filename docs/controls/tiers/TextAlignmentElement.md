@@ -6,7 +6,7 @@ Where text sits inside the space its own element was given.
 
 Wears: [VisualElement](VisualElement.md)
 
-Worn by: [Label](../Label.md) · [Picker](../Picker.md) · [SearchField](../SearchField.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md)
+Worn by: [Picker](../Picker.md) · [SearchField](../SearchField.md) · [Text](../Text.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Mixins/TextAlignmentElementContract.swift`.
 
@@ -14,5 +14,5 @@ How each of them realizes these members is on its own page.
 
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
-| `horizontalTextAlignment` | property | `TextAlignment` | native |
+| `multilineTextAlignment` | property | `TextAlignment` | native |
 | `verticalTextAlignment` | property | `TextAlignment` | native |

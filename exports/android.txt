@@ -11,13 +11,13 @@ Button
   iconSpacing
   isEnabled
   lineBreak
-  padding
+  contentPadding
   shape
   stroke
   strokeWidth
   text
   textCase
-  textColor
+  foregroundStyle
   clicked()
   pressed()
   released()
@@ -31,7 +31,7 @@ CheckBox
   isOn
   tint
   toggled()
-ColorBox
+ColorPicker
   color
   cornerRadius
 DatePicker
@@ -44,7 +44,7 @@ DatePicker
   isOpen
   maximumDate
   minimumDate
-  textColor
+  foregroundStyle
   closed()
   dateChanged()
   opened()
@@ -64,7 +64,7 @@ Grid
   columnSpacing
   columns
   ignoresInput
-  padding
+  contentPadding
   rowSpacing
   rows
   shape
@@ -73,7 +73,7 @@ Grid
 HStack
   clipsContent
   ignoresInput
-  padding
+  contentPadding
   shape
   spacing
   stroke
@@ -81,7 +81,7 @@ HStack
 Image
   aspect
   source
-ItemsView
+List
   endReachedWithin
   items
   itemsLayout
@@ -91,19 +91,19 @@ ItemsView
   itemActivated()
   realizedChanged()
   selectionChanged()
-Label
+Text
   characterSpacing
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  multilineTextAlignment
   lineBreak
   lineHeight
-  maximumLines
-  padding
+  lineLimit
+  contentPadding
   text
   textCase
-  textColor
+  foregroundStyle
   textDecorations
   verticalTextAlignment
 Line
@@ -137,12 +137,12 @@ Picker
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  multilineTextAlignment
   isEnabled
   isOpen
   options
   selectedIndex
-  textColor
+  foregroundStyle
   tint
   title
   closed()
@@ -183,10 +183,10 @@ RadioButton
   fontSize
   isEnabled
   isOn
-  padding
+  contentPadding
   text
   textCase
-  textColor
+  foregroundStyle
   toggled()
 Rectangle
   aspect
@@ -201,14 +201,14 @@ Rectangle
   strokeMiterLimit
   strokeWidth
 ScrollView
-  horizontalScrollBarVisibility
+  horizontalScrollIndicators
   orientation
-  padding
+  contentPadding
   scrollOffset
   shape
   stroke
   strokeWidth
-  verticalScrollBarVisibility
+  verticalScrollIndicators
   scrollStopped()
   scrollXChanged()
   scrollYChanged()
@@ -221,11 +221,11 @@ SearchField
   maximumLength
   placeholder
   placeholderColor
-  returnKey
+  submitLabel
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   submitted()
   textChanged()
 Slider
@@ -261,7 +261,7 @@ TextEditor
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   textChanged()
 TextField
   cursorPosition
@@ -273,11 +273,11 @@ TextField
   maximumLength
   placeholder
   placeholderColor
-  returnKey
+  submitLabel
   selectionLength
   text
   textCase
-  textColor
+  foregroundStyle
   submitted()
   textChanged()
 TimePicker
@@ -287,7 +287,7 @@ TimePicker
   format
   isEnabled
   isOpen
-  textColor
+  foregroundStyle
   time
   closed()
   opened()
@@ -295,7 +295,7 @@ TimePicker
 VStack
   clipsContent
   ignoresInput
-  padding
+  contentPadding
   shape
   spacing
   stroke
@@ -311,7 +311,7 @@ WebView
 ZStack
   clipsContent
   ignoresInput
-  padding
+  contentPadding
   shape
   stroke
   strokeWidth
@@ -332,7 +332,7 @@ ZStack
   horizontalAlignment
   isAccessibilityHidden
   isVisible
-  margin
+  padding
   maximumHeight
   maximumWidth
   minimumHeight
@@ -366,7 +366,7 @@ ZStack
   pointerPressed()
   pointerReleased()
   swiped()
-  tapped()
+  tapGesture()
 (acts)
   alert()
   announce()

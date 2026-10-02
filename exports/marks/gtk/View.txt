@@ -14,7 +14,7 @@ ActivityIndicator.gridColumnSpan: ✅
 ActivityIndicator.gridRow: ✅
 ActivityIndicator.gridRowSpan: ✅
 ActivityIndicator.horizontalAlignment: ✅
-ActivityIndicator.margin: ✅
+ActivityIndicator.padding: ✅
 ActivityIndicator.panTouchCount: cannot pan on ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.panUpdated: cannot pan on ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.panXChannel: cannot pan on ActivityIndicator - GTK's driver has no path for it yet
@@ -29,7 +29,7 @@ ActivityIndicator.swipeDirection: cannot pan on ActivityIndicator - GTK's driver
 ActivityIndicator.swipeThreshold: cannot pan on ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.swiped: cannot pan on ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.tapCount: cannot tap on ActivityIndicator - GTK's driver has no path for it yet
-ActivityIndicator.tapped: cannot tap on ActivityIndicator - GTK's driver has no path for it yet
+ActivityIndicator.tapGesture: cannot tap on ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.verticalAlignment: ✅
 Button.allowDrop: not realized
 Button.area: ✅
@@ -46,7 +46,7 @@ Button.gridColumnSpan: ✅
 Button.gridRow: ✅
 Button.gridRowSpan: ✅
 Button.horizontalAlignment: ✅
-Button.margin: ✅
+Button.padding: ✅
 Button.panTouchCount: cannot pan on Button - GTK's driver has no path for it yet
 Button.panUpdated: cannot pan on Button - GTK's driver has no path for it yet
 Button.panXChannel: cannot pan on Button - GTK's driver has no path for it yet
@@ -61,7 +61,7 @@ Button.swipeDirection: cannot pan on Button - GTK's driver has no path for it ye
 Button.swipeThreshold: cannot pan on Button - GTK's driver has no path for it yet
 Button.swiped: cannot pan on Button - GTK's driver has no path for it yet
 Button.tapCount: cannot tap on Button - GTK's driver has no path for it yet
-Button.tapped: cannot tap on Button - GTK's driver has no path for it yet
+Button.tapGesture: cannot tap on Button - GTK's driver has no path for it yet
 Button.verticalAlignment: ✅
 Canvas.allowDrop: not realized
 Canvas.area: not realized
@@ -78,7 +78,7 @@ Canvas.gridColumnSpan: not realized
 Canvas.gridRow: not realized
 Canvas.gridRowSpan: not realized
 Canvas.horizontalAlignment: not realized
-Canvas.margin: not realized
+Canvas.padding: not realized
 Canvas.panTouchCount: not realized
 Canvas.panUpdated: not realized
 Canvas.panXChannel: not realized
@@ -93,7 +93,7 @@ Canvas.swipeDirection: not realized
 Canvas.swipeThreshold: not realized
 Canvas.swiped: not realized
 Canvas.tapCount: not realized
-Canvas.tapped: not realized
+Canvas.tapGesture: not realized
 Canvas.verticalAlignment: not realized
 CheckBox.allowDrop: not realized
 CheckBox.area: ✅
@@ -110,7 +110,7 @@ CheckBox.gridColumnSpan: ✅
 CheckBox.gridRow: ✅
 CheckBox.gridRowSpan: ✅
 CheckBox.horizontalAlignment: ✅
-CheckBox.margin: ✅
+CheckBox.padding: ✅
 CheckBox.panTouchCount: cannot pan on CheckBox - GTK's driver has no path for it yet
 CheckBox.panUpdated: cannot pan on CheckBox - GTK's driver has no path for it yet
 CheckBox.panXChannel: cannot pan on CheckBox - GTK's driver has no path for it yet
@@ -125,40 +125,40 @@ CheckBox.swipeDirection: cannot pan on CheckBox - GTK's driver has no path for i
 CheckBox.swipeThreshold: cannot pan on CheckBox - GTK's driver has no path for it yet
 CheckBox.swiped: cannot pan on CheckBox - GTK's driver has no path for it yet
 CheckBox.tapCount: cannot tap on CheckBox - GTK's driver has no path for it yet
-CheckBox.tapped: cannot tap on CheckBox - GTK's driver has no path for it yet
+CheckBox.tapGesture: cannot tap on CheckBox - GTK's driver has no path for it yet
 CheckBox.verticalAlignment: ✅
-ColorBox.allowDrop: not realized
-ColorBox.area: ✅
-ColorBox.canDrag: not realized
-ColorBox.dragLeave: not realized
-ColorBox.dragOver: not realized
-ColorBox.dragStarting: not realized
-ColorBox.dragText: not realized
-ColorBox.drop: not realized
-ColorBox.dropCompleted: not realized
-ColorBox.frameChanged: ✅
-ColorBox.gridColumn: ✅
-ColorBox.gridColumnSpan: ✅
-ColorBox.gridRow: ✅
-ColorBox.gridRowSpan: ✅
-ColorBox.horizontalAlignment: ✅
-ColorBox.margin: ✅
-ColorBox.panTouchCount: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.panUpdated: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.panXChannel: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.panYChannel: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.pinchUpdated: cannot pinch on ColorBox - GTK's driver has no path for it yet
-ColorBox.pointerEntered: cannot hover on ColorBox - GTK's driver has no path for it yet
-ColorBox.pointerExited: cannot hover on ColorBox - GTK's driver has no path for it yet
-ColorBox.pointerMoved: cannot hover on ColorBox - GTK's driver has no path for it yet
-ColorBox.pointerPressed: cannot hover on ColorBox - GTK's driver has no path for it yet
-ColorBox.pointerReleased: cannot hover on ColorBox - GTK's driver has no path for it yet
-ColorBox.swipeDirection: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.swipeThreshold: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.swiped: cannot pan on ColorBox - GTK's driver has no path for it yet
-ColorBox.tapCount: cannot tap on ColorBox - GTK's driver has no path for it yet
-ColorBox.tapped: cannot tap on ColorBox - GTK's driver has no path for it yet
-ColorBox.verticalAlignment: ✅
+ColorPicker.allowDrop: not realized
+ColorPicker.area: ✅
+ColorPicker.canDrag: not realized
+ColorPicker.dragLeave: not realized
+ColorPicker.dragOver: not realized
+ColorPicker.dragStarting: not realized
+ColorPicker.dragText: not realized
+ColorPicker.drop: not realized
+ColorPicker.dropCompleted: not realized
+ColorPicker.frameChanged: ✅
+ColorPicker.gridColumn: ✅
+ColorPicker.gridColumnSpan: ✅
+ColorPicker.gridRow: ✅
+ColorPicker.gridRowSpan: ✅
+ColorPicker.horizontalAlignment: ✅
+ColorPicker.padding: ✅
+ColorPicker.panTouchCount: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.panUpdated: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.panXChannel: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.panYChannel: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pinchUpdated: cannot pinch on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pointerEntered: cannot hover on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pointerExited: cannot hover on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pointerMoved: cannot hover on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pointerPressed: cannot hover on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.pointerReleased: cannot hover on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.swipeDirection: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.swipeThreshold: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.swiped: cannot pan on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.tapCount: cannot tap on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.tapGesture: cannot tap on ColorPicker - GTK's driver has no path for it yet
+ColorPicker.verticalAlignment: ✅
 DatePicker.allowDrop: not realized
 DatePicker.area: not realized
 DatePicker.canDrag: not realized
@@ -174,7 +174,7 @@ DatePicker.gridColumnSpan: not realized
 DatePicker.gridRow: not realized
 DatePicker.gridRowSpan: not realized
 DatePicker.horizontalAlignment: not realized
-DatePicker.margin: not realized
+DatePicker.padding: not realized
 DatePicker.panTouchCount: not realized
 DatePicker.panUpdated: not realized
 DatePicker.panXChannel: not realized
@@ -189,7 +189,7 @@ DatePicker.swipeDirection: not realized
 DatePicker.swipeThreshold: not realized
 DatePicker.swiped: not realized
 DatePicker.tapCount: not realized
-DatePicker.tapped: not realized
+DatePicker.tapGesture: not realized
 DatePicker.verticalAlignment: not realized
 Ellipse.allowDrop: not realized
 Ellipse.area: ✅
@@ -206,7 +206,7 @@ Ellipse.gridColumnSpan: ✅
 Ellipse.gridRow: ✅
 Ellipse.gridRowSpan: ✅
 Ellipse.horizontalAlignment: ✅
-Ellipse.margin: ✅
+Ellipse.padding: ✅
 Ellipse.panTouchCount: cannot pan on Ellipse - GTK's driver has no path for it yet
 Ellipse.panUpdated: cannot pan on Ellipse - GTK's driver has no path for it yet
 Ellipse.panXChannel: cannot pan on Ellipse - GTK's driver has no path for it yet
@@ -221,7 +221,7 @@ Ellipse.swipeDirection: cannot pan on Ellipse - GTK's driver has no path for it 
 Ellipse.swipeThreshold: cannot pan on Ellipse - GTK's driver has no path for it yet
 Ellipse.swiped: cannot pan on Ellipse - GTK's driver has no path for it yet
 Ellipse.tapCount: cannot tap on Ellipse - GTK's driver has no path for it yet
-Ellipse.tapped: cannot tap on Ellipse - GTK's driver has no path for it yet
+Ellipse.tapGesture: cannot tap on Ellipse - GTK's driver has no path for it yet
 Ellipse.verticalAlignment: ✅
 Grid.allowDrop: not realized
 Grid.area: ✅
@@ -238,7 +238,7 @@ Grid.gridColumnSpan: ✅
 Grid.gridRow: ✅
 Grid.gridRowSpan: ✅
 Grid.horizontalAlignment: ✅
-Grid.margin: ✅
+Grid.padding: ✅
 Grid.panTouchCount: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.panUpdated: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.panXChannel: cannot pan on Grid - GTK's driver has no path for it yet
@@ -253,7 +253,7 @@ Grid.swipeDirection: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.swipeThreshold: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.swiped: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.tapCount: cannot tap on Grid - GTK's driver has no path for it yet
-Grid.tapped: cannot tap on Grid - GTK's driver has no path for it yet
+Grid.tapGesture: cannot tap on Grid - GTK's driver has no path for it yet
 Grid.verticalAlignment: ✅
 HStack.allowDrop: not realized
 HStack.area: ✅
@@ -270,7 +270,7 @@ HStack.gridColumnSpan: ✅
 HStack.gridRow: ✅
 HStack.gridRowSpan: ✅
 HStack.horizontalAlignment: ✅
-HStack.margin: ✅
+HStack.padding: ✅
 HStack.panTouchCount: cannot pan on HStack - GTK's driver has no path for it yet
 HStack.panUpdated: cannot pan on HStack - GTK's driver has no path for it yet
 HStack.panXChannel: cannot pan on HStack - GTK's driver has no path for it yet
@@ -285,7 +285,7 @@ HStack.swipeDirection: cannot pan on HStack - GTK's driver has no path for it ye
 HStack.swipeThreshold: cannot pan on HStack - GTK's driver has no path for it yet
 HStack.swiped: cannot pan on HStack - GTK's driver has no path for it yet
 HStack.tapCount: cannot tap on HStack - GTK's driver has no path for it yet
-HStack.tapped: cannot tap on HStack - GTK's driver has no path for it yet
+HStack.tapGesture: cannot tap on HStack - GTK's driver has no path for it yet
 HStack.verticalAlignment: ✅
 Image.allowDrop: not realized
 Image.area: ✅
@@ -302,7 +302,7 @@ Image.gridColumnSpan: ✅
 Image.gridRow: ✅
 Image.gridRowSpan: ✅
 Image.horizontalAlignment: ✅
-Image.margin: ✅
+Image.padding: ✅
 Image.panTouchCount: cannot pan on Image - GTK's driver has no path for it yet
 Image.panUpdated: cannot pan on Image - GTK's driver has no path for it yet
 Image.panXChannel: cannot pan on Image - GTK's driver has no path for it yet
@@ -317,72 +317,8 @@ Image.swipeDirection: cannot pan on Image - GTK's driver has no path for it yet
 Image.swipeThreshold: cannot pan on Image - GTK's driver has no path for it yet
 Image.swiped: cannot pan on Image - GTK's driver has no path for it yet
 Image.tapCount: cannot tap on Image - GTK's driver has no path for it yet
-Image.tapped: cannot tap on Image - GTK's driver has no path for it yet
+Image.tapGesture: cannot tap on Image - GTK's driver has no path for it yet
 Image.verticalAlignment: ✅
-ItemsView.allowDrop: not realized
-ItemsView.area: ✅
-ItemsView.canDrag: not realized
-ItemsView.dragLeave: not realized
-ItemsView.dragOver: not realized
-ItemsView.dragStarting: not realized
-ItemsView.dragText: not realized
-ItemsView.drop: not realized
-ItemsView.dropCompleted: not realized
-ItemsView.frameChanged: ✅
-ItemsView.gridColumn: ✅
-ItemsView.gridColumnSpan: ✅
-ItemsView.gridRow: ✅
-ItemsView.gridRowSpan: ✅
-ItemsView.horizontalAlignment: ✅
-ItemsView.margin: ✅
-ItemsView.panTouchCount: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.panUpdated: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.panXChannel: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.panYChannel: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.pinchUpdated: cannot pinch on ItemsView - GTK's driver has no path for it yet
-ItemsView.pointerEntered: cannot hover on ItemsView - GTK's driver has no path for it yet
-ItemsView.pointerExited: cannot hover on ItemsView - GTK's driver has no path for it yet
-ItemsView.pointerMoved: cannot hover on ItemsView - GTK's driver has no path for it yet
-ItemsView.pointerPressed: cannot hover on ItemsView - GTK's driver has no path for it yet
-ItemsView.pointerReleased: cannot hover on ItemsView - GTK's driver has no path for it yet
-ItemsView.swipeDirection: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.swipeThreshold: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.swiped: cannot pan on ItemsView - GTK's driver has no path for it yet
-ItemsView.tapCount: cannot tap on ItemsView - GTK's driver has no path for it yet
-ItemsView.tapped: cannot tap on ItemsView - GTK's driver has no path for it yet
-ItemsView.verticalAlignment: ✅
-Label.allowDrop: not realized
-Label.area: ✅
-Label.canDrag: not realized
-Label.dragLeave: not realized
-Label.dragOver: not realized
-Label.dragStarting: not realized
-Label.dragText: not realized
-Label.drop: not realized
-Label.dropCompleted: not realized
-Label.frameChanged: ✅
-Label.gridColumn: ✅
-Label.gridColumnSpan: ✅
-Label.gridRow: ✅
-Label.gridRowSpan: ✅
-Label.horizontalAlignment: ✅
-Label.margin: ✅
-Label.panTouchCount: cannot pan on Label - GTK's driver has no path for it yet
-Label.panUpdated: cannot pan on Label - GTK's driver has no path for it yet
-Label.panXChannel: cannot pan on Label - GTK's driver has no path for it yet
-Label.panYChannel: cannot pan on Label - GTK's driver has no path for it yet
-Label.pinchUpdated: cannot pinch on Label - GTK's driver has no path for it yet
-Label.pointerEntered: cannot hover on Label - GTK's driver has no path for it yet
-Label.pointerExited: cannot hover on Label - GTK's driver has no path for it yet
-Label.pointerMoved: cannot hover on Label - GTK's driver has no path for it yet
-Label.pointerPressed: cannot hover on Label - GTK's driver has no path for it yet
-Label.pointerReleased: cannot hover on Label - GTK's driver has no path for it yet
-Label.swipeDirection: cannot pan on Label - GTK's driver has no path for it yet
-Label.swipeThreshold: cannot pan on Label - GTK's driver has no path for it yet
-Label.swiped: cannot pan on Label - GTK's driver has no path for it yet
-Label.tapCount: cannot tap on Label - GTK's driver has no path for it yet
-Label.tapped: cannot tap on Label - GTK's driver has no path for it yet
-Label.verticalAlignment: ✅
 Line.allowDrop: not realized
 Line.area: ✅
 Line.canDrag: not realized
@@ -398,7 +334,7 @@ Line.gridColumnSpan: ✅
 Line.gridRow: ✅
 Line.gridRowSpan: ✅
 Line.horizontalAlignment: ✅
-Line.margin: ✅
+Line.padding: ✅
 Line.panTouchCount: cannot pan on Line - GTK's driver has no path for it yet
 Line.panUpdated: cannot pan on Line - GTK's driver has no path for it yet
 Line.panXChannel: cannot pan on Line - GTK's driver has no path for it yet
@@ -413,8 +349,40 @@ Line.swipeDirection: cannot pan on Line - GTK's driver has no path for it yet
 Line.swipeThreshold: cannot pan on Line - GTK's driver has no path for it yet
 Line.swiped: cannot pan on Line - GTK's driver has no path for it yet
 Line.tapCount: cannot tap on Line - GTK's driver has no path for it yet
-Line.tapped: cannot tap on Line - GTK's driver has no path for it yet
+Line.tapGesture: cannot tap on Line - GTK's driver has no path for it yet
 Line.verticalAlignment: ✅
+List.allowDrop: not realized
+List.area: ✅
+List.canDrag: not realized
+List.dragLeave: not realized
+List.dragOver: not realized
+List.dragStarting: not realized
+List.dragText: not realized
+List.drop: not realized
+List.dropCompleted: not realized
+List.frameChanged: ✅
+List.gridColumn: ✅
+List.gridColumnSpan: ✅
+List.gridRow: ✅
+List.gridRowSpan: ✅
+List.horizontalAlignment: ✅
+List.padding: ✅
+List.panTouchCount: cannot pan on List - GTK's driver has no path for it yet
+List.panUpdated: cannot pan on List - GTK's driver has no path for it yet
+List.panXChannel: cannot pan on List - GTK's driver has no path for it yet
+List.panYChannel: cannot pan on List - GTK's driver has no path for it yet
+List.pinchUpdated: cannot pinch on List - GTK's driver has no path for it yet
+List.pointerEntered: cannot hover on List - GTK's driver has no path for it yet
+List.pointerExited: cannot hover on List - GTK's driver has no path for it yet
+List.pointerMoved: cannot hover on List - GTK's driver has no path for it yet
+List.pointerPressed: cannot hover on List - GTK's driver has no path for it yet
+List.pointerReleased: cannot hover on List - GTK's driver has no path for it yet
+List.swipeDirection: cannot pan on List - GTK's driver has no path for it yet
+List.swipeThreshold: cannot pan on List - GTK's driver has no path for it yet
+List.swiped: cannot pan on List - GTK's driver has no path for it yet
+List.tapCount: cannot tap on List - GTK's driver has no path for it yet
+List.tapGesture: cannot tap on List - GTK's driver has no path for it yet
+List.verticalAlignment: ✅
 Map.allowDrop: not realized
 Map.area: not realized
 Map.canDrag: not realized
@@ -430,7 +398,7 @@ Map.gridColumnSpan: not realized
 Map.gridRow: not realized
 Map.gridRowSpan: not realized
 Map.horizontalAlignment: not realized
-Map.margin: not realized
+Map.padding: not realized
 Map.panTouchCount: not realized
 Map.panUpdated: not realized
 Map.panXChannel: not realized
@@ -445,7 +413,7 @@ Map.swipeDirection: not realized
 Map.swipeThreshold: not realized
 Map.swiped: not realized
 Map.tapCount: not realized
-Map.tapped: not realized
+Map.tapGesture: not realized
 Map.verticalAlignment: not realized
 Path.allowDrop: not realized
 Path.area: ✅
@@ -462,7 +430,7 @@ Path.gridColumnSpan: ✅
 Path.gridRow: ✅
 Path.gridRowSpan: ✅
 Path.horizontalAlignment: ✅
-Path.margin: ✅
+Path.padding: ✅
 Path.panTouchCount: cannot pan on Path - GTK's driver has no path for it yet
 Path.panUpdated: cannot pan on Path - GTK's driver has no path for it yet
 Path.panXChannel: cannot pan on Path - GTK's driver has no path for it yet
@@ -477,7 +445,7 @@ Path.swipeDirection: cannot pan on Path - GTK's driver has no path for it yet
 Path.swipeThreshold: cannot pan on Path - GTK's driver has no path for it yet
 Path.swiped: cannot pan on Path - GTK's driver has no path for it yet
 Path.tapCount: cannot tap on Path - GTK's driver has no path for it yet
-Path.tapped: cannot tap on Path - GTK's driver has no path for it yet
+Path.tapGesture: cannot tap on Path - GTK's driver has no path for it yet
 Path.verticalAlignment: ✅
 Picker.allowDrop: not realized
 Picker.area: ✅
@@ -494,7 +462,7 @@ Picker.gridColumnSpan: ✅
 Picker.gridRow: ✅
 Picker.gridRowSpan: ✅
 Picker.horizontalAlignment: ✅
-Picker.margin: ✅
+Picker.padding: ✅
 Picker.panTouchCount: cannot pan on Picker - GTK's driver has no path for it yet
 Picker.panUpdated: cannot pan on Picker - GTK's driver has no path for it yet
 Picker.panXChannel: cannot pan on Picker - GTK's driver has no path for it yet
@@ -509,7 +477,7 @@ Picker.swipeDirection: cannot pan on Picker - GTK's driver has no path for it ye
 Picker.swipeThreshold: cannot pan on Picker - GTK's driver has no path for it yet
 Picker.swiped: cannot pan on Picker - GTK's driver has no path for it yet
 Picker.tapCount: cannot tap on Picker - GTK's driver has no path for it yet
-Picker.tapped: cannot tap on Picker - GTK's driver has no path for it yet
+Picker.tapGesture: cannot tap on Picker - GTK's driver has no path for it yet
 Picker.verticalAlignment: ✅
 Polygon.allowDrop: not realized
 Polygon.area: ✅
@@ -526,7 +494,7 @@ Polygon.gridColumnSpan: ✅
 Polygon.gridRow: ✅
 Polygon.gridRowSpan: ✅
 Polygon.horizontalAlignment: ✅
-Polygon.margin: ✅
+Polygon.padding: ✅
 Polygon.panTouchCount: cannot pan on Polygon - GTK's driver has no path for it yet
 Polygon.panUpdated: cannot pan on Polygon - GTK's driver has no path for it yet
 Polygon.panXChannel: cannot pan on Polygon - GTK's driver has no path for it yet
@@ -541,7 +509,7 @@ Polygon.swipeDirection: cannot pan on Polygon - GTK's driver has no path for it 
 Polygon.swipeThreshold: cannot pan on Polygon - GTK's driver has no path for it yet
 Polygon.swiped: cannot pan on Polygon - GTK's driver has no path for it yet
 Polygon.tapCount: cannot tap on Polygon - GTK's driver has no path for it yet
-Polygon.tapped: cannot tap on Polygon - GTK's driver has no path for it yet
+Polygon.tapGesture: cannot tap on Polygon - GTK's driver has no path for it yet
 Polygon.verticalAlignment: ✅
 Polyline.allowDrop: not realized
 Polyline.area: ✅
@@ -558,7 +526,7 @@ Polyline.gridColumnSpan: ✅
 Polyline.gridRow: ✅
 Polyline.gridRowSpan: ✅
 Polyline.horizontalAlignment: ✅
-Polyline.margin: ✅
+Polyline.padding: ✅
 Polyline.panTouchCount: cannot pan on Polyline - GTK's driver has no path for it yet
 Polyline.panUpdated: cannot pan on Polyline - GTK's driver has no path for it yet
 Polyline.panXChannel: cannot pan on Polyline - GTK's driver has no path for it yet
@@ -573,7 +541,7 @@ Polyline.swipeDirection: cannot pan on Polyline - GTK's driver has no path for i
 Polyline.swipeThreshold: cannot pan on Polyline - GTK's driver has no path for it yet
 Polyline.swiped: cannot pan on Polyline - GTK's driver has no path for it yet
 Polyline.tapCount: cannot tap on Polyline - GTK's driver has no path for it yet
-Polyline.tapped: cannot tap on Polyline - GTK's driver has no path for it yet
+Polyline.tapGesture: cannot tap on Polyline - GTK's driver has no path for it yet
 Polyline.verticalAlignment: ✅
 PositionIndicator.allowDrop: not realized
 PositionIndicator.area: not realized
@@ -590,7 +558,7 @@ PositionIndicator.gridColumnSpan: not realized
 PositionIndicator.gridRow: not realized
 PositionIndicator.gridRowSpan: not realized
 PositionIndicator.horizontalAlignment: not realized
-PositionIndicator.margin: not realized
+PositionIndicator.padding: not realized
 PositionIndicator.panTouchCount: not realized
 PositionIndicator.panUpdated: not realized
 PositionIndicator.panXChannel: not realized
@@ -605,7 +573,7 @@ PositionIndicator.swipeDirection: not realized
 PositionIndicator.swipeThreshold: not realized
 PositionIndicator.swiped: not realized
 PositionIndicator.tapCount: not realized
-PositionIndicator.tapped: not realized
+PositionIndicator.tapGesture: not realized
 PositionIndicator.verticalAlignment: not realized
 ProgressBar.allowDrop: not realized
 ProgressBar.area: ✅
@@ -622,7 +590,7 @@ ProgressBar.gridColumnSpan: ✅
 ProgressBar.gridRow: ✅
 ProgressBar.gridRowSpan: ✅
 ProgressBar.horizontalAlignment: ✅
-ProgressBar.margin: ✅
+ProgressBar.padding: ✅
 ProgressBar.panTouchCount: cannot pan on ProgressBar - GTK's driver has no path for it yet
 ProgressBar.panUpdated: cannot pan on ProgressBar - GTK's driver has no path for it yet
 ProgressBar.panXChannel: cannot pan on ProgressBar - GTK's driver has no path for it yet
@@ -637,7 +605,7 @@ ProgressBar.swipeDirection: cannot pan on ProgressBar - GTK's driver has no path
 ProgressBar.swipeThreshold: cannot pan on ProgressBar - GTK's driver has no path for it yet
 ProgressBar.swiped: cannot pan on ProgressBar - GTK's driver has no path for it yet
 ProgressBar.tapCount: cannot tap on ProgressBar - GTK's driver has no path for it yet
-ProgressBar.tapped: cannot tap on ProgressBar - GTK's driver has no path for it yet
+ProgressBar.tapGesture: cannot tap on ProgressBar - GTK's driver has no path for it yet
 ProgressBar.verticalAlignment: ✅
 RadioButton.allowDrop: not realized
 RadioButton.area: ✅
@@ -654,7 +622,7 @@ RadioButton.gridColumnSpan: ✅
 RadioButton.gridRow: ✅
 RadioButton.gridRowSpan: ✅
 RadioButton.horizontalAlignment: ✅
-RadioButton.margin: ✅
+RadioButton.padding: ✅
 RadioButton.panTouchCount: cannot pan on RadioButton - GTK's driver has no path for it yet
 RadioButton.panUpdated: cannot pan on RadioButton - GTK's driver has no path for it yet
 RadioButton.panXChannel: cannot pan on RadioButton - GTK's driver has no path for it yet
@@ -669,7 +637,7 @@ RadioButton.swipeDirection: cannot pan on RadioButton - GTK's driver has no path
 RadioButton.swipeThreshold: cannot pan on RadioButton - GTK's driver has no path for it yet
 RadioButton.swiped: cannot pan on RadioButton - GTK's driver has no path for it yet
 RadioButton.tapCount: cannot tap on RadioButton - GTK's driver has no path for it yet
-RadioButton.tapped: cannot tap on RadioButton - GTK's driver has no path for it yet
+RadioButton.tapGesture: cannot tap on RadioButton - GTK's driver has no path for it yet
 RadioButton.verticalAlignment: ✅
 Rectangle.allowDrop: not realized
 Rectangle.area: ✅
@@ -686,7 +654,7 @@ Rectangle.gridColumnSpan: ✅
 Rectangle.gridRow: ✅
 Rectangle.gridRowSpan: ✅
 Rectangle.horizontalAlignment: ✅
-Rectangle.margin: ✅
+Rectangle.padding: ✅
 Rectangle.panTouchCount: cannot pan on Rectangle - GTK's driver has no path for it yet
 Rectangle.panUpdated: cannot pan on Rectangle - GTK's driver has no path for it yet
 Rectangle.panXChannel: cannot pan on Rectangle - GTK's driver has no path for it yet
@@ -701,7 +669,7 @@ Rectangle.swipeDirection: cannot pan on Rectangle - GTK's driver has no path for
 Rectangle.swipeThreshold: cannot pan on Rectangle - GTK's driver has no path for it yet
 Rectangle.swiped: cannot pan on Rectangle - GTK's driver has no path for it yet
 Rectangle.tapCount: cannot tap on Rectangle - GTK's driver has no path for it yet
-Rectangle.tapped: cannot tap on Rectangle - GTK's driver has no path for it yet
+Rectangle.tapGesture: cannot tap on Rectangle - GTK's driver has no path for it yet
 Rectangle.verticalAlignment: ✅
 ScrollView.allowDrop: not realized
 ScrollView.area: ✅
@@ -718,7 +686,7 @@ ScrollView.gridColumnSpan: ✅
 ScrollView.gridRow: ✅
 ScrollView.gridRowSpan: ✅
 ScrollView.horizontalAlignment: ✅
-ScrollView.margin: ✅
+ScrollView.padding: ✅
 ScrollView.panTouchCount: cannot pan on ScrollView - GTK's driver has no path for it yet
 ScrollView.panUpdated: cannot pan on ScrollView - GTK's driver has no path for it yet
 ScrollView.panXChannel: cannot pan on ScrollView - GTK's driver has no path for it yet
@@ -733,7 +701,7 @@ ScrollView.swipeDirection: cannot pan on ScrollView - GTK's driver has no path f
 ScrollView.swipeThreshold: cannot pan on ScrollView - GTK's driver has no path for it yet
 ScrollView.swiped: cannot pan on ScrollView - GTK's driver has no path for it yet
 ScrollView.tapCount: cannot tap on ScrollView - GTK's driver has no path for it yet
-ScrollView.tapped: cannot tap on ScrollView - GTK's driver has no path for it yet
+ScrollView.tapGesture: cannot tap on ScrollView - GTK's driver has no path for it yet
 ScrollView.verticalAlignment: ✅
 SearchField.allowDrop: not realized
 SearchField.area: ✅
@@ -750,7 +718,7 @@ SearchField.gridColumnSpan: ✅
 SearchField.gridRow: ✅
 SearchField.gridRowSpan: ✅
 SearchField.horizontalAlignment: ✅
-SearchField.margin: ✅
+SearchField.padding: ✅
 SearchField.panTouchCount: cannot pan on SearchField - GTK's driver has no path for it yet
 SearchField.panUpdated: cannot pan on SearchField - GTK's driver has no path for it yet
 SearchField.panXChannel: cannot pan on SearchField - GTK's driver has no path for it yet
@@ -765,7 +733,7 @@ SearchField.swipeDirection: cannot pan on SearchField - GTK's driver has no path
 SearchField.swipeThreshold: cannot pan on SearchField - GTK's driver has no path for it yet
 SearchField.swiped: cannot pan on SearchField - GTK's driver has no path for it yet
 SearchField.tapCount: cannot tap on SearchField - GTK's driver has no path for it yet
-SearchField.tapped: cannot tap on SearchField - GTK's driver has no path for it yet
+SearchField.tapGesture: cannot tap on SearchField - GTK's driver has no path for it yet
 SearchField.verticalAlignment: ✅
 Slider.allowDrop: not realized
 Slider.area: ✅
@@ -782,7 +750,7 @@ Slider.gridColumnSpan: ✅
 Slider.gridRow: ✅
 Slider.gridRowSpan: ✅
 Slider.horizontalAlignment: ✅
-Slider.margin: ✅
+Slider.padding: ✅
 Slider.panTouchCount: cannot pan on Slider - GTK's driver has no path for it yet
 Slider.panUpdated: cannot pan on Slider - GTK's driver has no path for it yet
 Slider.panXChannel: cannot pan on Slider - GTK's driver has no path for it yet
@@ -797,7 +765,7 @@ Slider.swipeDirection: cannot pan on Slider - GTK's driver has no path for it ye
 Slider.swipeThreshold: cannot pan on Slider - GTK's driver has no path for it yet
 Slider.swiped: cannot pan on Slider - GTK's driver has no path for it yet
 Slider.tapCount: cannot tap on Slider - GTK's driver has no path for it yet
-Slider.tapped: cannot tap on Slider - GTK's driver has no path for it yet
+Slider.tapGesture: cannot tap on Slider - GTK's driver has no path for it yet
 Slider.verticalAlignment: ✅
 Stepper.allowDrop: not realized
 Stepper.area: ✅
@@ -814,7 +782,7 @@ Stepper.gridColumnSpan: ✅
 Stepper.gridRow: ✅
 Stepper.gridRowSpan: ✅
 Stepper.horizontalAlignment: ✅
-Stepper.margin: ✅
+Stepper.padding: ✅
 Stepper.panTouchCount: cannot pan on Stepper - GTK's driver has no path for it yet
 Stepper.panUpdated: cannot pan on Stepper - GTK's driver has no path for it yet
 Stepper.panXChannel: cannot pan on Stepper - GTK's driver has no path for it yet
@@ -829,7 +797,7 @@ Stepper.swipeDirection: cannot pan on Stepper - GTK's driver has no path for it 
 Stepper.swipeThreshold: cannot pan on Stepper - GTK's driver has no path for it yet
 Stepper.swiped: cannot pan on Stepper - GTK's driver has no path for it yet
 Stepper.tapCount: cannot tap on Stepper - GTK's driver has no path for it yet
-Stepper.tapped: cannot tap on Stepper - GTK's driver has no path for it yet
+Stepper.tapGesture: cannot tap on Stepper - GTK's driver has no path for it yet
 Stepper.verticalAlignment: ✅
 Switch.allowDrop: not realized
 Switch.area: ✅
@@ -846,7 +814,7 @@ Switch.gridColumnSpan: ✅
 Switch.gridRow: ✅
 Switch.gridRowSpan: ✅
 Switch.horizontalAlignment: ✅
-Switch.margin: ✅
+Switch.padding: ✅
 Switch.panTouchCount: cannot pan on Switch - GTK's driver has no path for it yet
 Switch.panUpdated: cannot pan on Switch - GTK's driver has no path for it yet
 Switch.panXChannel: cannot pan on Switch - GTK's driver has no path for it yet
@@ -861,8 +829,40 @@ Switch.swipeDirection: cannot pan on Switch - GTK's driver has no path for it ye
 Switch.swipeThreshold: cannot pan on Switch - GTK's driver has no path for it yet
 Switch.swiped: cannot pan on Switch - GTK's driver has no path for it yet
 Switch.tapCount: cannot tap on Switch - GTK's driver has no path for it yet
-Switch.tapped: cannot tap on Switch - GTK's driver has no path for it yet
+Switch.tapGesture: cannot tap on Switch - GTK's driver has no path for it yet
 Switch.verticalAlignment: ✅
+Text.allowDrop: not realized
+Text.area: ✅
+Text.canDrag: not realized
+Text.dragLeave: not realized
+Text.dragOver: not realized
+Text.dragStarting: not realized
+Text.dragText: not realized
+Text.drop: not realized
+Text.dropCompleted: not realized
+Text.frameChanged: ✅
+Text.gridColumn: ✅
+Text.gridColumnSpan: ✅
+Text.gridRow: ✅
+Text.gridRowSpan: ✅
+Text.horizontalAlignment: ✅
+Text.padding: ✅
+Text.panTouchCount: cannot pan on Text - GTK's driver has no path for it yet
+Text.panUpdated: cannot pan on Text - GTK's driver has no path for it yet
+Text.panXChannel: cannot pan on Text - GTK's driver has no path for it yet
+Text.panYChannel: cannot pan on Text - GTK's driver has no path for it yet
+Text.pinchUpdated: cannot pinch on Text - GTK's driver has no path for it yet
+Text.pointerEntered: cannot hover on Text - GTK's driver has no path for it yet
+Text.pointerExited: cannot hover on Text - GTK's driver has no path for it yet
+Text.pointerMoved: cannot hover on Text - GTK's driver has no path for it yet
+Text.pointerPressed: cannot hover on Text - GTK's driver has no path for it yet
+Text.pointerReleased: cannot hover on Text - GTK's driver has no path for it yet
+Text.swipeDirection: cannot pan on Text - GTK's driver has no path for it yet
+Text.swipeThreshold: cannot pan on Text - GTK's driver has no path for it yet
+Text.swiped: cannot pan on Text - GTK's driver has no path for it yet
+Text.tapCount: cannot tap on Text - GTK's driver has no path for it yet
+Text.tapGesture: cannot tap on Text - GTK's driver has no path for it yet
+Text.verticalAlignment: ✅
 TextEditor.allowDrop: not realized
 TextEditor.area: ✅
 TextEditor.canDrag: not realized
@@ -878,7 +878,7 @@ TextEditor.gridColumnSpan: ✅
 TextEditor.gridRow: ✅
 TextEditor.gridRowSpan: ✅
 TextEditor.horizontalAlignment: ✅
-TextEditor.margin: ✅
+TextEditor.padding: ✅
 TextEditor.panTouchCount: cannot pan on TextEditor - GTK's driver has no path for it yet
 TextEditor.panUpdated: cannot pan on TextEditor - GTK's driver has no path for it yet
 TextEditor.panXChannel: cannot pan on TextEditor - GTK's driver has no path for it yet
@@ -893,7 +893,7 @@ TextEditor.swipeDirection: cannot pan on TextEditor - GTK's driver has no path f
 TextEditor.swipeThreshold: cannot pan on TextEditor - GTK's driver has no path for it yet
 TextEditor.swiped: cannot pan on TextEditor - GTK's driver has no path for it yet
 TextEditor.tapCount: cannot tap on TextEditor - GTK's driver has no path for it yet
-TextEditor.tapped: cannot tap on TextEditor - GTK's driver has no path for it yet
+TextEditor.tapGesture: cannot tap on TextEditor - GTK's driver has no path for it yet
 TextEditor.verticalAlignment: ✅
 TextField.allowDrop: not realized
 TextField.area: ✅
@@ -910,7 +910,7 @@ TextField.gridColumnSpan: ✅
 TextField.gridRow: ✅
 TextField.gridRowSpan: ✅
 TextField.horizontalAlignment: ✅
-TextField.margin: ✅
+TextField.padding: ✅
 TextField.panTouchCount: cannot pan on TextField - GTK's driver has no path for it yet
 TextField.panUpdated: cannot pan on TextField - GTK's driver has no path for it yet
 TextField.panXChannel: cannot pan on TextField - GTK's driver has no path for it yet
@@ -925,7 +925,7 @@ TextField.swipeDirection: cannot pan on TextField - GTK's driver has no path for
 TextField.swipeThreshold: cannot pan on TextField - GTK's driver has no path for it yet
 TextField.swiped: cannot pan on TextField - GTK's driver has no path for it yet
 TextField.tapCount: cannot tap on TextField - GTK's driver has no path for it yet
-TextField.tapped: cannot tap on TextField - GTK's driver has no path for it yet
+TextField.tapGesture: cannot tap on TextField - GTK's driver has no path for it yet
 TextField.verticalAlignment: ✅
 TimePicker.allowDrop: not realized
 TimePicker.area: not realized
@@ -942,7 +942,7 @@ TimePicker.gridColumnSpan: not realized
 TimePicker.gridRow: not realized
 TimePicker.gridRowSpan: not realized
 TimePicker.horizontalAlignment: not realized
-TimePicker.margin: not realized
+TimePicker.padding: not realized
 TimePicker.panTouchCount: not realized
 TimePicker.panUpdated: not realized
 TimePicker.panXChannel: not realized
@@ -957,7 +957,7 @@ TimePicker.swipeDirection: not realized
 TimePicker.swipeThreshold: not realized
 TimePicker.swiped: not realized
 TimePicker.tapCount: not realized
-TimePicker.tapped: not realized
+TimePicker.tapGesture: not realized
 TimePicker.verticalAlignment: not realized
 TitleBar.allowDrop: not realized
 TitleBar.area: not realized
@@ -974,7 +974,7 @@ TitleBar.gridColumnSpan: not realized
 TitleBar.gridRow: not realized
 TitleBar.gridRowSpan: not realized
 TitleBar.horizontalAlignment: not realized
-TitleBar.margin: not realized
+TitleBar.padding: not realized
 TitleBar.panTouchCount: not realized
 TitleBar.panUpdated: not realized
 TitleBar.panXChannel: not realized
@@ -989,7 +989,7 @@ TitleBar.swipeDirection: not realized
 TitleBar.swipeThreshold: not realized
 TitleBar.swiped: not realized
 TitleBar.tapCount: not realized
-TitleBar.tapped: not realized
+TitleBar.tapGesture: not realized
 TitleBar.verticalAlignment: not realized
 VStack.allowDrop: not realized
 VStack.area: ✅
@@ -1006,7 +1006,7 @@ VStack.gridColumnSpan: ✅
 VStack.gridRow: ✅
 VStack.gridRowSpan: ✅
 VStack.horizontalAlignment: ✅
-VStack.margin: ✅
+VStack.padding: ✅
 VStack.panTouchCount: cannot pan on VStack - GTK's driver has no path for it yet
 VStack.panUpdated: cannot pan on VStack - GTK's driver has no path for it yet
 VStack.panXChannel: cannot pan on VStack - GTK's driver has no path for it yet
@@ -1021,7 +1021,7 @@ VStack.swipeDirection: cannot pan on VStack - GTK's driver has no path for it ye
 VStack.swipeThreshold: cannot pan on VStack - GTK's driver has no path for it yet
 VStack.swiped: cannot pan on VStack - GTK's driver has no path for it yet
 VStack.tapCount: cannot tap on VStack - GTK's driver has no path for it yet
-VStack.tapped: cannot tap on VStack - GTK's driver has no path for it yet
+VStack.tapGesture: cannot tap on VStack - GTK's driver has no path for it yet
 VStack.verticalAlignment: ✅
 WebView.allowDrop: not realized
 WebView.area: not realized
@@ -1038,7 +1038,7 @@ WebView.gridColumnSpan: not realized
 WebView.gridRow: not realized
 WebView.gridRowSpan: not realized
 WebView.horizontalAlignment: not realized
-WebView.margin: not realized
+WebView.padding: not realized
 WebView.panTouchCount: not realized
 WebView.panUpdated: not realized
 WebView.panXChannel: not realized
@@ -1053,7 +1053,7 @@ WebView.swipeDirection: not realized
 WebView.swipeThreshold: not realized
 WebView.swiped: not realized
 WebView.tapCount: not realized
-WebView.tapped: not realized
+WebView.tapGesture: not realized
 WebView.verticalAlignment: not realized
 ZStack.allowDrop: not realized
 ZStack.area: ✅
@@ -1070,7 +1070,7 @@ ZStack.gridColumnSpan: ✅
 ZStack.gridRow: ✅
 ZStack.gridRowSpan: ✅
 ZStack.horizontalAlignment: ✅
-ZStack.margin: ✅
+ZStack.padding: ✅
 ZStack.panTouchCount: cannot pan on ZStack - GTK's driver has no path for it yet
 ZStack.panUpdated: cannot pan on ZStack - GTK's driver has no path for it yet
 ZStack.panXChannel: cannot pan on ZStack - GTK's driver has no path for it yet
@@ -1085,5 +1085,5 @@ ZStack.swipeDirection: cannot pan on ZStack - GTK's driver has no path for it ye
 ZStack.swipeThreshold: cannot pan on ZStack - GTK's driver has no path for it yet
 ZStack.swiped: cannot pan on ZStack - GTK's driver has no path for it yet
 ZStack.tapCount: cannot tap on ZStack - GTK's driver has no path for it yet
-ZStack.tapped: cannot tap on ZStack - GTK's driver has no path for it yet
+ZStack.tapGesture: cannot tap on ZStack - GTK's driver has no path for it yet
 ZStack.verticalAlignment: ✅

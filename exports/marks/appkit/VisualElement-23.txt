@@ -3,7 +3,7 @@ ActivityIndicator.scaleX: 🔌 read scaleX of ActivityIndicator: the host's own 
 Button.rotationX: 🔌 read rotationX of Button: the host's own transform, checked against the layer it composed itself
 Canvas.pivotX: 🔌 read pivotX of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.automationExcludedWithChildren: ✅
-ColorBox.accessibilityHint: ✅
+ColorPicker.accessibilityHint: ✅
 DatePicker.focus: ✅
 DatePicker.isFocusedChanged: ✅
 DatePicker.unfocus: ✅
@@ -16,9 +16,8 @@ Grid.opacity: ✅
 Grid.translationY: 🔌 read translationY of Grid: the host's own transform, checked against the layer it composed itself
 HStack.scaleX: 🔌 read scaleX of HStack: the host's own transform, checked against the layer it composed itself
 Image.rotationX: 🔌 read rotationX of Image: the host's own transform, checked against the layer it composed itself
-ItemsView.pivotX: 🔌 read pivotX of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.automationExcludedWithChildren: ✅
 Line.accessibilityHint: ✅
+List.pivotX: 🔌 read pivotX of List: the host's own transform, checked against the layer it composed itself
 Map.focus: not realized
 Map.isFocusedChanged: not realized
 Map.unfocus: not realized
@@ -47,6 +46,7 @@ SearchField.translationY: 🔌 read translationY of SearchField: the host's own 
 Slider.scaleX: 🔌 read scaleX of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.rotationX: 🔌 read rotationX of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.pivotX: 🔌 read pivotX of Switch: the host's own transform, checked against the layer it composed itself
+Text.automationExcludedWithChildren: ✅
 TextEditor.automationExcludedWithChildren: ✅
 TextField.accessibilityHint: ✅
 TimePicker.focus: ✅

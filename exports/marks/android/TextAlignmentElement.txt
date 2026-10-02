@@ -1,11 +1,11 @@
 # revision 1.1
-Label.horizontalTextAlignment: ✅
-Label.verticalTextAlignment: ✅
-Picker.horizontalTextAlignment: cannot read horizontalTextAlignment of Picker - Android's driver has no path for it yet
+Text.multilineTextAlignment: ✅
+Text.verticalTextAlignment: ✅
+Picker.multilineTextAlignment: cannot read multilineTextAlignment of Picker - Android's driver has no path for it yet
 Picker.verticalTextAlignment: not realized
-SearchField.horizontalTextAlignment: not realized
+SearchField.multilineTextAlignment: not realized
 SearchField.verticalTextAlignment: not realized
-TextEditor.horizontalTextAlignment: not realized
+TextEditor.multilineTextAlignment: not realized
 TextEditor.verticalTextAlignment: not realized
-TextField.horizontalTextAlignment: not realized
+TextField.multilineTextAlignment: not realized
 TextField.verticalTextAlignment: not realized

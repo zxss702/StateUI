@@ -4,16 +4,14 @@ Button.style: ✅
 Canvas.ignoresInput: ✅
 CheckBox.isEnabled: ✅
 CheckBox.zIndex: not realized
-ColorBox.scaleY: 🔌 read scaleY of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.scaleY: 🔌 read scaleY of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.rotationY: 🔌 read rotationY of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.pivotY: 🔌 read pivotY of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.background: ✅
 HStack.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
 Image.style: ✅
-ItemsView.ignoresInput: ✅
-Label.isEnabled: not realized
-Label.zIndex: not realized
 Line.scaleY: 🔌 read scaleY of Line: the host's own transform, checked against the layer it composed itself
+List.ignoresInput: ✅
 Map.rotationY: not realized
 Path.pivotY: 🔌 read pivotY of Path: the host's own transform, checked against the layer it composed itself
 Picker.background: ☑️ AppKit paints a colour on this view; a brush is drawn only by a layout.
@@ -29,6 +27,8 @@ SearchField.background: ☑️ AppKit paints a colour on this view; a brush is d
 Slider.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
 Stepper.style: ✅
 Switch.ignoresInput: ✅
+Text.isEnabled: not realized
+Text.zIndex: not realized
 TextEditor.isEnabled: ✅
 TextEditor.zIndex: not realized
 TextField.scaleY: 🔌 read scaleY of TextField: the host's own transform, checked against the layer it composed itself

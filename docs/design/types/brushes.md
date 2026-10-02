@@ -47,5 +47,5 @@ such a host is handed each axis's share of that one reach.
 
 A stop's colour may be a `Color(light:dark:)` pair. It crosses as both
 halves until the differ builds the element wearing the brush and picks the
-half in force, and that element builds again when the system theme changes;
-see [a pair for each theme](colour-and-theme.md#a-pair-for-each-theme).
+half in force, and that element builds again when the system color scheme changes;
+see [a pair for each color scheme](colour-and-color-scheme.md#a-pair-for-each-color-scheme).

@@ -11,10 +11,10 @@ A menu is written into Android's `Menu` in one call, whatever its size: each
 entry is an int of its kind - an item, a submenu, its end, a line - and its
 flags, and each item and submenu takes the next words and picture. A line
 starts a new group, and Android draws a line between groups from Android 9.
-An item that cannot be undone has its words, and its picture, in the theme's
+An item that cannot be undone has its words, and its picture, in the color scheme's
 error colour. One that cannot be chosen runs nothing and keeps the platform's
 disabled colour, which a colour of its own would hide, and its picture is
-dimmed as the theme dims what is disabled: Android dims no menu's picture
+dimmed as the color scheme dims what is disabled: Android dims no menu's picture
 itself. An item
 chosen comes back by its place among the items, which its Android id is too,
 plus one: a submenu has none.

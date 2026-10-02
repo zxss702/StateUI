@@ -47,16 +47,16 @@ the author wrote, and `HostStorage.crossing()` replaces it with the element's
 resolved law on every read the host makes. Resolving it once at the write would
 freeze whatever the application said at declaration onto a value an element
 claims later. The element's law is resolved by the differ, which alone can read
-an element's per-kind motion plan (identity-and-diffing.md).
+an element's per-kind animation plan (identity-and-diffing.md).
 
 Under `.custom` the host animates nothing: the crossing hands it `.none` and a
 destination equal to wherever this side's engine last wrote the value, so the
 host wears each frame as it comes, and a destination the author wrote - which
 the engine reads, and the host never sees - sends the host nowhere.
 
-`@State(motion:)` puts the law on the value from the first frame; it is the
-first answer the crossing asks for, ahead of the element's `.motion(_:)`, the
-application's and the library's. `$x.journey.motion` changes it later, except
+`@State(animation:)` puts the law on the value from the first frame; it is the
+first answer the crossing asks for, ahead of the element's `.animation(_:)`, the
+application's and the library's. `$x.journey.animation` changes it later, except
 `.custom`, which says who animates the value and is settled at the declaration:
 the host is told at the first crossing and cannot be told again.
 
@@ -65,7 +65,7 @@ the host is told at the first crossing and cannot be told again.
 ```text
   handed to a driven modifier, a two-way control or a scroller
       -> the HOST animates it and writes value and velocity back every frame
-  @State(motion: .custom)
+  @State(animation: .custom)
       -> an engine of the application's writes value and velocity
   worn by nothing yet (no number issued)
       -> nothing animates it: a write lands at the destination at once
@@ -76,7 +76,7 @@ the host is told at the first crossing and cannot be told again.
 `$x.journey.move(to:_:)` sends the value and suspends until it arrives. The
 answer is true when it got there and false when something else ended the
 journey: a newer destination, a value written over it, or a stop. Where there
-is nothing to animate - already there, or the user asked for less motion - it
+is nothing to animate - already there, or the user asked for less animation - it
 answers true at once.
 
 The waiter is booked with the renderer under a negative id from the counter
@@ -206,7 +206,7 @@ and shorthand closure arguments have no arity to bind to over a pack. The
 sources are read off their storage, not through their bindings, so the line
 that wrote the conversion does not become a reader of every source.
 
-## Motion laws
+## Animation laws
 
 `HostMotionLaw` gives where an animation stands at a time since it began. Every
 runtime animates with these numbers by calling it, and `MotionLawTests` holds
@@ -234,7 +234,7 @@ every animation of its table to where it starts and where it lands.
                                     holds a display clock awake for ever
 ```
 
-Time is in milliseconds, the unit of `Motion`'s numbers, so the law's velocity
+Time is in milliseconds, the unit of `Animation`'s numbers, so the law's velocity
 is per millisecond; a journey reports per second, and an animator converts
 where it reports. The slope of an eased curve is a central difference on the
 curve, a function of progress alone, so it answers the same number in every

@@ -28,7 +28,7 @@ A page's title is not worked out from the page's state on every build: it is
 what the page was told, and it changes when something says so, which is
 exactly a `@State` a handler writes. So the page builds again when its
 session is written, by the rule every state follows, and is asked nothing on
-a build caused by anything else. What a page's `.onCreated` writes is in the
+a build caused by anything else. What a page's `.onAppear` writes is in the
 same patch that brings the page, so a presented page's style and a bar's
 buttons are there when the platform first shows them.
 
@@ -37,14 +37,14 @@ buttons are there when the platform first shows them.
 A page's view is a value its parent builds afresh on every render, so
 nothing stored on it outlives a build. The session lives on the element the
 page is: made when the page is first built, handed back on every build after,
-and gone with it. An arrangement - a `NavigationStack`, a `TabbedView`, a
-`SplitView` - is a page already and has no session: it is told what it is by
+and gone with it. An arrangement - a `NavigationStack`, a `TabView`, a
+`NavigationSplitView` - is a page already and has no session: it is told what it is by
 modifier, from `PageElement`.
 
 ## Values and views written into a session
 
 A value written into a session is put on the node as the page or window
-builds, and a colour or a picture with a half for each theme is picked
+builds, and a colour or a picture with a half for each color scheme is picked
 there, so it is right in both themes whenever it was written. A view written
 into a session - a title view, a toolbar item, a title bar's slot - is built
 where it is shown: a composed view there reads its own state as it builds,
@@ -87,16 +87,16 @@ symptom is a setting that lags one run behind. The list is the one thing
 that cannot be worked out from the views, because the views that would name
 the keys do not exist yet when the store is read.
 
-## Styles and motion stay in the core
+## Styles and animation stay in the core
 
-`ApplicationSession.styles` and `.motion` are never sent to a host. A style
+`ApplicationSession.styles` and `.animation` are never sent to a host. A style
 is resolved in the core into the controls it applies to, a colour pair in it
-picked for the theme as each control builds, so a sheet written once serves
+picked for the color scheme as each control builds, so a sheet written once serves
 both themes, and a sheet written again is the next render's. What reaches
-the host of a motion is the resolved law, beside each property that
+the host of a animation is the resolved law, beside each property that
 animates.
 
-## Window geometry is a request
+## WindowScene geometry is a request
 
 A window's position and size are requests to a host whose windows move and
 resize. Each axis is independent: writing the width does not restore an old

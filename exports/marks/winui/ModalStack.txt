@@ -2,4 +2,4 @@
 ModalStack: ✅
 Page.appearing: ✅
 Page.disappearing: ✅
-Window.modalPopped: ✅
+WindowScene.modalPopped: ✅

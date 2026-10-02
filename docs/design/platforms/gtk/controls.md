@@ -33,10 +33,10 @@ colour, and the button its padding.
 A button the tree gives a fill, an outline or a shape wears a class of the
 host's style sheet drawing them - the fill as its background, the outline as
 its border, the shape as its corners' radius, an ellipse as round ends - and
-what the tree says nothing of stays the theme's. The sheet stands above the
-theme, so its fill would stand under the pointer and pressed too: the class
+what the tree says nothing of stays the color scheme's. The sheet stands above the
+color scheme, so its fill would stand under the pointer and pressed too: the class
 draws the fill a little fainter under the pointer and fainter again pressed,
-as the theme's own buttons answer.
+as the color scheme's own buttons answer.
 
 ## Runs of words
 
@@ -166,7 +166,7 @@ The panel draws the picture in the place its layout gives it, as the aspect
 says - whole in its room, covering it, stretched across it, or at its own
 size in the middle - cut at the room's edge. A bitmap is read once. An SVG is
 read at the size it shows at, at the display's scale, and again only for more
-pixels, so a size in motion does not read it every frame. An SVG keeps its
+pixels, so a size in animation does not read it every frame. An SVG keeps its
 own proportions as it is read, leaving bands where the room has others, so a
 stretched one is read covering its room and drawn squeezed into it - never
 enlarged.

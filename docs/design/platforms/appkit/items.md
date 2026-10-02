@@ -1,6 +1,6 @@
 # Items
 
-An ItemsView is AppKit's collection view in a scroll view: a diffable data
+An List is AppKit's collection view in a scroll view: a diffable data
 source over the list's identities, one section a group, and a compositional
 layout. The host makes the view itself, since each cell asks the tree for
 what it holds through the host layer's `ItemsCells`
@@ -48,4 +48,4 @@ short once the cells on the way are measured. `scrollTo` brings the item
 near first, lets the layout measure what it shows, and then stands the clip
 view where the anchor says from the item's frame as the layout holds it
 ([scrolling to an item](../../host/items.md#scrolling-to-an-item)).
-With motion, the clip view glides there and settles once more as it stops.
+With animation, the clip view glides there and settles once more as it stops.

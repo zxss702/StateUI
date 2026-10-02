@@ -1,7 +1,7 @@
 # Views
 
 `lib/StateUI/Sources/Views` holds what an application writes: the structure
-(`Application`, `Scene`, `Window`, `Page`), the controls, the layouts and
+(`App`, `Scene`, `WindowScene`, `Page`), the controls, the layouts and
 arrangements, the modifiers, the builders, the styles, and the library's own
 composed views. Each of them is a value that describes itself as a node; the
 core's differ turns the nodes into the patch a host applies.
@@ -19,7 +19,7 @@ hangs off them, `Styles` the styles and `Inspector` the inspector.
 | [composition.md](composition.md) | composed views as placeholders, their modifiers, container content, watchers, state and items in composed views |
 | [builders.md](builders.md) | result builders, the path key every statement records, `ForEach` keys, menus, windows and styles |
 | [tiers.md](tiers.md) | the two halves of the tier hierarchy, the mixin tiers, each control's own properties |
-| [modifiers.md](modifiers.md) | how a modifier writes, handlers, slot children, motion, keys and aims, transforms, accessibility, gestures, placement |
+| [modifiers.md](modifiers.md) | how a modifier writes, handlers, slot children, animation, keys and aims, transforms, accessibility, gestures, placement |
 | [bindings.md](bindings.md) | binding twins, carried states, modes, driven text, two-way controls, feeds, sampling |
 | [controls.md](controls.md) | the shape of a control, closed vocabularies, and each control's own rules |
 | [pages.md](pages.md) | application, scenes, windows, pages, the arrangements and their keys |
@@ -32,13 +32,13 @@ hangs off them, `Styles` the styles and `Inspector` the inspector.
 An application declares types; the tree under a window is views.
 
 ```text
-  Application ──scene──▶ Scene ──windows──▶ Windows ──main──▶ Window ──page──▶ any Page
-      │                    │                   └──groups──▶ WindowGroup ──▶ Window     │
+  App ──scene──▶ Scene ──windows──▶ Windows ──main──▶ WindowScene ──page──▶ any Page
+      │                    │                   └──groups──▶ WindowGroup ──▶ WindowScene     │
   ApplicationSession   SceneSession                          WindowSession            │
                                                                                       │
           ┌───────────────────────────────────────────────────────────────────────────┤
-          │ an arrangement - NavigationStack, TabbedView, SplitView -                  │ any other view -
-          │ is a page itself, and keys the pages it holds                              │ usually a ContentView -
+          │ an arrangement - NavigationStack, TabView, NavigationSplitView -                  │ any other view -
+          │ is a page itself, and keys the pages it holds                              │ usually a View -
           ▼                                                                            ▼ goes on a page element
       pages (each a view on a page element, or another arrangement)            that holds its PageSession
                                                                                        │
@@ -57,20 +57,20 @@ Everything a builder collects is an `Element`: something that answers `body`, a
 `Node` read afresh on every render.
 
 ```text
-  a control              struct Label: View { var node: Node }
-    Label("Total")         body is its node: Node(Label, props: [text: "Total"])
+  a control              struct Text: View { var node: Node }
+    Text("Total")         body is its node: Node(Text, props: [text: "Total"])
 
   a container            VStack { … }
                            Node(VStack) whose content closure runs only when
                            the differ reaches the stack
 
-  a composed view        struct Header: ContentView { var content: any View }
+  a composed view        struct Header: View { var body: some View }
     Header("Settings")     body is a placeholder, Node(Composed): the differ builds
                            `content` into it, keeping the view's @State - or
                            carries the view whole
 
   a modifier             .fontSize(20)        props[fontSize] = 20
-  (a modified copy)      .onTapped { … }      events[tapped] gains a handler
+  (a modified copy)      .onTapGesture { … }      events[tapped] gains a handler
                          .opacity($fade)      driven[opacity] = the state's registration
                          .id("total")         the node's key
                          .contextMenu { … }   a slot child after the view's own
@@ -118,11 +118,11 @@ through those members, never through spelled tokens.
 ```text
   Contracts/Elements, Contracts/Tiers, Contracts/Mixins
     LabelContract: ElementContract
-      nodeType "Label", layer, tiers [View, TextElement, FontElement, …]
-      members: lineBreak, maximumLines         ElementProperty / ElementEvent / ElementAct
+      nodeType "Text", layer, tiers [View, TextElement, FontElement, …]
+      members: lineBreak, lineLimit         ElementProperty / ElementEvent / ElementAct
          │
          ├─ Node(contract: LabelContract.self)           the control's node type
-         ├─ setValue(LabelContract.maximumLines, 3)      a property: its token, a typed value
+         ├─ setValue(LabelContract.lineLimit, 3)      a property: its token, a typed value
          ├─ onEvent(ButtonContract.clicked) { … }        an event: a typed payload, or none
          └─ aim.call(MapContract.moveToRegion, …)        an act, called through an aim
          │

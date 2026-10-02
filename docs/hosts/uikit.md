@@ -73,7 +73,7 @@ manifest reads it, declares the `Platforms/UIKit` target and its
 every module of the application. Swift written for this host alone stands
 under `#if UIKIT`.
 
-A new application made in `apps/` - **StateUI: New Application in apps/**, or
+A new application made in `apps/` - **StateUI: New App in apps/**, or
 `.scripts/new-app.sh` - has a UIKit head, as HelloWorld does.
 
 ## Scenes and windows
@@ -87,8 +87,8 @@ before in front of them. On an iPhone one scene stands, and a second window
 has none to stand in.
 
 A window's pages are UIKit's own controllers - a navigation controller for a
-`NavigationStack`, a tab bar controller for a `TabbedView`, a split view
-controller for a `SplitView` - and its sheets are presented over it, the user's
+`NavigationStack`, a tab bar controller for a `TabView`, a split view
+controller for a `NavigationSplitView` - and its sheets are presented over it, the user's
 swipe down taking the top one away. The application's `MenuBar` is the
 iPad's main menu.
 

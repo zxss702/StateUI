@@ -79,9 +79,9 @@ facts in one call: the model, the maker and Android's version; the display's
 size in pixels, its density, rotation and refresh rate; the application's
 name, package and version. A device whose smallest width is 600
 density-independent pixels or more is a tablet, any other a phone. The
-system's dark or light theme is read with them, and the activity is made in
-the matching one: a change of theme makes Android create the activity again,
-and the new one takes the scene over, its controls drawn in the new theme.
+system's dark or light color scheme is read with them, and the activity is made in
+the matching one: a change of color scheme makes Android create the activity again,
+and the new one takes the scene over, its controls drawn in the new color scheme.
 
 The user's locale, the battery and the network are read with them and again
 whenever one changes: the activity watches the zone, the clock, the battery,

@@ -14,6 +14,6 @@ How each of them realizes these members is on its own page.
 
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
-| `avoidsSafeArea` | property | `SafeAreaEdges` | adaptive |
+| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |
 | `clipsContent` | property | `Bool` | native |
 | `letsInputThrough` | property | `Bool` | native |

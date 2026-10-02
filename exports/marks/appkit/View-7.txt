@@ -12,11 +12,11 @@ CheckBox.dragStarting: not realized
 CheckBox.dragText: not realized
 CheckBox.dropCompleted: not realized
 CheckBox.frameChanged: ✅
-CheckBox.margin: ✅
-ColorBox.pinchUpdated: 🔌 pinch on ColorBox: handed to the host's recognizer or handler, no NSEvent sent
+CheckBox.padding: ✅
+ColorPicker.pinchUpdated: 🔌 pinch on ColorPicker: handed to the host's recognizer or handler, no NSEvent sent
 DatePicker.panYChannel: 🔌 pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent
 Ellipse.tapCount: 🔌 tap on Ellipse: handed to the host's recognizer or handler, no NSEvent sent
-Ellipse.tapped: 🔌 tap on Ellipse: handed to the host's recognizer or handler, no NSEvent sent
+Ellipse.tapGesture: 🔌 tap on Ellipse: handed to the host's recognizer or handler, no NSEvent sent
 Grid.frameChanged: ✅
 Grid.gridColumn: ✅
 Grid.gridRow: ✅
@@ -32,15 +32,12 @@ Image.pointerExited: 🔌 hover on Image: handed to the host's recognizer or han
 Image.pointerMoved: 🔌 hover on Image: handed to the host's recognizer or handler, no NSEvent sent
 Image.pointerPressed: 🔌 hover on Image: handed to the host's recognizer or handler, no NSEvent sent
 Image.pointerReleased: 🔌 hover on Image: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.swipeDirection: 🔌 pan on ItemsView: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.swipeThreshold: 🔌 pan on ItemsView: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.swiped: 🔌 pan on ItemsView: handed to the host's recognizer or handler, no NSEvent sent
-Label.panTouchCount: 🔌 pan on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.panUpdated: 🔌 pan on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.panXChannel: 🔌 pan on Label: handed to the host's recognizer or handler, no NSEvent sent
 Line.frameChanged: ✅
 Line.gridColumnSpan: ✅
 Line.gridRowSpan: ✅
+List.swipeDirection: 🔌 pan on List: handed to the host's recognizer or handler, no NSEvent sent
+List.swipeThreshold: 🔌 pan on List: handed to the host's recognizer or handler, no NSEvent sent
+List.swiped: 🔌 pan on List: handed to the host's recognizer or handler, no NSEvent sent
 Map.area: not realized
 Map.frameChanged: not realized
 Path.canDrag: not realized
@@ -48,11 +45,11 @@ Path.dragStarting: not realized
 Path.dragText: not realized
 Path.dropCompleted: not realized
 Path.frameChanged: ✅
-Path.margin: ✅
+Path.padding: ✅
 Picker.pinchUpdated: 🔌 pinch on Picker: handed to the host's recognizer or handler, no NSEvent sent
 Polygon.panYChannel: 🔌 pan on Polygon: handed to the host's recognizer or handler, no NSEvent sent
 Polyline.tapCount: 🔌 tap on Polyline: handed to the host's recognizer or handler, no NSEvent sent
-Polyline.tapped: 🔌 tap on Polyline: handed to the host's recognizer or handler, no NSEvent sent
+Polyline.tapGesture: 🔌 tap on Polyline: handed to the host's recognizer or handler, no NSEvent sent
 PositionIndicator.frameChanged: not realized
 PositionIndicator.gridColumn: not realized
 PositionIndicator.gridRow: not realized
@@ -84,11 +81,14 @@ Stepper.dragStarting: not realized
 Stepper.dragText: not realized
 Stepper.dropCompleted: not realized
 Stepper.frameChanged: ✅
-Stepper.margin: ✅
+Stepper.padding: ✅
 Switch.pinchUpdated: 🔌 pinch on Switch: handed to the host's recognizer or handler, no NSEvent sent
+Text.panTouchCount: 🔌 pan on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.panUpdated: 🔌 pan on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.panXChannel: 🔌 pan on Text: handed to the host's recognizer or handler, no NSEvent sent
 TextEditor.panYChannel: 🔌 pan on TextEditor: handed to the host's recognizer or handler, no NSEvent sent
 TextField.tapCount: 🔌 tap on TextField: handed to the host's recognizer or handler, no NSEvent sent
-TextField.tapped: 🔌 tap on TextField: handed to the host's recognizer or handler, no NSEvent sent
+TextField.tapGesture: 🔌 tap on TextField: handed to the host's recognizer or handler, no NSEvent sent
 TimePicker.frameChanged: ✅
 TimePicker.gridColumn: ✅
 TimePicker.gridRow: ✅

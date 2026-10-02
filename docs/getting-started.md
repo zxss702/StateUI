@@ -88,9 +88,9 @@ The Command Palette offers the rest under **StateUI:**
 | --- | --- |
 | Select Host | AppKit or Android, as the status bar item does |
 | Select Android Device | the device or emulator an Android head runs on |
-| Select Application | the application F5 runs |
+| Select App | the application F5 runs |
 | Run Tests | the workspace's suites, run as the chosen host |
-| New Application in apps/ | a new application beside Gallery and HelloWorld, made by `.scripts/new-app.sh` |
+| New App in apps/ | a new application beside Gallery and HelloWorld, made by `.scripts/new-app.sh` |
 | Clean Index | removes the language server's index and builds it again |
 | Check Toolchain | what this machine has of what its hosts need, and what to install for the rest |
 
@@ -132,12 +132,12 @@ on Windows):
 .scripts/new-app.sh Notes
 ```
 
-## Application shape
+## App shape
 
 Every application follows one structural path:
 
 ```text
-Application -> Scene -> Window -> Page -> View
+App -> Scene -> WindowScene -> Page -> View
 ```
 
 Each type declares exactly one composition property. Runtime properties such
@@ -145,31 +145,31 @@ as styles, window title, geometry, and page title belong to session objects in
 the environment.
 
 ```swift
-struct NotesApp: Application {
-    var scene: any Scene { NotesWindow() }
+struct NotesApp: App {
+    var body: some Scene { NotesWindow() }
 }
 
-struct NotesWindow: Window {
+struct NotesWindow: WindowScene {
     var page: any Page { NotesPage() }
 }
 
-struct NotesPage: ContentView {
+struct NotesPage: View {
     @Environment private var page: PageSession
     @State private var note = ""
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(note.isEmpty ? "A new note" : note)
+            Text(note.isEmpty ? "A new note" : note)
             TextField($note).placeholder("Write something")
         }
         .spacing(12)
-        .padding(24)
-        .onCreated { page.title = "Notes" }
+        .contentPadding(24)
+        .onAppear { page.title = "Notes" }
     }
 }
 ```
 
-`Application`, `Scene` and `Window` are declarations, not native objects, and
+`App`, `Scene` and `WindowScene` are declarations, not native objects, and
 so is the view a window shows as its page. Their sessions carry the identity
 and mutable runtime state.
 [Applications and sessions](interface/application-and-sessions.md) describes that model
@@ -183,7 +183,7 @@ An application has two concerns:
 NotesUI                     NotesAppKit
 ------------------------    ---------------------------
 imports StateUI             imports NotesUI
-Application and scenes      imports StateUIAppKit
+App and scenes      imports StateUIAppKit
 windows and pages           locates native resources
 state and styles            starts the AppKit host
 no toolkit imports          contains no application UI
@@ -193,16 +193,16 @@ The UI module exports one stable registration function. Registration names the
 application type to the host; it does not build native controls itself.
 
 ```swift
-struct RegisteredApp: Application {
-    var scene: any Scene { RegisteredWindow() }
+struct RegisteredApp: App {
+    var body: some Scene { RegisteredWindow() }
 }
 
-struct RegisteredWindow: Window {
+struct RegisteredWindow: WindowScene {
     var page: any Page { RegisteredPage() }
 }
 
-struct RegisteredPage: ContentView {
-    var content: any View { Label("Hello, StateUI") }
+struct RegisteredPage: View {
+    var body: some View { Text("Hello, StateUI") }
 }
 
 @_cdecl("stateui_app_register")
@@ -282,7 +282,7 @@ are modifiers:
 @State var volume = 0.5
 
 VStack {
-    Label("Playback")
+    Text("Playback")
         .fontSize(24)
 
     Slider($volume)
@@ -313,7 +313,7 @@ file name:
 
 ```swift
 Image("stateui_tile.png")
-    .height(120)
+    .frame(height: 120)
     .horizontalAlignment(.center)
 ```
 

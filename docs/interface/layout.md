@@ -12,25 +12,25 @@ from these or implemented once as StateUI-authored layout. A primitive is
 usable on a platform only when its row and required members are checked in the
 platform matrix.
 
-## Size, margin, padding, and alignment
+## Size, padding, padding, and alignment
 
 Every eligible view can state requested, minimum, and maximum dimensions:
 
 ```swift
-Label("Summary")
-    .width(240)
-    .minimumHeight(44)
+Text("Summary")
+    .frame(width: 240)
+    .frame(minHeight: 44)
     .horizontalAlignment(.center)
     .verticalAlignment(.start)
-    .margin(16, 8)
+    .contentPadding(16, 8)
 ```
 
 A request is input to measurement, not a promise that the platform has that
 much room. Minimum and maximum values bound the request. The enclosing layout
 still decides the final rectangle.
 
-`margin` is outside a view. `padding` is inside controls and containers that
-own content padding. `Insets` can be supplied as one value, horizontal and
+`padding` is outside a view. `padding` is inside controls and containers that
+own content padding. `EdgeInsets` can be supplied as one value, horizontal and
 vertical values, or four edges. `horizontalAlignment` and `verticalAlignment`
 express start, center, end, or fill behavior in the slot assigned by the
 parent.
@@ -58,10 +58,10 @@ rectangle, so it changes the drawing without changing measurement or
 arrangement:
 
 ```swift
-ColorBox(.cornflowerBlue)
-    .width(80)
-    .height(80)
-    .transform(.rotate(15).scale(1.1).translate(20, 0))
+ColorPicker(.cornflowerBlue)
+    .frame(width: 80)
+    .frame(height: 80)
+    .transformEffect(.rotate(15).scale(1.1).translate(20, 0))
 ```
 
 Read a chain from left to right. Every operation acts after everything written
@@ -101,7 +101,7 @@ in the [platform matrix](../platform-contract.md#shared-view-members).
 
 ```swift
 VStack {
-    Label("Account")
+    Text("Account")
 
     HStack {
         Button("Cancel")
@@ -110,7 +110,7 @@ VStack {
     .spacing(8)
 }
 .spacing(16)
-.padding(24)
+.contentPadding(24)
 ```
 
 The content closure is retained and described when the differ asks for the
@@ -126,7 +126,7 @@ A grid owns row and column definitions; each child states its cell and spans:
 @State var name = ""
 
 Grid {
-    Label("Name")
+    Text("Name")
 
     TextField($name)
         .gridColumn(1)
@@ -155,8 +155,8 @@ occupy the same cell; they overlap and `zIndex` decides drawing order.
 
 Grid definitions are data. Changing a definition keeps child identities and
 rearranges the existing controls, and each child rectangle travels to its new
-place under the grid's layout motion rather than being described frame by
-frame - see [Motion and journeys](../concepts/motion-and-journeys.md).
+place under the grid's layout animation rather than being described frame by
+frame - see [Animation and journeys](../concepts/animation-and-journeys.md).
 
 ## Layers
 
@@ -166,16 +166,16 @@ the whole room within the stack's padding, or the rectangle it names with
 
 ```swift
 ZStack {
-    ColorBox(.cornflowerBlue)
+    ColorPicker(.cornflowerBlue)
 
-    Label("Bottom right")
+    Text("Bottom right")
         .horizontalAlignment(.end)
         .verticalAlignment(.end)
 
-    ColorBox(.orange)
+    ColorPicker(.orange)
         .area(.proportional(0.5, 0, 0.5, 1))
 }
-.height(240)
+.frame(height: 240)
 ```
 
 `.absolute(x, y, width, height)` names an area in device-independent units
@@ -205,12 +205,12 @@ every page of a window is one of the window's overlays
 ScrollView {
     VStack {
         ForEach(1...100) { row in
-            Label("Row \(row)")
+            Text("Row \(row)")
         }
     }
 }
 .scrollOffset($offset)
-.verticalScrollBarVisibility(.default)
+.verticalScrollIndicators(.default)
 ```
 
 The `Point` binding is two-way. A program write moves the viewport; native
@@ -249,9 +249,9 @@ page continues moving under vertical input.
 
 `ScrollView` is eager. It is not a virtualized data collection.
 
-### ScrollReader
+### ScrollViewReader
 
-`ScrollReader` gives authored placement arithmetic native scroll input without
+`ScrollViewReader` gives authored placement arithmetic native scroll input without
 moving the content subtree itself. It lays a transparent native scroller over
 the held views and reports that scroller's offset into one driven `Point`
 state. An engine can read `$offset.journey.value` and move already mounted
@@ -262,7 +262,7 @@ or touch update.
 @State private var offset = Point.zero
 @State private var places = PlacedRun()
 
-ScrollReader(across: Double(cards.count - 1) * 90) {
+ScrollViewReader(across: Double(cards.count - 1) * 90) {
     PlacedLayout(cards, id: \.id) { Card($0) }
         .placement($places)
         .engine(following: $offset) { _ in
@@ -284,16 +284,16 @@ The rest of the contract follows from that ownership:
 - `onScrollStopped` is the scroller's own: it runs once a movement has ended,
   and a write to the offset from there is how a run comes to rest on an item.
 - The held subtree is input-transparent because the scroller owns the room's
-  native input. Attach `onTapped`, `onPanUpdated`, or `onTapped(within:_:)` to
+  native input. Attach `onTapGesture`, `onPanUpdated`, or `onTapGesture(within:_:)` to
   the reader rather than to a held card.
-- `onTapped(within:_:)` receives the measured room and returns the active
+- `onTapGesture(within:_:)` receives the measured room and returns the active
   rectangle in that room. With a scroll binding, StateUI keeps the native hit
   target over that viewport rectangle as the content offset moves. Without a
   binding it falls back to the whole run.
 - `aim(_:)` exposes the underlying scroller for other aimed acts. Offset
   movement itself remains state, not an act.
 
-`ScrollReader` is a StateUI composition, so its availability is the combined
+`ScrollViewReader` is a StateUI composition, so its availability is the combined
 availability of frame reporting, scrolling, driven state, and any authored
 layout used by its content. It is not an additional native control row.
 
@@ -311,7 +311,7 @@ Use it for finite content in stacks, grids, menus, and drawing structures. A
 plain `for` is intentionally not accepted by `ViewBuilder`, because the
 builder must know stable identity rather than receiving only positions.
 
-Many items - more than a screen holds - belong in an `ItemsView`, which
+Many items - more than a screen holds - belong in an `List`, which
 builds only the items the platform's own collection shows
 ([Controls and input](controls-and-input.md#collections)).
 
@@ -332,7 +332,7 @@ There are three readings of the same native measurement:
 | --- | --- |
 | `.frame($room)` | a one-way host feed of the parent-space rectangle into state |
 | `.onFrameChanged(in:)` | an asynchronous handler for one selected coordinate space |
-| `FrameReader` | local content rebuilt from its last measured rectangle |
+| `GeometryReader` | local content rebuilt from its last measured rectangle |
 
 The frame feed is useful when an engine or authored layout needs the native
 rectangle without making a body read it:
@@ -383,13 +383,13 @@ report never changes layout by itself. A visual transform never reports,
 because it does not alter the layout rectangle; an animated layout property
 reports the rectangles that the host actually settles.
 
-`FrameReader` owns the measured rectangle as its own state and rebuilds only
+`GeometryReader` owns the measured rectangle as its own state and rebuilds only
 its content from that value. Its closure first receives a zero rectangle; the first
 native frame report supplies the measured rectangle:
 
 ```swift
-FrameReader { frame in
-    Label("\(Int(frame.width)) x \(Int(frame.height))")
+GeometryReader { frame in
+    Text("\(Int(frame.width)) x \(Int(frame.height))")
 }
 ```
 
@@ -397,7 +397,7 @@ Use a reader when layout-derived content belongs locally. Use
 `onFrameChanged` when another owner genuinely needs the measurement. Avoid
 feedback where a measurement directly changes the dimension being measured
 without a stable stopping condition. A size derived from measurement normally
-uses `.motion(.none)`: letting the measured size travel can feed intermediate
+uses `.animation(.none)`: letting the measured size travel can feed intermediate
 measurements back into the same calculation.
 
 ## A layout's own box
@@ -408,10 +408,10 @@ wrap content in for a card - the layout holding the content is the card.
 
 ```swift
 VStack {
-    Label("Cheese")
-    Label("Aged twelve months")
+    Text("Cheese")
+    Text("Aged twelve months")
 }
-.padding(14)
+.contentPadding(14)
 .background(Color("#F4F4F4"))
 .shape(.roundedRectangle(8))
 .stroke(Color("#D0D0D0"))
@@ -428,7 +428,7 @@ is drawn and nothing is cut. A dashed outline belongs to a shape: lay a
 
 ## Safe areas and clipping
 
-`avoidsSafeArea` states, edge by edge, what a layout stands clear of on a
+`ignoresSafeArea` states, edge by edge, what a layout stands clear of on a
 screen with bars and a notch. A page's content stands clear of them by
 default (`.container`); the page's own layout says `.none` - edge to edge -
 to run under them, so its background colours the status bar's strip:
@@ -436,14 +436,14 @@ to run under them, so its background colours the status bar's strip:
 ```swift
 import StateUI
 
-struct Header: ContentView {
-    var content: any View {
+struct Header: View {
+    var body: some View {
         VStack {
-            Label("StateUI")
+            Text("StateUI")
         }
-        .padding(20, 60, 20, 20)
+        .contentPadding(20, 60, 20, 20)
         .background(.steelBlue)
-        .avoidsSafeArea(.none)
+        .ignoresSafeArea(.none)
     }
 }
 ```
@@ -459,7 +459,7 @@ The [platform contract](../platform-contract.md) says where each is realized.
 native controls. Their declarations and core tests preserve the intended
 authored-placement vocabulary, but they are deliberately outside the initial
 native-host acceptance milestone. That milestone first completes the primitive
-contract, sparse property motion, and layout motion.
+contract, sparse property animation, and layout animation.
 
 Do not mark either composition supported merely because its Swift declaration
 compiles. A host must first have checks for every primitive it depends on, and

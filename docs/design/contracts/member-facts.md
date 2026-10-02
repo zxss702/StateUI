@@ -8,7 +8,7 @@ They are arguments of `ElementProperty`, written in the contract files, and
 each defaults to the common case.
 
 ```text
-  static let maximumLines = ElementProperty<Self, Int>("maximumLines", layer: .native, travels: false)
+  static let lineLimit = ElementProperty<Self, Int>("lineLimit", layer: .native, travels: false)
   static let region       = ElementProperty<Self, MapRegion>("region", layer: .provider, travels: false, cleared: false)
   static let fontSize     = ElementProperty<Self, Double>("fontSize", layer: .native, moves: .text)
 ```
@@ -23,11 +23,11 @@ StateUI knows are meaningless out of the patch.
 ```text
   a place or a count       gridRow, gridColumn and their spans, tapCount, panTouchCount,
                            selectedIndex, currentPage, position, count, maximumVisible,
-                           cursorPosition, selectionLength, maximumLength, maximumLines, zIndex
+                           cursorPosition, selectionLength, maximumLength, lineLimit, zIndex
   a range or a region      a slider's and a stepper's minimum and maximum, a stepper's step,
                            a map's region, a pin's location
   a placement              area: the layout's own
-                           motion carries a child from one place to the next
+                           animation carries a child from one place to the next
   a state's number         panXChannel, panYChannel, scrollOffset
   a list drawn whole       a polygon's or a polyline's points, a stroke's dash pattern
   a gesture's threshold    swipeThreshold
@@ -61,11 +61,11 @@ only on a screen.
 
 ## Moves
 
-`moves` names the group of values a property is in, for `.motion(_:_:)`,
+`moves` names the group of values a property is in, for `.animation(_:_:)`,
 where its value alone cannot say: a size, a place, a transform, spacing or
 text. A colour says its own group through its value, so no colour member
 names one. A width or a height that a measured layout works out arrives at
-once rather than animating: carried through a motion, it would lay the page
+once rather than animating: carried through a animation, it would lay the page
 out at sizes nobody chose.
 
 ## One name one set of facts
@@ -74,7 +74,7 @@ The differ and the hosts hold a property as a token, which is a name, and
 read what it says by that name: `Prop.facts` looks it up in
 `LibraryContracts.facts`, where the first member met under a name answers
 for every member of it. So every member of one name says the same of its
-layer, travel, clearing and motion; two that disagreed would each be half
+layer, travel, clearing and animation; two that disagreed would each be half
 wrong. `LibraryContractTests` holds every member of one name to one set of
 facts. A name no library contract declares, an application's own, travels,
-is cleared, and says nothing of motion.
+is cleared, and says nothing of animation.

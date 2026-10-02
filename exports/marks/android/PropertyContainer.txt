@@ -3,14 +3,14 @@ ActivityIndicator.accessibilityIdentifier: ✅
 Button.accessibilityIdentifier: ✅
 Canvas.accessibilityIdentifier: ✅
 CheckBox.accessibilityIdentifier: ✅
-ColorBox.accessibilityIdentifier: ✅
+ColorPicker.accessibilityIdentifier: ✅
 DatePicker.accessibilityIdentifier: ✅
 Ellipse.accessibilityIdentifier: ✅
 Grid.accessibilityIdentifier: ✅
 HStack.accessibilityIdentifier: ✅
 Image.accessibilityIdentifier: ✅
-ItemsView.accessibilityIdentifier: ✅
-Label.accessibilityIdentifier: ✅
+List.accessibilityIdentifier: ✅
+Text.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅
 Map.accessibilityIdentifier: not realized
 MenuItem.accessibilityIdentifier: – An Android menu entry holds no identifier: automation finds it by its title.
@@ -27,10 +27,10 @@ ScrollView.accessibilityIdentifier: ✅
 SearchField.accessibilityIdentifier: ✅
 Slider.accessibilityIdentifier: ✅
 Span.accessibilityIdentifier: not realized
-SplitView.accessibilityIdentifier: ✅
+NavigationSplitView.accessibilityIdentifier: ✅
 Stepper.accessibilityIdentifier: ✅
 Switch.accessibilityIdentifier: ✅
-TabbedView.accessibilityIdentifier: ✅
+TabView.accessibilityIdentifier: ✅
 TextEditor.accessibilityIdentifier: ✅
 TextField.accessibilityIdentifier: ✅
 TimePicker.accessibilityIdentifier: ✅

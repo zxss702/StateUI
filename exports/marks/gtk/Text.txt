@@ -1,0 +1,6 @@
+# revision 1.1
+Text: ✅
+Text.frameChanged: ✅
+Text.lineBreak: ◐ cannot read lineBreak of Text - GTK's driver has no path for it yet
+Text.lineLimit: ◐ cannot read lineLimit of Text - GTK's driver has no path for it yet
+Text.text: ✅

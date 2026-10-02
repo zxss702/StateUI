@@ -6,7 +6,7 @@ What every view a layout positions has: where it sits in its layout, the space k
 
 Wears: [VisualElement](VisualElement.md)
 
-Worn by: [ActivityIndicator](../ActivityIndicator.md) · [Button](../Button.md) · [Canvas](../Canvas.md) · [CheckBox](../CheckBox.md) · [ColorBox](../ColorBox.md) · [DatePicker](../DatePicker.md) · [Ellipse](../Ellipse.md) · [Grid](../Grid.md) · [HStack](../HStack.md) · [Image](../Image.md) · [ItemsView](../ItemsView.md) · [Label](../Label.md) · [Line](../Line.md) · [Map](../Map.md) · [Path](../Path.md) · [Picker](../Picker.md) · [Polygon](../Polygon.md) · [Polyline](../Polyline.md) · [PositionIndicator](../PositionIndicator.md) · [ProgressBar](../ProgressBar.md) · [RadioButton](../RadioButton.md) · [Rectangle](../Rectangle.md) · [ScrollView](../ScrollView.md) · [SearchField](../SearchField.md) · [Slider](../Slider.md) · [Stepper](../Stepper.md) · [Switch](../Switch.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md) · [TimePicker](../TimePicker.md) · [TitleBar](../TitleBar.md) · [VStack](../VStack.md) · [WebView](../WebView.md) · [ZStack](../ZStack.md)
+Worn by: [ActivityIndicator](../ActivityIndicator.md) · [Button](../Button.md) · [Canvas](../Canvas.md) · [CheckBox](../CheckBox.md) · [ColorPicker](../ColorPicker.md) · [DatePicker](../DatePicker.md) · [Ellipse](../Ellipse.md) · [Grid](../Grid.md) · [HStack](../HStack.md) · [Image](../Image.md) · [Line](../Line.md) · [List](../List.md) · [Map](../Map.md) · [Path](../Path.md) · [Picker](../Picker.md) · [Polygon](../Polygon.md) · [Polyline](../Polyline.md) · [PositionIndicator](../PositionIndicator.md) · [ProgressBar](../ProgressBar.md) · [RadioButton](../RadioButton.md) · [Rectangle](../Rectangle.md) · [ScrollView](../ScrollView.md) · [SearchField](../SearchField.md) · [Slider](../Slider.md) · [Stepper](../Stepper.md) · [Switch](../Switch.md) · [Text](../Text.md) · [TextEditor](../TextEditor.md) · [TextField](../TextField.md) · [TimePicker](../TimePicker.md) · [TitleBar](../TitleBar.md) · [VStack](../VStack.md) · [WebView](../WebView.md) · [ZStack](../ZStack.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Tiers/ViewContract.swift`.
 
@@ -17,32 +17,32 @@ How each of them realizes these members is on its own page.
 | `allowDrop` | property | `Bool` | native |
 | `area` | property | `Area` | structure |
 | `canDrag` | property | `Bool` | native |
-| `onDragLeave` (`dragLeave`) | event |  | native |
-| `onDragOver` (`dragOver`) | event |  | native |
+| `dragLeave` | event |  | native |
+| `dragOver` | event |  | native |
 | `dragStarting` | event |  | native |
 | `dragText` | property | `String` | native |
 | `onDrop` (`drop`) | event | `String` | native |
-| `onDropCompleted` (`dropCompleted`) | event |  | native |
-| `onFrameChanged` (`frameChanged`) | event | `[Double]` | native |
+| `dropCompleted` | event |  | native |
+| `frameChanged` | event | `[Double]` | native |
 | `gridColumn` | property | `Int` | stateUI |
 | `gridColumnSpan` | property | `Int` | stateUI |
 | `gridRow` | property | `Int` | stateUI |
 | `gridRowSpan` | property | `Int` | stateUI |
 | `horizontalAlignment` | property | `Alignment` | native |
-| `margin` | property | `Insets` | native |
+| `padding` | property | `EdgeInsets` | native |
 | `panTouchCount` | property | `Int` | structure |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native |
 | `panXChannel` | property | `Int` | structure |
 | `panYChannel` | property | `Int` | structure |
-| `onPinchUpdated` (`pinchUpdated`) | event | `(GesturePhase, Double, Point)` | native |
-| `onPointerEntered` (`pointerEntered`) | event |  | native |
-| `onPointerExited` (`pointerExited`) | event |  | native |
-| `onPointerMoved` (`pointerMoved`) | event | `Point?` | native |
-| `onPointerPressed` (`pointerPressed`) | event | `Point?` | native |
-| `onPointerReleased` (`pointerReleased`) | event | `Point?` | native |
+| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native |
+| `pointerEntered` | event |  | native |
+| `pointerExited` | event |  | native |
+| `pointerMoved` | event | `Point?` | native |
+| `pointerPressed` | event | `Point?` | native |
+| `pointerReleased` | event | `Point?` | native |
 | `swipeDirection` | property | `SwipeDirection` | structure |
 | `swipeThreshold` | property | `Double` | structure |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native |
 | `tapCount` | property | `Int` | structure |
-| `onTapped` (`tapped`) | event |  | native |
+| `onTapGesture` (`tapGesture`) | event |  | native |
 | `verticalAlignment` | property | `Alignment` | native |

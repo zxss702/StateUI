@@ -42,7 +42,7 @@ when every cause of the render named the state it wrote; a plain
 `setNeedsRender()` names nothing and forces a build.
 
 The root build reads the open scenes, whatever the application's `scene`
-reads, and the application session's styles and motion. Those reads are kept
+reads, and the application session's styles and animation. Those reads are kept
 as `rootReads`; a change to any of them means the application has to be
 built again.
 
@@ -75,12 +75,12 @@ be a control left stale and a handler left waiting on an update nobody draws.
 ## Handlers in the message
 
 What an element says as it comes into the tree belongs in the message that
-brings it. `.onCreated` is where a page gets its title and buttons and a
+brings it. `.onAppear` is where a page gets its title and buttons and a
 window its size, and the platform acts on the message that makes the element:
 a page presented without its style is presented wrong.
 
-So after the walk, the handlers it found - `.onDestroying` of what left, then
-`.onCreated` and `.onChanged` in the order they were reached - run at once,
+So after the walk, the handlers it found - `.onDisappear` of what left, then
+`.onAppear` and `.onChange` in the order they were reached - run at once,
 each up to its first suspension. What they wrote is walked and merged into
 the same message, up to `settleLimit` passes. Three passes cover a handler
 that writes, a view that arrives with a handler of its own that writes, and
@@ -149,7 +149,7 @@ Registering an application starts a new tree: the previous tree is forgotten
 (handlers, engines, root reads), the application session is reset, one scene
 waits for the platform's first window, and the next render describes the
 whole of the new application - every element arriving, which is what
-`.onCreated` is told. The application's own `@State` properties are named by
+`.onAppear` is told. The application's own `@State` properties are named by
 reflection once, as it registers, because the application is never walked
 like a view.
 

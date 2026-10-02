@@ -38,7 +38,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/PageContract.swift
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `appearing` | event |  | adaptive | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: cannot goBack on Window - Android's driver has no path for it yet; GTK 4: waits on ModalStack |
+| `appearing` | event |  | adaptive | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: cannot goBack on WindowScene - Android's driver has no path for it yet; GTK 4: waits on ModalStack |
 | `backButtonTitle` | property | `String` | adaptive | · |  |  |  |  |  | cannot read backButtonTitle of Page - AppKit's driver has no path for it yet; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `background` | property | `Color` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `disappearing` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ | ◐ |  | GTK 4: waits on ModalStack |
@@ -47,7 +47,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/PageContract.swift
 | `navigatedFrom` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `navigatedTo` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `navigatingFrom` | event |  | adaptive | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `padding` | property | `Insets` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `contentPadding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 
 ## From [PageElement](tiers/PageElement.md)
 

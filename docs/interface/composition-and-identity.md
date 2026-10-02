@@ -7,27 +7,27 @@ meaning.
 
 ## Composed views
 
-A `ContentView` declares one semantic component and returns the views it is
+A `View` declares one semantic component and returns the views it is
 made from:
 
 ```swift
-struct StatusBadge: ContentView {
+struct StatusBadge: View {
     let title: String
     let ready: Bool
 
-    var content: any View {
+    var body: some View {
         HStack {
-            ColorBox(ready ? .green : .gray)
-                .width(8)
-                .height(8)
-            Label(title)
+            ColorPicker(ready ? .green : .gray)
+                .frame(width: 8)
+                .frame(height: 8)
+            Text(title)
         }
         .spacing(8)
     }
 }
 
 StatusBadge(title: "Archive", ready: true)
-    .margin(12)
+    .padding(12)
 ```
 
 The initializer carries the component's purpose. Optional presentation and
@@ -47,12 +47,12 @@ contract across the target platforms or belongs to an optional provider.
 A modifier specific to the composed concept returns another `Self`:
 
 ```swift
-struct Badge: ContentView {
+struct Badge: View {
     private var color = Color.cornflowerBlue
 
-    var content: any View {
-        Label("New")
-            .textColor(.white)
+    var body: some View {
+        Text("New")
+            .foregroundStyle(.white)
             .background(color)
     }
 
@@ -65,11 +65,11 @@ struct Badge: ContentView {
 
 Badge()
     .color(.gold)
-    .margin(8)
+    .padding(8)
 ```
 
 Write a component-specific modifier before common view modifiers. A common
-modifier such as `margin` returns StateUI's modified wrapper, whose surface is
+modifier such as `padding` returns StateUI's modified wrapper, whose surface is
 the shared view contract rather than the original component's custom methods.
 
 ## What makes a composed view rebuild
@@ -116,10 +116,10 @@ class instance by a stable property it owns rather than by the class value
 itself.
 
 ```swift
-struct FileRow: ContentView {
+struct FileRow: View {
     let path: String
 
-    var content: any View {
+    var body: some View {
         TextField()
             .placeholder(path)
             .id(path)
@@ -143,7 +143,7 @@ appears or disappears:
 
 VStack {
     if signedIn {
-        Label("Welcome")
+        Text("Welcome")
     }
 
     TextField($search)
@@ -166,7 +166,7 @@ let names = ["Ada", "Grace", "Linus"]
 
 VStack {
     ForEach(names) { name in
-        Label(name)
+        Text(name)
     }
 }
 ```
@@ -187,7 +187,7 @@ between adjacent descriptions and are not a global object registry.
 
 ## Element lifetime
 
-`onCreated` and `onDestroying` describe membership in the StateUI tree, not
+`onAppear` and `onDisappear` describe membership in the StateUI tree, not
 allocation of a platform object:
 
 ```swift
@@ -198,18 +198,18 @@ VStack {
     Button(visible ? "Hide" : "Show").onClicked { visible.toggle() }
 
     if visible {
-        Label("Draft")
-            .onCreated { log.append("created") }
-            .onDestroying { log.append("destroying") }
+        Text("Draft")
+            .onAppear { log.append("created") }
+            .onDisappear { log.append("destroying") }
     }
 }
 ```
 
-`onCreated` runs once after the render that first describes the element has
+`onAppear` runs once after the render that first describes the element has
 walked the tree. State and environment already resolve, and writes made before
 the handler's first suspension can enter that render's patch.
 
-`onDestroying` runs once after the first render that no longer describes the
+`onDisappear` runs once after the first render that no longer describes the
 element. Its state and environment still answer, which makes it the place to
 save local work or stop a resource owned by that element. Descendants destroy
 inside-out before a replacement is created; creation runs outside-in.
@@ -218,20 +218,20 @@ Rebuilding or carrying an existing element is neither creation nor destruction.
 
 ## Reacting to a changed value
 
-`onChanged` compares one `Equatable` value with the value the same element
+`onChange` compares one `Equatable` value with the value the same element
 carried in its previous description:
 
 ```swift
 @State var step = 0
 @State var direction = ""
 
-Label(direction)
-    .onChanged(step) { old, new in
+Text(direction)
+    .onChange(of: step) { old, new in
         direction = new > old ? "forward" : "back"
     }
 ```
 
-It does not run on the first description; use `onCreated` when arrival itself
+It does not run on the first description; use `onAppear` when arrival itself
 requires work. Multiple watchers are paired by modifier order. If their count
 or value type changes, that element starts watching afresh instead of matching
 unrelated slots.
@@ -245,14 +245,14 @@ creates a feedback loop; every such write needs a stopping condition.
 Call `debugInfo()` inside the description whose work you want to understand:
 
 ```swift
-struct BuildProbe: ContentView {
+struct BuildProbe: View {
     @State private var count = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(debugInfo())
+            Text(debugInfo())
             Button("Build").onClicked { count += 1 }
-            Label("\(count)")
+            Text("\(count)")
         }
     }
 }
@@ -279,7 +279,7 @@ struct EditorScene: Scene {
 }
 
 // Inside a page with SceneSession and PageSession environments:
-.onCreated { page.toolbarItems = [.inspector(scene)] }
+.onAppear { page.toolbarItems = [.inspector(scene)] }
 ```
 
 The inspector shows what caused each pass, whether a composed view was built,
@@ -308,6 +308,6 @@ tree, the renderer sends one complete generation. That pass builds even the
 composed views that an ordinary render could carry, because the host needs
 every effective field once. It still reconciles against the retained tree, so
 the same identities and current state reconcile the complete native hierarchy
-without creating or destroying continuing elements. Application code does not
+without creating or destroying continuing elements. App code does not
 maintain a second recovery path. The exact update semantics are defined in
 [Host contract](../internals/host-contract.md).

@@ -86,9 +86,9 @@ has nowhere to go back to.
 
 The pages a window's modal stack presents stand over its page in the
 activity's root, in order, the top one in front, each in a holder on the
-theme's window background that takes every touch meant for the page beneath.
+color scheme's window background that takes every touch meant for the page beneath.
 A page rises from the bottom as it comes and goes down as it leaves - at once
-where the user asks for less motion. The page in front is the one presented:
+where the user asks for less animation. The page in front is the one presented:
 the page beneath hears it disappear, and appear again when the one over it
 goes. Back is the page in front's own way first - a stack inside it pops -
 and then that page going down, which the window reports as `modalPopped`

@@ -15,7 +15,7 @@ How each of them realizes these members is on its own page.
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
 | `cursorPosition` | property | `Int` | native |
-| `inputPurpose` | property | `InputPurpose` | adaptive |
+| `textContentType` | property | `InputPurpose` | adaptive |
 | `isReadOnly` | property | `Bool` | native |
 | `isSpellCheckEnabled` | property | `Bool` | native |
 | `isTextPredictionEnabled` | property | `Bool` | native |

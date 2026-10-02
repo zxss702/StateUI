@@ -1,13 +1,13 @@
 # Items
 
-What a platform's collection holds of one ItemsView, and what it tells the
+What a platform's collection holds of one List, and what it tells the
 tree, is decided once in the host layer (`ItemsCells`); a backend is the
 toolkit's collection and its calls.
 
 The entries cross as one property, every identity in order. A backend takes
 them as they change (`takeEntries`) and shows one cell for each. When the
 collection asks a cell for an entry (`hold`) that the tree has not built,
-the host tells the tree which entries to build - the ItemsView's
+the host tells the tree which entries to build - the List's
 `realizedChanged` - and the turn that follows builds them as children of the
 list before the call returns: the cell shows its subtree at once. Asked
 while a turn is under way - the toolkit calling back from inside a patch -

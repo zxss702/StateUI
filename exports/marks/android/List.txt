@@ -1,0 +1,13 @@
+# revision 1.1
+List: ✅
+List.endReached: ✅
+List.endReachedWithin: ✅
+List.frameChanged: ✅
+List.itemActivated: ✅
+List.items: ✅
+List.itemsLayout: ✅
+List.realizedChanged: ✅
+List.scrollTo: ✅
+List.selectedItems: ✅
+List.selectionChanged: ✅
+List.selectionMode: 🔌 read selectionMode of List: the mode the relay keeps, which its cells tell TalkBack

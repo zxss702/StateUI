@@ -1,0 +1,5 @@
+# revision 1.1
+Text.frameChanged: ✅
+TabView: ✅
+TabView.currentPage: cannot choose on TabView - Android's driver has no path for it yet
+TabView.currentPageChanged: cannot choose on TabView - Android's driver has no path for it yet

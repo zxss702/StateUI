@@ -3,17 +3,17 @@ ActivityIndicator.layoutDirection: not realized
 Button.isAccessibilityHidden: ✅
 Canvas.accessibilityLabel: ✅
 CheckBox.frame: ✅
-ColorBox.frameChanged: ✅
-ColorBox.height: ✅
-ColorBox.width: ✅
+ColorPicker.frameChanged: ✅
+ColorPicker.height: ✅
+ColorPicker.width: ✅
 DatePicker.isVisible: ✅
 DatePicker.translationX: 🔌 read translationX of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.scale: 🔌 read scale of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.rotation: 🔌 read rotation of Grid: the host's own transform, checked against the layer it composed itself
 HStack.layoutDirection: not realized
 Image.isAccessibilityHidden: ✅
-ItemsView.accessibilityLabel: ✅
-Label.frame: ✅
+List.accessibilityLabel: ✅
+Text.frame: ✅
 Line.frameChanged: ✅
 Line.height: ✅
 Line.width: ✅

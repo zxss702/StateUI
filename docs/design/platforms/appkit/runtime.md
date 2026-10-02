@@ -74,7 +74,7 @@ and every move would write the growing file again.
 ## The menu bar
 
 Every application stands with the menu bar a Mac application has: its own
-menu with Quit, File with a new window, Edit and Window. Edit holds the text
+menu with Quit, File with a new window, Edit and WindowScene. Edit holds the text
 commands - undo, redo, cut, copy, paste, delete, select all - each sent down
 the responder chain, where the field holding the keyboard answers it: AppKit
 routes ⌘C, ⌘V and ⌘Z through the menu bar's key equivalents, so a field in an

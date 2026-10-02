@@ -9,12 +9,12 @@ reads.
 ## The scene tree
 
 ```text
-  Application
+  App
     Scene "1"            one per open scene, in the order they opened
-      Window "main"      its main window, always first
-      Window "fonts 1"   a window of a group: the kind, and a number of its own
+      WindowScene "main"      its main window, always first
+      WindowScene "fonts 1"   a window of a group: the kind, and a number of its own
     Scene "2"
-      Window "main"
+      WindowScene "main"
 ```
 
 The application is the root and its scenes an arranged list: one for most

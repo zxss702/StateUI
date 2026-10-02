@@ -1,6 +1,5 @@
 # revision 1.1
 SearchField.cursorPosition: not realized
-SearchField.inputPurpose: not realized
 SearchField.isEnabled: ✅
 SearchField.isReadOnly: ✅
 SearchField.isSpellCheckEnabled: not realized
@@ -11,8 +10,8 @@ SearchField.placeholderColor: not realized
 SearchField.selectionLength: not realized
 SearchField.text: ✅
 SearchField.textChanged: ✅
+SearchField.textContentType: not realized
 TextEditor.cursorPosition: ✅
-TextEditor.inputPurpose: ✅
 TextEditor.isEnabled: ✅
 TextEditor.isReadOnly: ✅
 TextEditor.isSpellCheckEnabled: ✅
@@ -23,8 +22,8 @@ TextEditor.placeholderColor: ✅
 TextEditor.selectionLength: ✅
 TextEditor.text: ✅
 TextEditor.textChanged: ✅
+TextEditor.textContentType: ✅
 TextField.cursorPosition: ✅
-TextField.inputPurpose: ✅
 TextField.isEnabled: ✅
 TextField.isReadOnly: ✅
 TextField.isSpellCheckEnabled: ✅
@@ -35,3 +34,4 @@ TextField.placeholderColor: ✅
 TextField.selectionLength: ✅
 TextField.text: ✅
 TextField.textChanged: ✅
+TextField.textContentType: ✅

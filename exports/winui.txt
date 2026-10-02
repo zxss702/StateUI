@@ -3,17 +3,17 @@ ActivityIndicator
   tint
 Button
   background
+  contentPadding
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
-  padding
   shape
   stroke
   strokeWidth
   text
   textCase
-  textColor
   clicked()
   pressed()
   released()
@@ -28,7 +28,7 @@ CheckBox
   isOn
   tint
   toggled()
-ColorBox
+ColorPicker
   color
   cornerRadius
 DatePicker
@@ -36,12 +36,12 @@ DatePicker
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   format
   isEnabled
   isOpen
   maximumDate
   minimumDate
-  textColor
   closed()
   dateChanged()
   opened()
@@ -61,8 +61,8 @@ Grid
   clipsContent
   columnSpacing
   columns
+  contentPadding
   ignoresInput
-  padding
   rowSpacing
   rows
   shape
@@ -71,8 +71,8 @@ Grid
 HStack
   background
   clipsContent
+  contentPadding
   ignoresInput
-  padding
   shape
   spacing
   stroke
@@ -80,32 +80,6 @@ HStack
 Image
   aspect
   source
-ItemsView
-  endReachedWithin
-  items
-  itemsLayout
-  selectedItems
-  selectionMode
-  endReached()
-  itemActivated()
-  realizedChanged()
-  selectionChanged()
-Label
-  background
-  characterSpacing
-  fontAttributes
-  fontFamily
-  fontSize
-  horizontalTextAlignment
-  lineBreak
-  lineHeight
-  maximumLines
-  padding
-  text
-  textCase
-  textColor
-  textDecorations
-  verticalTextAlignment
 Line
   aspect
   fill
@@ -121,6 +95,16 @@ Line
   x2
   y1
   y2
+List
+  endReachedWithin
+  items
+  itemsLayout
+  selectedItems
+  selectionMode
+  endReached()
+  itemActivated()
+  realizedChanged()
+  selectionChanged()
 Path
   aspect
   data
@@ -137,12 +121,12 @@ Picker
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
+  foregroundStyle
   isEnabled
   isOpen
+  multilineTextAlignment
   options
   selectedIndex
-  textColor
   tint
   title
   closed()
@@ -179,15 +163,15 @@ ProgressBar
   tint
 RadioButton
   background
+  contentPadding
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
   isOn
-  padding
   text
   textCase
-  textColor
   toggled()
 Rectangle
   aspect
@@ -203,14 +187,14 @@ Rectangle
   strokeWidth
 ScrollView
   background
-  horizontalScrollBarVisibility
+  contentPadding
+  horizontalScrollIndicators
   orientation
-  padding
   scrollOffset
   shape
   stroke
   strokeWidth
-  verticalScrollBarVisibility
+  verticalScrollIndicators
   scrollStopped()
   scrollXChanged()
   scrollYChanged()
@@ -218,13 +202,13 @@ SearchField
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isEnabled
   isReadOnly
   maximumLength
   placeholder
   text
   textCase
-  textColor
   submitted()
   textChanged()
 Slider
@@ -247,60 +231,76 @@ Switch
   isOn
   tint
   toggled()
+Text
+  background
+  characterSpacing
+  contentPadding
+  fontAttributes
+  fontFamily
+  fontSize
+  foregroundStyle
+  lineBreak
+  lineHeight
+  lineLimit
+  multilineTextAlignment
+  text
+  textCase
+  textDecorations
+  verticalTextAlignment
 TextEditor
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   growsWithText
-  horizontalTextAlignment
-  inputPurpose
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  textColor
+  textContentType
   textChanged()
 TextField
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
-  inputPurpose
+  foregroundStyle
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  textColor
+  textContentType
   submitted()
   textChanged()
 TimePicker
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   format
   isEnabled
-  textColor
   time
   timeChanged()
 VStack
   background
   clipsContent
+  contentPadding
   ignoresInput
-  padding
   shape
   spacing
   stroke
@@ -308,8 +308,8 @@ VStack
 ZStack
   background
   clipsContent
+  contentPadding
   ignoresInput
-  padding
   shape
   stroke
   strokeWidth
@@ -329,12 +329,12 @@ ZStack
   horizontalAlignment
   isAccessibilityHidden
   isVisible
-  margin
   maximumHeight
   maximumWidth
   minimumHeight
   minimumWidth
   opacity
+  padding
   panTouchCount
   panXChannel
   panYChannel
@@ -361,7 +361,7 @@ ZStack
   pointerPressed()
   pointerReleased()
   swiped()
-  tapped()
+  tapGesture()
 (acts)
   alert()
   announce()

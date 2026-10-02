@@ -54,7 +54,7 @@ A property says three things about itself beside its value's type:
            items, where the host puts an item (a toolbar item's order, a
            swipe's side), a choice clearing would move, and a window's kind,
            value and behaviour, which the host keeps its windows by
-  moves    which group of a view's values it is for `.motion(_:_:)` - a size,
+  moves    which group of a view's values it is for `.animation(_:_:)` - a size,
            a place, a transform, spacing, text - where the value cannot say;
            a colour says its own group through its value
 ```
@@ -63,7 +63,7 @@ A host still snaps a transition it cannot interpolate; `travels` keeps the
 ones StateUI knows are invalid out of the patch. Every host has to agree with
 the members that say `cleared` is false, or the difference shows only on a
 screen. A property no library contract declares - an application's own -
-animates, is cleared, and says nothing of motion.
+animates, is cleared, and says nothing of animation.
 
 ## Values that cross
 
@@ -130,7 +130,7 @@ host takes the same machinery.
 A member of a contract the element does not wear is refused and said once, at
 registration and at report alike. `apply` puts changed properties registered
 alone in name order, then runs each whole applier whose members changed, every
-value read as the host presents it - a value in motion or carried by a state
+value read as the host presents it - a value in animation or carried by a state
 included. An element whose view the host makes itself, because its making needs
 machinery no contract describes, registers its members with `madeByHost`.
 

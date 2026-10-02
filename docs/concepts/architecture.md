@@ -1,11 +1,11 @@
 # Architecture
 
 StateUI is a platform-neutral Swift model for native interfaces. Swift owns
-the description tree, identity, state, diffing, and motion laws. A platform
+the description tree, identity, state, diffing, and animation laws. A platform
 host owns native objects, platform lifecycle, input callbacks, layout
 integration, and display-frame updates.
 
-The model has two reactive paths and one motion axis:
+The model has two reactive paths and one animation axis:
 
 ```text
                          a state is written
@@ -25,10 +25,10 @@ The model has two reactive paths and one motion axis:
                        native object tree
                                 |
                                 v
-                       host-side motion clock
+                       host-side animation clock
 ```
 
-Motion is not a third state system. It is how a changed property or a
+Animation is not a third state system. It is how a changed property or a
 host-carried state travels from its standing value to its destination.
 
 ## One state declaration
@@ -43,10 +43,10 @@ final class Profile {
     @State var notifications = true
 }
 
-struct ProfileForm: ContentView {
+struct ProfileForm: View {
     @State private var profile = Profile()
 
-    var content: any View {
+    var body: some View {
         VStack {
             TextField(profile.$name)
             Switch(profile.$notifications)
@@ -70,19 +70,19 @@ StateUI rebuilds those descriptions and diffs their result against the retained
 tree.
 
 ```swift
-struct Greeting: ContentView {
+struct Greeting: View {
     @State private var name = "StateUI"
 
-    var content: any View {
+    var body: some View {
         VStack {
             TextField($name).placeholder("Name")
-            Label("Hello, \(name)")
+            Text("Hello, \(name)")
         }
     }
 }
 ```
 
-`Label` reads `name`, so an edit rebuilds `Greeting`. The resulting patch
+`Text` reads `name`, so an edit rebuilds `Greeting`. The resulting patch
 contains only values and descendants that actually changed. Reader sets are a
 function of the current tree: when a body no longer reads a state, that state
 no longer invalidates it.
@@ -92,7 +92,7 @@ This path is for structural decisions and authored values:
 - choosing which views or pages exist;
 - changing child order or identity;
 - computing a property from ordinary Swift values;
-- running `onChanged` after a value differs between two descriptions.
+- running `onChange` after a value differs between two descriptions.
 
 It is intentionally not a frame loop.
 
@@ -104,14 +104,14 @@ typed state channel and the host can read or report it without rebuilding the
 body.
 
 ```swift
-struct Level: ContentView {
+struct Level: View {
     @State private var level = 0.25
 
-    var content: any View {
+    var body: some View {
         VStack {
             Slider($level)
-            ColorBox(.cornflowerBlue).scaleX($level)
-            Label($level.convert { "\(Int($0 * 100))%" })
+            ColorPicker(.cornflowerBlue).scaleEffect(x: $level)
+            Text($level.convert { "\(Int($0 * 100))%" })
         }
     }
 }
@@ -153,9 +153,9 @@ Program writes are silent at the event boundary. This prevents a write such as
 The same-value guard exists on both sides of the boundary, so a native echo
 does not create a render loop.
 
-`onChanged` belongs to the description path. It compares the value carried by
-the previous and current descriptions and runs after the tree walk. `onCreated`
-and `onDestroying` describe StateUI element lifetime, not native allocation
+`onChange` belongs to the description path. It compares the value carried by
+the previous and current descriptions and runs after the tree walk. `onAppear`
+and `onDisappear` describe StateUI element lifetime, not native allocation
 callbacks.
 
 ## Journey
@@ -169,19 +169,19 @@ between destinations.
 | `value` | value currently shown on this host frame |
 | `destination` | target; the same value a plain state read returns |
 | `velocity` | per-second velocity, lane by lane |
-| `motion` | law used wherever this state is shown |
+| `animation` | law used wherever this state is shown |
 | `move(to:_:)` | set a destination and await whether it was reached |
 | `stop()` | end the active animation where it currently stands |
 | `snap(to:)` | set current value, destination, and zero velocity together |
 | `convert` | derive a host-driven value from the live journey |
 
 ```swift
-struct Fader: ContentView {
+struct Fader: View {
     @State private var fade = 1.0
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("Native motion").opacity($fade)
+            Text("Native animation").opacity($fade)
             Button("Fade").onClicked {
                 try await $fade.journey.move(to: 0.15, .eased(400, .cubicOut))
             }
@@ -199,31 +199,31 @@ rebuilds while the value moves. When a body does not need every frame, use
 caption needs the live value, use a journey conversion and keep the work on the
 host-cycle path.
 
-One host-carried state is one motion channel shared by all controls attached to
-it. Independent motion requires independent state.
+One host-carried state is one animation channel shared by all controls attached to
+it. Independent animation requires independent state.
 
-## Motion
+## Animation
 
-The complete motion contract, including selection precedence, awaited journey
+The complete animation contract, including selection precedence, awaited journey
 outcomes, visibility, layout lanes, and the `Walked` value set, is in
-[Motion and journeys](motion-and-journeys.md).
+[Animation and journeys](animation-and-journeys.md).
 
 StateUI describes destinations once. A host that implements the corresponding
-motion surface advances current property values and layout placements on its
+animation surface advances current property values and layout placements on its
 native display clock and lands exactly on the described destination. Until a
 host has that checked matrix row, an application relies only on the final
 destination.
 
 ```swift
-struct ResizingPanel: ContentView {
+struct ResizingPanel: View {
     @State private var expanded = false
 
-    var content: any View {
+    var body: some View {
         VStack {
-            ColorBox(.cornflowerBlue)
-                .width(expanded ? 280 : 120)
+            ColorPicker(.cornflowerBlue)
+                .frame(width: expanded ? 280 : 120)
                 .cornerRadius(expanded ? 28 : 8)
-                .motion(.spring(response: 320))
+                .animation(.spring(response: 320))
 
             Button("Resize").onClicked { expanded.toggle() }
         }
@@ -237,34 +237,34 @@ the boundary.
 
 There are two movement laws:
 
-- `Motion.eased` has a duration and easing curve;
-- `Motion.spring` has a response and damping, retaining velocity when
+- `Animation.eased` has a duration and easing curve;
+- `Animation.spring` has a response and damping, retaining velocity when
   retargeted.
 
-`Motion.none` snaps. `Motion.inherited` resolves through the element, then the
-application, then `Motion.standard`. A law on `@State(motion:)` or
-`journey.motion` belongs to that value and takes precedence wherever it is
-attached. `.motion(_:_:)` can override semantic groups such as opacity, size,
+`Animation.none` snaps. `Animation.inherited` resolves through the element, then the
+application, then `Animation.standard`. A law on `@State(animation:)` or
+`journey.animation` belongs to that value and takes precedence wherever it is
+attached. `.animation(_:_:)` can override semantic groups such as opacity, size,
 place, transform, spacing, and text. Layout placement uses `HostLayoutMotion`
-and `MotionLanes` because a child's native rectangle is a layout result rather
+and `AnimationLanes` because a child's native rectangle is a layout result rather
 than a described property.
 
-Reduced-motion input is part of the host cycle. The final state remains the
+Reduced-animation input is part of the host cycle. The final state remains the
 same; only the animation is shortened or removed.
 
 ## Custom engines
 
-`Motion.custom` gives the walk to StateUI code. An engine runs inside the host
+`Animation.custom` gives the walk to StateUI code. An engine runs inside the host
 display cycle, reads and writes state, and returns `.again` while it needs
 another frame or `.wait` until a followed state is written.
 
 ```swift
-struct FallingDot: ContentView {
-    @State(motion: .custom) private var y = 0.0
+struct FallingDot: View {
+    @State(animation: .custom) private var y = 0.0
 
-    var content: any View {
-        ColorBox(.cornflowerBlue)
-            .translationY($y)
+    var body: some View {
+        ColorPicker(.cornflowerBlue)
+            .offset(y: $y)
             .engine(following: $y) { cycle in
                 let journey = $y.journey
                 let elapsed = cycle.elapsed / 1000
@@ -283,12 +283,12 @@ engine's own write does not wake itself; it explicitly returns `.again` when it
 has more work. Engines run by ascending priority and stable registration order.
 They do not await, call controls, or create another thread-bound UI model.
 
-## Application sessions
+## App sessions
 
 The structural path is:
 
 ```text
-Application -> Scene -> Window -> Page -> View
+App -> Scene -> WindowScene -> Page -> View
 ```
 
 Each structural protocol has one composition property. A window's page is
@@ -297,20 +297,20 @@ container puts a view on holds that view's `PageSession`. Runtime values
 belong to identity-bearing sessions and are obtained with `@Environment`.
 
 ```swift
-struct HandbookApp: Application {
-    var scene: any Scene { HandbookWindow() }
+struct HandbookApp: App {
+    var body: some Scene { HandbookWindow() }
 }
 
-struct HandbookWindow: Window {
+struct HandbookWindow: WindowScene {
     var page: any Page { HandbookPage() }
 }
 
-struct HandbookPage: ContentView {
+struct HandbookPage: View {
     @Environment private var page: PageSession
 
-    var content: any View {
-        Label("Hello from StateUI")
-            .onCreated { page.title = "StateUI" }
+    var body: some View {
+        Text("Hello from StateUI")
+            .onAppear { page.title = "StateUI" }
     }
 }
 ```
@@ -329,7 +329,7 @@ control and is not state.
 The invariant across every host is one concept with one owner:
 
 - Swift owns state, reader tracking, identity, tree construction, diffing,
-  conversions, engines, and motion laws;
+  conversions, engines, and animation laws;
 - the host owns native objects, native layout integration, input reports,
   platform lifecycle, and the display clock;
 - application state owns navigation and presentation choices;

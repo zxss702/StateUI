@@ -11,16 +11,16 @@ own.
 ## The parts
 
 ```text
-  Application                        the root, and the acts with no control behind them
+  App                        the root, and the acts with no control behind them
     Scene                            one session of the application
-      Window                         a window onto a page
+      WindowScene                         a window onto a page
         Page, NavigationStack,       what a window shows; the arrangements are pages too
-        TabbedView, SplitView
+        TabView, NavigationSplitView
         TitleBar                     an authored title area, with its slots
         ModalStack                   the pages presented over the window, the last on top
         Overlay                      a view above the window's page
   MenuBar, Menu, MenuItem,           a page's menus, their entries, and the lines between them
-  MenuSeparator
+  Divider
   ContextMenu                        the menu a view offers where the user asks for one
   ToolbarItems, ToolbarItem          a page's actions in its bar or toolbar
   TitleView                          the view a page shows in its bar in place of its title

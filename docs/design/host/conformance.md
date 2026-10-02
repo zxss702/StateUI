@@ -100,7 +100,7 @@ A case reaches its host only through its session: the page it starts, the
 elements it finds, the acts it performs, the values it reads, and its
 expectations. A session waits for an effect by stepping the host until it
 holds, at most 150 steps, and sees that nothing happens by one turn of the
-pump alone. Motion is driven by a test clock and display frames, never by
+pump alone. Animation is driven by a test clock and display frames, never by
 the time a machine takes.
 
 What another process does is waited for by the clock: a web view's page

@@ -3,13 +3,13 @@
 StateUI owns its layouts' semantics: where a child of a stack, a grid, a
 ZStack or a page goes is StateUI's arithmetic, the same on every
 host, and a toolkit only measures its own views and moves them. [The
-runtime](runtime.md) draws where layout sits in a frame; [motion](motion.md)
+runtime](runtime.md) draws where layout sits in a frame; [animation](animation.md)
 says how a child travels to the place this arithmetic gives it.
 
 ## The layout arithmetic
 
 ```text
-  MountedElement.layoutValues      margin, alignments, stated sizes,
+  MountedElement.layoutValues      padding, alignments, stated sizes,
           |                        grid cell, area
           v
   LayoutChild                      the toolkit's child: those values, whether
@@ -26,7 +26,7 @@ says how a child travels to the place this arithmetic gives it.
 ```
 
 A layout's values are read off the element once, by the core, so every host
-reads the same margin, alignment and stated size. The toolkit supplies only
+reads the same padding, alignment and stated size. The toolkit supplies only
 what it alone knows: whether the child is shown, and how big its view is for a
 width it is offered - a label wraps, an image keeps its ratio. The arithmetic
 is pure, so a host calls it from its own layout pass - `layout()` on AppKit, a
@@ -35,7 +35,7 @@ is pure, so a host calls it from its own layout pass - `layout()` on AppKit, a
 ## One axis of a slot
 
 Along each axis a child has a slot: the room its layout offers it, less its
-margin. A size the child states wins over every alignment and is held only by
+padding. A size the child states wins over every alignment and is held only by
 its own least and most size. Without one, a filling child takes the slot and
 any other takes its natural size, never more than the slot. Where the least
 size is larger than the most, the least wins, so contradictory bounds cannot
@@ -43,9 +43,9 @@ leave a child with no answer. A child placed at its start sits at the slot's
 start; at its end, at the end; centred, or filling but stopped short by a
 stated or a most size, in the middle.
 
-The layout owns the margin both ways: it takes the margin out of the width it
+The layout owns the padding both ways: it takes the padding out of the width it
 offers a child and adds it to the size the child answers, and a toolkit's
-child measures its own view alone. A margin taken out twice narrows the
+child measures its own view alone. A padding taken out twice narrows the
 offer - words wrap where they had room, and on WinUI a label measured at two
 widths in one pass keeps the pass from settling.
 
@@ -73,7 +73,7 @@ measured, each within its bounds (`LayoutValues.offer`, `sized`). A host
 measures its native view at that width and nothing more.
 
 The trap is a child measured at one width and placed at another: a stated
-width wider than its room - a `FrameReader`'s width a frame late as a
+width wider than its room - a `GeometryReader`'s width a frame late as a
 window is resized - wraps its words for the stated width while it stands
 in the room. Most toolkits show the words cut; WinUI, which measures until
 its layout settles, finds the words' size changing at every pass and ends
@@ -258,7 +258,7 @@ down, or not at all, and offered no width when it scrolls across, where its
 width is its own to decide. A filling child stated no width takes the width
 it is held to. The document the content stands in is never smaller than the
 viewport: along an axis the scroller scrolls it is as large as the content
-with its padding and margin, and along any other it is the viewport's.
+with its padding and padding, and along any other it is the viewport's.
 
 ## An offset the tree writes
 

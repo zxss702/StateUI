@@ -15,7 +15,7 @@ lifecycle is told as the activity tells it: onResume as a window comes to the
 front, onPause as another application does, onPause and onStop as the user
 leaves it, and its finishing as it closes.
 
-A finger's and a mouse's input are motion events dispatched to the view, in
+A finger's and a mouse's input are animation events dispatched to the view, in
 its pixels, as the window hands them on: a tap put down and lifted in the
 view's middle, a run of taps each soon after the last; a pan put down in the
 middle and moved by its offset in two steps; a pinch two fingers spreading or

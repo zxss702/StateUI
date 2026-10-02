@@ -32,7 +32,7 @@ that the application may not render for - a tab chosen, the sidebar shown:
   puts its search;
 - an authored `TitleBar` adds its leading, centre and trailing content, and
   the bars' colours paint the chrome; with no colour written for what stands
-  on it, the chrome takes the dark theme on a dark band and the light one on
+  on it, the chrome takes the dark color scheme on a dark band and the light one on
   a light band ([words on a painted
   band](../../host/layout.md#words-on-a-painted-band)), its title, its
   buttons and its commands alike - the window's own caption buttons keep

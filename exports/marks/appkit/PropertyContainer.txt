@@ -3,17 +3,17 @@ ActivityIndicator.accessibilityIdentifier: ✅
 Button.accessibilityIdentifier: ✅
 Canvas.accessibilityIdentifier: ✅
 CheckBox.accessibilityIdentifier: ✅
-ColorBox.accessibilityIdentifier: ✅
+ColorPicker.accessibilityIdentifier: ✅
 DatePicker.accessibilityIdentifier: ✅
 Ellipse.accessibilityIdentifier: ✅
 Grid.accessibilityIdentifier: ✅
 HStack.accessibilityIdentifier: ✅
 Image.accessibilityIdentifier: ✅
-ItemsView.accessibilityIdentifier: ✅
-Label.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅
+List.accessibilityIdentifier: ✅
 Map.accessibilityIdentifier: not realized
 MenuItem.accessibilityIdentifier: ☑️ Only an entry of a context menu carries it; an entry the page puts in the menu bar does not.
+NavigationSplitView.accessibilityIdentifier: ✅
 NavigationStack.accessibilityIdentifier: ✅
 Path.accessibilityIdentifier: ✅
 Picker.accessibilityIdentifier: ✅
@@ -27,10 +27,10 @@ ScrollView.accessibilityIdentifier: ✅
 SearchField.accessibilityIdentifier: ✅
 Slider.accessibilityIdentifier: ✅
 Span.accessibilityIdentifier: not realized
-SplitView.accessibilityIdentifier: ✅
 Stepper.accessibilityIdentifier: ✅
 Switch.accessibilityIdentifier: ✅
-TabbedView.accessibilityIdentifier: ✅
+TabView.accessibilityIdentifier: ✅
+Text.accessibilityIdentifier: ✅
 TextEditor.accessibilityIdentifier: ✅
 TextField.accessibilityIdentifier: ✅
 TimePicker.accessibilityIdentifier: ✅

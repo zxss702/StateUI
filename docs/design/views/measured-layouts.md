@@ -7,7 +7,7 @@ on the host's frames, so a run of views can follow a finger with no view built.
 
 ```text
   GalleryView
-   ├── ScrollReader: an empty ScrollView over the cards ──────▶ offset state ($scrolled)
+   ├── ScrollViewReader: an empty ScrollView over the cards ──────▶ offset state ($scrolled)
    │     └── PlacedLayout (the cards) ◀── placements state ◀── engine(following: $scrolled, $room)
    │           └── .frame($room) ── the room, fed by the host ──┘   reads $scrolled.journey.value
    └── Turning: an empty view watching the asked position and shape
@@ -50,7 +50,7 @@ step of the layout it causes.
 
 ## Frame reader
 
-`FrameReader` is composed over the modifier, and earns its place by what the
+`GeometryReader` is composed over the modifier, and earns its place by what the
 modifier cannot do: its content is built from the measurement. It holds the
 last frame in a `@State` of its own, in a `Grid` that fills the offered space
 and reports its own frame, so the closure runs again whenever the frame
@@ -62,22 +62,22 @@ layout the closure is given a zero rectangle.
 
 `.frame($room)` writes the same frame into a state with no render at all: the
 arithmetic that lays views out has it, and no view is built for it - the
-difference from `FrameReader`, whose answer is a value the tree can show. Only
+difference from `GeometryReader`, whose answer is a value the tree can show. Only
 the host writes it; nothing this side writes reaches the platform, a view's
 frame being the layout's answer.
 
 ## Sizes worked out from a measurement arrive
 
 A size worked out from a measurement does not animate. Carried through a
-motion it would crawl after every change of the measurement, and every step of
+animation it would crawl after every change of the measurement, and every step of
 an animated size is a layout pass of the whole page, which starves the frame
 clock every other animation runs on.
 
 A layout that reports its frame - through `onFrameChanged` or a frame feed -
 gives its children their new sizes at once while their places still animate,
 since what a measurement reports is what the views beside a child leave it. A
-size worked out from a room elsewhere wants `.motion(.none)`. A place worked
-out from a measurement is written with no motion too: the room arrives over
+size worked out from a room elsewhere wants `.animation(.none)`. A place worked
+out from a measurement is written with no animation too: the room arrives over
 several passes, and a place left to animate to its answer sets off from
 whatever the first pass made of it - and where nothing else on the page moves
 there are no frames to carry it the rest of the way.
@@ -117,10 +117,10 @@ children are the library's own, so their order is its guarantee rather than
 the author's. The absence of a shade is a number, `PackedPlacement.unshaded`,
 because the host cannot see this side's views.
 
-The motion belongs to the run. `PlacedRun(placements)` puts the views where it
+The animation belongs to the run. `PlacedRun(placements)` puts the views where it
 says at once, which arithmetic re-run on every frame wants; a run written with
-a motion animates there, so a shape that changes can cross while a finger goes
-on moving the cards. `.motion(_:)` on the layout is what a run written
+a animation animates there, so a shape that changes can cross while a finger goes
+on moving the cards. `.animation(_:)` on the layout is what a run written
 `.inherited` animates by, and it reaches the views' turn and fade as well as
 their places.
 
@@ -142,7 +142,7 @@ stated size for this reason.
 
 ## Scroll reader
 
-`ScrollReader` lays an empty scroller over a run of views and reads its offset
+`ScrollViewReader` lays an empty scroller over a run of views and reads its offset
 into a state rather than showing it. What it holds is not scrolled: the views
 stay where their own arithmetic puts them, and what moves is a number a
 layout's engine follows. It is a scroller rather than a drag on purpose: a
@@ -179,7 +179,7 @@ drag on one view are two gestures, not a choice.
 
 ## Gallery view
 
-`GalleryView` is a `PlacedLayout` for the cards, a `ScrollReader` for the hand,
+`GalleryView` is a `PlacedLayout` for the cards, a `ScrollViewReader` for the hand,
 and a state between them. The offset of the empty scroller over the cards is
 written into a state no body reads, and the arithmetic placing the cards reads
 it, so the run follows a finger, a trackpad and a wheel with no view built,
@@ -221,7 +221,7 @@ card a fifth of a second behind the hand is a card that lags.
   began.
 - The run comes to rest on the nearest card: the scroller stops wherever the
   platform's throw leaves it, and a write to the offset carries it on under the
-  element's motion.
+  element's animation.
 - After each layout the run is put where the position says, asking again until
   it lands: a scroller cannot be moved before its content is laid out, and
   asked earlier it clamps to the length it has so far. That holds for every

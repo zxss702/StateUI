@@ -2,17 +2,17 @@
 ActivityIndicator.pinchUpdated: 🔌 pinch on ActivityIndicator: handed to the host's recognizer or handler, no NSEvent sent
 Button.panYChannel: 🔌 pan on Button: handed to the host's recognizer or handler, no NSEvent sent
 Canvas.tapCount: 🔌 tap on Canvas: handed to the host's recognizer or handler, no NSEvent sent
-Canvas.tapped: 🔌 tap on Canvas: handed to the host's recognizer or handler, no NSEvent sent
+Canvas.tapGesture: 🔌 tap on Canvas: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.frameChanged: ✅
 CheckBox.gridColumn: ✅
 CheckBox.gridRow: ✅
-ColorBox.allowDrop: not realized
-ColorBox.dragLeave: not realized
-ColorBox.dragOver: not realized
-ColorBox.drop: not realized
-ColorBox.frameChanged: ✅
-ColorBox.horizontalAlignment: ✅
-ColorBox.verticalAlignment: ✅
+ColorPicker.allowDrop: not realized
+ColorPicker.dragLeave: not realized
+ColorPicker.dragOver: not realized
+ColorPicker.drop: not realized
+ColorPicker.frameChanged: ✅
+ColorPicker.horizontalAlignment: ✅
+ColorPicker.verticalAlignment: ✅
 DatePicker.pointerEntered: 🔌 hover on DatePicker: handed to the host's recognizer or handler, no NSEvent sent
 DatePicker.pointerExited: 🔌 hover on DatePicker: handed to the host's recognizer or handler, no NSEvent sent
 DatePicker.pointerMoved: 🔌 hover on DatePicker: handed to the host's recognizer or handler, no NSEvent sent
@@ -29,16 +29,15 @@ HStack.gridColumnSpan: ✅
 HStack.gridRowSpan: ✅
 Image.area: ✅
 Image.frameChanged: ✅
-ItemsView.canDrag: not realized
-ItemsView.dragStarting: not realized
-ItemsView.dragText: not realized
-ItemsView.dropCompleted: not realized
-ItemsView.frameChanged: ✅
-ItemsView.margin: ✅
-Label.pinchUpdated: 🔌 pinch on Label: handed to the host's recognizer or handler, no NSEvent sent
 Line.panYChannel: 🔌 pan on Line: handed to the host's recognizer or handler, no NSEvent sent
+List.canDrag: not realized
+List.dragStarting: not realized
+List.dragText: not realized
+List.dropCompleted: not realized
+List.frameChanged: ✅
+List.padding: ✅
 Map.tapCount: not realized
-Map.tapped: not realized
+Map.tapGesture: not realized
 Path.frameChanged: ✅
 Path.gridColumn: ✅
 Path.gridRow: ✅
@@ -70,11 +69,11 @@ Rectangle.dragStarting: not realized
 Rectangle.dragText: not realized
 Rectangle.dropCompleted: not realized
 Rectangle.frameChanged: ✅
-Rectangle.margin: ✅
+Rectangle.padding: ✅
 ScrollView.pinchUpdated: 🔌 pinch on ScrollView: handed to the host's recognizer or handler, no NSEvent sent
 SearchField.panYChannel: 🔌 pan on SearchField: handed to the host's recognizer or handler, no NSEvent sent
 Slider.tapCount: 🔌 tap on Slider: handed to the host's recognizer or handler, no NSEvent sent
-Slider.tapped: 🔌 tap on Slider: handed to the host's recognizer or handler, no NSEvent sent
+Slider.tapGesture: 🔌 tap on Slider: handed to the host's recognizer or handler, no NSEvent sent
 Stepper.frameChanged: ✅
 Stepper.gridColumn: ✅
 Stepper.gridRow: ✅
@@ -85,6 +84,7 @@ Switch.drop: not realized
 Switch.frameChanged: ✅
 Switch.horizontalAlignment: ✅
 Switch.verticalAlignment: ✅
+Text.pinchUpdated: 🔌 pinch on Text: handed to the host's recognizer or handler, no NSEvent sent
 TextEditor.pointerEntered: 🔌 hover on TextEditor: handed to the host's recognizer or handler, no NSEvent sent
 TextEditor.pointerExited: 🔌 hover on TextEditor: handed to the host's recognizer or handler, no NSEvent sent
 TextEditor.pointerMoved: 🔌 hover on TextEditor: handed to the host's recognizer or handler, no NSEvent sent
@@ -106,5 +106,5 @@ WebView.dragStarting: not realized
 WebView.dragText: not realized
 WebView.dropCompleted: not realized
 WebView.frameChanged: not realized
-WebView.margin: not realized
+WebView.padding: not realized
 ZStack.pinchUpdated: 🔌 pinch on ZStack: handed to the host's recognizer or handler, no NSEvent sent

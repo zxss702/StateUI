@@ -6,11 +6,11 @@ Button.dragStarting: not realized
 Button.dragText: not realized
 Button.dropCompleted: not realized
 Button.frameChanged: ✅
-Button.margin: ✅
+Button.padding: ✅
 Canvas.pinchUpdated: 🔌 pinch on Canvas: the view's listening handed the recognizer's states, no touch sent
 CheckBox.panYChannel: 🔌 pan on CheckBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.tapCount: 🔌 tap on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.tapped: 🔌 tap on ColorBox: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.tapCount: 🔌 tap on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.tapGesture: 🔌 tap on ColorPicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.frameChanged: ✅
 DatePicker.gridColumn: ✅
 DatePicker.gridRow: ✅
@@ -32,21 +32,21 @@ HStack.swiped: 🔌 pan on HStack: the view's listening handed the recognizer's 
 Image.panTouchCount: 🔌 pan on Image: the view's listening handed the recognizer's states, no touch sent
 Image.panUpdated: 🔌 pan on Image: the view's listening handed the recognizer's states, no touch sent
 Image.panXChannel: 🔌 pan on Image: the view's listening handed the recognizer's states, no touch sent
-ItemsView.frameChanged: ✅
-ItemsView.gridColumnSpan: ✅
-ItemsView.gridRowSpan: ✅
-Label.area: ✅
-Label.frameChanged: ✅
+List.frameChanged: ✅
+List.gridColumnSpan: ✅
+List.gridRowSpan: ✅
+Text.area: ✅
+Text.frameChanged: ✅
 Line.canDrag: not realized
 Line.dragStarting: not realized
 Line.dragText: not realized
 Line.dropCompleted: not realized
 Line.frameChanged: ✅
-Line.margin: ✅
+Line.padding: ✅
 Map.pinchUpdated: not realized
 Path.panYChannel: 🔌 pan on Path: the view's listening handed the recognizer's states, no touch sent
 Picker.tapCount: 🔌 tap on Picker: the view's listening handed the recognizer's states, no touch sent
-Picker.tapped: 🔌 tap on Picker: the view's listening handed the recognizer's states, no touch sent
+Picker.tapGesture: 🔌 tap on Picker: the view's listening handed the recognizer's states, no touch sent
 Polygon.frameChanged: ✅
 Polygon.gridColumn: ✅
 Polygon.gridRow: ✅
@@ -78,11 +78,11 @@ SearchField.dragStarting: not realized
 SearchField.dragText: not realized
 SearchField.dropCompleted: not realized
 SearchField.frameChanged: ✅
-SearchField.margin: ✅
+SearchField.padding: ✅
 Slider.pinchUpdated: 🔌 pinch on Slider: the view's listening handed the recognizer's states, no touch sent
 Stepper.panYChannel: 🔌 pan on Stepper: the view's listening handed the recognizer's states, no touch sent
 Switch.tapCount: 🔌 tap on Switch: the view's listening handed the recognizer's states, no touch sent
-Switch.tapped: 🔌 tap on Switch: the view's listening handed the recognizer's states, no touch sent
+Switch.tapGesture: 🔌 tap on Switch: the view's listening handed the recognizer's states, no touch sent
 TextEditor.frameChanged: ✅
 TextEditor.gridColumn: ✅
 TextEditor.gridRow: ✅

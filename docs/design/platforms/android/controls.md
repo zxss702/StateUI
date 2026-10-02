@@ -116,7 +116,7 @@ width a view is measured at, so wrapped words are as tall as they will stand.
 
 ## A button's size
 
-A button is as big as its words and its padding. Android's theme gives every
+A button is as big as its words and its padding. Android's color scheme gives every
 button a least size of its own - 88 by 48 density-independent pixels - which
 would widen a short caption and push a row of buttons past a phone's edge;
 the host takes that floor away as it makes the button, and a least size is
@@ -126,13 +126,13 @@ the stepper's own choice.
 
 ## A button's look
 
-A button says nothing of its look and keeps its theme's: a background with
+A button says nothing of its look and keeps its color scheme's: a background with
 its own pressed ripple. A fill, an outline or corners make it one shape -
-the host's shape drawable - under Android's pressed ripple in the theme's
+the host's shape drawable - under Android's pressed ripple in the color scheme's
 highlight colour, kept within the same shape, so a drawn button still
 answers a finger as the platform's do. The shape dims while the button is
-disabled, to the theme's `disabledAlpha`, and so do words in a colour the
-tree gave, as the theme's own colours do.
+disabled, to the color scheme's `disabledAlpha`, and so do words in a colour the
+tree gave, as the color scheme's own colours do.
 
 An icon beside words is a compound drawable at the picture's own size,
 before, after, above or below them, the icon spacing apart or the
@@ -146,7 +146,7 @@ sent again only when the room changes.
 
 A picker is Android's dropdown spinner. A spinner always shows one of its
 rows, and StateUI's choice may be none, so the first row is the title: the
-closed field shows it, in the theme's hint colour, while nothing is chosen,
+closed field shows it, in the color scheme's hint colour, while nothing is chosen,
 and the open list leaves it out; a choice is the row after its index. Android
 tells a spinner's selection as it next measures or lays the spinner out -
 the row it started on, then the program's - when the program's write is long

@@ -160,8 +160,8 @@ the exception: its animator is an engine on this side.
 
 A colour pair (`Color(light:dark:)`) written into a carried state keeps the
 pair on the storage, and the image holds the half in force: lanes are one
-colour. Every driven modifier that hands the state on reads the theme as it
-does, which makes that element the theme's reader; a theme change builds it
+colour. Every driven modifier that hands the state on reads the color scheme as it
+does, which makes that element the color scheme's reader; a color scheme change builds it
 again, and the host animates the colour to the other half. The pair is let go
 when the host moves the value somewhere else.
 
@@ -210,7 +210,7 @@ recorded from under the storage's lock, so `hydrate` lands values after
 releasing its own.
 
 The key's kind must match the value's type, checked when the state is made. The
-label `persistentKey:` is the argument's own type, lowercased, as `motion:` and
+label `persistentKey:` is the argument's own type, lowercased, as `animation:` and
 `sceneKey:` are: there is one kind of state, and the brackets say only what else
 is true of one. The unlabelled position already means the initial value.
 

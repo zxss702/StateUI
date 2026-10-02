@@ -1,11 +1,11 @@
 # revision 1.1
-Label.horizontalTextAlignment: ✅
-Label.verticalTextAlignment: ✅
-Picker.horizontalTextAlignment: ✅
+Picker.multilineTextAlignment: ✅
 Picker.verticalTextAlignment: not realized
-SearchField.horizontalTextAlignment: not realized
+SearchField.multilineTextAlignment: not realized
 SearchField.verticalTextAlignment: not realized
-TextEditor.horizontalTextAlignment: ✅
+Text.multilineTextAlignment: ✅
+Text.verticalTextAlignment: ✅
+TextEditor.multilineTextAlignment: ✅
 TextEditor.verticalTextAlignment: not realized
-TextField.horizontalTextAlignment: ✅
+TextField.multilineTextAlignment: ✅
 TextField.verticalTextAlignment: not realized

@@ -1,0 +1,5 @@
+# revision 2.1
+NavigationSplitView: ✅
+NavigationSplitView.isSidebarVisible: ✅
+NavigationSplitView.isSidebarVisibleChanged: ✅
+Text.frameChanged: ✅

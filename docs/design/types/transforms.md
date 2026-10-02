@@ -1,7 +1,7 @@
 # Transforms
 
 `ViewTransform` is the one transform in the library: a view wears it through
-`.transform(_:)`, and a `Path`'s geometry takes the same value through
+`.transformEffect(_:)`, and a `Path`'s geometry takes the same value through
 `.renderTransform(_:)`.
 
 ## One transform
@@ -35,7 +35,7 @@ host.
 On a view the matrix comes to five ordinary properties about its centre:
 `translationX`, `translationY`, `rotation`, `scaleX` and `scaleY`. A changed
 transform therefore animates like any other value, every part of it at once.
-The view's own `scale` is left alone, so a `.scale(_:)` written on the view
+The view's own `scale` is left alone, so a `.scaleEffect(_:)` written on the view
 multiplies on top of the transform.
 
 ## The shear limit

@@ -1,0 +1,5 @@
+# revision 2.1
+NavigationSplitView: ✅
+NavigationSplitView.isSidebarVisible: cannot read isSidebarVisible of NavigationSplitView - GTK's driver has no path for it yet
+NavigationSplitView.isSidebarVisibleChanged: not realized
+Text.frameChanged: ✅

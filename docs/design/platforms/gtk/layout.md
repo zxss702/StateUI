@@ -37,7 +37,7 @@ something about it changes, so asking again costs little.
 
 ## Measuring a widget
 
-A widget's size counts its CSS margin, border and padding: a button measured
+A widget's size counts its CSS padding, border and padding: a button measured
 34 high draws its caption in the 24 inside that box. `gtk_widget_measure` and
 `gtk_widget_allocate` both speak of the whole box, and where a widget stands
 is read back with `gtk_widget_compute_bounds`, which does too;

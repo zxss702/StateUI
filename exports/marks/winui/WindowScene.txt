@@ -1,0 +1,26 @@
+# revision 1.1
+ModalStack: ✅
+WindowScene: ✅
+WindowScene.activated: ✅
+WindowScene.created: ✅
+WindowScene.deactivated: ✅
+WindowScene.destroying: ✅
+WindowScene.floatsOnTop: ✅
+WindowScene.height: ✅
+WindowScene.hidesWhenInactive: ✅
+WindowScene.isMaximizable: ✅
+WindowScene.isMinimizable: ✅
+WindowScene.isTranslucent: ✅
+WindowScene.maximumHeight: ✅
+WindowScene.maximumWidth: ✅
+WindowScene.minimumHeight: ✅
+WindowScene.minimumWidth: ✅
+WindowScene.modalPopped: ✅
+WindowScene.resumed: ✅
+WindowScene.stopped: ✅
+WindowScene.title: ✅
+WindowScene.width: ✅
+WindowScene.windowType: ✅
+WindowScene.windowValue: ✅
+WindowScene.x: ✅
+WindowScene.y: ✅

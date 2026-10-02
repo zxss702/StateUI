@@ -5,17 +5,17 @@ Canvas.frame: ✅
 CheckBox.frameChanged: ✅
 CheckBox.height: ✅
 CheckBox.width: ✅
-ColorBox.isVisible: ✅
-ColorBox.translationX: 🔌 read translationX of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.isVisible: ✅
+ColorPicker.translationX: 🔌 read translationX of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.scale: 🔌 read scale of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.rotation: 🔌 read rotation of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.layoutDirection: not realized
 HStack.isAccessibilityHidden: ✅
 Image.accessibilityLabel: ✅
-ItemsView.frame: ✅
-Label.frameChanged: ✅
-Label.height: ✅
-Label.width: ✅
+List.frame: ✅
+Text.frameChanged: ✅
+Text.height: ✅
+Text.width: ✅
 Line.isVisible: ✅
 Line.translationX: 🔌 read translationX of Line: the host's own transform, checked against the layer it composed itself
 Map.scale: not realized

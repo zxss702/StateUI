@@ -14,7 +14,7 @@ ActivityIndicator.gridColumnSpan: ✅
 ActivityIndicator.gridRow: ✅
 ActivityIndicator.gridRowSpan: ✅
 ActivityIndicator.horizontalAlignment: ✅
-ActivityIndicator.margin: ✅
+ActivityIndicator.padding: ✅
 ActivityIndicator.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 ActivityIndicator.panUpdated: ✅
 ActivityIndicator.panXChannel: ✅
@@ -29,7 +29,7 @@ ActivityIndicator.swipeDirection: ✅
 ActivityIndicator.swipeThreshold: ✅
 ActivityIndicator.swiped: ✅
 ActivityIndicator.tapCount: ✅
-ActivityIndicator.tapped: ✅
+ActivityIndicator.tapGesture: ✅
 ActivityIndicator.verticalAlignment: ✅
 Button.allowDrop: not realized
 Button.area: ✅
@@ -46,7 +46,7 @@ Button.gridColumnSpan: ✅
 Button.gridRow: ✅
 Button.gridRowSpan: ✅
 Button.horizontalAlignment: ✅
-Button.margin: ✅
+Button.padding: ✅
 Button.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Button.panUpdated: ✅
 Button.panXChannel: ✅
@@ -61,7 +61,7 @@ Button.swipeDirection: ✅
 Button.swipeThreshold: ✅
 Button.swiped: ✅
 Button.tapCount: ✅
-Button.tapped: ✅
+Button.tapGesture: ✅
 Button.verticalAlignment: ✅
 Canvas.allowDrop: not realized
 Canvas.area: ✅
@@ -78,7 +78,7 @@ Canvas.gridColumnSpan: ✅
 Canvas.gridRow: ✅
 Canvas.gridRowSpan: ✅
 Canvas.horizontalAlignment: ✅
-Canvas.margin: ✅
+Canvas.padding: ✅
 Canvas.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Canvas.panUpdated: ✅
 Canvas.panXChannel: ✅
@@ -93,7 +93,7 @@ Canvas.swipeDirection: ✅
 Canvas.swipeThreshold: ✅
 Canvas.swiped: ✅
 Canvas.tapCount: ✅
-Canvas.tapped: ✅
+Canvas.tapGesture: ✅
 Canvas.verticalAlignment: ✅
 CheckBox.allowDrop: not realized
 CheckBox.area: ✅
@@ -110,7 +110,7 @@ CheckBox.gridColumnSpan: ✅
 CheckBox.gridRow: ✅
 CheckBox.gridRowSpan: ✅
 CheckBox.horizontalAlignment: ✅
-CheckBox.margin: ✅
+CheckBox.padding: ✅
 CheckBox.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 CheckBox.panUpdated: ✅
 CheckBox.panXChannel: ✅
@@ -125,40 +125,40 @@ CheckBox.swipeDirection: ✅
 CheckBox.swipeThreshold: ✅
 CheckBox.swiped: ✅
 CheckBox.tapCount: ✅
-CheckBox.tapped: ✅
+CheckBox.tapGesture: ✅
 CheckBox.verticalAlignment: ✅
-ColorBox.allowDrop: not realized
-ColorBox.area: ✅
-ColorBox.canDrag: not realized
-ColorBox.dragLeave: not realized
-ColorBox.dragOver: not realized
-ColorBox.dragStarting: not realized
-ColorBox.dragText: not realized
-ColorBox.drop: not realized
-ColorBox.dropCompleted: not realized
-ColorBox.frameChanged: ✅
-ColorBox.gridColumn: ✅
-ColorBox.gridColumnSpan: ✅
-ColorBox.gridRow: ✅
-ColorBox.gridRowSpan: ✅
-ColorBox.horizontalAlignment: ✅
-ColorBox.margin: ✅
-ColorBox.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
-ColorBox.panUpdated: ✅
-ColorBox.panXChannel: ✅
-ColorBox.panYChannel: ✅
-ColorBox.pinchUpdated: ✅
-ColorBox.pointerEntered: ✅
-ColorBox.pointerExited: ✅
-ColorBox.pointerMoved: ✅
-ColorBox.pointerPressed: ✅
-ColorBox.pointerReleased: ✅
-ColorBox.swipeDirection: ✅
-ColorBox.swipeThreshold: ✅
-ColorBox.swiped: ✅
-ColorBox.tapCount: ✅
-ColorBox.tapped: ✅
-ColorBox.verticalAlignment: ✅
+ColorPicker.allowDrop: not realized
+ColorPicker.area: ✅
+ColorPicker.canDrag: not realized
+ColorPicker.dragLeave: not realized
+ColorPicker.dragOver: not realized
+ColorPicker.dragStarting: not realized
+ColorPicker.dragText: not realized
+ColorPicker.drop: not realized
+ColorPicker.dropCompleted: not realized
+ColorPicker.frameChanged: ✅
+ColorPicker.gridColumn: ✅
+ColorPicker.gridColumnSpan: ✅
+ColorPicker.gridRow: ✅
+ColorPicker.gridRowSpan: ✅
+ColorPicker.horizontalAlignment: ✅
+ColorPicker.padding: ✅
+ColorPicker.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
+ColorPicker.panUpdated: ✅
+ColorPicker.panXChannel: ✅
+ColorPicker.panYChannel: ✅
+ColorPicker.pinchUpdated: ✅
+ColorPicker.pointerEntered: ✅
+ColorPicker.pointerExited: ✅
+ColorPicker.pointerMoved: ✅
+ColorPicker.pointerPressed: ✅
+ColorPicker.pointerReleased: ✅
+ColorPicker.swipeDirection: ✅
+ColorPicker.swipeThreshold: ✅
+ColorPicker.swiped: ✅
+ColorPicker.tapCount: ✅
+ColorPicker.tapGesture: ✅
+ColorPicker.verticalAlignment: ✅
 DatePicker.allowDrop: not realized
 DatePicker.area: ✅
 DatePicker.canDrag: not realized
@@ -174,7 +174,7 @@ DatePicker.gridColumnSpan: ✅
 DatePicker.gridRow: ✅
 DatePicker.gridRowSpan: ✅
 DatePicker.horizontalAlignment: ✅
-DatePicker.margin: ✅
+DatePicker.padding: ✅
 DatePicker.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 DatePicker.panUpdated: ✅
 DatePicker.panXChannel: ✅
@@ -189,7 +189,7 @@ DatePicker.swipeDirection: ✅
 DatePicker.swipeThreshold: ✅
 DatePicker.swiped: ✅
 DatePicker.tapCount: ✅
-DatePicker.tapped: ✅
+DatePicker.tapGesture: ✅
 DatePicker.verticalAlignment: ✅
 Ellipse.allowDrop: not realized
 Ellipse.area: ✅
@@ -206,7 +206,7 @@ Ellipse.gridColumnSpan: ✅
 Ellipse.gridRow: ✅
 Ellipse.gridRowSpan: ✅
 Ellipse.horizontalAlignment: ✅
-Ellipse.margin: ✅
+Ellipse.padding: ✅
 Ellipse.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Ellipse.panUpdated: ✅
 Ellipse.panXChannel: ✅
@@ -221,7 +221,7 @@ Ellipse.swipeDirection: ✅
 Ellipse.swipeThreshold: ✅
 Ellipse.swiped: ✅
 Ellipse.tapCount: ✅
-Ellipse.tapped: ✅
+Ellipse.tapGesture: ✅
 Ellipse.verticalAlignment: ✅
 Grid.allowDrop: not realized
 Grid.area: ✅
@@ -238,7 +238,7 @@ Grid.gridColumnSpan: ✅
 Grid.gridRow: ✅
 Grid.gridRowSpan: ✅
 Grid.horizontalAlignment: ✅
-Grid.margin: ✅
+Grid.padding: ✅
 Grid.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Grid.panUpdated: ✅
 Grid.panXChannel: ✅
@@ -253,7 +253,7 @@ Grid.swipeDirection: ✅
 Grid.swipeThreshold: ✅
 Grid.swiped: ✅
 Grid.tapCount: ✅
-Grid.tapped: ✅
+Grid.tapGesture: ✅
 Grid.verticalAlignment: ✅
 HStack.allowDrop: not realized
 HStack.area: ✅
@@ -270,7 +270,7 @@ HStack.gridColumnSpan: ✅
 HStack.gridRow: ✅
 HStack.gridRowSpan: ✅
 HStack.horizontalAlignment: ✅
-HStack.margin: ✅
+HStack.padding: ✅
 HStack.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 HStack.panUpdated: ✅
 HStack.panXChannel: ✅
@@ -285,7 +285,7 @@ HStack.swipeDirection: ✅
 HStack.swipeThreshold: ✅
 HStack.swiped: ✅
 HStack.tapCount: ✅
-HStack.tapped: ✅
+HStack.tapGesture: ✅
 HStack.verticalAlignment: ✅
 Image.allowDrop: not realized
 Image.area: ✅
@@ -302,7 +302,7 @@ Image.gridColumnSpan: ✅
 Image.gridRow: ✅
 Image.gridRowSpan: ✅
 Image.horizontalAlignment: ✅
-Image.margin: ✅
+Image.padding: ✅
 Image.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Image.panUpdated: ✅
 Image.panXChannel: ✅
@@ -317,72 +317,72 @@ Image.swipeDirection: ✅
 Image.swipeThreshold: ✅
 Image.swiped: ✅
 Image.tapCount: ✅
-Image.tapped: ✅
+Image.tapGesture: ✅
 Image.verticalAlignment: ✅
-ItemsView.allowDrop: not realized
-ItemsView.area: ✅
-ItemsView.canDrag: not realized
-ItemsView.dragLeave: not realized
-ItemsView.dragOver: not realized
-ItemsView.dragStarting: not realized
-ItemsView.dragText: not realized
-ItemsView.drop: not realized
-ItemsView.dropCompleted: not realized
-ItemsView.frameChanged: ✅
-ItemsView.gridColumn: ✅
-ItemsView.gridColumnSpan: ✅
-ItemsView.gridRow: ✅
-ItemsView.gridRowSpan: ✅
-ItemsView.horizontalAlignment: ✅
-ItemsView.margin: ✅
-ItemsView.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
-ItemsView.panUpdated: ✅
-ItemsView.panXChannel: ✅
-ItemsView.panYChannel: ✅
-ItemsView.pinchUpdated: ✅
-ItemsView.pointerEntered: ✅
-ItemsView.pointerExited: ✅
-ItemsView.pointerMoved: ✅
-ItemsView.pointerPressed: ✅
-ItemsView.pointerReleased: ✅
-ItemsView.swipeDirection: ✅
-ItemsView.swipeThreshold: ✅
-ItemsView.swiped: ✅
-ItemsView.tapCount: ✅
-ItemsView.tapped: ✅
-ItemsView.verticalAlignment: ✅
-Label.allowDrop: not realized
-Label.area: ✅
-Label.canDrag: not realized
-Label.dragLeave: not realized
-Label.dragOver: not realized
-Label.dragStarting: not realized
-Label.dragText: not realized
-Label.drop: not realized
-Label.dropCompleted: not realized
-Label.frameChanged: ✅
-Label.gridColumn: ✅
-Label.gridColumnSpan: ✅
-Label.gridRow: ✅
-Label.gridRowSpan: ✅
-Label.horizontalAlignment: ✅
-Label.margin: ✅
-Label.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
-Label.panUpdated: ✅
-Label.panXChannel: ✅
-Label.panYChannel: ✅
-Label.pinchUpdated: ✅
-Label.pointerEntered: ✅
-Label.pointerExited: ✅
-Label.pointerMoved: ✅
-Label.pointerPressed: ✅
-Label.pointerReleased: ✅
-Label.swipeDirection: ✅
-Label.swipeThreshold: ✅
-Label.swiped: ✅
-Label.tapCount: ✅
-Label.tapped: ✅
-Label.verticalAlignment: ✅
+List.allowDrop: not realized
+List.area: ✅
+List.canDrag: not realized
+List.dragLeave: not realized
+List.dragOver: not realized
+List.dragStarting: not realized
+List.dragText: not realized
+List.drop: not realized
+List.dropCompleted: not realized
+List.frameChanged: ✅
+List.gridColumn: ✅
+List.gridColumnSpan: ✅
+List.gridRow: ✅
+List.gridRowSpan: ✅
+List.horizontalAlignment: ✅
+List.padding: ✅
+List.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
+List.panUpdated: ✅
+List.panXChannel: ✅
+List.panYChannel: ✅
+List.pinchUpdated: ✅
+List.pointerEntered: ✅
+List.pointerExited: ✅
+List.pointerMoved: ✅
+List.pointerPressed: ✅
+List.pointerReleased: ✅
+List.swipeDirection: ✅
+List.swipeThreshold: ✅
+List.swiped: ✅
+List.tapCount: ✅
+List.tapGesture: ✅
+List.verticalAlignment: ✅
+Text.allowDrop: not realized
+Text.area: ✅
+Text.canDrag: not realized
+Text.dragLeave: not realized
+Text.dragOver: not realized
+Text.dragStarting: not realized
+Text.dragText: not realized
+Text.drop: not realized
+Text.dropCompleted: not realized
+Text.frameChanged: ✅
+Text.gridColumn: ✅
+Text.gridColumnSpan: ✅
+Text.gridRow: ✅
+Text.gridRowSpan: ✅
+Text.horizontalAlignment: ✅
+Text.padding: ✅
+Text.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
+Text.panUpdated: ✅
+Text.panXChannel: ✅
+Text.panYChannel: ✅
+Text.pinchUpdated: ✅
+Text.pointerEntered: ✅
+Text.pointerExited: ✅
+Text.pointerMoved: ✅
+Text.pointerPressed: ✅
+Text.pointerReleased: ✅
+Text.swipeDirection: ✅
+Text.swipeThreshold: ✅
+Text.swiped: ✅
+Text.tapCount: ✅
+Text.tapGesture: ✅
+Text.verticalAlignment: ✅
 Line.allowDrop: not realized
 Line.area: ✅
 Line.canDrag: not realized
@@ -398,7 +398,7 @@ Line.gridColumnSpan: ✅
 Line.gridRow: ✅
 Line.gridRowSpan: ✅
 Line.horizontalAlignment: ✅
-Line.margin: ✅
+Line.padding: ✅
 Line.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Line.panUpdated: ✅
 Line.panXChannel: ✅
@@ -413,7 +413,7 @@ Line.swipeDirection: ✅
 Line.swipeThreshold: ✅
 Line.swiped: ✅
 Line.tapCount: ✅
-Line.tapped: ✅
+Line.tapGesture: ✅
 Line.verticalAlignment: ✅
 Map.allowDrop: not realized
 Map.area: not realized
@@ -430,7 +430,7 @@ Map.gridColumnSpan: not realized
 Map.gridRow: not realized
 Map.gridRowSpan: not realized
 Map.horizontalAlignment: not realized
-Map.margin: not realized
+Map.padding: not realized
 Map.panTouchCount: not realized
 Map.panUpdated: not realized
 Map.panXChannel: not realized
@@ -445,7 +445,7 @@ Map.swipeDirection: not realized
 Map.swipeThreshold: not realized
 Map.swiped: not realized
 Map.tapCount: not realized
-Map.tapped: not realized
+Map.tapGesture: not realized
 Map.verticalAlignment: not realized
 Path.allowDrop: not realized
 Path.area: ✅
@@ -462,7 +462,7 @@ Path.gridColumnSpan: ✅
 Path.gridRow: ✅
 Path.gridRowSpan: ✅
 Path.horizontalAlignment: ✅
-Path.margin: ✅
+Path.padding: ✅
 Path.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Path.panUpdated: ✅
 Path.panXChannel: ✅
@@ -477,7 +477,7 @@ Path.swipeDirection: ✅
 Path.swipeThreshold: ✅
 Path.swiped: ✅
 Path.tapCount: ✅
-Path.tapped: ✅
+Path.tapGesture: ✅
 Path.verticalAlignment: ✅
 Picker.allowDrop: not realized
 Picker.area: ✅
@@ -494,7 +494,7 @@ Picker.gridColumnSpan: ✅
 Picker.gridRow: ✅
 Picker.gridRowSpan: ✅
 Picker.horizontalAlignment: ✅
-Picker.margin: ✅
+Picker.padding: ✅
 Picker.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Picker.panUpdated: ✅
 Picker.panXChannel: ✅
@@ -509,7 +509,7 @@ Picker.swipeDirection: ✅
 Picker.swipeThreshold: ✅
 Picker.swiped: ✅
 Picker.tapCount: ✅
-Picker.tapped: ✅
+Picker.tapGesture: ✅
 Picker.verticalAlignment: ✅
 Polygon.allowDrop: not realized
 Polygon.area: ✅
@@ -526,7 +526,7 @@ Polygon.gridColumnSpan: ✅
 Polygon.gridRow: ✅
 Polygon.gridRowSpan: ✅
 Polygon.horizontalAlignment: ✅
-Polygon.margin: ✅
+Polygon.padding: ✅
 Polygon.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Polygon.panUpdated: ✅
 Polygon.panXChannel: ✅
@@ -541,7 +541,7 @@ Polygon.swipeDirection: ✅
 Polygon.swipeThreshold: ✅
 Polygon.swiped: ✅
 Polygon.tapCount: ✅
-Polygon.tapped: ✅
+Polygon.tapGesture: ✅
 Polygon.verticalAlignment: ✅
 Polyline.allowDrop: not realized
 Polyline.area: ✅
@@ -558,7 +558,7 @@ Polyline.gridColumnSpan: ✅
 Polyline.gridRow: ✅
 Polyline.gridRowSpan: ✅
 Polyline.horizontalAlignment: ✅
-Polyline.margin: ✅
+Polyline.padding: ✅
 Polyline.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Polyline.panUpdated: ✅
 Polyline.panXChannel: ✅
@@ -573,7 +573,7 @@ Polyline.swipeDirection: ✅
 Polyline.swipeThreshold: ✅
 Polyline.swiped: ✅
 Polyline.tapCount: ✅
-Polyline.tapped: ✅
+Polyline.tapGesture: ✅
 Polyline.verticalAlignment: ✅
 PositionIndicator.allowDrop: not realized
 PositionIndicator.area: not realized
@@ -590,7 +590,7 @@ PositionIndicator.gridColumnSpan: not realized
 PositionIndicator.gridRow: not realized
 PositionIndicator.gridRowSpan: not realized
 PositionIndicator.horizontalAlignment: not realized
-PositionIndicator.margin: not realized
+PositionIndicator.padding: not realized
 PositionIndicator.panTouchCount: not realized
 PositionIndicator.panUpdated: not realized
 PositionIndicator.panXChannel: not realized
@@ -605,7 +605,7 @@ PositionIndicator.swipeDirection: not realized
 PositionIndicator.swipeThreshold: not realized
 PositionIndicator.swiped: not realized
 PositionIndicator.tapCount: not realized
-PositionIndicator.tapped: not realized
+PositionIndicator.tapGesture: not realized
 PositionIndicator.verticalAlignment: not realized
 ProgressBar.allowDrop: not realized
 ProgressBar.area: ✅
@@ -622,7 +622,7 @@ ProgressBar.gridColumnSpan: ✅
 ProgressBar.gridRow: ✅
 ProgressBar.gridRowSpan: ✅
 ProgressBar.horizontalAlignment: ✅
-ProgressBar.margin: ✅
+ProgressBar.padding: ✅
 ProgressBar.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 ProgressBar.panUpdated: ✅
 ProgressBar.panXChannel: ✅
@@ -637,7 +637,7 @@ ProgressBar.swipeDirection: ✅
 ProgressBar.swipeThreshold: ✅
 ProgressBar.swiped: ✅
 ProgressBar.tapCount: ✅
-ProgressBar.tapped: ✅
+ProgressBar.tapGesture: ✅
 ProgressBar.verticalAlignment: ✅
 RadioButton.allowDrop: not realized
 RadioButton.area: ✅
@@ -654,7 +654,7 @@ RadioButton.gridColumnSpan: ✅
 RadioButton.gridRow: ✅
 RadioButton.gridRowSpan: ✅
 RadioButton.horizontalAlignment: ✅
-RadioButton.margin: ✅
+RadioButton.padding: ✅
 RadioButton.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 RadioButton.panUpdated: ✅
 RadioButton.panXChannel: ✅
@@ -669,7 +669,7 @@ RadioButton.swipeDirection: ✅
 RadioButton.swipeThreshold: ✅
 RadioButton.swiped: ✅
 RadioButton.tapCount: ✅
-RadioButton.tapped: ✅
+RadioButton.tapGesture: ✅
 RadioButton.verticalAlignment: ✅
 Rectangle.allowDrop: not realized
 Rectangle.area: ✅
@@ -686,7 +686,7 @@ Rectangle.gridColumnSpan: ✅
 Rectangle.gridRow: ✅
 Rectangle.gridRowSpan: ✅
 Rectangle.horizontalAlignment: ✅
-Rectangle.margin: ✅
+Rectangle.padding: ✅
 Rectangle.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Rectangle.panUpdated: ✅
 Rectangle.panXChannel: ✅
@@ -701,7 +701,7 @@ Rectangle.swipeDirection: ✅
 Rectangle.swipeThreshold: ✅
 Rectangle.swiped: ✅
 Rectangle.tapCount: ✅
-Rectangle.tapped: ✅
+Rectangle.tapGesture: ✅
 Rectangle.verticalAlignment: ✅
 ScrollView.allowDrop: not realized
 ScrollView.area: ✅
@@ -718,7 +718,7 @@ ScrollView.gridColumnSpan: ✅
 ScrollView.gridRow: ✅
 ScrollView.gridRowSpan: ✅
 ScrollView.horizontalAlignment: ✅
-ScrollView.margin: ✅
+ScrollView.padding: ✅
 ScrollView.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 ScrollView.panUpdated: ✅
 ScrollView.panXChannel: ✅
@@ -733,7 +733,7 @@ ScrollView.swipeDirection: ✅
 ScrollView.swipeThreshold: ✅
 ScrollView.swiped: ✅
 ScrollView.tapCount: ✅
-ScrollView.tapped: ✅
+ScrollView.tapGesture: ✅
 ScrollView.verticalAlignment: ✅
 SearchField.allowDrop: not realized
 SearchField.area: ✅
@@ -750,7 +750,7 @@ SearchField.gridColumnSpan: ✅
 SearchField.gridRow: ✅
 SearchField.gridRowSpan: ✅
 SearchField.horizontalAlignment: ✅
-SearchField.margin: ✅
+SearchField.padding: ✅
 SearchField.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 SearchField.panUpdated: ✅
 SearchField.panXChannel: ✅
@@ -765,7 +765,7 @@ SearchField.swipeDirection: ✅
 SearchField.swipeThreshold: ✅
 SearchField.swiped: ✅
 SearchField.tapCount: ✅
-SearchField.tapped: ✅
+SearchField.tapGesture: ✅
 SearchField.verticalAlignment: ✅
 Slider.allowDrop: not realized
 Slider.area: ✅
@@ -782,7 +782,7 @@ Slider.gridColumnSpan: ✅
 Slider.gridRow: ✅
 Slider.gridRowSpan: ✅
 Slider.horizontalAlignment: ✅
-Slider.margin: ✅
+Slider.padding: ✅
 Slider.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Slider.panUpdated: ✅
 Slider.panXChannel: ✅
@@ -797,7 +797,7 @@ Slider.swipeDirection: ✅
 Slider.swipeThreshold: ✅
 Slider.swiped: ✅
 Slider.tapCount: ✅
-Slider.tapped: ✅
+Slider.tapGesture: ✅
 Slider.verticalAlignment: ✅
 Stepper.allowDrop: not realized
 Stepper.area: ✅
@@ -814,7 +814,7 @@ Stepper.gridColumnSpan: ✅
 Stepper.gridRow: ✅
 Stepper.gridRowSpan: ✅
 Stepper.horizontalAlignment: ✅
-Stepper.margin: ✅
+Stepper.padding: ✅
 Stepper.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Stepper.panUpdated: ✅
 Stepper.panXChannel: ✅
@@ -829,7 +829,7 @@ Stepper.swipeDirection: ✅
 Stepper.swipeThreshold: ✅
 Stepper.swiped: ✅
 Stepper.tapCount: ✅
-Stepper.tapped: ✅
+Stepper.tapGesture: ✅
 Stepper.verticalAlignment: ✅
 Switch.allowDrop: not realized
 Switch.area: ✅
@@ -846,7 +846,7 @@ Switch.gridColumnSpan: ✅
 Switch.gridRow: ✅
 Switch.gridRowSpan: ✅
 Switch.horizontalAlignment: ✅
-Switch.margin: ✅
+Switch.padding: ✅
 Switch.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 Switch.panUpdated: ✅
 Switch.panXChannel: ✅
@@ -861,7 +861,7 @@ Switch.swipeDirection: ✅
 Switch.swipeThreshold: ✅
 Switch.swiped: ✅
 Switch.tapCount: ✅
-Switch.tapped: ✅
+Switch.tapGesture: ✅
 Switch.verticalAlignment: ✅
 TextEditor.allowDrop: not realized
 TextEditor.area: ✅
@@ -878,7 +878,7 @@ TextEditor.gridColumnSpan: ✅
 TextEditor.gridRow: ✅
 TextEditor.gridRowSpan: ✅
 TextEditor.horizontalAlignment: ✅
-TextEditor.margin: ✅
+TextEditor.padding: ✅
 TextEditor.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 TextEditor.panUpdated: ✅
 TextEditor.panXChannel: ✅
@@ -893,7 +893,7 @@ TextEditor.swipeDirection: ✅
 TextEditor.swipeThreshold: ✅
 TextEditor.swiped: ✅
 TextEditor.tapCount: ✅
-TextEditor.tapped: ✅
+TextEditor.tapGesture: ✅
 TextEditor.verticalAlignment: ✅
 TextField.allowDrop: not realized
 TextField.area: ✅
@@ -910,7 +910,7 @@ TextField.gridColumnSpan: ✅
 TextField.gridRow: ✅
 TextField.gridRowSpan: ✅
 TextField.horizontalAlignment: ✅
-TextField.margin: ✅
+TextField.padding: ✅
 TextField.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 TextField.panUpdated: ✅
 TextField.panXChannel: ✅
@@ -925,7 +925,7 @@ TextField.swipeDirection: ✅
 TextField.swipeThreshold: ✅
 TextField.swiped: ✅
 TextField.tapCount: ✅
-TextField.tapped: ✅
+TextField.tapGesture: ✅
 TextField.verticalAlignment: ✅
 TimePicker.allowDrop: not realized
 TimePicker.area: ✅
@@ -942,7 +942,7 @@ TimePicker.gridColumnSpan: ✅
 TimePicker.gridRow: ✅
 TimePicker.gridRowSpan: ✅
 TimePicker.horizontalAlignment: ✅
-TimePicker.margin: ✅
+TimePicker.padding: ✅
 TimePicker.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 TimePicker.panUpdated: ✅
 TimePicker.panXChannel: ✅
@@ -957,7 +957,7 @@ TimePicker.swipeDirection: ✅
 TimePicker.swipeThreshold: ✅
 TimePicker.swiped: ✅
 TimePicker.tapCount: ✅
-TimePicker.tapped: ✅
+TimePicker.tapGesture: ✅
 TimePicker.verticalAlignment: ✅
 TitleBar.allowDrop: not realized
 TitleBar.area: not realized
@@ -974,7 +974,7 @@ TitleBar.gridColumnSpan: not realized
 TitleBar.gridRow: not realized
 TitleBar.gridRowSpan: not realized
 TitleBar.horizontalAlignment: not realized
-TitleBar.margin: not realized
+TitleBar.padding: not realized
 TitleBar.panTouchCount: not realized
 TitleBar.panUpdated: not realized
 TitleBar.panXChannel: not realized
@@ -989,7 +989,7 @@ TitleBar.swipeDirection: not realized
 TitleBar.swipeThreshold: not realized
 TitleBar.swiped: not realized
 TitleBar.tapCount: not realized
-TitleBar.tapped: not realized
+TitleBar.tapGesture: not realized
 TitleBar.verticalAlignment: not realized
 VStack.allowDrop: not realized
 VStack.area: ✅
@@ -1006,7 +1006,7 @@ VStack.gridColumnSpan: ✅
 VStack.gridRow: ✅
 VStack.gridRowSpan: ✅
 VStack.horizontalAlignment: ✅
-VStack.margin: ✅
+VStack.padding: ✅
 VStack.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 VStack.panUpdated: ✅
 VStack.panXChannel: ✅
@@ -1021,7 +1021,7 @@ VStack.swipeDirection: ✅
 VStack.swipeThreshold: ✅
 VStack.swiped: ✅
 VStack.tapCount: ✅
-VStack.tapped: ✅
+VStack.tapGesture: ✅
 VStack.verticalAlignment: ✅
 WebView.allowDrop: not realized
 WebView.area: ✅
@@ -1038,7 +1038,7 @@ WebView.gridColumnSpan: ✅
 WebView.gridRow: ✅
 WebView.gridRowSpan: ✅
 WebView.horizontalAlignment: ✅
-WebView.margin: ✅
+WebView.padding: ✅
 WebView.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 WebView.panUpdated: ✅
 WebView.panXChannel: ✅
@@ -1053,7 +1053,7 @@ WebView.swipeDirection: ✅
 WebView.swipeThreshold: ✅
 WebView.swiped: ✅
 WebView.tapCount: ✅
-WebView.tapped: ✅
+WebView.tapGesture: ✅
 WebView.verticalAlignment: ✅
 ZStack.allowDrop: not realized
 ZStack.area: ✅
@@ -1070,7 +1070,7 @@ ZStack.gridColumnSpan: ✅
 ZStack.gridRow: ✅
 ZStack.gridRowSpan: ✅
 ZStack.horizontalAlignment: ✅
-ZStack.margin: ✅
+ZStack.padding: ✅
 ZStack.panTouchCount: ☑️ The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.
 ZStack.panUpdated: ✅
 ZStack.panXChannel: ✅
@@ -1085,5 +1085,5 @@ ZStack.swipeDirection: ✅
 ZStack.swipeThreshold: ✅
 ZStack.swiped: ✅
 ZStack.tapCount: ✅
-ZStack.tapped: ✅
+ZStack.tapGesture: ✅
 ZStack.verticalAlignment: ✅

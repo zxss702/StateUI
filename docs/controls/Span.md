@@ -64,7 +64,7 @@ How text looks wherever it is drawn: its colour and the space between its letter
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `characterSpacing` | property | `Double` | native |  |  |  | ✅ |  |  | not realized; UIKit: not realized; Android Views: not realized; GTK 4: not realized |
-| `textColor` | property | `Color` | native |  | · | · | ✅ | · |  | not realized; UIKit: cannot read textColor of Span - UIKit's driver has no path for it yet; Android Views: cannot read textColor of Span - Android's driver has no path for it yet; GTK 4: cannot read textColor of Span - GTK's driver has no path for it yet |
+| `foregroundStyle` | property | `Color` | native |  | · | · | ✅ | · |  | not realized; UIKit: cannot read foregroundStyle of Span - UIKit's driver has no path for it yet; Android Views: cannot read foregroundStyle of Span - Android's driver has no path for it yet; GTK 4: cannot read foregroundStyle of Span - GTK's driver has no path for it yet |
 
 ## From [FontElement](tiers/FontElement.md)
 

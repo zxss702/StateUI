@@ -59,27 +59,27 @@ run replaces each z-index with its rank, back to front, and a rank changes
 only when the picture does. Equal numbers keep the order the views stand in.
 A z-index does not animate: an order has no half-way.
 
-## A motion per write
+## A animation per write
 
-A `PlacedRun` carries its own motion, per write, which is what a layout
+A `PlacedRun` carries its own animation, per write, which is what a layout
 followed by a finger needs. The run is written at once (`.none`, the
 default) while a hand is moving it, since the next frame replaces whatever
 an animation would reach for, and animates when the shape of the layout
 changes. A write made during an animation bends it rather than starting it
 again, so a finger moving the cards while they cross does not restart the
-crossing. `.inherited` uses the layout's own `.motion`.
+crossing. `.inherited` uses the layout's own `.animation`.
 
 ## Twelve numbers a view
 
 A placement crosses as twelve numbers, in one order, and a run as each
-view's twelve followed by its motion's three.
+view's twelve followed by its animation's three.
 
 ```text
   x  y  width  height    translationX  translationY  rotation  scaleX  scaleY    opacity  zIndex  shade
   0  1  2      3         4             5             6         7       8         9        10      11
 ```
 
-The motion comes last, so a view's numbers always start at `12 × index`,
+The animation comes last, so a view's numbers always start at `12 × index`,
 which lets a host read one view's place by stride and know which view a
 changed lane belongs to. A state's dirty word has a bit per lane and runs
 out at lane 63, so a run says exactly which of its first five views moved

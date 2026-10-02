@@ -100,5 +100,5 @@ clock, and work reaches the UI thread through the host's doorbell.
 - [Glossary](glossary.md): StateUI's words and the common term for each.
 - [The runtime](host/runtime.md): a host's elements, one frame, one turn and a
   user's change, drawn.
-- [Motion in the runtime](host/motion.md) and [patches in the
+- [Animation in the runtime](host/animation.md) and [patches in the
   runtime](host/patches.md): the reasons behind the host layer's elements.

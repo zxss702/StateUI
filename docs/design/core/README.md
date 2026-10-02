@@ -17,7 +17,7 @@ The core's sources stand in one folder per topic, one element to a file, and
 | [invalidation.md](invalidation.md) | reads and changes, live readers, writes during a render, `debugInfo()` |
 | [identity-and-diffing.md](identity-and-diffing.md) | keys, state surviving a rebuild, carrying a view, the clean walk, what a patch carries |
 | [state.md](state.md) | storage and box, bindings, model state, carried state, kept and scene-kept state, the environment |
-| [journeys.md](journeys.md) | the journey lanes, the law on the image, moving and waiting, readings, conversions, motion laws |
+| [journeys.md](journeys.md) | the journey lanes, the law on the image, moving and waiting, readings, conversions, animation laws |
 | [cycle.md](cycle.md) | the board, where a write lands, host reports, engines, state numbers, the ticker |
 | [acts.md](acts.md) | acts, completion ids, aims, focus, dialogs, host events |
 | [concurrency.md](concurrency.md) | `MainActor` on every platform, the doorbell, draining jobs, the lock and its order |
@@ -28,7 +28,7 @@ The core's sources stand in one folder per topic, one element to a file, and
 ## The core at a glance
 
 ```text
-  application     Application -> Scene -> Window -> Page -> views
+  application     App -> Scene -> WindowScene -> Page -> views
                   bodies READ @State; handlers WRITE @State and call acts
         |
         v
@@ -101,7 +101,7 @@ host and never calls the core.
           composed views built with the same inputs are carried;
           children matched by .id(), builder path, position
      |
-     v  settle passes: .onDestroying, .onCreated, .onChanged run now,
+     v  settle passes: .onDisappear, .onAppear, .onChange run now,
      |  what they write is walked and merged - up to three passes
      v
   HostPatch -> HostRender
@@ -169,12 +169,12 @@ holds its reasons. A type's extensions stand in its folder, named
   Core/Carried      what a carried value is: StateValue and its image,    state, cycle
                     the attachments, HostStorage's three copies
   Core/Journey      Journey and its lanes, the law on the image, the two  journeys
-                    motion laws, readings, conversions, .multi
+                    animation laws, readings, conversions, .multi
   Core/Cycle        the board, engines, the ticker                        cycle
   Core/Render       the renderer, with its cycle, act queue and dispatch; render, acts,
                     read scopes, debugInfo()                              invalidation
   Core/Diff         the differ, Node, RenderedNode, placeholders and      identity-and-diffing
-                    inputs, .onChanged, .onCreated, .onDestroying, rows
+                    inputs, .onChange, .onAppear, .onDisappear, rows
   Core/Acts         acts and replies, aims, focus, dialogs, the screen    acts
                     reader, host events
   Core/Threads      the UI thread's executor, the doorbell, the lock      concurrency

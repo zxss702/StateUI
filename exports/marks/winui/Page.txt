@@ -3,10 +3,10 @@ Page: ✅
 Page.appearing: ✅
 Page.backButtonTitle: not realized
 Page.background: ✅
+Page.contentPadding: ✅
 Page.disappearing: ✅
 Page.hasBackButton: not realized
 Page.hasNavigationBar: ✅
 Page.navigatedFrom: ✅
 Page.navigatedTo: ✅
 Page.navigatingFrom: ✅
-Page.padding: ✅

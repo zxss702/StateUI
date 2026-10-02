@@ -3,9 +3,9 @@ ActivityIndicator.rotationX: 🔌 read rotationX of ActivityIndicator: the host'
 Button.pivotX: 🔌 read pivotX of Button: the host's own transform, checked against the layer it composed itself
 Canvas.automationExcludedWithChildren: ✅
 CheckBox.accessibilityHint: ✅
-ColorBox.focus: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
-ColorBox.isFocusedChanged: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
-ColorBox.unfocus: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.focus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.isFocusedChanged: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.unfocus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 DatePicker.frameChanged: ✅
 DatePicker.maximumHeight: ✅
 DatePicker.maximumWidth: ✅
@@ -16,11 +16,10 @@ Ellipse.translationY: 🔌 read translationY of Ellipse: the host's own transfor
 Grid.scaleX: 🔌 read scaleX of Grid: the host's own transform, checked against the layer it composed itself
 HStack.rotationX: 🔌 read rotationX of HStack: the host's own transform, checked against the layer it composed itself
 Image.pivotX: 🔌 read pivotX of Image: the host's own transform, checked against the layer it composed itself
-ItemsView.automationExcludedWithChildren: ✅
-Label.accessibilityHint: ✅
 Line.focus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
 Line.isFocusedChanged: – Line takes no keyboard focus here: it refuses it, and nothing is heard
 Line.unfocus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
+List.automationExcludedWithChildren: ✅
 Map.frameChanged: not realized
 Map.maximumHeight: not realized
 Map.maximumWidth: not realized
@@ -47,6 +46,7 @@ SearchField.scaleX: 🔌 read scaleX of SearchField: the host's own transform, c
 Slider.rotationX: 🔌 read rotationX of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.pivotX: 🔌 read pivotX of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.automationExcludedWithChildren: ✅
+Text.accessibilityHint: ✅
 TextEditor.accessibilityHint: ✅
 TextField.focus: ✅
 TextField.isFocusedChanged: ✅

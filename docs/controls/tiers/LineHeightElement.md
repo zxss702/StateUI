@@ -6,7 +6,7 @@ How far apart the lines of text are.
 
 Wears: [PropertyContainer](PropertyContainer.md)
 
-Worn by: [Label](../Label.md) · [Span](../Span.md)
+Worn by: [Span](../Span.md) · [Text](../Text.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Mixins/LineHeightElementContract.swift`.
 

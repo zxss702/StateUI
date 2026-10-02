@@ -6,7 +6,7 @@ Button.isVisible: ✅
 Button.translationX: 🔌 read translationX of Button: the host's own transform, checked against the layer it composed itself
 Canvas.scale: 🔌 read scale of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.rotation: 🔌 read rotation of CheckBox: the host's own transform, checked against the layer it composed itself
-ColorBox.layoutDirection: not realized
+ColorPicker.layoutDirection: not realized
 DatePicker.isAccessibilityHidden: ✅
 Ellipse.accessibilityLabel: ✅
 Grid.frame: ✅
@@ -15,9 +15,8 @@ HStack.height: ✅
 HStack.width: ✅
 Image.isVisible: ✅
 Image.translationX: 🔌 read translationX of Image: the host's own transform, checked against the layer it composed itself
-ItemsView.scale: 🔌 read scale of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.rotation: 🔌 read rotation of Label: the host's own transform, checked against the layer it composed itself
 Line.layoutDirection: not realized
+List.scale: 🔌 read scale of List: the host's own transform, checked against the layer it composed itself
 Map.isAccessibilityHidden: not realized
 Path.accessibilityLabel: ✅
 Picker.frame: ✅
@@ -38,6 +37,7 @@ Slider.width: ✅
 Stepper.isVisible: ✅
 Stepper.translationX: 🔌 read translationX of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.scale: 🔌 read scale of Switch: the host's own transform, checked against the layer it composed itself
+Text.rotation: 🔌 read rotation of Text: the host's own transform, checked against the layer it composed itself
 TextEditor.rotation: 🔌 read rotation of TextEditor: the host's own transform, checked against the layer it composed itself
 TextField.layoutDirection: not realized
 TimePicker.isAccessibilityHidden: ✅

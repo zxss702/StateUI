@@ -1,11 +1,11 @@
 # revision 1.1
-Label.horizontalTextAlignment: cannot read horizontalTextAlignment of Label - GTK's driver has no path for it yet
-Label.verticalTextAlignment: cannot read verticalTextAlignment of Label - GTK's driver has no path for it yet
-Picker.horizontalTextAlignment: not realized
+Picker.multilineTextAlignment: not realized
 Picker.verticalTextAlignment: not realized
-SearchField.horizontalTextAlignment: cannot read horizontalTextAlignment of SearchField - GTK's driver has no path for it yet
+SearchField.multilineTextAlignment: cannot read multilineTextAlignment of SearchField - GTK's driver has no path for it yet
 SearchField.verticalTextAlignment: not realized
-TextEditor.horizontalTextAlignment: cannot read horizontalTextAlignment of TextEditor - GTK's driver has no path for it yet
+Text.multilineTextAlignment: cannot read multilineTextAlignment of Text - GTK's driver has no path for it yet
+Text.verticalTextAlignment: cannot read verticalTextAlignment of Text - GTK's driver has no path for it yet
+TextEditor.multilineTextAlignment: cannot read multilineTextAlignment of TextEditor - GTK's driver has no path for it yet
 TextEditor.verticalTextAlignment: not realized
-TextField.horizontalTextAlignment: cannot read horizontalTextAlignment of TextField - GTK's driver has no path for it yet
+TextField.multilineTextAlignment: cannot read multilineTextAlignment of TextField - GTK's driver has no path for it yet
 TextField.verticalTextAlignment: not realized

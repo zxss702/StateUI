@@ -9,7 +9,7 @@ and this table maps the two.
 | StateUI term | Common term | What it means here |
 | --- | --- | --- |
 | user | user | the person using the application |
-| application, scene, window, page | same | the structure an application declares: `Application -> Scene -> Window -> Page` |
+| application, scene, window, page | same | the structure an application declares: `App -> Scene -> WindowScene -> Page` |
 | element | node | one entry of the described tree: a control, a layout, a part of the structure |
 | element contract | node schema | a node type's declaration: its tiers and each member with its value's type |
 | tier | trait | a set of members several elements share, such as `VisualElement` |
@@ -18,11 +18,11 @@ and this table maps the two.
 | layer (`ElementLayer`) | implementation source | who realizes a node type or a member: the platform, an adaptation, StateUI, the structure or a provider |
 | slot | named placeholder | a structural child that holds authored content in a known place: `Content`, `LeadingContent`, `TitleView` |
 | slot child | auxiliary child | a child a modifier appends after the laid-out ones: a context menu |
-| watcher (`.onChanged`) | change observer | a view that runs code when a value it watches changes |
+| watcher (`.onChange`) | change observer | a view that runs code when a value it watches changes |
 | mixin tier | mixin, trait | a tier several contracts wear for one group of members |
 | Normal (visual state) | default visual state | the visual state a control is in when none of its other states holds |
 | arrangement (`PageArrangement`) | page container | a page that arranges other pages: a stack, tabs, a split view |
-| arrangement (navigation) | navigation container | `NavigationStack`, `TabbedView` and `SplitView`: what decides which page shows |
+| arrangement (navigation) | navigation container | `NavigationStack`, `TabView` and `NavigationSplitView`: what decides which page shows |
 | session | per-instance runtime state | the values one opening of an application, a scene, a window or a page holds |
 | session (`PageSession`) | per-page state | the runtime values a page holds while it is shown |
 
@@ -46,7 +46,7 @@ and this table maps the two.
 | feed | host-supplied value | a value only the platform knows, such as focus or a frame, read into a state |
 | kept value (`persistent`) | persisted state | a state saved in a store and read back at launch |
 | standard environment, provider | environment object | the typed values an application and its host provide down the tree |
-| themed pair, the half in force | light and dark variant, the active variant | a value with one side for each theme, and the side the theme picks |
+| themed pair, the half in force | light and dark variant, the active variant | a value with one side for each color scheme, and the side the color scheme picks |
 | engine | frame callback | application code that runs once per display frame while it follows states |
 
 ## Identity and diffing
@@ -82,12 +82,12 @@ and this table maps the two.
 | stamp | write counter | what an engine compares to know a state changed |
 | armed, stirred, awake | wake reasons | why an engine runs on a frame |
 
-## Motion
+## Animation
 
 | StateUI term | Common term | What it means here |
 | --- | --- | --- |
-| motion (`Motion`) | animation timing | how a change animates: an eased curve over a duration, a spring, or none |
-| law, motion law | timing function | the curve or spring that gives a value at a time (`HostMotionLaw`) |
+| animation (`Animation`) | animation timing | how a change animates: an eased curve over a duration, a spring, or none |
+| law, animation law | timing function | the curve or spring that gives a value at a time (`HostMotionLaw`) |
 | journey (`$x.journey`) | animated value | a state's value with its destination, speed and timing |
 | animation (`Animation`) | animation | one running animation of one value |
 | animator (`Animator`), advance | animator, advance a frame | the one place a runtime advances every animation |
@@ -97,7 +97,7 @@ and this table maps the two.
 | travels, cleared, moves (member facts) | animatable, reset when unset, animation group | what a member's contract says about how its value changes |
 | travel, travelling layout | layout animation | a layout's children animating to their new places |
 | state channel | animated state source | the one place a runtime animates a bound state for every control tied to it |
-| described motion | property animation | the animation a patch describes for a property |
+| described animation | property animation | the animation a patch describes for a property |
 
 ## The runtime
 

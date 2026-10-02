@@ -1,0 +1,13 @@
+# revision 1.1
+List: ✅
+List.endReached: ✅
+List.endReachedWithin: ✅
+List.frameChanged: ✅
+List.itemActivated: ✅
+List.items: ✅
+List.itemsLayout: ✅
+List.realizedChanged: ✅
+List.scrollTo: ❌ threw no element has the id "80 of List"
+List.selectedItems: ✅
+List.selectionChanged: ✅
+List.selectionMode: ✅

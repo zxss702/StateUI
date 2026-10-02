@@ -14,8 +14,8 @@ Canvas.width: ✅
 CheckBox.frame: ✅
 CheckBox.pivotX: ✅
 CheckBox.zIndex: not realized
-ColorBox.accessibilityLabel: ✅
-ColorBox.rotationX: not realized
+ColorPicker.accessibilityLabel: ✅
+ColorPicker.rotationX: not realized
 DatePicker.isAccessibilityHidden: ✅
 DatePicker.isEnabled: ✅
 DatePicker.scaleX: ✅
@@ -34,18 +34,15 @@ Image.maximumWidth: ✅
 Image.minimumHeight: ✅
 Image.minimumWidth: ✅
 Image.translationX: ✅
-ItemsView.focus: ✅
-ItemsView.isFocusedChanged: ✅
-ItemsView.pivotY: ✅
-ItemsView.unfocus: ✅
-Label.accessibilityHint: ✅
-Label.isVisible: ✅
-Label.rotationY: not realized
 Line.automationExcludedWithChildren: ✅
 Line.frameChanged: ✅
 Line.height: ✅
 Line.scaleY: ✅
 Line.width: ✅
+List.focus: ✅
+List.isFocusedChanged: ✅
+List.pivotY: ✅
+List.unfocus: ✅
 Map.frame: not realized
 Map.pivotX: not realized
 Map.zIndex: not realized
@@ -92,6 +89,9 @@ Stepper.scaleX: ✅
 Switch.ignoresInput: not realized
 Switch.layoutDirection: not realized
 Switch.translationY: ✅
+Text.accessibilityHint: ✅
+Text.isVisible: ✅
+Text.rotationY: not realized
 TextEditor.rotation: ✅
 TextEditor.style: ✅
 TextField.accessibilityHeadingLevel: ✅

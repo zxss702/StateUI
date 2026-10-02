@@ -1,0 +1,14 @@
+# revision 1.1
+App: ✅
+App.alert: ✅
+App.announce: ✅
+App.chooseAction: ✅
+App.confirm: ✅
+App.currentTime: ✅
+App.currentTimeZone: ✅
+App.handlerFailed: ✅
+App.hideOnScreenKeyboard: ✅
+App.persistSceneValue: ✅
+App.persistValue: ✅
+App.prompt: ✅
+App.utcOffset: ✅

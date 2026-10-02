@@ -178,7 +178,7 @@ toolkit's terms.
 `HostRuntime` builds the parts every host holds alike and wires them once: the
 core's link, the patch's intake, the animator, the state channels and the two
 motions, the display cycle on the host's frame clock, the mounted tree and the
-pump - the clock's frames run the cycle, a layout motion or an animation
+pump - the clock's frames run the cycle, a layout animation or an animation
 starting holds the clock. It is also every road a user's change takes in: a
 dispatch, a user's transaction, a report through a bound state, a journey
 taken, a gesture's value. A host gives it its frame clock and how an element's
@@ -203,9 +203,9 @@ every Swift runtime to them: only `Animator` samples a timing law, only
 `DisplayCycle` advances the animator and runs the core's cycle, only `Pump`
 renders and takes the acts, only `CoreLink`
 calls into the core, only `ProgramWrite` marks a write, and no runtime type is
-an engine or a channel other than a state's. [Motion](motion.md) gives the
-reasons of the animator, the state channels, the described motion and the layout
-motion; [patches](patches.md) those of the patch intake and the program write;
+an engine or a channel other than a state's. [Animation](animation.md) gives the
+reasons of the animator, the state channels, the described animation and the layout
+animation; [patches](patches.md) those of the patch intake and the program write;
 [the mounted tree](tree.md) those of the tree and its native halves;
 [layout](layout.md) those of the layout arithmetic.
 

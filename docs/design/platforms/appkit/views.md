@@ -48,7 +48,7 @@ updates its layer. An oval scroller cuts and draws no outline.
 
 ## Scroll bars
 
-A ScrollView and an ItemsView lay their scroll bars over what they show,
+A ScrollView and an List lay their scroll bars over what they show,
 whatever the Mac is set to show. StateUI gives what they hold their whole
 width - a list's item as wide as the list - and a bar standing beside it
 takes 17 points of that: a Mac with a mouse and no trackpad shows its bars

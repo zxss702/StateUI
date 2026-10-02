@@ -3,16 +3,15 @@ ActivityIndicator.pivotY: 🔌 read pivotY of ActivityIndicator: the host's own 
 Button.background: ☑️ AppKit paints a colour on this view; a brush is drawn only by a layout.
 Canvas.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
 CheckBox.style: ✅
-ColorBox.ignoresInput: ✅
+ColorPicker.ignoresInput: ✅
 DatePicker.isEnabled: ✅
 DatePicker.zIndex: not realized
 Ellipse.scaleY: 🔌 read scaleY of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.rotationY: 🔌 read rotationY of Grid: the host's own transform, checked against the layer it composed itself
 HStack.pivotY: 🔌 read pivotY of HStack: the host's own transform, checked against the layer it composed itself
 Image.background: ☑️ AppKit paints a colour on this view; a brush is drawn only by a layout.
-ItemsView.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
-Label.style: ✅
 Line.ignoresInput: ✅
+List.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
 Map.isEnabled: not realized
 Map.zIndex: not realized
 Path.scaleY: 🔌 read scaleY of Path: the host's own transform, checked against the layer it composed itself
@@ -29,6 +28,7 @@ SearchField.rotationY: 🔌 read rotationY of SearchField: the host's own transf
 Slider.pivotY: 🔌 read pivotY of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.background: ☑️ AppKit paints a colour on this view; a brush is drawn only by a layout.
 Switch.accessibilityHeadingLevel: cannot read a heading's level - AppKit marks a heading, not its level
+Text.style: ✅
 TextEditor.style: ✅
 TextField.ignoresInput: ✅
 TimePicker.isEnabled: ✅

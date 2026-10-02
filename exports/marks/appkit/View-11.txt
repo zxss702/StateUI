@@ -13,36 +13,31 @@ Canvas.panXChannel: 🔌 pan on Canvas: handed to the host's recognizer or handl
 CheckBox.frameChanged: ✅
 CheckBox.gridColumnSpan: ✅
 CheckBox.gridRowSpan: ✅
-ColorBox.area: ✅
-ColorBox.frameChanged: ✅
+ColorPicker.area: ✅
+ColorPicker.frameChanged: ✅
 DatePicker.canDrag: not realized
 DatePicker.dragStarting: not realized
 DatePicker.dragText: not realized
 DatePicker.dropCompleted: not realized
 DatePicker.frameChanged: ✅
-DatePicker.margin: ✅
+DatePicker.padding: ✅
 Ellipse.pinchUpdated: 🔌 pinch on Ellipse: handed to the host's recognizer or handler, no NSEvent sent
 Grid.panYChannel: 🔌 pan on Grid: handed to the host's recognizer or handler, no NSEvent sent
 HStack.tapCount: 🔌 tap on HStack: handed to the host's recognizer or handler, no NSEvent sent
-HStack.tapped: 🔌 tap on HStack: handed to the host's recognizer or handler, no NSEvent sent
+HStack.tapGesture: 🔌 tap on HStack: handed to the host's recognizer or handler, no NSEvent sent
 Image.frameChanged: ✅
 Image.gridColumn: ✅
 Image.gridRow: ✅
-ItemsView.allowDrop: not realized
-ItemsView.dragLeave: not realized
-ItemsView.dragOver: not realized
-ItemsView.drop: not realized
-ItemsView.frameChanged: ✅
-ItemsView.horizontalAlignment: ✅
-ItemsView.verticalAlignment: ✅
-Label.pointerEntered: 🔌 hover on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.pointerExited: 🔌 hover on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.pointerMoved: 🔌 hover on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.pointerPressed: 🔌 hover on Label: handed to the host's recognizer or handler, no NSEvent sent
-Label.pointerReleased: 🔌 hover on Label: handed to the host's recognizer or handler, no NSEvent sent
 Line.swipeDirection: 🔌 pan on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.swipeThreshold: 🔌 pan on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.swiped: 🔌 pan on Line: handed to the host's recognizer or handler, no NSEvent sent
+List.allowDrop: not realized
+List.dragLeave: not realized
+List.dragOver: not realized
+List.drop: not realized
+List.frameChanged: ✅
+List.horizontalAlignment: ✅
+List.verticalAlignment: ✅
 Map.panTouchCount: not realized
 Map.panUpdated: not realized
 Map.panXChannel: not realized
@@ -56,11 +51,11 @@ Polygon.dragStarting: not realized
 Polygon.dragText: not realized
 Polygon.dropCompleted: not realized
 Polygon.frameChanged: ✅
-Polygon.margin: ✅
+Polygon.padding: ✅
 Polyline.pinchUpdated: 🔌 pinch on Polyline: handed to the host's recognizer or handler, no NSEvent sent
 PositionIndicator.panYChannel: not realized
 ProgressBar.tapCount: 🔌 tap on ProgressBar: handed to the host's recognizer or handler, no NSEvent sent
-ProgressBar.tapped: 🔌 tap on ProgressBar: handed to the host's recognizer or handler, no NSEvent sent
+ProgressBar.tapGesture: 🔌 tap on ProgressBar: handed to the host's recognizer or handler, no NSEvent sent
 RadioButton.frameChanged: ✅
 RadioButton.gridColumn: ✅
 RadioButton.gridRow: ✅
@@ -87,16 +82,21 @@ Stepper.gridColumnSpan: ✅
 Stepper.gridRowSpan: ✅
 Switch.area: ✅
 Switch.frameChanged: ✅
+Text.pointerEntered: 🔌 hover on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.pointerExited: 🔌 hover on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.pointerMoved: 🔌 hover on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.pointerPressed: 🔌 hover on Text: handed to the host's recognizer or handler, no NSEvent sent
+Text.pointerReleased: 🔌 hover on Text: handed to the host's recognizer or handler, no NSEvent sent
 TextEditor.canDrag: not realized
 TextEditor.dragStarting: not realized
 TextEditor.dragText: not realized
 TextEditor.dropCompleted: not realized
 TextEditor.frameChanged: ✅
-TextEditor.margin: ✅
+TextEditor.padding: ✅
 TextField.pinchUpdated: 🔌 pinch on TextField: handed to the host's recognizer or handler, no NSEvent sent
 TimePicker.panYChannel: 🔌 pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent
 TitleBar.tapCount: not realized
-TitleBar.tapped: not realized
+TitleBar.tapGesture: not realized
 VStack.frameChanged: ✅
 VStack.gridColumn: ✅
 VStack.gridRow: ✅

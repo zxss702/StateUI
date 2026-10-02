@@ -1,6 +1,6 @@
 # revision 1.1
 SearchField.cursorPosition: ✅
-SearchField.inputPurpose: not realized
+SearchField.textContentType: not realized
 SearchField.isEnabled: waits on SearchField.isReadOnly
 SearchField.isReadOnly: not realized
 SearchField.isSpellCheckEnabled: not realized
@@ -12,7 +12,7 @@ SearchField.selectionLength: ✅
 SearchField.text: ◐ waits on SearchField.isReadOnly
 SearchField.textChanged: ✅
 TextEditor.cursorPosition: ✅
-TextEditor.inputPurpose: not realized
+TextEditor.textContentType: not realized
 TextEditor.isEnabled: waits on TextEditor.isReadOnly
 TextEditor.isReadOnly: not realized
 TextEditor.isSpellCheckEnabled: not realized
@@ -24,7 +24,7 @@ TextEditor.selectionLength: ✅
 TextEditor.text: ◐ waits on TextEditor.isReadOnly
 TextEditor.textChanged: ✅
 TextField.cursorPosition: ✅
-TextField.inputPurpose: not realized
+TextField.textContentType: not realized
 TextField.isEnabled: waits on TextField.isReadOnly
 TextField.isReadOnly: not realized
 TextField.isSpellCheckEnabled: not realized

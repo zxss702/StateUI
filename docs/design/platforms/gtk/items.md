@@ -1,6 +1,6 @@
 # Items
 
-An ItemsView is a StateUI layout holding GTK's own list view in a scrolled
+An List is a StateUI layout holding GTK's own list view in a scrolled
 window - a `GtkListView` down or across, a `GtkGridView` in columns - over a
 `GtkStringList` of the list's identities, its rows made by a signal factory.
 Each row's child is a panel of the host's, holding the entry's subtree it

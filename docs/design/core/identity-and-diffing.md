@@ -64,7 +64,7 @@ What belongs to one walk is set as it starts: whether it describes every
 element, whether the sheet moved, the states written since the host's tree was
 built - what the clean walk and the carry decide by - and the environments in
 scope, seeded with the standard providers so an application's own
-`.environment()` below is nearer. Where an element says nothing of motion, a
+`.environment()` below is nearer. Where an element says nothing of animation, a
 value takes the application's answer, or the library's default in a test's
 differ. The handlers a walk finds run after it, what left first and innermost
 first; the composed views it is inside name a bare container's content in
@@ -155,7 +155,7 @@ It errs toward building: what it cannot see through it does not assume.
 ## What the parent wrote
 
 `sameWriting` compares the placeholder as the parent wrote it: properties, the
-motion plan, driven ties, the objects `.environment()` provided on it, the
+animation plan, driven ties, the objects `.environment()` provided on it, the
 watched values, and the names of the handlers. What runs as the view comes and
 goes is compared by count, the closures being taken fresh by the carry. A slot
 child, an engine or a reading written on the view makes it build as it always
@@ -250,38 +250,38 @@ control to it. An element described for the first time - built, replaced,
 resynced or adopted under a new key - has no before to animate from, so the
 first frame anyone sees is always the value itself. Nothing is written for a
 value with no half way (text, a flag, an enumeration member) or when the
-motion resolves to none.
+animation resolves to none.
 
 A size somebody measures is never animated. Where an element reports its own
 frame, or the layout it stands in is measured, a size comes from a report, and
 animating it would lay the page out at sizes nobody chose, growing from
 nothing on the first report.
 
-## Layout motion
+## Layout animation
 
 Where children go is the host's own arithmetic - a placement comes from a
 measurement - so it has no property for a transition to ride beside. A layout
-that places children, and an element that answered `.motion(_:)` for itself,
-say how their children animate in `HostPatch.motion`.
+that places children, and an element that answered `.animation(_:)` for itself,
+say how their children animate in `HostPatch.animation`.
 
 `.inherited` is what a layout is until told otherwise, on both sides, so a
 layout that animates the way the application does says nothing on any message.
 What crosses is an override and its going away; the application always says
-its own motion once. The lanes say which parts of a child's place animate: a
-layout told `.motion(.none, .size)` moves children to new places but gives them
+its own animation once. The lanes say which parts of a child's place animate: a
+layout told `.animation(.none, .size)` moves children to new places but gives them
 new sizes at once, and a measured layout's children take their sizes at once.
 
 ## Themes
 
-A value with a half for each theme (`Color(light:dark:)`) stays whole in the
+A value with a half for each color scheme (`Color(light:dark:)`) stays whole in the
 node and is resolved by the differ as the element is built. That read makes
-the element the theme's reader, so a theme change builds it again. A leaf
+the element the color scheme's reader, so a color scheme change builds it again. A leaf
 wearing such a value keeps its authored node, the way a container keeps its
 content, so the clean walk can resolve it again.
 
 ## Watching values
 
-`.onChanged` compares a value with the one the same element carried last
+`.onChange` compares a value with the one the same element carried last
 render; nothing about it crosses to the host. Its rules:
 
 ```text
@@ -299,8 +299,8 @@ a few times and then a render per step.
 
 ## Created and destroying
 
-`.onCreated` runs once for an element that was not there before - new, or
-replacing what stood there - and `.onDestroying` once as it leaves, while its
+`.onAppear` runs once for an element that was not there before - new, or
+replacing what stood there - and `.onDisappear` once as it leaves, while its
 state and environment still answer. Both run after the walk and before the
 message leaves, so what they write is in that message. What leaves runs before
 what arrives, innermost first, so what it saves is there for its replacement
@@ -330,7 +330,7 @@ of, if it is one, which the differ arms engines for on the element wearing it,
 and which of the view's values it is - the property's group, plus a colour's.
 
 What `.inherited` means for a driven value can be answered only here: the host
-knows what the application says, while an element's motion plan answers per
+knows what the application says, while an element's animation plan answers per
 kind of value. The differ resolves it and leaves the answer on the state's
 storage, which applies it at every crossing. Two elements resolving the same
 state differently is a complaint; the one described last wins.

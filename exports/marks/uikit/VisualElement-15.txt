@@ -3,15 +3,15 @@ ActivityIndicator.background: not realized
 Button.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
 Canvas.style: ✅
 CheckBox.ignoresInput: not realized
-ColorBox.isEnabled: not realized
-ColorBox.zIndex: not realized
+ColorPicker.isEnabled: not realized
+ColorPicker.zIndex: not realized
 DatePicker.scaleY: 🔌 read scaleY of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.rotationY: 🔌 read rotationY of Ellipse: the host's own transform, checked against the layer it composed itself
 Grid.pivotY: 🔌 read pivotY of Grid: the host's own transform, checked against the layer it composed itself
 HStack.background: ✅
 Image.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
-ItemsView.style: not realized
-Label.ignoresInput: not realized
+List.style: not realized
+Text.ignoresInput: not realized
 Line.isEnabled: not realized
 Line.zIndex: not realized
 Map.scaleY: not realized

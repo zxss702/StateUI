@@ -6,9 +6,9 @@ that exist while an application runs:
 ```text
 declaration         runtime state
 -----------         ------------------
-Application         ApplicationSession
+App         ApplicationSession
 Scene               SceneSession
-Window              WindowSession
+WindowScene              WindowSession
 Page                PageSession
 ```
 
@@ -17,22 +17,22 @@ particular running instance is called, where it stands in its lifecycle, and
 what actions can be taken on it. Sessions are ordinary objects with `@State`
 properties and are resolved through `@Environment`.
 
-## Application
+## App
 
 An application declares one scene shape. A window itself conforms to `Scene`,
 so a single-window application needs no extra scene type:
 
 ```swift
-struct SingleWindowApp: Application {
-    var scene: any Scene { MainWindow() }
+struct SingleWindowApp: App {
+    var body: some Scene { MainWindow() }
 }
 
-struct MainWindow: Window {
+struct MainWindow: WindowScene {
     var page: any Page { HomePage() }
 }
 
-struct HomePage: ContentView {
-    var content: any View { Label("Home") }
+struct HomePage: View {
+    var body: some View { Text("Home") }
 }
 ```
 
@@ -43,7 +43,7 @@ struct HomePage: ContentView {
 | `phase` | active, inactive, or background |
 | `scenes` | currently open scene sessions, in opening order |
 | `styles` | the application's `StyleSheet` |
-| `motion` | default motion law |
+| `animation` | default animation law |
 | `persistentKeys` | state keys hydrated before the first description |
 | `openScene()` | asks for another independent scene session |
 
@@ -51,16 +51,16 @@ Configuration needed before the first view is built belongs in the
 application's initializer:
 
 ```swift quote
-struct NotesApp: Application {
+struct NotesApp: App {
     @Environment private var application: ApplicationSession
 
     init() {
         application.styles = AppStyles.sheet
-        application.motion = .spring(response: 300)
+        application.animation = .spring(response: 300)
         application.persistentKeys = [.lastDocument]
     }
 
-    var scene: any Scene { NotesScene() }
+    var body: some Scene { NotesScene() }
 }
 ```
 
@@ -142,7 +142,7 @@ Both default to `false` and are independent.
 
 Changing either policy updates windows that are already open. In particular,
 turning `hidesWhenInactive` off while a window is hidden by its scene makes that window
-visible again. Window lifecycle reports follow effective visibility: overlapping
+visible again. WindowScene lifecycle reports follow effective visibility: overlapping
 scene and application hiding produces one `stopped`, and `resumed` arrives only
 after neither cause keeps the window hidden.
 
@@ -152,12 +152,12 @@ evidence that a particular host implements the policy; the
 [platform matrix](../platform-contract.md#contract-members) is the
 support authority.
 
-## Application and scene phases
+## App and scene phases
 
 `ApplicationSession.phase` and `SceneSession.phase` use the same three words
 at different ownership scopes:
 
-| Phase | Application | Scene |
+| Phase | App | Scene |
 | --- | --- | --- |
 | `.active` | one of the application's windows is in use | one of this scene's windows is in use |
 | `.inactive` | application windows remain visible while another application is in front | this scene remains visible while another scene is in front |
@@ -245,7 +245,7 @@ The scene declaration is rebuilt before its restored group windows are
 materialized, so every restored window receives the same session environment
 as a newly opened one.
 
-## Window session
+## WindowScene session
 
 `WindowSession` owns one running window's phase, title, geometry requests,
 translucency, authored title area, modal stack, and `close()` operation.
@@ -308,7 +308,7 @@ capability.
 
 `isTranslucent` asks for a window the desktop shows through, blurred, under
 whatever its pages leave uncovered or paint in a colour with an alpha - on
-AppKit the window's own material lies under the page, and the margin around a
+AppKit the window's own material lies under the page, and the padding around a
 floating sidebar shows it. It is a desktop semantic: a host whose windows
 cannot show what is behind them keeps them opaque, and the application's
 colours read as written. Text belongs on a surface of its own rather than
@@ -332,11 +332,11 @@ The host reports `WindowPhase` through the same session:
 
 The exact path is platform-adaptive: a host reports only transitions that
 occur in its lifecycle. Each phase it reports is rendered before its next
-report, so `.onChanged(window.phase)` sees every one. Repeating the phase
+report, so `.onChange(of: window.phase)` sees every one. Repeating the phase
 already stored changes no state, and therefore triggers no extra reaction.
 
 ```swift quote
-.onChanged(window.phase) { oldPhase, newPhase in
+.onChange(of: window.phase) { oldPhase, newPhase in
     if newPhase == .stopped {
         try await saveDraft()
     }
@@ -348,12 +348,12 @@ already stored changes no state, and therefore triggers no extra reaction.
 Whatever a container shows as a screen - a window's `page`, a navigation
 stack's root and destinations, a tab, either half of a split view, a sheet -
 is a `Page`. Nobody declares one by hand: every view is a page, usually a
-`ContentView` of the application's own, and so is each arrangement. The
+`View` of the application's own, and so is each arrangement. The
 container puts a view on a page that owns one `PageSession` for as long as
 the same view stands on it: the same view type under the same explicit id.
 Another view in that place starts a session of its own. A write to the session
 builds the page again and carries the view on it whole. An arrangement -
-`NavigationStack`, `TabbedView`, `SplitView` - is a page already and is shown
+`NavigationStack`, `TabView`, `NavigationSplitView` - is a page already and is shown
 as it is; it is not a view, so it stands only where a page stands, and it is
 told what it is by modifier.
 
@@ -391,17 +391,17 @@ Set stable page furniture when the content element is created and update it
 when the state it depends on changes:
 
 ```swift quote
-struct EditorPage: ContentView {
+struct EditorPage: View {
     @Environment private var page: PageSession
     @State private var dirty = false
 
-    var content: any View {
+    var body: some View {
         TextEditor()
-            .onCreated {
+            .onAppear {
                 page.title = "Draft"
                 page.toolbarItems = [saveItem]
             }
-            .onChanged(dirty) {
+            .onChange(of: dirty) {
                 page.title = dirty ? "Draft - Edited" : "Draft"
             }
     }
@@ -422,13 +422,13 @@ struct EditorPage: ContentView {
 A navigation arrival normally reports `.appearing` and then `.navigatedTo`.
 A navigation departure reports `.navigatingFrom`, `.disappearing`, and then
 `.navigatedFrom`; a tab switch needs only disappearance and appearance. Each
-phase is rendered before the next report, so `.onChanged(page.phase)` sees
+phase is rendered before the next report, so `.onChange(of: page.phase)` sees
 every one - an arrival's `.appearing` as well as its `.navigatedTo`. A host
 does not invent navigation phases for a visibility change that was not a
 navigation move. As with windows, a duplicate report of the standing phase is
 a no-op.
 
-`onCreated` and `onDestroying` describe the lifetime of a StateUI element;
+`onAppear` and `onDisappear` describe the lifetime of a StateUI element;
 they are not substitutes for page appearance or window activation. Use the
 session phase whose scope matches the work.
 

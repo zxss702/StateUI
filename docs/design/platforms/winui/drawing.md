@@ -30,7 +30,7 @@ ellipse of the layout's size, written in the arrangement that gives the size
 and only where it differs from the last. `UIElement.Clip` takes only a plain
 rectangle, and a panel's own corner radius cuts none of its children.
 
-A ColorBox is a `Border` of one colour, its four corners rounded each as the
+A ColorPicker is a `Border` of one colour, its four corners rounded each as the
 element says; a `Rectangle` rounds all four alike.
 
 ## A placed child

@@ -17,9 +17,9 @@ Canvas.swiped: 🔌 pan on Canvas: handed to the host's recognizer or handler, n
 CheckBox.panTouchCount: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.panUpdated: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
 CheckBox.panXChannel: 🔌 pan on CheckBox: handed to the host's recognizer or handler, no NSEvent sent
-ColorBox.frameChanged: ✅
-ColorBox.gridColumnSpan: ✅
-ColorBox.gridRowSpan: ✅
+ColorPicker.frameChanged: ✅
+ColorPicker.gridColumnSpan: ✅
+ColorPicker.gridRowSpan: ✅
 DatePicker.area: ✅
 DatePicker.frameChanged: ✅
 Ellipse.canDrag: not realized
@@ -27,26 +27,19 @@ Ellipse.dragStarting: not realized
 Ellipse.dragText: not realized
 Ellipse.dropCompleted: not realized
 Ellipse.frameChanged: ✅
-Ellipse.margin: ✅
+Ellipse.padding: ✅
 Grid.pinchUpdated: 🔌 pinch on Grid: handed to the host's recognizer or handler, no NSEvent sent
 HStack.panYChannel: 🔌 pan on HStack: handed to the host's recognizer or handler, no NSEvent sent
 Image.tapCount: 🔌 tap on Image: handed to the host's recognizer or handler, no NSEvent sent
-Image.tapped: 🔌 tap on Image: handed to the host's recognizer or handler, no NSEvent sent
-ItemsView.frameChanged: ✅
-ItemsView.gridColumn: ✅
-ItemsView.gridRow: ✅
-Label.allowDrop: not realized
-Label.dragLeave: not realized
-Label.dragOver: not realized
-Label.drop: not realized
-Label.frameChanged: ✅
-Label.horizontalAlignment: ✅
-Label.verticalAlignment: ✅
+Image.tapGesture: 🔌 tap on Image: handed to the host's recognizer or handler, no NSEvent sent
 Line.pointerEntered: 🔌 hover on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.pointerExited: 🔌 hover on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.pointerMoved: 🔌 hover on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.pointerPressed: 🔌 hover on Line: handed to the host's recognizer or handler, no NSEvent sent
 Line.pointerReleased: 🔌 hover on Line: handed to the host's recognizer or handler, no NSEvent sent
+List.frameChanged: ✅
+List.gridColumn: ✅
+List.gridRow: ✅
 Map.swipeDirection: not realized
 Map.swipeThreshold: not realized
 Map.swiped: not realized
@@ -63,11 +56,11 @@ Polyline.dragStarting: not realized
 Polyline.dragText: not realized
 Polyline.dropCompleted: not realized
 Polyline.frameChanged: ✅
-Polyline.margin: ✅
+Polyline.padding: ✅
 PositionIndicator.pinchUpdated: not realized
 ProgressBar.panYChannel: 🔌 pan on ProgressBar: handed to the host's recognizer or handler, no NSEvent sent
 RadioButton.tapCount: 🔌 tap on RadioButton: handed to the host's recognizer or handler, no NSEvent sent
-RadioButton.tapped: 🔌 tap on RadioButton: handed to the host's recognizer or handler, no NSEvent sent
+RadioButton.tapGesture: 🔌 tap on RadioButton: handed to the host's recognizer or handler, no NSEvent sent
 Rectangle.frameChanged: ✅
 Rectangle.gridColumn: ✅
 Rectangle.gridRow: ✅
@@ -92,6 +85,13 @@ Stepper.panXChannel: 🔌 pan on Stepper: handed to the host's recognizer or han
 Switch.frameChanged: ✅
 Switch.gridColumnSpan: ✅
 Switch.gridRowSpan: ✅
+Text.allowDrop: not realized
+Text.dragLeave: not realized
+Text.dragOver: not realized
+Text.drop: not realized
+Text.frameChanged: ✅
+Text.horizontalAlignment: ✅
+Text.verticalAlignment: ✅
 TextEditor.area: ✅
 TextEditor.frameChanged: ✅
 TextField.canDrag: not realized
@@ -99,11 +99,11 @@ TextField.dragStarting: not realized
 TextField.dragText: not realized
 TextField.dropCompleted: not realized
 TextField.frameChanged: ✅
-TextField.margin: ✅
+TextField.padding: ✅
 TimePicker.pinchUpdated: 🔌 pinch on TimePicker: handed to the host's recognizer or handler, no NSEvent sent
 TitleBar.panYChannel: not realized
 VStack.tapCount: 🔌 tap on VStack: handed to the host's recognizer or handler, no NSEvent sent
-VStack.tapped: 🔌 tap on VStack: handed to the host's recognizer or handler, no NSEvent sent
+VStack.tapGesture: 🔌 tap on VStack: handed to the host's recognizer or handler, no NSEvent sent
 WebView.frameChanged: not realized
 WebView.gridColumn: not realized
 WebView.gridRow: not realized

@@ -1,6 +1,6 @@
 # Items
 
-An ItemsView is UIKit's collection view: a diffable data source over the
+An List is UIKit's collection view: a diffable data source over the
 list's identities, one section a group, and a compositional layout. The host
 makes the view itself, since each cell asks the tree for what it holds
 through the host layer's `ItemsCells` ([items](../../host/items.md)).

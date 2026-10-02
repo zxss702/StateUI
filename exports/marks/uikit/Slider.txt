@@ -1,5 +1,5 @@
 # revision 1.1
-Label.text: ✅
+Text.text: ✅
 Slider: ✅
 Slider.dragCompleted: 🔌 pressDown on Slider: the view's listening handed the recognizer's states, no touch sent
 Slider.dragStarted: 🔌 pressDown on Slider: the view's listening handed the recognizer's states, no touch sent

@@ -4,5 +4,5 @@ Scene.activated: ✅
 Scene.deactivated: ✅
 Scene.destroying: ✅
 Scene.stopped: ✅
-Scene.windowClosed: waits on Window.windowType
+Scene.windowClosed: waits on WindowScene.windowType
 Scene.windowRestored: not realized

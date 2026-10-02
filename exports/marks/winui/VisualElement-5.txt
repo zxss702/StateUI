@@ -18,9 +18,9 @@ CheckBox.frameChanged: ✅
 CheckBox.height: ✅
 CheckBox.scaleY: ✅
 CheckBox.width: ✅
-ColorBox.frame: ✅
-ColorBox.pivotX: ✅
-ColorBox.zIndex: not realized
+ColorPicker.frame: ✅
+ColorPicker.pivotX: ✅
+ColorPicker.zIndex: not realized
 DatePicker.accessibilityLabel: ✅
 DatePicker.rotationX: not realized
 Ellipse.isAccessibilityHidden: ✅
@@ -34,20 +34,16 @@ HStack.style: ✅
 Image.accessibilityHeadingLevel: ✅
 Image.opacity: ✅
 Image.scale: ✅
-ItemsView.background: not realized
-ItemsView.frameChanged: ✅
-ItemsView.maximumHeight: ✅
-ItemsView.maximumWidth: ✅
-ItemsView.minimumHeight: ✅
-ItemsView.minimumWidth: ✅
-ItemsView.translationX: ✅
-Label.focus: – Label takes no keyboard focus here: it refuses it, and nothing is heard
-Label.isFocusedChanged: – Label takes no keyboard focus here: it refuses it, and nothing is heard
-Label.pivotY: ✅
-Label.unfocus: – Label takes no keyboard focus here: it refuses it, and nothing is heard
 Line.accessibilityHint: ✅
 Line.isVisible: ✅
 Line.rotationY: not realized
+List.background: not realized
+List.frameChanged: ✅
+List.maximumHeight: ✅
+List.maximumWidth: ✅
+List.minimumHeight: ✅
+List.minimumWidth: ✅
+List.translationX: ✅
 Map.automationExcludedWithChildren: not realized
 Map.frameChanged: not realized
 Map.height: not realized
@@ -96,6 +92,10 @@ Stepper.rotationX: not realized
 Switch.isAccessibilityHidden: ✅
 Switch.isEnabled: ✅
 Switch.scaleX: ✅
+Text.focus: – Text takes no keyboard focus here: it refuses it, and nothing is heard
+Text.isFocusedChanged: – Text takes no keyboard focus here: it refuses it, and nothing is heard
+Text.pivotY: ✅
+Text.unfocus: – Text takes no keyboard focus here: it refuses it, and nothing is heard
 TextEditor.ignoresInput: not realized
 TextEditor.layoutDirection: not realized
 TextEditor.translationY: ✅

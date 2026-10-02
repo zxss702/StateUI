@@ -11,7 +11,7 @@ Swift protocols behind them refine each other.
 ```text
   PropertyContainer                      the name automation finds an element by
   |-- VisualElement                      size, visibility, transform, input, focus, accessibility
-  |   |-- View                           place in a layout, margin, gestures, drag and drop, frame
+  |   |-- View                           place in a layout, padding, gestures, drag and drop, frame
   |   |   |-- Layout  (+ PaddingElement, BorderElement) safe area, clipping, own box, input through empty space
   |   |   |   '-- StackBase              spacing between children
   |   |   |-- InputView                  text limits, caret, keyboard, placeholder
@@ -35,8 +35,8 @@ Swift protocols behind them refine each other.
 ## Who wears what
 
 ```text
-  View               ActivityIndicator, Button, Canvas, CheckBox, ColorBox,
-                     DatePicker, Image, Label, Map, Picker, PositionIndicator,
+  View               ActivityIndicator, Button, Canvas, CheckBox, ColorPicker,
+                     DatePicker, Image, Text, Map, Picker, PositionIndicator,
                      ProgressBar, RadioButton, ScrollView, Slider, Stepper,
                      Switch, TimePicker, TitleBar, WebView
   Layout             Grid, ZStack
@@ -44,9 +44,9 @@ Swift protocols behind them refine each other.
   InputView          SearchField, TextEditor, TextField
   Shape              Ellipse, Line, Path, Polygon, Polyline, Rectangle
   MenuItemElement    MenuItem, ToolbarItem
-  PageElement        Page, NavigationStack, TabbedView, SplitView
+  PageElement        Page, NavigationStack, TabView, NavigationSplitView
   text tiers only    Span
-  no tier            Application, Scene, Window, Menu, MenuSeparator, ContextMenu,
+  no tier            App, Scene, WindowScene, Menu, Divider, ContextMenu,
                      ModalStack, Overlay, and the slots and collections
 ```
 

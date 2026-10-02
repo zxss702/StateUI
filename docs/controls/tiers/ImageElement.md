@@ -14,4 +14,4 @@ How each of them realizes these members is on its own page.
 
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
-| `aspect` | property | `Aspect` | native |
+| `aspect` | property | `ContentMode` | native |

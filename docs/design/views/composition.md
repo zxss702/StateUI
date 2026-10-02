@@ -1,14 +1,14 @@
 # Composition
 
-An application builds its interface out of composed views - `ContentView`s -
-and the library builds several of its own the same way: `FrameReader`,
-`PlacedLayout`, `ScrollReader`, `GalleryView`, the inspector. A
+An application builds its interface out of composed views - `View`s -
+and the library builds several of its own the same way: `GeometryReader`,
+`PlacedLayout`, `ScrollViewReader`, `GalleryView`, the inspector. A
 composed view is a value that says what it is made of; the differ decides when
 that is read.
 
 ## A composed view is a placeholder
 
-`ContentView.body` does not build the content. It answers a placeholder node
+`View.body` does not build the content. It answers a placeholder node
 (`Node.composed`) carrying the view's value, its state boxes, its inputs and a
 closure that builds the content:
 
@@ -40,8 +40,8 @@ into it, and the differ writes what accumulates there over the built content.
 That is why `PropertyContainer.Modified` is an associated type rather than
 `Self`.
 
-`ModifiedContent` offers what every view has - margin, opacity, grid placement
-- and nothing only some views have: what is inside might be a Label or a stack,
+`ModifiedContent` offers what every view has - padding, opacity, grid placement
+- and nothing only some views have: what is inside might be a Text or a stack,
 and `.fontSize()` on one would be a promise the library cannot keep. Because
 those modifiers return a `ModifiedContent`, a composed view's own modifiers
 come first in a chain, and an aim is written directly on the initializer's
@@ -79,7 +79,7 @@ and leave the cards in the shape they were last placed in.
 
 ## A watcher is a view of its own
 
-`.onChanged(value)` compares the value it was described with, so whatever
+`.onChange(of: value)` compares the value it was described with, so whatever
 writes the watcher reads the value at build - and whatever reads a value is
 built again when it moves. A watcher written on a view that holds many others
 makes that whole view rebuild for every change it watches.

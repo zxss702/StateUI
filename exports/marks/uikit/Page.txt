@@ -9,4 +9,4 @@ Page.hasNavigationBar: ✅
 Page.navigatedFrom: ✅
 Page.navigatedTo: ✅
 Page.navigatingFrom: ✅
-Page.padding: ✅
+Page.contentPadding: ✅

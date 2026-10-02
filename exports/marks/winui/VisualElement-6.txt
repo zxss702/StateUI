@@ -14,10 +14,10 @@ CheckBox.maximumWidth: ✅
 CheckBox.minimumHeight: ✅
 CheckBox.minimumWidth: ✅
 CheckBox.translationX: ✅
-ColorBox.focus: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
-ColorBox.isFocusedChanged: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
-ColorBox.pivotY: ✅
-ColorBox.unfocus: – ColorBox takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.focus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.isFocusedChanged: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
+ColorPicker.pivotY: ✅
+ColorPicker.unfocus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 DatePicker.accessibilityHint: ✅
 DatePicker.isVisible: ✅
 DatePicker.rotationY: not realized
@@ -34,14 +34,12 @@ HStack.rotationX: not realized
 Image.isAccessibilityHidden: ✅
 Image.isEnabled: not realized
 Image.scaleX: ✅
-ItemsView.ignoresInput: not realized
-ItemsView.layoutDirection: not realized
-ItemsView.translationY: ✅
-Label.rotation: ✅
-Label.style: ✅
 Line.accessibilityHeadingLevel: ✅
 Line.opacity: ✅
 Line.scale: ✅
+List.ignoresInput: not realized
+List.layoutDirection: not realized
+List.translationY: ✅
 Map.background: not realized
 Map.frameChanged: not realized
 Map.maximumHeight: not realized
@@ -96,6 +94,8 @@ Switch.frameChanged: ✅
 Switch.height: ✅
 Switch.scaleY: ✅
 Switch.width: ✅
+Text.rotation: ✅
+Text.style: ✅
 TextEditor.frame: ✅
 TextEditor.pivotX: ✅
 TextEditor.zIndex: not realized

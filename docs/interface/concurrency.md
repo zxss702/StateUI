@@ -3,7 +3,7 @@
 StateUI handlers may suspend without leaving the platform UI thread. That
 thread is Swift's `MainActor` on every platform: on Apple it is the main queue
 UIKit and AppKit drain, and on Android, Windows, and Linux StateUI makes it a
-queue the host drains on its UI thread. Application code uses ordinary Swift
+queue the host drains on its UI thread. App code uses ordinary Swift
 concurrency while the host remains the owner of its native event loop.
 
 ## Handler isolation
@@ -31,7 +31,7 @@ host action, so `Task.sleep`, task values, streams, continuations, and
 An uncaught handler error is reported through the active host. Use `do` and
 `catch` only when the application can recover or present a more useful state.
 
-## Application async functions
+## App async functions
 
 An asynchronous helper called by a handler must inherit its caller's executor
 or state its isolation explicitly:
@@ -124,19 +124,19 @@ interface clock, use `Ticker`, which advances a deadline and spends that
 lateness instead of adding it to the next interval.
 
 ```swift
-struct Countdown: ContentView {
+struct Countdown: View {
     @State private var ticker = Ticker(every: .seconds(1), limit: 10)
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\((ticker.limit ?? 0) - ticker.ticks)")
+            Text("\((ticker.limit ?? 0) - ticker.ticks)")
 
             Button(ticker.isRunning ? "Stop" : "Start")
                 .onClicked {
                     ticker.isRunning ? ticker.stop() : ticker.start()
                 }
         }
-        .onDestroying { ticker.stop() }
+        .onDisappear { ticker.stop() }
     }
 }
 ```
@@ -149,7 +149,7 @@ configuration change request a render.
 `start()` returns immediately and does nothing while the same run is already
 active. A completed limited ticker starts again from zero. `stop()` keeps the
 count; `reset()` stops and sets it to zero. Stop a view-owned ticker from
-`onDestroying` so a removed element cannot keep doing work.
+`onDisappear` so a removed element cannot keep doing work.
 
 Intervals shorter than one millisecond are clamped to one millisecond. The
 platform scheduler may have a coarser practical resolution.
@@ -168,15 +168,15 @@ not overlap:
 @State private var status = "Waiting"
 @State private var poll = Ticker(every: .seconds(30), isRepeating: false)
 
-VStack { Label(status) }
-    .onCreated {
+VStack { Text(status) }
+    .onAppear {
         poll.onTick = {
             status = await service.status()
             poll.start()
         }
         poll.start()
     }
-    .onDestroying { poll.stop() }
+    .onDisappear { poll.stop() }
 ```
 
 The final tick clears `isRunning` before invoking `onTick`, so that closure may
@@ -189,7 +189,7 @@ ticks.
 
 ## Foundation boundary
 
-The cross-platform StateUI module does not import Foundation. Application code
+The cross-platform StateUI module does not import Foundation. App code
 may use Foundation for networking, serialization, and domain models. At the UI
 boundary use StateUI's portable values and execution primitives:
 

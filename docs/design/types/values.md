@@ -34,7 +34,7 @@ name is text when there can be no end of them.
 A value made of numbers in a fixed order crosses as one `.numbers` run.
 
 ```text
-  Insets              left, top, right, bottom
+  EdgeInsets              left, top, right, bottom
   Rect                x, y, width, height
   CornerRadius        one .number, or top left, top right, bottom left, bottom right
   Point               x, y

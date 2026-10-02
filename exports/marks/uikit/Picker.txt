@@ -1,5 +1,5 @@
 # revision 1.1
-Label.text: ✅
+Text.text: ✅
 Picker: ✅
 Picker.closed: waits on Picker.isOpen
 Picker.frameChanged: ✅

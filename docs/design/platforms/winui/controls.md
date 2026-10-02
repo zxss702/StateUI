@@ -79,7 +79,7 @@ heard twice - so every button stands in a group of its own.
 A background given to one of them is what it is drawn over in every state:
 its templates paint their own backgrounds under the pointer, pressed and
 disabled - transparent until then - so the host writes the brush into each of
-those resources on the control as well, and the control reads its theme
+those resources on the control as well, and the control reads its color scheme
 again so its template takes them. A checked radio button's wash is its
 Checked visual state's background, which the core lays as the user chooses.
 
@@ -94,8 +94,8 @@ for the control - `CheckBoxCheckBackgroundFillChecked`, `ToggleSwitchFillOn`,
 `SliderTrackValueFill` and their kin - so the tint is written into the
 control's own resources under those names, the colour itself and fainter
 under the pointer and pressed, by the host layer's shares ([a
-box](../../host/layout.md#a-box)), as WinUI's accent brushes are. A template reads its resources as its theme is read, so the control
-reads its theme again at once; a tint changed after the control is drawn is
+box](../../host/layout.md#a-box)), as WinUI's accent brushes are. A template reads its resources as its color scheme is read, so the control
+reads its color scheme again at once; a tint changed after the control is drawn is
 drawn. No tint takes the names away, and the system's accent returns.
 
 ## A picker
@@ -268,7 +268,7 @@ is, the relay asks the layout holding it to measure again
 
 WinUI draws an SVG into pixels and takes those pixels for DIPs. The host has
 it drawn at the size it shows at in its room, in its own proportions, at the
-display's scale - again only for more pixels, so a size in motion does not
+display's scale - again only for more pixels, so a size in animation does not
 draw it every frame - and WinUI's `Stretch` fits it, fills with it, or
 centres it. A centred SVG gives the image its declared size, in the middle
 of the room. A stretched picture keeps no proportions, and WinUI draws a

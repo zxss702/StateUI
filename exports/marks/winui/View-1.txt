@@ -1,13 +1,13 @@
 # revision 1.1
 ActivityIndicator.frameChanged: ✅
-ActivityIndicator.margin: ✅
+ActivityIndicator.padding: ✅
 ActivityIndicator.pointerEntered: ✅
 ActivityIndicator.pointerExited: ✅
 ActivityIndicator.pointerMoved: ✅
 ActivityIndicator.pointerPressed: ✅
 ActivityIndicator.pointerReleased: ✅
 ActivityIndicator.tapCount: ✅
-ActivityIndicator.tapped: ✅
+ActivityIndicator.tapGesture: ✅
 Button.allowDrop: not realized
 Button.area: ✅
 Button.dragLeave: not realized
@@ -29,21 +29,21 @@ CheckBox.panTouchCount: ✅
 CheckBox.panUpdated: ✅
 CheckBox.panXChannel: ✅
 CheckBox.verticalAlignment: ✅
-ColorBox.frameChanged: ✅
-ColorBox.gridColumn: ✅
-ColorBox.gridRow: ✅
-ColorBox.swipeDirection: ✅
-ColorBox.swipeThreshold: ✅
-ColorBox.swiped: ✅
+ColorPicker.frameChanged: ✅
+ColorPicker.gridColumn: ✅
+ColorPicker.gridRow: ✅
+ColorPicker.swipeDirection: ✅
+ColorPicker.swipeThreshold: ✅
+ColorPicker.swiped: ✅
 DatePicker.frameChanged: ✅
-DatePicker.margin: ✅
+DatePicker.padding: ✅
 DatePicker.pointerEntered: ✅
 DatePicker.pointerExited: ✅
 DatePicker.pointerMoved: ✅
 DatePicker.pointerPressed: ✅
 DatePicker.pointerReleased: ✅
 DatePicker.tapCount: ✅
-DatePicker.tapped: ✅
+DatePicker.tapGesture: ✅
 Ellipse.allowDrop: not realized
 Ellipse.area: ✅
 Ellipse.dragLeave: not realized
@@ -71,22 +71,22 @@ Image.gridRow: ✅
 Image.swipeDirection: ✅
 Image.swipeThreshold: ✅
 Image.swiped: ✅
-ItemsView.frameChanged: ✅
-ItemsView.margin: ✅
-ItemsView.pointerEntered: ✅
-ItemsView.pointerExited: ✅
-ItemsView.pointerMoved: ✅
-ItemsView.pointerPressed: ✅
-ItemsView.pointerReleased: ✅
-ItemsView.tapCount: ✅
-ItemsView.tapped: ✅
-Label.allowDrop: not realized
-Label.area: ✅
-Label.dragLeave: not realized
-Label.dragOver: not realized
-Label.drop: not realized
-Label.frameChanged: ✅
-Label.panYChannel: ✅
+List.frameChanged: ✅
+List.padding: ✅
+List.pointerEntered: ✅
+List.pointerExited: ✅
+List.pointerMoved: ✅
+List.pointerPressed: ✅
+List.pointerReleased: ✅
+List.tapCount: ✅
+List.tapGesture: ✅
+Text.allowDrop: not realized
+Text.area: ✅
+Text.dragLeave: not realized
+Text.dragOver: not realized
+Text.drop: not realized
+Text.frameChanged: ✅
+Text.panYChannel: ✅
 Line.frameChanged: ✅
 Line.gridColumnSpan: ✅
 Line.gridRowSpan: ✅
@@ -108,14 +108,14 @@ Path.swipeDirection: ✅
 Path.swipeThreshold: ✅
 Path.swiped: ✅
 Picker.frameChanged: ✅
-Picker.margin: ✅
+Picker.padding: ✅
 Picker.pointerEntered: ✅
 Picker.pointerExited: ✅
 Picker.pointerMoved: ✅
 Picker.pointerPressed: ✅
 Picker.pointerReleased: ✅
 Picker.tapCount: ✅
-Picker.tapped: ✅
+Picker.tapGesture: ✅
 Polygon.allowDrop: not realized
 Polygon.area: ✅
 Polygon.dragLeave: not realized
@@ -144,14 +144,14 @@ ProgressBar.swipeDirection: ✅
 ProgressBar.swipeThreshold: ✅
 ProgressBar.swiped: ✅
 RadioButton.frameChanged: ✅
-RadioButton.margin: ✅
+RadioButton.padding: ✅
 RadioButton.pointerEntered: ✅
 RadioButton.pointerExited: ✅
 RadioButton.pointerMoved: ✅
 RadioButton.pointerPressed: ✅
 RadioButton.pointerReleased: ✅
 RadioButton.tapCount: ✅
-RadioButton.tapped: ✅
+RadioButton.tapGesture: ✅
 Rectangle.allowDrop: not realized
 Rectangle.area: ✅
 Rectangle.dragLeave: not realized
@@ -180,14 +180,14 @@ Slider.swipeDirection: ✅
 Slider.swipeThreshold: ✅
 Slider.swiped: ✅
 Stepper.frameChanged: ✅
-Stepper.margin: ✅
+Stepper.padding: ✅
 Stepper.pointerEntered: ✅
 Stepper.pointerExited: ✅
 Stepper.pointerMoved: ✅
 Stepper.pointerPressed: ✅
 Stepper.pointerReleased: ✅
 Stepper.tapCount: ✅
-Stepper.tapped: ✅
+Stepper.tapGesture: ✅
 Switch.allowDrop: not realized
 Switch.area: ✅
 Switch.dragLeave: not realized
@@ -216,14 +216,14 @@ TimePicker.swipeDirection: ✅
 TimePicker.swipeThreshold: ✅
 TimePicker.swiped: ✅
 TitleBar.frameChanged: not realized
-TitleBar.margin: not realized
+TitleBar.padding: not realized
 TitleBar.pointerEntered: not realized
 TitleBar.pointerExited: not realized
 TitleBar.pointerMoved: not realized
 TitleBar.pointerPressed: not realized
 TitleBar.pointerReleased: not realized
 TitleBar.tapCount: not realized
-TitleBar.tapped: not realized
+TitleBar.tapGesture: not realized
 VStack.allowDrop: not realized
 VStack.area: ✅
 VStack.dragLeave: not realized

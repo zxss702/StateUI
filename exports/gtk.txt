@@ -3,21 +3,21 @@ ActivityIndicator
   tint
 Button
   background
+  contentPadding
   fontAttributes
   fontFamily
   fontSize
-  padding
+  foregroundStyle
   shape
   stroke
   strokeWidth
   text
   textCase
-  textColor
   clicked()
 CheckBox
   isOn
   toggled()
-ColorBox
+ColorPicker
   color
   cornerRadius
 Ellipse
@@ -36,9 +36,9 @@ Grid
   clipsContent
   columnSpacing
   columns
+  contentPadding
   ignoresInput
   letsInputThrough
-  padding
   rowSpacing
   rows
   shape
@@ -47,9 +47,9 @@ Grid
 HStack
   background
   clipsContent
+  contentPadding
   ignoresInput
   letsInputThrough
-  padding
   shape
   spacing
   stroke
@@ -57,32 +57,6 @@ HStack
 Image
   aspect
   source
-ItemsView
-  endReachedWithin
-  items
-  itemsLayout
-  selectedItems
-  selectionMode
-  endReached()
-  itemActivated()
-  realizedChanged()
-  selectionChanged()
-Label
-  background
-  characterSpacing
-  fontAttributes
-  fontFamily
-  fontSize
-  horizontalTextAlignment
-  lineBreak
-  lineHeight
-  maximumLines
-  padding
-  text
-  textCase
-  textColor
-  textDecorations
-  verticalTextAlignment
 Line
   aspect
   fill
@@ -98,6 +72,16 @@ Line
   x2
   y1
   y2
+List
+  endReachedWithin
+  items
+  itemsLayout
+  selectedItems
+  selectionMode
+  endReached()
+  itemActivated()
+  realizedChanged()
+  selectionChanged()
 Path
   aspect
   data
@@ -144,14 +128,14 @@ ProgressBar
   progress
   tint
 RadioButton
+  contentPadding
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   isOn
-  padding
   text
   textCase
-  textColor
   toggled()
 Rectangle
   aspect
@@ -167,14 +151,14 @@ Rectangle
   strokeWidth
 ScrollView
   background
-  horizontalScrollBarVisibility
+  contentPadding
+  horizontalScrollIndicators
   orientation
-  padding
   scrollOffset
   shape
   stroke
   strokeWidth
-  verticalScrollBarVisibility
+  verticalScrollIndicators
   scrollStopped()
   scrollXChanged()
   scrollYChanged()
@@ -183,17 +167,17 @@ SearchField
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
-  inputPurpose
+  foregroundStyle
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
-  textColor
+  textContentType
   submitted()
   textChanged()
 Slider
@@ -210,49 +194,65 @@ Stepper
 Switch
   isOn
   toggled()
+Text
+  background
+  characterSpacing
+  contentPadding
+  fontAttributes
+  fontFamily
+  fontSize
+  foregroundStyle
+  lineBreak
+  lineHeight
+  lineLimit
+  multilineTextAlignment
+  text
+  textCase
+  textDecorations
+  verticalTextAlignment
 TextEditor
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   growsWithText
-  horizontalTextAlignment
-  inputPurpose
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
-  textColor
+  textContentType
   textChanged()
 TextField
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
-  horizontalTextAlignment
-  inputPurpose
+  foregroundStyle
   isPassword
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
-  textColor
+  textContentType
   submitted()
   textChanged()
 VStack
   background
   clipsContent
+  contentPadding
   ignoresInput
   letsInputThrough
-  padding
   shape
   spacing
   stroke
@@ -260,9 +260,9 @@ VStack
 ZStack
   background
   clipsContent
+  contentPadding
   ignoresInput
   letsInputThrough
-  padding
   shape
   stroke
   strokeWidth
@@ -282,12 +282,12 @@ ZStack
   isAccessibilityHidden
   isEnabled
   isVisible
-  margin
   maximumHeight
   maximumWidth
   minimumHeight
   minimumWidth
   opacity
+  padding
   panTouchCount
   panXChannel
   panYChannel
@@ -315,7 +315,7 @@ ZStack
   pointerPressed()
   pointerReleased()
   swiped()
-  tapped()
+  tapGesture()
 (acts)
   alert()
   announce()

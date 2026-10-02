@@ -1,8 +1,8 @@
 # revision 1.1
 Button.text: ✅
 Button.textCase: ✅
-Label.text: ✅
-Label.textCase: ✅
+Text.text: ✅
+Text.textCase: ✅
 RadioButton.text: ✅
 RadioButton.textCase: ✅
 SearchField.text: ✅

@@ -46,7 +46,7 @@ leave the host carrying a branch to tell them apart.
 
 ## A colour box fills with its colour
 
-A `ColorBox` carries both `color` and `background`, and draws `color`. The
+A `ColorPicker` carries both `color` and `background`, and draws `color`. The
 background is a second surface behind the box, which the corner radius does
 not round and which need not share the box's transform: a rotated box carrying
 both shows the background standing still underneath. A box is given its
@@ -62,7 +62,7 @@ nothing, since an application that opened it from a button of its own already
 knows. The user can still close it by choosing, tapping away or pressing
 Escape, which `onClosed` reports.
 
-A date picker and a time picker take `textColor` and letter spacing through
+A date picker and a time picker take `foregroundStyle` and letter spacing through
 `TextStyleElement` but have no `text`: the field shows the formatted value. The
 host does the formatting, where the calendar and the user's locale are, so
 month names and a 12- or 24-hour clock come out in the user's own terms. There
@@ -73,7 +73,7 @@ state.
 ## Where a map opens
 
 Where a map opens belongs in its initializer rather than in an act from
-`.onCreated`: a region given there is kept by the host and applied once the
+`.onAppear`: a region given there is kept by the host and applied once the
 platform's map is ready, while the act lands an instant after the native map
 exists and the platform's own opening region overwrites it. Moving a map that
 is already up is the act `moveToRegion`.
@@ -113,7 +113,7 @@ same on every host.
 
 ## Text runs
 
-A `TextSpan` is one run of text inside a Label, with its own colour, size and
+A `TextSpan` is one run of text inside a Text, with its own colour, size and
 weight; text in two colours is two runs. It is named `TextSpan` rather than
 `Span` because the standard library's `Span<Element>` is in scope in every file
 without an import: an application writing `Span("…")` would get "no exact
@@ -126,8 +126,8 @@ the vocabulary's name for a run.
 An image's source is a file among the application's resources, never an
 address: a name that looks like a url is looked for among the resources like
 any other and is not found. Artwork kept as an SVG is asked for by its PNG
-name. A source with a half for each theme carries both halves to the differ,
-which picks the one the theme asks for as it builds the view, so a theme change
+name. A source with a half for each color scheme carries both halves to the differ,
+which picks the one the color scheme asks for as it builds the view, so a color scheme change
 builds again only the views wearing a pair. An `Image` has no padding: a
 modifier that compiles into nothing is worse than no modifier. Whether an
 animated picture runs is a property rather than an act, so a paused animation

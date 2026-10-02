@@ -8,7 +8,7 @@ Button.opacity: ✅
 Button.translationY: 🔌 read translationY of Button: the host's own transform, checked against the layer it composed itself
 Canvas.scaleX: 🔌 read scaleX of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.rotationX: 🔌 read rotationX of CheckBox: the host's own transform, checked against the layer it composed itself
-ColorBox.pivotX: 🔌 read pivotX of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.pivotX: 🔌 read pivotX of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.automationExcludedWithChildren: ✅
 Ellipse.accessibilityHint: ✅
 Grid.focus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
@@ -21,8 +21,8 @@ HStack.minimumHeight: ✅
 HStack.minimumWidth: ✅
 Image.opacity: ✅
 Image.translationY: 🔌 read translationY of Image: the host's own transform, checked against the layer it composed itself
-ItemsView.scaleX: 🔌 read scaleX of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.rotationX: 🔌 read rotationX of Label: the host's own transform, checked against the layer it composed itself
+List.scaleX: 🔌 read scaleX of List: the host's own transform, checked against the layer it composed itself
+Text.rotationX: 🔌 read rotationX of Text: the host's own transform, checked against the layer it composed itself
 Line.pivotX: 🔌 read pivotX of Line: the host's own transform, checked against the layer it composed itself
 Map.automationExcludedWithChildren: not realized
 Path.accessibilityHint: ✅

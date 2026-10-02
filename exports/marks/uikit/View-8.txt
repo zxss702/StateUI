@@ -1,7 +1,7 @@
 # revision 1.1
 ActivityIndicator.panYChannel: 🔌 pan on ActivityIndicator: the view's listening handed the recognizer's states, no touch sent
 Button.tapCount: 🔌 tap on Button: the view's listening handed the recognizer's states, no touch sent
-Button.tapped: 🔌 tap on Button: the view's listening handed the recognizer's states, no touch sent
+Button.tapGesture: 🔌 tap on Button: the view's listening handed the recognizer's states, no touch sent
 Canvas.frameChanged: ✅
 Canvas.gridColumn: ✅
 Canvas.gridRow: ✅
@@ -12,11 +12,11 @@ CheckBox.drop: not realized
 CheckBox.frameChanged: ✅
 CheckBox.horizontalAlignment: ✅
 CheckBox.verticalAlignment: ✅
-ColorBox.pointerEntered: 🔌 hover on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.pointerExited: 🔌 hover on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.pointerMoved: 🔌 hover on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.pointerPressed: 🔌 hover on ColorBox: the view's listening handed the recognizer's states, no touch sent
-ColorBox.pointerReleased: 🔌 hover on ColorBox: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.pointerEntered: 🔌 hover on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.pointerExited: 🔌 hover on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.pointerMoved: 🔌 hover on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.pointerPressed: 🔌 hover on ColorPicker: the view's listening handed the recognizer's states, no touch sent
+ColorPicker.pointerReleased: 🔌 hover on ColorPicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.swipeDirection: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.swipeThreshold: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
 DatePicker.swiped: 🔌 pan on DatePicker: the view's listening handed the recognizer's states, no touch sent
@@ -33,11 +33,11 @@ Image.dragStarting: not realized
 Image.dragText: not realized
 Image.dropCompleted: not realized
 Image.frameChanged: ✅
-Image.margin: ✅
-ItemsView.pinchUpdated: 🔌 pinch on ItemsView: the view's listening handed the recognizer's states, no touch sent
-Label.panYChannel: 🔌 pan on Label: the view's listening handed the recognizer's states, no touch sent
+Image.padding: ✅
+List.pinchUpdated: 🔌 pinch on List: the view's listening handed the recognizer's states, no touch sent
+Text.panYChannel: 🔌 pan on Text: the view's listening handed the recognizer's states, no touch sent
 Line.tapCount: 🔌 tap on Line: the view's listening handed the recognizer's states, no touch sent
-Line.tapped: 🔌 tap on Line: the view's listening handed the recognizer's states, no touch sent
+Line.tapGesture: 🔌 tap on Line: the view's listening handed the recognizer's states, no touch sent
 Map.frameChanged: not realized
 Map.gridColumn: not realized
 Map.gridRow: not realized
@@ -69,11 +69,11 @@ RadioButton.dragStarting: not realized
 RadioButton.dragText: not realized
 RadioButton.dropCompleted: not realized
 RadioButton.frameChanged: ✅
-RadioButton.margin: ✅
+RadioButton.padding: ✅
 Rectangle.pinchUpdated: 🔌 pinch on Rectangle: the view's listening handed the recognizer's states, no touch sent
 ScrollView.panYChannel: 🔌 pan on ScrollView: the view's listening handed the recognizer's states, no touch sent
 SearchField.tapCount: 🔌 tap on SearchField: the view's listening handed the recognizer's states, no touch sent
-SearchField.tapped: 🔌 tap on SearchField: the view's listening handed the recognizer's states, no touch sent
+SearchField.tapGesture: 🔌 tap on SearchField: the view's listening handed the recognizer's states, no touch sent
 Slider.frameChanged: ✅
 Slider.gridColumn: ✅
 Slider.gridRow: ✅
@@ -105,6 +105,6 @@ VStack.dragStarting: not realized
 VStack.dragText: not realized
 VStack.dropCompleted: not realized
 VStack.frameChanged: ✅
-VStack.margin: ✅
+VStack.padding: ✅
 WebView.pinchUpdated: 🔌 pinch on WebView: the view's listening handed the recognizer's states, no touch sent
 ZStack.panYChannel: 🔌 pan on ZStack: the view's listening handed the recognizer's states, no touch sent

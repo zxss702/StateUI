@@ -13,9 +13,9 @@ working for controls, styles and composed views alike - a composed view's
 `modified` answers a `ModifiedContent` (composition.md).
 
 ```text
-  Label("Total")           Node(Label, props: [text: "Total"])
+  Text("Total")           Node(Text, props: [text: "Total"])
     .fontSize(20)          copy, props[fontSize] = 20
-    .onTapped { … }        copy, events[tapped] += handler
+    .onTapGesture { … }        copy, events[tapped] += handler
     .id("total")           copy, id = "total"
     .contextMenu { … }     copy, children += ContextMenu(...)
 ```
@@ -23,10 +23,10 @@ working for controls, styles and composed views alike - a composed view's
 ## Setting a property
 
 A value modifier writes one property through its contract member:
-`setValue(LabelContract.maximumLines, 3)`. The member carries the property's
+`setValue(LabelContract.lineLimit, 3)`. The member carries the property's
 token and its value's type, so a modifier cannot write the wrong type, and the
 token is what the patch names. A modifier that writes several things at once -
-`onTapped(count:)`, `onSwiped`, `transform` - does it inside one `modified`
+`onTapGesture(count:)`, `onSwiped`, `transform` - does it inside one `modified`
 closure with `write` and `describe` on the node, because chaining two
 modifiers would return `Modified.Modified`, which nothing can promise is
 `Modified`.
@@ -60,20 +60,20 @@ out of the arrangement. The slot a `.contextMenu` appended stays last: a
 modifier that writes other children - pins, title bar slots - puts them in
 front of it.
 
-## Motion is per view
+## Animation is per view
 
-`.motion(_:)` says how this view's values animate, and it applies to this view
+`.animation(_:)` says how this view's values animate, and it applies to this view
 and not to what is inside it. Nothing in the library reaches down a tree: a
 value animating because something four levels up said so is a surprise slow to
-find. A whole application is set once, with `application.motion` in its
+find. A whole application is set once, with `application.animation` in its
 session.
 
-`.motion(_:_:)` answers for some values only, and the last rule naming a value
+`.animation(_:_:)` answers for some values only, and the last rule naming a value
 answers for it, which is what a modifier written later means everywhere. Its
 usual use is a view whose shape changes: it takes its new size at once while
 its place still animates, since a panel growing out of nothing reads as a
 fault and a panel that slides does not. The plan stays in the renderer: its
-answers become transitions for changed properties and layout motion for the
+answers become transitions for changed properties and layout animation for the
 children a host arranges.
 
 ## Keys are described text
@@ -103,11 +103,11 @@ panel swapped - therefore cross-fade. The view stays in the tree the whole
 time and is hidden once the fade lands; a view on its way out answers no touch,
 so a tap during the change reaches what is arriving. A view described for the
 first time is simply shown or not, since nothing anybody saw is changing, and
-`.motion(.none)` makes the property a plain flag again.
+`.animation(.none)` makes the property a plain flag again.
 
 ## One transform about the centre
 
-`.transform(_:)` writes `translationX`, `translationY`, `rotation`, `scaleX` and
+`.transformEffect(_:)` writes `translationX`, `translationY`, `rotation`, `scaleX` and
 `scaleY` from one `ViewTransform`, about the view's own centre, so those five
 are its to say. The parts apply in the order written, each to what the parts
 before it made: a move written before a turn is swung round by it, one written
@@ -149,7 +149,7 @@ container is not.
 ## Gestures
 
 Gestures belong to every view, so a stack holding a whole row, an Image or a
-Label can answer one; a list row can be a view with a tap recognizer rather
+Text can answer one; a list row can be a view with a tap recognizer rather
 than a button disguised as a container. Tap, swipe, pan, pinch, pointer, drag
 and drop are described.
 
@@ -169,7 +169,7 @@ payload at once, so the handler that runs as the drag starts cannot decide it.
 Where a view sits in a Grid or a ZStack is written on the child: the
 layout asks and the child answers. The modifiers live on `ViewProperties`,
 where any view that may find itself in such a layout can reach them - and a
-style too, a view's place in a grid being as styleable as its margin.
+style too, a view's place in a grid being as styleable as its padding.
 
 Each names what its layout asks for, so a reader knows which layout reads
 it. A grid asks for a row and a column, words anything else could claim, so
@@ -181,7 +181,7 @@ and in the whole of a ZStack's room.
 
 ## Safe area edges
 
-`avoidsSafeArea` takes one value for all four edges, two for the horizontal
+`ignoresSafeArea` takes one value for all four edges, two for the horizontal
 and the vertical edges, or four. The two-value form is written out to four
 edges before it travels, so the patch carries one shape of the property and the
 host reads one thing rather than three spellings of it. The four regions

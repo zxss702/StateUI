@@ -10,7 +10,7 @@ Button.minimumWidth: ✅
 Canvas.opacity: ✅
 Canvas.translationY: 🔌 read translationY of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.scaleX: 🔌 read scaleX of CheckBox: the host's own transform, checked against the layer it composed itself
-ColorBox.rotationX: 🔌 read rotationX of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.rotationX: 🔌 read rotationX of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.pivotX: 🔌 read pivotX of DatePicker: the host's own transform, checked against the layer it composed itself
 Ellipse.automationExcludedWithChildren: ✅
 Grid.accessibilityHint: ✅
@@ -22,10 +22,9 @@ Image.maximumHeight: ✅
 Image.maximumWidth: ✅
 Image.minimumHeight: ✅
 Image.minimumWidth: ✅
-ItemsView.opacity: ✅
-ItemsView.translationY: 🔌 read translationY of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.scaleX: 🔌 read scaleX of Label: the host's own transform, checked against the layer it composed itself
 Line.rotationX: 🔌 read rotationX of Line: the host's own transform, checked against the layer it composed itself
+List.opacity: ✅
+List.translationY: 🔌 read translationY of List: the host's own transform, checked against the layer it composed itself
 Map.pivotX: not realized
 Path.automationExcludedWithChildren: ✅
 Picker.accessibilityHint: ✅
@@ -54,6 +53,7 @@ Stepper.minimumHeight: ✅
 Stepper.minimumWidth: ✅
 Switch.opacity: ✅
 Switch.translationY: 🔌 read translationY of Switch: the host's own transform, checked against the layer it composed itself
+Text.scaleX: 🔌 read scaleX of Text: the host's own transform, checked against the layer it composed itself
 TextEditor.scaleX: 🔌 read scaleX of TextEditor: the host's own transform, checked against the layer it composed itself
 TextField.rotationX: 🔌 read rotationX of TextField: the host's own transform, checked against the layer it composed itself
 TimePicker.pivotX: 🔌 read pivotX of TimePicker: the host's own transform, checked against the layer it composed itself

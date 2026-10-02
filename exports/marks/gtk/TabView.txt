@@ -1,0 +1,5 @@
+# revision 1.1
+TabView: ✅
+TabView.currentPage: cannot read currentPage of TabView - GTK's driver has no path for it yet
+TabView.currentPageChanged: not realized
+Text.frameChanged: ✅

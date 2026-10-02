@@ -35,7 +35,7 @@ struct HostPatch {
     var transitions: [Prop: HostTransition] = [:]
     var driven: HostDrivenUpdate?
     var events: HostEventUpdate?
-    var motion: HostLayoutMotion?
+    var animation: HostLayoutMotion?
     var children: HostChildrenUpdate = .unchanged
 }
 
@@ -60,12 +60,12 @@ struct HostStateBinding {
 }
 
 struct HostTransition {
-    let motion: Motion
+    let animation: Animation
 }
 
 struct HostLayoutMotion {
-    let motion: Motion
-    let lanes: MotionLanes
+    let animation: Animation
+    let lanes: AnimationLanes
 }
 ```
 
@@ -93,7 +93,7 @@ A host applies one generation as one transaction:
    `transitions`;
 5. replace driven bindings and event subscriptions only when their optional
    update is present;
-6. apply the changed layout-motion rule;
+6. apply the changed layout-animation rule;
 7. reconcile children according to `changed` or `arranged`;
 8. detach every external subscription, recognizer, menu, timer, and native
    object belonging to an element that left;
@@ -149,10 +149,10 @@ feed, or another declared host shape.
 On a native display frame the host:
 
 1. applies pending program writes;
-2. advances active property transitions, layout motion, and journey channels;
+2. advances active property transitions, layout animation, and journey channels;
 3. runs StateUI engines in deterministic priority order;
 4. publishes the complete value and changed-lane mask for every changed state;
-5. requests another display frame only while motion or an engine continues.
+5. requests another display frame only while animation or an engine continues.
 
 All journey values emitted by one clock tick are applied in one post-order tree
 walk, so a shared ancestor is rearranged once for that frame. A native host
@@ -160,7 +160,7 @@ updates ordinary content views in place; it reconciles scene and window chrome
 only when the changed property is presented by that outer shell.
 
 Native input is committed to the matching channel before its event handler is
-dispatched. Program writes never dispatch user events. Motion completion lands
+dispatched. Program writes never dispatch user events. Animation completion lands
 on the exact destination once, and an interrupted awaited journey answers that
 it did not reach its target.
 
@@ -208,7 +208,7 @@ A host is an adapter. It owns:
 - property and child-patch application;
 - native input and lifecycle reports;
 - layout integration with the toolkit;
-- display-frame property and layout motion.
+- display-frame property and layout animation.
 
 The host does not own a second description tree, diffing model, router, or
 state system. Anything an element attaches outside its native subtree is
@@ -228,14 +228,14 @@ larger renderer surface.
 
 ## Collections
 
-`ItemsView` is the shared collection surface. StateUI owns the item order, the
+`List` is the shared collection surface. StateUI owns the item order, the
 identities, their changes, and the subtree for an identity; the toolkit owns
 the viewport, cell reuse, input, keyboard navigation, and accessibility. The
 adapters are `NSCollectionView`, `UICollectionView`, Android `RecyclerView`,
-WinUI `ItemsView`, and GTK 4 `GtkListView` or `GtkGridView`.
+WinUI `List`, and GTK 4 `GtkListView` or `GtkGridView`.
 
 Nothing new crosses the boundary for it. Every identity the list shows, in
-order and in groups, is one property, `ItemsViewContract.items`. The
+order and in groups, is one property, `ListContract.items`. The
 identities the host holds in its cells come back as an event,
 `realizedChanged`, and the element's children are those entries alone, each
 keyed by its identity; the host layer's `ItemsCells` sends the event and runs

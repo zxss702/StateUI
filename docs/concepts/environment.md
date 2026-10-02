@@ -20,26 +20,26 @@ final class Account {
     @State var visits = 0
 }
 
-struct AccountBadge: ContentView {
+struct AccountBadge: View {
     @Environment private var account: Account
 
-    var content: any View {
-        Label("\(account.name) · \(account.visits) visit(s)")
+    var body: some View {
+        Text("\(account.name) · \(account.visits) visit(s)")
     }
 }
 
-struct AccountEditor: ContentView {
+struct AccountEditor: View {
     @Environment private var account: Account
 
-    var content: any View {
+    var body: some View {
         TextField(account.$name)
     }
 }
 
-struct AccountBranch: ContentView {
+struct AccountBranch: View {
     @State private var account = Account()
 
-    var content: any View {
+    var body: some View {
         VStack {
             AccountBadge()
             AccountEditor()
@@ -87,12 +87,12 @@ The same rule applies to standard providers. A test, preview, or controlled
 subtree can provide a nearer instance:
 
 ```swift
-struct SavePanel: ContentView {
+struct SavePanel: View {
     @Environment private var connectivity: Connectivity
 
-    var content: any View {
+    var body: some View {
         Button("Save")
-            .isEnabled(connectivity.networkAccess == .internet)
+            .disabled(!(connectivity.networkAccess == .internet))
     }
 }
 
@@ -122,7 +122,7 @@ StateUI's contract:
 | display — `DeviceDisplay` | `width`, `height`, `density`, `orientation`, `rotation`, `refreshRate` | main display pixels, pixels per layout point, orientation, rotation, and rate; numeric values are `0` and enums `.unknown` until reported |
 | locale — `LocaleInfo` | `language`, `region`, `name`, `timeZone`, `uses24HourClock`, `firstDayOfWeek`, `isMetric` | host-normalized language, region, IANA zone, clock and calendar conventions; text starts empty, the clock starts 12-hour, the week on Sunday, and units metric |
 | device — `DeviceInfo` | `formFactor`, `platform`, `model`, `manufacturer`, `name`, `versionString`, `deviceType` | form factor, open platform name, hardware and system facts; text starts empty and closed values `.unknown` |
-| app — `AppInfo` | `name`, `packageName`, `versionString`, `buildString`, `requestedTheme` | manifest identity and live requested appearance; text starts empty and theme `.system` |
+| app — `AppInfo` | `name`, `packageName`, `versionString`, `buildString`, `colorScheme` | manifest identity and live requested appearance; text starts empty and color scheme `.system` |
 | application — `ApplicationSession` | `phase` | process-wide visibility state; the host maps lifecycle to `.active`, `.inactive`, or `.background` |
 
 A host may be unable to observe a domain. The documented fallback remains
@@ -145,7 +145,7 @@ The closed vocabulary used by these fields is:
 | `Weekday` | `sunday` through `saturday` |
 | `FormFactor` | `unknown`, `phone`, `tablet`, `desktop`, `tv`, `watch` |
 | `DeviceType` | `unknown`, `physical`, `virtual` |
-| `Theme` | `system`, `light`, `dark` |
+| `ColorScheme` | `system`, `light`, `dark` |
 | `ApplicationPhase` | `active`, `inactive`, `background` |
 
 The [Platform contract](../platform-contract.md) is the implementation-status
@@ -156,18 +156,18 @@ proves a capability, rely on the documented fallback.
 ### Reading platform facts
 
 ```swift
-struct RuntimeSummary: ContentView {
+struct RuntimeSummary: View {
     @Environment private var device: DeviceInfo
     @Environment private var display: DeviceDisplay
     @Environment private var locale: LocaleInfo
     @Environment private var app: AppInfo
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("\(app.name) \(app.versionString)")
-            Label("\(device.platform) · \(device.formFactor)")
-            Label("\(Int(display.width / max(display.density, 1))) points wide")
-            Label("\(locale.language)-\(locale.region) · \(locale.timeZone)")
+            Text("\(app.name) \(app.versionString)")
+            Text("\(device.platform) · \(device.formFactor)")
+            Text("\(Int(display.width / max(display.density, 1))) points wide")
+            Text("\(locale.language)-\(locale.region) · \(locale.timeZone)")
         }
     }
 }
@@ -175,10 +175,10 @@ struct RuntimeSummary: ContentView {
 
 Use `DeviceInfo.formFactor` for a semantic form-factor decision, never for
 layout: a window can be smaller than its display, and resized. Lay out by the
-room a view is given - `.onFrameChanged` and `FrameReader`
+room a view is given - `.onFrameChanged` and `GeometryReader`
 ([layout](../interface/layout.md)) - and read display points (`pixels / density`) for the
-screen itself, handling zero density before the first host report. Use `AppInfo.requestedTheme` only when logic itself branches on the
-theme; themed colors resolve through the style and color system directly.
+screen itself, handling zero density before the first host report. Use `AppInfo.colorScheme` only when logic itself branches on the
+color scheme; themed colors resolve through the style and color system directly.
 
 `Connectivity.networkAccess == .internet` means ordinary internet access.
 `.constrainedInternet` describes a route with a portal or another constraint,
@@ -190,7 +190,7 @@ Four session types are available by the same mechanism:
 
 | Session | Lifetime and ownership |
 | --- | --- |
-| `ApplicationSession` | one process; styles, default motion, persistent keys and storage, application phase, and open scenes |
+| `ApplicationSession` | one process; styles, default animation, persistent keys and storage, application phase, and open scenes |
 | `SceneSession` | one application scene; scene phase, its windows, and scene/window operations |
 | `WindowSession` | one native window; lifecycle, title, geometry requests, chrome, modal stack, and close operation |
 | `PageSession` | one content-page element; title, toolbar, menus, and page presentation state |
@@ -199,14 +199,14 @@ Each scene, window, and page provides its own session nearer than the inert
 fallback instance. A descendant therefore acts on the session it is inside:
 
 ```swift
-struct WindowHeading: ContentView {
+struct WindowHeading: View {
     @Environment private var window: WindowSession
     @Environment private var application: ApplicationSession
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label(window.title ?? "Untitled")
-            Label("\(application.scenes.count) scene(s)")
+            Text(window.title ?? "Untitled")
+            Text("\(application.scenes.count) scene(s)")
         }
     }
 }
@@ -232,7 +232,7 @@ let alarm = ClockTime(hour: 7, minute: 30)
 VStack {
     DatePicker(due)
     TimePicker(alarm)
-    Label("Due \(due.text) at \(alarm.text)")
+    Text("Due \(due.text) at \(alarm.text)")
 }
 ```
 
@@ -265,8 +265,8 @@ let winterOffset = try await TimeZoneInfo.utcOffset(
     of: zone,
     on: CalendarDate(year: 2027, month: 1, day: 15))
 
-Label("\(zone) · \(now.text) · \(localOffset.components.seconds) seconds from UTC")
-Label("Winter: \(winterOffset.components.seconds) seconds from UTC")
+Text("\(zone) · \(now.text) · \(localOffset.components.seconds) seconds from UTC")
+Text("Winter: \(winterOffset.components.seconds) seconds from UTC")
 ```
 
 `TimeZoneInfo.local()` returns an IANA identifier. `utcOffset(of:on:)`

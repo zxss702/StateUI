@@ -1,0 +1,5 @@
+# revision 2.1
+Text.frameChanged: ✅
+NavigationSplitView: ✅
+NavigationSplitView.isSidebarVisible: 🔌 read isSidebarVisible of NavigationSplitView: the split's own flag; the drawer slides on it
+NavigationSplitView.isSidebarVisibleChanged: 🔌 toggle on NavigationSplitView: the host's own entry the scrim's tap and the bar's button call

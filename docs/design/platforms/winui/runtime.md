@@ -29,7 +29,7 @@ executor's queue, which rings the doorbell. The WinUI element goes with it.
 
 The head's `main` names the application and hands the thread to
 `StateUIWinUI.run()`, which loads the Windows App SDK the application carries
-and starts WinUI's `Application` there; WinUI's loop runs that thread until
+and starts WinUI's `App` there; WinUI's loop runs that thread until
 the last window closes. Its `OnLaunched` calls the host, whose first act is to
 drain StateUI's UI executor on that thread: the drain is what makes the thread
 `MainActor`'s, and every native call after it asserts that isolation rather
@@ -85,7 +85,7 @@ performance counter's, in milliseconds.
 
 ## The window
 
-Each window element the tree holds is shown in a WinUI `Window` of its own,
+Each window element the tree holds is shown in a WinUI `WindowScene` of its own,
 kept by a window controller in the tree's order; a window the tree no longer
 holds is closed. The first is the scene's main window, where the application's
 questions stand and whose screen the environment reads. A window element's
@@ -139,13 +139,13 @@ the call returns.
 
 The host tells the core what it stands on as it starts: a desktop running
 Windows - the device's maker, model, name and version, and whether it is a
-virtual machine - the application's name, the system's theme, the user's
+virtual machine - the application's name, the system's color scheme, the user's
 locale, the battery and the network; and the screen once there is a window,
 at the system's scale, which a window on a second screen may not share, and
 turned as Windows says (`dmDisplayOrientation`, quarters of the picture's
-turn clockwise, the host layer's rotation). The theme is the one Windows
+turn clockwise, the host layer's rotation). The color scheme is the one Windows
 paints its controls in, so a colour written for light and dark reads as
-WinUI's own text beside it. Windows says when the theme, the power, the
+WinUI's own text beside it. Windows says when the color scheme, the power, the
 network or a screen's area changes - a tablet turned among them; the relay
 posts each change to the UI thread, and the host tells the core again,
 the screen with it, and renders what it changed.

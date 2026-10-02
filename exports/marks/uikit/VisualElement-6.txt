@@ -4,15 +4,15 @@ Button.isEnabled: ✅
 Button.zIndex: not realized
 Canvas.scaleY: 🔌 read scaleY of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.rotationY: 🔌 read rotationY of CheckBox: the host's own transform, checked against the layer it composed itself
-ColorBox.pivotY: 🔌 read pivotY of ColorBox: the host's own transform, checked against the layer it composed itself
+ColorPicker.pivotY: 🔌 read pivotY of ColorPicker: the host's own transform, checked against the layer it composed itself
 DatePicker.background: not realized
 Ellipse.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
 Grid.style: ✅
 HStack.ignoresInput: ✅
 Image.isEnabled: not realized
 Image.zIndex: not realized
-ItemsView.scaleY: 🔌 read scaleY of ItemsView: the host's own transform, checked against the layer it composed itself
-Label.rotationY: 🔌 read rotationY of Label: the host's own transform, checked against the layer it composed itself
+List.scaleY: 🔌 read scaleY of List: the host's own transform, checked against the layer it composed itself
+Text.rotationY: 🔌 read rotationY of Text: the host's own transform, checked against the layer it composed itself
 Line.pivotY: 🔌 read pivotY of Line: the host's own transform, checked against the layer it composed itself
 Map.background: not realized
 Path.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level

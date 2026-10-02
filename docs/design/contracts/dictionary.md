@@ -59,10 +59,10 @@ a host writes by hand and what its runtime registers - and by the case:
   Map: – <why>                     the host's family never has it
   Line.x1: not realized            empty: the host has no realization yet
   TextField.submitted: cannot ...  empty: the driver cannot do or read it, and why
-  SplitView: waits on <member>     empty: realized, its case stopped by a member
+  NavigationSplitView: waits on <member>     empty: realized, its case stopped by a member
                                    the host does not realize yet
   Switch.toggled: ❌ <failure>      a case proving it failed, its first failure
-  Label.lineBreak: ◐ <why>         one case proved it, another could not run or read
+  Text.lineBreak: ◐ <why>         one case proved it, another could not run or read
 ```
 
 A case runs only where the host realizes every member it covers; a member

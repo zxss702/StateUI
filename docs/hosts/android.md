@@ -63,7 +63,7 @@ The head's `AndroidManifest.xml` declares the host's activity,
 `stateui.android.StateUIActivity`, with the library to load as its
 `stateui.library`. The activity loads it and starts the host; an application
 needs no Java of its own. Its `build.gradle.kts` depends on AndroidX's
-`recyclerview`, the collection an ItemsView stands on. One that extends the host with views of its own
+`recyclerview`, the collection an List stands on. One that extends the host with views of its own
 keeps their Java beside the head, in `Java/`, and may extend the activity,
 declaring its own class in the manifest instead.
 
@@ -74,7 +74,7 @@ the library it makes and the `StateUIAndroid` dependency, and defines the
 written for this host alone stands under `#if ANDROID`. `build-swift.sh` sets
 nothing else: the library itself is built as every host builds it.
 
-A new application made in `apps/` - **StateUI: New Application in apps/**, or
+A new application made in `apps/` - **StateUI: New App in apps/**, or
 `.scripts/new-app.sh` - has an Android head, as HelloWorld does, and runs and
 is debugged as soon as it is made.
 

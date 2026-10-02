@@ -90,5 +90,5 @@ reading direction.
 
 A colour written `Color(light:dark:)` goes into its record as both halves.
 The differ picks the half in force as it builds the canvas, which builds
-again when the system theme changes; see
-[a pair for each theme](colour-and-theme.md#a-pair-for-each-theme).
+again when the system color scheme changes; see
+[a pair for each color scheme](colour-and-color-scheme.md#a-pair-for-each-color-scheme).

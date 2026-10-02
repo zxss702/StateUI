@@ -30,14 +30,14 @@ lib/StateUI.Host/Sources/
   Drawing/       boxes, brushes, pictures, a control's pressed fill
   Text/          words in their case, their look, their lines
   Input/         the user's changes, gestures, scrolling, typed words, ranges
-  Motion/        the animator, the state channels, described and layout motion
+  Animation/        the animator, the state channels, described and layout animation
   Acts/          answering acts, questions for the user, the application's acts
   Environment/   the machine a host stands on, in the core's terms
 ```
 
 The design notes give each part's reasons: [the runtime](../design/host/runtime.md),
 [the mounted tree](../design/host/tree.md), [pages](../design/host/pages.md),
-[layout](../design/host/layout.md), [motion](../design/host/motion.md),
+[layout](../design/host/layout.md), [animation](../design/host/animation.md),
 [patches](../design/host/patches.md) and [conformance](../design/host/conformance.md).
 The [glossary](../design/glossary.md) maps StateUI's words to the common ones.
 
@@ -54,7 +54,7 @@ only its toolkit has:
 | `TurnPresenter` | set as `pump.presenter`: shows what a render changed around the tree - the windows, their pages, their chrome - and performs an act |
 | `FramePresenter` | set as `displayCycle.presenter`: hands each step of a frame back to the layer - `frames.commit`, `tree.present`, `pump.turn` |
 | the doorbell | a thread of its own in `CoreLink.ringForever`, posting one `pump.turn()` to the UI thread whenever the core has work |
-| `reducesMotion` | whether the user asked the platform for less motion |
+| `reducesMotion` | whether the user asked the platform for less animation |
 | `log` | where a message the intake refused is said, through `HostLog` |
 | `LayoutChild` | each child a layout measures: its `LayoutValues`, whether it shows, its size for an offered width |
 | `PlacedView` | each view a layout stands at a rectangle |
@@ -107,7 +107,7 @@ every host:
 | the user chose a tab | `HostRuntime.tabChosen` |
 | a split view's sidebar showed or hid | `HostRuntime.sidebarShown` |
 | the user went back | `HostRuntime.goBack` with the window's `wayBack` |
-| the theme, locale, power or network changed | `HostRuntime.environmentChanged` |
+| the color scheme, locale, power or network changed | `HostRuntime.environmentChanged` |
 | a window was activated, deactivated or minimized | `HostRuntime.windowStateChanged` |
 | the whole application was hidden or shown | `HostRuntime.applicationHidden` |
 | the user closed a window | `HostRuntime.userClosed` |
@@ -144,7 +144,7 @@ these that the text shows, and a type named for an engine or a channel
 
 - **`HostRuntime`** builds the parts every host holds alike and wires them
   once: the line to the core, the patch intake, the animator, the state
-  channels, the described and layout motion, the display cycle on the host's
+  channels, the described and layout animation, the display cycle on the host's
   clock, the mounted tree, the pump and the frame followers.
   ([The runtime's parts](../design/host/runtime.md#the-runtimes-parts))
 - **`CoreLink`** is the one line to the running core: a render, a cycle, an
@@ -326,7 +326,7 @@ measures only its native views.
   reads of a child (`MountedElement.layoutValues`) and the child as the
   arithmetic sees it; `offer` and `sized` measure a child at its stated width
   within its bounds. The host's child measures its own view at the width
-  offered, its margin already taken out.
+  offered, its padding already taken out.
   ([The layout arithmetic](../design/host/layout.md#the-layout-arithmetic),
   [a child measured](../design/host/layout.md#a-child-measured))
 - **`Extent`** is one axis of a child's slot: a stated size wins, a filling
@@ -461,35 +461,35 @@ host.
   where it changed either, else the one the control shows.
   ([A value in a range](../design/host/runtime.md#a-value-in-a-range))
 
-## Motion
+## Animation
 
-`Motion/` animates every value a host shows. The timing laws are the core's
+`Animation/` animates every value a host shows. The timing laws are the core's
 (`HostMotionLaw`), and only the animator samples one.
 
 - **`Animator`**, **`Animation`**, **`AnimationTarget`** and
   **`AnimationStep`** are the one animator: every animation advanced together
   in target order - states, then described properties, then layout places -
-  each pure in the time handed to it. With less motion every animation arrives
-  at once. ([One animator](../design/host/motion.md#one-animator))
+  each pure in the time handed to it. With less animation every animation arrives
+  at once. ([One animator](../design/host/animation.md#one-animator))
 - **`StateChannels`** holds one channel per host-carried state, shared by every
   control bound to it. It lives while any control wears it, and the user's hold
   stops its animation where the user holds the value.
-  ([State channels](../design/host/motion.md#state-channels))
+  ([State channels](../design/host/animation.md#state-channels))
 - **`DescribedMotion`** is a property's transition a patch describes, keyed by
   element and property; a new one starts where the running one stands, at its
-  speed. ([Described motion](../design/host/motion.md#described-motion))
+  speed. ([Described animation](../design/host/animation.md#described-animation))
 - **`MountedElement.fadeIn`**, **`crossVisibility`** and **`standsShown`**
   are an element's showing: a child joining a standing layout fades in, a
   hidden one fades out still standing shown and then hides as its layout
   closes over it, one shown again mid-fade comes back from where it stands.
   The host hands the view (`FadingView`) and what closes its layout.
-  ([Showing and hiding](../design/host/motion.md#showing-and-hiding))
+  ([Showing and hiding](../design/host/animation.md#showing-and-hiding))
 - **`LayoutMotion`**, **`TravellingPlaces`** and **`PlacedView`** move a
   layout's children to their places: what a patch changed travels, a room that
   moves is followed exactly, and the first arrangement arrives. A host's layout
   holds one `TravellingPlaces`, begins each arrangement with its width
   (`begin`) and stands each child through it (`place`).
-  ([Layout motion](../design/host/motion.md#layout-motion))
+  ([Layout animation](../design/host/animation.md#layout-animation))
 
 The display cycle drives all of it. The host says only whether its toolkit
 animates a property (`NativeElement.animates`) and where the property stands
