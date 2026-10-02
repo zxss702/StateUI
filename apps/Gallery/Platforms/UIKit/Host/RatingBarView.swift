@@ -94,7 +94,7 @@ final class RatingBarView: UIView {
     /// Stars up to the rating lit, the rest embers.
     private func repaint() {
         for (index, star) in stars.enumerated() {
-            star.textColor = rating >= Double(index) + 1 ? Self.lit : Self.ember
+            star.foregroundStyle = rating >= Double(index) + 1 ? Self.lit : Self.ember
         }
     }
 }

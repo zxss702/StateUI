@@ -4,7 +4,7 @@ import StateUI
 ///
 /// It carries its own way out because the modal presentation covers the page
 /// that opened it.
-struct ModalPage: ContentView {
+struct ModalPage: View {
     /// Where the gallery is. A modal closes itself by shortening the array it
     /// is a member of, exactly as a pushed page pops itself.
     let nav: Navigation
@@ -12,43 +12,43 @@ struct ModalPage: ContentView {
     /// The page itself.
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         VStack {
             SectionTitle("Over everything")
 
-            Label("Native modal page")
+            Text("Native modal page")
                 .fontSize(20)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label("The host chooses the presentation that belongs to this platform.")
+            Text("The host chooses the presentation that belongs to this platform.")
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             Button("Close")
                 .background(Palette.accent)
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { nav.dismiss() }
 
             Button("Present another")
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { nav.present(.page) }
 
-            Label("Depth: \(nav.sheets.count)")
+            Text("Depth: \(nav.sheets.count)")
                 .fontSize(12)
                 .fontFamily("Menlo")
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
         }
         .spacing(16)
-        .padding(24)
+        .contentPadding(24)
         .verticalAlignment(.center)
-        .onCreated {
+        .onAppear {
             page.title = "Presented"
             page.background = Palette.surface
         }

@@ -12,7 +12,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
     @State private var running = false
 
     /// Which visit to this page the running loop belongs to. Leaving stops the
-    /// loop through `.onDestroying`; the token is what retires a loop still
+    /// loop through `.onDisappear`; the token is what retires a loop still
     /// asleep when the next one starts, so a return cannot end up with two
     /// loops counting the same numbers down.
     @State private var visit = 0
@@ -31,7 +31,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
             // The countdown is read here, so every step builds this closure.
             DebugInfoLabel()
 
-            Label("\\(remaining)")
+            Text("\\(remaining)")
 
             ProgressBar(total == 0 ? 0 : Double(remaining) / Double(total))
 
@@ -82,18 +82,18 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                 }
             }
         }
-        .onDestroying { running = false }
+        .onDisappear { running = false }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("\(remaining)")
+            Text("\(remaining)")
                 .fontSize(64)
                 .fontAttributes(.bold)
-                .textColor(remaining == 0 ? Palette.subtle : Palette.accent)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(remaining == 0 ? Palette.subtle : Palette.accent)
+                .multilineTextAlignment(.center)
 
             ProgressBar(total == 0 ? 0 : Double(remaining) / Double(total))
                 .tint(Palette.accent)
@@ -101,7 +101,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
             HStack {
                 Button(running ? "Stop" : "Start")
                     .fontSize(13)
-                    .padding(20, 6)
+                    .contentPadding(20, 6)
                     .onClicked {
                         if running {
                             running = false
@@ -131,7 +131,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
 
                 Button("Reset")
                     .fontSize(13)
-                    .padding(20, 6)
+                    .contentPadding(20, 6)
                     .onClicked {
                         running = false
                         remaining = total
@@ -144,7 +144,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                 ForEach([10, 30, 60]) { length in
                     Button("\(length)s")
                         .fontSize(12)
-                        .padding(14, 4)
+                        .contentPadding(14, 4)
                         .onClicked {
                             running = false
                             total = length
@@ -156,33 +156,33 @@ struct TaskSleepSample: SampleContent, ExampleContent {
             .horizontalAlignment(.center)
         }
         .spacing(12)
-        .onDestroying { running = false }
+        .onDisappear { running = false }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Foundation's `Timer` hangs off a RunLoop, and nothing turns one on "
+            Text("Foundation's `Timer` hangs off a RunLoop, and nothing turns one on "
                 + "Android or Windows - so a timer here is a loop that sleeps. The "
                 + "handler resumes on the thread the host draws on, which is what makes "
                 + "writing state from it ordinary.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Leaving the page stops it: .onDestroying clears the flag, and the visit "
+            Text("Leaving the page stops it: .onDisappear clears the flag, and the visit "
                 + "token retires a loop still asleep when the next one starts. Without one, "
                 + "coming back would start a second loop counting the same number down "
                 + "twice as fast.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A sleep of one second costs slightly MORE than one second, and a loop "
+            Text("A sleep of one second costs slightly MORE than one second, and a loop "
                 + "that sleeps for the interval adds every one of those up - the "
                 + "lateness accumulates lap after lap, and a sleeper aimed at a deadline "
                 + "avoids it. The Ticker sample beside this one is the same countdown "
                 + "with that fixed; the Analog clock takes the other route, asking the "
                 + "host the time each lap.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

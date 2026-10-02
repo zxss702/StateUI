@@ -19,7 +19,7 @@ struct ButtonSample: SampleContent, ExampleContent {
             Button("Increment")
                 .onClicked { counter += 1 }
 
-            Label("Clicked \\(counter) time(s)")
+            Text("Clicked \\(counter) time(s)")
 
             Button("Outlined")
                 .background(.transparent)
@@ -28,48 +28,48 @@ struct ButtonSample: SampleContent, ExampleContent {
                 .onClicked { counter += 1 }
 
             Button("Disabled")
-                .isEnabled(false)
+                .disabled(true)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             Button("Increment")
                 .background(Palette.accent)
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { counter += 1 }
 
-            Label("Clicked \(counter) time(s)")
+            Text("Clicked \(counter) time(s)")
                 .fontSize(15)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             Button("Outlined")
                 .background(.transparent)
-                .textColor(Palette.accent)
+                .foregroundStyle(Palette.accent)
                 .stroke(Palette.accent)
                 .strokeWidth(1)
                 .shape(.roundedRectangle(8))
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { counter += 1 }
 
             Button("Disabled")
-                .isEnabled(false)
-                .padding(20, 10)
+                .disabled(true)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
         }
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("Also `.onPressed` and `.onReleased`, for the moment the button goes "
+    var notes: (any View)? {
+        Text("Also `.onPressed` and `.onReleased`, for the moment the button goes "
             + "down and comes up.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }

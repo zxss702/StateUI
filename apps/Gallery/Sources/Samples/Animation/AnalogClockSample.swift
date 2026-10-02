@@ -64,8 +64,8 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 .background(Palette.raised)
                 .stroke(Palette.outline)
                 .shape(.roundedRectangle(110))
-                .width(220)
-                .height(220)
+                .frame(width: 220)
+                .frame(height: 220)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
 
@@ -74,10 +74,10 @@ struct AnalogClockSample: SampleContent, ExampleContent {
             // margin(2x, 2y, 0, 0) shifts a centred view by (x, y).
             ForEach(Array(Self.marks.enumerated()), id: \\.offset) { pair in
                 let (x, y, wide, tall) = pair.element
-                return ColorBox(Palette.outline)
-                    .width(wide)
-                    .height(tall)
-                    .margin(2 * x, 2 * y, 0, 0)
+                return ColorPicker(Palette.outline)
+                    .frame(width: wide)
+                    .frame(height: tall)
+                    .padding(2 * x, 2 * y, 0, 0)
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
             }
@@ -89,12 +89,12 @@ struct AnalogClockSample: SampleContent, ExampleContent {
             ZStack().style("Card")
                 .background(Palette.accent)
                 .shape(.roundedRectangle(6))
-                .width(12)
-                .height(12)
+                .frame(width: 12)
+                .frame(height: 12)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
         }
-        .onCreated {
+        .onAppear {
             // Each visit starts a loop of its own and retires the last. The
             // hands come back at the angles the state kept, and the first
             // reading below ASSIGNS the time rather than flying through
@@ -161,24 +161,24 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 }
             }
         }
-        .onDestroying {
+        .onDisappear {
             ticking = false
         }
 
         /// One hand: bottom at the face's centre, rotating about that bottom.
         /// The bottom margin equals the length, so centring the margin box puts
         /// the hand's foot exactly on the middle - plain layout, no transforms.
-        /// `.rotation(angle)` DRIVES the rotation from the state handed in,
+        /// `.rotationEffect(angle)` DRIVES the rotation from the state handed in,
         /// which is what makes a movement on that state turn this hand.
         private func hand(
             _ angle: Binding<Double>,
             length: Double, width: Double, color: Color
         ) -> some View {
-            ColorBox(color)
-                .rotation(angle)
-                .width(width)
-                .height(length)
-                .margin(0, 0, 0, length)
+            ColorPicker(color)
+                .rotationEffect(angle)
+                .frame(width: width)
+                .frame(height: length)
+                .padding(0, 0, 0, length)
                 .pivotY(1)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
@@ -194,7 +194,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         Grid {
             DebugInfoLabel()
 
@@ -203,17 +203,17 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 .stroke(Palette.outline)
                 .strokeWidth(2)
                 .shape(.roundedRectangle(110))
-                .width(220)
-                .height(220)
+                .frame(width: 220)
+                .frame(height: 220)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
 
             ForEach(Array(Self.marks.enumerated()), id: \.offset) { pair in
                 let (x, y, wide, tall) = pair.element
-                return ColorBox(Palette.outline)
-                    .width(wide)
-                    .height(tall)
-                    .margin(2 * x, 2 * y, 0, 0)
+                return ColorPicker(Palette.outline)
+                    .frame(width: wide)
+                    .frame(height: tall)
+                    .padding(2 * x, 2 * y, 0, 0)
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
             }
@@ -226,13 +226,13 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 .background(Palette.accent)
                 .stroke(.transparent)
                 .shape(.roundedRectangle(6))
-                .width(12)
-                .height(12)
+                .frame(width: 12)
+                .frame(height: 12)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
         }
         .horizontalAlignment(.fill)
-        .onCreated {
+        .onAppear {
             // Each visit starts a loop of its own and retires the last. The
             // hands come back at the angles the state kept, and the first
             // reading below ASSIGNS the time rather than flying through
@@ -294,29 +294,29 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 }
             }
         }
-        .onDestroying {
+        .onDisappear {
             ticking = false
         }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The time comes from the platform - `ClockTime.now()` - and the wait is "
+            Text("The time comes from the platform - `ClockTime.now()` - and the wait is "
                 + "plain `Task.sleep`, which resumes on time on every platform. Every tick "
                 + "sleeps to the NEXT whole second rather than for a fixed while - the "
                 + "reading carries milliseconds, so the spring lands just past each "
                 + "boundary instead of drifting across one.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Each hand is a box whose bottom sits at the face's centre - "
+            Text("Each hand is a box whose bottom sits at the face's centre - "
                 + "the bottom margin equals its length, so centring the margin "
                 + "box puts the foot on the middle - and pivotY(1) makes that "
                 + "foot the pivot.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A hand's rotation is DRIVEN - .rotation($sAngle) over a state "
+            Text("A hand's rotation is DRIVEN - .rotationEffect($sAngle) over a state "
                 + "the host moves - so a tick is that state being sent somewhere "
                 + "and the hand springs there on the display's own frames, with "
                 + "nothing described in between. sAngle answers where "
@@ -324,9 +324,9 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 + "wants - it adds the FORWARD distance to the time, so the "
                 + "angles only grow and the hands never spin back.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Leaving this page stops the loop, and coming back starts a "
+            Text("Leaving this page stops the loop, and coming back starts a "
                 + "fresh one. The hands are drawn wherever the angles were left, "
                 + "because the angles are state, and the first reading ASSIGNS "
                 + "the time instead of flying to it - each journey's `value` is "
@@ -334,7 +334,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 + "the clock is right at once, with no winding through what "
                 + "passed.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }
@@ -342,18 +342,18 @@ struct AnalogClockSample: SampleContent, ExampleContent {
     /// One hand: bottom at the face's centre, rotating about that bottom.
     /// The bottom margin equals the length, so centring the margin box puts
     /// the hand's foot exactly on the middle - plain layout, no transforms.
-    /// `.rotation(angle)` DRIVES the rotation from the state handed in, which
+    /// `.rotationEffect(angle)` DRIVES the rotation from the state handed in, which
     /// is what makes a movement on that state turn this hand - on the host's
     /// own frames, with nothing described in between.
     private func hand(
         _ angle: Binding<Double>,
         length: Double, width: Double, color: Color
     ) -> some View {
-        ColorBox(color)
-            .rotation(angle)
-            .width(width)
-            .height(length)
-            .margin(0, 0, 0, length)
+        ColorPicker(color)
+            .rotationEffect(angle)
+            .frame(width: width)
+            .frame(height: length)
+            .padding(0, 0, 0, length)
             .pivotY(1)
             .horizontalAlignment(.center)
             .verticalAlignment(.center)

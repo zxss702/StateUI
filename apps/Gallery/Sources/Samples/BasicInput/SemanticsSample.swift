@@ -46,13 +46,13 @@ struct SemanticsSample: SampleContent, ExampleContent {
                 describedButton
             }
 
-            Label("Tapped \\(taps) time\\(taps == 1 ? "" : "s")")
+            Text("Tapped \\(taps) time\\(taps == 1 ? "" : "s")")
 
             SwitchRow("Describe the second button", $described)
 
             // Read as a heading: somewhere a user jumping through the page
             // can land.
-            Label("A heading, and drawn the same")
+            Text("A heading, and drawn the same")
                 .accessibilityHeadingLevel(.level1)
 
             // Said out loud, now, whatever the user was on. An ACT, because
@@ -67,21 +67,21 @@ struct SemanticsSample: SampleContent, ExampleContent {
 
             // Shown as well as said: with no screen reader running there is
             // nothing to see otherwise, and what was said is the point.
-            Label(said.isEmpty ? "nothing said yet" : "said: \\(said)")
+            Text(said.isEmpty ? "nothing said yet" : "said: \\(said)")
 
             // One word takes the panel AND everything in it out of what a
             // screen reader walks; the rule below is a single view taken out.
             ZStack {
                 VStack {
-                    Label("Skipped")
-                    Label("Neither line is read")
+                    Text("Skipped")
+                    Text("Neither line is read")
                 }
             }
             .style("Card")
             .automationExcludedWithChildren(true)
 
-            ColorBox(Palette.outline)
-                .height(1)
+            ColorPicker(Palette.outline)
+                .frame(height: 1)
                 .isAccessibilityHidden(true)
         }
 
@@ -98,7 +98,7 @@ struct SemanticsSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -108,50 +108,50 @@ struct SemanticsSample: SampleContent, ExampleContent {
                         .style("IconButton")
                         .accessibilityIdentifier("semantics.bare")
                         .aspect(.fit)
-                        .width(64)
-                        .height(64)
+                        .frame(width: 64)
+                        .frame(height: 64)
                         .stroke(Palette.outline)
                         .strokeWidth(1)
                         .shape(.roundedRectangle(12))
                         .onClicked { taps += 1 }
 
-                    Label("A user hears")
+                    Text("A user hears")
                         .fontSize(11)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
 
-                    Label("nothing")
+                    Text("nothing")
                         .fontSize(13)
                         .fontAttributes(.italic)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
                 }
                 .spacing(4)
-                .width(150)
+                .frame(width: 150)
 
                 VStack {
                     describedButton
 
-                    Label("A user hears")
+                    Text("A user hears")
                         .fontSize(11)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
 
-                    Label(described ? "\(Self.says)\n\(Self.hint)" : "nothing")
+                    Text(described ? "\(Self.says)\n\(Self.hint)" : "nothing")
                         .fontSize(13)
                         .fontAttributes(described ? .none : .italic)
-                        .textColor(described ? Palette.accent : Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(described ? Palette.accent : Palette.subtle)
+                        .multilineTextAlignment(.center)
                 }
                 .spacing(4)
-                .width(150)
+                .frame(width: 150)
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
-            Label("Tapped \(taps) time\(taps == 1 ? "" : "s")")
+            Text("Tapped \(taps) time\(taps == 1 ? "" : "s")")
                 .fontSize(15)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             SwitchRow("Describe the second button", $described)
                 .horizontalAlignment(.center)
@@ -161,11 +161,11 @@ struct SemanticsSample: SampleContent, ExampleContent {
             // Drawn alike and read differently: only the second is somewhere a
             // user jumping through the page can land.
             VStack {
-                Label("Drawn large")
+                Text("Drawn large")
                     .fontSize(20)
                     .fontAttributes(.bold)
 
-                Label("A heading, and drawn the same")
+                Text("A heading, and drawn the same")
                     .fontSize(20)
                     .fontAttributes(.bold)
                     .accessibilityHeadingLevel(.level1)
@@ -177,7 +177,7 @@ struct SemanticsSample: SampleContent, ExampleContent {
             Button("Announce the count")
                 .accessibilityIdentifier("semantics.announce")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked {
                     let words = "Tapped \(taps) time\(taps == 1 ? "" : "s")"
@@ -185,26 +185,26 @@ struct SemanticsSample: SampleContent, ExampleContent {
                     said = words
                 }
 
-            Label(said.isEmpty ? "nothing said yet" : "said: \(said)")
+            Text(said.isEmpty ? "nothing said yet" : "said: \(said)")
                 .fontSize(12)
-                .textColor(said.isEmpty ? Palette.subtle : Palette.accent)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(said.isEmpty ? Palette.subtle : Palette.accent)
+                .multilineTextAlignment(.center)
 
             SectionTitle("What a user walks past")
 
             HStack {
                 ZStack {
                     VStack {
-                        Label("Walked")
+                        Text("Walked")
                             .fontSize(15)
                             .fontAttributes(.bold)
 
-                        Label("Both lines are read")
+                        Text("Both lines are read")
                             .fontSize(12)
-                            .textColor(Palette.subtle)
+                            .foregroundStyle(Palette.subtle)
                     }
                     .spacing(2)
-                    .padding(12)
+                    .contentPadding(12)
                 }
                 .style("Card")
 
@@ -212,16 +212,16 @@ struct SemanticsSample: SampleContent, ExampleContent {
                 // to a screen reader - one word instead of one per view.
                 ZStack {
                     VStack {
-                        Label("Skipped")
+                        Text("Skipped")
                             .fontSize(15)
                             .fontAttributes(.bold)
 
-                        Label("Neither line is read")
+                        Text("Neither line is read")
                             .fontSize(12)
-                            .textColor(Palette.subtle)
+                            .foregroundStyle(Palette.subtle)
                     }
                     .spacing(2)
-                    .padding(12)
+                    .contentPadding(12)
                 }
                 .style("Card")
                 .automationExcludedWithChildren(true)
@@ -230,8 +230,8 @@ struct SemanticsSample: SampleContent, ExampleContent {
             .horizontalAlignment(.center)
 
             // A rule is decoration: a stop that would waste the user's time.
-            ColorBox(Palette.outline)
-                .height(1)
+            ColorPicker(Palette.outline)
+                .frame(height: 1)
                 .isAccessibilityHidden(true)
         }
         .spacing(12)
@@ -247,8 +247,8 @@ struct SemanticsSample: SampleContent, ExampleContent {
             .style("IconButton")
             .accessibilityIdentifier("semantics.described")
             .aspect(.fit)
-            .width(64)
-            .height(64)
+            .frame(width: 64)
+            .frame(height: 64)
             .stroke(Palette.outline)
             .strokeWidth(1)
             .shape(.roundedRectangle(12))
@@ -259,9 +259,9 @@ struct SemanticsSample: SampleContent, ExampleContent {
             : button
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Two jobs, four modifiers, and they do not stand in for one another. "
+            Text("Two jobs, four modifiers, and they do not stand in for one another. "
                 + "`.accessibilityLabel` and `.accessibilityHint` are what a screen reader "
                 + "SAYS: the first names the control, the second says what using it does. "
                 + "`.accessibilityHeadingLevel` marks a view as a heading, which is how a "
@@ -269,23 +269,23 @@ struct SemanticsSample: SampleContent, ExampleContent {
                 + "hears - it is what a UI test, a script or an agent driving the "
                 + "application asks the platform to find.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Every control on this page carries one: the two buttons answer to "
+            Text("Every control on this page carries one: the two buttons answer to "
                 + "`semantics.bare` and `semantics.described`. An id is worth having "
                 + "wherever something outside the application has to find a control, and "
                 + "it has to stay the same between renders - one that moves with the "
                 + "state is one nothing can wait for.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Turn the switch off and the description is taken off the control it "
+            Text("Turn the switch off and the description is taken off the control it "
                 + "was on, rather than a second button being drawn: a property that goes "
                 + "away is cleared back to the host's native default. To hear any of it, turn on "
                 + "the platform's screen reader - VoiceOver on Apple, TalkBack on "
                 + "Android, Narrator on Windows - and touch the two buttons in turn.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

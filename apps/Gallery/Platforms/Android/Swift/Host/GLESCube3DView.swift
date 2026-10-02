@@ -78,7 +78,7 @@ final class GLESCube3DView: AndroidControl {
     /// Draws the cube as it stands: turned, scaled and seen in perspective, over the housing's colour.
     private func draw() {
         drawing?.draw(
-            transform: Self.transform(aspect: drawing?.aspect ?? 1, turn: angle, scale: min(max(cubeSize, 0), 1)),
+            transform: Self.transformEffect(aspect: drawing?.aspect ?? 1, turn: angle, scale: min(max(cubeSize, 0), 1)),
             color: Self.colors[Int(color.rawValue)])
     }
 

@@ -4,7 +4,7 @@ import StateUI
 /// as its own - so writing it makes the same window about another swatch, and
 /// the system restores the window for the number it was left on. See
 /// `MultiWindowSample`.
-struct SwatchWindow: Window {
+struct SwatchWindow: WindowScene {
     /// Which swatch the window is for - its value, lent by its group.
     @Binding var number: Int
 
@@ -12,7 +12,7 @@ struct SwatchWindow: Window {
 }
 
 /// One swatch: its colour, its number, and a way on to the next.
-struct SwatchPage: ContentView {
+struct SwatchPage: View {
     /// The window's own value.
     @Binding var number: Int
 
@@ -23,14 +23,14 @@ struct SwatchPage: ContentView {
     /// The page itself - its padding.
     @Environment private var page: PageSession
 
-    var content: any View {
+    var body: some View {
         VStack {
-            ColorBox()
+            ColorPicker()
                 .color(SwatchPage.colour(of: number))
-                .height(150)
+                .frame(height: 150)
                 .cornerRadius(12)
 
-            Label("Swatch \(number)")
+            Text("Swatch \(number)")
                 .fontSize(20)
                 .fontAttributes(.bold)
                 .horizontalAlignment(.center)
@@ -38,20 +38,20 @@ struct SwatchPage: ContentView {
             HStack {
                 Button("Next")
                     .fontSize(13)
-                    .padding(14, 6)
+                    .contentPadding(14, 6)
                     .onClicked { number += 1 }
 
                 Button("Done")
                     .fontSize(13)
-                    .padding(14, 6)
+                    .contentPadding(14, 6)
                     .onClicked { try await window.close() }
             }
             .spacing(10)
             .horizontalAlignment(.center)
         }
         .spacing(14)
-        .onCreated {
-            page.padding = Insets(16)
+        .onAppear {
+            page.contentPadding = EdgeInsets(16)
 
             window.title = "Swatch \(number)"
             window.width = 300
@@ -61,7 +61,7 @@ struct SwatchPage: ContentView {
         }
         // A written number makes the same window about another swatch, so its
         // name follows.
-        .onChanged(number) { window.title = "Swatch \(number)" }
+        .onChange(of: number) { window.title = "Swatch \(number)" }
     }
 
     /// The colour of a swatch - the gallery's accents, in turn.

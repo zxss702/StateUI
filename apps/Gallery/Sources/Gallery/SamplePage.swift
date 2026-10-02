@@ -9,7 +9,7 @@ import StateUI
 /// back button and back gesture work as they do anywhere else, and two samples
 /// can be on the stack at once. A sample whose examples must hold the page
 /// still is shown as tabs instead - see `shown(_:nav:)` and `SampleTabPage`.
-struct SamplePage: ContentView {
+struct SamplePage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -30,19 +30,19 @@ struct SamplePage: ContentView {
     static func shown(_ sample: Sample, nav: Navigation, bar: Color) -> any Page {
         guard !sample.scrolls else { return SamplePage(sample: sample, nav: nav) }
 
-        return TabbedView(sample.tabs) { tab in
+        return TabView(sample.tabs) { tab in
             SampleTabPage(sample: sample, tab: tab, nav: nav)
         }
         .title(sample.title)
         .barBackgroundColor(bar)
     }
 
-    var content: any View {
+    var body: some View {
         // Dressed as every page of the gallery is. What a sample adds to the
-        // bar it writes from its own `.onCreated`, which runs AFTER this one,
+        // bar it writes from its own `.onAppear`, which runs AFTER this one,
         // being further in - so its buttons go before these and its title
         // view, a page having one, replaces the gallery's.
-        scrolling.onCreated { page.gallery(sample.title, scene: scene, nav: nav) }
+        scrolling.onAppear { page.gallery(sample.title, scene: scene, nav: nav) }
     }
 
     /// Everything in one scroller: the summary, then each example with its
@@ -52,9 +52,9 @@ struct SamplePage: ContentView {
     private var scrolling: ScrollView {
         ScrollView {
             VStack {
-                Label(sample.summary)
+                Text(sample.summary)
                     .fontSize(15)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
 
                 // By OFFSET: the examples never change.
                 ForEach(Array(sample.examples.enumerated()), id: \.offset) { item in
@@ -62,7 +62,7 @@ struct SamplePage: ContentView {
                 }
             }
             .spacing(24)
-            .padding(24)
+            .contentPadding(24)
         }
     }
 
@@ -92,7 +92,7 @@ struct SamplePage: ContentView {
 
             // The far side of the example, where it has one: a section per
             // language its host's half is written in.
-            example.hostCode.listings.map { listing -> Element in
+            example.hostCode.listings.map { listing -> any View in
                 Self.section(
                     example.hostCode.heading(of: listing), CodeBlock(listing.code).language(listing.language))
             }
@@ -104,7 +104,7 @@ struct SamplePage: ContentView {
     ///
     /// - Parameter heading: what the section is called.
     /// - Parameter content: what it holds.
-    static func section(_ heading: String, _ content: Element) -> any View {
+    static func section(_ heading: String, _ content: any View) -> any View {
         VStack {
             SectionTitle(heading)
             content
@@ -122,18 +122,18 @@ struct SamplePage: ContentView {
     ///
     /// - Parameter view: the example itself.
     /// - Parameter fills: whether the example takes the whole cell.
-    static func boxed(_ view: Element, fills: Bool = false) -> ZStack {
+    static func boxed(_ view: any View, fills: Bool = false) -> ZStack {
         ZStack {
             if fills {
                 Grid {
                     view
                 }
-                .padding(16)
+                .contentPadding(16)
             } else {
                 VStack {
                     view
                 }
-                .padding(16)
+                .contentPadding(16)
             }
         }
         .style("Card")

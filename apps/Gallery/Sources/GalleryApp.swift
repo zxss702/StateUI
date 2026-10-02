@@ -33,7 +33,7 @@ import StateUI
 /// An application is what every gallery SHARES - its styles, and the settings
 /// it keeps between launches. Each gallery is a scene of its own, and there are
 /// as many as the user opens: see Gallery/GalleryScene.swift.
-struct GalleryApp: Application {
+struct GalleryApp: App {
     /// Which kind of device this is, from the standard environment - answered
     /// by the host before the application is made, so the styles below already
     /// know whether the SearchField wants a touch floor. An APPLICATION's
@@ -49,7 +49,7 @@ struct GalleryApp: Application {
         // because one style reads
         // it: the SearchField's touch floor is a touch screen's, not the
         // desktop's - and the host says the device before the application is
-        // made. A colour in a style follows the theme by itself. See
+        // made. A colour in a style follows the color scheme by itself. See
         // Styles/AppStyles.swift.
         application.styles = AppStyles.sheet(on: device.formFactor)
 
@@ -63,7 +63,7 @@ struct GalleryApp: Application {
     }
 
     /// One gallery, and as many more as the user opens.
-    var scene: any Scene { GalleryScene() }
+    var body: some Scene { GalleryScene() }
 }
 
 /// The one thing this module exports.

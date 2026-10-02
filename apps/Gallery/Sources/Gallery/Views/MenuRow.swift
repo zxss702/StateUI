@@ -15,7 +15,7 @@ import StateUI
 ///
 /// Shaped like `Card`, and for the same reason: what the row IS goes in the
 /// initializer, and everything a caller may leave out is a modifier.
-struct MenuRow: Element {
+struct MenuRow: View {
     /// What the row says.
     private let title: String
 
@@ -54,15 +54,7 @@ struct MenuRow: Element {
         return copy
     }
 
-    /// `Element` rather than `ContentView`: this row is only ever placed inside
-    /// a stack and wears no modifier of its own, and an `Element` requires
-    /// nothing but `body`.
-    ///
-    /// Which is also what it OFFERS - a plain `Element` wears no modifiers at
-    /// all, `.margin`, `.onCreated` and `.isVisible` among them, and the compiler
-    /// names the missing modifier rather than the base protocol. A composed view
-    /// that must wear any of them is a `ContentView`.
-    var body: Node {
+    var body: some View {
         // Copies for the handler to capture, never `self` - see the note in
         // Card.swift: a closure written in a body getter that captures the view
         // is moved off this library's executor by the compiler, and the press
@@ -76,17 +68,17 @@ struct MenuRow: Element {
             // edge instead of after a gap - which is what a row somewhere
             // other than the menu wants. See the Search sample.
             Image(picture)
-                .width(20)
-                .height(20)
-                .isVisible(!picture.isEmpty)
+                .frame(width: 20)
+                .frame(height: 20)
+                .hidden(picture.isEmpty)
                 .verticalAlignment(.center)
 
             // The style says what a row's caption is; the two lines under it
             // say what the CHOSEN one is. A control's own value wins over its
             // style, per property, which is what lets one style serve both.
-            Label(title)
+            Text(title)
                 .style("MenuRowText")
-                .textColor(chosen ? Palette.accent : Palette.subtle)
+                .foregroundStyle(chosen ? Palette.accent : Palette.subtle)
                 .fontAttributes(chosen ? .bold : .none)
         }
         .style("MenuRow")
@@ -96,7 +88,6 @@ struct MenuRow: Element {
         // nothing says they act together. Handle.swift has the rule.
         .accessibilityIdentifier(handle("menu", title))
         .accessibilityLabel(title)
-        .onTapped { try await action() }
-        .body
+        .onTapGesture { try await action() }
     }
 }

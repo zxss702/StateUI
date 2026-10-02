@@ -8,7 +8,7 @@ extension PageSession {
     /// behind the content.
     ///
     ///     VStack { … }
-    ///         .onCreated { page.gallery("Level 2", scene: scene, nav: nav) }
+    ///         .onAppear { page.gallery("Level 2", scene: scene, nav: nav) }
     ///
     /// Said once here instead of on every page. **What is NOT here is the
     /// bar**: a `NavigationStack` owns its bar, so its appearance is written
@@ -19,7 +19,7 @@ extension PageSession {
     ///
     /// The title is the page's own, drawn by each platform's bar in its own
     /// type. A page with actions of its own puts them before these from its
-    /// `.onCreated`; see `ToolbarSample`.
+    /// `.onAppear`; see `ToolbarSample`.
     ///
     /// - Parameters:
     ///   - title: what the page is called.

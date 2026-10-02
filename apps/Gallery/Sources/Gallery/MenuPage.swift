@@ -11,7 +11,7 @@ import StateUI
 /// whatever a handler can do.
 ///
 /// Its title names the pane on hosts whose navigation chrome exposes that name.
-struct MenuPage: ContentView {
+struct MenuPage: View {
     /// Everything the gallery shows - the rows are one per group.
     let catalog: Catalog
 
@@ -36,7 +36,7 @@ struct MenuPage: ContentView {
     /// The window the menu stands in - whether the desktop shows through it.
     @Environment private var window: WindowSession
 
-    var content: any View {
+    var body: some View {
         Grid {
             header
 
@@ -58,8 +58,8 @@ struct MenuPage: ContentView {
         // EDGE TO EDGE, so the gradient runs behind the status bar the way the
         // navigation bar beside it does. Every LAYOUT insets itself, so the
         // header says it too.
-        .avoidsSafeArea(.none)
-        .onCreated {
+        .ignoresSafeArea(.none)
+        .onAppear {
             page.title = "StateUI"
 
             // The image hosts use for the pane's navigation affordance.
@@ -67,7 +67,7 @@ struct MenuPage: ContentView {
             page.background = surface
         }
         // A window the desktop shows through shows it through the menu as well.
-        .onChanged(window.isTranslucent) { page.background = surface }
+        .onChange(of: window.isTranslucent) { page.background = surface }
     }
 
     /// What the menu is drawn on: the gallery's surface - and nothing of its own
@@ -84,20 +84,20 @@ struct MenuPage: ContentView {
         VStack {
             if device.formFactor != .phone {
                 Image("stateui_mark.png")
-                    .width(51)
-                    .height(51)
+                    .frame(width: 51)
+                    .frame(height: 51)
                     .horizontalAlignment(.start)
             }
 
-            Label("StateUI")
+            Text("StateUI")
                 .fontSize(24)
                 .fontAttributes(.bold)
                 .characterSpacing(-0.5)
-                .textColor(Palette.onBrand)
+                .foregroundStyle(Palette.onBrand)
 
-            Label("Native interfaces, written in Swift")
+            Text("Native interfaces, written in Swift")
                 .fontSize(12)
-                .textColor(Palette.onBrand)
+                .foregroundStyle(Palette.onBrand)
                 .opacity(0.85)
         }
         .spacing(6)
@@ -108,8 +108,8 @@ struct MenuPage: ContentView {
         // (measured on an iPhone 15 Pro simulator: 59 points, the tagline gone
         // and the name cut mid-letter). The gradient was always meant to run
         // behind the status bar anyway.
-        .avoidsSafeArea(.none)
-        .padding(20, 40, 20, 22)
+        .ignoresSafeArea(.none)
+        .contentPadding(20, 40, 20, 22)
         .background(Palette.identity)
     }
 
@@ -149,14 +149,14 @@ struct MenuPage: ContentView {
     /// What is underneath: the platform compiled in, and the formFactor the host
     /// answered before the first render.
     private var footer: any View {
-        Label("native: \(stateUIPlatform()) · \(device.formFactor)")
+        Text("native: \(stateUIPlatform()) · \(device.formFactor)")
             .fontSize(11)
-            .textColor(Palette.subtle)
-            .horizontalTextAlignment(.center)
+            .foregroundStyle(Palette.subtle)
+            .multilineTextAlignment(.center)
             // Room under it for the home indicator, the content being edge to
             // edge: a phone with no home button draws a bar across the bottom
             // of the screen, and this line would otherwise sit under it.
-            .padding(16, 16, 16, 30)
+            .contentPadding(16, 16, 16, 30)
             // The footer's own row, written on the footer.
             .gridRow(2)
     }

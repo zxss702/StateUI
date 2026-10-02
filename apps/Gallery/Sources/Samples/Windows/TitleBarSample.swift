@@ -25,14 +25,14 @@ struct TitleBarSample: SampleContent, ExampleContent {
             @State var showsAction = false
         }
 
-        struct MainWindow: Window {
+        struct MainWindow: WindowScene {
             let titleBar: TitleBarState
             @Environment private var window: WindowSession
 
             var page: any Page {
                 HomePage()
-                    .onCreated { window.titleBar = chrome }
-                    .onChanged(titleBar.subtitle) {
+                    .onAppear { window.titleBar = chrome }
+                    .onChange(of: titleBar.subtitle) {
                         window.titleBar = chrome
                     }
             }
@@ -51,10 +51,10 @@ struct TitleBarSample: SampleContent, ExampleContent {
             }
         }
 
-        struct TitleBarAction: ContentView {
+        struct TitleBarAction: View {
             let state: TitleBarState
 
-            var content: any View {
+            var body: some View {
                 HStack {
                     if state.showsAction {
                         Button("Surprise me")
@@ -63,36 +63,36 @@ struct TitleBarSample: SampleContent, ExampleContent {
             }
         }
 
-        struct TitleBarSample: ContentView {
+        struct TitleBarSample: View {
             let state: TitleBarState
 
-            var content: any View {
+            var body: some View {
                 VStack {
                     DebugInfoLabel()
-                    TextField(state.$subtitle).placeholder("Window subtitle")
+                    TextField(state.$subtitle).placeholder("WindowScene subtitle")
                     Switch(state.$showsAction)
                 }
             }
         }
         """
 
-    var notes: Element? { nil }
+    var notes: (any View)? { nil }
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             TextField(bar.$subtitle)
                 .accessibilityIdentifier("titleBar.subtitle")
                 .accessibilityLabel("Subtitle for the window")
-                .placeholder("Window subtitle")
+                .placeholder("WindowScene subtitle")
 
             HStack {
                 Switch(bar.$showsSurprise)
                     .accessibilityIdentifier("titleBar.surprise")
                     .accessibilityLabel("Show a title bar action")
 
-                Label("Show a trailing action")
+                Text("Show a trailing action")
                     .verticalAlignment(.center)
             }
             .spacing(8)

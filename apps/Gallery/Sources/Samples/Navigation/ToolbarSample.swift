@@ -57,7 +57,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                     .id("clear")
                     .placement(.overflow)
                     .isDestructive(true)
-                    .isEnabled(saved > 0)
+                    .disabled(saved <= 0)
                     .onClicked { saved = 0 },
             ]
         }
@@ -69,7 +69,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                         .id("save")
                         .onClicked { saved += 1 }
 
-                    MenuSeparator()
+                    Divider()
                         .id("line")
 
                     Menu("Recent") {
@@ -80,37 +80,37 @@ struct ToolbarSample: SampleContent, ExampleContent {
                         }
                     }
                     .id("recent")
-                    .isEnabled(!recent.isEmpty)
+                    .disabled(recent.isEmpty)
                 }
                 .id("file"),
             ]
         }
 
-        var content: any View {
+        var body: some View {
             VStack {
                 // The counts are read here, so every toolbar item that acts
                 // builds this closure.
                 DebugInfoLabel()
 
-                Label("Saved \\(saved) time(s)")
-                Label(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
+                Text("Saved \\(saved) time(s)")
+                Text(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
 
                 HStack {
                     Switch($addFirst)
 
-                    Label(addFirst
+                    Text(addFirst
                         ? "Add asks first - .priority(0), against Save's 1"
                         : "Save asks first - .priority(0), against Add's 1")
                 }
             }
-            .onCreated {
+            .onAppear {
                 chrome = page.toolbarItems      // what the page put there first
                 page.toolbarItems = items + chrome
                 page.menuBar = menus
             }
-            .onChanged(addFirst) { page.toolbarItems = items + chrome }
-            .onChanged(saved) { page.toolbarItems = items + chrome }
-            .onChanged(recent) { page.menuBar = menus }
+            .onChange(of: addFirst) { page.toolbarItems = items + chrome }
+            .onChange(of: saved) { page.toolbarItems = items + chrome }
+            .onChange(of: recent) { page.menuBar = menus }
         }
         """
 
@@ -137,7 +137,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                 .id("clear")
                 .placement(.overflow)
                 .isDestructive(true)
-                .isEnabled(saved > 0)
+                .disabled(saved <= 0)
                 .onClicked { saved = 0 },
         ]
     }
@@ -150,7 +150,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                     .id("save")
                     .onClicked { saved += 1 }
 
-                MenuSeparator()
+                Divider()
                     .id("line")
 
                 Menu("Recent") {
@@ -161,26 +161,26 @@ struct ToolbarSample: SampleContent, ExampleContent {
                     }
                 }
                 .id("recent")
-                .isEnabled(!recent.isEmpty)
+                .disabled(recent.isEmpty)
             }
             .id("file"),
         ]
     }
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("Saved \(saved) time(s)")
+            Text("Saved \(saved) time(s)")
                 .fontSize(17)
 
-            Label(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
+            Text(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
                 .fontSize(13)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Press Save and Add on the bar; Clear is in its overflow.")
+            Text("Press Save and Add on the bar; Clear is in its overflow.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             SectionTitle("Which one comes first")
 
@@ -189,7 +189,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                     .accessibilityIdentifier("toolbar.addFirst")
                     .accessibilityLabel("Add asks first")
 
-                Label(addFirst
+                Text(addFirst
                     ? "Add asks first - `.priority(0)`, against Save's 1"
                     : "Save asks first - `.priority(0)`, against Add's 1")
                     .fontSize(14)
@@ -201,7 +201,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
         // The bar and the menus are the PAGE's, so this sample writes them
         // into the page's session - its buttons before the gallery's own,
         // which the page wrote a moment earlier, being further out.
-        .onCreated {
+        .onAppear {
             chrome = page.toolbarItems
             page.toolbarItems = items + chrome
             page.menuBar = menus
@@ -209,33 +209,33 @@ struct ToolbarSample: SampleContent, ExampleContent {
         // What they say follows the state, so they are written again when it
         // moves: `saved` decides whether Clear can be pressed, `addFirst` the
         // priorities, `recent` the submenu.
-        .onChanged(addFirst) { page.toolbarItems = items + chrome }
-        .onChanged(saved) { page.toolbarItems = items + chrome }
-        .onChanged(recent) { page.menuBar = menus }
+        .onChange(of: addFirst) { page.toolbarItems = items + chrome }
+        .onChange(of: saved) { page.toolbarItems = items + chrome }
+        .onChange(of: recent) { page.menuBar = menus }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Save and Add are on the page's bar. Clear is a destructive item in the "
+            Text("Save and Add are on the page's bar. Clear is a destructive item in the "
                 + "native overflow, enabled once something is saved.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Lower priority appears first; equal priority keeps source order. "
+            Text("Lower priority appears first; equal priority keeps source order. "
                 + "Flip the switch and the same native items exchange places.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Recent files live in the desktop File menu: Add puts one there, "
+            Text("Recent files live in the desktop File menu: Add puts one there, "
                 + "choosing one removes it, and an empty submenu disables itself.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The bar and the menus belong to the page, so they are written into "
+            Text("The bar and the menus belong to the page, so they are written into "
                 + "its `PageSession` - and written again whenever the state they show "
                 + "moves.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

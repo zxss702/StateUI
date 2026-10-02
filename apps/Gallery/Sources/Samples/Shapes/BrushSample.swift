@@ -35,7 +35,7 @@ struct BrushSample: SampleContent, ExampleContent {
                     startPoint: Point(0, 0),
                     endPoint: Self.ends[end].point))
                 .aspect(.stretch)        // fills the room, proportions and all
-                .height(80)
+                .frame(height: 80)
 
             Button("endPoint: \\(Self.ends[end].name)")
                 .onClicked { end = (end + 1) % Self.ends.count }
@@ -45,12 +45,12 @@ struct BrushSample: SampleContent, ExampleContent {
                     [GradientStop(.white, 0), GradientStop(.steelBlue, 1)],
                     center: Point(0.35, 0.3),
                     radius: 0.75))
-                .width(96)
-                .height(96)
+                .frame(width: 96)
+                .frame(height: 96)
 
             ZStack {
-                Label("A stroke is a brush too")
-                    .padding(16, 10)
+                Text("A stroke is a brush too")
+                    .contentPadding(16, 10)
             }
             .style("Card")
             .strokeWidth(4)
@@ -60,8 +60,8 @@ struct BrushSample: SampleContent, ExampleContent {
             // Not a shape at all: `.background` takes a brush, so any view can
             // carry one.
             VStack {
-                Label("A whole stack, behind a gradient")
-                    .textColor(Palette.onAccent)
+                Text("A whole stack, behind a gradient")
+                    .foregroundStyle(Palette.onAccent)
             }
             .background(.linearGradient(Self.stops, startPoint: Point(0, 0), endPoint: Point(1, 1)))
         }
@@ -80,7 +80,7 @@ struct BrushSample: SampleContent, ExampleContent {
         (Point(1, 1), "Point(1, 1)"),
     ]
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -93,11 +93,11 @@ struct BrushSample: SampleContent, ExampleContent {
                     startPoint: Point(0, 0),
                     endPoint: Self.ends[end].point))
                 .aspect(.stretch)
-                .height(80)
+                .frame(height: 80)
 
             Button("endPoint: \(Self.ends[end].name)")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked { end = (end + 1) % Self.ends.count }
 
@@ -108,16 +108,16 @@ struct BrushSample: SampleContent, ExampleContent {
                     [GradientStop(.white, 0), GradientStop(.steelBlue, 1)],
                     center: Point(0.35, 0.3),
                     radius: 0.75))
-                .width(96)
-                .height(96)
+                .frame(width: 96)
+                .frame(height: 96)
                 .horizontalAlignment(.center)
 
             SectionTitle("On a stroke and a background")
 
             ZStack {
-                Label("A stroke is a brush too")
+                Text("A stroke is a brush too")
                     .fontSize(14)
-                    .padding(16, 10)
+                    .contentPadding(16, 10)
             }
             .style("Card")
             .strokeWidth(4)
@@ -125,37 +125,37 @@ struct BrushSample: SampleContent, ExampleContent {
             .stroke(.linearGradient(Self.stops, startPoint: Point(0, 0), endPoint: Point(1, 0)))
 
             VStack {
-                Label("A whole stack, behind a gradient")
+                Text("A whole stack, behind a gradient")
                     .fontSize(14)
-                    .textColor(Palette.onAccent)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.onAccent)
+                    .multilineTextAlignment(.center)
             }
-            .padding(16)
+            .contentPadding(16)
             .background(.linearGradient(Self.stops, startPoint: Point(0, 0), endPoint: Point(1, 1)))
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("A gradient's points are fractions of the thing being painted, not device "
+            Text("A gradient's points are fractions of the thing being painted, not device "
                 + "units: `Point(0, 0)` is its top left corner and `Point(1, 1)` its bottom "
                 + "right. So the axis follows the box's own corners rather than a fixed "
                 + "angle - and on a bar this wide, corner to corner is only a few degrees "
                 + "off straight across.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`.background` takes one colour or a brush; it is one property, so a "
+            Text("`.background` takes one colour or a brush; it is one property, so a "
                 + "view given both draws the one it was given last.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A stop's colour may be written `Color(light:dark:)`, and it picks its half "
+            Text("A stop's colour may be written `Color(light:dark:)`, and it picks its half "
                 + "as the view wearing the gradient is built - the first stop above is "
                 + "the gallery's accent, which is a lighter orange in the dark.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

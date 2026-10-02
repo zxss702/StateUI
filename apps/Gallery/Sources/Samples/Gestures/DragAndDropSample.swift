@@ -30,8 +30,8 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             HStack {
                 ForEach(items) { item in
                     ZStack {
-                        Label(item)
-                            .padding(12, 8)
+                        Text(item)
+                            .contentPadding(12, 8)
                     }
                     .style("Card")
                     .stroke(Palette.accent)
@@ -46,19 +46,19 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 }
             }
 
-            Label(finished)
+            Text(finished)
 
             ZStack {
                 VStack {
-                    Label(over
+                    Text(over
                         ? "let go to drop it"
                         : (basket.isEmpty ? "nothing yet" : "\\(basket.count) dropped"))
 
                     ForEach(Array(basket.enumerated()), id: \\.offset) { pair in
-                        Label(pair.element)
+                        Text(pair.element)
                     }
                 }
-                .padding(24)
+                .contentPadding(24)
             }
             .style("Card")
             // Lit while something is over it and dark again once it leaves,
@@ -76,12 +76,12 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             }
 
             Button("Empty it")
-                .isEnabled(!basket.isEmpty)
+                .disabled(basket.isEmpty)
                 .onClicked { basket = [] }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -90,9 +90,9 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             HStack {
                 ForEach(items) { item in
                     ZStack {
-                        Label(item)
+                        Text(item)
                             .fontSize(14)
-                            .padding(12, 8)
+                            .contentPadding(12, 8)
                     }
                     .style("Card")
                     .stroke(Palette.accent)
@@ -107,30 +107,30 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             }
             .spacing(8)
 
-            Label(finished)
+            Text(finished)
                 .fontSize(12)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             SectionTitle("Drop here")
 
             ZStack {
                 VStack {
-                    Label(over
+                    Text(over
                         ? "let go to drop it"
                         : (basket.isEmpty ? "nothing yet" : "\(basket.count) dropped"))
                         .fontSize(15)
-                        .horizontalTextAlignment(.center)
+                        .multilineTextAlignment(.center)
 
                     ForEach(Array(basket.enumerated()), id: \.offset) { pair in
-                        Label(pair.element)
+                        Text(pair.element)
                             .fontSize(13)
-                            .textColor(Palette.subtle)
-                            .horizontalTextAlignment(.center)
+                            .foregroundStyle(Palette.subtle)
+                            .multilineTextAlignment(.center)
                     }
                 }
                 .spacing(4)
-                .padding(24)
+                .contentPadding(24)
             }
             .style("Card")
             // Lit while something is over it and dark again once it leaves,
@@ -149,43 +149,43 @@ struct DragAndDropSample: SampleContent, ExampleContent {
 
             Button("Empty it")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
-                .isEnabled(!basket.isEmpty)
+                .disabled(basket.isEmpty)
                 .onClicked { basket = [] }
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("What travels is a STRING, decided before the drag starts: a native "
+            Text("What travels is a STRING, decided before the drag starts: a native "
                 + "drag session needs its payload at once, so `draggable(text:)` says it "
                 + "up front.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Reading what was dropped is asynchronous - it may be coming from "
+            Text("Reading what was dropped is asynchronous - it may be coming from "
                 + "another application - so the host reads it, and `onDrop` runs with the "
                 + "text when there is something to say.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`onDragOver` runs again and again while a drag is held over the "
+            Text("`onDragOver` runs again and again while a drag is held over the "
                 + "target, not once, so it SETS the highlight rather than counting; "
                 + "`onDragLeave` runs when the drag goes away without being let go. A "
                 + "drop is not a leave, so `onDrop` takes the highlight down as well.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Both of those belong to a view that ACCEPTS a drop, and `onDrop` is "
+            Text("Both of those belong to a view that ACCEPTS a drop, and `onDrop` is "
                 + "what makes a view one - written without it, neither ever runs. "
                 + "`onDropCompleted` is the other end: it belongs to the view that was "
                 + "dragged, so it needs `draggable(text:)` beside it, and it runs when "
                 + "that drag ends wherever it ended - over the basket, or over nothing "
                 + "at all.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

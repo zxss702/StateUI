@@ -8,7 +8,7 @@ struct LifecycleSample: SampleContent, ExampleContent {
     let log: WindowLog
 
     static let id = "lifecycle"
-    static let title = "Window lifecycle"
+    static let title = "WindowScene lifecycle"
     static let summary = "Watch the native window lifecycle as state."
 
     static let code = """
@@ -22,15 +22,15 @@ struct LifecycleSample: SampleContent, ExampleContent {
             }
         }
 
-        struct MainWindow: Window {
+        struct MainWindow: WindowScene {
             @Environment private var window: WindowSession
             @State private var menuOpen = false
             let log: WindowLog
 
             var page: any Page {
-                SplitView($menuOpen) { MenuPage() } detail: { HomePage() }
-                    .onCreated { log.note("created") }
-                    .onChanged(window.phase) { log.note("\\(window.phase)") }
+                NavigationSplitView($menuOpen) { MenuPage() } detail: { HomePage() }
+                    .onAppear { log.note("created") }
+                    .onChange(of: window.phase) { log.note("\\(window.phase)") }
             }
         }
 
@@ -38,30 +38,30 @@ struct LifecycleSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             ForEach(log.events) { row in
-                Label(row)
+                Text(row)
             }
         }
         """
 
-    var notes: Element? { nil }
+    var notes: (any View)? { nil }
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("What the window has said so far, newest last:")
+            Text("What the window has said so far, newest last:")
                 .fontSize(14)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             VStack {
                 DebugInfoLabel()
 
                 if log.events.isEmpty {
-                    Label("nothing yet - switch away and back")
+                    Text("nothing yet - switch away and back")
                         .fontSize(15)
-                        .textColor(Palette.subtle)
+                        .foregroundStyle(Palette.subtle)
                 }
 
                 ForEach(log.events) { row in
-                    Label(row)
+                    Text(row)
                         .fontSize(15)
                 }
             }

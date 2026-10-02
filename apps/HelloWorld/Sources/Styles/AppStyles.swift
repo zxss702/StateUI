@@ -13,17 +13,17 @@ enum AppStyles {
         StyleSheet {
             // Both colours carry both themes, so the app follows the system
             // with nothing else to write.
-            Style<Label>()
-                .textColor(Color(light: .black, dark: .white))
+            Style<Text>()
+                .foregroundStyle(Color(light: .black, dark: .white))
                 .fontSize(15)
 
             Style<Button>()
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .background(Color(light: Color("#512BD4"), dark: Color("#7B5CE0")))
                 .fontSize(14)
                 .fontAttributes(.bold)
                 .shape(.roundedRectangle(10))
-                .padding(16, 11)
+                .contentPadding(16, 11)
         }
     }
 }

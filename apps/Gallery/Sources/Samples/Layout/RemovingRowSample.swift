@@ -23,7 +23,7 @@ struct RemovingRowSample: SampleContent, ExampleContent {
         // A PLAIN VStack. Nothing here ASKS for animation: the row is HIDDEN,
         // which fades it where it stands, and the rows under it are then given
         // new places - which is somewhere they travel to. The one line about
-        // motion is the switch turning it OFF.
+        // animation is the switch turning it OFF.
         VStack {
             // INSIDE the stack's own braces, because that is where `gone` and
             // `atOnce` are read: deleting a row builds this closure, and a
@@ -33,17 +33,17 @@ struct RemovingRowSample: SampleContent, ExampleContent {
 
             ForEach(Self.rows, id: \\.self) { row in
                 Grid {
-                    Label(row).gridColumn(0)
+                    Text(row).gridColumn(0)
 
                     Button("Delete")
                         .gridColumn(1)
                         .onClicked { remove(row) }
                 }
                 .columns(.fill, .auto)
-                .isVisible(!gone.contains(row) && !atOnce.contains(row))
+                .hidden(gone.contains(row) || atOnce.contains(row))
                 // What the switch below chooses: a row told to travel at NO
-                // motion goes at once, and the stack still closes over it.
-                .motion(atOnce.contains(row) ? .none : .inherited)
+                // animation goes at once, and the stack still closes over it.
+                .animation(atOnce.contains(row) ? .none : .inherited)
             }
         }
 
@@ -64,7 +64,7 @@ struct RemovingRowSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             VStack {
                 // INSIDE the stack's own braces, because that is where `gone`
@@ -75,25 +75,25 @@ struct RemovingRowSample: SampleContent, ExampleContent {
 
                 ForEach(Self.rows, id: \.self) { row in
                     Grid {
-                        Label(row)
+                        Text(row)
                             .fontSize(15)
                             .verticalAlignment(.center)
                             .gridColumn(0)
 
                         Button("Delete")
                             .fontSize(12)
-                            .padding(10, 4)
+                            .contentPadding(10, 4)
                             .gridColumn(1)
                             .onClicked { remove(row) }
                     }
                     .columns(.fill, .auto)
-                    .padding(14, 6)
+                    .contentPadding(14, 6)
                     .background(Palette.raised)
-                    .height(46)
-                    .isVisible(!gone.contains(row) && !atOnce.contains(row))
+                    .frame(height: 46)
+                    .hidden(gone.contains(row) || atOnce.contains(row))
                     // The other half of the sample: a row told to travel at no
-                    // motion goes at once, and the stack still closes over it.
-                    .motion(atOnce.contains(row) ? .none : .inherited)
+                    // animation goes at once, and the stack still closes over it.
+                    .animation(atOnce.contains(row) ? .none : .inherited)
                 }
             }
             .spacing(6)
@@ -117,27 +117,27 @@ struct RemovingRowSample: SampleContent, ExampleContent {
         }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Delete a row. It FADES where it stands and the rows under it "
+            Text("Delete a row. It FADES where it stands and the rows under it "
                 + "then close over the gap - a plain `VStack`, and not a line in "
                 + "the example ASKING for animation: the row is hidden, and the "
                 + "ones below it are given new places.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`The row fades first` chooses how the row itself leaves. "
-                + "Turned off, the row is told `.motion(.none)` and goes at "
+            Text("`The row fades first` chooses how the row itself leaves. "
+                + "Turned off, the row is told `.animation(.none)` and goes at "
                 + "once - the stack still closes over it, because where a "
                 + "child sits is always somewhere it travels to.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`Bring them back` is the same thing the other way round: the "
+            Text("`Bring them back` is the same thing the other way round: the "
                 + "rows appear at nothing and come up while everything below "
                 + "them moves down to make room.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

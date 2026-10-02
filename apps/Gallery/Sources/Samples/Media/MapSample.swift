@@ -91,33 +91,33 @@ struct MapSample: SampleContent, ExampleContent {
                 .onMapClicked { location in
                     said = "map: \\(location.latitude), \\(location.longitude)"
                 }
-                .height(300)
+                .frame(height: 300)
 
-            Label(said)
+            Text(said)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             HStack {
                 Button("Old Town")
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         try await map.moveToRegion(
                             latitude: 50.0617, longitude: 19.9373, radiusMeters: 1500)
                     }
 
                 Button("Poland")
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         try await map.moveToRegion(
                             latitude: 52.1, longitude: 19.4, radiusMeters: 350_000)
                     }
 
                 Button(kind == .street ? "Street" : kind == .satellite ? "Satellite" : "Hybrid")
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         kind =
                             kind == .street
@@ -136,7 +136,7 @@ struct MapSample: SampleContent, ExampleContent {
                 SwitchRow("Locked", $locked)
             }
 
-            // The opening region is the INITIALIZER's, not an `.onCreated` act:
+            // The opening region is the INITIALIZER's, not an `.onAppear` act:
             // written here it is kept until the platform's map has connected,
             // while an act can land an instant too early and be overwritten
             // by the map's own opening view.
@@ -165,31 +165,31 @@ struct MapSample: SampleContent, ExampleContent {
                 .onMapClicked { location in
                     said = "map: \(rounded(location.latitude)), \(rounded(location.longitude))"
                 }
-                .height(300)
+                .frame(height: 300)
 
-            Label(said)
+            Text(said)
                 .fontSize(12)
                 .fontFamily("Menlo")
-                .textColor(Palette.accent)
+                .foregroundStyle(Palette.accent)
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("`Map` is an optional provider, drawn by the platform's own map where a "
+            Text("`Map` is an optional provider, drawn by the platform's own map where a "
                 + "host provides one - `MKMapView` on Apple. Elsewhere a host depends on a "
                 + "map library and a map service, and the Web has no map element.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Where the map opens is the initializer's: that region is kept until the "
-                + "platform's map has connected, while the same move from `.onCreated` can "
+            Text("Where the map opens is the initializer's: that region is kept until the "
+                + "platform's map has connected, while the same move from `.onAppear` can "
                 + "land an instant too early and be overwritten. Moving later is the act "
                 + "the buttons perform - `moveToRegion` through the map's `@Aim`, with the "
                 + "radius in meters.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

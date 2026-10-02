@@ -11,14 +11,14 @@
 //     so anything accented separates from what is around it without being made
 //     bigger or bolder.
 //
-// The interactive orange is DEEPER than Swift's own in the light theme and
+// The interactive orange is DEEPER than Swift's own in the light color scheme and
 // LIGHTER in the dark: white on #F05138 is 3.5:1, which fails WCAG AA for text,
 // while #CE3F1C is 4.8:1. The brand orange stays exactly Swift's wherever
 // nothing has to be read on top of it.
 //
 // What the gallery draws with is next door in Palette.swift - these are the raw
 // values, named for what they ARE, and almost everything reaches them through
-// that file; the colours that must not follow the theme, and a sample showing a
+// that file; the colours that must not follow the color scheme, and a sample showing a
 // colour of its own, read them directly.
 
 import StateUI
@@ -32,7 +32,7 @@ enum AppColors {
     static let swiftOrange = Color("#F05138")
 
     /// The same hue, deep enough that white text on it passes WCAG AA (4.8:1).
-    /// The interactive colour in the light theme.
+    /// The interactive colour in the light color scheme.
     static let swiftOrangeDeep = Color("#CE3F1C")
 
     /// The same hue lifted for a dark background, where full-strength orange is
@@ -67,7 +67,7 @@ enum AppColors {
     /// The violet lifted for a dark background.
     static let violetLight = Color("#A78BFA")
 
-    // MARK: Neutrals, light theme
+    // MARK: Neutrals, light color scheme
     //
     // Every one of these carries the brand hue. On their own they read as
     // greys; beside a true grey they do not.
@@ -95,7 +95,7 @@ enum AppColors {
     /// card, because "which page is this" has to be answerable at a glance.
     static let selected = Color("#EBE6F9")
 
-    // MARK: Neutrals, dark theme
+    // MARK: Neutrals, dark color scheme
 
     /// Body text in the dark.
     static let inkDark = Color("#F4F2FA")

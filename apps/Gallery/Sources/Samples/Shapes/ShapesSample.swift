@@ -25,25 +25,25 @@ struct ShapesSample: SampleContent, ExampleContent {
             HStack {
                 Rectangle()
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(14)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(topLeft: 22, topRight: 4, bottomLeft: 4, bottomRight: 22)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Ellipse()
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
             }
 
             HStack {
@@ -53,8 +53,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeLineCap(.round)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Line()
                     .x1(0).y1(28)
@@ -62,15 +62,15 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 // The one shape that is whatever you can write down: SVG path
                 // syntax, normalized by StateUI for every native backend.
                 Path("M 28,0 L 56,56 L 0,56 Z")
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 // A transform on the GEOMETRY - the same ViewTransform
                 // every view takes, drawn whole: a lean draws here, and the
@@ -79,22 +79,22 @@ struct ShapesSample: SampleContent, ExampleContent {
                 Path("M 28,0 L 56,56 L 0,56 Z")
                     .fill(Palette.accent)
                     .renderTransform(.skew(20, 0))
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(14)
                     .renderTransform(.skew(20, 0))
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Polyline([Point(0, 44), Point(14, 12), Point(30, 34), Point(56, 4)])
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeLineJoin(.round)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
             }
 
             // The same dashes twice, half a pattern apart: the offset, like
@@ -107,8 +107,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
                     .strokeDashOffset(0)
-                    .width(200)
-                    .height(8)
+                    .frame(width: 200)
+                    .frame(height: 8)
 
                 Line()
                     .x1(0).y1(4)
@@ -117,8 +117,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
                     .strokeDashOffset(2.5)
-                    .width(200)
-                    .height(8)
+                    .frame(width: 200)
+                    .frame(height: 8)
             }
 
             // The same sharp corner twice. A miter join carries the two outer
@@ -130,23 +130,23 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(8)
                     .strokeLineJoin(.miter)
                     .strokeMiterLimit(10)
-                    .width(56)
-                    .height(72)
+                    .frame(width: 56)
+                    .frame(height: 72)
 
                 Polyline([Point(10, 4), Point(28, 48), Point(46, 4)])
                     .stroke(Palette.accent)
                     .strokeWidth(8)
                     .strokeLineJoin(.miter)
                     .strokeMiterLimit(1)
-                    .width(56)
-                    .height(72)
+                    .frame(width: 56)
+                    .frame(height: 72)
             }
 
             Polygon(Self.star)
                 .fill(Palette.accent)
                 .fillRule(rule)
-                .width(56)
-                .height(56)
+                .frame(width: 56)
+                .frame(height: 56)
 
             Button("fillRule: .\\(rule)")
                 .onClicked { rule = rule == .evenOdd ? .nonzero : .evenOdd }
@@ -160,7 +160,7 @@ struct ShapesSample: SampleContent, ExampleContent {
         Point(54.6, 19.3), Point(11.5, 50.6),
     ]
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -169,25 +169,25 @@ struct ShapesSample: SampleContent, ExampleContent {
             HStack {
                 Rectangle()
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(14)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(topLeft: 22, topRight: 4, bottomLeft: 4, bottomRight: 22)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Ellipse()
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
             }
             .spacing(12)
             .horizontalAlignment(.center)
@@ -201,8 +201,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeLineCap(.round)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Line()
                     .x1(0).y1(28)
@@ -210,13 +210,13 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Path("M 28,0 L 56,56 L 0,56 Z")
                     .fill(Palette.accent)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 // A transform on the GEOMETRY - the same ViewTransform
                 // every view takes, drawn whole: a lean draws here, and the
@@ -225,22 +225,22 @@ struct ShapesSample: SampleContent, ExampleContent {
                 Path("M 28,0 L 56,56 L 0,56 Z")
                     .fill(Palette.accent)
                     .renderTransform(.skew(20, 0))
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Rectangle()
                     .fill(Palette.accent)
                     .cornerRadius(14)
                     .renderTransform(.skew(20, 0))
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
 
                 Polyline([Point(0, 44), Point(14, 12), Point(30, 34), Point(56, 4)])
                     .stroke(Palette.accent)
                     .strokeWidth(4)
                     .strokeLineJoin(.round)
-                    .width(56)
-                    .height(56)
+                    .frame(width: 56)
+                    .frame(height: 56)
             }
             .spacing(12)
             .horizontalAlignment(.center)
@@ -255,8 +255,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
                     .strokeDashOffset(0)
-                    .width(200)
-                    .height(8)
+                    .frame(width: 200)
+                    .frame(height: 8)
 
                 Line()
                     .x1(0).y1(4)
@@ -265,8 +265,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(4)
                     .strokeDashPattern([3, 2])
                     .strokeDashOffset(2.5)
-                    .width(200)
-                    .height(8)
+                    .frame(width: 200)
+                    .frame(height: 8)
             }
             .spacing(10)
             .horizontalAlignment(.center)
@@ -279,16 +279,16 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .strokeWidth(8)
                     .strokeLineJoin(.miter)
                     .strokeMiterLimit(10)
-                    .width(56)
-                    .height(72)
+                    .frame(width: 56)
+                    .frame(height: 72)
 
                 Polyline([Point(10, 4), Point(28, 48), Point(46, 4)])
                     .stroke(Palette.accent)
                     .strokeWidth(8)
                     .strokeLineJoin(.miter)
                     .strokeMiterLimit(1)
-                    .width(56)
-                    .height(72)
+                    .frame(width: 56)
+                    .frame(height: 72)
             }
             .spacing(12)
             .horizontalAlignment(.center)
@@ -298,38 +298,38 @@ struct ShapesSample: SampleContent, ExampleContent {
             Polygon(Self.star)
                 .fill(Palette.accent)
                 .fillRule(rule)
-                .width(56)
-                .height(56)
+                .frame(width: 56)
+                .frame(height: 56)
                 .horizontalAlignment(.center)
 
             Button("fillRule: .\(rule)")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked { rule = rule == .evenOdd ? .nonzero : .evenOdd }
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Fill, stroke and everything about the stroke form one `Shape` protocol, "
+            Text("Fill, stroke and everything about the stroke form one `Shape` protocol, "
                 + "shared by all six outlines and every native host. A shape with no "
                 + "stroke width draws no outline and one with no fill has no inside - a "
                 + "`Line` has only the first, as there is nothing to fill. A `Rectangle` "
                 + "rounds its corners with `cornerRadius`: one number for all four, or "
                 + "each corner by name.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A `Path` is whatever you can write down: `M` moves the pen, `L` draws a "
+            Text("A `Path` is whatever you can write down: `M` moves the pen, `L` draws a "
                 + "line to a point, `Z` closes the figure back to where it started - the "
                 + "same SVG path vocabulary on every StateUI host. A `Polygon` closes its "
                 + "figure for you and a `Polyline` leaves it open.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Dashes and their offset are counted in stroke widths: `[3, 2]` at "
+            Text("Dashes and their offset are counted in stroke widths: `[3, 2]` at "
                 + "width 4 repeats every 20 points, so the lower line's offset of 2.5 "
                 + "shifts it half a pattern and its dashes stand under the upper line's gaps. "
                 + "A miter join carries the two outer edges on until they cross, and the "
@@ -337,15 +337,15 @@ struct ShapesSample: SampleContent, ExampleContent {
                 + "corner asks for about 2.6: the left V is allowed 10 and keeps its point, "
                 + "the right one is allowed 1 and is cut off flat - a bevel.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The star is five points, each joined to the one two along, so its outline "
+            Text("The star is five points, each joined to the one two along, so its outline "
                 + "crosses itself and the middle is enclosed twice. A `fillRule` only says "
                 + "anything there: `.evenOdd` counts that middle as outside and empties it, "
                 + "`.nonzero` counts it as inside and fills it. Everywhere else the two "
                 + "rules agree.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

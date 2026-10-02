@@ -13,7 +13,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
     static let code = """
         // The arrangement, in Gallery/MainWindow.swift - over the gallery's
         // own `Navigation`, a class of states:
-        SplitView(nav.$menuOpen) {
+        NavigationSplitView(nav.$menuOpen) {
             MenuPage(catalog: catalog, nav: nav, log: log,
                      listsHiddenRow: nav.listsHiddenRow)
         } detail: {
@@ -25,7 +25,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
         }
 
         // The menu is a page of its own:
-        struct MenuPage: ContentView {
+        struct MenuPage: View {
             let catalog: Catalog
             let nav: Navigation
             let log: WindowLog
@@ -34,7 +34,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
             @Environment private var device: DeviceInfo
             @Environment private var page: PageSession
 
-            var content: any View {
+            var body: some View {
                 VStack {
                     // Choose, then close: `open` writes the section and the
                     // path, then the menu.
@@ -64,7 +64,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
                     // its own - so a phase change builds that and nothing else.
                     WindowPhaseLog(log: log)
                 }
-                .onCreated { page.title = "StateUI" }
+                .onAppear { page.title = "StateUI" }
             }
         }
 
@@ -77,9 +77,9 @@ struct SplitViewSample: SampleContent, ExampleContent {
             .onClicked { nav.open(.hidden) }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("Open the menu: every row in it is a view.")
+            Text("Open the menu: every row in it is a view.")
                 .fontSize(14)
 
             SwitchRow("Menu open", nav.$menuOpen)
@@ -90,7 +90,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
                     .accessibilityIdentifier("splitview.hiddenRow")
                     .accessibilityLabel("Show the row that is not in the list")
 
-                Label(nav.listsHiddenRow
+                Text(nav.listsHiddenRow
                     ? "The menu lists \"Not in the list\""
                     : "The menu does not list it")
                     .fontSize(14)
@@ -99,25 +99,25 @@ struct SplitViewSample: SampleContent, ExampleContent {
             .spacing(10)
 
             Button("Go there anyway")
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { nav.open(.hidden) }
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The pane is an ordinary page. Every row is a view whose action chooses "
+            Text("The pane is an ordinary page. Every row is a view whose action chooses "
                 + "a section and closes the menu, and a row the app does not want is an "
                 + "`if` around it.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`SplitView($menuOpen)` is two-way. The native host adapts the pane; "
+            Text("`NavigationSplitView($menuOpen)` is two-way. The native host adapts the pane; "
                 + "when it keeps both sides visible, the binding settles on `true`.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

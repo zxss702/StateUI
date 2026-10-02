@@ -1,6 +1,6 @@
 import StateUI
 
-/// `.onCreated` and `.onDestroying`: what runs as an element comes into the
+/// `.onAppear` and `.onDisappear`: what runs as an element comes into the
 /// tree and as it leaves, once each.
 struct LifetimeSample: SampleContent, ExampleContent {
     /// Whether the card is in the tree at all.
@@ -48,38 +48,38 @@ struct LifetimeSample: SampleContent, ExampleContent {
 
             VStack {
                 if log.isEmpty {
-                    Label("nothing yet")
+                    Text("nothing yet")
                 }
 
                 ForEach(Array(log.suffix(6))) { line in
-                    Label(line)
+                    Text(line)
                 }
             }
         }
 
-        struct LifetimeCard: ContentView {
+        struct LifetimeCard: View {
             let number: Int
             @Binding var log: [String]
             @State private var taps = 0
 
-            var content: any View {
+            var body: some View {
                 Button("Card \\(number) · tapped \\(taps)")
                     .onClicked { taps += 1 }
                     // Once, after the render that brings the card in - its
                     // state and its environment are there to use.
-                    .onCreated {
+                    .onAppear {
                         log.append("\\(log.count + 1) · card \\(number) created")
                     }
                     // Once, after the render that leaves it out - and its
                     // state still answers, which is what saving needs.
-                    .onDestroying {
+                    .onDisappear {
                         log.append("\\(log.count + 1) · card \\(number) destroying, tapped \\(taps)")
                     }
             }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -88,12 +88,12 @@ struct LifetimeSample: SampleContent, ExampleContent {
             HStack {
                 Button("A new card")
                     .fontSize(13)
-                    .padding(16, 6)
+                    .contentPadding(16, 6)
                     .onClicked { identity += 1 }
 
                 Button("Build this again · \(builds)")
                     .fontSize(13)
-                    .padding(16, 6)
+                    .contentPadding(16, 6)
                     .onClicked { builds += 1 }
             }
             .spacing(10)
@@ -105,13 +105,13 @@ struct LifetimeSample: SampleContent, ExampleContent {
 
             VStack {
                 if log.isEmpty {
-                    Label("nothing yet")
+                    Text("nothing yet")
                         .fontSize(14)
-                        .textColor(Palette.subtle)
+                        .foregroundStyle(Palette.subtle)
                 }
 
                 ForEach(Array(log.suffix(6))) { line in
-                    Label(line)
+                    Text(line)
                         .fontSize(14)
                         .fontFamily("Menlo")
                 }
@@ -121,48 +121,48 @@ struct LifetimeSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Switch the card off and on: it is destroyed and created again - a new "
+            Text("Switch the card off and on: it is destroyed and created again - a new "
                 + "card, counting from nought. A new card does the same to the one on "
                 + "screen by giving it a new identity. Build this again builds the page "
                 + "once more, which carries the card, built with the same inputs, and "
                 + "creates nothing: an element is created once, however many times the "
                 + "view around it is built.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Tap the card before it goes: what it says as it is destroyed is its "
+            Text("Tap the card before it goes: what it says as it is destroyed is its "
                 + "own count, because its state still answers - the place to save what it "
                 + "holds. Both are on every view and control and on the pages the library "
                 + "builds - a page of your own writes them on its content - and both run "
                 + "after the render that made the change.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }
 }
 
 /// A card that says when it comes and goes, counting its own taps.
-private struct LifetimeCard: ContentView {
+private struct LifetimeCard: View {
     let number: Int
     @Binding var log: [String]
     @State private var taps = 0
 
-    var content: any View {
+    var body: some View {
         Button("Card \(number) · tapped \(taps)")
             .fontSize(15)
-            .textColor(.white)
+            .foregroundStyle(.white)
             .background(Palette.accent)
             .shape(.roundedRectangle(10))
-            .padding(20, 12)
+            .contentPadding(20, 12)
             .horizontalAlignment(.center)
             .onClicked { taps += 1 }
-            .onCreated {
+            .onAppear {
                 log.append("\(log.count + 1) · card \(number) created")
             }
-            .onDestroying {
+            .onDisappear {
                 log.append("\(log.count + 1) · card \(number) destroying, tapped \(taps)")
             }
     }

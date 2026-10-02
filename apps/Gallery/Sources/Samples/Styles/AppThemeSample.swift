@@ -1,31 +1,31 @@
 import StateUI
 
-/// The theme as a value a view can branch on.
+/// The color scheme as a value a view can branch on.
 struct AppThemeSample: SampleContent, ExampleContent {
-    /// The application's information, where the theme is read.
+    /// The application's information, where the color scheme is read.
     @Environment var app: AppInfo
 
     static let id = "appTheme"
-    static let title = "Theme"
-    static let summary = "The theme as a value a view can branch on - "
+    static let title = "ColorScheme"
+    static let summary = "The colorScheme as a value a view can branch on - "
         + "updated live when the system switches."
 
     static let code = """
-        struct ThemeBadge: ContentView {
+        struct ThemeBadge: View {
             @Environment var app: AppInfo
 
-            var content: any View {
+            var body: some View {
                 VStack {
-                    // The theme is read here, so a change to it builds this
+                    // The color scheme is read here, so a change to it builds this
                     // closure.
                     DebugInfoLabel()
 
-                    Label("\\(app.requestedTheme)")
+                    Text("\\(app.colorScheme)")
 
-                    // LOGIC on the theme - a different WORD, not a colour.
-                    // A colour that differs by theme is Color(light:dark:),
+                    // LOGIC on the color scheme - a different WORD, not a colour.
+                    // A colour that differs by color scheme is Color(light:dark:),
                     // which follows by itself.
-                    Label(app.requestedTheme == .dark
+                    Text(app.colorScheme == .dark
                         ? "lights off - a view can choose calmer artwork"
                         : "lights on - a view can choose vivid artwork")
                 }
@@ -33,37 +33,37 @@ struct AppThemeSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("\(app.requestedTheme)")
+            Text("\(app.colorScheme)")
                 .fontSize(34)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label(app.requestedTheme == .dark
+            Text(app.colorScheme == .dark
                 ? "lights off - a view can choose calmer artwork"
                 : "lights on - a view can choose vivid artwork")
                 .fontSize(15)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
         }
         .spacing(10)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Switch the SYSTEM's appearance and the word above follows "
+            Text("Switch the SYSTEM's appearance and the word above follows "
                 + "in the same breath.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Use this for LOGIC - a different picture, a different word. A "
-                + "colour should not need it: a `Color(light:dark:)` reads the theme "
-                + "as the view wearing it is built, so a theme change builds exactly "
+            Text("Use this for LOGIC - a different picture, a different word. A "
+                + "colour should not need it: a `Color(light:dark:)` reads the colorScheme "
+                + "as the view wearing it is built, so a colorScheme change builds exactly "
                 + "the views wearing one again.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

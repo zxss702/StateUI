@@ -3,76 +3,76 @@ import StateUI
 /// Rectangles of colour - square, rounded, round and faded - and a divider.
 struct ColorBoxSample: SampleContent, ExampleContent {
     static let id = "colorBox"
-    static let title = "ColorBox"
+    static let title = "ColorPicker"
     static let summary = "A rectangle of colour - the simplest thing a host draws."
 
     static let code = """
         VStack {
             HStack {
-                ColorBox(Palette.accent)
-                    .width(44)
-                    .height(44)
+                ColorPicker(Palette.accent)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Palette.accent)
+                ColorPicker(Palette.accent)
                     .cornerRadius(10)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Palette.accent)
+                ColorPicker(Palette.accent)
                     .cornerRadius(22)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Color("#E53935"))
+                ColorPicker(Color("#E53935"))
                     .cornerRadius(10)
                     .opacity(0.4)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
             }
 
-            // A one-pixel ColorBox is also the usual divider.
-            ColorBox(Palette.outline)
-                .height(1)
+            // A one-pixel ColorPicker is also the usual divider.
+            ColorPicker(Palette.outline)
+                .frame(height: 1)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             HStack {
-                ColorBox(Palette.accent)
-                    .width(44)
-                    .height(44)
+                ColorPicker(Palette.accent)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Palette.accent)
+                ColorPicker(Palette.accent)
                     .cornerRadius(10)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Palette.accent)
+                ColorPicker(Palette.accent)
                     .cornerRadius(22)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
 
-                ColorBox(Color("#E53935"))
+                ColorPicker(Color("#E53935"))
                     .cornerRadius(10)
                     .opacity(0.4)
-                    .width(44)
-                    .height(44)
+                    .frame(width: 44)
+                    .frame(height: 44)
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
-            ColorBox(Palette.outline)
-                .height(1)
+            ColorPicker(Palette.outline)
+                .frame(height: 1)
         }
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("A ColorBox draws the colour its initializer takes, which is its `.color`. "
+    var notes: (any View)? {
+        Text("A ColorPicker draws the colour its initializer takes, which is its `.color`. "
             + "`.background` is a second surface behind it that the corner radius "
-            + "does not round. A one-pixel ColorBox is also the usual divider.")
+            + "does not round. A one-pixel ColorPicker is also the usual divider.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }

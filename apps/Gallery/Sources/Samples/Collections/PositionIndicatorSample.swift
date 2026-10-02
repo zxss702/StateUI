@@ -20,7 +20,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // closure - one build a page, whatever the movement costs.
             DebugInfoLabel()
 
-            Label(Self.steps[step])
+            Text(Self.steps[step])
 
             PositionIndicator()
                 .count(Self.steps.count)
@@ -37,11 +37,11 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
 
             HStack {
                 Button("Back")
-                    .isEnabled(step > 0)
+                    .disabled(step <= 0)
                     .onClicked { step -= 1 }
 
                 Button("Next")
-                    .isEnabled(step < Self.steps.count - 1)
+                    .disabled(step >= Self.steps.count - 1)
                     .onClicked { step += 1 }
             }
 
@@ -49,7 +49,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // on the DOTS and not on the items: `count` is twelve in both
             // rows, and the stepper takes the second row's dots away one at a
             // time.
-            Label("Twelve items, maximumVisible(12)")
+            Text("Twelve items, maximumVisible(12)")
 
             PositionIndicator()
                 .count(12)
@@ -58,7 +58,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .indicatorColor(Palette.outline)
                 .selectedIndicatorColor(Palette.accent)
 
-            Label("The same twelve, maximumVisible(\\(Int(cap)))")
+            Text("The same twelve, maximumVisible(\\(Int(cap)))")
 
             PositionIndicator()
                 .count(12)
@@ -76,7 +76,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // about where the user is - and the right-hand one asks for it.
             HStack {
                 VStack {
-                    Label("hideSingle(true)")
+                    Text("hideSingle(true)")
 
                     PositionIndicator()
                         .count(1)
@@ -87,7 +87,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 }
 
                 VStack {
-                    Label("hideSingle(false)")
+                    Text("hideSingle(false)")
 
                     PositionIndicator()
                         .count(1)
@@ -102,14 +102,14 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
 
     private static let steps = ["Describe", "Diff", "Send", "Render"]
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label(Self.steps[step])
+            Text(Self.steps[step])
                 .fontSize(20)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             PositionIndicator()
                 .count(Self.steps.count)
@@ -129,14 +129,14 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             HStack {
                 Button("Back")
                     .fontSize(13)
-                    .padding(16, 6)
-                    .isEnabled(step > 0)
+                    .contentPadding(16, 6)
+                    .disabled(step <= 0)
                     .onClicked { step -= 1 }
 
                 Button("Next")
                     .fontSize(13)
-                    .padding(16, 6)
-                    .isEnabled(step < Self.steps.count - 1)
+                    .contentPadding(16, 6)
+                    .disabled(step >= Self.steps.count - 1)
                     .onClicked { step += 1 }
             }
             .spacing(10)
@@ -146,9 +146,9 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // on the DOTS and not on the items: `count` is twelve in both
             // rows, and the stepper takes the second row's dots away one at a
             // time.
-            Label("Twelve items, maximumVisible(12)")
+            Text("Twelve items, maximumVisible(12)")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
             PositionIndicator()
@@ -159,9 +159,9 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .selectedIndicatorColor(Palette.accent)
                 .horizontalAlignment(.center)
 
-            Label("The same twelve, maximumVisible(\(Int(cap)))")
+            Text("The same twelve, maximumVisible(\(Int(cap)))")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
             PositionIndicator()
@@ -184,10 +184,10 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // about where the user is - and the right-hand one asks for it.
             HStack {
                 VStack {
-                    Label("hideSingle(true)")
+                    Text("hideSingle(true)")
                         .fontSize(12)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
 
                     PositionIndicator()
                         .count(1)
@@ -200,10 +200,10 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .spacing(6)
 
                 VStack {
-                    Label("hideSingle(false)")
+                    Text("hideSingle(false)")
                         .fontSize(12)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
 
                     PositionIndicator()
                         .count(1)
@@ -221,31 +221,31 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The usual home for one is under a GalleryView. Both take a `position`, so "
+            Text("The usual home for one is under a GalleryView. Both take a `position`, so "
                 + "one @State joins them - which is also what makes a PositionIndicator useful "
                 + "on its own, as above.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Nothing about it is the user's to change, so there is no binding "
+            Text("Nothing about it is the user's to change, so there is no binding "
                 + "overload - `position` is told to it.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`maximumVisible` is a ceiling on the DOTS: both rows above say "
+            Text("`maximumVisible` is a ceiling on the DOTS: both rows above say "
                 + "`count(12)`, and only the number drawn moves as the stepper does - "
                 + "which is what keeps a long sequence's dots a readable width.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`hideSingle` is true by default, which is why an indicator over a "
+            Text("`hideSingle` is true by default, which is why an indicator over a "
                 + "ONE-item list draws nothing at all: a lone dot says nothing about where "
                 + "the user is. The two columns above are that same one-item indicator, "
                 + "both ways round.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

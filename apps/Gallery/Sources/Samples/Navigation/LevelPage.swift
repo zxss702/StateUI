@@ -7,7 +7,7 @@ import StateUI
 /// It also shows what a PAGE can still ask of the stack it is on, the bar
 /// itself belonging to the arrangement: those requests are written into the
 /// page session.
-struct LevelPage: ContentView {
+struct LevelPage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -43,46 +43,46 @@ struct LevelPage: ContentView {
     @State private var leaving = 0
     @State private var left = 0
 
-    var content: any View {
+    var body: some View {
         VStack {
             SectionTitle("Pushed page")
 
-            Label("Level \(level)")
+            Text("Level \(level)")
                 .fontSize(32)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label("appeared \(arrivals)× · disappeared \(departures)×")
+            Text("appeared \(arrivals)× · disappeared \(departures)×")
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
-            Label("navigated to \(navigatedTo)× · leaving \(leaving)× · left \(left)×")
+            Text("navigated to \(navigatedTo)× · leaving \(leaving)× · left \(left)×")
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             Button("Deeper")
                 .background(Palette.accent)
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { path.append(.level(level + 1)) }
 
             Button("Back")
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .onClicked { path.removeLast() }
 
-            Label("Go deeper and come back: the same page counts a second arrival.")
+            Text("Go deeper and come back: the same page counts a second arrival.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
         }
         .spacing(16)
-        .padding(24)
-        .onCreated {
+        .contentPadding(24)
+        .onAppear {
             page.gallery("Level \(level)", scene: scene, nav: nav)
 
             // What the back button reads while the page ABOVE this one is on
@@ -95,7 +95,7 @@ struct LevelPage: ContentView {
         // `appearing` comes on every arrival, the first one included, which
         // makes it the moment to refresh what may have changed while the page
         // was covered.
-        .onChanged(page.phase) {
+        .onChange(of: page.phase) {
             switch page.phase {
             case .appearing: arrivals += 1
             case .disappearing: departures += 1

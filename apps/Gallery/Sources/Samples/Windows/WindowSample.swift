@@ -12,16 +12,16 @@ struct WindowSample: SampleContent, ExampleContent {
     @State private var height = 0.0
 
     static let id = "window"
-    static let title = "Window"
+    static let title = "WindowScene"
     static let summary = "Change the native window while it stays on screen."
 
     static let code = """
-        struct MainWindow: Window {
+        struct MainWindow: WindowScene {
             @Environment private var window: WindowSession
 
             var page: any Page {
                 HomePage()
-                    .onCreated {
+                    .onAppear {
                         window.title = "Notes"
                         window.width = 1100
                         window.height = 800
@@ -55,28 +55,28 @@ struct WindowSample: SampleContent, ExampleContent {
             window.height = 650
         }
 
-        Switch($maximizable).onChanged(maximizable) {
+        Switch($maximizable).onChange(of: maximizable) {
             window.isMaximizable = maximizable
         }
 
-        Switch($minimizable).onChanged(minimizable) {
+        Switch($minimizable).onChange(of: minimizable) {
             window.isMinimizable = minimizable
         }
 
         Switch($translucent)
-            .onChanged(translucent) {
+            .onChange(of: translucent) {
                 window.isTranslucent = translucent
             }
-            .onCreated { translucent = window.isTranslucent == true }
+            .onAppear { translucent = window.isTranslucent == true }
         """
 
-    var notes: Element? { nil }
+    var notes: (any View)? { nil }
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label(window.title ?? "Platform title")
+            Text(window.title ?? "Platform title")
                 .fontSize(15)
                 .fontAttributes(.bold)
 
@@ -111,23 +111,23 @@ struct WindowSample: SampleContent, ExampleContent {
             .spacing(10)
 
             option("Maximize", id: "window.maximize", value: $maximizable)
-                .onChanged(maximizable) {
+                .onChange(of: maximizable) {
                     window.isMaximizable = maximizable
                 }
 
             option("Minimize", id: "window.minimize", value: $minimizable)
-                .onChanged(minimizable) {
+                .onChange(of: minimizable) {
                     window.isMinimizable = minimizable
                 }
 
             option("Translucent", id: "window.translucent", value: $translucent)
-                .onChanged(translucent) {
+                .onChange(of: translucent) {
                     window.isTranslucent = translucent
                 }
 
-            Label("Sample frame: \(Int(width)) × \(Int(height))")
+            Text("Sample frame: \(Int(width)) × \(Int(height))")
                 .fontSize(13)
-                .textColor(Palette.accent)
+                .foregroundStyle(Palette.accent)
         }
         .spacing(12)
         .onFrameChanged(in: .global) { frame in
@@ -136,14 +136,14 @@ struct WindowSample: SampleContent, ExampleContent {
         }
         // The switch starts where the window stands - on, where the gallery's
         // window opens translucent.
-        .onCreated { translucent = window.isTranslucent == true }
+        .onAppear { translucent = window.isTranslucent == true }
     }
 
     /// An action that writes the surrounding window session.
     private func action(_ title: String, _ write: @escaping () -> Void) -> any View {
         Button(title)
             .fontSize(13)
-            .padding(16, 6)
+            .contentPadding(16, 6)
             .onClicked { write() }
     }
 
@@ -153,7 +153,7 @@ struct WindowSample: SampleContent, ExampleContent {
             Switch(value)
                 .accessibilityIdentifier(id)
                 .accessibilityLabel(title)
-            Label(title).verticalAlignment(.center)
+            Text(title).verticalAlignment(.center)
         }
         .spacing(8)
     }

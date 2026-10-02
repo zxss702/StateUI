@@ -38,7 +38,7 @@ final class ContractRoadsTests: XCTestCase {
             static let members: [any ContractMember] = [title, level, tapped]
         }
 
-        struct Marker: View {
+        struct Marker: VisualElement {
             var node = Node(contract: MarkerContract.self)
         }
 
@@ -57,8 +57,8 @@ final class ContractRoadsTests: XCTestCase {
     private static let roads = [
         Road(
             name: "a property set by its token",
-            removed: #"_ = Label("Hi").setValue(Prop("fontSize"), .number(20))"#,
-            contract: #"_ = Label("Hi").setValue(FontElementContract.fontSize, 20)"#),
+            removed: #"_ = Text("Hi").setValue(Prop("fontSize"), .number(20))"#,
+            contract: #"_ = Text("Hi").setValue(FontElementContract.fontSize, 20)"#),
         Road(
             name: "a property driven from a state by its token",
             removed: """
@@ -133,8 +133,8 @@ final class ContractRoadsTests: XCTestCase {
                 """),
         Road(
             name: "the withdrawn SwipeView",
-            removed: #"_ = SwipeView { Label("Row") }"#,
-            contract: #"_ = Label("Row").onSwiped { _ in }"#),
+            removed: #"_ = SwipeView { Text("Row") }"#,
+            contract: #"_ = Text("Row").onSwiped { _ in }"#),
         Road(
             name: "the withdrawn SwipeAction",
             removed: #"_ = SwipeAction("Delete")"#,
@@ -145,8 +145,8 @@ final class ContractRoadsTests: XCTestCase {
             contract: #"_ = PersistentKey("notes.draft", of: String.self)"#),
         Road(
             name: "the withdrawn RefreshView",
-            removed: #"_ = RefreshView { ScrollView { Label("Rows") } }"#,
-            contract: #"_ = ScrollView { Label("Rows") }"#),
+            removed: #"_ = RefreshView { ScrollView { Text("Rows") } }"#,
+            contract: #"_ = ScrollView { Text("Rows") }"#),
         Road(
             name: "a button's withdrawn borderColor",
             removed: ##"_ = Button("Save").borderColor(Color("#888888"))"##,
@@ -161,20 +161,20 @@ final class ContractRoadsTests: XCTestCase {
             contract: #"_ = Button("Save").shape(.roundedRectangle(8))"#),
         Road(
             name: "the withdrawn Border",
-            removed: ##"_ = Border { Label("Card") }.stroke(Color("#888888"))"##,
-            contract: ##"_ = ZStack { Label("Card") }.shape(.roundedRectangle(8)).stroke(Color("#888888"))"##),
+            removed: ##"_ = Border { Text("Card") }.stroke(Color("#888888"))"##,
+            contract: ##"_ = ZStack { Text("Card") }.shape(.roundedRectangle(8)).stroke(Color("#888888"))"##),
         Road(
             name: "the withdrawn AbsoluteLayout",
-            removed: #"_ = AbsoluteLayout { Label("Corner") }"#,
-            contract: #"_ = ZStack { Label("Corner") }"#),
+            removed: #"_ = AbsoluteLayout { Text("Corner") }"#,
+            contract: #"_ = ZStack { Text("Corner") }"#),
         Road(
             name: "the withdrawn absolute bounds",
-            removed: #"_ = Label("Corner").absoluteLayoutBounds(Rect(0, 0, 120, 40))"#,
-            contract: #"_ = Label("Corner").area(.absolute(0, 0, 120, 40))"#),
+            removed: #"_ = Text("Corner").absoluteLayoutBounds(Rect(0, 0, 120, 40))"#,
+            contract: #"_ = Text("Corner").area(.absolute(0, 0, 120, 40))"#),
         Road(
             name: "the withdrawn proportions",
-            removed: #"_ = Label("Half").absoluteLayoutProportions(.all)"#,
-            contract: #"_ = Label("Half").area(.proportional(0.5, 0, 0.5, 1))"#),
+            removed: #"_ = Text("Half").absoluteLayoutProportions(.all)"#,
+            contract: #"_ = Text("Half").area(.proportional(0.5, 0, 0.5, 1))"#),
         Road(
             name: "a visual state by a name of the author's own",
             removed: #"_ = Button("Save").visualState(VisualState("Hovered")) { $0.opacity(0.5) }"#,
@@ -197,8 +197,8 @@ final class ContractRoadsTests: XCTestCase {
             contract: #"_ = Button("Save").visualState(.focused) { $0.opacity(1) }"#),
         Road(
             name: "the withdrawn selected state",
-            removed: #"_ = Label("Row").visualState(.selected) { $0.opacity(0.5) }"#,
-            contract: #"_ = Label("Row").visualState(.pointerOver) { $0.opacity(0.5) }"#),
+            removed: #"_ = Text("Row").visualState(.selected) { $0.opacity(0.5) }"#,
+            contract: #"_ = Text("Row").visualState(.pointerOver) { $0.opacity(0.5) }"#),
         Road(
             name: "the host's withdrawn visual state report",
             removed: #"_ = Button("Save").onEvent(VisualElementContract.visualStateChanged) { _ in }"#,

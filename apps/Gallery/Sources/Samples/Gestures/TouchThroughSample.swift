@@ -26,28 +26,28 @@ struct TouchThroughSample: SampleContent, ExampleContent {
 
             Grid {
                 // Underneath, and still reachable.
-                ColorBox(Palette.accent)
-                    .height(120)
-                    .onTapped { below += 1 }
+                ColorPicker(Palette.accent)
+                    .frame(height: 120)
+                    .onTapGesture { below += 1 }
 
                 // On top. Its own empty area lets taps through to the box below
                 // while the label inside still answers - or, with the switch on,
                 // the whole of it ignores input, the label included.
                 VStack {
-                    Label("tap the child")
-                        .textColor(Palette.onBrand)
+                    Text("tap the child")
+                        .foregroundStyle(Palette.onBrand)
                         .background(Palette.brand)
-                        .padding(14, 8)
+                        .contentPadding(14, 8)
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
-                        .onTapped { child += 1 }
+                        .onTapGesture { child += 1 }
                 }
-                .padding(16)
+                .contentPadding(16)
                 .letsInputThrough(!childrenToo)
-                .ignoresInput(childrenToo)
+                .allowsHitTesting(!childrenToo)
             }
 
-            Label("below \\(below)   child \\(child)")
+            Text("below \\(below)   child \\(child)")
 
             HStack {
                 SwitchRow("Children too", $childrenToo)
@@ -58,33 +58,33 @@ struct TouchThroughSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             Grid {
-                ColorBox(Palette.accent)
-                    .height(120)
-                    .onTapped { below += 1 }
+                ColorPicker(Palette.accent)
+                    .frame(height: 120)
+                    .onTapGesture { below += 1 }
 
                 VStack {
                     // The child wears its own colour and its own padding, so
                     // what is the child and what is the empty area around it
                     // can be told apart by eye - and aimed at separately.
-                    Label("tap the child")
-                        .textColor(Palette.onBrand)
+                    Text("tap the child")
+                        .foregroundStyle(Palette.onBrand)
                         .background(Palette.brand)
-                        .padding(24, 12)
+                        .contentPadding(24, 12)
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
-                        .onTapped { child += 1 }
+                        .onTapGesture { child += 1 }
                 }
-                .padding(16)
+                .contentPadding(16)
                 .letsInputThrough(!childrenToo)
-                .ignoresInput(childrenToo)
+                .allowsHitTesting(!childrenToo)
             }
 
-            Label("below \(below)   child \(child)")
+            Text("below \(below)   child \(child)")
                 .fontSize(13)
                 .horizontalAlignment(.center)
 
@@ -100,23 +100,23 @@ struct TouchThroughSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("`letsInputThrough(true)` takes only a layout's own empty area out of "
+            Text("`letsInputThrough(true)` takes only a layout's own empty area out of "
                 + "hit testing: a tap there reaches the box below, and the label inside "
                 + "still counts. It is what an overlay over a page wants.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`ignoresInput(true)` takes the view and everything in it out - with the "
+            Text("`ignoresInput(true)` takes the view and everything in it out - with the "
                 + "switch on, the label stops counting too and every tap reaches the box.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Neither is the same as disabled: a disabled view still takes the tap "
+            Text("Neither is the same as disabled: a disabled view still takes the tap "
                 + "and does nothing with it, while these are not hit at all.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

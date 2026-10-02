@@ -44,19 +44,19 @@ struct KeyboardSample: SampleContent, ExampleContent {
                         : "Nothing was focused"
                 }
 
-            Label(said.isEmpty ? "Nothing said yet." : said)
+            Text(said.isEmpty ? "Nothing said yet." : said)
         }
         """
 
-    var notes: Element? {
-        Label("`focus()` and `unfocus()` are acts aimed at one field with `@Aim`. "
+    var notes: (any View)? {
+        Text("`focus()` and `unfocus()` are acts aimed at one field with `@Aim`. "
             + "`OnScreenKeyboard.hide()` releases whichever input holds the focus, and answers "
             + "whether anything did.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -89,9 +89,9 @@ struct KeyboardSample: SampleContent, ExampleContent {
                         : "Nothing was focused"
                 }
 
-            Label(said.isEmpty ? "Nothing said yet." : said)
+            Text(said.isEmpty ? "Nothing said yet." : said)
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

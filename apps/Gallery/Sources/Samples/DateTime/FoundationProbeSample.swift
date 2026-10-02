@@ -36,12 +36,12 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
 
             ForEach(rows, id: \\.0) { row in
                 VStack {
-                    Label(row.0)
-                    Label(row.1)
+                    Text(row.0)
+                    Text(row.1)
                 }
             }
         }
-        .onCreated {
+        .onAppear {
             let hostZone = try await TimeZoneInfo.local()
 
             #if canImport(Android)
@@ -114,24 +114,24 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             ForEach(rows, id: \.0) { row in
                 VStack {
-                    Label(row.0)
+                    Text(row.0)
                         .fontSize(11)
-                        .textColor(Palette.subtle)
+                        .foregroundStyle(Palette.subtle)
 
-                    Label(row.1)
+                    Text(row.1)
                         .fontSize(15)
                 }
                 .spacing(1)
             }
         }
         .spacing(10)
-        .onCreated {
+        .onAppear {
             let hostZone = try await TimeZoneInfo.local()
 
             #if canImport(Android)
@@ -198,31 +198,31 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
         }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Each row is one question put to Foundation on this platform. The "
+            Text("Each row is one question put to Foundation on this platform. The "
                 + "library crosses the boundary with three-integer dates; Foundation here "
                 + "is the application's own import. On Apple it is the system's; on "
                 + "Android it is swift-foundation, whose zones come from an ICU it "
                 + "carries itself.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Android cannot detect the current zone - its tz database is packed "
+            Text("Android cannot detect the current zone - its tz database is packed "
                 + "in a format Foundation does not read, so TimeZone.current starts as "
                 + "GMT. The host knows the zone, so the handler asks it and sets TZ "
                 + "before Foundation first looks. Every row above depends on that one "
                 + "line.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Windows fails one step earlier: only FoundationEssentials is linked "
+            Text("Windows fails one step earlier: only FoundationEssentials is linked "
                 + "there, so there is no zone database for TZ to name. Dates, calendar "
                 + "arithmetic, ISO8601 and JSON are right; TimeZone.current is GMT, a "
                 + "named zone is nil and Locale.current is a fallback. The host row is "
                 + "the answer on that platform, the way the host's time already is.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
     }

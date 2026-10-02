@@ -1,14 +1,14 @@
 // The few colours the gallery says for itself.
 //
-// A colour written as a pair - `Color(light:dark:)` - follows the theme: the
+// A colour written as a pair - `Color(light:dark:)` - follows the color scheme: the
 // half the system is asking for is picked as the view wearing it is built, and
-// a change of theme builds exactly the views wearing one again. So nothing here
-// has to know which theme is on, and neither does anything using it - which is
+// a change of color scheme builds exactly the views wearing one again. So nothing here
+// has to know which color scheme is on, and neither does anything using it - which is
 // why every name below is one name rather than two.
 //
 // These are for what a colour is FOR. What it IS is in AppColors beside this,
 // and almost everything reaches it through here; the colours that must not
-// follow the theme, and a sample showing a colour of its own, read it directly.
+// follow the color scheme, and a sample showing a colour of its own, read it directly.
 
 import StateUI
 
@@ -35,7 +35,7 @@ enum Palette {
     /// near-black caption on a filled button reads as DISABLED, and an
     /// affordance the user misreads costs more than the contrast buys. The
     /// trap is that white on the accent's dark half measures 2.3:1 - a deeper
-    /// dark-theme accent is what raises that without darkening the text.
+    /// dark-color scheme accent is what raises that without darkening the text.
     static let onAccent = Color(light: AppColors.white, dark: AppColors.white)
 
     /// Text that reads on `brand`, and on the bar. White in both, which is what
@@ -60,7 +60,7 @@ enum Palette {
 
     // MARK: Text
 
-    /// Ordinary text. The implicit Label style sets this; it is here for the
+    /// Ordinary text. The implicit Text style sets this; it is here for the
     /// places that need to say it again - over a filled panel, say.
     static let text = Color(light: AppColors.ink, dark: AppColors.inkDark)
 

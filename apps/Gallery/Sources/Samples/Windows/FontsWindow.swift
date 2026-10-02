@@ -3,12 +3,12 @@ import StateUI
 /// The window a gallery chooses its font in - a window OF THE GALLERY that
 /// opened it: it closes with that gallery, may step aside for another, and
 /// changes what this gallery shows and no other. See `MultiWindowSample`.
-struct FontsWindow: Window {
+struct FontsWindow: WindowScene {
     var page: any Page { FontsPage() }
 }
 
 /// The families on offer, each set in itself.
-struct FontsPage: ContentView {
+struct FontsPage: View {
     /// The gallery's look - the one its scene offers every window of it.
     @Environment private var style: SessionStyle
 
@@ -22,22 +22,22 @@ struct FontsPage: ContentView {
     /// platform's own.
     static let families = ["", "Georgia", "Courier New", "Trebuchet MS"]
 
-    var content: any View {
+    var body: some View {
         VStack {
-            Label("The font this gallery's preview is set in.")
+            Text("The font this gallery's preview is set in.")
                 .fontSize(13)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            ForEach(FontsPage.families) { family -> Element in
+            ForEach(FontsPage.families) { family in
                 let chosen = style.font == family
                 let button = Button(family.isEmpty ? "The platform's own" : family)
                     .fontSize(15)
-                    .textColor(chosen ? .white : Palette.text)
+                    .foregroundStyle(chosen ? .white : Palette.text)
                     .background(chosen ? style.accent.color : .transparent)
                     .stroke(Palette.subtle)
                     .strokeWidth(chosen ? 0 : 1)
                     .shape(.roundedRectangle(8))
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked { style.font = family }
 
                 return family.isEmpty ? button : button.fontFamily(family)
@@ -46,14 +46,14 @@ struct FontsPage: ContentView {
             // The window closes itself, through its own session.
             Button("Done")
                 .fontSize(13)
-                .padding(14, 6)
+                .contentPadding(14, 6)
                 .horizontalAlignment(.end)
                 .onClicked { try await window.close() }
         }
         .spacing(10)
-        .onCreated {
+        .onAppear {
             page.title = "Fonts"
-            page.padding = Insets(16)
+            page.contentPadding = EdgeInsets(16)
 
             window.title = "Fonts"
             window.width = 320

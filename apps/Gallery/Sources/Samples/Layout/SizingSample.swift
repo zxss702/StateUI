@@ -9,136 +9,136 @@ struct SizingSample: SampleContent, ExampleContent {
     static let code = """
         VStack {
             // A request, not an instruction: the layout has the last word.
-            ColorBox(Palette.accent)
-                .width(120)
-                .height(24)
+            ColorPicker(Palette.accent)
+                .frame(width: 120)
+                .frame(height: 24)
 
             // Filling the width, but never past 200.
-            ColorBox(Palette.accent)
-                .height(24)
-                .maximumWidth(200)
+            ColorPicker(Palette.accent)
+                .frame(height: 24)
+                .frame(maxWidth: 200)
 
             // Filling the width, but never squeezed below 160.
-            ColorBox(Palette.accent)
-                .height(24)
-                .minimumWidth(160)
+            ColorPicker(Palette.accent)
+                .frame(height: 24)
+                .frame(minWidth: 160)
 
             // The same ceiling on the other axis, against the same request
             // without it: 80 asked for on the left, 32 allowed on the right.
             HStack {
-                ColorBox(Palette.outline)
-                    .width(60)
-                    .height(80)
+                ColorPicker(Palette.outline)
+                    .frame(width: 60)
+                    .frame(height: 80)
                     .verticalAlignment(.start)
 
-                ColorBox(Palette.accent)
-                    .width(60)
-                    .height(80)
-                    .maximumHeight(32)
+                ColorPicker(Palette.accent)
+                    .frame(width: 60)
+                    .frame(height: 80)
+                    .frame(maxHeight: 32)
                     .verticalAlignment(.start)
             }
             .spacing(10)
 
             // A child drawn past the layout's edge, cut off at it.
             VStack {
-                ColorBox(Palette.accent)
-                    .height(24)
-                    .translationX(60)
+                ColorPicker(Palette.accent)
+                    .frame(height: 24)
+                    .offset(x: 60)
             }
             .clipsContent(true)
-            .width(120)
+            .frame(width: 120)
 
             // The same child in the same layout, and nothing cut off.
             VStack {
-                ColorBox(Palette.accent)
-                    .height(24)
-                    .translationX(60)
+                ColorPicker(Palette.accent)
+                    .frame(height: 24)
+                    .offset(x: 60)
             }
             .clipsContent(false)
-            .width(120)
+            .frame(width: 120)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             row("width(120)",
-                ColorBox(Palette.accent).width(120).height(24))
+                ColorPicker(Palette.accent).frame(width: 120).frame(height: 24))
 
             row("maximumWidth(200)",
-                ColorBox(Palette.accent).height(24).maximumWidth(200))
+                ColorPicker(Palette.accent).frame(height: 24).frame(maxWidth: 200))
 
             row("minimumWidth(160)",
-                ColorBox(Palette.accent).height(24).minimumWidth(160))
+                ColorPicker(Palette.accent).frame(height: 24).frame(minWidth: 160))
 
             // The pair is the point: both ask for 80 high, and only the one
             // without a ceiling on it is allowed to have it.
             row("height(80), then the same with maximumHeight(32)",
                 HStack {
-                    ColorBox(Palette.outline)
-                        .width(60)
-                        .height(80)
+                    ColorPicker(Palette.outline)
+                        .frame(width: 60)
+                        .frame(height: 80)
                         .verticalAlignment(.start)
 
-                    ColorBox(Palette.accent)
-                        .width(60)
-                        .height(80)
-                        .maximumHeight(32)
+                    ColorPicker(Palette.accent)
+                        .frame(width: 60)
+                        .frame(height: 80)
+                        .frame(maxHeight: 32)
                         .verticalAlignment(.start)
                 }
                 .spacing(10))
 
             row("clipsContent(true)",
                 VStack {
-                    ColorBox(Palette.accent)
-                        .height(24)
-                        .translationX(60)
+                    ColorPicker(Palette.accent)
+                        .frame(height: 24)
+                        .offset(x: 60)
                 }
                 .clipsContent(true)
-                .width(120))
+                .frame(width: 120))
 
             row("clipsContent(false)",
                 VStack {
-                    ColorBox(Palette.accent)
-                        .height(24)
-                        .translationX(60)
+                    ColorPicker(Palette.accent)
+                        .frame(height: 24)
+                        .offset(x: 60)
                 }
                 .clipsContent(false)
-                .width(120))
+                .frame(width: 120))
         }
         .spacing(14)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Every one of these is a REQUEST. The layout decides, and a stack that "
+            Text("Every one of these is a REQUEST. The layout decides, and a stack that "
                 + "has no room to spare will ignore a width it cannot give - which is why "
                 + "the bounds are worth saying separately from the size.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`maximumWidth` and `maximumHeight` are the ceiling: a "
+            Text("`maximumWidth` and `maximumHeight` are the ceiling: a "
                 + "view filling its parent stops growing there, and a view that ASKED for "
                 + "more than the ceiling gets the ceiling. The minimum pair are the floor, "
                 + "and stop it being squeezed.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`clipsContent` is the LAYOUT's edge, and cuts off a child drawn "
+            Text("`clipsContent` is the LAYOUT's edge, and cuts off a child drawn "
                 + "past it - here by a translation. It is not the same as a shape given "
                 + "to one view.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }
 
     /// One example with the modifier that made it, so the column reads as a
     /// list of named cases.
-    private func row(_ caption: String, _ view: Element) -> any View {
+    private func row(_ caption: String, _ view: any View) -> any View {
         VStack {
-            Label(caption)
+            Text(caption)
                 .fontSize(11)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             view
         }

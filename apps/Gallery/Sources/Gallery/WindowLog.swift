@@ -28,18 +28,18 @@ final class WindowLog {
 /// activated/deactivated pair follows the host's own window activation, and
 /// where the application stands is `application.phase`, which the Phases
 /// sample shows.
-struct WindowPhaseLog: ContentView {
+struct WindowPhaseLog: View {
     /// Where the moments are written.
     let log: WindowLog
 
     /// The window this view stands in, whose phase it follows.
     @Environment private var window: WindowSession
 
-    var content: any View {
-        ColorBox(Color("#00000000"))
-            .width(0)
-            .height(0)
-            .ignoresInput(true)
-            .onChanged(window.phase) { log.note("\(window.phase)") }
+    var body: some View {
+        ColorPicker(Color("#00000000"))
+            .frame(width: 0)
+            .frame(height: 0)
+            .allowsHitTesting(false)
+            .onChange(of: window.phase) { log.note("\(window.phase)") }
     }
 }

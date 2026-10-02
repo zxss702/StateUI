@@ -18,12 +18,12 @@ struct ProgressBarSample: SampleContent, ExampleContent {
             // How far along is read here, so every step builds this closure.
             DebugInfoLabel()
 
-            Label("Step \\(Int(done)) of \\(Int(steps))")
+            Text("Step \\(Int(done)) of \\(Int(steps))")
 
             // A FRACTION, not a count: the division happens here, in Swift,
             // because that is where the numbers are.
             ProgressBar(done / steps)
-                .height(8)
+                .frame(height: 8)
 
             Stepper($done)
                 .minimum(0)
@@ -35,21 +35,21 @@ struct ProgressBarSample: SampleContent, ExampleContent {
             // move opposite ways.
             ProgressBar()
                 .progress(1 - done / steps)
-                .height(8)
+                .frame(height: 8)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("Step \(Int(done)) of \(Int(steps))")
+            Text("Step \(Int(done)) of \(Int(steps))")
                 .fontSize(17)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             ProgressBar(done / steps)
                 .tint(Palette.accent)
-                .height(8)
+                .frame(height: 8)
 
             Stepper($done)
                 .accessibilityIdentifier("progressBar.done")
@@ -64,36 +64,36 @@ struct ProgressBarSample: SampleContent, ExampleContent {
             ProgressBar()
                 .progress(1 - done / steps)
                 .tint(Palette.subtle)
-                .height(8)
+                .frame(height: 8)
 
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("A FRACTION, not a percentage and not a count: 0.4 is four tenths of the "
+            Text("A FRACTION, not a percentage and not a count: 0.4 is four tenths of the "
                 + "way through, whatever the work is measured in. The step count is divided "
                 + "in Swift, because that is where the numbers are. A value outside 0 to 1 "
                 + "is clamped, so a bar is never drawn more than full.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`ProgressBar()` carries no value at all, so `.progress` is how one "
+            Text("`ProgressBar()` carries no value at all, so `.progress` is how one "
                 + "reaches it - and it sets the very property the initializer's argument "
                 + "sets. This one shows what is LEFT to do, so the two bars move opposite "
                 + "ways as the stepper is tapped.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("That pairing is the rule, not this control's quirk: wherever a "
+            Text("That pairing is the rule, not this control's quirk: wherever a "
                 + "control takes its purpose in the initializer - `Switch($on)`, "
                 + "`Picker(items)`, `Path(\"M 28,0 ...\")`, `Polygon(points)` - there is a "
                 + "modifier of the same name beside it. The initializer is what a view "
                 + "written in place uses; the MODIFIER is what a `Style` needs, and what "
                 + "a control built empty and filled in later has.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

@@ -7,7 +7,7 @@ import StateUI
 /// One type for every group rather than one page per category - a group differs
 /// by what is in it, and nothing else. Adding a category is a line in the
 /// catalog, not a file.
-struct GroupPage: ContentView {
+struct GroupPage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -22,16 +22,16 @@ struct GroupPage: ContentView {
     /// Which kind of device this is - what decides which samples are listed.
     @Environment var device: DeviceInfo
 
-    var content: any View {
+    var body: some View {
         ScrollView {
             VStack {
-                Label(group.title)
+                Text(group.title)
                     .fontSize(28)
                     .fontAttributes(.bold)
 
-                Label(group.summary)
+                Text(group.summary)
                     .fontSize(14)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
 
                 // Tapping PUSHES the sample's page: one more element on the
                 // array the stack is, with the id riding as a value of the
@@ -45,8 +45,8 @@ struct GroupPage: ContentView {
                 }
             }
             .spacing(14)
-            .padding(24)
+            .contentPadding(24)
         }
-        .onCreated { page.gallery(group.title, scene: scene, nav: nav) }
+        .onAppear { page.gallery(group.title, scene: scene, nav: nav) }
     }
 }

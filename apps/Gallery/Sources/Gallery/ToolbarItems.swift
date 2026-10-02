@@ -22,7 +22,7 @@ extension ToolbarItem {
     /// The picture is the WHITE house in both themes, which is the one that
     /// reads on the accent bar `MainWindow` paints - see the note in
     /// GalleryPage.swift on why a ToolbarItem's icon cannot be tinted and has to
-    /// be chosen instead. The file is named for the theme it was drawn for; what
+    /// be chosen instead. The file is named for the color scheme it was drawn for; what
     /// decides here is the colour behind it, and that colour does not change.
     ///
     /// **One assignment.** `nav.home()` sets the section and empties the path,

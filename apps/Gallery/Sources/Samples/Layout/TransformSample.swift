@@ -39,7 +39,7 @@ struct TransformSample: SampleContent, ExampleContent {
             // costs. Each row of boxes below reads the switch in its own
             // braces, so each of them is a reader of its own.
             HStack {
-                Label(transformed ? "every transform on" : "plain squares")
+                Text(transformed ? "every transform on" : "plain squares")
 
                 DebugInfoLabel()
             }
@@ -49,29 +49,29 @@ struct TransformSample: SampleContent, ExampleContent {
             // is a plain move right, written before it is swung round by it.
             HStack {
                 box(Family.order)
-                    .transform(transformed ? .rotate(45).translate(28, 0) : .identity)
+                    .transformEffect(transformed ? .rotate(45).translate(28, 0) : .identity)
 
                 box(Family.order)
-                    .transform(transformed ? .translate(28, 0).rotate(45) : .identity)
+                    .transformEffect(transformed ? .translate(28, 0).rotate(45) : .identity)
             }
 
             HStack {
                 // Flat, in the plane of the screen.
                 box(Family.turn)
-                    .rotation(transformed ? 20 : 0)
+                    .rotationEffect(transformed ? 20 : 0)
 
                 // Tipped about the horizontal axis: the top goes away.
                 box(Family.turn)
-                    .rotationX(transformed ? 55 : 0)
+                    .rotation3DEffect(x: transformed ? 55 : 0)
 
                 // Turned about the vertical axis: one side goes away.
                 box(Family.turn)
-                    .rotationY(transformed ? 55 : 0)
+                    .rotation3DEffect(y: transformed ? 55 : 0)
 
                 // The same turn about the top left corner instead of the
                 // middle, which is what an anchor moves.
                 box(Family.turn)
-                    .rotation(transformed ? 20 : 0)
+                    .rotationEffect(transformed ? 20 : 0)
                     .pivotX(0)
                     .pivotY(0)
             }
@@ -82,23 +82,23 @@ struct TransformSample: SampleContent, ExampleContent {
             HStack {
                 // Drawing only - the room the layout gave it does not change.
                 box(Family.size)
-                    .scale(transformed ? 1.6 : 1)
+                    .scaleEffect(transformed ? 1.6 : 1)
 
                 // The same factor sideways only: wider, and no taller.
                 box(Family.size)
-                    .scaleX(transformed ? 1.6 : 1)
+                    .scaleEffect(x: transformed ? 1.6 : 1)
 
                 // And the other axis on its own: taller, and no wider.
                 box(Family.size)
-                    .scaleY(transformed ? 1.6 : 1)
+                    .scaleEffect(y: transformed ? 1.6 : 1)
             }
             .spacing(44)
         }
 
-        func box(_ colour: Color) -> ColorBox {
-            ColorBox(colour)
-                .width(44)
-                .height(44)
+        func box(_ colour: Color) -> ColorPicker {
+            ColorPicker(colour)
+                .frame(width: 44)
+                .frame(height: 44)
         }
 
         /// One colour per family, so the three rows read apart at a glance.
@@ -114,7 +114,7 @@ struct TransformSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             SwitchRow("Transforms", $transformed)
 
@@ -123,9 +123,9 @@ struct TransformSample: SampleContent, ExampleContent {
             // costs. Each row of boxes below reads the switch in its own
             // braces, so each of them is a reader of its own.
             HStack {
-                Label(transformed ? "every transform on" : "plain squares")
+                Text(transformed ? "every transform on" : "plain squares")
                     .fontSize(12)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
                     .verticalAlignment(.center)
 
                 DebugInfoLabel()
@@ -138,24 +138,24 @@ struct TransformSample: SampleContent, ExampleContent {
             HStack {
                 piece(
                     box(Family.order)
-                        .transform(transformed ? .rotate(45).translate(28, 0) : .identity),
+                        .transformEffect(transformed ? .rotate(45).translate(28, 0) : .identity),
                     "rotate, then move")
 
                 piece(
                     box(Family.order)
-                        .transform(transformed ? .translate(28, 0).rotate(45) : .identity),
+                        .transformEffect(transformed ? .translate(28, 0).rotate(45) : .identity),
                     "move, then rotate")
             }
             .spacing(44)
             .horizontalAlignment(.center)
 
             HStack {
-                piece(box(Family.turn).rotation(transformed ? 20 : 0), "rotation")
-                piece(box(Family.turn).rotationX(transformed ? 55 : 0), "rotationX")
-                piece(box(Family.turn).rotationY(transformed ? 55 : 0), "rotationY")
+                piece(box(Family.turn).rotationEffect(transformed ? 20 : 0), "rotation")
+                piece(box(Family.turn).rotation3DEffect(x: transformed ? 55 : 0), "rotationX")
+                piece(box(Family.turn).rotation3DEffect(y: transformed ? 55 : 0), "rotationY")
                 piece(
                     box(Family.turn)
-                        .rotation(transformed ? 20 : 0)
+                        .rotationEffect(transformed ? 20 : 0)
                         .pivotX(0)
                         .pivotY(0),
                     "anchor 0,0")
@@ -168,9 +168,9 @@ struct TransformSample: SampleContent, ExampleContent {
             // WIDER GAP than the violet row, because a scaled box is drawn
             // outside its room and would otherwise touch its neighbours.
             HStack {
-                piece(box(Family.size).scale(transformed ? 1.6 : 1), "scale")
-                piece(box(Family.size).scaleX(transformed ? 1.6 : 1), "scaleX")
-                piece(box(Family.size).scaleY(transformed ? 1.6 : 1), "scaleY")
+                piece(box(Family.size).scaleEffect(transformed ? 1.6 : 1), "scale")
+                piece(box(Family.size).scaleEffect(x: transformed ? 1.6 : 1), "scaleX")
+                piece(box(Family.size).scaleEffect(y: transformed ? 1.6 : 1), "scaleY")
             }
             .spacing(44)
             .horizontalAlignment(.center)
@@ -178,37 +178,37 @@ struct TransformSample: SampleContent, ExampleContent {
         .spacing(22)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("One switch throws every example on the page at once. Each transform is "
+            Text("One switch throws every example on the page at once. Each transform is "
                 + "written as a choice between itself and none, and a changed transform "
                 + "travels - so the boxes fly to their turned, tipped, grown selves and back.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`.transform(_:)` is one transform in the order it is written, about the "
+            Text("`.transformEffect(_:)` is one transform in the order it is written, about the "
                 + "view's centre: `.rotate(45).translate(28, 0)` moves the turned box a plain "
                 + "28 to the right, while `.translate(28, 0).rotate(45)` swings that move "
                 + "round with the turn. That is the orange row.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`rotation` turns a view within the plane of the screen, so a square stays "
+            Text("`rotation` turns a view within the plane of the screen, so a square stays "
                 + "square; `rotationX` and `rotationY` tip it out of that plane, so it becomes "
                 + "a trapezium. All of them pivot about the anchor, the middle until it is "
                 + "moved: 0 is the left edge or the top, 1 the right edge or the bottom. The "
                 + "fourth violet box turns about its top left corner.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A transform happens after the layout: the view keeps the room it was "
+            Text("A transform happens after the layout: the view keeps the room it was "
                 + "given, and only what is drawn moves. `scale` is both axes at once and "
                 + "`scaleX` and `scaleY` one each; all three multiply the size the layout "
                 + "gave, so 1 is that size and 0.5 half of it. A scaled view overlaps its "
                 + "neighbour without pushing it aside, which is why the amber row is spaced "
                 + "wider than the violet one.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }
@@ -218,22 +218,22 @@ struct TransformSample: SampleContent, ExampleContent {
     ///
     /// - Parameter colour: which family this square belongs to.
     /// - Returns: the square, ready to be transformed.
-    private func box(_ colour: Color) -> ColorBox {
-        ColorBox(colour)
-            .width(44)
-            .height(44)
+    private func box(_ colour: Color) -> ColorPicker {
+        ColorPicker(colour)
+            .frame(width: 44)
+            .frame(height: 44)
     }
 
     /// One piece with its caption, so a row reads as labelled examples rather
     /// than bare boxes. The gap under the box is what a scaled one grows into.
-    private func piece(_ view: Element, _ caption: String) -> any View {
+    private func piece(_ view: any View, _ caption: String) -> any View {
         VStack {
             view
 
-            Label(caption)
+            Text(caption)
                 .fontSize(11)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
         }
         .spacing(22)
     }

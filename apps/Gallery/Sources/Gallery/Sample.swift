@@ -50,7 +50,7 @@ protocol SampleContent {
     /// `GalleryView`, or WebView.
     ///
     /// Such an example needs a bounded height, and stating one in points is the
-    /// wrong way to bound it: a list of `.height(240)` shows the same
+    /// wrong way to bound it: a list of `.frame(height: 240)` shows the same
     /// four rows on a phone and on a 27-inch screen, with the rest of the page
     /// empty under it. Filling the cell instead makes the example as tall as
     /// there is room for, and the thing inside it already knows how to scroll.
@@ -83,7 +83,7 @@ extension SampleContent where Self: ExampleContent {
 /// One example: a piece of interface, the words about it, and the Swift that
 /// wrote it.
 ///
-/// A `ContentView`, because that is what a piece of interface is in this
+/// A `View`, because that is what a piece of interface is in this
 /// library - so an example is written the way an application writes one, and
 /// a build reading it takes sits where the example means it to and is shown in
 /// the same place in `code`. Its `@State` is its own, carried by the catalog
@@ -91,7 +91,7 @@ extension SampleContent where Self: ExampleContent {
 ///
 /// The example says as little as it can: its controls, what they report, and
 /// at most one line saying what to try. Everything else is `notes`.
-protocol ExampleContent: ContentView {
+protocol ExampleContent: View {
     /// The Swift that produced the example: its own code with the decoration
     /// taken out, as a reader would write it.
     static var code: String { get }
@@ -106,7 +106,7 @@ protocol ExampleContent: ContentView {
     /// An `Element` and not a string, so the words are written the way every
     /// other view here is. Required with no default, so a `notes` of any other
     /// type is a compile error rather than a property nothing reads.
-    var notes: Element? { get }
+    var notes: (any View)? { get }
 
     /// What heads the example's own code.
     ///
@@ -185,10 +185,10 @@ struct HostListing {
 /// Swift.
 struct Example {
     /// The example itself, as a value whose content builds when the page does.
-    let view: Element
+    let view: any View
 
     /// The words about it, where it has any.
-    let notes: Element?
+    let notes: (any View)?
 
     /// The Swift that wrote it.
     let code: String
@@ -226,7 +226,7 @@ struct Sample {
     let fills: Bool
 
     /// The examples, usually one. Stored as values: an example is a
-    /// ContentView, so what is kept here is a placeholder whose content builds
+    /// View, so what is kept here is a placeholder whose content builds
     /// when the page does - and whose `@State` lives as long as the gallery
     /// that keeps this catalog.
     let examples: [Example]

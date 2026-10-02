@@ -29,9 +29,9 @@ struct DatePickerSample: SampleContent, ExampleContent {
                     picks += 1
                 }
 
-            Label("Due \\(due.text)")
+            Text("Due \\(due.text)")
 
-            Label(picks == 0
+            Text(picks == 0
                 ? "onDateChanged has not fired"
                 : "onDateChanged: \\(chosen), \\(picks) so far")
 
@@ -42,7 +42,7 @@ struct DatePickerSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -57,48 +57,48 @@ struct DatePickerSample: SampleContent, ExampleContent {
                     picks += 1
                 }
 
-            Label("Due \(due.text)")
+            Text("Due \(due.text)")
                 .fontSize(17)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label(picks == 0
+            Text(picks == 0
                 ? "onDateChanged has not fired"
                 : "onDateChanged: \(chosen), \(picks) so far")
                 .fontSize(13)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             Button("Push it to New Year")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked { due = CalendarDate(year: 2027, month: 1, day: 1) }
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The binding and the event are two halves of one choice: `$due` takes "
+            Text("The binding and the event are two halves of one choice: `$due` takes "
                 + "the chosen day into state, and `onDateChanged` runs after that write "
                 + "with the same day - which is where anything beyond holding the value "
                 + "belongs. The button writes `due` from the tree instead, and the count "
                 + "stays put: the event answers the USER picking a day and nothing "
                 + "else.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A CalendarDate rather than a Date: formatting a Date needs a "
+            Text("A CalendarDate rather than a Date: formatting a Date needs a "
                 + "DateFormatter, a DateFormatter needs ICU, and ICU is the one "
                 + "dependency this library cannot take. It is three numbers both "
                 + "ways - into the picker, and back out of it when a day is picked "
                 + "on screen.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The text in the field is the host's to write, in the user's locale; "
+            Text("The text in the field is the host's to write, in the user's locale; "
                 + "`.format(\"D\")` asks for the long form.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

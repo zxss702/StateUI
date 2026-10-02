@@ -1,6 +1,6 @@
 import StateUI
 
-/// One gallery - a SESSION of the application. *File ▸ New Window* opens
+/// One gallery - a SESSION of the application. *File ▸ New WindowScene* opens
 /// another, and so does the windows sample's "Open another gallery"; each has
 /// state of its own, and the windows it opens beside its main one are its own.
 ///

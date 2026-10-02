@@ -20,7 +20,7 @@ struct OnChangedSample: SampleContent, ExampleContent {
             // builds it again - which is what a get on a dragged value costs.
             DebugInfoLabel()
 
-            Label("\\(Int(celsius)) °C")
+            Text("\\(Int(celsius)) °C")
 
             Slider($celsius)
                 .minimum(-10)
@@ -31,11 +31,11 @@ struct OnChangedSample: SampleContent, ExampleContent {
             // page appears - a view arriving is not a value changing.
             VStack {
                 ForEach(log.reversed()) { line in
-                    Label(line).id(line)
+                    Text(line).id(line)
                 }
             }
-            .motion(.none)
-            .onChanged(Int(celsius)) { old, new in
+            .animation(.none)
+            .onChange(of: Int(celsius)) { old, new in
                 fired += 1
                 let arrow = new > old ? "warmer" : "colder"
                 log.append("\\(old) -> \\(new) °C, \\(arrow) (#\\(fired))")
@@ -44,11 +44,11 @@ struct OnChangedSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("\(Int(celsius)) °C")
+            Text("\(Int(celsius)) °C")
                 .fontSize(34)
                 .fontAttributes(.bold)
                 .horizontalAlignment(.center)
@@ -64,14 +64,14 @@ struct OnChangedSample: SampleContent, ExampleContent {
             // appears - a view arriving is not a value changing.
             VStack {
                 ForEach(log.reversed()) { line in
-                    Label(line)
+                    Text(line)
                         .fontSize(13)
                         .id(line)
                 }
             }
-            .motion(.none)
             .spacing(4)
-            .onChanged(Int(celsius)) { old, new in
+            .animation(.none)
+            .onChange(of: Int(celsius)) { old, new in
                 fired += 1
                 let arrow = new > old ? "warmer" : "colder"
                 log.append("\(old) -> \(new) °C, \(arrow) (#\(fired))")
@@ -82,20 +82,20 @@ struct OnChangedSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("`.onChanged` compares against what this view carried last render, on "
+            Text("`.onChanged` compares against what this view carried last render, on "
                 + "the Swift side alone - nothing about it crosses to the host. The "
                 + "two-argument form is handed the old value and the new one; the short "
                 + "form takes no arguments at all.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("It watches rounded degrees here, so dragging fires once per whole "
+            Text("It watches rounded degrees here, so dragging fires once per whole "
                 + "degree rather than once per pixel. It does not fire when the page "
                 + "appears: a view arriving is not a value changing.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

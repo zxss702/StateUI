@@ -26,12 +26,12 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
             // The bar: one driven property, and the host moves it.
             ZStack { }
             .style("Card")
-                .width($width)
-                .height(28)
+                .frame(width: $width)
+                .frame(height: 28)
 
             // The two readings, off ONE journey: `destination` is where the
             // value is going and `value` where it has got to.
-            Label($width.journey.convert {
+            Text($width.journey.convert {
                 "going to \\(Int($0.destination)) — showing \\(Int($0.value))"
             })
 
@@ -40,8 +40,8 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
             // pressed, and nought when the bar arrives.
             ZStack { }
             .style("Card")
-                .width($width.journey.convert { abs($0.destination - $0.value) })
-                .height(10)
+                .frame(width: $width.journey.convert { abs($0.destination - $0.value) })
+                .frame(height: 10)
 
             HStack {
                 Button("Grow").onClicked {
@@ -60,40 +60,40 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
 
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             ZStack {
-                Label("")
+                Text("")
             }
             .style("Card")
-            .width($width)
-            .height(28)
+            .frame(width: $width)
+            .frame(height: 28)
             .background(.solidColor(Palette.accent))
             .shape(.roundedRectangle(8))
             .strokeWidth(0)
             .horizontalAlignment(.start)
 
-            Label()
+            Text()
                 .text($width.journey.convert {
                     "going to \(Int($0.destination)) — showing \(Int($0.value))"
                 })
                 .fontSize(17)
 
-            Label("how far apart the two readings are")
+            Text("how far apart the two readings are")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             // The SAME arithmetic drawn: the distance between where the value
             // is going and where it is. It is widest the moment a button is
             // pressed and nought when the bar arrives.
             ZStack {
-                Label("")
+                Text("")
             }
             .style("Card")
-            .width($width.journey.convert { abs($0.destination - $0.value) })
-            .height(10)
+            .frame(width: $width.journey.convert { abs($0.destination - $0.value) })
+            .frame(height: 10)
             .background(.solidColor(Palette.subtle))
             .shape(.roundedRectangle(5))
             .strokeWidth(0)
@@ -103,7 +103,7 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 Button("Grow")
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .padding(16, 8)
+                    .contentPadding(16, 8)
                     .onClicked {
                         try await $width.journey.move(to: 300, .eased(1600, .cubicOut))
                     }
@@ -111,7 +111,7 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 Button("Shrink")
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .padding(16, 8)
+                    .contentPadding(16, 8)
                     .onClicked {
                         try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
                     }
@@ -120,9 +120,9 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .padding(16, 8)
+                    .contentPadding(16, 8)
                     .onClicked { $width.journey.stop() }
             }
             .spacing(10)
@@ -130,37 +130,37 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("One state, two readings. `width` is 300 the instant Grow is "
+            Text("One state, two readings. `width` is 300 the instant Grow is "
                 + "pressed; `$width.journey.value` is what the bar is actually showing this "
                 + "frame. The grey bar under the caption is the distance between them, "
                 + "widest at the start and nought on arrival.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Both numbers, and the grey bar's width, are CONVERSIONS of the one "
+            Text("Both numbers, and the grey bar's width, are CONVERSIONS of the one "
                 + "state: `$width.journey.convert { … }` reads `destination` and `value` off it "
                 + "and the host works the answer out on its own frames. Nothing on this "
                 + "page reads `width` in a body, so a 1600ms journey costs no renders at "
                 + "all: a body printing `width` would be built once per press, and one "
                 + "printing `$width.journey.value` once per frame.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Stop leaves the value where it stands and brings the destination to "
+            Text("Stop leaves the value where it stands and brings the destination to "
                 + "meet it, so the two readings agree again and the grey bar closes. "
                 + "Press Grow and then Stop half way: the caption's first number "
                 + "becomes the second.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("There is no cadence to choose. A conversion is worked out once a "
+            Text("There is no cadence to choose. A conversion is worked out once a "
                 + "frame, and what it answers is another driven state - so asking for "
                 + "a reading sixty times a second costs what asking for one twice a "
                 + "second would.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

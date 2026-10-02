@@ -45,12 +45,12 @@ struct PanSample: SampleContent, ExampleContent {
             // A fixed box for it to move inside, so the layout does not follow
             // the view about.
             ZStack {
-                ColorBox(Palette.accent)
-                    .width(64)
-                    .height(64)
+                ColorPicker(Palette.accent)
+                    .frame(width: 64)
+                    .frame(height: 64)
                     // DRIVEN, both of them.
-                    .translationX($liveX)
-                    .translationY($liveY)
+                    .offset(x: $liveX)
+                    .offset(y: $liveY)
                     .onPanUpdated { update in
                         switch update.phase {
                         case .running:
@@ -66,11 +66,11 @@ struct PanSample: SampleContent, ExampleContent {
                     }
             }
             .style("Card")
-            .height(200)
+            .frame(height: 200)
 
             // Two states into one conversion: the host works the words out
             // from where the box HAS GOT TO, on its own frames.
-            Label($liveX.journey.convert(with: $liveY.journey) { x, y in
+            Text($liveX.journey.convert(with: $liveY.journey) { x, y in
                 "Moved \\(Int(x.value)), \\(Int(y.value))"
             })
 
@@ -106,23 +106,23 @@ struct PanSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             // A fixed box for it to move inside, so the layout does not follow
             // the view about.
             ZStack {
-                ColorBox(Palette.accent)
+                ColorPicker(Palette.accent)
                     .cornerRadius(10)
-                    .width(64)
-                    .height(64)
+                    .frame(width: 64)
+                    .frame(height: 64)
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
                     // DRIVEN, both of them: the host reads the translation off
                     // the state every frame, and no report renders anything.
-                    .translationX($liveX)
-                    .translationY($liveY)
+                    .offset(x: $liveX)
+                    .offset(y: $liveY)
                     .onPanUpdated { update in
                         switch update.phase {
                         case .running:
@@ -141,20 +141,20 @@ struct PanSample: SampleContent, ExampleContent {
             .stroke(Palette.outline)
             .strokeWidth(1)
             .shape(.roundedRectangle(10))
-            .height(200)
+            .frame(height: 200)
 
-            Label()
+            Text()
                 .text($liveX.journey.convert(with: $liveY.journey) { x, y in
                     "Moved \(Int(x.value)), \(Int(y.value))"
                 })
                 .fontSize(15)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             SwitchRow("The drag snaps", $snaps)
 
             Button("Put it back")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 // A SETPOINT, so the box TRAVELS home from wherever it was
                 // left - the same two states, written the other way.
@@ -188,37 +188,37 @@ struct PanSample: SampleContent, ExampleContent {
         }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The totals are measured from where the pan BEGAN, not from "
+            Text("The totals are measured from where the pan BEGAN, not from "
                 + "the last report - which is why the running case adds them to "
                 + "where the view was, and the completed case is what commits "
                 + "the move.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`The drag snaps` is the whole lesson, and on a walked state it is "
+            Text("`The drag snaps` is the whole lesson, and on a walked state it is "
                 + "the choice of which part to write. `$liveX.journey.snap(to:)` puts "
                 + "the box under the finger, going nowhere, standing still. The state "
                 + "itself is where it is GOING, so writing that on every report starts "
                 + "a journey the next report interrupts - turn the switch off and the "
                 + "box trails the hand.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`Put it back` writes the states instead, which is the same two "
+            Text("`Put it back` writes the states instead, which is the same two "
                 + "states written the other way: the box travels home rather than "
                 + "jumping there.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Nothing on this page is described while the box moves. The "
+            Text("Nothing on this page is described while the box moves. The "
                 + "translation is read off the state by the host, and the caption is a "
                 + "converted text over the same two states - so a drag of a hundred "
                 + "reports costs "
                 + "a hundred pieces of arithmetic and no renders.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

@@ -70,11 +70,11 @@ struct AimSample: SampleContent, ExampleContent {
                     }
             }
 
-            Label(says)
+            Text(says)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -94,7 +94,7 @@ struct AimSample: SampleContent, ExampleContent {
                 Button("Focus the first")
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         try await field.focus()
                         says = "focused \(field)"
@@ -103,7 +103,7 @@ struct AimSample: SampleContent, ExampleContent {
                 Button("Focus the second")
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         try await note.focus()
                         says = "focused \(note)"
@@ -113,9 +113,9 @@ struct AimSample: SampleContent, ExampleContent {
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
                     .onClicked {
                         try await field.unfocus()
                         says = "let go of \(field)"
@@ -123,44 +123,44 @@ struct AimSample: SampleContent, ExampleContent {
             }
             .spacing(10)
 
-            Label(says)
+            Text(says)
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
         }
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("What an author holds is declared, one way for each kind. A value is "
+            Text("What an author holds is declared, one way for each kind. A value is "
                 + "@State, which the modifier that shows it also animates through its $ "
                 + "binding. A control is @Aim: `.aim(field)` puts the view's address into "
                 + "the aim, and on the aim you call the control's methods - `focus()`, "
                 + "`unfocus()`, a WebView's `goBack()`, a Map's `moveToRegion(_:)`.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A property is a modifier - opacity, rotation, a stack's background - "
+            Text("A property is a modifier - opacity, rotation, a stack's background - "
                 + "which takes a binding and animates along that binding's journey. Nothing "
                 + "is both a modifier and a method, and a scroller's offset is state as "
                 + "well: `.scrollOffset($offset)`.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("No names are involved: an aim points at the view it was put on, so two "
+            Text("No names are involved: an aim points at the view it was put on, so two "
                 + "instances of one composed view reach their own controls, and a view handed "
                 + "its parent's aim reaches the parent's. Calling an act on an aim that is on "
                 + "no view throws before anything is sent, and an aim put on two views at "
                 + "once says so.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Read an aim from a handler, not from a body: it is filled while the view "
+            Text("Read an aim from a handler, not from a body: it is filled while the view "
                 + "is drawn, so a body sees what the last render left, and `nowhere` on the "
                 + "very first.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

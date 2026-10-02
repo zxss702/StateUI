@@ -32,20 +32,20 @@ struct HostTimeSample: SampleContent, ExampleContent {
             // closure once.
             DebugInfoLabel()
 
-            Label("Here: \\(zone)")
-            Label(season)
+            Text("Here: \\(zone)")
+            Text(season)
 
             ForEach(clocks, id: \\.0) { clock in
                 HStack {
-                    Label(clock.0)
-                    Label(clock.1)
+                    Text(clock.0)
+                    Text(clock.1)
                 }
             }
 
             Button("Read again")
                 .onClicked { try await read() }
         }
-        .onCreated { try await read() }
+        .onAppear { try await read() }
 
         func read() async throws {
             zone = try await TimeZoneInfo.local()
@@ -86,58 +86,58 @@ struct HostTimeSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("Here: \(zone.isEmpty ? "…" : zone)")
+            Text("Here: \(zone.isEmpty ? "…" : zone)")
                 .fontSize(17)
                 .fontAttributes(.bold)
 
-            Label(season)
+            Text(season)
                 .fontSize(13)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             ForEach(clocks, id: \.0) { clock in
                 HStack {
-                    Label(clock.0)
+                    Text(clock.0)
                         .fontSize(14)
                         .horizontalAlignment(.start)
 
-                    Label(clock.1)
+                    Text(clock.1)
                         .fontSize(14)
-                        .textColor(Palette.accent)
+                        .foregroundStyle(Palette.accent)
                         .horizontalAlignment(.end)
-                        .horizontalTextAlignment(.end)
+                        .multilineTextAlignment(.end)
                 }
                 .spacing(12)
             }
 
             Button("Read again")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked { try await read() }
         }
         .spacing(10)
-        .onCreated { try await read() }
+        .onAppear { try await read() }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Every line above crossed the boundary as an act - `ClockTime.now()`, "
+            Text("Every line above crossed the boundary as an act - `ClockTime.now()`, "
                 + "`TimeZoneInfo.local()`, `TimeZoneInfo.utcOffset` - and came back as "
                 + "a `ClockTime` and a `Duration`, both of which this side owns. No "
                 + "Foundation is involved, which is why the answers are the same on every "
                 + "platform.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("An offset is a whole number of minutes, so +05:30 is not a special case, "
+            Text("An offset is a whole number of minutes, so +05:30 is not a special case, "
                 + "and it is asked for a DAY - which is how the same zone answers "
                 + "differently in January than it does in August.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
     }

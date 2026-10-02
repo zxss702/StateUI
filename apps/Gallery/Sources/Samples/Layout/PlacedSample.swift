@@ -169,7 +169,7 @@ struct PlacedSample: SampleContent, ExampleContent {
         // over, which a stack cannot give a child.
         Grid {
             Grid {
-                // WHAT MOVES IT. A ScrollReader lays an empty scroller over
+                // WHAT MOVES IT. A ScrollViewReader lays an empty scroller over
                 // the cards and writes its offset into the value; `.panX`
                 // writes a drag into one instead, for a ring that is taken
                 // hold of rather than scrolled.
@@ -179,7 +179,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                     }
                     .panX($dragged)
                 } else {
-                    ScrollReader(across: Double(cards.count - 1) * 90) {
+                    ScrollViewReader(across: Double(cards.count - 1) * 90) {
                         board
                     }
                     .scrollOffset($scrolled)
@@ -215,12 +215,12 @@ struct PlacedSample: SampleContent, ExampleContent {
                 // and a second engine over the SAME two values, at the foot of
                 // the room and taking no touches.
                 PlacedLayout(cards, id: \\.name) { _ in
-                    ColorBox(Palette.text)
+                    ColorPicker(Palette.text)
                         .cornerRadius(3)
                 }
                 .placement($dots)
                 .frame($dotRoom)
-                .ignoresInput(true)
+                .allowsHitTesting(false)
                 .engine(following: $scrolled, $dragged, $dotRoom) { _ in
                     dots = PlacedRun(cards.indices.map { dot($0, cards.count) })
                 }
@@ -237,11 +237,11 @@ struct PlacedSample: SampleContent, ExampleContent {
                 DebugInfoLabel()
 
                 Button("Back")
-                    .isEnabled(!grabbing)
+                    .disabled(grabbing)
                     .onClicked { try await move(-1) }
 
                 Button("Next")
-                    .isEnabled(!grabbing)
+                    .disabled(grabbing)
                     .onClicked { try await move(1) }
             }
             .gridRow(1)
@@ -278,7 +278,7 @@ struct PlacedSample: SampleContent, ExampleContent {
             }
             // One view, drawn over every card and wearing the card's own
             // corners - which is why it is the application's to give.
-            .shade(ColorBox(Color("#000000")).cornerRadius(16))
+            .shade(ColorPicker(Color("#000000")).cornerRadius(16))
             .placement($ring)
             .frame($room)
             .engine(following: $scrolled, $dragged, $room) { _ in
@@ -311,7 +311,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                     176 * fit,
                     248 * fit),
                 transform: .rotate(angle * 180 / .pi + 90)
-                    .scale(0.52 + 0.16 * near),
+                    .scaleEffect(0.52 + 0.16 * near),
                 // THE FAR CARDS DARKEN rather than fade: a fade would show
                 // the card behind, which on a ring is every other card.
                 // `shade` is the opacity of the view given above.
@@ -349,8 +349,8 @@ struct PlacedSample: SampleContent, ExampleContent {
                         .aspect(.fill)
 
                     VStack {
-                        Label(card.name)
-                        Label("Placed by arithmetic")
+                        Text(card.name)
+                        Text("Placed by arithmetic")
                     }
                     .verticalAlignment(.end)
                 }
@@ -363,13 +363,13 @@ struct PlacedSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         // A GRID rather than a stack: the board takes whatever room is left
         // over, which a stack cannot give a child - and a ring wants it all.
         Grid {
             Grid {
                 // THE BOARD, under everything.
-                ColorBox(Palette.raised)
+                ColorPicker(Palette.raised)
                     .cornerRadius(14)
 
                 // THE CARDS, and what moves them - the whole of the example.
@@ -389,7 +389,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                     // offset is the value. A finger drag, a two-finger
                     // trackpad swipe and a mouse wheel are ONE thing to a
                     // scroller and three different things to anything else.
-                    ScrollReader(across: Double(Self.cards.count - 1) * Self.reach) {
+                    ScrollViewReader(across: Double(Self.cards.count - 1) * Self.reach) {
                         cards
                     }
                     .scrollOffset($scrolled)
@@ -428,12 +428,12 @@ struct PlacedSample: SampleContent, ExampleContent {
                 // of its own, because a phone on its side has no height to
                 // spare for one.
                 PlacedLayout(Self.cards, id: \.name) { _ in
-                    ColorBox(Palette.text)
+                    ColorPicker(Palette.text)
                         .cornerRadius(3)
                 }
                 .placement($dots)
                 .frame($dotRoom)
-                .ignoresInput(true)
+                .allowsHitTesting(false)
                 .engine(following: $scrolled, $dragged, $dotRoom) { _ in
                     dots = PlacedRun(Self.cards.indices.map { dot($0, Self.cards.count) })
                 }
@@ -448,16 +448,16 @@ struct PlacedSample: SampleContent, ExampleContent {
                 // read: the switch below is the only thing here a build
                 // depends on, and the ring itself turns for no build at all.
                 DebugInfoLabel()
-                    .margin(4, 0)
+                    .padding(4, 0)
 
                 Button("Back")
-                    .margin(4, 0)
-                    .isEnabled(!grabbing)
+                    .padding(4, 0)
+                    .disabled(grabbing)
                     .onClicked { try await move(-1) }
 
                 Button("Next")
-                    .margin(4, 0)
-                    .isEnabled(!grabbing)
+                    .padding(4, 0)
+                    .disabled(grabbing)
                     .onClicked { try await move(1) }
             }
             .spacing(8)
@@ -498,7 +498,7 @@ struct PlacedSample: SampleContent, ExampleContent {
         // WHAT `shade` IN THE ARITHMETIC BELOW IS WORN BY: one view, drawn over
         // every card, wearing the card's own corners - which is why it is the
         // application's to give and not the library's to draw.
-        .shade(ColorBox(Color("#000000")).cornerRadius(16))
+        .shade(ColorPicker(Color("#000000")).cornerRadius(16))
         .placement($ring)
         .frame($room)
         // THE WHOLE LAYOUT, run on the display's own frames whenever one of
@@ -533,19 +533,19 @@ struct PlacedSample: SampleContent, ExampleContent {
                 VStack {
                     // ONE LINE, whatever the card's width: a caption that
                     // wrapped would change the picture's height with it.
-                    Label(card.name)
+                    Text(card.name)
                         .fontSize(18)
                         .fontAttributes(.bold)
-                        .textColor(Palette.onBrand)
+                        .foregroundStyle(Palette.onBrand)
                         .lineBreak(.tailTruncation)
 
-                    Label("Placed by arithmetic")
+                    Text("Placed by arithmetic")
                         .fontSize(10)
-                        .textColor(Palette.onBrand)
+                        .foregroundStyle(Palette.onBrand)
                         .opacity(0.8)
                         .lineBreak(.tailTruncation)
                 }
-                .padding(12, 10)
+                .contentPadding(12, 10)
                 .spacing(1)
                 // A dark strip under the words, so a caption reads over a
                 // picture of any colour.
@@ -625,9 +625,9 @@ struct PlacedSample: SampleContent, ExampleContent {
             Self.height * fit)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("`PlacedLayout` builds one view per card from its closure; an engine of "
+            Text("`PlacedLayout` builds one view per card from its closure; an engine of "
                 + "yours works out a `Placement` for each - where the card goes, and how it "
                 + "is turned, scaled, faded and stacked - and writes them as a `PlacedRun` on "
                 + "the state `.placement(_:)` names, in the room `.frame(_:)` reports. That is "
@@ -635,18 +635,18 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "under Cards, is the same layout with the arithmetic for a wheel, "
                 + "a fan and a row already written.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Swipe left or right to turn the ring; it settles on the card it is "
+            Text("Swipe left or right to turn the ring; it settles on the card it is "
                 + "nearest, and `Back` and `Next` do the same without the hand. With `Turn by "
                 + "panning` on, the cards are taken hold of instead and follow the finger, "
-                + "with no scroller over them. Otherwise a `ScrollReader` lays an empty "
+                + "with no scroller over them. Otherwise a `ScrollViewReader` lays an empty "
                 + "scroller over them and writes its offset into the value, so a finger "
                 + "drag, a two-finger trackpad swipe and a mouse wheel all turn the ring.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Every value that turns the ring is a `@State` no body reads. The two "
+            Text("Every value that turns the ring is a `@State` no body reads. The two "
                 + "numbers, the room and where each card goes are handed on with `$`, so "
                 + "writing them describes nothing, and `.engine(following:)` says which of "
                 + "them moving runs the arithmetic again. It runs on the display's own "
@@ -654,15 +654,15 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "the ring turns with no view built. The dots under the cards are a second "
                 + "layout and a second engine over the same two numbers.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The trap is a label written from a driven value: it is built again every "
+            Text("The trap is a label written from a driven value: it is built again every "
                 + "time the value moves. A placement is not, which is why the cards shrink "
                 + "as they go round the back with no view rebuilt. The ring keeps its card "
                 + "through a change of geometry - turn the phone or resize the window, and "
                 + "the same card is back at the front once the room settles.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

@@ -33,14 +33,14 @@ struct InteropEventsSample: SampleContent, ExampleContent {
             // this closure.
             DebugInfoLabel()
 
-            Label("battery: \\(battery)")
+            Text("battery: \\(battery)")
 
-            Label(log.isEmpty
+            Text(log.isEmpty
                 ? "Plug or unplug the power."
                 : log.suffix(4).joined(separator: "\\n"))
         }
         // Listening for exactly as long as the view is in the tree.
-        .onCreated {
+        .onAppear {
             heard.forEach { $0.cancel() }
             heard = [
                 HostEvents.on(GalleryContract.batteryChanged) { level, charging in
@@ -49,7 +49,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 },
             ]
         }
-        .onDestroying {
+        .onDisappear {
             heard.forEach { $0.cancel() }
             heard = []
         }
@@ -374,21 +374,21 @@ struct InteropEventsSample: SampleContent, ExampleContent {
             """))
     #endif
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("battery: \(battery)")
+            Text("battery: \(battery)")
                 .fontSize(17)
 
-            Label(log.isEmpty
+            Text(log.isEmpty
                 ? "Plug or unplug the power."
                 : log.suffix(4).joined(separator: "\n"))
                 .fontSize(13)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
-        .onCreated {
+        .onAppear {
             heard.forEach { $0.cancel() }
             heard = [
                 HostEvents.on(GalleryContract.batteryChanged) { level, charging in
@@ -397,15 +397,15 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 },
             ]
         }
-        .onDestroying {
+        .onDisappear {
             heard.forEach { $0.cancel() }
             heard = []
         }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The host calls `StateUIEvents.raise(event, values)` when the platform "
+            Text("The host calls `StateUIEvents.raise(event, values)` when the platform "
                 + "reports something, from any thread. Every `HostEvents.on` subscription "
                 + "to that member runs like a control's handler: on the library's "
                 + "executor, handed the values the contract declares, free to await and to "
@@ -413,20 +413,20 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 + "`StateUIEvents.raises`, so a handler listening for one nothing raises "
                 + "is told so once.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The subscriptions are made in `.onCreated` and cancelled in "
-                + "`.onDestroying`, so the page listens while it is in the tree. A raise "
+            Text("The subscriptions are made in `.onAppear` and cancelled in "
+                + "`.onDisappear`, so the page listens while it is in the tree. A raise "
                 + "nobody hears is an ordinary answer, so the host wires its sources "
                 + "unconditionally.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("A desktop with no battery reports nothing at all, and that is the "
+            Text("A desktop with no battery reports nothing at all, and that is the "
                 + "honest answer rather than a failure: this page then keeps saying it "
                 + "has not heard.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

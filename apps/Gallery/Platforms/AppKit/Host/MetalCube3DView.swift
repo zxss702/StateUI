@@ -38,7 +38,7 @@ final class MetalCube3DView: MTKView {
         didSet {
             guard isSpinning != oldValue else { return }
 
-            // The clock restarts with the motion, or the time spent stopped
+            // The clock restarts with the animation, or the time spent stopped
             // would arrive as one jump.
             lastTime = CACurrentMediaTime()
             resumeOrStop()
@@ -182,8 +182,8 @@ final class MetalCube3DView: MTKView {
 
         return Self.perspective(fieldOfView: 50 * .pi / 180, aspect: aspect)
             * Self.translation(z: -4)
-            * Self.rotation(aroundX: turn * 0.35)
-            * Self.rotation(aroundY: turn * 0.60)
+            // * Self.rotationEffect(aroundX: turn * 0.35)
+            // * Self.rotationEffect(aroundY: turn * 0.60)
             * Self.scaling(scale)
     }
 

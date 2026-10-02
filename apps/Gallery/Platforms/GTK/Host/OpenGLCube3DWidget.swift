@@ -196,7 +196,7 @@ final class OpenGLCube3DWidget: GTKControl {
         epoxy_glUseProgram(program)
         let width = Double(max(gtk_widget_get_width(widget), 1))
         let height = Double(max(gtk_widget_get_height(widget), 1))
-        var transform = Self.transform(aspect: width / height, turn: angle, scale: min(max(cubeSize, 0), 1))
+        var transform = Self.transformEffect(aspect: width / height, turn: angle, scale: min(max(cubeSize, 0), 1))
         epoxy_glUniformMatrix4fv(transformAt, 1, GLboolean(GL_FALSE), &transform)
         let (red, green, blue) = Self.colors[Int(color.rawValue)]
         epoxy_glUniform4f(colorAt, red, green, blue, 1)

@@ -19,7 +19,7 @@ import StateUI
 /// what it looks like, the log its lifecycle is written into and what its
 /// chrome says - which is what lets a test build the whole arrangement without
 /// reaching into a running application.
-struct MainWindow: Window {
+struct MainWindow: WindowScene {
     /// Which kind of device this is, from the standard environment - answered by
     /// the host before the first render, so the first window build already knows
     /// whether to wear a title bar.
@@ -56,7 +56,7 @@ struct MainWindow: Window {
     /// THE ARRANGEMENT, and it is three ordinary values: a split view holding two
     /// pages, a stack holding an array, a set of tabs holding a selection.
     var page: any Page {
-        SplitView(nav.$menuOpen) {
+        NavigationSplitView(nav.$menuOpen) {
             MenuPage(
                 catalog: catalog,
                 nav: nav,
@@ -71,7 +71,7 @@ struct MainWindow: Window {
         // screen - and there is no `x` or `y` on purpose: pinning an app to
         // the same corner of the screen at every launch is worse than letting
         // the platform place it.
-        .onCreated {
+        .onAppear {
             window.title = "StateUI Gallery"
             window.width = 1100
             window.height = 800
@@ -108,19 +108,19 @@ struct MainWindow: Window {
         }
         // The chrome is painted in the gallery's accent, which the Colours
         // window chooses - so the bar is written again when it moves.
-        .onChanged(style.accent.color) {
+        .onChange(of: style.accent.color) {
             if device.formFactor == .desktop {
                 window.titleBar = chrome
             }
         }
-        .onChanged(bar.subtitle) {
+        .onChange(of: bar.subtitle) {
             if device.formFactor == .desktop {
                 window.titleBar = chrome
             }
         }
         // And again when the desktop starts or stops showing through the
         // window, the bars letting it through with the rest.
-        .onChanged(window.isTranslucent) {
+        .onChange(of: window.isTranslucent) {
             if device.formFactor == .desktop {
                 window.titleBar = chrome
             }
@@ -133,7 +133,7 @@ struct MainWindow: Window {
     /// Almost always a STACK - a `NavigationStack` over the path, with the
     /// section's own page underneath. The tabs demonstration is the exception,
     /// and it is the reason this is a function rather than one expression: a
-    /// `TabbedView` is a page like any other, so a section may simply be one -
+    /// `TabView` is a page like any other, so a section may simply be one -
     /// and a stack may sit inside a tab, because pages nest without a rule
     /// about which may hold which.
     func detail() -> any Page {
@@ -206,13 +206,13 @@ struct MainWindow: Window {
         }
     }
 
-    /// The one section that is not a stack: a `TabbedView` over the author's own
+    /// The one section that is not a stack: a `TabView` over the author's own
     /// enum, with a stack inside the first tab.
     ///
     /// Its own flat bar background, which the native selector's selected and
     /// unselected tabs read on.
     func tabs() -> any Page {
-        TabbedView(nav.tabs) { which in
+        TabView(nav.tabs) { which in
             switch which {
             case .stack:
                 return NavigationStack(nav.$tabsPath) {
@@ -263,7 +263,7 @@ struct MainWindow: Window {
 }
 
 /// The optional action at the trailing edge of the native title area.
-private struct ChromeEnd: ContentView {
+private struct ChromeEnd: View {
     /// What the chrome says - the TitleBar sample writes it.
     let bar: TitleBarState
 
@@ -276,7 +276,7 @@ private struct ChromeEnd: ContentView {
     /// Which kind of device this is, so the pick leaves out what it cannot show.
     @Environment private var device: DeviceInfo
 
-    var content: any View {
+    var body: some View {
         HStack {
             if bar.showsSurprise {
                 Button("Surprise me")
@@ -288,6 +288,6 @@ private struct ChromeEnd: ContentView {
                     .onClicked { nav.surprise(from: catalog, on: device.formFactor) }
             }
         }
-        .margin(0, 0, 5, 0)
+        .padding(0, 0, 5, 0)
     }
 }

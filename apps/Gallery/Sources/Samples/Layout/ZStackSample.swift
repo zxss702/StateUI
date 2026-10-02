@@ -23,11 +23,11 @@ private struct Areas: ExampleContent {
         VStack {
             ZStack {
                 // No area: the whole room, filled.
-                ColorBox(Palette.outline)
+                ColorPicker(Palette.outline)
 
                 // The panel fills the area it names: the right half of the
                 // room, or 120 by 60 at 16, 16 whatever the room's size.
-                ColorBox(Color("#1E88E5"))
+                ColorPicker(Color("#1E88E5"))
                     .area(proportional ? .proportional(0.5, 0, 0.5, 1) : .absolute(16, 16, 120, 60))
 
                 // Its natural size, where its alignments put it.
@@ -39,33 +39,33 @@ private struct Areas: ExampleContent {
                     .horizontalAlignment(.end)
                     .verticalAlignment(.end)
             }
-            .height(180)
+            .frame(height: 180)
 
             SwitchRow("Proportional area", $proportional)
         }
 
-        private struct Marker: ContentView {
+        private struct Marker: View {
             let text: String
             let color: String
 
-            var content: any View {
-                Label(text)
-                    .textColor(.white)
+            var body: some View {
+                Text(text)
+                    .foregroundStyle(.white)
                     .background(Color(color))
-                    .padding(10, 6)
+                    .contentPadding(10, 6)
             }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             // NO BUILD READING HERE. `proportional` is read inside the stack's
             // own braces, and a container describes its children when the
             // differ asks, so the only closure this switch rebuilds is that one.
             ZStack {
-                ColorBox(Palette.outline)
+                ColorPicker(Palette.outline)
 
-                ColorBox(Color("#1E88E5"))
+                ColorPicker(Color("#1E88E5"))
                     .area(proportional ? .proportional(0.5, 0, 0.5, 1) : .absolute(16, 16, 120, 60))
 
                 Marker(text: "start", color: "#E53935")
@@ -76,7 +76,7 @@ private struct Areas: ExampleContent {
                     .horizontalAlignment(.end)
                     .verticalAlignment(.end)
             }
-            .height(180)
+            .frame(height: 180)
 
             SwitchRow("Proportional area", $proportional)
                 .horizontalAlignment(.center)
@@ -84,10 +84,10 @@ private struct Areas: ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("Resize the window: a proportional area follows the room, an absolute one stays put.")
+    var notes: (any View)? {
+        Text("Resize the window: a proportional area follows the room, an absolute one stays put.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }
 
@@ -102,42 +102,42 @@ private struct Layers: ExampleContent {
             // Left alone, the child written last is drawn on top; the higher
             // zIndex is nearer the front, and nothing moves.
             ZStack {
-                ColorBox(Color("#E53935"))
-                    .width(150)
-                    .height(70)
+                ColorPicker(Color("#E53935"))
+                    .frame(width: 150)
+                    .frame(height: 70)
                     .horizontalAlignment(.start)
                     .zIndex(redInFront ? 1 : 0)
 
-                ColorBox(Color("#1E88E5"))
-                    .width(150)
-                    .height(70)
+                ColorPicker(Color("#1E88E5"))
+                    .frame(width: 150)
+                    .frame(height: 70)
                     .horizontalAlignment(.end)
                     .zIndex(redInFront ? 0 : 1)
             }
-            .height(70)
-            .maximumWidth(240)
+            .frame(height: 70)
+            .frame(maxWidth: 240)
 
             SwitchRow("Red in front", $redInFront)
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             ZStack {
-                ColorBox(Color("#E53935"))
-                    .width(150)
-                    .height(70)
+                ColorPicker(Color("#E53935"))
+                    .frame(width: 150)
+                    .frame(height: 70)
                     .horizontalAlignment(.start)
                     .zIndex(redInFront ? 1 : 0)
 
-                ColorBox(Color("#1E88E5"))
-                    .width(150)
-                    .height(70)
+                ColorPicker(Color("#1E88E5"))
+                    .frame(width: 150)
+                    .frame(height: 70)
                     .horizontalAlignment(.end)
                     .zIndex(redInFront ? 0 : 1)
             }
-            .height(70)
-            .maximumWidth(240)
+            .frame(height: 70)
+            .frame(maxWidth: 240)
             .horizontalAlignment(.center)
 
             SwitchRow("Red in front", $redInFront)
@@ -146,20 +146,20 @@ private struct Layers: ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? { nil }
+    var notes: (any View)? { nil }
 }
 
 /// One labelled marker, so the sample says what is being positioned rather than
 /// how it is drawn.
-private struct Marker: ContentView {
+private struct Marker: View {
     let text: String
     let color: String
 
-    var content: any View {
-        Label(text)
+    var body: some View {
+        Text(text)
             .fontSize(12)
-            .textColor(.white)
+            .foregroundStyle(.white)
             .background(Color(color))
-            .padding(10, 6)
+            .contentPadding(10, 6)
     }
 }

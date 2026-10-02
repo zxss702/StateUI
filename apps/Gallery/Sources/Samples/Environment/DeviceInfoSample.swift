@@ -16,67 +16,67 @@ struct DeviceInfoSample: SampleContent, ExampleContent {
         + "facts a layout branches on."
 
     static let code = """
-        struct AboutBox: ContentView {
+        struct AboutBox: View {
             @Environment var device: DeviceInfo
             @Environment var app: AppInfo
 
-            var content: any View {
+            var body: some View {
                 VStack {
                     // The device never changes, so this stands at one build.
                     DebugInfoLabel()
 
-                    Label("\\(app.name) \\(app.versionString) "
+                    Text("\\(app.name) \\(app.versionString) "
                         + "(\\(app.buildString))")
-                    Label(app.packageName)
+                    Text(app.packageName)
 
-                    Label("\\(device.manufacturer) \\(device.model)")
-                    Label("\\(device.platform) \\(device.versionString) · "
+                    Text("\\(device.manufacturer) \\(device.model)")
+                    Text("\\(device.platform) \\(device.versionString) · "
                         + "\\(device.formFactor) · \\(device.deviceType)")
-                    Label(device.name.isEmpty ? "not said" : device.name)
+                    Text(device.name.isEmpty ? "not said" : device.name)
                 }
             }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("\(app.name) \(app.versionString) (\(app.buildString))")
+            Text("\(app.name) \(app.versionString) (\(app.buildString))")
                 .fontSize(22)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label(app.packageName)
+            Text(app.packageName)
                 .fontSize(15)
 
-            Label("device · \(device.manufacturer) \(device.model)")
+            Text("device · \(device.manufacturer) \(device.model)")
                 .fontSize(15)
-            Label("system · \(device.platform) \(device.versionString)")
+            Text("system · \(device.platform) \(device.versionString)")
                 .fontSize(15)
-            Label("formFactor · \(device.formFactor), \(device.deviceType)")
+            Text("formFactor · \(device.formFactor), \(device.deviceType)")
                 .fontSize(15)
-            Label("name · \(device.name.isEmpty ? "not said" : device.name)")
+            Text("name · \(device.name.isEmpty ? "not said" : device.name)")
                 .fontSize(15)
         }
         .spacing(10)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The formFactor is the value this gallery itself builds by: the "
+            Text("The formFactor is the value this gallery itself builds by: the "
                 + "window wears a title bar and lists the TitleBar sample only "
                 + "where device.formFactor answers .desktop. It is known BEFORE the "
                 + "first render, so the first tree already has it - which "
                 + "pages exist is decided while the tree is built.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Headless - a test, a host that could not say - everything "
+            Text("Headless - a test, a host that could not say - everything "
                 + "here answers its default, .unknown included, which the "
                 + "catalog reads as \"show everything\".")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
     }

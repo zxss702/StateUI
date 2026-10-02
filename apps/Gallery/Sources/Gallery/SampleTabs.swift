@@ -52,7 +52,7 @@ extension Sample {
 /// Every tab stays in the tree while the sample is shown, so reading the code
 /// and coming back keeps the example's state - what a gesture sample has to
 /// show IS its state.
-struct SampleTabPage: ContentView {
+struct SampleTabPage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -65,20 +65,20 @@ struct SampleTabPage: ContentView {
 
     let nav: Navigation
 
-    var content: any View {
-        FrameReader { frame in
+    var body: some View {
+        GeometryReader { frame in
             held
-                .height(frame.height)
-                .width(frame.width)
+                .frame(height: frame.height)
+                .frame(width: frame.width)
                 .verticalAlignment(.start)
                 .horizontalAlignment(.start)
         }
         // Dressed as every page of the gallery is, and named and pictured for
         // its tab: the tab's caption and icon. The window takes the sample's
         // name from the tabs (`SamplePage.shown`). What a sample adds to the bar
-        // it writes from its own `.onCreated`, which runs after this one,
+        // it writes from its own `.onAppear`, which runs after this one,
         // being further in.
-        .onCreated {
+        .onAppear {
             page.gallery(sample.caption(of: tab), scene: scene, nav: nav)
             page.icon = sample.icon(of: tab)
         }
@@ -88,9 +88,9 @@ struct SampleTabPage: ContentView {
     /// fills the rest of the page.
     private var held: Grid {
         Grid {
-            Label(sample.summary)
+            Text(sample.summary)
                 .fontSize(15)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             if case .example(let index) = tab {
                 // An example that scrolls itself takes the whole cell; one
@@ -113,7 +113,7 @@ struct SampleTabPage: ContentView {
         }
         .rows(.auto, .fill)
         .rowSpacing(16)
-        .padding(24)
+        .contentPadding(24)
     }
 
     /// One example's notes and Swift, under "Notes" and "In Swift" - and,
@@ -130,7 +130,7 @@ struct SampleTabPage: ContentView {
 
             SamplePage.section(example.codeHeading, CodeBlock(example.code))
 
-            example.hostCode.listings.map { listing -> Element in
+            example.hostCode.listings.map { listing -> any View in
                 SamplePage.section(
                     example.hostCode.heading(of: listing), CodeBlock(listing.code).language(listing.language))
             }

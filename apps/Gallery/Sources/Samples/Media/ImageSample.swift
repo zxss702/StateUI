@@ -1,6 +1,6 @@
 import StateUI
 
-/// Pictures from the app's resources: fitted, filled, and one per theme.
+/// Pictures from the app's resources: fitted, filled, and one per color scheme.
 struct ImageSample: SampleContent, ExampleContent {
     static let id = "image"
     static let title = "Image"
@@ -10,20 +10,20 @@ struct ImageSample: SampleContent, ExampleContent {
         VStack {
             HStack {
                 Image(light: "nav_home.png", dark: "nav_home_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_layout.png", dark: "nav_layout_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_input.png", dark: "nav_input_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_shell.png", dark: "nav_shell_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
             }
 
             // The same square picture in the same wide box, so the only thing
@@ -33,62 +33,62 @@ struct ImageSample: SampleContent, ExampleContent {
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
                         .aspect(.fit)
-                        .width(120)
-                        .height(60)
+                        .frame(width: 120)
+                        .frame(height: 60)
 
-                    Label(".aspect(.fit)")
+                    Text(".aspect(.fit)")
                 }
 
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
                         .aspect(.fill)
-                        .width(120)
-                        .height(60)
+                        .frame(width: 120)
+                        .frame(height: 60)
 
-                    Label(".aspect(.fill)")
+                    Text(".aspect(.fill)")
                 }
             }
 
-            // The same shape drawn black, and drawn once per theme. An Image
+            // The same shape drawn black, and drawn once per color scheme. An Image
             // has no tint, so what changes is the SOURCE.
             HStack {
                 Image("nav_gestures.png")
-                    .width(32)
-                    .height(32)
+                    .frame(width: 32)
+                    .frame(height: 32)
 
-                Label("black artwork, always")
+                Text("black artwork, always")
                     .verticalAlignment(.center)
             }
 
             HStack {
                 Image(light: "nav_gestures.png", dark: "nav_gestures_dark.png")
-                    .width(32)
-                    .height(32)
+                    .frame(width: 32)
+                    .frame(height: 32)
 
-                Label("one per theme - switch the system between light and dark")
+                Text("one per colorScheme - switch the system between light and dark")
                     .verticalAlignment(.center)
             }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             HStack {
                 Image(light: "nav_home.png", dark: "nav_home_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_layout.png", dark: "nav_layout_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_input.png", dark: "nav_input_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
 
                 Image(light: "nav_shell.png", dark: "nav_shell_dark.png")
-                    .width(48)
-                    .height(48)
+                    .frame(width: 48)
+                    .frame(height: 48)
             }
             .spacing(16)
             .horizontalAlignment(.center)
@@ -101,46 +101,46 @@ struct ImageSample: SampleContent, ExampleContent {
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
                         .aspect(.fit)
-                        .width(120)
-                        .height(60)
+                        .frame(width: 120)
+                        .frame(height: 60)
                         .background(Palette.surface)
 
-                    Label(".aspect(.fit)")
+                    Text(".aspect(.fit)")
                         .fontSize(11)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
                 }
                 .spacing(4)
 
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
                         .aspect(.fill)
-                        .width(120)
-                        .height(60)
+                        .frame(width: 120)
+                        .frame(height: 60)
                         .background(Palette.surface)
 
-                    Label(".aspect(.fill)")
+                    Text(".aspect(.fill)")
                         .fontSize(11)
-                        .textColor(Palette.subtle)
-                        .horizontalTextAlignment(.center)
+                        .foregroundStyle(Palette.subtle)
+                        .multilineTextAlignment(.center)
                 }
                 .spacing(4)
             }
             .spacing(16)
             .horizontalAlignment(.center)
 
-            SectionTitle("One per theme")
+            SectionTitle("One per colorScheme")
 
             // The same shape drawn black and white. An Image has no tint, so
             // what changes is the SOURCE - and the half in force is picked as
-            // the view is built, so switching the system theme builds this
+            // the view is built, so switching the system color scheme builds this
             // view again with the other file.
             HStack {
                 Image("nav_gestures.png")
-                    .width(32)
-                    .height(32)
+                    .frame(width: 32)
+                    .frame(height: 32)
 
-                Label("black artwork, always")
+                Text("black artwork, always")
                     .fontSize(13)
                     .verticalAlignment(.center)
             }
@@ -148,10 +148,10 @@ struct ImageSample: SampleContent, ExampleContent {
 
             HStack {
                 Image(light: "nav_gestures.png", dark: "nav_gestures_dark.png")
-                    .width(32)
-                    .height(32)
+                    .frame(width: 32)
+                    .frame(height: 32)
 
-                Label("one per theme - switch the system between light and dark")
+                Text("one per colorScheme - switch the system between light and dark")
                     .fontSize(13)
                     .verticalAlignment(.center)
             }
@@ -160,34 +160,34 @@ struct ImageSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The first row is the sidebar's own icons: SVGs in `Resources/Images`, "
+            Text("The first row is the sidebar's own icons: SVGs in `Resources/Images`, "
                 + "each asked for by its `.png` name. Where the build makes no PNG of that "
                 + "name, the host loads the SVG of the same name instead.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`.aspect` is the choice between showing all of the picture and filling "
+            Text("`.aspect` is the choice between showing all of the picture and filling "
                 + "every corner: `.fit` keeps the whole picture and leaves room on "
                 + "two sides, `.fill` covers the box and crops what will not fit.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("An `Image` has no tint, so a picture that has to read on both themes is "
+            Text("An `Image` has no tint, so a picture that has to read on both themes is "
                 + "two pictures. `ImageSource(light:dark:)` is picked the way "
-                + "`Color(light:dark:)` is - as the view is built - so a change of theme "
+                + "`Color(light:dark:)` is - as the view is built - so a change of colorScheme "
                 + "builds the views wearing one again.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("`.isAnimating(true)` runs a picture that HAS frames - a GIF, an "
+            Text("`.isAnimating(true)` runs a picture that HAS frames - a GIF, an "
                 + "animated WebP - and does nothing at all to a still one, which is why "
                 + "no example above uses it: the gallery ships no animated artwork. It is "
                 + "a property rather than an act, so a paused animation is a state the "
                 + "tree describes and a rebuild cannot lose.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

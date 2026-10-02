@@ -20,15 +20,15 @@ struct TextEditorSample: SampleContent, ExampleContent {
             // height, the right grows with every line you add.
             Grid {
                 VStack {
-                    Label("a stated height")
+                    Text("a stated height")
 
                     TextEditor($draft)
                         .placeholder("Anything worth remembering")
-                        .height(110)
+                        .frame(height: 110)
                 }
 
                 VStack {
-                    Label(".growsWithText(true)")
+                    Text(".growsWithText(true)")
 
                     TextEditor($draft)
                         .placeholder("The same text, sized by it")
@@ -38,15 +38,15 @@ struct TextEditorSample: SampleContent, ExampleContent {
             }
             .columns(.fill, .fill)
 
-            Label(draft.isEmpty ? "nothing written yet" : "\\(draft.count) character(s)")
+            Text(draft.isEmpty ? "nothing written yet" : "\\(draft.count) character(s)")
 
             Button("Clear")
-                .isEnabled(!draft.isEmpty)
+                .disabled(draft.isEmpty)
                 .onClicked { draft = "" }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -54,22 +54,22 @@ struct TextEditorSample: SampleContent, ExampleContent {
             // other - and only the right one grows with it.
             Grid {
                 VStack {
-                    Label("a stated height")
+                    Text("a stated height")
                         .fontSize(12)
-                        .textColor(Palette.subtle)
+                        .foregroundStyle(Palette.subtle)
 
                     TextEditor($draft)
                         .accessibilityIdentifier("editor.notes")
                         .accessibilityLabel("Notes")
                         .placeholder("Anything worth remembering")
-                        .height(110)
+                        .frame(height: 110)
                 }
                 .spacing(4)
 
                 VStack {
-                    Label(".growsWithText(true)")
+                    Text(".growsWithText(true)")
                         .fontSize(12)
-                        .textColor(Palette.subtle)
+                        .foregroundStyle(Palette.subtle)
 
                     TextEditor($draft)
                         .accessibilityIdentifier("editor.notes.growsWithText")
@@ -84,20 +84,20 @@ struct TextEditorSample: SampleContent, ExampleContent {
             .columns(.fill, .fill)
             .columnSpacing(12)
 
-            Label(draft.isEmpty ? "nothing written yet" : "\(draft.count) character(s)")
+            Text(draft.isEmpty ? "nothing written yet" : "\(draft.count) character(s)")
                 .fontSize(12)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             Button("Clear")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
-                .isEnabled(!draft.isEmpty)
+                .disabled(draft.isEmpty)
                 .onClicked { draft = "" }
         }
         .spacing(12)
     }
 
-    var notes: Element? { nil }
+    var notes: (any View)? { nil }
 }

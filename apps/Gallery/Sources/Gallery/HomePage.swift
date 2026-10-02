@@ -20,7 +20,7 @@ import StateUI
 /// but only when a user turns the device or drags the window past a
 /// threshold, which is a handful of times in a session rather than a handful of
 /// times a second.
-struct HomePage: ContentView {
+struct HomePage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -106,7 +106,7 @@ struct HomePage: ContentView {
     /// out of patience.
     @State private var waited = 0.0
 
-    var content: any View {
+    var body: some View {
         let groups = catalog.groups
 
         // THE CEILING AND THE CHROME ARE READ HERE, in the body, and handed to
@@ -139,23 +139,23 @@ struct HomePage: ContentView {
                 ZStack {
                     VStack {
                         Image("stateui_mark.png")
-                            .width(84)
-                            .height(84)
+                            .frame(width: 84)
+                            .frame(height: 84)
                             .horizontalAlignment(.start)
 
-                        Label("StateUI Gallery")
+                        Text("StateUI Gallery")
                             .fontSize(34)
                             .fontAttributes(.bold)
                             .characterSpacing(-0.5)
-                            .textColor(Palette.onBrand)
+                            .foregroundStyle(Palette.onBrand)
 
-                        Label("Native interfaces, written in Swift")
+                        Text("Native interfaces, written in Swift")
                             .fontSize(15)
-                            .textColor(Palette.onBrand)
+                            .foregroundStyle(Palette.onBrand)
                             .opacity(0.85)
                     }
                     .spacing(10)
-                    .padding(22)
+                    .contentPadding(22)
                 }
                 .style("Card")
                 .background(Palette.identity)
@@ -170,7 +170,7 @@ struct HomePage: ContentView {
             .verticalAlignment(.start)
             // A PHONE ON ITS SIDE has no height for a heading: the cards are
             // what the page is for, so they are what it keeps.
-            .isVisible(wearing.heads)
+            .hidden(!wearing.heads)
             .gridRow(0)
 
             VStack {
@@ -190,11 +190,11 @@ struct HomePage: ContentView {
                 // card rather than the card going transparent. It wears the
                 // card's own corners, which is why the view is the
                 // application's to give.
-                .shade(ColorBox(Color("#000000")).cornerRadius(16))
+                .shade(ColorPicker(Color("#000000")).cornerRadius(16))
                 // WHAT THE ROWS CAN SPARE, worn on the host's own frames. The
                 // state is written by the engine under this grid, so a page
                 // settling through half a dozen passes costs no render at all.
-                .height($box)
+                .frame(height: $box)
 
                 // AND THE SAME RUN, A CARD AT A TIME, directly under the cards
                 // it steps. ON A DESKTOP ONLY: a finger has the run itself and
@@ -224,7 +224,7 @@ struct HomePage: ContentView {
                 // what changes between cards is how much of the block is
                 // empty underneath rather than how tall it is.
                 Caption(catalog: catalog, position: $chosen, formFactor: device.formFactor)
-                    .height(Self.caption)
+                    .frame(height: Self.caption)
                     .verticalAlignment(.start)
             }
             .spacing(Self.gap)
@@ -237,32 +237,32 @@ struct HomePage: ContentView {
             // runs short - an auto row keeps its height whatever is left, and
             // words that no longer fit would be drawn OVER what is above them.
             VStack {
-                Label("Every example here is described in Swift and rendered as real "
+                Text("Every example here is described in Swift and rendered as real "
                     + "native controls.")
                     .fontSize(15)
-                    .textColor(Palette.subtle)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.subtle)
+                    .multilineTextAlignment(.center)
 
                 // The platform is compiled in; the formFactor - phone, tablet,
                 // desktop - is the host's answer, which is what lets the
                 // catalog list desktop chrome only where it draws.
-                Label("native: \(stateUIPlatform()) · \(device.formFactor)")
+                Text("native: \(stateUIPlatform()) · \(device.formFactor)")
                     .fontSize(11)
-                    .textColor(Palette.subtle)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.subtle)
+                    .multilineTextAlignment(.center)
             }
             .spacing(4)
-            .isVisible(wearing.foots)
+            .hidden(!wearing.foots)
             .gridRow(2)
         }
         .rows(.auto, .fill, .auto)
         .rowSpacing(Self.gap)
         // The margin is the rows' own to lose: the frame below is this grid's
         // outer one, so the arithmetic takes the margin off explicitly.
-        .padding(Self.margin, Self.margin)
+        .contentPadding(Self.margin, Self.margin)
         // THE PAGE'S OWN ROOM, written by the host and read by the arithmetic
         // that sizes the run. Nothing is built for it, which is the whole
-        // difference between this and measuring a page with a `FrameReader`:
+        // difference between this and measuring a page with a `GeometryReader`:
         // the run's height then rode a render per settling pass, and everything
         // standing under it rode them too.
         .frame($room)
@@ -307,7 +307,7 @@ struct HomePage: ContentView {
             // ever put it still.
             guard settled || waited >= Self.patience else { return .again }
 
-            $shown.journey.motion = .eased(Self.entrance, .cubicOut)
+            $shown.journey.animation = .eased(Self.entrance, .cubicOut)
             shown = 1
             // `phase` is named in no `following:`, so writing it wakes
             // nothing and the entrance is over for good - the engine goes on
@@ -338,7 +338,7 @@ struct HomePage: ContentView {
         .opacity($shown)
         // No home button: this is it. The inspector stays, as it does on
         // every page - what each render cost is a question about any of them.
-        .onCreated { page.gallery("Home", scene: scene, nav: nil) }
+        .onAppear { page.gallery("Home", scene: scene, nav: nil) }
     }
 
     /// Where the page is in coming in.
@@ -487,7 +487,7 @@ struct HomePage: ContentView {
 ///
 /// It is handed the catalog rather than the group: a class, compared by
 /// identity, where a group holds its samples and could never compare cheaply.
-private struct Caption: ContentView {
+private struct Caption: View {
     /// Every group there is - a class, so this view's inputs are three cheap
     /// ones.
     let catalog: Catalog
@@ -499,22 +499,22 @@ private struct Caption: ContentView {
     /// What the device is, for the count - a phone is shown fewer samples.
     let formFactor: FormFactor
 
-    var content: any View {
+    var body: some View {
         let groups = catalog.groups
         let group = groups[min(max(position, 0), max(groups.count - 1, 0))]
 
         // THE NAME IS NOT AMONG THEM: the card carries it, and saying it again
         // a card's width below reads as two things rather than one.
         return VStack {
-            Label("\(group.shown(on: formFactor).count) samples · tap the card to open")
+            Text("\(group.shown(on: formFactor).count) samples · tap the card to open")
                 .fontSize(12)
-                .textColor(Palette.accent)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.accent)
+                .multilineTextAlignment(.center)
 
-            Label(group.summary)
+            Text(group.summary)
                 .fontSize(14)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
         }
         .spacing(4)
     }
@@ -526,14 +526,14 @@ private struct Caption: ContentView {
 /// mouse without a wheel - or a hand on a keyboard - has no way to turn it at
 /// all. A VIEW OF ITS OWN for the reason the caption is one: whether an arrow
 /// can be pressed follows the position, so this reads it and the page does not.
-private struct Steps: ContentView {
+private struct Steps: View {
     /// Which card is in the middle - read for the arrows, written by them.
     @Binding var position: Int
 
     /// How many there are, which is where the arrows stop.
     let count: Int
 
-    var content: any View {
+    var body: some View {
         HStack {
             step("‹", to: position - 1)
             step("›", to: position + 1)
@@ -546,13 +546,13 @@ private struct Steps: ContentView {
     private func step(_ caption: String, to: Int) -> any View {
         Button(caption)
             .fontSize(18)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
             .background(.transparent)
             .stroke(Palette.outline)
             .strokeWidth(1)
             .shape(.roundedRectangle(8))
-            .padding(18, 2)
-            .isEnabled(to >= 0 && to < count)
+            .contentPadding(18, 2)
+            .disabled(to < 0 || to >= count)
             .onClicked { position = to }
     }
 }
@@ -564,24 +564,24 @@ private struct Steps: ContentView {
 /// caption, for a shape, for a press - while every card is CARRIED: a
 /// composed view built with the same inputs is not built again, and the run
 /// costs what the caption costs.
-private struct GroupFace: ContentView {
+private struct GroupFace: View {
     let title: String
     let summary: String
     let picture: ImageSource
 
-    var content: any View {
+    var body: some View {
         ZStack {
             Grid {
                 Image(picture)
                     .aspect(.fill)
 
                 Grid {
-                    Label(title)
+                    Text(title)
                         .fontSize(18)
                         .fontAttributes(.bold)
-                        .textColor(Palette.onBrand)
+                        .foregroundStyle(Palette.onBrand)
                         .lineBreak(.tailTruncation)
-                        .padding(12, 10)
+                        .contentPadding(12, 10)
                 }
                 .background(Color("#B3000000"))
                 .verticalAlignment(.end)

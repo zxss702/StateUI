@@ -44,7 +44,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 // a reader of it - so every report the thumb makes builds it.
                 DebugInfoLabel()
 
-                Label("volume · \\(percent(volume))")
+                Text("volume · \\(percent(volume))")
 
                 Slider($volume)
                     .minimum(0)
@@ -66,7 +66,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 // A CONVERTED TEXT. The host works it out from the same image
                 // the thumb is walking, on its own frames, so the words keep
                 // up with the movement and cost no render.
-                Label($level.journey.convert { "level · \\(Int(($0.value * 100).rounded()))%" })
+                Text($level.journey.convert { "level · \\(Int(($0.value * 100).rounded()))%" })
 
                 Slider($level)
                     .minimum(0)
@@ -81,7 +81,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
             VStack {
                 DebugInfoLabel()
 
-                Label($count.journey.convert { "count · \\(Int($0.value.rounded()))" })
+                Text($count.journey.convert { "count · \\(Int($0.value.rounded()))" })
 
                 Stepper($count)
                     .minimum(0)
@@ -103,16 +103,16 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             VStack {
-                Label("A get")
+                Text("A get")
                     .fontSize(12)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
 
                 DebugInfoLabel()
 
-                Label("volume · \(percent(volume))")
+                Text("volume · \(percent(volume))")
                     .fontSize(15)
 
                 Slider($volume)
@@ -129,19 +129,19 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
             .spacing(10)
 
             VStack {
-                Label("A binding")
+                Text("A binding")
                     .fontSize(12)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
 
                 DebugInfoLabel()
 
                 // A CONVERTED TEXT: the host works it out from the same image
                 // the thumb is walking, on its own frames, so the words keep
                 // up with the movement and cost no render.
-                Label()
+                Text()
                     .text($level.journey.convert { "level · \(Int(($0.value * 100).rounded()))%" })
                     .fontSize(15)
-                    .textColor(Palette.accent)
+                    .foregroundStyle(Palette.accent)
 
                 // THE SAME DECLARATION as above, and the same spelling: what
                 // differs is that nothing here reads `level` at build.
@@ -162,10 +162,10 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
             VStack {
                 DebugInfoLabel()
 
-                Label()
+                Text()
                     .text($count.journey.convert { "count · \(Int($0.value.rounded()))" })
                     .fontSize(15)
-                    .textColor(Palette.accent)
+                    .foregroundStyle(Palette.accent)
 
                 Stepper($count)
                     .accessibilityIdentifier("animatedInput.count")
@@ -184,18 +184,18 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
         .spacing(10)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("The build count each half takes is what tells them apart. The top "
+            Text("The build count each half takes is what tells them apart. The top "
                 + "caption PRINTS `volume`, which makes the closure it sits in a "
                 + "reader, so every report the thumb makes builds that closure again, "
                 + "and nothing around it. `level` is handed on as `$level` - to the "
                 + "slider and to the caption's conversion - and a binding makes no "
                 + "reader: a drag and a journey leave the count where it was.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("THAT IS THE WHOLE RULE. A value read in a body - a get - makes the "
+            Text("THAT IS THE WHOLE RULE. A value read in a body - a get - makes the "
                 + "body a reader, and a write to the state renders it. A value handed "
                 + "on as `$x` - to a control, a modifier, a child or an engine - makes "
                 + "no reader, and the host carries it with nothing rebuilt. Where a "
@@ -204,9 +204,9 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "to ten a second; where it need not, a converted text shows it for "
                 + "nothing.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("AND A READING THAT MUST KEEP UP READS THE JOURNEY. Every walked "
+            Text("AND A READING THAT MUST KEEP UP READS THE JOURNEY. Every walked "
                 + "state has one: `level` is where it is GOING, from the first "
                 + "millisecond; `$level.journey.value` where it HAS GOT TO this frame - "
                 + "so a caption converted off `$level.journey` counts its way along it "
@@ -214,9 +214,9 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "destination at once. The journey is also what steers the value: "
                 + "`move(to:)`, `stop()`, `snap(to:)`.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Both readings are CONVERSIONS of the journey - "
+            Text("Both readings are CONVERSIONS of the journey - "
                 + "`$level.journey.convert { … }` - which is an engine the differ "
                 + "writes for you: it runs on the display's own frames, from the same "
                 + "image the control is walking, so a drag and a journey both cost the "
@@ -224,7 +224,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "the slider does: a Stepper draws two buttons and NO number, so the "
                 + "caption is the only thing that shows the value at all.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }
@@ -238,7 +238,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
         Button(caption)
             .fontSize(13)
-            .padding(14, 6)
+            .contentPadding(14, 6)
             .onClicked(act)
     }
 }

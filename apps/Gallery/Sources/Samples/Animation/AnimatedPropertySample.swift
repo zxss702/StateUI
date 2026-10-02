@@ -7,7 +7,7 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
 
     @State private var panelColor = AppColors.lineDark
     @State private var panelHeight = 90.0
-    @State private var panelPadding = Insets(16)
+    @State private var panelPadding = EdgeInsets(16)
     @State private var captionColor = AppColors.ink
     @State private var captionSize = 17.0
 
@@ -20,7 +20,7 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
 
         @State private var panelColor = AppColors.lineDark
         @State private var panelHeight = 90.0
-        @State private var panelPadding = Insets(16)
+        @State private var panelPadding = EdgeInsets(16)
         @State private var captionColor = AppColors.ink
         @State private var captionSize = 17.0
 
@@ -31,14 +31,14 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             ZStack {
-                Label("A property, carried")
+                Text("A property, carried")
                     .fontSize($captionSize)
-                    .textColor($captionColor)
+                    .foregroundStyle($captionColor)
             }
             .style("Card")
             .background($panelColor)
-            .padding($panelPadding)
-            .height($panelHeight)
+            .contentPadding($panelPadding)
+            .frame(height: $panelHeight)
 
             Button("Colour").onClicked {
                 try await $panelColor.journey.move(to: AppColors.swiftOrangeDeep, .eased(500))
@@ -52,8 +52,8 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
             }
 
             Button("Padding").onClicked {
-                try await $panelPadding.journey.move(to: Insets(48), .eased(400))
-                try await $panelPadding.journey.move(to: Insets(16), .eased(400))
+                try await $panelPadding.journey.move(to: EdgeInsets(48), .eased(400))
+                try await $panelPadding.journey.move(to: EdgeInsets(16), .eased(400))
             }
 
             Button("Text size").onClicked {
@@ -76,15 +76,15 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             ZStack {
                 Grid {
-                    Label("A property, carried")
+                    Text("A property, carried")
                         .fontSize($captionSize)
-                        .textColor($captionColor)
+                        .foregroundStyle($captionColor)
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
                 }
@@ -92,8 +92,8 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
             }
             .style("Card")
             .background($panelColor)
-            .padding($panelPadding)
-            .height($panelHeight)
+            .contentPadding($panelPadding)
+            .frame(height: $panelHeight)
             .stroke(.transparent)
             .shape(.roundedRectangle(12))
 
@@ -114,8 +114,8 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
                 }
 
                 button("Padding") {
-                    try await $panelPadding.journey.move(to: Insets(48), .eased(400))
-                    try await $panelPadding.journey.move(to: Insets(16), .eased(400))
+                    try await $panelPadding.journey.move(to: EdgeInsets(48), .eased(400))
+                    try await $panelPadding.journey.move(to: EdgeInsets(16), .eased(400))
                 }
             }
             .spacing(8)
@@ -146,17 +146,17 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Each button moves a bound property on host frames. The build "
+            Text("Each button moves a bound property on host frames. The build "
                 + "counter stays still while colour, size, padding and text move.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Size moves the panel between 90 and 160 points. Back restores "
+            Text("Size moves the panel between 90 and 160 points. Back restores "
                 + "the values that remain after their journeys.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }
@@ -165,7 +165,7 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
         Button(caption)
             .fontSize(13)
-            .padding(14, 6)
+            .contentPadding(14, 6)
             .onClicked(act)
     }
 }

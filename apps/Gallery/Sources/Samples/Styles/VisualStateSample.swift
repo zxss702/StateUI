@@ -36,15 +36,15 @@ struct VisualStateSample: SampleContent, ExampleContent {
             // the dot are the ones a Button actually enters: .pressed is there,
             // and .on - which is a Switch's - does not compile.
             Button(enabled ? "Hold me" : "Disabled")
-                .isEnabled(enabled)
-                .scale($press)
+                .disabled(!enabled)
+                .scaleEffect($press)
                 .visualState(.pressed) { $0.background(Palette.brand) }
                 .visualState(.disabled) { $0
                     .background(Palette.outline)
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
                 // The colour is a setter and the engine carries it at the
-                // button's own motion; this takes 90ms, because a handler may
+                // button's own animation; this takes 90ms, because a handler may
                 // await. The scale is DRIVEN by `press`, so the handler sends
                 // the state and the button follows it.
                 .onVisualStateChanged { state in
@@ -54,17 +54,17 @@ struct VisualStateSample: SampleContent, ExampleContent {
                 .onClicked { presses += 1 }
 
             // THE SAME STATES, ARRIVING, so the two can be held down side by
-            // side: a visual state travels under the control's own motion, and
-            // `.motion(.none)` is what none of it looks like.
+            // side: a visual state travels under the control's own animation, and
+            // `.animation(.none)` is what none of it looks like.
             Button(enabled ? "Hold me too" : "Disabled")
-                .isEnabled(enabled)
-                .motion(.none)
+                .disabled(!enabled)
+                .animation(.none)
                 .visualState(.pressed) { $0.background(Palette.brand) }
                 .onClicked { presses += 1 }
 
             Switch($enabled)
 
-            Label("entered \\(entered) · pressed \\(presses) times")
+            Text("entered \\(entered) · pressed \\(presses) times")
 
             // A RadioButton has two states of its own, following isOn.
             RadioButton("Ready")
@@ -77,7 +77,7 @@ struct VisualStateSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -88,12 +88,12 @@ struct VisualStateSample: SampleContent, ExampleContent {
             // while the right arrives at it.
             HStack {
                 Button(enabled ? "Hold me" : "Disabled")
-                    .isEnabled(enabled)
-                    .scale($press)
+                    .disabled(!enabled)
+                    .scaleEffect($press)
                     .visualState(.pressed) { $0.background(Palette.brand) }
                     .visualState(.disabled) { $0
                         .background(Palette.outline)
-                        .textColor(Palette.disabled)
+                        .foregroundStyle(Palette.disabled)
                     }
                     .onVisualStateChanged { state in
                         entered = state.name
@@ -102,23 +102,23 @@ struct VisualStateSample: SampleContent, ExampleContent {
                     .onClicked { presses += 1 }
 
                 Button(enabled ? "Hold me too" : "Disabled")
-                    .isEnabled(enabled)
                     // THE SAME STATES, ARRIVING. A visual state travels under
-                    // the control's own motion, and this is what none looks
+                    // the control's own animation, and this is what none looks
                     // like.
-                    .motion(.none)
                     .visualState(.pressed) { $0.background(Palette.brand) }
                     .visualState(.disabled) { $0
                         .background(Palette.outline)
-                        .textColor(Palette.disabled)
+                        .foregroundStyle(Palette.disabled)
                     }
                     .onClicked { presses += 1 }
+                    .disabled(!enabled)
+                    .animation(.none)
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
             HStack {
-                Label("Enabled")
+                Text("Enabled")
                     .fontSize(14)
                     .verticalAlignment(.center)
 
@@ -129,10 +129,10 @@ struct VisualStateSample: SampleContent, ExampleContent {
             .spacing(12)
             .horizontalAlignment(.center)
 
-            Label("entered \(entered) · pressed \(presses) times")
+            Text("entered \(entered) · pressed \(presses) times")
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             SectionTitle("States only a RadioButton has")
 
@@ -147,10 +147,10 @@ struct VisualStateSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("Hold each button down: the left crosses to its pressed colour, the right arrives at it. "
+    var notes: (any View)? {
+        Text("Hold each button down: the left crosses to its pressed colour, the right arrives at it. "
             + "Turn Enabled off for the disabled look, and choose a radio button for the checked one.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }

@@ -27,8 +27,8 @@ struct PollSample: SampleContent, ExampleContent {
             // builds this closure once.
             DebugInfoLabel()
 
-            Label(status)
-            Label("\\(rounds) round(s)")
+            Text(status)
+            Text("\\(rounds) round(s)")
 
             ActivityIndicator(checking)
 
@@ -45,7 +45,7 @@ struct PollSample: SampleContent, ExampleContent {
                     poll.start()
                 }
         }
-        .onCreated {
+        .onAppear {
             // Set here rather than in the initializer: the closure reads this
             // view's @State, which does not exist yet while the property that
             // holds the ticker is being initialized.
@@ -69,30 +69,30 @@ struct PollSample: SampleContent, ExampleContent {
                 poll.start()
             }
         }
-        .onDestroying { poll.stop() }
+        .onDisappear { poll.stop() }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label(status)
+            Text(status)
                 .fontSize(20)
                 .fontAttributes(.bold)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label("\(rounds) round(s)")
+            Text("\(rounds) round(s)")
                 .fontSize(13)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             ActivityIndicator(checking)
                 .tint(Palette.accent)
-                .height(28)
+                .frame(height: 28)
 
             Button(poll.isRunning || checking ? "Stop" : "Start")
                 .fontSize(13)
-                .padding(20, 6)
+                .contentPadding(20, 6)
                 .horizontalAlignment(.center)
                 .onClicked {
                     if poll.isRunning || checking {
@@ -107,7 +107,7 @@ struct PollSample: SampleContent, ExampleContent {
                 }
         }
         .spacing(12)
-        .onCreated {
+        .onAppear {
             // Set here rather than in the initializer: the closure reads this
             // view's @State, which does not exist yet while the property that
             // holds the ticker is being initialized.
@@ -131,33 +131,33 @@ struct PollSample: SampleContent, ExampleContent {
                 poll.start()
             }
         }
-        .onDestroying { poll.stop() }
+        .onDisappear { poll.stop() }
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("A repeating timer would fire again while the work of the last round "
+            Text("A repeating timer would fire again while the work of the last round "
                 + "was still going, and two checks would overlap. This one does not "
                 + "repeat: it ticks once, the tick does the work, and the tick starts "
                 + "the next round when that work is done - so the gap is measured from "
                 + "the END of the work rather than from the start.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The last tick of a run stops the ticker BEFORE running its closure, "
+            Text("The last tick of a run stops the ticker BEFORE running its closure, "
                 + "which is what makes that possible: start() on a ticker that is still "
                 + "running does nothing, so the round would be lost in silence. Reading "
                 + "isRunning therefore says whether another tick is coming, not whether "
                 + "the work has finished - which is why the button above asks about both.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The work runs on a task of its own and the restart comes back from "
+            Text("The work runs on a task of its own and the restart comes back from "
                 + "there, off the thread the host draws on. `Ticker` keeps its state "
                 + "behind a lock for exactly this: `start`, `stop` and `reset` are safe "
                 + "from any thread.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }

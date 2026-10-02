@@ -69,12 +69,12 @@ final class ResourceTests: XCTestCase {
     }
 
     /// The Gallery's look is a light one and a dark one. A colour written for
-    /// only one theme is the thing that reads wrong on the other, so most of
+    /// only one color scheme is the thing that reads wrong on the other, so most of
     /// them are written for both.
     ///
-    /// Asked of the sheet itself: a value written with a half for each theme
+    /// Asked of the sheet itself: a value written with a half for each color scheme
     /// is held as the PAIR until the differ builds the element wearing it, so
-    /// the values that follow the theme are the ones that are `.themed`.
+    /// the values that follow the color scheme are the ones that are `.themed`.
     func testTheStylesAreWrittenForBothThemes() {
         var themed = 0
 
@@ -86,7 +86,7 @@ final class ResourceTests: XCTestCase {
             }
         }
 
-        XCTAssertGreaterThan(themed, 10, "hardly anything follows the theme")
+        XCTAssertGreaterThan(themed, 10, "hardly anything follows the colorScheme")
     }
 
     /// The keyed styles the gallery asks for by name exist. A key nothing was
@@ -107,12 +107,7 @@ final class ResourceTests: XCTestCase {
     /// worth pinning is that chosen and resting rows render differently.
     func testTheChosenMenuRowIsDrawnDifferentlyFromTheRest() {
         func drawn(chosen: Bool) -> Node {
-            var node = MenuRow("Layout", action: {}).icon("nav_layout.png").chosen(chosen).body
-
-            // A raw tree keeps a container's content in its closure - the
-            // differ is who runs it - so this reader materializes first.
-            node.materialize()
-            return node
+            return MenuRow("Layout", action: {}).icon("nav_layout.png").chosen(chosen).node.built
         }
 
         let on = drawn(chosen: true)
@@ -124,7 +119,7 @@ final class ResourceTests: XCTestCase {
         let onText = on.children.first { $0.props["text"] == .string("Layout") }
         let offText = off.children.first { $0.props["text"] == .string("Layout") }
 
-        XCTAssertNotEqual(onText?.props["textColor"], offText?.props["textColor"])
+        XCTAssertNotEqual(onText?.props["foregroundStyle"], offText?.props["foregroundStyle"])
         XCTAssertNotEqual(onText?.props["fontAttributes"], offText?.props["fontAttributes"])
     }
 }

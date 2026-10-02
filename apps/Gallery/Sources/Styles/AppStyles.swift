@@ -14,7 +14,7 @@
 //     not installed is a way to get a different font on every platform.
 //   - Nothing a Style cannot NAME: a shadow is a property of the view that
 //     casts it, a page's appearance is its `PageSession`'s, and the bars of
-//     NavigationStack and TabbedView are written on the arrangement itself -
+//     NavigationStack and TabView are written on the arrangement itself -
 //     see MainWindow.detail.
 
 import StateUI
@@ -30,35 +30,35 @@ enum AppStyles {
         StyleSheet {
             // MARK: Text
 
-            Style<Label>()
-                .textColor(Palette.text)
+            Style<Text>()
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .fontSize(15)                
 
             // A page's own name for itself. Tight tracking, because a large
             // size at the default spacing reads loose.
-            Style<Label>("Headline")
-                .textColor(Palette.text)
+            Style<Text>("Headline")
+                .foregroundStyle(Palette.text)
                 .fontSize(32)
                 .fontAttributes(.bold)
                 .characterSpacing(-0.5)
                 .horizontalAlignment(.center)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
             // A PAIR, and the second is written from the first: everything
             // about the shape of a quotation is stated once here, and
             // "QuoteLoud" adds the one property that makes it loud. The Styles
             // sample draws both, side by side.
-            Style<Label>("Quote")
-                .textColor(Palette.subtle)
+            Style<Text>("Quote")
+                .foregroundStyle(Palette.subtle)
                 .fontSize(17)
                 .fontAttributes(.italic)
                 .characterSpacing(0.3)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Style<Label>("QuoteLoud")
+            Style<Text>("QuoteLoud")
                 .basedOn("Quote")
-                .textColor(Palette.accent)
+                .foregroundStyle(Palette.accent)
 
             // MARK: Buttons
 
@@ -73,17 +73,17 @@ enum AppStyles {
                 .background(Palette.selected)
 
             Style<Button>()
-                .textColor(Palette.onAccent)
+                .foregroundStyle(Palette.onAccent)
                 .background(Palette.accent)
                 .fontSize(14)
                 .fontAttributes(.bold)
                 .strokeWidth(0)
                 .shape(.roundedRectangle(10))                
-                .padding(16, 11)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .contentPadding(16, 11)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                     .background(Palette.outline)
                 }
 
@@ -107,8 +107,8 @@ enum AppStyles {
             // chrome matches the other things in the chrome that can be
             // pressed. Fixed rather than `Palette.accent` - the exception
             // Gallery/GalleryPage.swift makes for the toolbar icon: the title
-            // bar does not follow the theme, so a themed colour would be right
-            // in one theme and wrong in the other. It measures 5.0:1 on the
+            // bar does not follow the color scheme, so a themed colour would be right
+            // in one color scheme and wrong in the other. It measures 5.0:1 on the
             // bar's violet, where `swiftOrangeLight` is 3.4:1 and fails AA for
             // text.
             //
@@ -116,13 +116,13 @@ enum AppStyles {
             // everything it needs, the 44-point touch floor deliberately
             // dropped: a title bar is a desktop, and a mouse is not a thumb.
             Style<Button>("ChromeChip")
-                .textColor(AppColors.windowYellow)
+                .foregroundStyle(AppColors.windowYellow)
                 .background(.transparent)
                 .fontSize(13)
                 .fontAttributes(.bold)
                 .strokeWidth(0)
-                .padding(5, 0)
-                .height(26)
+                .contentPadding(5, 0)
+                .frame(height: 26)
                 .visualState(.normal) { $0
                     .opacity(1)
                 }
@@ -143,17 +143,17 @@ enum AppStyles {
             // A keyed style REPLACES the implicit one, so this states
             // everything it needs - the ChromeChip rule again.
             Style<Button>("RowChip")
-                .textColor(Palette.onAccent)
+                .foregroundStyle(Palette.onAccent)
                 .background(Palette.accent)
                 .fontSize(13)
                 .fontAttributes(.bold)
                 .strokeWidth(0)
                 .shape(.roundedRectangle(10))
-                .padding(14, 4)
-                .minimumHeight(0)
-                .minimumWidth(0)
+                .contentPadding(14, 4)
+                .frame(minHeight: 0)
+                .frame(minWidth: 0)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                     .background(Palette.outline)
                 }
 
@@ -162,8 +162,8 @@ enum AppStyles {
                 .stroke(.transparent)
                 .strokeWidth(0)
                 .shape(.roundedRectangle(10))
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
                     .opacity(0.4)
                 }
@@ -171,55 +171,55 @@ enum AppStyles {
             // MARK: Fields
 
             Style<TextField>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .placeholderColor(Palette.subtle)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             Style<TextEditor>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .placeholderColor(Palette.subtle)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             Style<Picker>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             Style<DatePicker>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             Style<TimePicker>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             // NO background: a search field keeps the platform's own
@@ -228,14 +228,14 @@ enum AppStyles {
             // dead band under the field - a mouse is not a thumb, the
             // ChromeChip rule.
             Style<SearchField>()
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .placeholderColor(Palette.subtle)
                 .tint(Palette.accent)
                 .fontSize(15)
-                .minimumHeight(formFactor == .desktop ? 0 : 44)
-                .minimumWidth(44)
+                .frame(minHeight: formFactor == .desktop ? 0 : 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                     .placeholderColor(Palette.disabled)
                 }
 
@@ -252,20 +252,20 @@ enum AppStyles {
 
             Style<CheckBox>()
                 .tint(Palette.accent)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
                     .tint(Palette.disabled)
                 }
 
             Style<RadioButton>()
                 .background(.transparent)
-                .textColor(Palette.text)
+                .foregroundStyle(Palette.text)
                 .fontSize(15)
-                .minimumHeight(44)
-                .minimumWidth(44)
+                .frame(minHeight: 44)
+                .frame(minWidth: 44)
                 .visualState(.disabled) { $0
-                    .textColor(Palette.disabled)
+                    .foregroundStyle(Palette.disabled)
                 }
 
             Style<Slider>()
@@ -300,13 +300,13 @@ enum AppStyles {
 
             Style<HStack>("MenuRow")
                 .spacing(14)
-                .padding(18, 13)
+                .contentPadding(18, 13)
                 .background(.transparent)
 
-            Style<Label>("MenuRowText")
+            Style<Text>("MenuRowText")
                 .fontSize(16)
                 .verticalAlignment(.center)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             // MARK: Shapes
 
@@ -326,12 +326,12 @@ enum AppStyles {
                 .strokeWidth(1)
                 .clipsContent(true)
 
-            // COLOUR, not background: a ColorBox draws its colour, and a
+            // COLOUR, not background: a ColorPicker draws its colour, and a
             // background is a second square behind that one - which Android
             // does not turn with the view, so a rotated box would show it
             // standing still underneath. The gallery's clock hands are the
             // ones that showed it.
-            Style<ColorBox>()
+            Style<ColorPicker>()
                 .color(Palette.accent)
         }
     }

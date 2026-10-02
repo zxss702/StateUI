@@ -4,7 +4,7 @@ import StateUI
 
 /// The gallery's one navigational shape - a row on a group's page.
 ///
-/// The WHOLE card answers a tap: a view with `.onTapped` on it, not a button
+/// The WHOLE card answers a tap: a view with `.onTapGesture` on it, not a button
 /// with something around it. The chevron is a chevron - it says where the row goes and nothing more.
 /// And because a tapped ZStack shows nothing where a Button would, the card
 /// says the press back itself: a quick dip in scale before the action runs.
@@ -22,7 +22,7 @@ import StateUI
 /// Its own modifiers are written FIRST, before the ones every view has:
 /// `.margin` and friends give back a `ModifiedContent`, which is a view and no
 /// longer a `Card`.
-struct Card: ContentView {
+struct Card: View {
     private let title: String
     private let summary: String
     private let action: EventHandler
@@ -57,13 +57,13 @@ struct Card: ContentView {
         return copy
     }
 
-    /// `ContentView`, not `Element`: the press is a piece of `@State`, and
+    /// `View`, not `Element`: the press is a piece of `@State`, and
     /// state on a view needs the placeholder a composed view puts in the tree.
     /// The differ builds the content once it knows this card stood here last
     /// render, and hands the rebuilt `dip` the storage its predecessor held;
     /// an eager `body` would hand out a fresh 1.0 on every render and the dip
     /// would have nowhere to live.
-    var content: any View {
+    var body: some View {
         // Copies for the handler to capture. The locals keep `self` out of
         // the closure, and a BINDING is copied like anything else the
         // handler holds. ConcurrencyTests pins this shape on the library's
@@ -74,41 +74,41 @@ struct Card: ContentView {
         return ZStack {
             Grid {
                 Image(picture)
-                    .width(24)
-                    .height(24)
-                    .isVisible(!picture.isEmpty)
+                    .frame(width: 24)
+                    .frame(height: 24)
+                    .hidden(picture.isEmpty)
                     .verticalAlignment(.center)
 
                 VStack {
-                    Label(title)
+                    Text(title)
                         .fontSize(17)
                         .fontAttributes(.bold)
 
-                    Label(summary)
+                    Text(summary)
                         .fontSize(13)
-                        .textColor(Palette.subtle)
-                        .maximumLines(2)
+                        .foregroundStyle(Palette.subtle)
+                        .lineLimit(2)
                 }
                 .gridColumn(1)
                 .spacing(2)
                 .horizontalAlignment(.fill)
                 .verticalAlignment(.center)
 
-                Label("›")
+                Text("›")
                     .gridColumn(2)
                     .fontSize(22)
-                    .textColor(Palette.accent)
+                    .foregroundStyle(Palette.accent)
                     .verticalAlignment(.center)
             }
             .columnSpacing(14)
-            // The TEXT is the star column. An Auto column measures a Label at
+            // The TEXT is the star column. An Auto column measures a Text at
             // the width it would like - the whole summary on one line - so the
             // text ran under the chevron and out through the outline, with an
             // empty star column beside it holding the space it needed. A star
-            // column is given what the others left, and a Label given a width
+            // column is given what the others left, and a Text given a width
             // wraps to it.
             .columns(.auto, .fill, .auto)
-            .padding(16, 14)
+            .contentPadding(16, 14)
         }
         .style("Card")
         // A CARD IS A ZSTACK WITH A TAP ON IT, which no platform reads as a
@@ -120,7 +120,7 @@ struct Card: ContentView {
         .accessibilityIdentifier(handle("card", title))
         .accessibilityLabel(title)
         .accessibilityHint(summary)
-        .scale($dip)
+        .scaleEffect($dip)
         // The press, said back: a ZStack with a TapGestureRecognizer draws
         // nothing on its own, unlike a Button, so without this a tap shows
         // nothing until the page changes. The DIP runs to the end before the
@@ -140,7 +140,7 @@ struct Card: ContentView {
         // was ever drawn or not - and a return whose card has already left
         // with the page reaches no control and lands on the spot. Nothing has
         // to put anything back afterwards.
-        .onTapped {
+        .onTapGesture {
             try await dip.journey.move(to: 0.96, .eased(50, .cubicOut))
             async let restored: Bool = dip.journey.move(to: 1, .eased(30, .cubicOut))
             try await action()

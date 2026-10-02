@@ -58,10 +58,10 @@ public enum Cube3DContract: ElementContract {
 /// Nothing about the drawing is described here and nothing about the
 /// description is drawn here: this side owns what the cube should be, and the
 /// host owns the frames that make it so.
-public struct Cube3D: View {
+public struct Cube3D: VisualElement {
     public var node = Node(contract: Cube3DContract.self)
 
-    /// A cube at whatever size, colour and motion its modifiers say.
+    /// A cube at whatever size, colour and animation its modifiers say.
     public init() {}
 
     /// How long the cube's edge is, as a share of the room the view is given,

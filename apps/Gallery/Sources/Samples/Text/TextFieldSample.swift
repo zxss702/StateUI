@@ -33,11 +33,11 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .showsClearButton(true)
                 .isFocused($editing)
 
-            Label(name.isEmpty ? "Hello, stranger" : "Hello, \\(name)!")
+            Text(name.isEmpty ? "Hello, stranger" : "Hello, \\(name)!")
 
-            Label(editing ? "the field has the focus" : "the field does not have the focus")
+            Text(editing ? "the field has the focus" : "the field does not have the focus")
 
-            Label("return pressed \\(done)x")
+            Text("return pressed \\(done)x")
 
             // A field for something that is not prose: the platform's
             // underline and its next-word guesses only get in the way, the
@@ -65,19 +65,19 @@ struct TextFieldSample: SampleContent, ExampleContent {
             TextField()
                 .placeholder("a password")
                 .isPassword(true)
-                .returnKey(.done)
+                .submitLabel(.done)
 
             // The keyboard the platform brings up, a cap on the length, and
             // what the return key does when it is pressed.
             TextField($email)
                 .placeholder("an address, capped at 20")
-                .inputPurpose(.email)
+                .textContentType(.email)
                 .maximumLength(20)
                 .onSubmitted { done += 1 }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
@@ -88,19 +88,19 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .showsClearButton(true)
                 .isFocused($editing)
 
-            Label(name.isEmpty ? "Hello, stranger" : "Hello, \(name)!")
+            Text(name.isEmpty ? "Hello, stranger" : "Hello, \(name)!")
                 .fontSize(17)
-                .horizontalTextAlignment(.center)
+                .multilineTextAlignment(.center)
 
-            Label(editing ? "the field has the focus" : "the field does not have the focus")
+            Text(editing ? "the field has the focus" : "the field does not have the focus")
                 .fontSize(12)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
-            Label("return pressed \(done)x")
+            Text("return pressed \(done)x")
                 .fontSize(12)
-                .textColor(Palette.subtle)
-                .horizontalTextAlignment(.center)
+                .foregroundStyle(Palette.subtle)
+                .multilineTextAlignment(.center)
 
             // A field for something that is not prose: the platform's
             // underline and its next-word guesses only get in the way, the
@@ -123,7 +123,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
             // for the selection the field already has says nothing at all.
             Button(selectAll ? "Clear the selection" : "Select the lot")
                 .fontSize(13)
-                .padding(16, 6)
+                .contentPadding(16, 6)
                 .horizontalAlignment(.center)
                 .onClicked { selectAll.toggle() }
 
@@ -137,7 +137,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .accessibilityLabel("Password")
                 .placeholder("a password")
                 .isPassword(true)
-                .returnKey(.done)
+                .submitLabel(.done)
 
             // The keyboard the platform brings up, a cap on the length, and
             // what the return key does when it is pressed.
@@ -145,19 +145,19 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .accessibilityIdentifier("entry.email")
                 .accessibilityLabel("Email address")
                 .placeholder("an address, capped at 20")
-                .inputPurpose(.email)
+                .textContentType(.email)
                 .maximumLength(20)
                 .onSubmitted { done += 1 }
         }
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("The binding IS the two-way part: `TextField($name)` hands the state to the "
+    var notes: (any View)? {
+        Text("The binding IS the two-way part: `TextField($name)` hands the state to the "
             + "host, which shows it in the field and lands every edit back on it. "
             + "`.onTextChanged` written afterwards runs beside it, never instead of "
             + "it, and after the state already holds the text.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }

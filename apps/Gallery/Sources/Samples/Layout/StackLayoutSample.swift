@@ -37,19 +37,19 @@ struct StackLayoutSample: SampleContent, ExampleContent {
         }
         .spacing(8)
 
-        private struct StackCell: ContentView {
+        private struct StackCell: View {
             let text: String
 
-            var content: any View {
-                Label(text)
-                    .textColor(.white)
+            var body: some View {
+                Text(text)
+                    .foregroundStyle(.white)
                     .background(Palette.accent)
-                    .padding(14, 8)
+                    .contentPadding(14, 8)
             }
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             SectionTitle("Vertical")
 
@@ -89,23 +89,23 @@ struct StackLayoutSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("`.horizontalAlignment` places a child across the room its stack gives it.")
+    var notes: (any View)? {
+        Text("`.horizontalAlignment` places a child across the room its stack gives it.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 }
 
 /// One block of colour with a word in it, so an arrangement is visible.
-private struct StackCell: ContentView {
+private struct StackCell: View {
     let text: String
 
-    var content: any View {
-        Label(text)
+    var body: some View {
+        Text(text)
             .fontSize(13)
-            .textColor(.white)
+            .foregroundStyle(.white)
             .background(Palette.accent)
-            .padding(14, 8)
-            .horizontalTextAlignment(.center)
+            .contentPadding(14, 8)
+            .multilineTextAlignment(.center)
     }
 }

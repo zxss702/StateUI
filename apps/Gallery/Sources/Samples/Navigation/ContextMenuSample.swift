@@ -21,7 +21,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
 
             ForEach(Array(items.enumerated()), id: \\.offset) { pair in
                 let (index, item) = pair
-                return Label(item)
+                return Text(item)
                     .contextMenu {
                         MenuItem("Duplicate")
                             .onClicked {
@@ -31,7 +31,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
 
                         Menu("Move") {
                             MenuItem("To the top")
-                                .isEnabled(index > 0)
+                                .disabled(index <= 0)
                                 .onClicked {
                                     items.remove(at: index)
                                     items.insert(item, at: 0)
@@ -39,7 +39,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
                                 }
                         }
 
-                        MenuSeparator()
+                        Divider()
 
                         MenuItem("Remove")
                             .isDestructive(true)
@@ -50,7 +50,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
                     }
             }
 
-            Label("Last: \\(chosen)")
+            Text("Last: \\(chosen)")
 
             Button("Start again")
                 .onClicked {
@@ -60,16 +60,16 @@ struct ContextMenuSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
             VStack {
                 ForEach(Array(items.enumerated()), id: \.offset) { pair in
                     let (index, item) = pair
-                    return Label(item)
+                    return Text(item)
                         .fontSize(16)
-                        .padding(14, 10)
+                        .contentPadding(14, 10)
                         .background(Palette.raised)
                         .contextMenu {
                             MenuItem("Duplicate")
@@ -80,7 +80,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
 
                             Menu("Move") {
                                 MenuItem("To the top")
-                                    .isEnabled(index > 0)
+                                    .disabled(index <= 0)
                                     .onClicked {
                                         items.remove(at: index)
                                         items.insert(item, at: 0)
@@ -88,7 +88,7 @@ struct ContextMenuSample: SampleContent, ExampleContent {
                                     }
                             }
 
-                            MenuSeparator()
+                            Divider()
 
                             MenuItem("Remove")
                                 .isDestructive(true)
@@ -101,12 +101,12 @@ struct ContextMenuSample: SampleContent, ExampleContent {
             }
             .spacing(2)
 
-            Label("Last: \(chosen)")
+            Text("Last: \(chosen)")
                 .fontSize(13)
-                .textColor(Palette.accent)
+                .foregroundStyle(Palette.accent)
 
             Button("Start again")
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.start)
                 .onClicked {
                     items = ["Alpha", "Beta", "Gamma"]
@@ -116,24 +116,24 @@ struct ContextMenuSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Right-click or long-press a row. The entries are the same three a menu bar takes - "
+            Text("Right-click or long-press a row. The entries are the same three a menu bar takes - "
                 + "an item, a submenu and a separator - attached to a view instead of to "
                 + "a page.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Context menus are optional platform furniture. Never put the only "
+            Text("Context menus are optional platform furniture. Never put the only "
                 + "way to perform an essential action behind one.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("The menu is a slot on the view rather than one of its children: it is "
-                + "written with a modifier, so a Label, a button or a stack all take one, and "
+            Text("The menu is a slot on the view rather than one of its children: it is "
+                + "written with a modifier, so a Text, a button or a stack all take one, and "
                 + "whatever arranges that control's children leaves it alone.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

@@ -93,7 +93,7 @@ final class Catalog {
                 icon: ImageSource(light: "nav_animation.png", dark: "nav_animation_dark.png"),
                 card: ImageSource("cat_animation.png"),
                 samples: [
-                    Sample(MotionSample()),
+                    Sample(JourneySample()),
                     Sample(AnimationSample()),
                     Sample(AnimatedPropertySample()),
                     Sample(AnimatedInputSample()),
@@ -126,7 +126,7 @@ final class Catalog {
             SampleGroup(
                 route: "text",
                 title: "Text & typing",
-                summary: "Words shown and words typed - a Label and its spans, TextField, "
+                summary: "Words shown and words typed - a Text and its spans, TextField, "
                     + "TextEditor, SearchField on the page rather than in the navigation "
                     + "bar, and giving the keyboard back.",
                 icon: ImageSource(light: "nav_text.png", dark: "nav_text_dark.png"),
@@ -166,7 +166,7 @@ final class Catalog {
                 route: "styles",
                 title: "Styles",
                 summary: "How a control looks - one style worn by every control of a "
-                    + "type, how it looks held down or disabled, and the theme it "
+                    + "type, how it looks held down or disabled, and the colorScheme it "
                     + "answers light and dark.",
                 icon: ImageSource(light: "nav_styles.png", dark: "nav_styles_dark.png"),
                 card: ImageSource("cat_styles.png"),
@@ -275,7 +275,7 @@ final class Catalog {
                 title: "Environment",
                 summary: "What the host knows - the device, the screen, the locale, the "
                     + "network and the battery - provided above and resolved below by "
-                    + "type; the theme is under Styles.",
+                    + "type; the colorScheme is under Styles.",
                 icon: ImageSource(light: "nav_environment.png", dark: "nav_environment_dark.png"),
                 card: ImageSource("cat_environment.png"),
                 samples: [

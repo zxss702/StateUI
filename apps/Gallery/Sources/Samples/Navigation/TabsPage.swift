@@ -2,11 +2,11 @@ import StateUI
 
 /// The first tab of the tabs demonstration - the one holding a stack of its own.
 ///
-/// It is the ROOT of a `NavigationStack` that lives inside a `TabbedView`, and
-/// that `TabbedView` is the detail of the same split view every other section
+/// It is the ROOT of a `NavigationStack` that lives inside a `TabView`, and
+/// that `TabView` is the detail of the same split view every other section
 /// is shown in. All three are pages, and pages nest - so a tab may hold a
 /// stack, and the stack it holds is its own array.
-struct TabsPage: ContentView {
+struct TabsPage: View {
     /// The gallery this page is in - the scene its inspector button opens.
     @Environment var scene: SceneSession
 
@@ -19,32 +19,32 @@ struct TabsPage: ContentView {
     /// the whole of why each tab keeps its place.
     @Binding var path: [Route]
 
-    var content: any View {
+    var body: some View {
         ScrollView {
             VStack {
                 SectionTitle("A section arranged as tabs")
 
-                Label("A TabbedView of two")
+                Text("A TabView of two")
                     .fontSize(26)
                     .fontAttributes(.bold)
 
-                Label("Push a page, change tabs, come back: it is still on top.")
+                Text("Push a page, change tabs, come back: it is still on top.")
                     .fontSize(13)
-                    .textColor(Palette.subtle)
+                    .foregroundStyle(Palette.subtle)
 
                 Button("Push a page onto this tab")
                     .background(Palette.accent)
-                    .textColor(.white)
+                    .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .padding(20, 10)
+                    .contentPadding(20, 10)
                     .horizontalAlignment(.center)
                     .onClicked { path.append(.level(1)) }
 
-                Label("Depth here: \(path.count)")
+                Text("Depth here: \(path.count)")
                     .fontSize(13)
                     .fontFamily("Menlo")
-                    .textColor(Palette.accent)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.accent)
+                    .multilineTextAlignment(.center)
 
                 TabsControls(nav: nav, thisTab: .stack)
 
@@ -52,13 +52,13 @@ struct TabsPage: ContentView {
                 // and the group is pushed onto it, so the back button leads
                 // home from there.
                 Button("Back to the Navigation samples")
-                    .padding(20, 10)
+                    .contentPadding(20, 10)
                     .horizontalAlignment(.center)
                     .onClicked { nav.openGroup("navigation") }
             }
             .spacing(14)
-            .padding(24)
+            .contentPadding(24)
         }
-        .onCreated { page.gallery("Tabs", scene: scene, nav: nav) }
+        .onAppear { page.gallery("Tabs", scene: scene, nav: nav) }
     }
 }

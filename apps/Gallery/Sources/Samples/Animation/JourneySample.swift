@@ -2,14 +2,14 @@ import StateUI
 
 /// A value that changes TRAVELS - the default, and the three laws it can travel
 /// under.
-struct MotionSample: SampleContent, ExampleContent {
-    static let id = "motion"
-    static let title = "Motion"
+struct JourneySample: SampleContent, ExampleContent {
+    static let id = "journeys"
+    static let title = "Journeys"
     static let summary = "Assign the state and the control travels there - at a length, on a spring, or not at all."
 
     static let laws = ["Eased 200ms", "Spring", "Long and slow", "None"]
 
-    static func law(_ index: Int) -> Motion {
+    static func law(_ index: Int) -> Animation {
         switch index {
         case 1: .spring(response: 320)
         case 2: .eased(900, .sineInOut)
@@ -29,7 +29,7 @@ struct MotionSample: SampleContent, ExampleContent {
 
         static let laws = ["Eased 200ms", "Spring", "Long and slow", "None"]
 
-        static func law(_ index: Int) -> Motion {
+        static func law(_ index: Int) -> Animation {
             switch index {
             case 1: .spring(response: 320)
             case 2: .eased(900, .sineInOut)
@@ -46,31 +46,31 @@ struct MotionSample: SampleContent, ExampleContent {
             // the rest.
             DebugInfoLabel()
 
-            ColorBox()
+            ColorPicker()
                 .color(warm ? Palette.accent : Palette.brand)
-                .width(wide ? 300 : 120)
-                .height(wide ? 120 : 60)
+                .frame(width: wide ? 300 : 120)
+                .frame(height: wide ? 120 : 60)
                 .cornerRadius(wide ? 32 : 8)
-                .motion(Self.law(law))
+                .animation(Self.law(law))
 
-            // The same panel, told to stay still. `.motion` is per view.
-            ColorBox()
+            // The same panel, told to stay still. `.animation` is per view.
+            ColorPicker()
                 .color(warm ? Palette.accent : Palette.brand)
-                .width(wide ? 300 : 120)
-                .height(wide ? 120 : 60)
+                .frame(width: wide ? 300 : 120)
+                .frame(height: wide ? 120 : 60)
                 .cornerRadius(wide ? 32 : 8)
-                .motion(.none)
+                .animation(.none)
 
             // And the same panel again, with a rule: everything travels
             // EXCEPT how big it is, which arrives. The last rule that names a
             // value is the one that answers for it.
-            ColorBox()
+            ColorPicker()
                 .color(warm ? Palette.accent : Palette.brand)
-                .width(wide ? 300 : 120)
-                .height(wide ? 120 : 60)
+                .frame(width: wide ? 300 : 120)
+                .frame(height: wide ? 120 : 60)
                 .cornerRadius(wide ? 32 : 8)
-                .motion(Self.law(law))
-                .motion(.none, .size)
+                .animation(Self.law(law))
+                .animation(.none, .size)
 
             HStack {
                 Button("Size").onClicked { wide.toggle() }
@@ -80,28 +80,28 @@ struct MotionSample: SampleContent, ExampleContent {
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             DebugInfoLabel()
 
-            Label("A change that travels")
+            Text("A change that travels")
                 .fontSize(11)
                 .characterSpacing(1)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             panel(travels: true)
 
-            Label("The same, told to stay still")
+            Text("The same, told to stay still")
                 .fontSize(11)
                 .characterSpacing(1)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             panel(travels: false)
 
-            Label("The same, holding only its size still")
+            Text("The same, holding only its size still")
                 .fontSize(11)
                 .characterSpacing(1)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
             sized()
 
@@ -117,38 +117,38 @@ struct MotionSample: SampleContent, ExampleContent {
 
     /// One panel, either travelling at the chosen law or arriving at once.
     private func panel(travels: Bool) -> any View {
-        ColorBox()
+        ColorPicker()
             .color(warm ? Palette.accent : Palette.brand)
-            .width(wide ? 300 : 120)
-            .height(wide ? 110 : 56)
+            .frame(width: wide ? 300 : 120)
+            .frame(height: wide ? 110 : 56)
             .cornerRadius(wide ? 28 : 8)
             .horizontalAlignment(.start)
-            .motion(travels ? Self.law(law) : .none)
+            .animation(travels ? Self.law(law) : .none)
     }
 
     /// The same panel with a RULE: everything travels except how big it is.
     private func sized() -> any View {
-        ColorBox()
+        ColorPicker()
             .color(warm ? Palette.accent : Palette.brand)
-            .width(wide ? 300 : 120)
-            .height(wide ? 110 : 56)
+            .frame(width: wide ? 300 : 120)
+            .frame(height: wide ? 110 : 56)
             .cornerRadius(wide ? 28 : 8)
             .horizontalAlignment(.start)
-            .motion(Self.law(law))
-            .motion(.none, .size)
+            .animation(Self.law(law))
+            .animation(.none, .size)
     }
 
-    var notes: Element? {
+    var notes: (any View)? {
         VStack {
-            Label("Press Size or Colour. The first panel travels, the second "
+            Text("Press Size or Colour. The first panel travels, the second "
                 + "arrives immediately, and the third holds only its size still.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
 
-            Label("Change the law to compare eased, spring, slow and immediate "
-                + "motion. StateUI sends destinations; the host supplies the frames.")
+            Text("Change the law to compare eased, spring, slow and immediate "
+                + "animation. StateUI sends destinations; the host supplies the frames.")
                 .fontSize(12)
-                .textColor(Palette.subtle)
+                .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
     }

@@ -38,8 +38,8 @@ struct MultiWindowSample: SampleContent, ExampleContent {
 
         enum AccentChoice: String, CaseIterable, PersistentValue { case violet, teal, coral, graphite }
 
-        struct GalleryApp: Application {
-            var scene: any Scene { GalleryScene() }         // a gallery, and as many more
+        struct GalleryApp: App {
+            var body: some Scene { GalleryScene() }         // a gallery, and as many more
         }
 
         struct GalleryScene: Scene {                    // ONE gallery
@@ -113,13 +113,13 @@ struct MultiWindowSample: SampleContent, ExampleContent {
             // What the last button answered, and what is open - read here, so
             // a gallery or a window opening or closing builds this closure.
             DebugInfoLabel()
-            Label(said)
-            Label("\\(application.scenes.count) galleries open")
-            Label(scene.windows.map { $0.title ?? "untitled" }.joined(separator: " · "))
+            Text(said)
+            Text("\\(application.scenes.count) galleries open")
+            Text(scene.windows.map { $0.title ?? "untitled" }.joined(separator: " · "))
         }
         """
 
-    var content: any View {
+    var body: some View {
         VStack {
             preview
 
@@ -142,23 +142,23 @@ struct MultiWindowSample: SampleContent, ExampleContent {
             VStack {
                 DebugInfoLabel()
 
-                Label(said)
+                Text(said)
                     .fontSize(13)
                     .fontFamily("Menlo")
-                    .textColor(Palette.accent)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.accent)
+                    .multilineTextAlignment(.center)
 
-                Label(application.scenes.count == 1
+                Text(application.scenes.count == 1
                     ? "1 gallery open"
                     : "\(application.scenes.count) galleries open")
                     .fontSize(13)
-                    .horizontalTextAlignment(.center)
+                    .multilineTextAlignment(.center)
 
-                Label("this gallery's windows: "
+                Text("this gallery's windows: "
                     + scene.windows.map { $0.title ?? "untitled" }.joined(separator: " · "))
                     .fontSize(13)
-                    .textColor(Palette.subtle)
-                    .horizontalTextAlignment(.center)
+                    .foregroundStyle(Palette.subtle)
+                    .multilineTextAlignment(.center)
             }
             .spacing(4)
 
@@ -177,7 +177,7 @@ struct MultiWindowSample: SampleContent, ExampleContent {
 
             Button("Close swatch 2")
                 .fontSize(13)
-                .padding(14, 6)
+                .contentPadding(14, 6)
                 .horizontalAlignment(.center)
                 .onClicked { await closeSwatch(2) }
 
@@ -185,16 +185,16 @@ struct MultiWindowSample: SampleContent, ExampleContent {
 
             Button("Open another gallery")
                 .background(style.accent.color)
-                .textColor(.white)
+                .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .padding(20, 10)
+                .contentPadding(20, 10)
                 .horizontalAlignment(.center)
                 .accessibilityIdentifier("scene.open")
                 .onClicked { await openAnother() }
 
             Button("Close this gallery")
                 .fontSize(13)
-                .padding(14, 6)
+                .contentPadding(14, 6)
                 .horizontalAlignment(.center)
                 .accessibilityIdentifier("scene.close")
                 .onClicked { await closeThis() }
@@ -202,22 +202,22 @@ struct MultiWindowSample: SampleContent, ExampleContent {
         .spacing(12)
     }
 
-    var notes: Element? {
-        Label("Fonts and Colours are this gallery's own windows: they change its font "
+    var notes: (any View)? {
+        Text("Fonts and Colours are this gallery's own windows: they change its font "
             + "and accent, and close with it. A swatch window exists once per value, "
             + "its number lent to it as a binding. Another gallery is one more scene, "
             + "with windows and state of its own.")
             .fontSize(12)
-            .textColor(Palette.subtle)
+            .foregroundStyle(Palette.subtle)
     }
 
     /// A line in the gallery's own font and accent - what its two windows
     /// change.
     private var preview: any View {
-        let line = Label("The quick brown fox jumps over the lazy dog.")
+        let line = Text("The quick brown fox jumps over the lazy dog.")
             .fontSize(20)
-            .textColor(style.accent.color)
-            .horizontalTextAlignment(.center)
+            .foregroundStyle(style.accent.color)
+            .multilineTextAlignment(.center)
 
         return style.font.isEmpty ? line : line.fontFamily(style.font)
     }
@@ -226,9 +226,9 @@ struct MultiWindowSample: SampleContent, ExampleContent {
     private func opens(_ caption: String, _ type: WindowType) -> any View {
         Button(caption)
             .background(style.accent.color)
-            .textColor(.white)
+            .foregroundStyle(.white)
             .shape(.roundedRectangle(8))
-            .padding(20, 8)
+            .contentPadding(20, 8)
             .accessibilityIdentifier(handle("window.open", caption))
             .onClicked { await open(type, caption) }
     }
@@ -237,7 +237,7 @@ struct MultiWindowSample: SampleContent, ExampleContent {
     private func closes(_ caption: String, _ type: WindowType) -> any View {
         Button(caption)
             .fontSize(13)
-            .padding(14, 6)
+            .contentPadding(14, 6)
             .accessibilityIdentifier(handle("window.close", caption))
             .onClicked { await close(type, caption) }
     }
@@ -280,9 +280,9 @@ struct MultiWindowSample: SampleContent, ExampleContent {
     private func swatch(_ number: Int) -> any View {
         Button("Swatch \(number)")
             .background(SwatchPage.colour(of: number))
-            .textColor(.white)
+            .foregroundStyle(.white)
             .shape(.roundedRectangle(8))
-            .padding(16, 8)
+            .contentPadding(16, 8)
             .accessibilityIdentifier("window.open.swatch.\(number)")
             .onClicked { await openSwatch(number) }
     }
