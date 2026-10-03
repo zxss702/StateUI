@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Three roads to the same walking number, and what each one costs.
 struct PacedStateSample: SampleContent, ExampleContent {
@@ -49,11 +49,11 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 .opacity($fade)
 
             HStack {
-                Button("Fade")
-                    .onClicked { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) }
+                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) })
+                    
 
-                Button("Back")
-                    .onClicked { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) }
+                Button("Back", action: { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) })
+                    
             }
         }
         """
@@ -67,7 +67,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 DebugInfoLabel()
 
                 Text($fade.convert { "going to \(Int($0 * 100))%" })
-                    .fontSize(17)
+                    .font(.system(size: 17))
             }
             .spacing(4)
             .contentPadding(14)
@@ -80,7 +80,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 DebugInfoLabel()
 
                 Text("at \(Int($fade.journey.value * 100))%")
-                    .fontSize(17)
+                    .font(.system(size: 17))
             }
             .spacing(4)
             .contentPadding(14)
@@ -92,7 +92,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 DebugInfoLabel()
 
                 Text("at \(Int(shown * 100))%")
-                    .fontSize(17)
+                    .font(.system(size: 17))
             }
             .spacing(4)
             .contentPadding(14)
@@ -106,27 +106,27 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 .opacity($fade)
 
             HStack {
-                Button("Fade")
+                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) })
                     .accessibilityIdentifier("paced.fade")
                     .accessibilityLabel("Fade the box out")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
-                    .onClicked { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) }
+                    .contentPadding(EdgeInsets(20, 10))
+                    
 
-                Button("Back")
+                Button("Back", action: { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) })
                     .accessibilityIdentifier("paced.back")
                     .accessibilityLabel("Bring the box back")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
-                    .onClicked { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) }
+                    .contentPadding(EdgeInsets(20, 10))
+                    
             }
             .spacing(12)
             .horizontalAlignment(.center)
@@ -140,7 +140,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 + "whole two seconds, the second counts up once a frame, the third about "
                 + "ten times a second. One value, three ways of showing it, and the "
                 + "difference between them is the whole of what this page is about.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A state is at its value the moment it is written. `move(to:)` puts "
@@ -148,7 +148,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 + "there - which is what lets the box travel without a single render. "
                 + "`fade` is that destination; `$fade.journey.value` is where the box "
                 + "has got to.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A read of the journey is a build per frame. The host writes where the "
@@ -156,7 +156,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 + "see every one of them. A closure that prints `fade` alone is built once "
                 + "per write, the destination never moving in between. That is the honest "
                 + "cost of a moving number, and why the first block is a converter.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A reading is the middle road: where the value had got to when the "
@@ -166,7 +166,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 + "only shown, since it costs no render at all; a reading where it decides "
                 + "which views there are while it travels; the journey itself where every "
                 + "frame matters and the closure is small.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A slider's value and a stepper's - the two properties a USER can move,
 /// both carried by the host. Two sliders and a stepper, and what differs is who
@@ -46,15 +46,13 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
                 Text("volume · \\(percent(volume))")
 
-                Slider($volume)
-                    .minimum(0)
-                    .maximum(1)
+                Slider($volume, in: 0...1)
 
-                Button("Send the top one").onClicked {
+                Button("Send the top one", action: {
                     // An assignment sends the thumb there under the element's
                     // law, and costs the one render this line asks for.
                     volume = volume < 0.5 ? 1 : 0
-                }
+                })
             }
 
             VStack {
@@ -68,14 +66,12 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 // up with the movement and cost no render.
                 Text($level.journey.convert { "level · \\(Int(($0.value * 100).rounded()))%" })
 
-                Slider($level)
-                    .minimum(0)
-                    .maximum(1)
+                Slider($level, in: 0...1)
 
-                Button("Send the bottom one").onClicked {
+                Button("Send the bottom one", action: {
                     try await $level.journey.move(to: level < 0.5 ? 1 : 0,
                                                .eased(900, .cubicInOut))
-                }
+                })
             }
 
             VStack {
@@ -83,14 +79,12 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
                 Text($count.journey.convert { "count · \\(Int($0.value.rounded()))" })
 
-                Stepper($count)
-                    .minimum(0)
-                    .maximum(20)
+                Stepper($count, in: 0...20)
                     .step(1)
 
-                Button("Send the stepper to 12").onClicked {
+                Button("Send the stepper to 12", action: {
                     try await $count.journey.move(to: 12, .eased(800, .cubicOut))
-                }
+                })
             }
         }
         // Every report either control makes, with no render anywhere and no
@@ -107,19 +101,17 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
         VStack {
             VStack {
                 Text("A get")
-                    .fontSize(12)
+                    .font(.system(size: 12))
                     .foregroundStyle(Palette.subtle)
 
                 DebugInfoLabel()
 
                 Text("volume · \(percent(volume))")
-                    .fontSize(15)
+                    .font(.system(size: 15))
 
-                Slider($volume)
+                Slider($volume, in: 0...1)
                     .accessibilityIdentifier("animatedInput.volume")
                     .accessibilityLabel("Volume")
-                    .minimum(0)
-                    .maximum(1)
                     .tint(Palette.subtle)
 
                 button("Send the top one") {
@@ -130,7 +122,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
             VStack {
                 Text("A binding")
-                    .fontSize(12)
+                    .font(.system(size: 12))
                     .foregroundStyle(Palette.subtle)
 
                 DebugInfoLabel()
@@ -140,16 +132,14 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 // up with the movement and cost no render.
                 Text()
                     .text($level.journey.convert { "level · \(Int(($0.value * 100).rounded()))%" })
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .foregroundStyle(Palette.accent)
 
                 // THE SAME DECLARATION as above, and the same spelling: what
                 // differs is that nothing here reads `level` at build.
-                Slider($level)
+                Slider($level, in: 0...1)
                     .accessibilityIdentifier("animatedInput.level")
                     .accessibilityLabel("Level")
-                    .minimum(0)
-                    .maximum(1)
                     .tint(Palette.accent)
 
                 button("Send the bottom one") {
@@ -164,14 +154,12 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
                 Text()
                     .text($count.journey.convert { "count · \(Int($0.value.rounded()))" })
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .foregroundStyle(Palette.accent)
 
-                Stepper($count)
+                Stepper($count, in: 0...20)
                     .accessibilityIdentifier("animatedInput.count")
                     .accessibilityLabel("Count")
-                    .minimum(0)
-                    .maximum(20)
                     .step(1)
                     .horizontalAlignment(.start)
 
@@ -192,7 +180,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "and nothing around it. `level` is handed on as `$level` - to the "
                 + "slider and to the caption's conversion - and a binding makes no "
                 + "reader: a drag and a journey leave the count where it was.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("THAT IS THE WHOLE RULE. A value read in a body - a get - makes the "
@@ -203,7 +191,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "per report, or `.samples($x, into:, .every(100))` holds a reading "
                 + "to ten a second; where it need not, a converted text shows it for "
                 + "nothing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("AND A READING THAT MUST KEEP UP READS THE JOURNEY. Every walked "
@@ -213,7 +201,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "where one converted from the state itself would jump to the "
                 + "destination at once. The journey is also what steers the value: "
                 + "`move(to:)`, `stop()`, `snap(to:)`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Both readings are CONVERSIONS of the journey - "
@@ -223,7 +211,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                 + "arithmetic and no renders. The stepper needs its caption more than "
                 + "the slider does: a Stepper draws two buttons and NO number, so the "
                 + "caption is the only thing that shows the value at all.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -236,9 +224,9 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

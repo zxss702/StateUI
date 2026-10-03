@@ -55,9 +55,9 @@ struct OutlineSample: SampleContent, ExampleContent {
         VStack {
             VStack {
                 Text("A column")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 Text("rounded, with a hairline")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
             }
             .spacing(2)
@@ -68,9 +68,9 @@ struct OutlineSample: SampleContent, ExampleContent {
 
             HStack {
                 Text("A row,")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 Text("square and thicker")
-                    .fontSize(15)
+                    .font(.system(size: 15))
             }
             .spacing(6)
             .contentPadding(16)
@@ -80,7 +80,7 @@ struct OutlineSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("An ellipse")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
             }
@@ -103,7 +103,7 @@ struct OutlineSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         Text("The shape is `.rectangle`, `.roundedRectangle(radius)` or `.ellipse`: the layout's background is "
             + "painted to it and its outline follows it. `.clipsContent(true)` cuts what the layout holds to it too.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

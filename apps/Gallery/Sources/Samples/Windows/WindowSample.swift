@@ -45,25 +45,25 @@ struct WindowSample: SampleContent, ExampleContent {
 
         DebugInfoLabel()
 
-        Button("Move to 80, 80").onClicked {
+        Button("Move to 80, 80", action: {
             window.x = 80
             window.y = 80
-        }
+        })
 
-        Button("900 × 650").onClicked {
+        Button("900 × 650", action: {
             window.width = 900
             window.height = 650
-        }
+        })
 
-        Switch($maximizable).onChange(of: maximizable) {
+        Toggle(isOn: $maximizable).onChange(of: maximizable) {
             window.isMaximizable = maximizable
         }
 
-        Switch($minimizable).onChange(of: minimizable) {
+        Toggle(isOn: $minimizable).onChange(of: minimizable) {
             window.isMinimizable = minimizable
         }
 
-        Switch($translucent)
+        Toggle(isOn: $translucent)
             .onChange(of: translucent) {
                 window.isTranslucent = translucent
             }
@@ -77,8 +77,8 @@ struct WindowSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(window.title ?? "Platform title")
-                .fontSize(15)
-                .fontAttributes(.bold)
+                .font(.system(size: 15))
+                .bold()
 
             HStack {
                 action("Rename") {
@@ -126,7 +126,7 @@ struct WindowSample: SampleContent, ExampleContent {
                 }
 
             Text("Sample frame: \(Int(width)) × \(Int(height))")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.accent)
         }
         .spacing(12)
@@ -141,16 +141,16 @@ struct WindowSample: SampleContent, ExampleContent {
 
     /// An action that writes the surrounding window session.
     private func action(_ title: String, _ write: @escaping () -> Void) -> any View {
-        Button(title)
-            .fontSize(13)
-            .contentPadding(16, 6)
-            .onClicked { write() }
+        Button(title, action: { write() })
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(16, 6))
+            
     }
 
     /// A native boolean window capability.
     private func option(_ title: String, id: String, value: Binding<Bool>) -> any View {
         HStack {
-            Switch(value)
+            Toggle(isOn: value)
                 .accessibilityIdentifier(id)
                 .accessibilityLabel(title)
             Text(title).verticalAlignment(.center)

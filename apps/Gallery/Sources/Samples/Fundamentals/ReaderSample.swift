@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// WHO IS THE READER: one state, written by a slider and a button, and seven
 /// places it is used - each wearing its own build count, so the rule is on the
@@ -116,11 +116,9 @@ struct ReaderSample: SampleContent, ExampleContent {
 
     var body: some View {
         VStack {
-            Slider($value)
+            Slider($value, in: 0...1)
                 .accessibilityIdentifier("reader.value")
                 .accessibilityLabel("Value")
-                .minimum(0)
-                .maximum(1)
                 .tint(Palette.accent)
 
             HStack {
@@ -132,16 +130,14 @@ struct ReaderSample: SampleContent, ExampleContent {
 
             row("1 · a get in this row's braces") {
                 Text("value · \(percent(value))")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 DebugInfoLabel()
             }
 
             row("2 · a binding alone") {
-                Slider($value)
+                Slider($value, in: 0...1)
                     .accessibilityIdentifier("reader.value.bound")
                     .accessibilityLabel("Value, handed on as a binding")
-                    .minimum(0)
-                    .maximum(1)
                     .tint(Palette.subtle)
                 DebugInfoLabel()
             }
@@ -149,18 +145,18 @@ struct ReaderSample: SampleContent, ExampleContent {
             row("3 · a converted text") {
                 Text()
                     .text($value.convert { percent($0) })
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 DebugInfoLabel()
             }
 
             row("4 · a get in a nested container") {
                 Text("outside the braces: " + BuildCount.of(debugInfo()))
-                    .fontSize(12)
+                    .font(.system(size: 12))
                     .foregroundStyle(Palette.accent)
                 ZStack {
                     VStack {
                         Text("inside: \(percent(value))")
-                            .fontSize(15)
+                            .font(.system(size: 15))
                         DebugInfoLabel()
                     }
                     .spacing(4)
@@ -187,14 +183,14 @@ struct ReaderSample: SampleContent, ExampleContent {
                 + "what a write costs is on the screen. `DebugInfoLabel` is this "
                 + "gallery's one-liner over the library's own `debugInfo()`, and where "
                 + "it is written is what it measures.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A get makes the closure it sits in a reader, and a write builds exactly "
                 + "that closure again: row 1, the inner stack in row 4 and not the row "
                 + "around it, and the child in row 5, which reads the value it borrowed. "
                 + "A handler is not a reader: it reads when it fires, not at build.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A binding makes no reader. Handed to a control, a child or an engine, "
@@ -202,7 +198,7 @@ struct ReaderSample: SampleContent, ExampleContent {
                 + "Row 2 is a second slider on `$value`, and the host moves both thumbs; "
                 + "row 3 shows the value through a conversion without reading it; the "
                 + "child in row 6 only hands the binding on. None of them is built again.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Pulse writes a state no view reads, lent to the last row by `$pulses`. "
@@ -210,7 +206,7 @@ struct ReaderSample: SampleContent, ExampleContent {
                 + "engine follow it: the write wakes the engine, the engine writes a "
                 + "driven text, and neither side renders - the count stays at one while "
                 + "the number climbs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -223,7 +219,7 @@ struct ReaderSample: SampleContent, ExampleContent {
         ZStack {
             VStack {
                 Text(caption)
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
 
                 VStack(content: content)
@@ -244,10 +240,10 @@ struct ReaderSample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }
 
@@ -260,10 +256,10 @@ private struct Reading: View {
         ZStack {
             VStack {
                 Text("5 · a child that reads the value it borrowed")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
                 Text("value · \(percent(value))")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 DebugInfoLabel()
             }
             .spacing(4)
@@ -287,13 +283,11 @@ private struct Holding: View {
         ZStack {
             VStack {
                 Text("6 · a child that only hands the binding on")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
-                Slider($value)
+                Slider($value, in: 0...1)
                     .accessibilityIdentifier("reader.value.handedOn")
                     .accessibilityLabel("Value, in a child that only hands it on")
-                    .minimum(0)
-                    .maximum(1)
                     .tint(Palette.subtle)
                 DebugInfoLabel()
             }
@@ -317,11 +311,11 @@ private struct Pulsed: View {
         ZStack {
             VStack {
                 Text("7 · a state by binding")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
                 Text()
                     .text($said)
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 DebugInfoLabel()
             }
             .spacing(4)

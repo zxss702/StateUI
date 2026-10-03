@@ -17,31 +17,30 @@ struct ModalPage: View {
             SectionTitle("Over everything")
 
             Text("Native modal page")
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("The host chooses the presentation that belongs to this platform.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            Button("Close")
+            Button("Close", action: { nav.dismiss() })
                 .background(Palette.accent)
                 .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.dismiss() }
+                
 
-            Button("Present another")
-                .contentPadding(20, 10)
+            Button("Present another", action: { nav.present(.page) })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.present(.page) }
+                
 
             Text("Depth: \(nav.sheets.count)")
-                .fontSize(12)
-                .fontFamily("Menlo")
+                .font(.system(size: 12, design: .monospaced))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }

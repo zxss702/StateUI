@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A binding is no reader: one state, handed on as `$level` to a knob that
 /// drags it and to two meters that show it - one by READING the value, one by
@@ -36,8 +36,8 @@ struct BindingReaderSample: SampleContent, ExampleContent {
                         .animation(.eased(600, .cubicOut))
 
                     HStack {
-                        Button("Full").onClicked { level = 1 }
-                        Button("Empty").onClicked { level = 0 }
+                        Button("Full", action: { level = 1 })
+                        Button("Empty", action: { level = 0 })
                     }
                 }
             }
@@ -51,7 +51,7 @@ struct BindingReaderSample: SampleContent, ExampleContent {
 
                 return VStack {
                     // A GET: this meter is a reader, and every report rebuilds it.
-                    ProgressBar().progress(level)
+                    ProgressView().progress(level)
                     Text(count)
                 }
             }
@@ -94,7 +94,7 @@ struct BindingReaderSample: SampleContent, ExampleContent {
                 + "rebuilds that meter and its count climbs; the second is handed the "
                 + "same `$level` and CONVERTS it - `$level.convert { … }`, words the "
                 + "host works out on its own frames - and its count stays at one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`@Binding` is the same spelling at every depth: in a child, `level` "
@@ -102,14 +102,14 @@ struct BindingReaderSample: SampleContent, ExampleContent {
                 + "`following: $level` and `level = 1` are written as the owner writes "
                 + "them. Full and Empty are assignments, and the thumb travels under the "
                 + "slider's own `.animation`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A read in a body is the ONE thing that makes a reader, whether the "
                 + "state is the view's own or borrowed. So a value a view must show is "
                 + "read where it is shown and costs that view's renders alone, and a "
                 + "value that only has to move is handed on and costs none.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -128,20 +128,20 @@ private struct Knob: View {
                 .animation(.eased(600, .cubicOut))
 
             HStack {
-                Button("Full")
+                Button("Full", action: { level = 1 })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked { level = 1 }
+                    .contentPadding(EdgeInsets(16, 8))
+                    
 
-                Button("Empty")
+                Button("Empty", action: { level = 0 })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked { level = 0 }
+                    .contentPadding(EdgeInsets(16, 8))
+                    
             }
             .spacing(10)
         }
@@ -159,12 +159,11 @@ private struct ReadingMeter: View {
         let count = BuildCount.of(debugInfo())
 
         return VStack {
-            ProgressBar()
-                .progress(level)
+            ProgressView(level)
                 .tint(Palette.accent)
 
             Text("a bar that reads the value — \(count)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -184,10 +183,10 @@ private struct ConvertedMeter: View {
             // out on its frames - handing a conversion on reads nothing here.
             Text()
                 .text($level.convert { "\(Int(($0 * 100).rounded()))%" })
-                .fontSize(17)
+                .font(.system(size: 17))
 
             Text("a conversion of the same state — \(count)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

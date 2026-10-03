@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A card's opacity, sideways translation, scale and rotation, each driven by a state.
 struct AnimationSample: SampleContent, ExampleContent {
@@ -48,50 +48,50 @@ struct AnimationSample: SampleContent, ExampleContent {
             .rotationEffect($angle)
             .background(Palette.brand)
 
-            Picker(Self.curves)
-                .selectedIndex($curve)
-                .title("Easing")
+            Picker("Easing", selection: $curve) {
+                ForEach(Self.curves.indices) { Text(Self.curves[$0]).tag($0) }
+            }
 
             HStack {
                 // A movement answers whether it ran to the END. Stop says
                 // false, and so does a second press taking this one's place -
                 // and the way back is not taken over whatever happened instead.
-                Button("Fade").onClicked {
+                Button("Fade", action: {
                     let landed = try await $fade.journey.move(to: 0.1, .eased(400, easing))
                     if landed { try await $fade.journey.move(to: 1, .eased(400, easing)) }
-                }
+                })
 
                 // ONE movement, because the card only ever moves sideways. A
                 // diagonal would be a second state on translationY, started
                 // with `async let` so the two land together.
-                Button("Move").onClicked {
+                Button("Move", action: {
                     let landed = try await $shift.journey.move(to: 60, .eased(400, easing))
                     if landed { try await $shift.journey.move(to: 0, .eased(400, easing)) }
-                }
+                })
 
-                Button("Scale").onClicked {
+                Button("Scale", action: {
                     let landed = try await $scale.journey.move(to: 1.4, .eased(400, easing))
                     if landed { try await $scale.journey.move(to: 1, .eased(400, easing)) }
-                }
+                })
 
                 // A movement goes TO a value, never BY one, so a full turn is
                 // the author's arithmetic. The state is where the last one
                 // was headed, which is what makes the next press carry on from
                 // there rather than start over.
-                Button("Spin").onClicked {
+                Button("Spin", action: {
                     try await $angle.journey.move(to: angle + 360, .eased(700, easing))
-                }
+                })
             }
 
             // Whichever of them is moving; a state standing still is
             // unaffected. Each stop leaves the value where it had got to, so
             // the card stays exactly where the user saw it stop.
-            Button("Stop").onClicked {
+            Button("Stop", action: {
                 $fade.journey.stop()
                 $shift.journey.stop()
                 $scale.journey.stop()
                 $angle.journey.stop()
-            }
+            })
         }
 
         /// The curve the picker is on.
@@ -111,9 +111,9 @@ struct AnimationSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("Animate me")
-                    .fontSize(17)
+                    .font(.system(size: 17))
                     .foregroundStyle(Palette.onBrand)
-                    .contentPadding(24, 16)
+                    .contentPadding(EdgeInsets(24, 16))
             }
             .style("Card")
             // Four DRIVEN properties. Read off a state the host moves, so none
@@ -127,11 +127,11 @@ struct AnimationSample: SampleContent, ExampleContent {
             .shape(.roundedRectangle(32))
             .horizontalAlignment(.center)
 
-            Picker(Self.curves)
-                .accessibilityIdentifier("animation.curve")
-                .accessibilityLabel("Easing curve")
-                .selectedIndex($curve)
-                .title("Easing")
+            Picker("Easing", selection: $curve) {
+                ForEach(Self.curves.indices) { Text(Self.curves[$0]).tag($0) }
+            }
+            .accessibilityIdentifier("animation.curve")
+            .accessibilityLabel("Easing curve")
 
             HStack {
                 // A movement answers whether it ran to the END. Stop says
@@ -189,7 +189,7 @@ struct AnimationSample: SampleContent, ExampleContent {
                 + "everything driven by `fade` to 0.1. `await` says the movement "
                 + "is over and the answer says whether it reached the end, which "
                 + "is what lets one follow another without a callback.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The state holds BOTH readings: `fade` is 0.1 from the "
@@ -197,14 +197,14 @@ struct AnimationSample: SampleContent, ExampleContent {
                 + "host has got the card to. Nothing is described in between, so the "
                 + "whole 400ms costs no renders - and `$fade.journey.value = 0.5` "
                 + "instead of a movement simply snaps.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("There is no relative turn and no two-axis move. Spin adds 360 "
                 + "to where the angle was headed and goes to the sum, so each "
                 + "press carries on from the last; Move is a single movement on "
                 + "translationX, the only axis this card uses.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Move comes back because the sample says so, not because it "
@@ -212,7 +212,7 @@ struct AnimationSample: SampleContent, ExampleContent {
                 + "no render being needed to say so. Stop is the other half - it "
                 + "leaves the value exactly where it stood, so a movement broken "
                 + "off halfway leaves the card where the user saw it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -220,10 +220,10 @@ struct AnimationSample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 
     /// The curve the picker is on.

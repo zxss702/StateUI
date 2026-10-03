@@ -31,7 +31,7 @@ private struct LayerRows: ExampleContent {
             // reads when it FIRES, not at build. So this stands at one build.
             DebugInfoLabel()
 
-            Button("+1").onClicked { counter += 1 }
+            Button("+1", action: { counter += 1 })
 
             // LAYER ONE - A GET. The value is read here, so this closure is
             // its reader and every press builds it again.
@@ -55,26 +55,26 @@ private struct LayerRows: ExampleContent {
             // so this closure stands at one build however often you press.
             DebugInfoLabel()
 
-            Button("+1")
-                .fontSize(14)
+            Button("+1", action: { counter += 1 })
+                .font(.system(size: 14))
                 .background(Palette.accent)
                 .foregroundStyle(Palette.onAccent)
                 .shape(.roundedRectangle(8))
-                .contentPadding(22, 10)
+                .contentPadding(EdgeInsets(22, 10))
                 .horizontalAlignment(.center)
-                .onClicked { counter += 1 }
+                
 
             boxed("Layer one · a get") {
                 Text("Counter \(counter)")
-                    .fontSize(20)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 20))
+                    .bold()
                 DebugInfoLabel()
             }
 
             boxed("Layer two · a channel") {
                 Text($counter.convert { "Counter \($0)" })
-                    .fontSize(20)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 20))
+                    .bold()
                 DebugInfoLabel()
             }
         }
@@ -87,13 +87,13 @@ private struct LayerRows: ExampleContent {
                 + "builds that row again, compares it and sends what changed. The second "
                 + "hands the state on and the host writes the words itself, so the row "
                 + "is built once.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`$counter.convert { \"Counter \\($0)\" }` is what the channel says: a "
                 + "second value the host carries, worked out from the first. Press +1 "
                 + "and watch the two build counts part.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
@@ -105,7 +105,7 @@ private struct LayerRows: ExampleContent {
         ZStack {
             VStack {
                 Text(caption)
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
 
                 VStack(content: content)
@@ -139,11 +139,11 @@ private struct LayerCost: ExampleContent {
         // bottom - so the number is what that press cost in Swift.
         VStack {
             HStack {
-                Button("+1").onClicked { counter += 1 }
+                Button("+1", action: { counter += 1 })
 
                 // A choice of more than two, so a button that cycles them.
-                Button("Views: \\(leaves)")
-                    .onClicked { leaves = leaves == 25 ? 100 : leaves == 100 ? 400 : 25 }
+                Button("Views: \\(leaves)", action: { leaves = leaves == 25 ? 100 : leaves == 100 ? 400 : 25 })
+                    
             }
 
             // LAYER ONE: the get is in the closure, so a press describes every
@@ -200,36 +200,36 @@ private struct LayerCost: ExampleContent {
     var body: some View {
         VStack {
             HStack {
-                Button("+1")
-                    .fontSize(13)
+                Button("+1", action: { counter += 1 })
+                    .font(.system(size: 13))
                     .background(Palette.accent)
                     .foregroundStyle(Palette.onAccent)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(18, 8)
-                    .onClicked { counter += 1 }
+                    .contentPadding(EdgeInsets(18, 8))
+                    
 
                 // A choice of more than two, so a button that cycles them.
-                Button("Views: \(leaves)")
-                    .fontSize(13)
+                Button("Views: \(leaves)", action: { leaves = leaves == 25 ? 100 : leaves == 100 ? 400 : 25 })
+                    .font(.system(size: 13))
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(18, 8)
-                    .onClicked { leaves = leaves == 25 ? 100 : leaves == 100 ? 400 : 25 }
+                    .contentPadding(EdgeInsets(18, 8))
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)
 
             Text("Layer one · a get")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
 
             Described(counter: $counter, leaves: leaves)
 
             Text("Layer two · a channel")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
 
             Channelled(counter: $counter, leaves: leaves)
@@ -242,19 +242,19 @@ private struct LayerCost: ExampleContent {
             Text("Two blocks of the same views, one number shown two ways. Each block "
                 + "reads the clock at the top of its closure and again at the bottom, so "
                 + "what it prints is what describing it cost.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Press +1: the first block is described again - every view in it - and "
                 + "its build count and its microseconds climb. The second is not "
                 + "described at all, and its count stays at one. Raise the views to 400 "
                 + "and the difference grows with them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Reading is what a view that decides by a value needs; a channel is for "
                 + "a value that only moves.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
@@ -285,12 +285,12 @@ private struct Described: View {
             }
 
             Text("Counter \(counter)")
-                .fontSize(13)
-                .fontAttributes(.bold)
-                .padding(6, 0)
+                .font(.system(size: 13))
+                .bold()
+                .padding(EdgeInsets(6, 0))
 
             Text(took(began, leaves))
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.accent)
                 .frame(height: 15)
 
@@ -323,12 +323,12 @@ private struct Channelled: View {
             }
 
             Text($counter.convert { "Counter \($0)" })
-                .fontSize(13)
-                .fontAttributes(.bold)
-                .padding(6, 0)
+                .font(.system(size: 13))
+                .bold()
+                .padding(EdgeInsets(6, 0))
 
             Text(took(began, leaves))
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.accent)
                 .frame(height: 15)
 

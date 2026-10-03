@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// EVERY PROPERTY CAN BE HANDED A BINDING: a font size, a colour, a flag, a
 /// placeholder, a choice, a toggle - each a plain `@State` handed on as `$x`,
@@ -31,7 +31,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
 
     /// A CHOICE: an enum the host sets as it stands. It crosses as the
     /// member's number and the host resolves it into the platform's own.
-    @State private var side = Alignment.start
+    @State private var side = AxisAlignment.start
 
     static let id = "boundProperties"
     static let title = "Every property by binding"
@@ -45,7 +45,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
         @State private var hint = "Type here"     // words: the host writes them
         @State private var choice = 1             // a choice: set and reported
         @State private var on = false             // a toggle: set and reported
-        @State private var side = Alignment.start   // a member: the host sets it
+        @State private var side = AxisAlignment.start   // a member: the host sets it
 
         VStack {
             // A JOURNEY. `size = 30` sends the font size there under the
@@ -55,8 +55,8 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
                 DebugInfoLabel()                            // stays at one
             }
             HStack {
-                Button("Smaller").onClicked { size = max(10, size - 4) }
-                Button("Bigger").onClicked { size = min(40, size + 4) }
+                Button("Smaller", action: { size = max(10, size - 4) })
+                Button("Bigger", action: { size = min(40, size + 4) })
             }
 
             // A colour walks the same way.
@@ -64,34 +64,36 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
                 Text("Tinted").foregroundStyle($tint)
                 DebugInfoLabel()                            // stays at one
             }
-            Button("Swap the tint").onClicked {
+            Button("Swap the tint", action: {
                 warm.toggle()
                 tint = warm ? Palette.accent : Palette.subtle
-            }
+            })
 
             // A PLAIN flag: set as it stands, nothing walks.
             VStack {
                 Text("Now you see me").hidden($shown.convert { !$0 })
                 DebugInfoLabel()                            // stays at one
             }
-            Switch($shown)
+            Toggle(isOn: $shown)
 
             // WORDS: written by the host as the state changes.
             VStack {
                 TextField().placeholder($hint)
                 DebugInfoLabel()                            // stays at one
             }
-            Button("Another hint").onClicked {
+            Button("Another hint", action: {
                 hint = hint == "Type here" ? "Your name" : "Type here"
-            }
+            })
 
             // BOTH WAYS: the host sets the choice from the state and lands
             // the user's pick on it - and nothing here reads `choice`.
             VStack {
-                Picker(["S", "M", "L"]).selectedIndex($choice)
+                Picker("Size", selection: $choice) {
+                    ForEach(0..<3) { Text(["S", "M", "L"][$0]).tag($0) }
+                }
                 DebugInfoLabel()                            // stays at one
             }
-            Button("Choose L").onClicked { choice = 2 }
+            Button("Choose L", action: { choice = 2 })
 
             // A MEMBER: an alignment handed on as $side. The host sets it, and
             // `side = .end` moves the label without building anything.
@@ -99,14 +101,14 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
                 Text("Where am I?").horizontalAlignment($side)
                 DebugInfoLabel()                            // stays at one
             }
-            Button("Move me along").onClicked {
+            Button("Move me along", action: {
                 side = side == .start ? .center : side == .center ? .end : .start
-            }
+            })
 
             // The one row that READS: `on` printed in its braces makes it a
             // reader, so a flip renders this row and no other.
             VStack {
-                Switch($on)
+                Toggle(isOn: $on)
                 Text(on ? "on" : "off")
                 DebugInfoLabel()                            // climbs on every flip
             }
@@ -130,7 +132,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
 
             row("2 · a colour the host walks - foregroundStyle($tint)") {
                 Text("Tinted words")
-                    .fontSize(17)
+                    .font(.system(size: 17))
                     .foregroundStyle($tint)
                 DebugInfoLabel()
             }
@@ -142,7 +144,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
 
             row("3 · a flag the host sets - isVisible($shown)") {
                 Text("Now you see me")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .hidden($shown.convert { !$0 })
                 DebugInfoLabel()
             }
@@ -160,10 +162,11 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
             button("Another hint") { hint = hint == "Type here" ? "Your name" : "Type here" }
 
             row("5 · a choice, both ways - selectedIndex($choice)") {
-                Picker(["S", "M", "L"])
-                    .accessibilityIdentifier("boundProperties.choice")
-                    .accessibilityLabel("Size")
-                    .selectedIndex($choice)
+                Picker("Size", selection: $choice) {
+                    ForEach(0..<3) { Text(["S", "M", "L"][$0]).tag($0) }
+                }
+                .accessibilityIdentifier("boundProperties.choice")
+                .accessibilityLabel("Size")
                 DebugInfoLabel()
             }
 
@@ -171,7 +174,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
 
             row("6 · a member the host sets - horizontalAlignment($side)") {
                 Text("Where am I?")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .horizontalAlignment($side)
                 DebugInfoLabel()
             }
@@ -181,12 +184,12 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
             }
 
             row("7 · a toggle, both ways - and a label that reads it") {
-                Switch($on)
+                Toggle(isOn: $on)
                     .accessibilityIdentifier("boundProperties.on")
                     .accessibilityLabel("On")
                     .horizontalAlignment(.start)
                 Text(on ? "on" : "off")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                 DebugInfoLabel()
             }
         }
@@ -203,7 +206,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
                 + "crosses as its number and the host resolves it into the platform's own. "
                 + "Every row wears its own build count, and only row 7 climbs: it is the "
                 + "one whose braces read the value.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The rule is the same one everywhere: a get makes the closure it sits "
@@ -211,7 +214,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
                 + "every value form's twin taking `Binding<T>` - a number, a colour, a "
                 + "insets, a flag, a count, a string - so a value that moves is never "
                 + "a reason to build the view again.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -223,7 +226,7 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
         ZStack {
             VStack {
                 Text(caption)
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
 
                 VStack(content: content)
@@ -239,9 +242,9 @@ struct BoundPropertiesSample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

@@ -74,19 +74,19 @@ struct PointerSample: SampleContent, ExampleContent {
                 Text(hovering
                     ? "at \(Int(pointer.x)), \(Int(pointer.y))"
                     : "move a pointer over this box")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .multilineTextAlignment(.center)
 
                 // Which of the five arrived last. Pressed and released say
                 // where they happened; entered and exited carry no position at
                 // all, and moved's is the line above.
                 Text("last: \(last)")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
                     .multilineTextAlignment(.center)
             }
             .spacing(6)
-            .contentPadding(40, 100)
+            .contentPadding(EdgeInsets(40, 100))
         }
         .style("Card")
         // The box reacts, so its look is part of what it says: the outline is
@@ -118,14 +118,14 @@ struct PointerSample: SampleContent, ExampleContent {
             Text("Five events: entered, exited, moved, pressed and released. A pointer "
                 + "is a mouse, a trackpad or a pen, so on a touch-only device none of "
                 + "them fires.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Three of them carry a position, in the VIEW's own coordinates and not "
                 + "the window's: moved says where the pointer is, pressed and released "
                 + "where the button went down and came back up. Entered and exited carry "
                 + "nothing but the fact.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

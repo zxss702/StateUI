@@ -21,25 +21,25 @@ struct ColoursPage: View {
     var body: some View {
         VStack {
             Text("The accent this gallery's bars are painted in.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
 
             ForEach(AccentChoice.allCases) { accent in
-                Button(style.accent == accent ? "✓  \(accent.name)" : accent.name)
-                    .fontSize(15)
+                Button(style.accent == accent ? "✓  \(accent.name)" : accent.name, action: { style.accent = accent })
+                    .font(.system(size: 15))
                     .foregroundStyle(.white)
                     .background(accent.color)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(14, 8)
-                    .onClicked { style.accent = accent }
+                    .contentPadding(EdgeInsets(14, 8))
+                    
             }
 
             // The window closes itself, through its own session.
-            Button("Done")
-                .fontSize(13)
-                .contentPadding(14, 6)
+            Button("Done", action: { try await window.close() })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(14, 6))
                 .horizontalAlignment(.end)
-                .onClicked { try await window.close() }
+                
         }
         .spacing(10)
         .onAppear {

@@ -47,16 +47,16 @@ private struct WebBrowserPart: ExampleContent {
                         DebugInfoLabel()
 
                         HStack {
-                            Button("Back")
+                            Button("Back", action: { try await browser.goBack() })
                                 .disabled(!hasBack)
-                                .onClicked { try await browser.goBack() }
+                                
 
-                            Button("Forward")
+                            Button("Forward", action: { try await browser.goForward() })
                                 .disabled(!hasForward)
-                                .onClicked { try await browser.goForward() }
+                                
 
-                            Button("Reload")
-                                .onClicked { try await browser.reload() }
+                            Button("Reload", action: { try await browser.reload() })
+                                
                         }
                     }
                     .gridRow(0)
@@ -86,10 +86,10 @@ private struct WebBrowserPart: ExampleContent {
                     Text(status)
                         .gridRow(2)
 
-                    Button("Title?")
-                        .onClicked {
+                    Button("Title?", action: {
                             answer = try await browser.evaluateJavaScript("document.title")
-                        }
+                        })
+                        
                         .gridRow(3)
 
                     Text(answer)
@@ -106,19 +106,19 @@ private struct WebBrowserPart: ExampleContent {
                 DebugInfoLabel()
 
                 HStack {
-                    Button("Back")
+                    Button("Back", action: { try await browser.goBack() })
                         .disabled(!hasBack)
-                        .contentPadding(14, 8)
-                        .onClicked { try await browser.goBack() }
+                        .contentPadding(EdgeInsets(14, 8))
+                        
 
-                    Button("Forward")
+                    Button("Forward", action: { try await browser.goForward() })
                         .disabled(!hasForward)
-                        .contentPadding(14, 8)
-                        .onClicked { try await browser.goForward() }
+                        .contentPadding(EdgeInsets(14, 8))
+                        
 
-                    Button("Reload")
-                        .contentPadding(14, 8)
-                        .onClicked { try await browser.reload() }
+                    Button("Reload", action: { try await browser.reload() })
+                        .contentPadding(EdgeInsets(14, 8))
+                        
                 }
                 .spacing(8)
                 .horizontalAlignment(.center)
@@ -149,21 +149,20 @@ private struct WebBrowserPart: ExampleContent {
                 .gridRow(1)
 
             Text(status)
-                .fontSize(12)
-                .fontFamily("Menlo")
+                .font(.system(size: 12, design: .monospaced))
                 .foregroundStyle(Palette.accent)
                 .gridRow(2)
 
-            Button("Title?")
-                .contentPadding(14, 8)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button("Title?", action: {
                     answer = try await browser.evaluateJavaScript("document.title")
-                }
+                })
+                .contentPadding(EdgeInsets(14, 8))
+                .horizontalAlignment(.center)
+                
                 .gridRow(3)
 
             Text(answer)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .gridRow(4)
         }
@@ -177,14 +176,14 @@ private struct WebBrowserPart: ExampleContent {
                 + "`canGoForward` are reported into bindings after every navigation. "
                 + "Back, Forward, Reload and the title question are acts aimed at the "
                 + "view with `@Aim`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.onProcessTerminated` reports what no button here can provoke: the "
                 + "platform runs web content in a process of its own and ends it when "
                 + "memory runs short, which leaves the view blank. `reload()` brings the "
                 + "page back.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -212,7 +211,7 @@ private struct WrittenInPlacePart: ExampleContent {
         Text("`source(html:)` shows HTML written in place, without the network. Web "
             + "content scrolls itself, which is why this page holds still and the view "
             + "fills the height the window gives it.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

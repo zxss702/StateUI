@@ -49,8 +49,8 @@ private struct FollowsState: ExampleContent {
                     }
                     .frame(height: 120)
 
-                    Button("Different numbers")
-                        .onClicked { bars = bars.map { _ in Double.random(in: 0.15...1) } }
+                    Button("Different numbers", action: { bars = bars.map { _ in Double.random(in: 0.15...1) } })
+                        
                 }
             }
         }
@@ -78,11 +78,11 @@ private struct FollowsState: ExampleContent {
             }
             .frame(height: 120)
 
-            Button("Different numbers")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Different numbers", action: { bars = bars.map { _ in Double.random(in: 0.15...1) } })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { bars = bars.map { _ in Double.random(in: 0.15...1) } }
+                
         }
         .spacing(12)
     }
@@ -91,7 +91,7 @@ private struct FollowsState: ExampleContent {
         Text("The drawing is a list of instructions described in Swift. They travel to "
             + "the host, which draws them on the platform's canvas. The bars are read "
             + "inside the drawing, so new numbers draw it again.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -128,9 +128,9 @@ private struct FollowsAFinger: ExampleContent {
                     .onDragged { trail = Array((trail + [$0]).suffix(120)) }
                     .onReleased { _ in }
 
-                    Button("Clear")
+                    Button("Clear", action: { trail = [] })
                         .disabled(trail.isEmpty)
-                        .onClicked { trail = [] }
+                        
                 }
             }
         }
@@ -155,12 +155,12 @@ private struct FollowsAFinger: ExampleContent {
             .onDragged { trail = Array((trail + [$0]).suffix(120)) }
             .onReleased { _ in }
 
-            Button("Clear")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Clear", action: { trail = [] })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
                 .disabled(trail.isEmpty)
-                .onClicked { trail = [] }
+                
         }
         .spacing(12)
     }
@@ -168,7 +168,7 @@ private struct FollowsAFinger: ExampleContent {
     var notes: (any View)? {
         Text("Every point the finger reports is a write: the trail changes, the "
             + "drawing is described again, and the new instructions travel.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

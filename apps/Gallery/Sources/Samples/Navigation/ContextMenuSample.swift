@@ -52,11 +52,11 @@ struct ContextMenuSample: SampleContent, ExampleContent {
 
             Text("Last: \\(chosen)")
 
-            Button("Start again")
-                .onClicked {
+            Button("Start again", action: {
                     items = ["Alpha", "Beta", "Gamma"]
                     chosen = "nothing yet"
-                }
+                })
+                
         }
         """
 
@@ -68,8 +68,8 @@ struct ContextMenuSample: SampleContent, ExampleContent {
                 ForEach(Array(items.enumerated()), id: \.offset) { pair in
                     let (index, item) = pair
                     return Text(item)
-                        .fontSize(16)
-                        .contentPadding(14, 10)
+                        .font(.system(size: 16))
+                        .contentPadding(EdgeInsets(14, 10))
                         .background(Palette.raised)
                         .contextMenu {
                             MenuItem("Duplicate")
@@ -102,16 +102,16 @@ struct ContextMenuSample: SampleContent, ExampleContent {
             .spacing(2)
 
             Text("Last: \(chosen)")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.accent)
 
-            Button("Start again")
-                .contentPadding(20, 10)
-                .horizontalAlignment(.start)
-                .onClicked {
+            Button("Start again", action: {
                     items = ["Alpha", "Beta", "Gamma"]
                     chosen = "nothing yet"
-                }
+                })
+                .contentPadding(EdgeInsets(20, 10))
+                .horizontalAlignment(.start)
+                
         }
         .spacing(12)
     }
@@ -121,18 +121,18 @@ struct ContextMenuSample: SampleContent, ExampleContent {
             Text("Right-click or long-press a row. The entries are the same three a menu bar takes - "
                 + "an item, a submenu and a separator - attached to a view instead of to "
                 + "a page.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Context menus are optional platform furniture. Never put the only "
                 + "way to perform an essential action behind one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The menu is a slot on the view rather than one of its children: it is "
                 + "written with a modifier, so a Text, a button or a stack all take one, and "
                 + "whatever arranges that control's children leaves it alone.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

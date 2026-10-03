@@ -37,8 +37,8 @@ struct BrushSample: SampleContent, ExampleContent {
                 .aspect(.stretch)        // fills the room, proportions and all
                 .frame(height: 80)
 
-            Button("endPoint: \\(Self.ends[end].name)")
-                .onClicked { end = (end + 1) % Self.ends.count }
+            Button("endPoint: \\(Self.ends[end].name)", action: { end = (end + 1) % Self.ends.count })
+                
 
             Ellipse()
                 .fill(.radialGradient(
@@ -50,7 +50,7 @@ struct BrushSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("A stroke is a brush too")
-                    .contentPadding(16, 10)
+                    .contentPadding(EdgeInsets(16, 10))
             }
             .style("Card")
             .strokeWidth(4)
@@ -95,11 +95,11 @@ struct BrushSample: SampleContent, ExampleContent {
                 .aspect(.stretch)
                 .frame(height: 80)
 
-            Button("endPoint: \(Self.ends[end].name)")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("endPoint: \(Self.ends[end].name)", action: { end = (end + 1) % Self.ends.count })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { end = (end + 1) % Self.ends.count }
+                
 
             SectionTitle("Out from a point")
 
@@ -116,8 +116,8 @@ struct BrushSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("A stroke is a brush too")
-                    .fontSize(14)
-                    .contentPadding(16, 10)
+                    .font(.system(size: 14))
+                    .contentPadding(EdgeInsets(16, 10))
             }
             .style("Card")
             .strokeWidth(4)
@@ -126,7 +126,7 @@ struct BrushSample: SampleContent, ExampleContent {
 
             VStack {
                 Text("A whole stack, behind a gradient")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .foregroundStyle(Palette.onAccent)
                     .multilineTextAlignment(.center)
             }
@@ -143,18 +143,18 @@ struct BrushSample: SampleContent, ExampleContent {
                 + "right. So the axis follows the box's own corners rather than a fixed "
                 + "angle - and on a bar this wide, corner to corner is only a few degrees "
                 + "off straight across.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.background` takes one colour or a brush; it is one property, so a "
                 + "view given both draws the one it was given last.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A stop's colour may be written `Color(light:dark:)`, and it picks its half "
                 + "as the view wearing the gradient is built - the first stop above is "
                 + "the gallery's accent, which is a lighter orange in the dark.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

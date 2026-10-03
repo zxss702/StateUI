@@ -48,21 +48,21 @@ struct ConnectivitySample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(connectivity.networkAccess == .internet ? "online" : "offline")
-                .fontSize(34)
-                .fontAttributes(.bold)
+                .font(.system(size: 34))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("access · \(connectivity.networkAccess)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("via · \(profiles.isEmpty ? "nothing reported" : profiles)")
-                .fontSize(15)
+                .font(.system(size: 15))
 
             Button("Save to the cloud")
                 .disabled(connectivity.networkAccess != .internet)
                 .background(Palette.accent)
                 .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
         }
         .spacing(10)
@@ -75,14 +75,14 @@ struct ConnectivitySample: SampleContent, ExampleContent {
                 + "network with no handler anywhere. On a phone, flip airplane "
                 + "mode and watch this page change twice; on Android that is "
                 + "`adb shell svc wifi disable`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A desktop wired to Ethernet may never CHANGE, but the "
                 + "values here are still the host's answer, pushed before "
                 + "the first render. A host that cannot observe reachability "
                 + "reports `.unknown` and no profiles.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

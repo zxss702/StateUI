@@ -43,8 +43,8 @@ struct DeviceDisplaySample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(Int(display.width)) × \(Int(display.height)) px")
-                .fontSize(28)
-                .fontAttributes(.bold)
+                .font(.system(size: 28))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text(display.density > 0
@@ -52,16 +52,16 @@ struct DeviceDisplaySample: SampleContent, ExampleContent {
                     + "\(Int(display.height / display.density)) pt at "
                     + "\(display.density)x"
                 : "density not said")
-                .fontSize(15)
+                .font(.system(size: 15))
 
             Text("orientation · \(display.orientation)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("rotation · \(display.rotation)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text(display.refreshRate > 0
                 ? "refresh · \(Int(display.refreshRate)) Hz"
                 : "refresh · not said")
-                .fontSize(15)
+                .font(.system(size: 15))
         }
         .spacing(10)
     }
@@ -73,7 +73,7 @@ struct DeviceDisplaySample: SampleContent, ExampleContent {
             + "rotation, and the width and height swapping places. A "
             + "desktop usually answers `.unknown` for both, its window "
             + "being the thing that turns.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

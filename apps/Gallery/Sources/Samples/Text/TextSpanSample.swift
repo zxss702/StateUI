@@ -35,7 +35,7 @@ struct TextSpanSample: SampleContent, ExampleContent {
                 .spans {
                     TextSpan("Sold ")
                     TextSpan("out")
-                        .fontAttributes(.bold)
+                        .bold()
                         .foregroundStyle(Palette.onAccent)
                         .background(Palette.accent)
                 }
@@ -48,12 +48,12 @@ struct TextSpanSample: SampleContent, ExampleContent {
                         let (index, word) = pair
                         return TextSpan(word + " ")
                             .foregroundStyle(index == highlighted ? Palette.accent : Palette.text)
-                            .fontAttributes(index == highlighted ? .bold : .none)
+                            .fontWeight(index == highlighted ? .bold : .regular)
                     }
                 }
 
-            Button("Move the highlight")
-                .onClicked { highlighted = (highlighted + 1) % words.count }
+            Button("Move the highlight", action: { highlighted = (highlighted + 1) % words.count })
+                
 
             // `text` and `spans` are MUTUALLY EXCLUSIVE: a label
             // given both shows the runs.
@@ -74,18 +74,17 @@ struct TextSpanSample: SampleContent, ExampleContent {
                     TextSpan("counter").foregroundStyle(Palette.accent)
                     TextSpan(" = 0")
                 }
-                .fontSize(17)
-                .fontFamily("Menlo")
+                .font(.system(size: 17, design: .monospaced))
 
             Text()
                 .spans {
                     TextSpan("Sold ")
-                        .fontSize(17)
+                        .font(.system(size: 17))
                         .foregroundStyle(Palette.text)
 
                     TextSpan("out")
-                        .fontSize(17)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 17))
+                        .bold()
                         .foregroundStyle(Palette.onAccent)
                         .background(Palette.accent)
                 }
@@ -95,19 +94,19 @@ struct TextSpanSample: SampleContent, ExampleContent {
                     ForEach(Array(words.enumerated()), id: \.offset) { pair in
                         let (index, word) = pair
                         return TextSpan(word + " ")
-                            .fontSize(17)
+                            .font(.system(size: 17))
                             .foregroundStyle(index == highlighted ? Palette.accent : Palette.text)
-                            .fontAttributes(index == highlighted ? .bold : .none)
+                            .fontWeight(index == highlighted ? .bold : .regular)
                     }
                 }
 
-            Button("Move the highlight")
-                .onClicked { highlighted = (highlighted + 1) % words.count }
+            Button("Move the highlight", action: { highlighted = (highlighted + 1) % words.count })
+                
 
             Text("this text never appears")
                 .spans {
                     TextSpan("the runs win")
-                        .fontSize(17)
+                        .font(.system(size: 17))
                         .foregroundStyle(Palette.text)
                 }
 
@@ -121,25 +120,25 @@ struct TextSpanSample: SampleContent, ExampleContent {
                 + "so text in two colours is two runs. A run carries font and text properties "
                 + "of its own - size, family, weight, a background behind those words alone. "
                 + "It is not a view, so there is no margin and no size on it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A loop is the usual way, one run per token - which is how the code block "
                 + "under every example here is drawn. Moving the highlight sends the two runs "
                 + "that changed and nothing else; the host keeps the rest of the line, the "
                 + "same way it keeps a list of rows.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`text` and `spans` are MUTUALLY EXCLUSIVE: the last label is given "
                 + "both, and it shows only the runs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The Swift type is `TextSpan`, not `Span`: Swift's own standard library has "
                 + "a `Span` in scope in every file, and it wins - `Span(\"…\")` does not "
                 + "compile.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

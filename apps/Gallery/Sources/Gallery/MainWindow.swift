@@ -279,15 +279,15 @@ private struct ChromeEnd: View {
     var body: some View {
         HStack {
             if bar.showsSurprise {
-                Button("Surprise me")
+                Button("Surprise me", action: { nav.surprise(from: catalog, on: device.formFactor) })
                     .icon("nav_surprise_chrome.png")
                     .iconPosition(.leading)
                     .iconSpacing(5)
                     .style("ChromeChip")
                     .verticalAlignment(.center)
-                    .onClicked { nav.surprise(from: catalog, on: device.formFactor) }
+                    
             }
         }
-        .padding(0, 0, 5, 0)
+        .padding(EdgeInsets(0, 0, 5, 0))
     }
 }

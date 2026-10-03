@@ -29,10 +29,10 @@ struct SwitchRow: View {
     var body: some View {
         HStack {
             Text(text)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .verticalAlignment(.center)
 
-            Switch(value)
+            Toggle(isOn: value)
                 // The caption is a Text BESIDE the switch, and no platform
                 // ties the two together on its own: a user who cannot see
                 // the row is handed a switch with no name. The same words say

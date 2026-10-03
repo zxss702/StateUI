@@ -40,16 +40,16 @@ struct BatterySample: SampleContent, ExampleContent {
             Text(battery.chargeLevel <= 0
                 ? "the host has not said"
                 : "\(Int(battery.chargeLevel * 100))%")
-                .fontSize(34)
-                .fontAttributes(.bold)
+                .font(.system(size: 34))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("state · \(battery.state)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("source · \(battery.powerSource)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("saver · \(battery.energySaverStatus)")
-                .fontSize(15)
+                .font(.system(size: 15))
         }
         .spacing(10)
     }
@@ -60,13 +60,13 @@ struct BatterySample: SampleContent, ExampleContent {
                 + "pushes each change the platform reports, and exactly the "
                 + "views that read the battery are rebuilt. On Android, try "
                 + "`adb shell dumpsys battery set level 50`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A host that cannot observe a battery leaves the level at -1, "
                 + "read here as \"the host has not said\", and the other "
                 + "values at `.unknown`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

@@ -33,14 +33,14 @@ enum AppStyles {
             Style<Text>()
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
-                .fontSize(15)                
+                .font(.system(size: 15))                
 
             // A page's own name for itself. Tight tracking, because a large
             // size at the default spacing reads loose.
             Style<Text>("Headline")
                 .foregroundStyle(Palette.text)
-                .fontSize(32)
-                .fontAttributes(.bold)
+                .font(.system(size: 32))
+                .bold()
                 .characterSpacing(-0.5)
                 .horizontalAlignment(.center)
                 .multilineTextAlignment(.center)
@@ -51,8 +51,8 @@ enum AppStyles {
             // sample draws both, side by side.
             Style<Text>("Quote")
                 .foregroundStyle(Palette.subtle)
-                .fontSize(17)
-                .fontAttributes(.italic)
+                .font(.system(size: 17))
+                .italic()
                 .characterSpacing(0.3)
                 .multilineTextAlignment(.center)
 
@@ -75,11 +75,11 @@ enum AppStyles {
             Style<Button>()
                 .foregroundStyle(Palette.onAccent)
                 .background(Palette.accent)
-                .fontSize(14)
-                .fontAttributes(.bold)
+                .font(.system(size: 14))
+                .bold()
                 .strokeWidth(0)
                 .shape(.roundedRectangle(10))                
-                .contentPadding(16, 11)
+                .contentPadding(EdgeInsets(16, 11))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -118,10 +118,10 @@ enum AppStyles {
             Style<Button>("ChromeChip")
                 .foregroundStyle(AppColors.windowYellow)
                 .background(.transparent)
-                .fontSize(13)
-                .fontAttributes(.bold)
+                .font(.system(size: 13))
+                .bold()
                 .strokeWidth(0)
-                .contentPadding(5, 0)
+                .contentPadding(EdgeInsets(5, 0))
                 .frame(height: 26)
                 .visualState(.normal) { $0
                     .opacity(1)
@@ -145,11 +145,11 @@ enum AppStyles {
             Style<Button>("RowChip")
                 .foregroundStyle(Palette.onAccent)
                 .background(Palette.accent)
-                .fontSize(13)
-                .fontAttributes(.bold)
+                .font(.system(size: 13))
+                .bold()
                 .strokeWidth(0)
                 .shape(.roundedRectangle(10))
-                .contentPadding(14, 4)
+                .contentPadding(EdgeInsets(14, 4))
                 .frame(minHeight: 0)
                 .frame(minWidth: 0)
                 .visualState(.disabled) { $0
@@ -174,7 +174,7 @@ enum AppStyles {
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .placeholderColor(Palette.subtle)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -185,7 +185,7 @@ enum AppStyles {
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
                 .placeholderColor(Palette.subtle)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -195,7 +195,7 @@ enum AppStyles {
             Style<Picker>()
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -205,7 +205,7 @@ enum AppStyles {
             Style<DatePicker>()
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -215,7 +215,7 @@ enum AppStyles {
             Style<TimePicker>()
                 .foregroundStyle(Palette.text)
                 .background(.transparent)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -231,7 +231,7 @@ enum AppStyles {
                 .foregroundStyle(Palette.text)
                 .placeholderColor(Palette.subtle)
                 .tint(Palette.accent)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: formFactor == .desktop ? 0 : 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -261,7 +261,7 @@ enum AppStyles {
             Style<RadioButton>()
                 .background(.transparent)
                 .foregroundStyle(Palette.text)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(minHeight: 44)
                 .frame(minWidth: 44)
                 .visualState(.disabled) { $0
@@ -300,11 +300,11 @@ enum AppStyles {
 
             Style<HStack>("MenuRow")
                 .spacing(14)
-                .contentPadding(18, 13)
+                .contentPadding(EdgeInsets(18, 13))
                 .background(.transparent)
 
             Style<Text>("MenuRowText")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .verticalAlignment(.center)
                 .foregroundStyle(Palette.subtle)
 

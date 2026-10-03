@@ -66,7 +66,7 @@ struct CodeBlock: View {
                         // nothing and leaves nothing to it.
                         TextSpan(run.element.text)
                             .foregroundStyle(run.element.colour)
-                            .fontSize(size)
+                            .font(.system(size: size))
                     }
                 }
                 .contentPadding(14)

@@ -113,20 +113,20 @@ struct SizingSample: SampleContent, ExampleContent {
             Text("Every one of these is a REQUEST. The layout decides, and a stack that "
                 + "has no room to spare will ignore a width it cannot give - which is why "
                 + "the bounds are worth saying separately from the size.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`maximumWidth` and `maximumHeight` are the ceiling: a "
                 + "view filling its parent stops growing there, and a view that ASKED for "
                 + "more than the ceiling gets the ceiling. The minimum pair are the floor, "
                 + "and stop it being squeezed.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`clipsContent` is the LAYOUT's edge, and cuts off a child drawn "
                 + "past it - here by a translation. It is not the same as a shape given "
                 + "to one view.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -137,7 +137,7 @@ struct SizingSample: SampleContent, ExampleContent {
     private func row(_ caption: String, _ view: any View) -> any View {
         VStack {
             Text(caption)
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
 
             view

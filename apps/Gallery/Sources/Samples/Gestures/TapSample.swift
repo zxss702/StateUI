@@ -48,7 +48,7 @@ struct TapSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("Tap anywhere on this box")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .contentPadding(24)
                     .multilineTextAlignment(.center)
             }
@@ -60,7 +60,7 @@ struct TapSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("Double-tap this one to reset")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .contentPadding(24)
                     .multilineTextAlignment(.center)
             }
@@ -71,7 +71,7 @@ struct TapSample: SampleContent, ExampleContent {
             .onTapGesture(count: 2) { taps = 0 }
 
             Text("Tapped \(taps) time(s)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
         }
         .spacing(12)
@@ -80,7 +80,7 @@ struct TapSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         Text("Any view answers a tap: every card on a group's page is a view with "
             + "`.onTapGesture` on it.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

@@ -10,10 +10,10 @@ struct LabelSample: SampleContent, ExampleContent {
             Text("Plain")
 
             Text("Bold")
-                .fontAttributes(.bold)
+                .bold()
 
             Text("Italic, and coloured")
-                .fontAttributes(.italic)
+                .italic()
                 .foregroundStyle(Palette.accent)
 
             Text("Underlined and struck through")
@@ -51,10 +51,10 @@ struct LabelSample: SampleContent, ExampleContent {
             // Text follows the system's text-size setting unless a label says
             // it does not.
             Text("Grows with the system text size")
-                .fontSize(16)
+                .font(.system(size: 16))
 
             Text("Stays at 16 whatever the system says")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .fontAutoScalingEnabled(false)
         }
         """
@@ -62,61 +62,61 @@ struct LabelSample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             Text("Plain")
-                .fontSize(16)
+                .font(.system(size: 16))
 
             Text("Bold")
-                .fontSize(16)
-                .fontAttributes(.bold)
+                .font(.system(size: 16))
+                .bold()
 
             Text("Italic, and coloured")
-                .fontSize(16)
-                .fontAttributes(.italic)
+                .font(.system(size: 16))
+                .italic()
                 .foregroundStyle(Palette.accent)
 
             Text("Underlined and struck through")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .textDecorations([.underline, .strikethrough])
 
             Text("Centred, with room around it")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .multilineTextAlignment(.center)
                 .contentPadding(8)
 
             Text("A long line that has nowhere left to go, so it is cut short with an ellipsis")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .lineBreak(.tailTruncation)
                 .lineLimit(1)
 
             Text("Letters spaced out")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .characterSpacing(3)
 
             // The height of a line as a MULTIPLE of the font's own: the same
             // two lines packed tight, then opened out.
             HStack {
                 Text("Two lines,\nlineHeight 0.8")
-                    .fontSize(16)
+                    .font(.system(size: 16))
                     .lineHeight(0.8)
 
                 Text("Two lines,\nlineHeight 2")
-                    .fontSize(16)
+                    .font(.system(size: 16))
                     .lineHeight(2)
             }
             .spacing(16)
 
             Text("One string, drawn in Two Ways")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .textCase(.uppercase)
 
             Text("One string, drawn in Two Ways")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .textCase(.lowercase)
 
             Text("Grows with the system text size")
-                .fontSize(16)
+                .font(.system(size: 16))
 
             Text("Stays at 16 whatever the system says")
-                .fontSize(16)
+                .font(.system(size: 16))
                 .fontAutoScalingEnabled(false)
         }
         .spacing(10)
@@ -126,7 +126,7 @@ struct LabelSample: SampleContent, ExampleContent {
         VStack {
             Text("The uppercase and the lowercase line are written the same way, in mixed "
                 + "case: the transform changes the DRAWING and leaves the text alone.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The last two are both 16 until the system's text-size setting moves - "
@@ -134,12 +134,12 @@ struct LabelSample: SampleContent, ExampleContent {
                 + "Display ▸ Font size. Then the first grows with it and the second stays "
                 + "where it is; where the platform offers no such setting, the two never "
                 + "differ.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Formatting is expressed by StateUI properties and TextSpan runs; "
                 + "the native host remains responsible for shaping and drawing glyphs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

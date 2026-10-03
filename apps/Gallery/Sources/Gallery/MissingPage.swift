@@ -31,20 +31,20 @@ struct MissingPage: View {
     var body: some View {
         VStack {
             Text("No sample called \"\(id)\"")
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("The route asked for a sample the catalog does not have. Every sample "
                 + "is named in Gallery/Catalog.swift; this id is not one of them.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            Button("Back")
-                .contentPadding(20, 10)
+            Button("Back", action: { path.removeLast() })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { path.removeLast() }
+                
         }
         .spacing(16)
         .contentPadding(24)

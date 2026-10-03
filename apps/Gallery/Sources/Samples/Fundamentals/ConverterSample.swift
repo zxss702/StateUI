@@ -44,8 +44,7 @@ struct ConverterSample: SampleContent, ExampleContent {
                 // THE SAME STATE IN PERCENT: a second state the host carries,
                 // worked out by an engine following `volume` - and a drag comes
                 // back through `convertBack`, in the source's own terms.
-                Slider($volume.convert { $0 * 100 }.convertBack { $0 / 100 })
-                    .maximum(100)
+                Slider($volume.convert { $0 * 100 }.convertBack { $0 / 100 }, in: 0...100)
                 DebugInfoLabel()                  // stays at one
             }
 
@@ -63,17 +62,13 @@ struct ConverterSample: SampleContent, ExampleContent {
                 // both. A step of one on each would leave the state on 20.56
                 // and the two captions would round it their own way.
                 HStack {
-                    Stepper($celsius)
+                    Stepper($celsius, in: -20...60)
                         .step(5)
-                        .minimum(-20)
-                        .maximum(60)
                     Text($celsius.convert { "\\(Int($0)) °C" })
                 }
                 HStack {
-                    Stepper($celsius.convert { $0 * 9 / 5 + 32 }.convertBack { ($0 - 32) * 5 / 9 })
+                    Stepper($celsius.convert { $0 * 9 / 5 + 32 }.convertBack { ($0 - 32) * 5 / 9 }, in: -4...140)
                         .step(9)
-                        .minimum(-4)
-                        .maximum(140)
                     Text($celsius.convert { "\\(Int($0 * 9 / 5 + 32)) °F" })
                 }
                 DebugInfoLabel()                  // stays at one
@@ -81,12 +76,8 @@ struct ConverterSample: SampleContent, ExampleContent {
 
             VStack {
                 // TWO STATES INTO ONE: an engine following both.
-                Slider($width)
-                    .minimum(20)
-                    .maximum(200)
-                Slider($height)
-                    .minimum(20)
-                    .maximum(200)
+                Slider($width, in: 20...200)
+                Slider($height, in: 20...200)
                 Text($width.convert(with: $height) { w, h in "\\(Int(w)) × \\(Int(h)) = \\(Int(w * h))" })
                 DebugInfoLabel()                  // stays at one
             }
@@ -115,21 +106,17 @@ struct ConverterSample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             row("1 · the source, 0 to 1") {
-                Slider($volume)
+                Slider($volume, in: 0...1)
                     .accessibilityIdentifier("converters.volume")
                     .accessibilityLabel("Volume, 0 to 1")
-                    .minimum(0)
-                    .maximum(1)
                     .tint(Palette.accent)
                 DebugInfoLabel()
             }
 
             row("2 · the same state in percent") {
-                Slider($volume.convert { $0 * 100 }.convertBack { $0 / 100 })
+                Slider($volume.convert { $0 * 100 }.convertBack { $0 / 100 }, in: 0...100)
                     .accessibilityIdentifier("converters.volume.percent")
                     .accessibilityLabel("Volume, in percent")
-                    .minimum(0)
-                    .maximum(100)
                     .tint(Palette.subtle)
                 DebugInfoLabel()
             }
@@ -137,7 +124,7 @@ struct ConverterSample: SampleContent, ExampleContent {
             row("3 · a caption from the conversion") {
                 Text()
                     .text($volume.convert { "\(Int($0 * 100))%" })
-                    .fontSize(17)
+                    .font(.system(size: 17))
                 DebugInfoLabel()
             }
 
@@ -147,46 +134,38 @@ struct ConverterSample: SampleContent, ExampleContent {
                     // (-20 °C = -4 °F, 60 °C = 140 °F), so every value either
                     // stepper can reach is whole in both scales and the two
                     // captions can never disagree.
-                    Stepper($celsius)
+                    Stepper($celsius, in: -20...60)
                         .accessibilityIdentifier("converters.celsius")
                         .accessibilityLabel("Celsius")
                         .step(5)
-                        .minimum(-20)
-                        .maximum(60)
                     Text()
                         .text($celsius.convert { "\(Int($0)) °C" })
-                        .fontSize(15)
+                        .font(.system(size: 15))
                 }
                 .spacing(10)
                 HStack {
-                    Stepper($celsius.convert { $0 * 9 / 5 + 32 }.convertBack { ($0 - 32) * 5 / 9 })
+                    Stepper($celsius.convert { $0 * 9 / 5 + 32 }.convertBack { ($0 - 32) * 5 / 9 }, in: -4...140)
                         .accessibilityIdentifier("converters.fahrenheit")
                         .accessibilityLabel("Fahrenheit")
                         .step(9)
-                        .minimum(-4)
-                        .maximum(140)
                     Text()
                         .text($celsius.convert { "\(Int($0 * 9 / 5 + 32)) °F" })
-                        .fontSize(15)
+                        .font(.system(size: 15))
                 }
                 .spacing(10)
                 DebugInfoLabel()
             }
 
             row("5 · two states into one") {
-                Slider($width)
+                Slider($width, in: 20...200)
                     .accessibilityIdentifier("converters.width")
                     .accessibilityLabel("Width")
-                    .minimum(20)
-                    .maximum(200)
-                Slider($height)
+                Slider($height, in: 20...200)
                     .accessibilityIdentifier("converters.height")
                     .accessibilityLabel("Height")
-                    .minimum(20)
-                    .maximum(200)
                 Text()
                     .text($width.convert(with: $height) { w, h in "\(Int(w)) × \(Int(h)) = \(Int(w * h))" })
-                    .fontSize(17)
+                    .font(.system(size: 17))
                 DebugInfoLabel()
             }
 
@@ -202,7 +181,7 @@ struct ConverterSample: SampleContent, ExampleContent {
                 Text()
                     .text(.multi($named, $width, $height)
                         .convert { "\($0): \(Int($1)) × \(Int($2))" })
-                    .fontSize(17)
+                    .font(.system(size: 17))
                 DebugInfoLabel()
             }
         }
@@ -216,7 +195,7 @@ struct ConverterSample: SampleContent, ExampleContent {
                 + "slider and the other follows, because `convertBack` is the engine the "
                 + "other way, landing a report on the source in the source's own terms. "
                 + "The caption under them is words written from the same conversion.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Two steppers on one Celsius state, one of them converted to Fahrenheit "
@@ -228,7 +207,7 @@ struct ConverterSample: SampleContent, ExampleContent {
                 + "caption does, so what is typed lands on `named` with no render - type "
                 + "in the field and watch the `.multi` caption in the next row follow "
                 + "while every count stands still.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The temperature steps by 5 and by 9 on purpose, and it is the one "
@@ -240,13 +219,13 @@ struct ConverterSample: SampleContent, ExampleContent {
                 + "stepper can reach is whole in both. Where no such step exists, show "
                 + "the value with enough figures to be true rather than rounding it "
                 + "twice.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`convertBack` is meant to be the inverse of `convert`; where it is "
                 + "not exactly, the source settles once on the value the round trip "
                 + "lands on.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -258,7 +237,7 @@ struct ConverterSample: SampleContent, ExampleContent {
         ZStack {
             VStack {
                 Text(caption)
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
 
                 VStack(content: content)

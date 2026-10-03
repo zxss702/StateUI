@@ -37,7 +37,7 @@ struct PickerSample: SampleContent, ExampleContent {
                 .onOpened { opened += 1; showing = true }
                 .onClosed { showing = false }
 
-            Button("Open the list").onClicked { showing = true }
+            Button("Open the list", action: { showing = true })
 
             Text(chosen)
             Text("Changed \\(changes)x, opened \\(opened)x")
@@ -65,17 +65,24 @@ struct PickerSample: SampleContent, ExampleContent {
                 .onOpened { opened += 1; showing = true }
                 .onClosed { showing = false }
 
-            Button("Open the list")
-                .onClicked { showing = true }
+            Button("Open the list", action: { showing = true })
+                
                 .horizontalAlignment(.center)
 
             Text(chosen)
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             Text("Changed \(changes)x, opened \(opened)x")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
+
+            // `.pickerStyle` is a logical look: segmented where the platform
+            // has such a control, a sensible fallback where it has none.
+            Picker(Self.sizes)
+                .selectedIndex($size)
+                .pickerStyle(.segmented)
+                .help("The same choice, presented as segments")
         }
         .spacing(12)
     }
@@ -84,27 +91,27 @@ struct PickerSample: SampleContent, ExampleContent {
         VStack {
             Text("The items are a list of strings and the choice is an index into it; "
                 + "-1 means nothing is chosen.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`$size` and the handler are one event written twice: the binding sets "
                 + "the index and registers the write-back, and an `.onSelectedIndexChanged` "
                 + "written beside it still runs - whichever order the two are written in.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`isOpen` is settable, so the button opens the list without touching "
                 + "it. The platform closes it on its own - a tap outside, a choice made - "
                 + "which is why `onClosed` writes the state back rather than the state "
                 + "being trusted.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("THE COUNT ONLY MOVES FOR A USER. Opening the list with the button "
                 + "leaves `opened` where it was: that open is this side's own write, and "
                 + "a write made here never comes back as an event. Tap the field itself "
                 + "and the count goes up.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

@@ -1,6 +1,6 @@
 // One tappable row: a title, a line about it, and where it goes.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The gallery's one navigational shape - a row on a group's page.
 ///
@@ -81,11 +81,11 @@ struct Card: View {
 
                 VStack {
                     Text(title)
-                        .fontSize(17)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 17))
+                        .bold()
 
                     Text(summary)
-                        .fontSize(13)
+                        .font(.system(size: 13))
                         .foregroundStyle(Palette.subtle)
                         .lineLimit(2)
                 }
@@ -96,7 +96,7 @@ struct Card: View {
 
                 Text("›")
                     .gridColumn(2)
-                    .fontSize(22)
+                    .font(.system(size: 22))
                     .foregroundStyle(Palette.accent)
                     .verticalAlignment(.center)
             }
@@ -108,7 +108,7 @@ struct Card: View {
             // column is given what the others left, and a Text given a width
             // wraps to it.
             .columns(.auto, .fill, .auto)
-            .contentPadding(16, 14)
+            .contentPadding(EdgeInsets(16, 14))
         }
         .style("Card")
         // A CARD IS A ZSTACK WITH A TAP ON IT, which no platform reads as a

@@ -50,13 +50,13 @@ struct LayoutDirectionSample: SampleContent, ExampleContent {
                 + "right, padding swaps sides, and text finds its natural alignment at "
                 + "the other edge. It is what a language written right to left needs, "
                 + "and it is one modifier rather than a second set of layouts.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("It is INHERITED. A view left at `.inherited` - which is the default "
                 + "- takes whatever the view above it has, so an application usually says "
                 + "it once, high up, and everything below follows.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -66,7 +66,7 @@ struct LayoutDirectionSample: SampleContent, ExampleContent {
     private func row(_ caption: String, _ direction: LayoutDirection) -> any View {
         VStack {
             Text(caption)
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
 
             HStack {

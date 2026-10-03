@@ -58,13 +58,13 @@ struct CheckBoxSample: SampleContent, ExampleContent {
                     .tint(Palette.accent)
 
                 Text("I have read the terms")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .verticalAlignment(.center)
             }
             .spacing(4)
 
             Text(agreed ? "Ticked" : "Not ticked")
-                .fontSize(15)
+                .font(.system(size: 15))
                 .foregroundStyle(agreed ? Palette.accent : Palette.subtle)
 
             SectionTitle("Several of them")
@@ -79,7 +79,7 @@ struct CheckBoxSample: SampleContent, ExampleContent {
                         .onToggled { ticked in extras[index] = ticked }
 
                     Text(name)
-                        .fontSize(15)
+                        .font(.system(size: 15))
                         .verticalAlignment(.center)
                 }
                 .spacing(4)
@@ -87,7 +87,7 @@ struct CheckBoxSample: SampleContent, ExampleContent {
             }
 
             Text(chosen.isEmpty ? "Nothing extra" : "With \(chosen.joined(separator: ", "))")
-                .fontSize(15)
+                .font(.system(size: 15))
         }
         .spacing(12)
     }
@@ -97,12 +97,12 @@ struct CheckBoxSample: SampleContent, ExampleContent {
             Text("A `CheckBox` is the box and nothing else: it has no caption, so the words "
                 + "beside it are a `Text`. Tapping the words does nothing; that is the "
                 + "platform's behaviour.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Boxes are independent - tick as many as you like. One choice out of "
                 + "several is a `RadioButton`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

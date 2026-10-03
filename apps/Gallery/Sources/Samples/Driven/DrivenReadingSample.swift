@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Where a value is GOING and where it HAS GOT TO are two readings, and a
 /// walked state holds both: the state itself is the destination from the first
@@ -44,17 +44,17 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 .frame(height: 10)
 
             HStack {
-                Button("Grow").onClicked {
+                Button("Grow", action: {
                     try await $width.journey.move(to: 300, .eased(1600, .cubicOut))
-                }
+                })
 
-                Button("Shrink").onClicked {
+                Button("Shrink", action: {
                     try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
-                }
+                })
 
                 // Stopping leaves the value where it stands, and the
                 // destination is mirrored onto it - so both readings agree again.
-                Button("Stop").onClicked { $width.journey.stop() }
+                Button("Stop", action: { $width.journey.stop() })
             }
         }
 
@@ -79,10 +79,10 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 .text($width.journey.convert {
                     "going to \(Int($0.destination)) — showing \(Int($0.value))"
                 })
-                .fontSize(17)
+                .font(.system(size: 17))
 
             Text("how far apart the two readings are")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             // The SAME arithmetic drawn: the distance between where the value
@@ -100,30 +100,30 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
             .horizontalAlignment(.start)
 
             HStack {
-                Button("Grow")
-                    .background(Palette.accent)
-                    .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked {
+                Button("Grow", action: {
                         try await $width.journey.move(to: 300, .eased(1600, .cubicOut))
-                    }
-
-                Button("Shrink")
+                    })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked {
-                        try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
-                    }
+                    .contentPadding(EdgeInsets(16, 8))
+                    
 
-                Button("Stop")
+                Button("Shrink", action: {
+                        try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
+                    })
+                    .background(Palette.accent)
+                    .shape(.roundedRectangle(8))
+                    .contentPadding(EdgeInsets(16, 8))
+                    
+
+                Button("Stop", action: { $width.journey.stop() })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked { $width.journey.stop() }
+                    .contentPadding(EdgeInsets(16, 8))
+                    
             }
             .spacing(10)
         }
@@ -136,7 +136,7 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 + "pressed; `$width.journey.value` is what the bar is actually showing this "
                 + "frame. The grey bar under the caption is the distance between them, "
                 + "widest at the start and nought on arrival.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Both numbers, and the grey bar's width, are CONVERSIONS of the one "
@@ -145,21 +145,21 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                 + "page reads `width` in a body, so a 1600ms journey costs no renders at "
                 + "all: a body printing `width` would be built once per press, and one "
                 + "printing `$width.journey.value` once per frame.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Stop leaves the value where it stands and brings the destination to "
                 + "meet it, so the two readings agree again and the grey bar closes. "
                 + "Press Grow and then Stop half way: the caption's first number "
                 + "becomes the second.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("There is no cadence to choose. A conversion is worked out once a "
                 + "frame, and what it answers is another driven state - so asking for "
                 + "a reading sixty times a second costs what asking for one twice a "
                 + "second would.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

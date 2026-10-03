@@ -52,7 +52,7 @@ private struct Areas: ExampleContent {
                 Text(text)
                     .foregroundStyle(.white)
                     .background(Color(color))
-                    .contentPadding(10, 6)
+                    .contentPadding(EdgeInsets(10, 6))
             }
         }
         """
@@ -86,7 +86,7 @@ private struct Areas: ExampleContent {
 
     var notes: (any View)? {
         Text("Resize the window: a proportional area follows the room, an absolute one stays put.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -157,9 +157,9 @@ private struct Marker: View {
 
     var body: some View {
         Text(text)
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(.white)
             .background(Color(color))
-            .contentPadding(10, 6)
+            .contentPadding(EdgeInsets(10, 6))
     }
 }

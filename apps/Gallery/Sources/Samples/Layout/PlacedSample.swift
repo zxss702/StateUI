@@ -1,5 +1,5 @@
 import Foundation
-import StateUI
+@_spi(Host) import StateUI
 
 /// A layout of the author's own: one line of arithmetic says where each card
 /// goes and how it is turned, and the host puts every card there on its own
@@ -236,13 +236,13 @@ struct PlacedSample: SampleContent, ExampleContent {
                 // depends on, and the ring itself turns for no build at all.
                 DebugInfoLabel()
 
-                Button("Back")
+                Button("Back", action: { try await move(-1) })
                     .disabled(grabbing)
-                    .onClicked { try await move(-1) }
+                    
 
-                Button("Next")
+                Button("Next", action: { try await move(1) })
                     .disabled(grabbing)
-                    .onClicked { try await move(1) }
+                    
             }
             .gridRow(1)
 
@@ -448,17 +448,17 @@ struct PlacedSample: SampleContent, ExampleContent {
                 // read: the switch below is the only thing here a build
                 // depends on, and the ring itself turns for no build at all.
                 DebugInfoLabel()
-                    .padding(4, 0)
+                    .padding(EdgeInsets(4, 0))
 
-                Button("Back")
-                    .padding(4, 0)
+                Button("Back", action: { try await move(-1) })
+                    .padding(EdgeInsets(4, 0))
                     .disabled(grabbing)
-                    .onClicked { try await move(-1) }
+                    
 
-                Button("Next")
-                    .padding(4, 0)
+                Button("Next", action: { try await move(1) })
+                    .padding(EdgeInsets(4, 0))
                     .disabled(grabbing)
-                    .onClicked { try await move(1) }
+                    
             }
             .spacing(8)
             .horizontalAlignment(.center)
@@ -534,18 +534,18 @@ struct PlacedSample: SampleContent, ExampleContent {
                     // ONE LINE, whatever the card's width: a caption that
                     // wrapped would change the picture's height with it.
                     Text(card.name)
-                        .fontSize(18)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 18))
+                        .bold()
                         .foregroundStyle(Palette.onBrand)
                         .lineBreak(.tailTruncation)
 
                     Text("Placed by arithmetic")
-                        .fontSize(10)
+                        .font(.system(size: 10))
                         .foregroundStyle(Palette.onBrand)
                         .opacity(0.8)
                         .lineBreak(.tailTruncation)
                 }
-                .contentPadding(12, 10)
+                .contentPadding(EdgeInsets(12, 10))
                 .spacing(1)
                 // A dark strip under the words, so a caption reads over a
                 // picture of any colour.
@@ -634,7 +634,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "the whole layout: this ring is six lines of arithmetic. `GalleryView`, "
                 + "under Cards, is the same layout with the arithmetic for a wheel, "
                 + "a fan and a row already written.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Swipe left or right to turn the ring; it settles on the card it is "
@@ -643,7 +643,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "with no scroller over them. Otherwise a `ScrollViewReader` lays an empty "
                 + "scroller over them and writes its offset into the value, so a finger "
                 + "drag, a two-finger trackpad swipe and a mouse wheel all turn the ring.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Every value that turns the ring is a `@State` no body reads. The two "
@@ -653,7 +653,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "frames and writes placements the host wears straight onto the cards, so "
                 + "the ring turns with no view built. The dots under the cards are a second "
                 + "layout and a second engine over the same two numbers.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The trap is a label written from a driven value: it is built again every "
@@ -661,7 +661,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                 + "as they go round the back with no view rebuilt. The ring keeps its card "
                 + "through a change of geometry - turn the phone or resize the window, and "
                 + "the same card is back at the front once the room settles.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

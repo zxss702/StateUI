@@ -7,6 +7,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
     @State private var code = ""
     @State private var selectAll = false
     @State private var email = ""
+    @State private var password = ""
     @State private var done = 0
 
     static let id = "textField"
@@ -19,6 +20,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
         @State private var code = ""
         @State private var selectAll = false
         @State private var email = ""
+        @State private var password = ""
         @State private var done = 0
 
         VStack {
@@ -31,7 +33,9 @@ struct TextFieldSample: SampleContent, ExampleContent {
             TextField($name)
                 .placeholder("Type your name")
                 .showsClearButton(true)
-                .isFocused($editing)
+                .focused($editing)
+
+            Button("Give the field the focus", action: { editing = true })
 
             Text(name.isEmpty ? "Hello, stranger" : "Hello, \\(name)!")
 
@@ -56,15 +60,13 @@ struct TextFieldSample: SampleContent, ExampleContent {
             // because a press has to WRITE a value the field has not been
             // given: an absent field means unchanged, so a press that asks
             // for the selection the field already has says nothing at all.
-            Button(selectAll ? "Clear the selection" : "Select the lot")
-                .onClicked { selectAll.toggle() }
+            Button(selectAll ? "Clear the selection" : "Select the lot", action: { selectAll.toggle() })
+                
 
             TextField("read only")
                 .isReadOnly(true)
 
-            TextField()
-                .placeholder("a password")
-                .isPassword(true)
+            SecureField("a password", text: $password)
                 .submitLabel(.done)
 
             // The keyboard the platform brings up, a cap on the length, and
@@ -86,19 +88,23 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .accessibilityLabel("Name")
                 .placeholder("Type your name")
                 .showsClearButton(true)
-                .isFocused($editing)
+                .focused($editing)
+
+            // `.focused` is the binding both ways: the field's move of the
+            // focus writes `editing`, and writing it puts the focus back.
+            Button("Give the field the focus", action: { editing = true })
 
             Text(name.isEmpty ? "Hello, stranger" : "Hello, \(name)!")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             Text(editing ? "the field has the focus" : "the field does not have the focus")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
             Text("return pressed \(done)x")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
@@ -121,22 +127,20 @@ struct TextFieldSample: SampleContent, ExampleContent {
             // because a press has to WRITE a value the field has not been
             // given: an absent field means unchanged, so a press that asks
             // for the selection the field already has says nothing at all.
-            Button(selectAll ? "Clear the selection" : "Select the lot")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button(selectAll ? "Clear the selection" : "Select the lot", action: { selectAll.toggle() })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { selectAll.toggle() }
+                
 
             TextField("read only")
                 .accessibilityIdentifier("entry.readOnly")
                 .accessibilityLabel("A field that cannot be typed in")
                 .isReadOnly(true)
 
-            TextField()
+            SecureField("a password", text: $password)
                 .accessibilityIdentifier("entry.password")
                 .accessibilityLabel("Password")
-                .placeholder("a password")
-                .isPassword(true)
                 .submitLabel(.done)
 
             // The keyboard the platform brings up, a cap on the length, and
@@ -148,6 +152,15 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .textContentType(.email)
                 .maximumLength(20)
                 .onSubmitted { done += 1 }
+                .help("Submitted to nobody - this is a gallery")
+
+            // `.textFieldStyle` is the field's look as a logical value; each
+            // host maps it to its own native chrome.
+            TextField("plain style")
+                .textFieldStyle(.plain)
+
+            TextField("square border")
+                .textFieldStyle(.squareBorder)
         }
         .spacing(12)
     }
@@ -157,7 +170,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
             + "host, which shows it in the field and lands every edit back on it. "
             + "`.onTextChanged` written afterwards runs beside it, never instead of "
             + "it, and after the state already holds the text.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

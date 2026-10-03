@@ -148,8 +148,8 @@ struct ShapesSample: SampleContent, ExampleContent {
                 .frame(width: 56)
                 .frame(height: 56)
 
-            Button("fillRule: .\\(rule)")
-                .onClicked { rule = rule == .evenOdd ? .nonzero : .evenOdd }
+            Button("fillRule: .\\(rule)", action: { rule = rule == .evenOdd ? .nonzero : .evenOdd })
+                
         }
         """
 
@@ -302,11 +302,11 @@ struct ShapesSample: SampleContent, ExampleContent {
                 .frame(height: 56)
                 .horizontalAlignment(.center)
 
-            Button("fillRule: .\(rule)")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("fillRule: .\(rule)", action: { rule = rule == .evenOdd ? .nonzero : .evenOdd })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { rule = rule == .evenOdd ? .nonzero : .evenOdd }
+                
         }
         .spacing(12)
     }
@@ -319,14 +319,14 @@ struct ShapesSample: SampleContent, ExampleContent {
                 + "`Line` has only the first, as there is nothing to fill. A `Rectangle` "
                 + "rounds its corners with `cornerRadius`: one number for all four, or "
                 + "each corner by name.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A `Path` is whatever you can write down: `M` moves the pen, `L` draws a "
                 + "line to a point, `Z` closes the figure back to where it started - the "
                 + "same SVG path vocabulary on every StateUI host. A `Polygon` closes its "
                 + "figure for you and a `Polyline` leaves it open.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Dashes and their offset are counted in stroke widths: `[3, 2]` at "
@@ -336,7 +336,7 @@ struct ShapesSample: SampleContent, ExampleContent {
                 + "miter limit is how long that join may be, in the same units. The Vs' "
                 + "corner asks for about 2.6: the left V is allowed 10 and keeps its point, "
                 + "the right one is allowed 1 and is cut off flat - a bevel.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The star is five points, each joined to the one two along, so its outline "
@@ -344,7 +344,7 @@ struct ShapesSample: SampleContent, ExampleContent {
                 + "anything there: `.evenOdd` counts that middle as outside and empties it, "
                 + "`.nonzero` counts it as inside and fills it. Everywhere else the two "
                 + "rules agree.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

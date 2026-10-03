@@ -36,13 +36,13 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .selectedIndicatorColor(Palette.accent)
 
             HStack {
-                Button("Back")
+                Button("Back", action: { step -= 1 })
                     .disabled(step <= 0)
-                    .onClicked { step -= 1 }
+                    
 
-                Button("Next")
+                Button("Next", action: { step += 1 })
                     .disabled(step >= Self.steps.count - 1)
-                    .onClicked { step += 1 }
+                    
             }
 
             // Twelve items twice, at two caps. `maximumVisible` is a ceiling
@@ -67,9 +67,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .indicatorColor(Palette.outline)
                 .selectedIndicatorColor(Palette.accent)
 
-            Stepper($cap)
-                .minimum(4)
-                .maximum(12)
+            Stepper($cap, in: 4...12)
 
             // One item twice. `hideSingle` is true by default, so the
             // left-hand one draws NOTHING at all - a lone dot says nothing
@@ -107,8 +105,8 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(Self.steps[step])
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
                 .multilineTextAlignment(.center)
 
             PositionIndicator()
@@ -127,17 +125,17 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .horizontalAlignment(.center)
 
             HStack {
-                Button("Back")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
+                Button("Back", action: { step -= 1 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
                     .disabled(step <= 0)
-                    .onClicked { step -= 1 }
+                    
 
-                Button("Next")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
+                Button("Next", action: { step += 1 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
                     .disabled(step >= Self.steps.count - 1)
-                    .onClicked { step += 1 }
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)
@@ -147,7 +145,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             // rows, and the stepper takes the second row's dots away one at a
             // time.
             Text("Twelve items, maximumVisible(12)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
@@ -160,7 +158,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .horizontalAlignment(.center)
 
             Text("The same twelve, maximumVisible(\(Int(cap)))")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
@@ -172,11 +170,9 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
                 .selectedIndicatorColor(Palette.accent)
                 .horizontalAlignment(.center)
 
-            Stepper($cap)
+            Stepper($cap, in: 4...12)
                 .accessibilityIdentifier("positionIndicator.cap")
                 .accessibilityLabel("How many dots")
-                .minimum(4)
-                .maximum(12)
                 .horizontalAlignment(.center)
 
             // One item twice. `hideSingle` is true by default, so the
@@ -185,7 +181,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             HStack {
                 VStack {
                     Text("hideSingle(true)")
-                        .fontSize(12)
+                        .font(.system(size: 12))
                         .foregroundStyle(Palette.subtle)
                         .multilineTextAlignment(.center)
 
@@ -201,7 +197,7 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
 
                 VStack {
                     Text("hideSingle(false)")
-                        .fontSize(12)
+                        .font(.system(size: 12))
                         .foregroundStyle(Palette.subtle)
                         .multilineTextAlignment(.center)
 
@@ -226,25 +222,25 @@ struct PositionIndicatorSample: SampleContent, ExampleContent {
             Text("The usual home for one is under a GalleryView. Both take a `position`, so "
                 + "one @State joins them - which is also what makes a PositionIndicator useful "
                 + "on its own, as above.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Nothing about it is the user's to change, so there is no binding "
                 + "overload - `position` is told to it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`maximumVisible` is a ceiling on the DOTS: both rows above say "
                 + "`count(12)`, and only the number drawn moves as the stepper does - "
                 + "which is what keeps a long sequence's dots a readable width.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`hideSingle` is true by default, which is why an indicator over a "
                 + "ONE-item list draws nothing at all: a lone dot says nothing about where "
                 + "the user is. The two columns above are that same one-item indicator, "
                 + "both ways round.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

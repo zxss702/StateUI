@@ -27,12 +27,12 @@ struct StateSample: SampleContent, ExampleContent {
                     .multilineTextAlignment(.center)
 
                 HStack {
-                    Button("Increment")
-                        .onClicked { counter += 1 }
+                    Button("Increment", action: { counter += 1 })
+                        
 
-                    Button("Reset")
+                    Button("Reset", action: { counter = 0 })
                         .disabled(counter == 0)
-                        .onClicked { counter = 0 }
+                        
                 }
 
                 ZStack {
@@ -68,32 +68,32 @@ struct StateSample: SampleContent, ExampleContent {
         ZStack {
             VStack {
                 Text("This closure reads `counter`")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .characterSpacing(1)
                     .foregroundStyle(Palette.accent)
 
                 DebugInfoLabel()
 
                 Text("Count: \(counter)")
-                    .fontSize(22)
+                    .font(.system(size: 22))
                     .multilineTextAlignment(.center)
 
                 HStack {
-                    Button("Increment")
+                    Button("Increment", action: { counter += 1 })
                         .background(Palette.accent)
                         .shape(.roundedRectangle(8))
-                        .contentPadding(20, 10)
-                        .onClicked { counter += 1 }
+                        .contentPadding(EdgeInsets(20, 10))
+                        
 
-                    Button("Reset")
+                    Button("Reset", action: { counter = 0 })
                         .stroke(Palette.outline)
                         .strokeWidth(1)
                         .background(.transparent)
                         .foregroundStyle(Palette.subtle)
                         .shape(.roundedRectangle(8))
-                        .contentPadding(20, 10)
+                        .contentPadding(EdgeInsets(20, 10))
                         .disabled(counter == 0)
-                        .onClicked { counter = 0 }
+                        
                 }
                 .spacing(12)
                 .horizontalAlignment(.center)
@@ -101,7 +101,7 @@ struct StateSample: SampleContent, ExampleContent {
                 ZStack {
                     VStack {
                         Text("And this one reads `name`")
-                            .fontSize(11)
+                            .font(.system(size: 11))
                             .characterSpacing(1)
                             .foregroundStyle(Palette.accent)
 
@@ -113,7 +113,7 @@ struct StateSample: SampleContent, ExampleContent {
                             .placeholder("And the same for text")
 
                         Text(name.isEmpty ? "Hello, stranger" : "Hello, \(name)!")
-                            .fontSize(17)
+                            .font(.system(size: 17))
                             .multilineTextAlignment(.center)
                     }
                     .spacing(14)
@@ -138,14 +138,14 @@ struct StateSample: SampleContent, ExampleContent {
             Text("This view is a value, rebuilt on every render, and its @State is "
                 + "declared right on it. The same view at the same place keeps its state "
                 + "through the rebuild; nothing is invalidated by hand.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A child view borrows a value with @Binding - `$name` lends it - and "
                 + "writes through it reach the owner. Lending makes no reader: what makes "
                 + "a reader is reading the value inside a closure, and only that closure "
                 + "is rebuilt when the value is written.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The two rectangles are those two closures drawn. The outlines are "
@@ -153,13 +153,13 @@ struct StateSample: SampleContent, ExampleContent {
                 + "Increment rebuilds the outer closure and the inner one goes with it, "
                 + "which is what `with its parent` means; typing rebuilds the inner "
                 + "closure alone and leaves the one around it standing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("State lives as long as its owner stays in the tree. This gallery keeps "
                 + "its samples in the catalog its pages hold, so the count is still here "
                 + "when you come back.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

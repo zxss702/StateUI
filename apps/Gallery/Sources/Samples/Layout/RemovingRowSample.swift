@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A row taken away, and the stack closing over it.
 struct RemovingRowSample: SampleContent, ExampleContent {
@@ -35,9 +35,9 @@ struct RemovingRowSample: SampleContent, ExampleContent {
                 Grid {
                     Text(row).gridColumn(0)
 
-                    Button("Delete")
+                    Button("Delete", action: { remove(row) })
                         .gridColumn(1)
-                        .onClicked { remove(row) }
+                        
                 }
                 .columns(.fill, .auto)
                 .hidden(gone.contains(row) || atOnce.contains(row))
@@ -49,10 +49,10 @@ struct RemovingRowSample: SampleContent, ExampleContent {
 
         SwitchRow("The row fades first", $slow)
 
-        Button("Bring them back").onClicked {
+        Button("Bring them back", action: {
             gone.removeAll()
             atOnce.removeAll()
-        }
+        })
 
         /// Takes a row away - fading it where it stands, or at once.
         private func remove(_ row: String) {
@@ -76,34 +76,34 @@ struct RemovingRowSample: SampleContent, ExampleContent {
                 ForEach(Self.rows, id: \.self) { row in
                     Grid {
                         Text(row)
-                            .fontSize(15)
+                            .font(.system(size: 15))
                             .verticalAlignment(.center)
                             .gridColumn(0)
 
-                        Button("Delete")
-                            .fontSize(12)
-                            .contentPadding(10, 4)
+                        Button("Delete", action: { remove(row) })
+                            .font(.system(size: 12))
+                            .contentPadding(EdgeInsets(10, 4))
                             .gridColumn(1)
-                            .onClicked { remove(row) }
+                            
                     }
                     .columns(.fill, .auto)
-                    .contentPadding(14, 6)
+                    .contentPadding(EdgeInsets(14, 6))
                     .background(Palette.raised)
                     .frame(height: 46)
                     .hidden(gone.contains(row) || atOnce.contains(row))
                     // The other half of the sample: a row told to travel at no
                     // animation goes at once, and the stack still closes over it.
-                    .animation(atOnce.contains(row) ? .none : .inherited)
+                    .animation(atOnce.contains(row) ? nil : .inherited)
                 }
             }
             .spacing(6)
 
             SwitchRow("The row fades first", $slow)
 
-            Button("Bring them back").onClicked {
+            Button("Bring them back", action: {
                 gone.removeAll()
                 atOnce.removeAll()
-            }
+            })
         }
         .spacing(12)
     }
@@ -123,20 +123,20 @@ struct RemovingRowSample: SampleContent, ExampleContent {
                 + "then close over the gap - a plain `VStack`, and not a line in "
                 + "the example ASKING for animation: the row is hidden, and the "
                 + "ones below it are given new places.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`The row fades first` chooses how the row itself leaves. "
-                + "Turned off, the row is told `.animation(.none)` and goes at "
+                + "Turned off, the row is told `.animation(nil)` and goes at "
                 + "once - the stack still closes over it, because where a "
                 + "child sits is always somewhere it travels to.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`Bring them back` is the same thing the other way round: the "
                 + "rows appear at nothing and come up while everything below "
                 + "them moves down to make room.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

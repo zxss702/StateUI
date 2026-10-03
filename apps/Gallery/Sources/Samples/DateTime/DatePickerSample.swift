@@ -37,8 +37,8 @@ struct DatePickerSample: SampleContent, ExampleContent {
 
             // A day written from the TREE is not a pick: the field moves and
             // the count stays where it is.
-            Button("Push it to New Year")
-                .onClicked { due = CalendarDate(year: 2027, month: 1, day: 1) }
+            Button("Push it to New Year", action: { due = CalendarDate(year: 2027, month: 1, day: 1) })
+                
         }
         """
 
@@ -58,20 +58,20 @@ struct DatePickerSample: SampleContent, ExampleContent {
                 }
 
             Text("Due \(due.text)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             Text(picks == 0
                 ? "onDateChanged has not fired"
                 : "onDateChanged: \(chosen), \(picks) so far")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
 
-            Button("Push it to New Year")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Push it to New Year", action: { due = CalendarDate(year: 2027, month: 1, day: 1) })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { due = CalendarDate(year: 2027, month: 1, day: 1) }
+                
         }
         .spacing(12)
     }
@@ -84,7 +84,7 @@ struct DatePickerSample: SampleContent, ExampleContent {
                 + "belongs. The button writes `due` from the tree instead, and the count "
                 + "stays put: the event answers the USER picking a day and nothing "
                 + "else.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A CalendarDate rather than a Date: formatting a Date needs a "
@@ -92,12 +92,12 @@ struct DatePickerSample: SampleContent, ExampleContent {
                 + "dependency this library cannot take. It is three numbers both "
                 + "ways - into the picker, and back out of it when a day is picked "
                 + "on screen.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The text in the field is the host's to write, in the user's locale; "
                 + "`.format(\"D\")` asks for the long form.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

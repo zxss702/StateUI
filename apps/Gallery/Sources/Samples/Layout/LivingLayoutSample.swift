@@ -40,14 +40,14 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
             }
 
             HStack {
-                Button("Add").onClicked {
+                Button("Add", action: {
                     rows.insert(names[next % names.count], at: 0)
                     next += 1
-                }
-                Button("Remove").onClicked {
+                })
+                Button("Remove", action: {
                     if !rows.isEmpty { rows.removeLast() }
-                }
-                Button("Shuffle").onClicked { rows.shuffle() }
+                })
+                Button("Shuffle", action: { rows.shuffle() })
             }
 
             // A grid whose column widths change: every child crosses to its
@@ -63,7 +63,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
                 .proportional(1),
                 wide ? .proportional(1) : .proportional(3))
 
-            Button("Widen the other end").onClicked { wide.toggle() }
+            Button("Widen the other end", action: { wide.toggle() })
         }
         """
 
@@ -75,7 +75,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("A stack")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .characterSpacing(1)
                 .foregroundStyle(Palette.subtle)
 
@@ -88,7 +88,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
                 ForEach(rows, id: \.self) { name in
                     ZStack {
                         Text(name)
-                            .fontSize(15)
+                            .font(.system(size: 15))
                             .verticalAlignment(.center)
                     }
                     .style("Card")
@@ -101,21 +101,21 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
             .spacing(6)
 
             HStack {
-                Button("Add").onClicked {
+                Button("Add", action: {
                     rows.insert(Self.names[next % Self.names.count], at: 0)
                     next += 1
-                }
+                })
 
-                Button("Remove").onClicked {
+                Button("Remove", action: {
                     if !rows.isEmpty { rows.removeLast() }
-                }
+                })
 
-                Button("Shuffle").onClicked { rows.shuffle() }
+                Button("Shuffle", action: { rows.shuffle() })
             }
             .spacing(8)
 
             Text("A grid, its columns changing width")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .characterSpacing(1)
                 .foregroundStyle(Palette.subtle)
 
@@ -131,7 +131,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
             .columnSpacing(8)
             .frame(height: 52)
 
-            Button("Widen the other end").onClicked { wide.toggle() }
+            Button("Widen the other end", action: { wide.toggle() })
         }
         .spacing(10)
     }
@@ -141,7 +141,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
     ) -> any View {
         ZStack {
             Text(text)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.onBrand)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
@@ -160,7 +160,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
                 + "example says nothing about animation: it writes "
                 + "`rows.insert(…)`, and the layout works out where everything "
                 + "belongs the same way it would if nothing moved.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The grid is the same thing one level up. Its columns change "
@@ -168,14 +168,14 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
                 + "is given is somewhere it travels to. A view that ARRIVES "
                 + "fades in; one that leaves goes at once and the gap closes "
                 + "behind it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A layout's own SIZE changing is different, and deliberately: "
                 + "drag the window and the children track it exactly, because a "
                 + "resize is something a user is doing rather than something "
                 + "the interface decided.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

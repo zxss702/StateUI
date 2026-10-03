@@ -19,7 +19,7 @@ private struct VisitBadge: View {
             DebugInfoLabel()
 
             Text("\(session.name) - \(session.visits) visit(s)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
         }
         .spacing(2)
@@ -93,8 +93,8 @@ struct EnvironmentSample: SampleContent, ExampleContent {
                     VStack {
                         VisitBadge()
 
-                        Button("Visit again")
-                            .onClicked { session.visits += 1 }
+                        Button("Visit again", action: { session.visits += 1 })
+                            
 
                         NameEditor()
                     }
@@ -116,13 +116,13 @@ struct EnvironmentSample: SampleContent, ExampleContent {
             VStack {
                 VisitBadge()
 
-                Button("Visit again")
+                Button("Visit again", action: { session.visits += 1 })
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { session.visits += 1 }
+                    
 
                 NameEditor()
             }
@@ -140,7 +140,7 @@ struct EnvironmentSample: SampleContent, ExampleContent {
             Text("The badge and the editor say `@Environment var session: Session` and "
                 + "nothing is passed to them - the type is the key, and they resolve the "
                 + "nearest Session provided above.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Press the button and watch the two readings: the badge is built "
@@ -148,13 +148,13 @@ struct EnvironmentSample: SampleContent, ExampleContent {
                 + "no property, so a write in the object is none of its business. Typing "
                 + "in the TextField lands on `session.$name`, the provided object's own state "
                 + "for the name.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The last badge sits under its OWN `.environment` - a different "
                 + "Session, so its branch resolves that one: a nearer provider wins for "
                 + "its branch, and the button moves nothing there.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

@@ -55,23 +55,23 @@ struct NavigationSample: SampleContent, ExampleContent {
         // a pop build again.
         DebugInfoLabel()
 
-        Button("Push a page")
-            .onClicked { path.append(.level(1)) }
+        Button("Push a page", action: { path.append(.level(1)) })
+            
 
         // On LevelPage:
-        Button("Back")
-            .onClicked { path.removeLast() }
+        Button("Back", action: { path.removeLast() })
+            
 
-        Button("Go home, and count the visit")
-            .onClicked {
+        Button("Go home, and count the visit", action: {
                 section = "home"
                 path = []
                 menuOpen = false
                 arrivals += 1
-            }
+            })
+            
 
-        Button("Empty the stack")
-            .onClicked { path = [] }
+        Button("Empty the stack", action: { path = [] })
+            
 
         // Where am I? A question Swift answers, with no host in it:
         Text("\\(path.count) page(s) on top of \\(section)")
@@ -82,38 +82,37 @@ struct NavigationSample: SampleContent, ExampleContent {
         VStack {
             DebugInfoLabel()
 
-            Button("Push a page")
+            Button("Push a page", action: { nav.push(.level(1)) })
                 .background(Palette.accent)
                 .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.push(.level(1)) }
+                
 
             // No act, no await, no question asked of the host: the answer is
             // the state this page is reading.
             Text(here)
-                .fontSize(13)
-                .fontFamily("Menlo")
+                .font(.system(size: 13, design: .monospaced))
                 .foregroundStyle(Palette.accent)
                 .multilineTextAlignment(.center)
 
-            Button("Go home, and count the visit")
-                .contentPadding(20, 10)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button("Go home, and count the visit", action: {
                     nav.home()
                     arrivals += 1
-                }
+                })
+                .contentPadding(EdgeInsets(20, 10))
+                .horizontalAlignment(.center)
+                
 
             Text("Arrived home \(arrivals) time(s)")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
 
-            Button("Empty the stack")
-                .contentPadding(20, 10)
+            Button("Empty the stack", action: { nav.path = [] })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.path = [] }
+                
         }
         .spacing(12)
     }
@@ -123,13 +122,13 @@ struct NavigationSample: SampleContent, ExampleContent {
             Text("The stack is this array, so where the gallery is can be read, written, "
                 + "tested and serialized in Swift - and the platform's own back gesture "
                 + "writes it too, so the array is still the answer after a swipe.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Push the same route again from a pushed page and it builds another "
                 + "page: identity on a stack is the depth together with the route, so two "
                 + "`.level(2)` pages are two pages with `@State` of their own.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`home()` is three assignments - the section, the empty path and the "
@@ -137,7 +136,7 @@ struct NavigationSample: SampleContent, ExampleContent {
                 + "this page and the group page under it included, so you land on the "
                 + "home page. Assigning the state you want is the navigation, and the "
                 + "host brings the native stack to it in one move.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

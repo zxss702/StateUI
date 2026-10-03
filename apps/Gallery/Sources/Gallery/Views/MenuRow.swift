@@ -79,7 +79,7 @@ struct MenuRow: View {
             Text(title)
                 .style("MenuRowText")
                 .foregroundStyle(chosen ? Palette.accent : Palette.subtle)
-                .fontAttributes(chosen ? .bold : .none)
+                .fontWeight(chosen ? .bold : .regular)
         }
         .style("MenuRow")
         .background(chosen ? Palette.selected : .transparent)

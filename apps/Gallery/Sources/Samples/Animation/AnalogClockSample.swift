@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A driven rotation, sprung to real time by a plain Swift loop.
 struct AnalogClockSample: SampleContent, ExampleContent {
@@ -77,7 +77,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 return ColorPicker(Palette.outline)
                     .frame(width: wide)
                     .frame(height: tall)
-                    .padding(2 * x, 2 * y, 0, 0)
+                    .padding(EdgeInsets(2 * x, 2 * y, 0, 0))
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
             }
@@ -178,7 +178,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 .rotationEffect(angle)
                 .frame(width: width)
                 .frame(height: length)
-                .padding(0, 0, 0, length)
+                .padding(EdgeInsets(0, 0, 0, length))
                 .pivotY(1)
                 .horizontalAlignment(.center)
                 .verticalAlignment(.center)
@@ -213,7 +213,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 return ColorPicker(Palette.outline)
                     .frame(width: wide)
                     .frame(height: tall)
-                    .padding(2 * x, 2 * y, 0, 0)
+                    .padding(EdgeInsets(2 * x, 2 * y, 0, 0))
                     .horizontalAlignment(.center)
                     .verticalAlignment(.center)
             }
@@ -306,14 +306,14 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 + "sleeps to the NEXT whole second rather than for a fixed while - the "
                 + "reading carries milliseconds, so the spring lands just past each "
                 + "boundary instead of drifting across one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Each hand is a box whose bottom sits at the face's centre - "
                 + "the bottom margin equals its length, so centring the margin "
                 + "box puts the foot on the middle - and pivotY(1) makes that "
                 + "foot the pivot.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A hand's rotation is DRIVEN - .rotationEffect($sAngle) over a state "
@@ -323,7 +323,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 + "the hand is GOING, which is what the next tick's arithmetic "
                 + "wants - it adds the FORWARD distance to the time, so the "
                 + "angles only grow and the hands never spin back.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Leaving this page stops the loop, and coming back starts a "
@@ -333,7 +333,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                 + "written, and the state to match, so nothing travels - and "
                 + "the clock is right at once, with no winding through what "
                 + "passed.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -353,7 +353,7 @@ struct AnalogClockSample: SampleContent, ExampleContent {
             .rotationEffect(angle)
             .frame(width: width)
             .frame(height: length)
-            .padding(0, 0, 0, length)
+            .padding(EdgeInsets(0, 0, 0, length))
             .pivotY(1)
             .horizontalAlignment(.center)
             .verticalAlignment(.center)

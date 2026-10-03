@@ -100,18 +100,16 @@ struct Cube3DSample: SampleContent, ExampleContent {
             Text()
                 .text($size.journey.convert { "Edge: \\(Int($0.value * 100))% of the view" })
 
-            Slider($size)
-                .minimum(0.2)
-                .maximum(1)
+            Slider($size, in: 0.2...1)
 
-            Picker(Self.colors)
-                .selectedIndex($color)
-                .title("Color")
+            Picker("Color", selection: $color) {
+                ForEach(Self.colors.indices) { Text(Self.colors[$0]).tag($0) }
+            }
 
             HStack {
                 Text("Spin")
 
-                Switch($spinning)
+                Toggle(isOn: $spinning)
             }
         }
         """
@@ -855,28 +853,26 @@ struct Cube3DSample: SampleContent, ExampleContent {
 
             Text()
                 .text($size.journey.convert { "Edge: \(Int($0.value * 100))% of the view" })
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
-            Slider($size)
+            Slider($size, in: 0.2...1)
                 .accessibilityIdentifier("cube3D.size")
                 .accessibilityLabel("Edge")
-                .minimum(0.2)
-                .maximum(1)
                 .tint(Palette.accent)
 
-            Picker(Self.colors)
-                .accessibilityIdentifier("cube3D.color")
-                .accessibilityLabel("Color")
-                .selectedIndex($color)
-                .title("Color")
+            Picker("Color", selection: $color) {
+                ForEach(Self.colors.indices) { Text(Self.colors[$0]).tag($0) }
+            }
+            .accessibilityIdentifier("cube3D.color")
+            .accessibilityLabel("Color")
 
             HStack {
                 Text("Spin")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
 
-                Switch($spinning)
+                Toggle(isOn: $spinning)
                     .accessibilityIdentifier("cube3D.spin")
                     .accessibilityLabel("Spin")
                     .tint(Palette.accent)
@@ -925,7 +921,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         VStack {
             Text(Self.drawnBy)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The edge is HANDED OVER: `.size($size)` gives the host the state "
@@ -934,26 +930,26 @@ struct Cube3DSample: SampleContent, ExampleContent {
                 + "grows and the number counts up on the host's own frames. The colour "
                 + "and the spin are plain values, described again on the one build a "
                 + "pick or a flip costs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Nothing about the drawing crosses. What travels is a number, a "
                 + "vocabulary member and a flag; the corners, the matrix and the frames "
                 + "are the host's own, and this side never learns they exist.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Turning the spin off stops the host's render loop rather than hiding "
                 + "it: the cube holds the angle it had, and a changed size or colour "
                 + "still draws the one frame it needs. " + Self.stopsWith)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("One `Cube3D` on this side, drawn by each host in its own way. An "
                 + "element only some hosts can honestly realize is declared only for "
                 + "them - this one stands under the same condition as its sample, so no "
                 + "other host is held to a promise it cannot keep.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

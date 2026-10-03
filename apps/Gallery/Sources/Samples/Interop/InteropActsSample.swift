@@ -50,49 +50,49 @@ struct InteropActsSample: SampleContent, ExampleContent {
 
             TextField($draft)
 
-            Button("Copy to the clipboard")
-                .onClicked {
+            Button("Copy to the clipboard", action: {
                     try await stateUICall(GalleryContract.setClipboard, draft)
                     status = "copied"
-                }
+                })
+                
 
             // An answer arrives as the types the contract declares.
-            Button("Paste from the clipboard")
-                .onClicked {
+            Button("Paste from the clipboard", action: {
                     let text = try await stateUICall(GalleryContract.readClipboard)
                     draft = text
                     status = text.isEmpty ? "the clipboard is empty" : "pasted"
-                }
+                })
+                
 
-            Button("Ask about the battery")
-                .onClicked {
+            Button("Ask about the battery", action: {
                     let (level, charging) = try await stateUICall(GalleryContract.batteryLevel)
 
                     status = level <= 0
                         ? "this device does not say"
                         : "battery \\(Int((level * 100).rounded()))%" + (charging ? ", charging" : "")
-                }
+                })
+                
 
             // An act nothing registered throws; a failure is never a silence.
-            Button("Call something nobody registered")
-                .onClicked {
+            Button("Call something nobody registered", action: {
                     do {
                         try await stateUICall(GalleryContract.nobody)
                         status = "that should have thrown"
                     } catch {
                         status = "thrown: \\(error)"
                     }
-                }
+                })
+                
 
             RatingBar()
                 .rating(4)
                 .aim(stars)
 
-            Button("Flash the bar")
-                .onClicked {
+            Button("Flash the bar", action: {
                     try await stars.flash()
                     status = "flashed \\(stars)"
-                }
+                })
+                
 
             Text(status)
         }
@@ -417,21 +417,20 @@ struct InteropActsSample: SampleContent, ExampleContent {
                 .accessibilityIdentifier(Self.id + ".draft")
                 .accessibilityLabel("Text to copy")
 
-            Button("Copy to the clipboard")
-                .onClicked {
+            Button("Copy to the clipboard", action: {
                     try await stateUICall(GalleryContract.setClipboard, draft)
                     status = "copied"
-                }
+                })
+                
 
-            Button("Paste from the clipboard")
-                .onClicked {
+            Button("Paste from the clipboard", action: {
                     let text = try await stateUICall(GalleryContract.readClipboard)
                     draft = text
                     status = text.isEmpty ? "the clipboard is empty" : "pasted"
-                }
+                })
+                
 
-            Button("Ask about the battery")
-                .onClicked {
+            Button("Ask about the battery", action: {
                     let (level, charging) = try await stateUICall(GalleryContract.batteryLevel)
 
                     // A desktop without a battery answers 0, so only a level
@@ -439,31 +438,32 @@ struct InteropActsSample: SampleContent, ExampleContent {
                     status = level <= 0
                         ? "this device does not say"
                         : "battery \(Int((level * 100).rounded()))%" + (charging ? ", charging" : "")
-                }
+                })
+                
 
-            Button("Call something nobody registered")
-                .onClicked {
+            Button("Call something nobody registered", action: {
                     do {
                         try await stateUICall(GalleryContract.nobody)
                         status = "that should have thrown"
                     } catch {
                         status = "thrown: \(error)"
                     }
-                }
+                })
+                
 
             RatingBar()
                 .rating(4)
                 .horizontalAlignment(.center)
                 .aim(stars)
 
-            Button("Flash the bar")
-                .onClicked {
+            Button("Flash the bar", action: {
                     try await stars.flash()
                     status = "flashed \(stars)"
-                }
+                })
+                
 
             Text(status)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .multilineTextAlignment(.center)
         }
         .spacing(8)
@@ -475,21 +475,21 @@ struct InteropActsSample: SampleContent, ExampleContent {
                 + "application's contract declares, with what it takes and answers. "
                 + "`stateUICall` calls it from any handler: typed arguments in, typed "
                 + "values back, and the compiler refuses a performer of another shape." + InteropHost.awaiting)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A performer that throws, a name nothing registered, and an answer of "
                 + "another shape than the contract's resume the handler by throwing "
                 + "`StateUIError` with the reason. Prefix the names with the application's "
                 + "own, so they never meet the library's.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("An act of a control's own is declared in the control's contract and "
                 + "called through its aim: `call` puts the control's identity in argument "
                 + "0, and the host turns it back into the \(InteropHost.made) it made - so the performer "
                 + "is handed that \(InteropHost.made) itself.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

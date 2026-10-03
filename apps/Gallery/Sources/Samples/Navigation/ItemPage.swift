@@ -26,19 +26,19 @@ struct ItemPage: View {
                 SectionTitle("Pushed page")
 
                 Text(item.isEmpty ? "Nothing selected" : item)
-                    .fontSize(28)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 28))
+                    .bold()
                     .multilineTextAlignment(.center)
 
                 Text("Pushed by `path.append(.item(\"\(item)\"))`.")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
                     .multilineTextAlignment(.center)
 
-                Button("Back")
-                    .contentPadding(20, 10)
+                Button("Back", action: { path.removeLast() })
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { path.removeLast() }
+                    
             }
             .spacing(16)
         }

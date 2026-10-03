@@ -18,7 +18,7 @@ struct IconButtonSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             HStack {
-                Button(icon: ImageSource(light: "nav_media.png", dark: "nav_media_dark.png"))
+                Button(icon: ImageSource(light: "nav_media.png", dark: "nav_media_dark.png"), action: { taps += 1 })
                     .style("IconButton")
                     .aspect(.fit)
                     .frame(width: 64)
@@ -26,17 +26,17 @@ struct IconButtonSample: SampleContent, ExampleContent {
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .shape(.roundedRectangle(12))
-                    .onClicked { taps += 1 }
+                    
                     .onPressed { pressed = true }
                     .onReleased { pressed = false }
 
-                Button(icon: ImageSource(light: "nav_layout.png", dark: "nav_layout_dark.png"))
+                Button(icon: ImageSource(light: "nav_layout.png", dark: "nav_layout_dark.png"), action: { taps += 1 })
                     .style("IconButton")
                     .aspect(.fit)
                     .frame(width: 64)
                     .frame(height: 64)
                     .shape(.roundedRectangle(32))
-                    .onClicked { taps += 1 }
+                    
             }
 
             Text(pressed ? "Held down" : "Tapped \\(taps) time\\(taps == 1 ? "" : "s")")
@@ -48,7 +48,7 @@ struct IconButtonSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             HStack {
-                Button(icon: ImageSource(light: "nav_media.png", dark: "nav_media_dark.png"))
+                Button(icon: ImageSource(light: "nav_media.png", dark: "nav_media_dark.png"), action: { taps += 1 })
                     .style("IconButton")
                     .aspect(.fit)
                     .frame(width: 64)
@@ -57,11 +57,11 @@ struct IconButtonSample: SampleContent, ExampleContent {
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .shape(.roundedRectangle(12))
-                    .onClicked { taps += 1 }
+                    
                     .onPressed { pressed = true }
                     .onReleased { pressed = false }
 
-                Button(icon: ImageSource(light: "nav_layout.png", dark: "nav_layout_dark.png"))
+                Button(icon: ImageSource(light: "nav_layout.png", dark: "nav_layout_dark.png"), action: { taps += 1 })
                     .style("IconButton")
                     .aspect(.fit)
                     .frame(width: 64)
@@ -69,13 +69,13 @@ struct IconButtonSample: SampleContent, ExampleContent {
                     .contentPadding(12)
                     .background(Palette.accent)
                     .shape(.roundedRectangle(32))
-                    .onClicked { taps += 1 }
+                    
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
             Text(pressed ? "Held down" : "Tapped \(taps) time\(taps == 1 ? "" : "s")")
-                .fontSize(14)
+                .font(.system(size: 14))
                 .horizontalAlignment(.center)
         }
         .spacing(12)
@@ -86,12 +86,12 @@ struct IconButtonSample: SampleContent, ExampleContent {
             Text("The picture is what gives it its purpose, so it goes in the initializer - "
                 + "and it can be drawn once per colorScheme, like any other, which is what these "
                 + "two are.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("It is a button, not an `Image` with a tap recognizer on it: that gives no "
                 + "pressed state, no outline and no shape.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

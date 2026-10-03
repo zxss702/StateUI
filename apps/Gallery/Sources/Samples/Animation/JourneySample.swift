@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A value that changes TRAVELS - the default, and the three laws it can travel
 /// under.
@@ -11,7 +11,7 @@ struct JourneySample: SampleContent, ExampleContent {
 
     static func law(_ index: Int) -> Animation {
         switch index {
-        case 1: .spring(response: 320)
+        case 1: .spring(response: 0.32)
         case 2: .eased(900, .sineInOut)
         case 3: .none
         default: .standard
@@ -31,7 +31,7 @@ struct JourneySample: SampleContent, ExampleContent {
 
         static func law(_ index: Int) -> Animation {
             switch index {
-            case 1: .spring(response: 320)
+            case 1: .spring(response: 0.32)
             case 2: .eased(900, .sineInOut)
             case 3: .none
             default: .standard
@@ -59,7 +59,7 @@ struct JourneySample: SampleContent, ExampleContent {
                 .frame(width: wide ? 300 : 120)
                 .frame(height: wide ? 120 : 60)
                 .cornerRadius(wide ? 32 : 8)
-                .animation(.none)
+                .animation(nil)
 
             // And the same panel again, with a rule: everything travels
             // EXCEPT how big it is, which arrives. The last rule that names a
@@ -73,9 +73,9 @@ struct JourneySample: SampleContent, ExampleContent {
                 .animation(.none, .size)
 
             HStack {
-                Button("Size").onClicked { wide.toggle() }
-                Button("Colour").onClicked { warm.toggle() }
-                Button(Self.laws[law]).onClicked { law = (law + 1) % Self.laws.count }
+                Button("Size", action: { wide.toggle() })
+                Button("Colour", action: { warm.toggle() })
+                Button(Self.laws[law], action: { law = (law + 1) % Self.laws.count })
             }
         }
         """
@@ -85,30 +85,30 @@ struct JourneySample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("A change that travels")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .characterSpacing(1)
                 .foregroundStyle(Palette.subtle)
 
             panel(travels: true)
 
             Text("The same, told to stay still")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .characterSpacing(1)
                 .foregroundStyle(Palette.subtle)
 
             panel(travels: false)
 
             Text("The same, holding only its size still")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .characterSpacing(1)
                 .foregroundStyle(Palette.subtle)
 
             sized()
 
             HStack {
-                Button("Size").onClicked { wide.toggle() }
-                Button("Colour").onClicked { warm.toggle() }
-                Button(Self.laws[law]).onClicked { law = (law + 1) % Self.laws.count }
+                Button("Size", action: { wide.toggle() })
+                Button("Colour", action: { warm.toggle() })
+                Button(Self.laws[law], action: { law = (law + 1) % Self.laws.count })
             }
             .spacing(8)
         }
@@ -142,12 +142,12 @@ struct JourneySample: SampleContent, ExampleContent {
         VStack {
             Text("Press Size or Colour. The first panel travels, the second "
                 + "arrives immediately, and the third holds only its size still.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Change the law to compare eased, spring, slow and immediate "
                 + "animation. StateUI sends destinations; the host supplies the frames.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

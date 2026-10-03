@@ -15,11 +15,12 @@ private struct LongList: ExampleContent {
                     Text("\\(number)").frame(width: 90)
                     Text("\\(number * number)")
                 }
-                .contentPadding(14, 10)
+                .contentPadding(EdgeInsets(14, 10))
             }
             .header(Text("N and N², a thousand times"))
             .footer(Text("That is all of them."))
             .selection($chosen)
+            .listStyle(.sidebar)
             .gridRow(0)
 
             // Built again only for the choice: scrolling builds rows, never
@@ -38,46 +39,58 @@ private struct LongList: ExampleContent {
             List(0..<1_000) { number in
                 HStack {
                     Text("\(number)")
-                        .fontSize(14)
+                        .font(.system(size: 14))
                         .frame(width: 90)
                         .verticalAlignment(.center)
 
                     Text("\(number * number)")
-                        .fontSize(13)
+                        .font(.system(size: 13))
                         .foregroundStyle(Palette.subtle)
                         .verticalAlignment(.center)
                 }
                 .spacing(12)
-                .contentPadding(14, 10)
+                .contentPadding(EdgeInsets(14, 10))
             }
             .header(Text("N and N², a thousand times")
-                .fontSize(11)
-                .fontAttributes(.bold)
+                .font(.system(size: 11))
+                .bold()
                 .foregroundStyle(Palette.subtle)
-                .contentPadding(14, 8)
+                .contentPadding(EdgeInsets(14, 8))
                 .background(Palette.raised))
             .footer(Text("That is all of them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
-                .contentPadding(14, 8))
+                .contentPadding(EdgeInsets(14, 8)))
             .selection($chosen)
+            .listStyle(.sidebar)
             .gridRow(0)
 
             DebugInfoLabel()
                 .gridRow(1)
 
             Text(chosen.map { "Row \($0) is chosen." } ?? "Tap a row.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.accent)
                 .gridRow(1)
         }
         .rows(.fill, .auto)
         .rowSpacing(10)
+        // `.safeAreaInset` pins a bar to an edge of the WINDOW, over the
+        // content - here a status strip along the bottom.
+        .safeAreaInset(edge: .bottom) {
+            HStack {
+                Text("\(chosen.map { "Row \($0)" } ?? "none")")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Palette.subtle)
+            }
+            .contentPadding(EdgeInsets(8, 4))
+            .background(Palette.raised)
+        }
     }
 
     var notes: (any View)? {
         Text("Scroll to the end, and tap a row to choose it.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -108,7 +121,7 @@ private struct AcrossList: ExampleContent {
             // Each tag as wide as its word.
             List(tags) { tag in
                 Text(tag)
-                    .contentPadding(14, 0)
+                    .contentPadding(EdgeInsets(14, 0))
                     .verticalTextAlignment(.center)
                     .background(Palette.raised)
             }
@@ -123,7 +136,7 @@ private struct AcrossList: ExampleContent {
 
             List(1...200) { number in
                 Text("Card \(number)")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .multilineTextAlignment(.center)
                     .verticalTextAlignment(.center)
                     .frame(width: 120)
@@ -134,8 +147,8 @@ private struct AcrossList: ExampleContent {
 
             List(Self.tags) { tag in
                 Text(tag)
-                    .fontSize(13)
-                    .contentPadding(14, 0)
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(14, 0))
                     .verticalTextAlignment(.center)
                     .background(Palette.raised)
             }
@@ -147,7 +160,7 @@ private struct AcrossList: ExampleContent {
 
     var notes: (any View)? {
         Text("Swipe both strips: the cards share one width, and every tag is as wide as its word.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -187,8 +200,8 @@ private struct GridList: ExampleContent {
         Grid {
             List(0..<120) { number in
                 Text("\(number)")
-                    .fontSize(15)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 15))
+                    .bold()
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .verticalTextAlignment(.center)
@@ -203,7 +216,7 @@ private struct GridList: ExampleContent {
                 .gridRow(1)
 
             Text(opened.map { "Tile \($0) opened." } ?? "Tap a tile.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.accent)
                 .gridRow(1)
         }
@@ -213,7 +226,7 @@ private struct GridList: ExampleContent {
 
     var notes: (any View)? {
         Text("Turn the device or widen the window: the columns follow the width.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -249,13 +262,13 @@ private struct GroupedList: ExampleContent {
             // A group per shelf, named so two shelves may hold the same item.
             List(groups: shelves.map { shelf in
                 let group = ItemsGroup(shelf.items) { item in
-                    Text(item).contentPadding(14, 10)
+                    Text(item).contentPadding(EdgeInsets(14, 10))
                 }
                 .id(shelf.name)
-                .header(Text(shelf.name).fontAttributes(.bold).contentPadding(14, 8))
+                .header(Text(shelf.name).bold().contentPadding(EdgeInsets(14, 8)))
 
                 return counts
-                    ? group.footer(Text("\\(shelf.items.count) items").contentPadding(14, 6))
+                    ? group.footer(Text("\\(shelf.items.count) items").contentPadding(EdgeInsets(14, 6)))
                     : group
             })
             .gridRow(1)
@@ -274,22 +287,22 @@ private struct GroupedList: ExampleContent {
             List(groups: Self.shelves.map { (shelf: Shelf) -> ItemsGroup<[String], String> in
                 let group = ItemsGroup(shelf.items) { item in
                     Text(item)
-                        .fontSize(14)
-                        .contentPadding(14, 10)
+                        .font(.system(size: 14))
+                        .contentPadding(EdgeInsets(14, 10))
                 }
                 .id(shelf.name)
                 .header(Text(shelf.name)
-                    .fontSize(12)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 12))
+                    .bold()
                     .foregroundStyle(Palette.subtle)
-                    .contentPadding(14, 8)
+                    .contentPadding(EdgeInsets(14, 8))
                     .background(Palette.raised))
 
                 return counts
                     ? group.footer(Text("\(shelf.items.count) items")
-                        .fontSize(12)
+                        .font(.system(size: 12))
                         .foregroundStyle(Palette.subtle)
-                        .contentPadding(14, 6))
+                        .contentPadding(EdgeInsets(14, 6)))
                     : group
             })
             .gridRow(1)
@@ -300,7 +313,7 @@ private struct GroupedList: ExampleContent {
 
     var notes: (any View)? {
         Text("Turn Counts off: the groups close up where their footers stood.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

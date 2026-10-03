@@ -71,7 +71,7 @@ struct SwipeSample: SampleContent, ExampleContent {
 
             ZStack {
                 Text("Swipe across this box")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .contentPadding(32)
                     .multilineTextAlignment(.center)
             }
@@ -84,12 +84,12 @@ struct SwipeSample: SampleContent, ExampleContent {
             }
 
             Text(swipe.isEmpty ? "nothing yet" : "Swiped \(swipe)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             ZStack {
                 Text("Left or right, and a long way")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .contentPadding(32)
                     .multilineTextAlignment(.center)
             }
@@ -104,7 +104,7 @@ struct SwipeSample: SampleContent, ExampleContent {
             }
 
             Text(narrowed.isEmpty ? "nothing yet" : "Swiped \(narrowed)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
         }
         .spacing(12)
@@ -116,7 +116,7 @@ struct SwipeSample: SampleContent, ExampleContent {
             + "second is narrowed to `.left` and `.right` with the threshold raised "
             + "to 150 device units: swipe up on it, or flick it short, and nothing "
             + "fires.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 

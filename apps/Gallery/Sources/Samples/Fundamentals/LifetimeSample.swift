@@ -35,8 +35,8 @@ struct LifetimeSample: SampleContent, ExampleContent {
             SwitchRow("Show the card", $shown)
 
             HStack {
-                Button("A new card").onClicked { identity += 1 }
-                Button("Build this again · \\(builds)").onClicked { builds += 1 }
+                Button("A new card", action: { identity += 1 })
+                Button("Build this again · \\(builds)", action: { builds += 1 })
             }
 
             if shown {
@@ -63,8 +63,8 @@ struct LifetimeSample: SampleContent, ExampleContent {
             @State private var taps = 0
 
             var body: some View {
-                Button("Card \\(number) · tapped \\(taps)")
-                    .onClicked { taps += 1 }
+                Button("Card \\(number) · tapped \\(taps)", action: { taps += 1 })
+                    
                     // Once, after the render that brings the card in - its
                     // state and its environment are there to use.
                     .onAppear {
@@ -86,15 +86,15 @@ struct LifetimeSample: SampleContent, ExampleContent {
             SwitchRow("Show the card", $shown)
 
             HStack {
-                Button("A new card")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { identity += 1 }
+                Button("A new card", action: { identity += 1 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Build this again · \(builds)")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { builds += 1 }
+                Button("Build this again · \(builds)", action: { builds += 1 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
             }
             .spacing(10)
 
@@ -106,14 +106,13 @@ struct LifetimeSample: SampleContent, ExampleContent {
             VStack {
                 if log.isEmpty {
                     Text("nothing yet")
-                        .fontSize(14)
+                        .font(.system(size: 14))
                         .foregroundStyle(Palette.subtle)
                 }
 
                 ForEach(Array(log.suffix(6))) { line in
                     Text(line)
-                        .fontSize(14)
-                        .fontFamily("Menlo")
+                        .font(.system(size: 14, design: .monospaced))
                 }
             }
             .spacing(4)
@@ -129,7 +128,7 @@ struct LifetimeSample: SampleContent, ExampleContent {
                 + "once more, which carries the card, built with the same inputs, and "
                 + "creates nothing: an element is created once, however many times the "
                 + "view around it is built.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Tap the card before it goes: what it says as it is destroyed is its "
@@ -137,7 +136,7 @@ struct LifetimeSample: SampleContent, ExampleContent {
                 + "holds. Both are on every view and control and on the pages the library "
                 + "builds - a page of your own writes them on its content - and both run "
                 + "after the render that made the change.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -151,14 +150,14 @@ private struct LifetimeCard: View {
     @State private var taps = 0
 
     var body: some View {
-        Button("Card \(number) · tapped \(taps)")
-            .fontSize(15)
+        Button("Card \(number) · tapped \(taps)", action: { taps += 1 })
+            .font(.system(size: 15))
             .foregroundStyle(.white)
             .background(Palette.accent)
             .shape(.roundedRectangle(10))
-            .contentPadding(20, 12)
+            .contentPadding(EdgeInsets(20, 12))
             .horizontalAlignment(.center)
-            .onClicked { taps += 1 }
+            
             .onAppear {
                 log.append("\(log.count + 1) · card \(number) created")
             }

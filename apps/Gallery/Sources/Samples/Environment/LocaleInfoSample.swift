@@ -39,22 +39,22 @@ struct LocaleInfoSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(locale.name.isEmpty ? "the host has not said" : locale.name)
-                .fontSize(28)
-                .fontAttributes(.bold)
+                .font(.system(size: 28))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("language · \(locale.language)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("region · \(locale.region.isEmpty ? "none" : locale.region)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("zone · \(locale.timeZone)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("clock · \(locale.uses24HourClock ? "24-hour" : "12-hour")")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("week starts · \(locale.firstDayOfWeek)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text(locale.isMetric ? "metric" : "not metric")
-                .fontSize(15)
+                .font(.system(size: 15))
         }
         .spacing(10)
     }
@@ -63,7 +63,7 @@ struct LocaleInfoSample: SampleContent, ExampleContent {
         Text("This is the host's answer on every platform, the zone an "
             + "IANA name everywhere. It is for LOGIC - a first weekday, a "
             + "24-hour clock, a unit - not for formatting.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

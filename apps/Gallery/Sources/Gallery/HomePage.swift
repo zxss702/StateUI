@@ -1,6 +1,6 @@
 // Where the gallery opens.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// What this is, and every group there is.
 ///
@@ -144,13 +144,13 @@ struct HomePage: View {
                             .horizontalAlignment(.start)
 
                         Text("StateUI Gallery")
-                            .fontSize(34)
-                            .fontAttributes(.bold)
+                            .font(.system(size: 34))
+                            .bold()
                             .characterSpacing(-0.5)
                             .foregroundStyle(Palette.onBrand)
 
                         Text("Native interfaces, written in Swift")
-                            .fontSize(15)
+                            .font(.system(size: 15))
                             .foregroundStyle(Palette.onBrand)
                             .opacity(0.85)
                     }
@@ -239,7 +239,7 @@ struct HomePage: View {
             VStack {
                 Text("Every example here is described in Swift and rendered as real "
                     + "native controls.")
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .foregroundStyle(Palette.subtle)
                     .multilineTextAlignment(.center)
 
@@ -247,7 +247,7 @@ struct HomePage: View {
                 // desktop - is the host's answer, which is what lets the
                 // catalog list desktop chrome only where it draws.
                 Text("native: \(stateUIPlatform()) · \(device.formFactor)")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.subtle)
                     .multilineTextAlignment(.center)
             }
@@ -507,12 +507,12 @@ private struct Caption: View {
         // a card's width below reads as two things rather than one.
         return VStack {
             Text("\(group.shown(on: formFactor).count) samples · tap the card to open")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.accent)
                 .multilineTextAlignment(.center)
 
             Text(group.summary)
-                .fontSize(14)
+                .font(.system(size: 14))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }
@@ -544,16 +544,16 @@ private struct Steps: View {
 
     /// One arrow: where it goes, and whether there is anything there.
     private func step(_ caption: String, to: Int) -> any View {
-        Button(caption)
-            .fontSize(18)
+        Button(caption, action: { position = to })
+            .font(.system(size: 18))
             .foregroundStyle(Palette.subtle)
             .background(.transparent)
             .stroke(Palette.outline)
             .strokeWidth(1)
             .shape(.roundedRectangle(8))
-            .contentPadding(18, 2)
+            .contentPadding(EdgeInsets(18, 2))
             .disabled(to < 0 || to >= count)
-            .onClicked { position = to }
+            
     }
 }
 
@@ -577,11 +577,11 @@ private struct GroupFace: View {
 
                 Grid {
                     Text(title)
-                        .fontSize(18)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 18))
+                        .bold()
                         .foregroundStyle(Palette.onBrand)
                         .lineBreak(.tailTruncation)
-                        .contentPadding(12, 10)
+                        .contentPadding(EdgeInsets(12, 10))
                 }
                 .background(Color("#B3000000"))
                 .verticalAlignment(.end)

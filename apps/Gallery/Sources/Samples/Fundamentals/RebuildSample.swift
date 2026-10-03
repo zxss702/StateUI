@@ -14,8 +14,8 @@ struct RebuildSample: SampleContent, ExampleContent {
         @State private var right = 0
 
         VStack {
-            Button("Change left").onClicked { left += 1 }
-            Button("Change right").onClicked { right += 1 }
+            Button("Change left", action: { left += 1 })
+            Button("Change right", action: { right += 1 })
 
             // Each panel BORROWS one of the two values, so each reads one
             // piece of state and is described again when that one moves.
@@ -53,11 +53,11 @@ struct RebuildSample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             HStack {
-                Button("Change left")
-                    .onClicked { left += 1 }
+                Button("Change left", action: { left += 1 })
+                    
 
-                Button("Change right")
-                    .onClicked { right += 1 }
+                Button("Change right", action: { right += 1 })
+                    
             }
             .spacing(8)
             .horizontalAlignment(.center)
@@ -78,24 +78,24 @@ struct RebuildSample: SampleContent, ExampleContent {
                 + "answers the view's own name, how many times it has been "
                 + "described, and which piece of state THIS description is "
                 + "for - named by the property the author declared it as.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Change one of the two values. The panel that borrowed it "
                 + "names it and its count climbs; the other panel stands still, "
                 + "because a render rebuilds only the views whose reads moved.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The small line inside each panel reads nothing and is "
                 + "built with nothing: it is carried through every rebuild "
                 + "and keeps saying `1 build, first time`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Put it in a `Text` on the screen being worked on. Reading "
                 + "it causes no render of its own.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -112,18 +112,18 @@ private struct RebuildPanel: View {
         ZStack {
             VStack {
                 Text("\(name) is \(value)")
-                    .fontSize(15)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 15))
+                    .bold()
                     .foregroundStyle(Palette.text)
 
                 Text(debugInfo())
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.accent)
 
                 RebuildPassenger()
             }
             .spacing(4)
-            .contentPadding(14, 12)
+            .contentPadding(EdgeInsets(14, 12))
         }
         .style("Card")
         .stroke(Palette.outline)
@@ -138,7 +138,7 @@ private struct RebuildPanel: View {
 private struct RebuildPassenger: View {
     var body: some View {
         Text(debugInfo())
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

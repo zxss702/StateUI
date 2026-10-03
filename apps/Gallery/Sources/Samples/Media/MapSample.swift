@@ -33,24 +33,24 @@ struct MapSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             HStack {
-                Button("Old Town")
-                    .onClicked {
+                Button("Old Town", action: {
                         try await map.moveToRegion(
                             latitude: 50.0617, longitude: 19.9373, radiusMeters: 1500)
-                    }
+                    })
+                    
 
-                Button("Poland")
-                    .onClicked {
+                Button("Poland", action: {
                         try await map.moveToRegion(
                             latitude: 52.1, longitude: 19.4, radiusMeters: 350_000)
-                    }
+                    })
+                    
 
                 // What it DRAWS, cycled so all three can be seen.
-                Button(kind == .street ? "Street" : kind == .satellite ? "Satellite" : "Hybrid")
-                    .onClicked {
+                Button(kind == .street ? "Street" : kind == .satellite ? "Satellite" : "Hybrid", action: {
                         kind = kind == .street ? .satellite
                             : kind == .satellite ? .hybrid : .street
-                    }
+                    })
+                    
             }
 
             HStack {
@@ -102,28 +102,28 @@ struct MapSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             HStack {
-                Button("Old Town")
-                    .contentPadding(14, 8)
-                    .onClicked {
+                Button("Old Town", action: {
                         try await map.moveToRegion(
                             latitude: 50.0617, longitude: 19.9373, radiusMeters: 1500)
-                    }
+                    })
+                    .contentPadding(EdgeInsets(14, 8))
+                    
 
-                Button("Poland")
-                    .contentPadding(14, 8)
-                    .onClicked {
+                Button("Poland", action: {
                         try await map.moveToRegion(
                             latitude: 52.1, longitude: 19.4, radiusMeters: 350_000)
-                    }
+                    })
+                    .contentPadding(EdgeInsets(14, 8))
+                    
 
-                Button(kind == .street ? "Street" : kind == .satellite ? "Satellite" : "Hybrid")
-                    .contentPadding(14, 8)
-                    .onClicked {
+                Button(kind == .street ? "Street" : kind == .satellite ? "Satellite" : "Hybrid", action: {
                         kind =
                             kind == .street
                             ? .satellite
                             : kind == .satellite ? .hybrid : .street
-                    }
+                    })
+                    .contentPadding(EdgeInsets(14, 8))
+                    
             }
             .spacing(8)
             .horizontalAlignment(.center)
@@ -168,8 +168,7 @@ struct MapSample: SampleContent, ExampleContent {
                 .frame(height: 300)
 
             Text(said)
-                .fontSize(12)
-                .fontFamily("Menlo")
+                .font(.system(size: 12, design: .monospaced))
                 .foregroundStyle(Palette.accent)
         }
         .spacing(12)
@@ -180,7 +179,7 @@ struct MapSample: SampleContent, ExampleContent {
             Text("`Map` is an optional provider, drawn by the platform's own map where a "
                 + "host provides one - `MKMapView` on Apple. Elsewhere a host depends on a "
                 + "map library and a map service, and the Web has no map element.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Where the map opens is the initializer's: that region is kept until the "
@@ -188,7 +187,7 @@ struct MapSample: SampleContent, ExampleContent {
                 + "land an instant too early and be overwritten. Moving later is the act "
                 + "the buttons perform - `moveToRegion` through the map's `@Aim`, with the "
                 + "radius in meters.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

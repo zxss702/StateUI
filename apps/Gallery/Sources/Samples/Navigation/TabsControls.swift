@@ -27,21 +27,20 @@ struct TabsControls: View {
             .spacing(4)
 
             Text("currentPage sent to the host · \(sentToTheHost)")
-                .fontSize(13)
-                .fontFamily("Menlo")
+                .font(.system(size: 13, design: .monospaced))
                 .foregroundStyle(Palette.accent)
 
             if agrees {
                 Text(verdict)
-                    .fontSize(12)
+                    .font(.system(size: 12))
                     .foregroundStyle(Palette.subtle)
             } else {
                 HStack {
                     WarningMark()
 
                     Text(verdict)
-                        .fontSize(12)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 12))
+                        .bold()
                         .foregroundStyle(Palette.accent)
                 }
                 .spacing(6)
@@ -60,8 +59,7 @@ struct TabsControls: View {
             move("Reset") { nav.resetTabs() }
 
             Text("last move · \(nav.tabsNote)")
-                .fontSize(12)
-                .fontFamily("Menlo")
+                .font(.system(size: 12, design: .monospaced))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)
@@ -75,26 +73,25 @@ struct TabsControls: View {
     private func row(index: Int, tab: DemoTab) -> any View {
         HStack {
             Text("\(index)")
-                .fontSize(13)
-                .fontFamily("Menlo")
+                .font(.system(size: 13, design: .monospaced))
                 .foregroundStyle(Palette.subtle)
                 .frame(width: 24)
 
             Text(tab.caption)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(tab == nav.tab ? Palette.accent : Palette.text)
                 .frame(width: 90)
 
             Text(tab == nav.tab ? "◀ selected" : " ")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.accent)
                 .frame(width: 80)
 
             if nav.tabs.count > 1 {
-                Button("close")
-                    .fontSize(12)
-                    .contentPadding(10, 2)
-                    .onClicked { nav.closeTab(tab, showing: thisTab) }
+                Button("close", action: { nav.closeTab(tab, showing: thisTab) })
+                    .font(.system(size: 12))
+                    .contentPadding(EdgeInsets(10, 2))
+                    
             }
         }
         .spacing(8)
@@ -102,11 +99,11 @@ struct TabsControls: View {
 
     /// One of the buttons, all of which look the same.
     private func move(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(16, 6)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(16, 6))
             .horizontalAlignment(.start)
-            .onClicked(act)
+            
     }
 
     /// The index `TabView.selection` sends the host for this selection -

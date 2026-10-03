@@ -20,8 +20,8 @@ struct SameInputsSample: SampleContent, ExampleContent {
             // is each view's own question.
             DebugInfoLabel()
 
-            Button("Count \\(counter)")
-                .onClicked { counter += 1 }
+            Button("Count \\(counter)", action: { counter += 1 })
+                
 
             // CARRIED: built with a constant, reading nothing. Its count
             // stays at one for good.
@@ -84,10 +84,10 @@ struct SameInputsSample: SampleContent, ExampleContent {
             // each view's own question.
             DebugInfoLabel()
 
-            Button("Count \(counter)")
-                .contentPadding(20, 10)
+            Button("Count \(counter)", action: { counter += 1 })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { counter += 1 }
+                
 
             // CARRIED: built with a constant, reading nothing.
             Block(caption: "a constant", value: "fixed", tint: Palette.accent)
@@ -100,7 +100,7 @@ struct SameInputsSample: SampleContent, ExampleContent {
             Reads(count: $counter, tint: Palette.brand)
 
             Text("Rows built with their item")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
@@ -121,7 +121,7 @@ struct SameInputsSample: SampleContent, ExampleContent {
                 + "still and the other two move, each for a reason of its own. The rows "
                 + "under them are built with their item alone, so the button builds none "
                 + "of them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A composed view - a View of your own - is built again in two "
@@ -129,7 +129,7 @@ struct SameInputsSample: SampleContent, ExampleContent {
                 + "state it read changed. Otherwise it is carried whole, with its state, "
                 + "its handlers and everything under it, however often the view around it "
                 + "is built.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("What it was built with is its stored properties. A value counts as "
@@ -137,14 +137,14 @@ struct SameInputsSample: SampleContent, ExampleContent {
                 + "the same state, whatever the value in it; an object when it is the same "
                 + "object. A closure handed to a view always counts as changed: nothing "
                 + "can compare two closures, so the view is built to be safe.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The third block shows the other half of the rule. Its one input is the "
                 + "same state every time, so by its inputs alone it would be carried - "
                 + "but it READS that state, and whoever reads a value is built again when "
                 + "it changes.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -162,13 +162,13 @@ private struct Block: View {
     var body: some View {
         VStack {
             Text("Built with \(caption)")
-                .fontSize(12)
-                .fontAttributes(.bold)
+                .font(.system(size: 12))
+                .bold()
                 .foregroundStyle(tint)
 
             Text(value)
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
 
             DebugInfoLabel()
         }
@@ -185,13 +185,13 @@ private struct Reads: View {
     var body: some View {
         VStack {
             Text("Reads the count")
-                .fontSize(12)
-                .fontAttributes(.bold)
+                .font(.system(size: 12))
+                .bold()
                 .foregroundStyle(tint)
 
             Text("\(count)")
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
 
             DebugInfoLabel()
         }
@@ -207,11 +207,11 @@ private struct Row: View {
     var body: some View {
         VStack {
             Text(item)
-                .fontSize(15)
+                .font(.system(size: 15))
 
             DebugInfoLabel()
         }
         .spacing(2)
-        .contentPadding(12, 8)
+        .contentPadding(EdgeInsets(12, 8))
     }
 }

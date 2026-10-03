@@ -56,11 +56,11 @@ struct InteropControlSample: SampleContent, ExampleContent {
 
             Text("signal: \\(signal)")
 
-            Button("Advance")
-                .onClicked {
+            Button("Advance", action: {
                     let all = TrafficSignal.allCases
                     signal = all[(all.firstIndex(of: signal)! + 1) % all.count]
-                }
+                })
+                
         }
         """
 
@@ -492,14 +492,14 @@ struct InteropControlSample: SampleContent, ExampleContent {
                 .horizontalAlignment(.center)
 
             Text("signal: \(signal)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
-            Button("Advance")
-                .onClicked {
+            Button("Advance", action: {
                     let all = TrafficSignal.allCases
                     signal = all[(all.firstIndex(of: signal)! + 1) % all.count]
-                }
+                })
+                
         }
         .spacing(8)
     }
@@ -510,19 +510,19 @@ struct InteropControlSample: SampleContent, ExampleContent {
                 + "it by identity between renders, puts each described value on it, and "
                 + "then applies what every view shares - margins, alignment, opacity, "
                 + "gestures.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The control never switches itself. A tap raises `lampTapped` through "
                 + "the reports its `create` is handed, this sample's `@State` decides, "
                 + "and the next render lights the lamp.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`TrafficSignal` is a closed vocabulary, so it crosses as its member's "
                 + "number - and the registration is handed it back as `TrafficSignal`, "
                 + "typed, rather than as that number.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

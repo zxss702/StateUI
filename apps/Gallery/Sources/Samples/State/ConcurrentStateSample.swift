@@ -41,9 +41,7 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                     ? "Press to count 200 × 100 on 200 concurrent tasks"
                     : "\\(total) of \\(expected) landed - none lost"))
 
-            Button(running ? "Counting…" : "Count from 200 tasks at once")
-                .disabled(running)
-                .onClicked {
+            Button(running ? "Counting…" : "Count from 200 tasks at once", action: {
                     running = true
                     total = 0
                     expected = 200 * 100
@@ -64,7 +62,9 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                     }
 
                     running = false
-                }
+                })
+                .disabled(running)
+                
         }
 
         // WRONG - never do this to "reach the UI thread":
@@ -82,8 +82,8 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(total)")
-                .fontSize(56)
-                .fontAttributes(.bold)
+                .font(.system(size: 56))
+                .bold()
                 .foregroundStyle(total == 0 ? Palette.subtle : Palette.accent)
                 .multilineTextAlignment(.center)
 
@@ -92,20 +92,11 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                 : (expected == 0
                     ? "Press to count 200 × 100 on 200 concurrent tasks"
                     : "\(total) of \(expected) landed - none lost"))
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(total == expected && expected != 0 ? Palette.accent : Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            Button(running ? "Counting…" : "Count from 200 tasks at once")
-                .fontSize(14)
-                .fontAttributes(.bold)
-                .background(running ? Palette.disabled : Palette.accent)
-                .foregroundStyle(Palette.onAccent)
-                .shape(.roundedRectangle(10))
-                .contentPadding(22, 12)
-                .disabled(running)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button(running ? "Counting…" : "Count from 200 tasks at once", action: {
                     running = true
                     total = 0
                     expected = 200 * 100
@@ -126,7 +117,16 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                     }
 
                     running = false
-                }
+                })
+                .font(.system(size: 14))
+                .bold()
+                .background(running ? Palette.disabled : Palette.accent)
+                .foregroundStyle(Palette.onAccent)
+                .shape(.roundedRectangle(10))
+                .contentPadding(EdgeInsets(22, 12))
+                .disabled(running)
+                .horizontalAlignment(.center)
+                
         }
         .spacing(16)
     }
@@ -139,7 +139,7 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                 + "wherever it was made, and a write that "
                 + "lands mid-render is kept for the next one. So there is nothing "
                 + "to hop back to a UI thread for.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Which is the one move that is forbidden: never post to "
@@ -148,7 +148,7 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                 + "instead - so what is posted there never runs, "
                 + "silently. A handler already runs on `MainActor`, the UI thread; you "
                 + "do not move yourself there, and you do not need to.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The one thing to reach for: `update` when two tasks change the "
@@ -158,7 +158,7 @@ struct ConcurrentStateSample: SampleContent, ExampleContent {
                 + "three steps. This sample counts 20,000 that way and loses none "
                 + "- take the `update` out for `counter += 1` from 200 tasks and "
                 + "the total comes up short.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

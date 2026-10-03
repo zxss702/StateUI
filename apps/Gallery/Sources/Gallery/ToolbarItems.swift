@@ -36,7 +36,9 @@ extension ToolbarItem {
             // a script reaches for most. `.id` is the DIFFER's identity and
             // never leaves this side; this is the platform's own.
             .accessibilityIdentifier("chrome.home")
-            .icon("nav_home_dark.png")
+            // A symbol, not a file: every platform draws the home glyph its
+            // own icon set knows, in the theme the system wears.
+            .icon(.symbol("house"))
             .onClicked { nav.home() }
     }
 

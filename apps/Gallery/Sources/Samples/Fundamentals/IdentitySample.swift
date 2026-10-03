@@ -16,23 +16,23 @@ struct IdentitySample: SampleContent, ExampleContent {
 
         VStack {
             HStack {
-                Button("Add")
-                    .onClicked {
+                Button("Add", action: {
                         items.append("Item \\(nextItem)")
                         nextItem += 1
-                    }
+                    })
+                    
 
-                Button("Insert at the top")
-                    .onClicked {
+                Button("Insert at the top", action: {
                         items.insert("Item \\(nextItem)", at: 0)
                         nextItem += 1
-                    }
+                    })
+                    
 
-                Button("Rotate")
-                    .disabled(items.count <= 1)
-                    .onClicked {
+                Button("Rotate", action: {
                         items = Array(items.dropFirst()) + [items[0]]
-                    }
+                    })
+                    .disabled(items.count <= 1)
+                    
             }
 
             // Each row is identified by its ITEM - ForEach's rule - so
@@ -62,10 +62,10 @@ struct IdentitySample: SampleContent, ExampleContent {
                         .placeholder("type here")
                         .horizontalAlignment(.fill)
 
-                    Button("Remove")
-                        .onClicked {
+                    Button("Remove", action: {
                             items = items.filter { $0 != item }
-                        }
+                        })
+                        
                 }
             }
         }
@@ -74,29 +74,29 @@ struct IdentitySample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             HStack {
-                Button("Add")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked {
+                Button("Add", action: {
                         items.append("Item \(nextItem)")
                         nextItem += 1
-                    }
+                    })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Insert at the top")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked {
+                Button("Insert at the top", action: {
                         items.insert("Item \(nextItem)", at: 0)
                         nextItem += 1
-                    }
+                    })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Rotate")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .disabled(items.count <= 1)
-                    .onClicked {
+                Button("Rotate", action: {
                         items = Array(items.dropFirst()) + [items[0]]
-                    }
+                    })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    .disabled(items.count <= 1)
+                    
             }
             .spacing(10)
 
@@ -120,14 +120,14 @@ struct IdentitySample: SampleContent, ExampleContent {
         VStack {
             Text("Type in a field, then insert a row above it: the text stays where it "
                 + "is, because the control did.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A row is identified by its item, which is `ForEach`'s rule. Known by "
                 + "position, an inserted row would rewrite every row into the one below "
                 + "it, which is why a plain `for` does not compile here. A row may still "
                 + "write an `.id()` of its own, and the author's wins.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -143,7 +143,7 @@ private struct IdentityRow: View {
     var body: some View {
         HStack {
             Text(item)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .frame(width: 90)
                 .verticalAlignment(.center)
 
@@ -153,12 +153,12 @@ private struct IdentityRow: View {
                 .placeholder("type here")
                 .horizontalAlignment(.fill)
 
-            Button("Remove")
-                .fontSize(12)
-                .contentPadding(12, 6)
-                .onClicked {
+            Button("Remove", action: {
                     items = items.filter { $0 != item }
-                }
+                })
+                .font(.system(size: 12))
+                .contentPadding(EdgeInsets(12, 6))
+                
         }
         .spacing(10)
     }

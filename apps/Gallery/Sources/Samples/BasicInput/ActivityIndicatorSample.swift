@@ -16,14 +16,14 @@ struct ActivityIndicatorSample: SampleContent, ExampleContent {
             // closure - the spinner itself costs nothing to keep running.
             DebugInfoLabel()
 
-            ActivityIndicator(loading)
+            Group { if loading { ProgressView() } }
                 .frame(height: 48)
 
             HStack {
                 Text("Working")
                     .verticalAlignment(.center)
 
-                Switch($loading)
+                Toggle(isOn: $loading)
             }
         }
         """
@@ -32,16 +32,16 @@ struct ActivityIndicatorSample: SampleContent, ExampleContent {
         VStack {
             DebugInfoLabel()
 
-            ActivityIndicator(loading)
+            Group { if loading { ProgressView() } }
                 .tint(Palette.accent)
                 .frame(height: 48)
 
             HStack {
                 Text("Working")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
 
-                Switch($loading)
+                Toggle(isOn: $loading)
                     .accessibilityIdentifier("activityIndicator.loading")
                     .accessibilityLabel("Loading")
                     .tint(Palette.accent)
@@ -56,19 +56,19 @@ struct ActivityIndicatorSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         VStack {
             Text("A still spinner is also an INVISIBLE one on most platforms, which is why "
-                + "`ActivityIndicator(loading)` is usually the whole of it - there is "
+                + "`if loading { ProgressView() }` is usually the whole of it - there is "
                 + "nothing to hide by hand.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A spinner says \"wait\"; a `ProgressBar` says \"how much longer\". Use the "
                 + "bar wherever the work can be counted.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("No binding here, unlike the inputs: nothing about a spinner is the "
                 + "user's to change, so the value only goes one way.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

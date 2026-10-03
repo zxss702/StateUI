@@ -29,7 +29,7 @@ func DebugInfoLabel() -> Text {
     // running, never about the view it is asked through, which is what lets
     // this be a function at all rather than a view.
     Text(BuildCount.of(Text("").debugInfo()))
-        .fontSize(12)
+        .font(.system(size: 12))
         .foregroundStyle(Palette.accent)
         .horizontalAlignment(.end)
         .multilineTextAlignment(.end)

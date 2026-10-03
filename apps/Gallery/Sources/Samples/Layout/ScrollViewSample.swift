@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A strip of tiles a fixed distance apart - the shape the grid and throw
 /// examples are cut from. A tile is 140 wide with 20 between them, so one
@@ -8,7 +8,7 @@ private func tileStrip() -> ScrollView {
         HStack {
             ForEach(1...40) { tile in
                 Text("Tile \(tile)")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .multilineTextAlignment(.center)
                     .verticalAlignment(.center)
                     .frame(width: 140)
@@ -29,8 +29,8 @@ private func numberedLines() -> ScrollView {
         VStack {
             ForEach(1...40) { line in
                 Text("Line \(line)")
-                    .fontSize(14)
-                    .contentPadding(8, 6)
+                    .font(.system(size: 14))
+                    .contentPadding(EdgeInsets(8, 6))
             }
         }
     }
@@ -42,8 +42,8 @@ private func numberedLines() -> ScrollView {
 /// - Returns: the words, styled.
 private func columnTitle(_ text: String) -> Text {
     Text(text)
-        .fontSize(12)
-        .fontAttributes(.bold)
+        .font(.system(size: 12))
+        .bold()
         .foregroundStyle(Palette.subtle)
         .multilineTextAlignment(.center)
 }
@@ -54,8 +54,7 @@ private func columnTitle(_ text: String) -> Text {
 /// - Returns: the words, in the code face.
 private func spelling(_ text: String) -> Text {
     Text(text)
-        .fontSize(11)
-        .fontFamily("Menlo")
+        .font(.system(size: 11, design: .monospaced))
         .foregroundStyle(Palette.subtle)
         .multilineTextAlignment(.center)
 }
@@ -79,7 +78,7 @@ private struct DescribedOffset: View {
             // THE GET. Reading the offset here is what makes this Grid its
             // reader, and a render is what every single report then costs.
             Text("\(Int($offset.journey.value.y)) down")
-                .fontSize(14)
+                .font(.system(size: 14))
                 .multilineTextAlignment(.center)
                 .gridRow(2)
 
@@ -121,7 +120,7 @@ private struct PacedOffset: View {
             // the reading was taken; what the window holds back is how often
             // one is taken.
             Text("\(Int(shown.y)) down")
-                .fontSize(14)
+                .font(.system(size: 14))
                 .multilineTextAlignment(.center)
                 .gridRow(2)
 
@@ -158,7 +157,7 @@ private struct DrivenOffset: View {
             // and it reads `value`, where the offset IS, so it follows a
             // glide frame by frame rather than jumping to where it is going.
             Text($offset.journey.convert { "\(Int($0.value.y)) down" })
-                .fontSize(14)
+                .font(.system(size: 14))
                 .multilineTextAlignment(.center)
                 .gridRow(2)
 
@@ -200,7 +199,7 @@ private struct OffsetStrips: ExampleContent {
                 VStack {
                     ForEach(1...40) { line in
                         Text("Line \\(line)")
-                            .contentPadding(8, 6)
+                            .contentPadding(EdgeInsets(8, 6))
                     }
                 }
             }
@@ -312,8 +311,8 @@ private struct OffsetStrips: ExampleContent {
                     .gridRow(0)
 
                     HStack {
-                        Button("Top").onClicked { try await move(to: 0) }
-                        Button("Line 9").onClicked { try await move(to: 240) }
+                        Button("Top", action: { try await move(to: 0) })
+                        Button("Line 9", action: { try await move(to: 240) })
                     }
                     .gridRow(1)
                 }
@@ -353,15 +352,15 @@ private struct OffsetStrips: ExampleContent {
             .gridRow(0)
 
             HStack {
-                Button("Top")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { try await move(to: 0) }
+                Button("Top", action: { try await move(to: 0) })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Line 9")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { try await move(to: 240) }
+                Button("Line 9", action: { try await move(to: 240) })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
             }
             .spacing(16)
             .horizontalAlignment(.center)
@@ -389,7 +388,7 @@ private struct OffsetStrips: ExampleContent {
             Text("Three strips, three states. `.scrollOffset($offset)` hands the state over, "
                 + "so the scroller is no reader of it: what the offset costs is decided "
                 + "by who reads it, and each column reads it differently.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Described reads the offset in its own braces, so the column is built "
@@ -398,25 +397,25 @@ private struct OffsetStrips: ExampleContent {
                 + "second, so its count is a tenth. A channel reads nothing: "
                 + "`$offset.journey.convert { … }` is a second state the host works out "
                 + "on its own frames, and the count stays at one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Hand the value on where it moves with a finger, read it where "
                 + "something decides by it, and put a cadence on the read where the "
                 + "difference cannot be seen. `A state on a cadence`, under Using state, "
                 + "shows the cadence on its own.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.scrollOffset($offset)` goes both ways: scrolling writes the state, and a "
                 + "write moves the scroller. `try await $offset.journey.move(to:)` returns "
                 + "when the glide finishes, which is why Top moves the strips one after "
                 + "another; `$offset.journey.snap(to:)` puts one there at once.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A ScrollView holds one view; several children are wrapped in a stack.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -494,14 +493,13 @@ private struct RestStrips: ExampleContent {
                 .gridRow(0)
 
             Text("at rest on tile \(rested)")
-                .fontSize(12)
-                .fontFamily("Menlo")
+                .font(.system(size: 12, design: .monospaced))
                 .foregroundStyle(Palette.accent)
                 .multilineTextAlignment(.center)
                 .gridRow(1)
 
             Text("`.onScrollStopped` + a write to `.scrollOffset`")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
                 .gridRow(2)
@@ -512,7 +510,7 @@ private struct RestStrips: ExampleContent {
                 .gridRow(3)
 
             Text("the platform's own rest")
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
                 .gridRow(4)
@@ -529,14 +527,14 @@ private struct RestStrips: ExampleContent {
             Text("Drag the first strip and let go: the throw stops where the platform "
                 + "stops it, and the strip then glides on to the tile it is nearest. The "
                 + "strip under it stays wherever the throw ends.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.onScrollStopped` runs once a movement of the user's has ended - "
                 + "a drag, a throw, a wheel - and not after the glide it asked for itself. "
                 + "That is the moment work costs nothing, so it is also where a list builds "
                 + "the rows the next swipe needs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -561,7 +559,7 @@ private struct BarStrips: ExampleContent {
                     VStack {
                         ForEach(1...40) { line in
                             Text("Line \\(line)")
-                                .contentPadding(6, 4)
+                                .contentPadding(EdgeInsets(6, 4))
                         }
                     }
                 }
@@ -593,8 +591,8 @@ private struct BarStrips: ExampleContent {
                 VStack {
                     ForEach(1...40) { line in
                         Text("Line \(line)")
-                            .fontSize(13)
-                            .contentPadding(6, 4)
+                            .font(.system(size: 13))
+                            .contentPadding(EdgeInsets(6, 4))
                     }
                 }
             }
@@ -602,7 +600,7 @@ private struct BarStrips: ExampleContent {
             .gridRow(0)
 
             Text(caption)
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
                 .gridRow(1)
@@ -616,7 +614,7 @@ private struct BarStrips: ExampleContent {
             + "one that stays whether or not a drag is under way. Where the platform draws "
             + "an overlay bar that fades on its own, the two look alike until the scroller "
             + "is dragged.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

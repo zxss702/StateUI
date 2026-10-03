@@ -42,8 +42,8 @@ struct HostTimeSample: SampleContent, ExampleContent {
                 }
             }
 
-            Button("Read again")
-                .onClicked { try await read() }
+            Button("Read again", action: { try await read() })
+                
         }
         .onAppear { try await read() }
 
@@ -91,21 +91,21 @@ struct HostTimeSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("Here: \(zone.isEmpty ? "…" : zone)")
-                .fontSize(17)
-                .fontAttributes(.bold)
+                .font(.system(size: 17))
+                .bold()
 
             Text(season)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
 
             ForEach(clocks, id: \.0) { clock in
                 HStack {
                     Text(clock.0)
-                        .fontSize(14)
+                        .font(.system(size: 14))
                         .horizontalAlignment(.start)
 
                     Text(clock.1)
-                        .fontSize(14)
+                        .font(.system(size: 14))
                         .foregroundStyle(Palette.accent)
                         .horizontalAlignment(.end)
                         .multilineTextAlignment(.end)
@@ -113,11 +113,11 @@ struct HostTimeSample: SampleContent, ExampleContent {
                 .spacing(12)
             }
 
-            Button("Read again")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Read again", action: { try await read() })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
-                .onClicked { try await read() }
+                
         }
         .spacing(10)
         .onAppear { try await read() }
@@ -130,13 +130,13 @@ struct HostTimeSample: SampleContent, ExampleContent {
                 + "a `ClockTime` and a `Duration`, both of which this side owns. No "
                 + "Foundation is involved, which is why the answers are the same on every "
                 + "platform.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("An offset is a whole number of minutes, so +05:30 is not a special case, "
                 + "and it is asked for a DAY - which is how the same zone answers "
                 + "differently in January than it does in August.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

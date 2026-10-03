@@ -22,23 +22,23 @@ struct TickerSample: SampleContent, ExampleContent {
 
             Text("\\((ticker.limit ?? 0) - ticker.ticks)")
 
-            ProgressBar(remaining)
+            ProgressView(remaining)
 
             HStack {
-                Button(ticker.isRunning ? "Stop" : "Start")
-                    .onClicked { ticker.isRunning ? ticker.stop() : ticker.start() }
+                Button(ticker.isRunning ? "Stop" : "Start", action: { ticker.isRunning ? ticker.stop() : ticker.start() })
+                    
 
-                Button("Reset")
-                    .onClicked { ticker.reset() }
+                Button("Reset", action: { ticker.reset() })
+                    
             }
 
             HStack {
                 ForEach([10, 30, 60]) { length in
-                    Button("\\(length)s")
-                        .onClicked {
+                    Button("\\(length)s", action: {
                             ticker.reset()
                             ticker.limit = length
-                        }
+                        })
+                        
                 }
             }
         }
@@ -55,37 +55,37 @@ struct TickerSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\((ticker.limit ?? 0) - ticker.ticks)")
-                .fontSize(64)
-                .fontAttributes(.bold)
+                .font(.system(size: 64))
+                .bold()
                 .foregroundStyle(ticker.isFinished ? Palette.subtle : Palette.accent)
                 .multilineTextAlignment(.center)
 
-            ProgressBar(remaining)
+            ProgressView(remaining)
                 .tint(Palette.accent)
 
             HStack {
-                Button(ticker.isRunning ? "Stop" : "Start")
-                    .fontSize(13)
-                    .contentPadding(20, 6)
-                    .onClicked { ticker.isRunning ? ticker.stop() : ticker.start() }
+                Button(ticker.isRunning ? "Stop" : "Start", action: { ticker.isRunning ? ticker.stop() : ticker.start() })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(20, 6))
+                    
 
-                Button("Reset")
-                    .fontSize(13)
-                    .contentPadding(20, 6)
-                    .onClicked { ticker.reset() }
+                Button("Reset", action: { ticker.reset() })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(20, 6))
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)
 
             HStack {
                 ForEach([10, 30, 60]) { length in
-                    Button("\(length)s")
-                        .fontSize(12)
-                        .contentPadding(14, 4)
-                        .onClicked {
+                    Button("\(length)s", action: {
                             ticker.reset()
                             ticker.limit = length
-                        }
+                        })
+                        .font(.system(size: 12))
+                        .contentPadding(EdgeInsets(14, 4))
+                        
                 }
             }
             .spacing(8)
@@ -101,13 +101,13 @@ struct TickerSample: SampleContent, ExampleContent {
                 + "the library. What is left here is a value to read: no flag, no visit "
                 + "token, no while - a tick writes what the interface reads and asks "
                 + "for the render itself.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("It sleeps to a DEADLINE rather than for a length, so the lateness of "
                 + "each lap is spent instead of added up - where a loop written by hand "
                 + "adds every one of them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Starting twice is safe - each run takes a token, and a loop that wakes "
@@ -115,7 +115,7 @@ struct TickerSample: SampleContent, ExampleContent {
                 + "reader's to write: a ticker outlives the page unless someone says "
                 + "otherwise, which is what makes it usable for something that should "
                 + "keep counting.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

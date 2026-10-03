@@ -32,21 +32,44 @@ struct ImageSample: SampleContent, ExampleContent {
             HStack {
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
-                        .aspect(.fit)
+                        .scaledToFit()
                         .frame(width: 120)
                         .frame(height: 60)
 
-                    Text(".aspect(.fit)")
+                    Text(".scaledToFit()")
                 }
 
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
-                        .aspect(.fill)
+                        .scaledToFill()
                         .frame(width: 120)
                         .frame(height: 60)
 
-                    Text(".aspect(.fill)")
+                    Text(".scaledToFill()")
                 }
+            }
+
+            // A systemName names a symbol, not a file: the host draws the one
+            // its own set knows. A Label is a title with a symbol at its head.
+            HStack {
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .frame(width: 24)
+                    .frame(height: 24)
+
+                Label("Starred", systemImage: "star.fill")
+            }
+
+            // `.clipShape` cuts the view to the outline a shape stands for.
+            HStack {
+                Image("nav_media.png")
+                    .scaledToFill()
+                    .frame(width: 48)
+                    .frame(height: 48)
+                    .clipShape(Circle())
+
+                Text("clipped to a circle")
+                    .verticalAlignment(.center)
             }
 
             // The same shape drawn black, and drawn once per color scheme. An Image
@@ -100,13 +123,13 @@ struct ImageSample: SampleContent, ExampleContent {
             HStack {
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
-                        .aspect(.fit)
+                        .scaledToFit()
                         .frame(width: 120)
                         .frame(height: 60)
                         .background(Palette.surface)
 
-                    Text(".aspect(.fit)")
-                        .fontSize(11)
+                    Text(".scaledToFit()")
+                        .font(.system(size: 11))
                         .foregroundStyle(Palette.subtle)
                         .multilineTextAlignment(.center)
                 }
@@ -114,13 +137,13 @@ struct ImageSample: SampleContent, ExampleContent {
 
                 VStack {
                     Image(light: "nav_media.png", dark: "nav_media_dark.png")
-                        .aspect(.fill)
+                        .scaledToFill()
                         .frame(width: 120)
                         .frame(height: 60)
                         .background(Palette.surface)
 
-                    Text(".aspect(.fill)")
-                        .fontSize(11)
+                    Text(".scaledToFill()")
+                        .font(.system(size: 11))
                         .foregroundStyle(Palette.subtle)
                         .multilineTextAlignment(.center)
                 }
@@ -141,7 +164,7 @@ struct ImageSample: SampleContent, ExampleContent {
                     .frame(height: 32)
 
                 Text("black artwork, always")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .verticalAlignment(.center)
             }
             .spacing(12)
@@ -152,10 +175,39 @@ struct ImageSample: SampleContent, ExampleContent {
                     .frame(height: 32)
 
                 Text("one per colorScheme - switch the system between light and dark")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .verticalAlignment(.center)
             }
             .spacing(12)
+
+            SectionTitle("Symbols")
+
+            // `systemName` names a symbol, not a file: the host draws the one
+            // its own set knows - SF Symbols on a Mac, Fluent Icons on
+            // Windows, the icon theme on Linux.
+            HStack {
+                ForEach(["star", "heart.fill", "house", "gearshape", "magnifyingglass"], id: \.self) { name in
+                    Image(systemName: name)
+                        .resizable()
+                        .frame(width: 24)
+                        .frame(height: 24)
+                }
+            }
+            .spacing(16)
+            .horizontalAlignment(.center)
+
+            // A Label is a title with a symbol at its head - and its style
+            // picks which of the two shows.
+            HStack {
+                Label("Starred", systemImage: "star.fill")
+
+                Label("Bookmarked", systemImage: "bookmark")
+                    .labelStyle(.iconOnly)
+                    .frame(width: 24)
+                    .frame(height: 24)
+            }
+            .spacing(16)
+            .horizontalAlignment(.center)
         }
         .spacing(12)
     }
@@ -165,20 +217,28 @@ struct ImageSample: SampleContent, ExampleContent {
             Text("The first row is the sidebar's own icons: SVGs in `Resources/Images`, "
                 + "each asked for by its `.png` name. Where the build makes no PNG of that "
                 + "name, the host loads the SVG of the same name instead.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.aspect` is the choice between showing all of the picture and filling "
                 + "every corner: `.fit` keeps the whole picture and leaves room on "
                 + "two sides, `.fill` covers the box and crops what will not fit.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("An `Image` has no tint, so a picture that has to read on both themes is "
                 + "two pictures. `ImageSource(light:dark:)` is picked the way "
                 + "`Color(light:dark:)` is - as the view is built - so a change of colorScheme "
                 + "builds the views wearing one again.")
-                .fontSize(12)
+                .font(.system(size: 12))
+                .foregroundStyle(Palette.subtle)
+
+            Text("`Image(systemName:)` asks for no file: the name is a logical "
+                + "symbol, and each host maps it to its own set - SF Symbols on "
+                + "macOS, Segoe Fluent Icons on Windows, the icon theme on "
+                + "Linux. `Label` pairs one with a title, and `.labelStyle` "
+                + "picks which of the two shows.")
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.isAnimating(true)` runs a picture that HAS frames - a GIF, an "
@@ -186,7 +246,7 @@ struct ImageSample: SampleContent, ExampleContent {
                 + "no example above uses it: the gallery ships no animated artwork. It is "
                 + "a property rather than an act, so a paused animation is a state the "
                 + "tree describes and a rebuild cannot lose.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

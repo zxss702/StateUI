@@ -51,23 +51,23 @@ struct AimSample: SampleContent, ExampleContent {
                 // differ settled - "#12" - or the name an .id() gave it. Read
                 // in the HANDLER, because the walk fills it after the body
                 // that describes the view was built.
-                Button("Focus the first")
-                    .onClicked {
+                Button("Focus the first", action: {
                         try await field.focus()
                         says = "focused \\(field)"
-                    }
+                    })
+                    
 
-                Button("Focus the second")
-                    .onClicked {
+                Button("Focus the second", action: {
                         try await note.focus()
                         says = "focused \\(note)"
-                    }
+                    })
+                    
 
-                Button("Let go")
-                    .onClicked {
+                Button("Let go", action: {
                         try await field.unfocus()
                         says = "let go of \\(field)"
-                    }
+                    })
+                    
             }
 
             Text(says)
@@ -91,40 +91,40 @@ struct AimSample: SampleContent, ExampleContent {
                 .aim(note)
 
             HStack {
-                Button("Focus the first")
-                    .background(Palette.accent)
-                    .shape(.roundedRectangle(8))
-                    .contentPadding(14, 8)
-                    .onClicked {
+                Button("Focus the first", action: {
                         try await field.focus()
                         says = "focused \(field)"
-                    }
-
-                Button("Focus the second")
+                    })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(14, 8)
-                    .onClicked {
+                    .contentPadding(EdgeInsets(14, 8))
+                    
+
+                Button("Focus the second", action: {
                         try await note.focus()
                         says = "focused \(note)"
-                    }
+                    })
+                    .background(Palette.accent)
+                    .shape(.roundedRectangle(8))
+                    .contentPadding(EdgeInsets(14, 8))
+                    
 
-                Button("Let go")
+                Button("Let go", action: {
+                        try await field.unfocus()
+                        says = "let go of \(field)"
+                    })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(14, 8)
-                    .onClicked {
-                        try await field.unfocus()
-                        says = "let go of \(field)"
-                    }
+                    .contentPadding(EdgeInsets(14, 8))
+                    
             }
             .spacing(10)
 
             Text(says)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }
@@ -138,14 +138,14 @@ struct AimSample: SampleContent, ExampleContent {
                 + "binding. A control is @Aim: `.aim(field)` puts the view's address into "
                 + "the aim, and on the aim you call the control's methods - `focus()`, "
                 + "`unfocus()`, a WebView's `goBack()`, a Map's `moveToRegion(_:)`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A property is a modifier - opacity, rotation, a stack's background - "
                 + "which takes a binding and animates along that binding's journey. Nothing "
                 + "is both a modifier and a method, and a scroller's offset is state as "
                 + "well: `.scrollOffset($offset)`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("No names are involved: an aim points at the view it was put on, so two "
@@ -153,13 +153,13 @@ struct AimSample: SampleContent, ExampleContent {
                 + "its parent's aim reaches the parent's. Calling an act on an aim that is on "
                 + "no view throws before anything is sent, and an aim put on two views at "
                 + "once says so.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Read an aim from a handler, not from a body: it is filled while the view "
                 + "is drawn, so a body sees what the last render left, and `nowhere` on the "
                 + "very first.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

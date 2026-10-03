@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// States written on the control itself, and the list of them being the
 /// control's own.
@@ -55,14 +55,14 @@ struct VisualStateSample: SampleContent, ExampleContent {
 
             // THE SAME STATES, ARRIVING, so the two can be held down side by
             // side: a visual state travels under the control's own animation, and
-            // `.animation(.none)` is what none of it looks like.
+            // `.animation(nil)` is what none of it looks like.
             Button(enabled ? "Hold me too" : "Disabled")
                 .disabled(!enabled)
-                .animation(.none)
+                .animation(nil)
                 .visualState(.pressed) { $0.background(Palette.brand) }
                 .onClicked { presses += 1 }
 
-            Switch($enabled)
+            Toggle(isOn: $enabled)
 
             Text("entered \\(entered) · pressed \\(presses) times")
 
@@ -112,17 +112,17 @@ struct VisualStateSample: SampleContent, ExampleContent {
                     }
                     .onClicked { presses += 1 }
                     .disabled(!enabled)
-                    .animation(.none)
+                    .animation(nil)
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
             HStack {
                 Text("Enabled")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
 
-                Switch($enabled)
+                Toggle(isOn: $enabled)
                     .accessibilityIdentifier("visual-states.enabled")
                     .accessibilityLabel("Enabled")
             }
@@ -130,7 +130,7 @@ struct VisualStateSample: SampleContent, ExampleContent {
             .horizontalAlignment(.center)
 
             Text("entered \(entered) · pressed \(presses) times")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
@@ -150,7 +150,7 @@ struct VisualStateSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         Text("Hold each button down: the left crosses to its pressed colour, the right arrives at it. "
             + "Turn Enabled off for the disabled look, and choose a radio button for the checked one.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

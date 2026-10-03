@@ -89,7 +89,7 @@ struct SampleTabPage: View {
     private var held: Grid {
         Grid {
             Text(sample.summary)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .foregroundStyle(Palette.subtle)
 
             if case .example(let index) = tab {

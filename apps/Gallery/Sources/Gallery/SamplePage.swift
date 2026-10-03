@@ -34,6 +34,7 @@ struct SamplePage: View {
             SampleTabPage(sample: sample, tab: tab, nav: nav)
         }
         .title(sample.title)
+        .badge("\(sample.tabs.count)")
         .barBackgroundColor(bar)
     }
 
@@ -53,7 +54,7 @@ struct SamplePage: View {
         ScrollView {
             VStack {
                 Text(sample.summary)
-                    .fontSize(15)
+                    .font(.system(size: 15))
                     .foregroundStyle(Palette.subtle)
 
                 // By OFFSET: the examples never change.

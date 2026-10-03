@@ -90,13 +90,13 @@ struct MenuPage: View {
             }
 
             Text("StateUI")
-                .fontSize(24)
-                .fontAttributes(.bold)
+                .font(.system(size: 24))
+                .bold()
                 .characterSpacing(-0.5)
                 .foregroundStyle(Palette.onBrand)
 
             Text("Native interfaces, written in Swift")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.onBrand)
                 .opacity(0.85)
         }
@@ -109,7 +109,7 @@ struct MenuPage: View {
         // and the name cut mid-letter). The gradient was always meant to run
         // behind the status bar anyway.
         .ignoresSafeArea(.none)
-        .contentPadding(20, 40, 20, 22)
+        .contentPadding(EdgeInsets(20, 40, 20, 22))
         .background(Palette.identity)
     }
 
@@ -150,13 +150,13 @@ struct MenuPage: View {
     /// answered before the first render.
     private var footer: any View {
         Text("native: \(stateUIPlatform()) · \(device.formFactor)")
-            .fontSize(11)
+            .font(.system(size: 11))
             .foregroundStyle(Palette.subtle)
             .multilineTextAlignment(.center)
             // Room under it for the home indicator, the content being edge to
             // edge: a phone with no home button draws a bar across the bottom
             // of the screen, and this line would otherwise sit under it.
-            .contentPadding(16, 16, 16, 30)
+            .contentPadding(EdgeInsets(16, 16, 16, 30))
             // The footer's own row, written on the footer.
             .gridRow(2)
     }

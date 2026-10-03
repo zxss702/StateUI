@@ -40,7 +40,7 @@ struct WindowPhaseSample: SampleContent, ExampleContent {
             PhaseRow(name: "this window", value: "\(window.phase)")
 
             Text(verdict)
-                .fontSize(14)
+                .font(.system(size: 14))
                 .foregroundStyle(Palette.accent)
                 .multilineTextAlignment(.center)
         }
@@ -74,14 +74,14 @@ private struct PhaseRow: View {
     var body: some View {
         HStack {
             Text(name)
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .frame(width: 110)
                 .verticalAlignment(.center)
 
             Text(value)
-                .fontSize(24)
-                .fontAttributes(.bold)
+                .font(.system(size: 24))
+                .bold()
                 .verticalAlignment(.center)
         }
         .spacing(12)

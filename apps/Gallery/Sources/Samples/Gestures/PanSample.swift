@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A view dragged about under a finger, and the one write that must not travel.
 struct PanSample: SampleContent, ExampleContent {
@@ -77,12 +77,12 @@ struct PanSample: SampleContent, ExampleContent {
             SwitchRow("The drag snaps", $snaps)
 
             // A SETPOINT, so the box travels home from wherever it was left.
-            Button("Put it back").onClicked {
+            Button("Put it back", action: {
                 panX = 0
                 panY = 0
                 liveX = 0
                 liveY = 0
-            }
+            })
         }
 
 
@@ -147,23 +147,23 @@ struct PanSample: SampleContent, ExampleContent {
                 .text($liveX.journey.convert(with: $liveY.journey) { x, y in
                     "Moved \(Int(x.value)), \(Int(y.value))"
                 })
-                .fontSize(15)
+                .font(.system(size: 15))
                 .multilineTextAlignment(.center)
 
             SwitchRow("The drag snaps", $snaps)
 
-            Button("Put it back")
-                .fontSize(13)
-                .contentPadding(16, 6)
-                .horizontalAlignment(.center)
-                // A SETPOINT, so the box TRAVELS home from wherever it was
-                // left - the same two states, written the other way.
-                .onClicked {
+            Button("Put it back", action: {
                     panX = 0
                     panY = 0
                     liveX = 0
                     liveY = 0
-                }
+                })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
+                .horizontalAlignment(.center)
+                // A SETPOINT, so the box TRAVELS home from wherever it was
+                // left - the same two states, written the other way.
+                
         }
         .spacing(12)
 
@@ -194,7 +194,7 @@ struct PanSample: SampleContent, ExampleContent {
                 + "the last report - which is why the running case adds them to "
                 + "where the view was, and the completed case is what commits "
                 + "the move.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`The drag snaps` is the whole lesson, and on a walked state it is "
@@ -203,13 +203,13 @@ struct PanSample: SampleContent, ExampleContent {
                 + "itself is where it is GOING, so writing that on every report starts "
                 + "a journey the next report interrupts - turn the switch off and the "
                 + "box trails the hand.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`Put it back` writes the states instead, which is the same two "
                 + "states written the other way: the box travels home rather than "
                 + "jumping there.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Nothing on this page is described while the box moves. The "
@@ -217,7 +217,7 @@ struct PanSample: SampleContent, ExampleContent {
                 + "converted text over the same two states - so a drag of a hundred "
                 + "reports costs "
                 + "a hundred pieces of arithmetic and no renders.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

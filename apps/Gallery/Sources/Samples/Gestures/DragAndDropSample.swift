@@ -31,7 +31,7 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 ForEach(items) { item in
                     ZStack {
                         Text(item)
-                            .contentPadding(12, 8)
+                            .contentPadding(EdgeInsets(12, 8))
                     }
                     .style("Card")
                     .stroke(Palette.accent)
@@ -75,9 +75,9 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 over = false
             }
 
-            Button("Empty it")
+            Button("Empty it", action: { basket = [] })
                 .disabled(basket.isEmpty)
-                .onClicked { basket = [] }
+                
         }
         """
 
@@ -91,8 +91,8 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 ForEach(items) { item in
                     ZStack {
                         Text(item)
-                            .fontSize(14)
-                            .contentPadding(12, 8)
+                            .font(.system(size: 14))
+                            .contentPadding(EdgeInsets(12, 8))
                     }
                     .style("Card")
                     .stroke(Palette.accent)
@@ -108,7 +108,7 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             .spacing(8)
 
             Text(finished)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
@@ -119,12 +119,12 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                     Text(over
                         ? "let go to drop it"
                         : (basket.isEmpty ? "nothing yet" : "\(basket.count) dropped"))
-                        .fontSize(15)
+                        .font(.system(size: 15))
                         .multilineTextAlignment(.center)
 
                     ForEach(Array(basket.enumerated()), id: \.offset) { pair in
                         Text(pair.element)
-                            .fontSize(13)
+                            .font(.system(size: 13))
                             .foregroundStyle(Palette.subtle)
                             .multilineTextAlignment(.center)
                     }
@@ -147,12 +147,12 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 over = false
             }
 
-            Button("Empty it")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Empty it", action: { basket = [] })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
                 .disabled(basket.isEmpty)
-                .onClicked { basket = [] }
+                
         }
         .spacing(12)
     }
@@ -162,20 +162,20 @@ struct DragAndDropSample: SampleContent, ExampleContent {
             Text("What travels is a STRING, decided before the drag starts: a native "
                 + "drag session needs its payload at once, so `draggable(text:)` says it "
                 + "up front.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Reading what was dropped is asynchronous - it may be coming from "
                 + "another application - so the host reads it, and `onDrop` runs with the "
                 + "text when there is something to say.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`onDragOver` runs again and again while a drag is held over the "
                 + "target, not once, so it SETS the highlight rather than counting; "
                 + "`onDragLeave` runs when the drag goes away without being let go. A "
                 + "drop is not a leave, so `onDrop` takes the highlight down as well.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Both of those belong to a view that ACCEPTS a drop, and `onDrop` is "
@@ -184,7 +184,7 @@ struct DragAndDropSample: SampleContent, ExampleContent {
                 + "dragged, so it needs `draggable(text:)` beside it, and it runs when "
                 + "that drag ends wherever it ended - over the basket, or over nothing "
                 + "at all.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

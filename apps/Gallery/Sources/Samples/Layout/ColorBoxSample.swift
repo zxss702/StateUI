@@ -72,7 +72,7 @@ struct ColorBoxSample: SampleContent, ExampleContent {
         Text("A ColorPicker draws the colour its initializer takes, which is its `.color`. "
             + "`.background` is a second surface behind it that the corner radius "
             + "does not round. A one-pixel ColorPicker is also the usual divider.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

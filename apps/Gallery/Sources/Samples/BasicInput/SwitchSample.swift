@@ -3,6 +3,7 @@ import StateUI
 /// A switch bound to a flag, reporting each flip as the value it now has.
 struct SwitchSample: SampleContent, ExampleContent {
     @State private var soundOn = true
+    @State private var boldOn = false
     @State private var said = "not thrown yet"
 
     static let id = "switch"
@@ -11,6 +12,7 @@ struct SwitchSample: SampleContent, ExampleContent {
 
     static let code = """
         @State private var soundOn = true
+        @State private var boldOn = false
         @State private var said = "not thrown yet"
 
         VStack {
@@ -21,14 +23,20 @@ struct SwitchSample: SampleContent, ExampleContent {
                 Text("Sound")
                     .verticalAlignment(.center)
 
-                Switch($soundOn)
+                Toggle(isOn: $soundOn)
                     // Runs beside the binding's write-back, carrying what the
                     // switch NOW is rather than what this side guessed.
-                    .onToggled { on in said = on ? "thrown on" : "thrown off" }
+                    .onChange(of: soundOn) { _, on in said = on ? "thrown on" : "thrown off" }
             }
 
             Text(soundOn ? "on" : "off")
             Text(said)
+
+            // A toggle as a button that holds its pressed look.
+            Toggle(isOn: $boldOn) {
+                Label("Bold", systemImage: "bold")
+            }
+            .toggleStyle(.button)
         }
         """
 
@@ -38,24 +46,32 @@ struct SwitchSample: SampleContent, ExampleContent {
 
             HStack {
                 Text("Sound")
-                    .fontSize(16)
+                    .font(.system(size: 16))
                     .verticalAlignment(.center)
 
-                Switch($soundOn)
+                Toggle(isOn: $soundOn)
                     .accessibilityIdentifier("switch.sound")
                     .accessibilityLabel("Sound on")
                     .tint(Palette.accent)
-                    .onToggled { on in said = on ? "thrown on" : "thrown off" }
+                    .onChange(of: soundOn) { _, on in said = on ? "thrown on" : "thrown off" }
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
+            // A toggle as a button that holds its pressed look - a toolbar's,
+            // which is what `.toggleStyle(.button)` asks of each host.
+            Toggle(isOn: $boldOn) {
+                Label("Bold", systemImage: "bold")
+            }
+            .toggleStyle(.button)
+            .accessibilityIdentifier("switch.bold")
+
             Text(soundOn ? "on" : "off")
-                .fontSize(15)
+                .font(.system(size: 15))
                 .multilineTextAlignment(.center)
 
             Text(said)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }
@@ -63,10 +79,10 @@ struct SwitchSample: SampleContent, ExampleContent {
     }
 
     var notes: (any View)? {
-        Text("`.onToggled` carries the value the switch now has, and runs after the "
+        Text("`.onChange` carries the value the switch now has, and runs after the "
             + "binding has written it - so both hold what the switch is, not what this "
             + "side guessed.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

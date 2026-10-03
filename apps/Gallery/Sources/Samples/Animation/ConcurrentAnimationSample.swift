@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Several movements in the air at once, which is what `async let` buys.
 struct ConcurrentAnimationSample: SampleContent, ExampleContent {
@@ -66,7 +66,7 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
             .background($wash)
 
             HStack {
-                Button("Play").onClicked {
+                Button("Play", action: {
                     guard !playing else { return }
                     playing = true
 
@@ -83,10 +83,10 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
                     }
 
                     try await $breath.journey.move(to: 1, .eased(200))
-                }
+                })
                 .disabled(playing)
 
-                Button("Stop").onClicked {
+                Button("Stop", action: {
                     playing = false
 
                     // One stop per state, each leaving the value where it had
@@ -98,7 +98,7 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
                         bar.journey.stop()
                         try await bar.journey.move(to: 0, .eased(120))
                     }
-                }
+                })
                 .disabled(!playing)
             }
         }
@@ -159,7 +159,7 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
 
                     Text("in concert")
                         .opacity($breath)
-                        .fontSize(15)
+                        .font(.system(size: 15))
                         .foregroundStyle(Palette.onAccent)
                         .multilineTextAlignment(.center)
                 }
@@ -224,21 +224,21 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
                 + "moving inside it. `async let` starts a movement without waiting for "
                 + "it, which is why the wash, the breath and the hop of the moment are "
                 + "three in the air together.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The four bars are FOUR states, one each, because a driven state is "
                 + "one image the host reads - a binding into an array of numbers has no "
                 + "image of its own, so there would be nothing to read a bar's place off. "
                 + "The list of bindings is what keeps the loop short.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A state holds both readings at once: `breath` is 0.25 on the "
                 + "line after the movement starts, while `$breath.journey.value` is whatever is "
                 + "on the screen. That is what lets one movement follow another with "
                 + "nothing to put back afterwards.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Awaiting the two long ones at the BOTTOM is what keeps this a loop "
@@ -246,7 +246,7 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
                 + "over, so the next colour never starts over the one before it. Stop is "
                 + "stop() on each state, and each leaves its value where it stood - "
                 + "which is what the bars then come home from.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -292,9 +292,9 @@ struct ConcurrentAnimationSample: SampleContent, ExampleContent {
 
     /// One of the buttons, both of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

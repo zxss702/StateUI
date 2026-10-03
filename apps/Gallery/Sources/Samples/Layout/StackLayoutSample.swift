@@ -44,7 +44,7 @@ struct StackLayoutSample: SampleContent, ExampleContent {
                 Text(text)
                     .foregroundStyle(.white)
                     .background(Palette.accent)
-                    .contentPadding(14, 8)
+                    .contentPadding(EdgeInsets(14, 8))
             }
         }
         """
@@ -91,7 +91,7 @@ struct StackLayoutSample: SampleContent, ExampleContent {
 
     var notes: (any View)? {
         Text("`.horizontalAlignment` places a child across the room its stack gives it.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }
@@ -102,10 +102,10 @@ private struct StackCell: View {
 
     var body: some View {
         Text(text)
-            .fontSize(13)
+            .font(.system(size: 13))
             .foregroundStyle(.white)
             .background(Palette.accent)
-            .contentPadding(14, 8)
+            .contentPadding(EdgeInsets(14, 8))
             .multilineTextAlignment(.center)
     }
 }

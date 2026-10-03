@@ -28,19 +28,19 @@ struct TabsExtraPage: View {
                 SectionTitle("A tab the user added")
 
                 Text("Extra \(number)")
-                    .fontSize(26)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 26))
+                    .bold()
 
                 Text("This tab is `.extra(\(number))`, one value in the tabs array.")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
 
                 TabsControls(nav: nav, thisTab: .extra(number))
 
-                Button("Back to the Navigation samples")
-                    .contentPadding(20, 10)
+                Button("Back to the Navigation samples", action: { nav.openGroup("navigation") })
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { nav.openGroup("navigation") }
+                    
             }
             .spacing(14)
             .contentPadding(24)

@@ -65,12 +65,12 @@ struct PersistentStateSample: SampleContent, ExampleContent {
             Text("Pressed \\(visits) times, ever")
 
             HStack {
-                Button("Press")
-                    .onClicked { visits += 1 }
+                Button("Press", action: { visits += 1 })
+                    
 
-                Button("Start over")
+                Button("Start over", action: { visits = 0 })
                     .disabled(visits == 0)
-                    .onClicked { visits = 0 }
+                    
             }
 
             TextField($who)
@@ -78,8 +78,8 @@ struct PersistentStateSample: SampleContent, ExampleContent {
 
             Text(who.isEmpty ? "Welcome back" : "Welcome back, \\(who)")
 
-            Button(shade == .quiet ? "quiet" : "bold")
-                .onClicked { shade = shade == .quiet ? .bold : .quiet }
+            Button(shade == .quiet ? "quiet" : "bold", action: { shade = shade == .quiet ? .bold : .quiet })
+                
 
             ColorPicker()
                 .color(shade == .bold ? Palette.accent : Palette.surface)
@@ -90,7 +90,7 @@ struct PersistentStateSample: SampleContent, ExampleContent {
         VStack {
             Text("Close the app completely and open it again: the count and the name "
                 + "are where you left them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The value written beside the state - `= 0` - is what it holds when "
@@ -98,14 +98,14 @@ struct PersistentStateSample: SampleContent, ExampleContent {
                 + "it can be seen. Reading and writing are exactly what they are on any "
                 + "other @State: nothing is awaited, and a write reaches the store by "
                 + "itself.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The application LISTS its keys, in its session's persistentKeys. That is not "
                 + "ceremony: a settings store is read one key at a time and offers no "
                 + "list of what it holds, so naming them is what puts the values in "
                 + "memory before the first view asks for one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("They are kept in the platform's own settings store - NSUserDefaults, "
@@ -113,7 +113,7 @@ struct PersistentStateSample: SampleContent, ExampleContent {
                 + "the app keeps there. So a key can hold only what such a store holds: "
                 + "a whole number, a number, true or false, or text. An enum over one of "
                 + "those is one line, as Shade is here.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -124,25 +124,25 @@ struct PersistentStateSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("Pressed \(visits) times, ever")
-                .fontSize(22)
+                .font(.system(size: 22))
                 .multilineTextAlignment(.center)
 
             HStack {
-                Button("Press")
+                Button("Press", action: { visits += 1 })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
-                    .onClicked { visits += 1 }
+                    .contentPadding(EdgeInsets(20, 10))
+                    
 
-                Button("Start over")
+                Button("Start over", action: { visits = 0 })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .disabled(visits == 0)
-                    .onClicked { visits = 0 }
+                    
             }
             .spacing(12)
             .horizontalAlignment(.center)
@@ -153,7 +153,7 @@ struct PersistentStateSample: SampleContent, ExampleContent {
                 .placeholder("Your name")
 
             Text(who.isEmpty ? "Welcome back" : "Welcome back, \(who)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             // A key whose value is an enum - kept as the word it is spelled
@@ -162,14 +162,14 @@ struct PersistentStateSample: SampleContent, ExampleContent {
                 Text("Shade")
                     .verticalAlignment(.center)
 
-                Button(shade == .quiet ? "quiet" : "bold")
+                Button(shade == .quiet ? "quiet" : "bold", action: { shade = shade == .quiet ? .bold : .quiet })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(16, 8)
-                    .onClicked { shade = shade == .quiet ? .bold : .quiet }
+                    .contentPadding(EdgeInsets(16, 8))
+                    
             }
             .spacing(12)
 

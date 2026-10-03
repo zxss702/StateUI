@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// One colour per family, so the three rows read apart at a glance rather than
 /// as one long run of identical squares.
@@ -124,7 +124,7 @@ struct TransformSample: SampleContent, ExampleContent {
             // braces, so each of them is a reader of its own.
             HStack {
                 Text(transformed ? "every transform on" : "plain squares")
-                    .fontSize(12)
+                    .font(.system(size: 12))
                     .foregroundStyle(Palette.subtle)
                     .verticalAlignment(.center)
 
@@ -183,14 +183,14 @@ struct TransformSample: SampleContent, ExampleContent {
             Text("One switch throws every example on the page at once. Each transform is "
                 + "written as a choice between itself and none, and a changed transform "
                 + "travels - so the boxes fly to their turned, tipped, grown selves and back.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`.transformEffect(_:)` is one transform in the order it is written, about the "
                 + "view's centre: `.rotate(45).translate(28, 0)` moves the turned box a plain "
                 + "28 to the right, while `.translate(28, 0).rotate(45)` swings that move "
                 + "round with the turn. That is the orange row.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`rotation` turns a view within the plane of the screen, so a square stays "
@@ -198,7 +198,7 @@ struct TransformSample: SampleContent, ExampleContent {
                 + "a trapezium. All of them pivot about the anchor, the middle until it is "
                 + "moved: 0 is the left edge or the top, 1 the right edge or the bottom. The "
                 + "fourth violet box turns about its top left corner.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A transform happens after the layout: the view keeps the room it was "
@@ -207,7 +207,7 @@ struct TransformSample: SampleContent, ExampleContent {
                 + "gave, so 1 is that size and 0.5 half of it. A scaled view overlaps its "
                 + "neighbour without pushing it aside, which is why the amber row is spaced "
                 + "wider than the violet one.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -231,7 +231,7 @@ struct TransformSample: SampleContent, ExampleContent {
             view
 
             Text(caption)
-                .fontSize(11)
+                .font(.system(size: 11))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }

@@ -22,9 +22,7 @@ struct OnChangedSample: SampleContent, ExampleContent {
 
             Text("\\(Int(celsius)) °C")
 
-            Slider($celsius)
-                .minimum(-10)
-                .maximum(40)
+            Slider($celsius, in: -10...40)
 
             // Watches ROUNDED degrees, so dragging fires once per whole
             // degree rather than once per pixel. It does not fire when the
@@ -34,7 +32,7 @@ struct OnChangedSample: SampleContent, ExampleContent {
                     Text(line).id(line)
                 }
             }
-            .animation(.none)
+            .animation(nil)
             .onChange(of: Int(celsius)) { old, new in
                 fired += 1
                 let arrow = new > old ? "warmer" : "colder"
@@ -49,15 +47,13 @@ struct OnChangedSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(Int(celsius)) °C")
-                .fontSize(34)
-                .fontAttributes(.bold)
+                .font(.system(size: 34))
+                .bold()
                 .horizontalAlignment(.center)
 
-            Slider($celsius)
+            Slider($celsius, in: -10...40)
                 .accessibilityIdentifier("onChanged.celsius")
                 .accessibilityLabel("Celsius")
-                .minimum(-10)
-                .maximum(40)
 
             // Watches ROUNDED degrees, so dragging fires once per whole degree
             // rather than once per pixel. It does not fire when the page
@@ -65,12 +61,12 @@ struct OnChangedSample: SampleContent, ExampleContent {
             VStack {
                 ForEach(log.reversed()) { line in
                     Text(line)
-                        .fontSize(13)
+                        .font(.system(size: 13))
                         .id(line)
                 }
             }
             .spacing(4)
-            .animation(.none)
+            .animation(nil)
             .onChange(of: Int(celsius)) { old, new in
                 fired += 1
                 let arrow = new > old ? "warmer" : "colder"
@@ -88,13 +84,13 @@ struct OnChangedSample: SampleContent, ExampleContent {
                 + "the Swift side alone - nothing about it crosses to the host. The "
                 + "two-argument form is handed the old value and the new one; the short "
                 + "form takes no arguments at all.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("It watches rounded degrees here, so dragging fires once per whole "
                 + "degree rather than once per pixel. It does not fire when the page "
                 + "appears: a view arriving is not a value changing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

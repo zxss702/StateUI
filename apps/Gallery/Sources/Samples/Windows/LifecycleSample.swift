@@ -48,7 +48,7 @@ struct LifecycleSample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             Text("What the window has said so far, newest last:")
-                .fontSize(14)
+                .font(.system(size: 14))
                 .foregroundStyle(Palette.subtle)
 
             VStack {
@@ -56,13 +56,13 @@ struct LifecycleSample: SampleContent, ExampleContent {
 
                 if log.events.isEmpty {
                     Text("nothing yet - switch away and back")
-                        .fontSize(15)
+                        .font(.system(size: 15))
                         .foregroundStyle(Palette.subtle)
                 }
 
                 ForEach(log.events) { row in
                     Text(row)
-                        .fontSize(15)
+                        .font(.system(size: 15))
                 }
             }
             .spacing(4)

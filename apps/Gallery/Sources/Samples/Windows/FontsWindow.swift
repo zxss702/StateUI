@@ -25,30 +25,30 @@ struct FontsPage: View {
     var body: some View {
         VStack {
             Text("The font this gallery's preview is set in.")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
 
             ForEach(FontsPage.families) { family in
                 let chosen = style.font == family
-                let button = Button(family.isEmpty ? "The platform's own" : family)
-                    .fontSize(15)
+                let button = Button(family.isEmpty ? "The platform's own" : family, action: { style.font = family })
+                    .font(.system(size: 15))
                     .foregroundStyle(chosen ? .white : Palette.text)
                     .background(chosen ? style.accent.color : .transparent)
                     .stroke(Palette.subtle)
                     .strokeWidth(chosen ? 0 : 1)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(14, 8)
-                    .onClicked { style.font = family }
+                    .contentPadding(EdgeInsets(14, 8))
+                    
 
-                return family.isEmpty ? button : button.fontFamily(family)
+                return family.isEmpty ? button : button.font(.custom(family, size: 15))
             }
 
             // The window closes itself, through its own session.
-            Button("Done")
-                .fontSize(13)
-                .contentPadding(14, 6)
+            Button("Done", action: { try await window.close() })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(14, 6))
                 .horizontalAlignment(.end)
-                .onClicked { try await window.close() }
+                
         }
         .spacing(10)
         .onAppear {

@@ -77,19 +77,19 @@ struct TabsSample: SampleContent, ExampleContent {
         }
 
         // And from here, one move:
-        Button("Open the tabs")
-            .onClicked { nav.open(.tabs) }
+        Button("Open the tabs", action: { nav.open(.tabs) })
+            
         """
 
     var body: some View {
         VStack {
-            Button("Open the tabs")
+            Button("Open the tabs", action: { nav.open(.tabs) })
                 .background(Palette.accent)
                 .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.open(.tabs) }
+                
         }
         .spacing(12)
     }
@@ -100,14 +100,14 @@ struct TabsSample: SampleContent, ExampleContent {
                 + "button opens a section arranged as tabs rather than as a stack. The "
                 + "tabs are an array of your own type and the selection is a binding of "
                 + "it, so moving the tabs from code is an assignment.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The binding is two-way: tapping a tab writes it, and on Android so does "
                 + "swiping between them. Each tab keeps its own place because each stack "
                 + "is its own array - push a page on the first tab, change tabs and come "
                 + "back, and the page is still on top.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Every tab page carries a panel that adds, inserts, closes and reverses "
@@ -115,14 +115,14 @@ struct TabsSample: SampleContent, ExampleContent {
                 + "so rearranging the list leaves it alone, and the panel warns the moment "
                 + "the binding and the tab on screen disagree. `Reverse the tabs` from the "
                 + "middle of three rebuilds the whole bar and leaves you on the same page.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Closing the tab you are on is the one move with nothing left to keep "
                 + "showing: the first tab shows instead, and the binding follows it. The "
                 + "menu draws no row for this section, so every tab page carries a button "
                 + "back to the samples.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

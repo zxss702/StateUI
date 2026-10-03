@@ -71,37 +71,37 @@ struct SplitViewSample: SampleContent, ExampleContent {
         // And on this page, which reads the same states:
         SwitchRow("Menu open", nav.$menuOpen)
 
-        Switch(nav.$listsHiddenRow)
+        Toggle(isOn: nav.$listsHiddenRow)
 
-        Button("Go there anyway")
-            .onClicked { nav.open(.hidden) }
+        Button("Go there anyway", action: { nav.open(.hidden) })
+            
         """
 
     var body: some View {
         VStack {
             Text("Open the menu: every row in it is a view.")
-                .fontSize(14)
+                .font(.system(size: 14))
 
             SwitchRow("Menu open", nav.$menuOpen)
                 .horizontalAlignment(.center)
 
             HStack {
-                Switch(nav.$listsHiddenRow)
+                Toggle(isOn: nav.$listsHiddenRow)
                     .accessibilityIdentifier("splitview.hiddenRow")
                     .accessibilityLabel("Show the row that is not in the list")
 
                 Text(nav.listsHiddenRow
                     ? "The menu lists \"Not in the list\""
                     : "The menu does not list it")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
             }
             .spacing(10)
 
-            Button("Go there anyway")
-                .contentPadding(20, 10)
+            Button("Go there anyway", action: { nav.open(.hidden) })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { nav.open(.hidden) }
+                
         }
         .spacing(12)
     }
@@ -111,12 +111,12 @@ struct SplitViewSample: SampleContent, ExampleContent {
             Text("The pane is an ordinary page. Every row is a view whose action chooses "
                 + "a section and closes the menu, and a row the app does not want is an "
                 + "`if` around it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`NavigationSplitView($menuOpen)` is two-way. The native host adapts the pane; "
                 + "when it keeps both sides visible, the binding settles on `true`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

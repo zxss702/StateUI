@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Content built from the space it was given, and frames reported on request.
 struct FrameReaderSample: SampleContent, ExampleContent {
@@ -54,9 +54,7 @@ struct FrameReaderSample: SampleContent, ExampleContent {
             .contentPadding(16)
             .background(Palette.selected)
 
-            Slider($width)
-                .minimum(140)
-                .maximum(340)
+            Slider($width, in: 140...340)
 
             // Where the panel sits, in three spaces: inside the tinted box
             // above, inside the window, and inside the safe area.
@@ -64,12 +62,12 @@ struct FrameReaderSample: SampleContent, ExampleContent {
             Text("in the window · \\(Int(window.x)), \\(Int(window.y))")
             Text("in the safe area · \\(Int(safe.x)), \\(Int(safe.y))")
 
-            Button("Animate the width").onClicked {
+            Button("Animate the width", action: {
                 // Nothing is described: the host carries the width and the
                 // slider's thumb off the same state, and the frame reports
                 // say where the panel actually got to.
                 try await $width.journey.move(to: $width.journey.value < 240 ? 340 : 140)
-            }
+            })
         }
         """
 
@@ -87,7 +85,7 @@ struct FrameReaderSample: SampleContent, ExampleContent {
             // in towards the middle.
             VStack {
                 Text("the parent")
-                    .fontSize(11)
+                    .font(.system(size: 11))
                     .foregroundStyle(Palette.brand)
 
                 // The reader's content is built FROM the measurement, which
@@ -96,8 +94,8 @@ struct FrameReaderSample: SampleContent, ExampleContent {
                 // them - so a settled frame builds the reader AND the page.
                 GeometryReader { frame in
                     Text("\(Int(frame.width)) × \(Int(frame.height))")
-                        .fontSize(22)
-                        .fontAttributes(.bold)
+                        .font(.system(size: 22))
+                        .bold()
                         .foregroundStyle(Palette.onAccent)
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
@@ -119,36 +117,34 @@ struct FrameReaderSample: SampleContent, ExampleContent {
             .contentPadding(16)
             .background(Palette.selected)
 
-            Slider($width)
+            Slider($width, in: 140...340)
                 .accessibilityIdentifier("frameReader.width")
                 .accessibilityLabel("Width")
-                .minimum(140)
-                .maximum(340)
 
             // Where the panel sits, in three spaces. The first is against the
             // tinted box above, which is why that box is drawn at all.
             Text("in its parent · \(Int(slot.x)), \(Int(slot.y))")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.brand)
                 .multilineTextAlignment(.center)
 
             Text("in the window · \(Int(window.x)), \(Int(window.y))")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
 
             Text("in the safe area · \(Int(safe.x)), \(Int(safe.y))")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
 
-            Button("Animate the width")
-                .contentPadding(20, 10)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button("Animate the width", action: {
                     // Nothing is described: the host carries the width and the
                     // slider's thumb off the same state, and the frame reports
                     // say where the panel actually got to.
                     try await $width.journey.move(to: $width.journey.value < 240 ? 340 : 140)
-                }
+                })
+                .contentPadding(EdgeInsets(20, 10))
+                .horizontalAlignment(.center)
+                
         }
         .spacing(12)
     }
@@ -159,21 +155,21 @@ struct FrameReaderSample: SampleContent, ExampleContent {
                 + "against it: `in its parent` is where the panel sits inside that box. "
                 + "Widening the panel walks its x in towards the middle, while the window "
                 + "and safe-area readings move by the same amount from wherever the page is.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A frame costs nothing until something asks for it: a view with no "
                 + "`.onFrameChanged` is not even subscribed. A report comes when the frame "
                 + "settles somewhere new, so dragging the slider re-lays the panel out and "
                 + "the button's walk reports every step of the way.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The panel's width and the slider's thumb are one driven state - "
                 + "`.frame(width: $width)` and `Slider($width)` - so dragging the thumb "
                 + "resizes the panel without the page being described for it, and the "
                 + "button moves that same state.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The width costs no build - a driven state describes nothing by itself - "
@@ -181,7 +177,7 @@ struct FrameReaderSample: SampleContent, ExampleContent {
                 + "it was given, and the three handlers beside it write the page's own "
                 + "states, which the lines under the panel print. So the page is a reader "
                 + "too, and the count at the top moves for the frame reports and nothing else.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

@@ -40,9 +40,9 @@ struct TextEditorSample: SampleContent, ExampleContent {
 
             Text(draft.isEmpty ? "nothing written yet" : "\\(draft.count) character(s)")
 
-            Button("Clear")
+            Button("Clear", action: { draft = "" })
                 .disabled(draft.isEmpty)
-                .onClicked { draft = "" }
+                
         }
         """
 
@@ -55,7 +55,7 @@ struct TextEditorSample: SampleContent, ExampleContent {
             Grid {
                 VStack {
                     Text("a stated height")
-                        .fontSize(12)
+                        .font(.system(size: 12))
                         .foregroundStyle(Palette.subtle)
 
                     TextEditor($draft)
@@ -68,7 +68,7 @@ struct TextEditorSample: SampleContent, ExampleContent {
 
                 VStack {
                     Text(".growsWithText(true)")
-                        .fontSize(12)
+                        .font(.system(size: 12))
                         .foregroundStyle(Palette.subtle)
 
                     TextEditor($draft)
@@ -85,16 +85,16 @@ struct TextEditorSample: SampleContent, ExampleContent {
             .columnSpacing(12)
 
             Text(draft.isEmpty ? "nothing written yet" : "\(draft.count) character(s)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            Button("Clear")
-                .fontSize(13)
-                .contentPadding(16, 6)
+            Button("Clear", action: { draft = "" })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
                 .horizontalAlignment(.center)
                 .disabled(draft.isEmpty)
-                .onClicked { draft = "" }
+                
         }
         .spacing(12)
     }

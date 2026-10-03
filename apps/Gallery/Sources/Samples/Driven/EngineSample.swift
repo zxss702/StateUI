@@ -56,14 +56,16 @@ struct EngineSample: SampleContent, ExampleContent {
             Text("Lap: \\(lap)")
 
             HStack {
-                Button($caption).onClicked {
+                Button(action: {
                     running.toggle()
                     caption = running ? "Stop" : "Start"
+                }) {
+                    Text($caption)
                 }
 
-                Button("Lap").onClicked { lap = reading }
+                Button("Lap", action: { lap = reading })
 
-                Button("Reset").onClicked {
+                Button("Reset", action: {
                     running = false
                     caption = "Start"
                     elapsed = 0
@@ -72,7 +74,7 @@ struct EngineSample: SampleContent, ExampleContent {
                     // The one write here that IS described, and the one that
                     // costs this button its render.
                     lap = "-"
-                }
+                })
             }
         }
         .engine(following: $running) { cycle in
@@ -98,32 +100,33 @@ struct EngineSample: SampleContent, ExampleContent {
             ZStack {
                 Text()
                     .text($reading)
-                    .fontSize(44)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 44))
+                    .bold()
                     .multilineTextAlignment(.center)
                     .horizontalAlignment(.center)
             }
             .style("Card")
-            .contentPadding(24, 16)
+            .contentPadding(EdgeInsets(24, 16))
             .background(Palette.surface)
             .stroke(.transparent)
             .shape(.roundedRectangle(12))
             .horizontalAlignment(.center)
 
             Text("Lap: \(lap)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
             HStack {
-                Button()
-                    .text($caption)
-                    .fontSize(13)
-                    .contentPadding(14, 6)
-                    .onClicked {
+                Button(action: {
                         running.toggle()
                         caption = running ? "Stop" : "Start"
+                    }) {
+                        Text($caption)
                     }
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(14, 6))
+                    
 
                 button("Lap") { lap = reading }
 
@@ -160,7 +163,7 @@ struct EngineSample: SampleContent, ExampleContent {
                 + "cannot be one: what it shows is worked out from how long it has been "
                 + "running, which is not a function of any state on the page. A state of "
                 + "the engine's own holds that, which makes this an engine written by hand.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The two readings are the same reading. The clock is driven; Lap puts "
@@ -168,7 +171,7 @@ struct EngineSample: SampleContent, ExampleContent {
                 + "how many times this closure has been described and which value for. "
                 + "Start the clock and let it run for a minute: the count does not move. "
                 + "Press Lap once, and it goes up by one and says `for lap`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`Text($reading)` reads its words off a driven state the engine writes "
@@ -178,7 +181,7 @@ struct EngineSample: SampleContent, ExampleContent {
                 + "the control only when its bytes change, so a reading that lands on the "
                 + "same tenth writes nothing - which matters because setting a label's "
                 + "text measures it again.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`running` and `elapsed` are ordinary `@State` that no view reads, so "
@@ -189,7 +192,7 @@ struct EngineSample: SampleContent, ExampleContent {
                 + "`.again` holds the frame clock, because a clock is moved by time rather "
                 + "than by anything being written; `.wait` lets the display go back to "
                 + "sleep until Start is tapped again.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -197,9 +200,9 @@ struct EngineSample: SampleContent, ExampleContent {
 
     /// The buttons whose caption is their own rather than a driven state's.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

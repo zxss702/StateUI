@@ -30,10 +30,9 @@ struct PollSample: SampleContent, ExampleContent {
             Text(status)
             Text("\\(rounds) round(s)")
 
-            ActivityIndicator(checking)
+            if checking { ProgressView() }
 
-            Button(poll.isRunning || checking ? "Stop" : "Start")
-                .onClicked {
+            Button(poll.isRunning || checking ? "Stop" : "Start", action: {
                     if poll.isRunning || checking {
                         poll.stop()
                         checking = false
@@ -43,7 +42,8 @@ struct PollSample: SampleContent, ExampleContent {
 
                     status = "Waiting"
                     poll.start()
-                }
+                })
+                
         }
         .onAppear {
             // Set here rather than in the initializer: the closure reads this
@@ -77,24 +77,20 @@ struct PollSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(status)
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("\(rounds) round(s)")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            ActivityIndicator(checking)
+            Group { if checking { ProgressView() } }
                 .tint(Palette.accent)
                 .frame(height: 28)
 
-            Button(poll.isRunning || checking ? "Stop" : "Start")
-                .fontSize(13)
-                .contentPadding(20, 6)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button(poll.isRunning || checking ? "Stop" : "Start", action: {
                     if poll.isRunning || checking {
                         poll.stop()
                         checking = false
@@ -104,7 +100,11 @@ struct PollSample: SampleContent, ExampleContent {
 
                     status = "Waiting"
                     poll.start()
-                }
+                })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(20, 6))
+                .horizontalAlignment(.center)
+                
         }
         .spacing(12)
         .onAppear {
@@ -141,7 +141,7 @@ struct PollSample: SampleContent, ExampleContent {
                 + "repeat: it ticks once, the tick does the work, and the tick starts "
                 + "the next round when that work is done - so the gap is measured from "
                 + "the END of the work rather than from the start.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The last tick of a run stops the ticker BEFORE running its closure, "
@@ -149,14 +149,14 @@ struct PollSample: SampleContent, ExampleContent {
                 + "running does nothing, so the round would be lost in silence. Reading "
                 + "isRunning therefore says whether another tick is coming, not whether "
                 + "the work has finished - which is why the button above asks about both.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The work runs on a task of its own and the restart comes back from "
                 + "there, off the thread the host draws on. `Ticker` keeps its state "
                 + "behind a lock for exactly this: `start`, `stop` and `reset` are safe "
                 + "from any thread.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

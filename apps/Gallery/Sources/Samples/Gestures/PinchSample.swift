@@ -63,12 +63,12 @@ struct PinchSample: SampleContent, ExampleContent {
                 }
             }
 
-            Button("Back to life size")
-                .onClicked {
+            Button("Back to life size", action: {
                     pinch = 1
                     reports = 0
                     log = []
-                }
+                })
+                
         }
         """
 
@@ -121,29 +121,29 @@ struct PinchSample: SampleContent, ExampleContent {
             // The count is here on purpose: a pinch that reports once is a pinch
             // that has been interrupted, and the number says so at a glance.
             Text("Scale \(Int(pinch * 100))% - \(reports) report(s)")
-                .fontSize(15)
+                .font(.system(size: 15))
                 .multilineTextAlignment(.center)
 
             // What arrived: phase, scale, and where the pinch is centred.
             VStack {
                 ForEach(Array(log.enumerated()), id: \.offset) { pair in
                     Text(pair.element)
-                        .fontSize(11)
+                        .font(.system(size: 11))
                         .foregroundStyle(Palette.subtle)
                         .multilineTextAlignment(.center)
                 }
             }
             .spacing(2)
 
-            Button("Back to life size")
-                .fontSize(13)
-                .contentPadding(16, 6)
-                .horizontalAlignment(.center)
-                .onClicked {
+            Button("Back to life size", action: {
                     pinch = 1
                     reports = 0
                     log = []
-                }
+                })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(16, 6))
+                .horizontalAlignment(.center)
+                
         }
         .spacing(12)
     }
@@ -153,20 +153,20 @@ struct PinchSample: SampleContent, ExampleContent {
             Text("`scale` is RELATIVE - how much has changed since the LAST report - so "
                 + "a view being pinched multiplies rather than assigns. `scaleOrigin` says "
                 + "where the pinch is centred, as a fraction of the view.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The four statuses are not a promise. A trackpad magnification may "
                 + "arrive as .running then .completed, and .started never comes at all. "
                 + "A pinch that only works when it has seen .started works on a phone and "
                 + "not on a laptop.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The pinch is heard on the ZStack, and the ColorPicker inside it is what "
                 + "scales: a view that transforms itself while a gesture runs can cancel "
                 + "its own recognizer, and the pinch stops after its first report.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

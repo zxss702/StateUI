@@ -96,7 +96,7 @@ struct ToolbarSample: SampleContent, ExampleContent {
                 Text(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
 
                 HStack {
-                    Switch($addFirst)
+                    Toggle(isOn: $addFirst)
 
                     Text(addFirst
                         ? "Add asks first - .priority(0), against Save's 1"
@@ -172,27 +172,27 @@ struct ToolbarSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("Saved \(saved) time(s)")
-                .fontSize(17)
+                .font(.system(size: 17))
 
             Text(recent.isEmpty ? "No recent files" : recent.joined(separator: ", "))
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
 
             Text("Press Save and Add on the bar; Clear is in its overflow.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             SectionTitle("Which one comes first")
 
             HStack {
-                Switch($addFirst)
+                Toggle(isOn: $addFirst)
                     .accessibilityIdentifier("toolbar.addFirst")
                     .accessibilityLabel("Add asks first")
 
                 Text(addFirst
                     ? "Add asks first - `.priority(0)`, against Save's 1"
                     : "Save asks first - `.priority(0)`, against Add's 1")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
             }
             .spacing(10)
@@ -218,23 +218,23 @@ struct ToolbarSample: SampleContent, ExampleContent {
         VStack {
             Text("Save and Add are on the page's bar. Clear is a destructive item in the "
                 + "native overflow, enabled once something is saved.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Lower priority appears first; equal priority keeps source order. "
                 + "Flip the switch and the same native items exchange places.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Recent files live in the desktop File menu: Add puts one there, "
                 + "choosing one removes it, and an empty submenu disables itself.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The bar and the menus belong to the page, so they are written into "
                 + "its `PageSession` - and written again whenever the state they show "
                 + "moves.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

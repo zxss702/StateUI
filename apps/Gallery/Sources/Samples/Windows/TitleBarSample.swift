@@ -70,7 +70,7 @@ struct TitleBarSample: SampleContent, ExampleContent {
                 VStack {
                     DebugInfoLabel()
                     TextField(state.$subtitle).placeholder("WindowScene subtitle")
-                    Switch(state.$showsAction)
+                    Toggle(isOn: state.$showsAction)
                 }
             }
         }
@@ -88,7 +88,7 @@ struct TitleBarSample: SampleContent, ExampleContent {
                 .placeholder("WindowScene subtitle")
 
             HStack {
-                Switch(bar.$showsSurprise)
+                Toggle(isOn: bar.$showsSurprise)
                     .accessibilityIdentifier("titleBar.surprise")
                     .accessibilityLabel("Show a title bar action")
 

@@ -24,14 +24,14 @@ struct TimePickerSample: SampleContent, ExampleContent {
             Text("Alarm at \\(alarm.text)")
 
             HStack {
-                Button("Morning")
-                    .onClicked { alarm = ClockTime(hour: 7, minute: 30) }
+                Button("Morning", action: { alarm = ClockTime(hour: 7, minute: 30) })
+                    
 
-                Button("Lunch")
-                    .onClicked { alarm = ClockTime(hour: 12, minute: 0) }
+                Button("Lunch", action: { alarm = ClockTime(hour: 12, minute: 0) })
+                    
 
-                Button("Evening")
-                    .onClicked { alarm = ClockTime(hour: 21, minute: 5) }
+                Button("Evening", action: { alarm = ClockTime(hour: 21, minute: 5) })
+                    
             }
 
             // The same time, one-way: `.time` is what puts it in the field,
@@ -60,24 +60,24 @@ struct TimePickerSample: SampleContent, ExampleContent {
                 .format("t")
 
             Text("Alarm at \(alarm.text)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
             HStack {
-                Button("Morning")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { alarm = ClockTime(hour: 7, minute: 30) }
+                Button("Morning", action: { alarm = ClockTime(hour: 7, minute: 30) })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Lunch")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { alarm = ClockTime(hour: 12, minute: 0) }
+                Button("Lunch", action: { alarm = ClockTime(hour: 12, minute: 0) })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
 
-                Button("Evening")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
-                    .onClicked { alarm = ClockTime(hour: 21, minute: 5) }
+                Button("Evening", action: { alarm = ClockTime(hour: 21, minute: 5) })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)
@@ -97,7 +97,7 @@ struct TimePickerSample: SampleContent, ExampleContent {
             Text(picks == 0
                 ? "onTimeChanged has not fired"
                 : "onTimeChanged: \(alarm.text), \(picks) so far")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
         }
         .spacing(12)
@@ -110,7 +110,7 @@ struct TimePickerSample: SampleContent, ExampleContent {
                 + "the dependency this library cannot take. It is three numbers - hour, "
                 + "minute, second - and whether the user sees 21:05 or 9:05 PM is the "
                 + "host's to decide, from the user's locale and the `.format`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`TimePicker()` says nothing about a time, so `.time` is what puts one "
@@ -118,12 +118,12 @@ struct TimePickerSample: SampleContent, ExampleContent {
                 + "elsewhere has to use. Nothing comes back on its own either: the "
                 + "`alarm = time` in `onTimeChanged` is exactly the write the binding "
                 + "above makes for you, which is why both fields move together.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The count answers the USER: the three buttons write `alarm` from the "
                 + "tree, both fields follow, and no event fires.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

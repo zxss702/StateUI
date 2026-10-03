@@ -37,7 +37,7 @@ struct TouchThroughSample: SampleContent, ExampleContent {
                     Text("tap the child")
                         .foregroundStyle(Palette.onBrand)
                         .background(Palette.brand)
-                        .contentPadding(14, 8)
+                        .contentPadding(EdgeInsets(14, 8))
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
                         .onTapGesture { child += 1 }
@@ -52,8 +52,8 @@ struct TouchThroughSample: SampleContent, ExampleContent {
             HStack {
                 SwitchRow("Children too", $childrenToo)
 
-                Button("Reset")
-                    .onClicked { below = 0; child = 0 }
+                Button("Reset", action: { below = 0; child = 0 })
+                    
             }
         }
         """
@@ -74,7 +74,7 @@ struct TouchThroughSample: SampleContent, ExampleContent {
                     Text("tap the child")
                         .foregroundStyle(Palette.onBrand)
                         .background(Palette.brand)
-                        .contentPadding(24, 12)
+                        .contentPadding(EdgeInsets(24, 12))
                         .horizontalAlignment(.center)
                         .verticalAlignment(.center)
                         .onTapGesture { child += 1 }
@@ -85,14 +85,14 @@ struct TouchThroughSample: SampleContent, ExampleContent {
             }
 
             Text("below \(below)   child \(child)")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .horizontalAlignment(.center)
 
             HStack {
                 SwitchRow("Children too", $childrenToo)
 
-                Button("Reset")
-                    .onClicked { below = 0; child = 0 }
+                Button("Reset", action: { below = 0; child = 0 })
+                    
             }
             .spacing(7)
             .horizontalAlignment(.center)
@@ -105,17 +105,17 @@ struct TouchThroughSample: SampleContent, ExampleContent {
             Text("`letsInputThrough(true)` takes only a layout's own empty area out of "
                 + "hit testing: a tap there reaches the box below, and the label inside "
                 + "still counts. It is what an overlay over a page wants.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`ignoresInput(true)` takes the view and everything in it out - with the "
                 + "switch on, the label stops counting too and every tap reaches the box.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Neither is the same as disabled: a disabled view still takes the tap "
                 + "and does nothing with it, while these are not hit at all.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

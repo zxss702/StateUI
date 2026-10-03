@@ -103,19 +103,19 @@ private struct GridPlacement: ExampleContent {
             Text("Where a view sits is written on the view - `.gridRow(1)`, "
                 + "`.gridColumn(1)` - and those modifiers are on every view, because any "
                 + "view can be a grid child.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A span counts from the view's own cell: `.gridRowSpan(2)` on the red "
                 + "cell covers rows 0 and 1 and the spacing between them, and "
                 + "`.gridColumnSpan(2)` does the same across. A cell nothing is placed in "
                 + "stays empty.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A row or column is a `GridLength`: `.fixed(64)`, `.auto`, `.fill` "
                 + "and `.proportional(2)`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -130,7 +130,7 @@ private struct GridCell: View {
 
     var body: some View {
         Text(text)
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(.white)
             .background(Color(color))
             .contentPadding(8)

@@ -30,19 +30,19 @@ struct KeyboardSample: SampleContent, ExampleContent {
                 .placeholder("Note")
 
             HStack {
-                Button("Focus first")
-                    .onClicked { try await first.focus() }
+                Button("Focus first", action: { try await first.focus() })
+                    
 
-                Button("Unfocus first")
-                    .onClicked { try await first.unfocus() }
+                Button("Unfocus first", action: { try await first.unfocus() })
+                    
             }
 
-            Button("Close keyboard")
-                .onClicked {
+            Button("Close keyboard", action: {
                     said = try await OnScreenKeyboard.hide()
                         ? "Focus released"
                         : "Nothing was focused"
-                }
+                })
+                
 
             Text(said.isEmpty ? "Nothing said yet." : said)
         }
@@ -52,7 +52,7 @@ struct KeyboardSample: SampleContent, ExampleContent {
         Text("`focus()` and `unfocus()` are acts aimed at one field with `@Aim`. "
             + "`OnScreenKeyboard.hide()` releases whichever input holds the focus, and answers "
             + "whether anything did.")
-            .fontSize(12)
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 
@@ -72,25 +72,25 @@ struct KeyboardSample: SampleContent, ExampleContent {
                 .placeholder("Note")
 
             HStack {
-                Button("Focus first")
+                Button("Focus first", action: { try await first.focus() })
                     .horizontalAlignment(.fill)
-                    .onClicked { try await first.focus() }
+                    
 
-                Button("Unfocus first")
+                Button("Unfocus first", action: { try await first.unfocus() })
                     .horizontalAlignment(.fill)
-                    .onClicked { try await first.unfocus() }
+                    
             }
             .spacing(8)
 
-            Button("Close keyboard")
-                .onClicked {
+            Button("Close keyboard", action: {
                     said = try await OnScreenKeyboard.hide()
                         ? "Focus released"
                         : "Nothing was focused"
-                }
+                })
+                
 
             Text(said.isEmpty ? "Nothing said yet." : said)
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

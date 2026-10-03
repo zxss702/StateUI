@@ -23,7 +23,7 @@ struct WindowOverlaySample: SampleContent, ExampleContent {
         @Environment private var window: WindowSession
         @State private var shown = false
 
-        Switch($shown).onChange(of: shown) {
+        Toggle(isOn: $shown).onChange(of: shown) {
             window.overlays[.notice] = shown ? WindowNotice() : nil
         }
 
@@ -33,7 +33,7 @@ struct WindowOverlaySample: SampleContent, ExampleContent {
             var body: some View {
                 HStack {
                     Text("Over every page")
-                    Button("Dismiss").onClicked { window.overlays[.notice] = nil }
+                    Button("Dismiss", action: { window.overlays[.notice] = nil })
                 }
                 .horizontalAlignment(.center)
                 .verticalAlignment(.start)
@@ -45,7 +45,7 @@ struct WindowOverlaySample: SampleContent, ExampleContent {
 
     var body: some View {
         HStack {
-            Switch($shown)
+            Toggle(isOn: $shown)
                 .accessibilityIdentifier("window.overlay")
                 .accessibilityLabel("Notice over the window")
             Text("Notice over the window").verticalAlignment(.center)
@@ -70,12 +70,12 @@ private struct WindowNotice: View {
             Text("Over every page")
                 .foregroundStyle(.white)
                 .verticalAlignment(.center)
-            Button("Dismiss")
+            Button("Dismiss", action: { window.overlays[.notice] = nil })
                 .accessibilityIdentifier("window.overlay.dismiss")
-                .onClicked { window.overlays[.notice] = nil }
+                
         }
         .spacing(12)
-        .contentPadding(16, 8)
+        .contentPadding(EdgeInsets(16, 8))
         .background(Palette.accent)
         .shape(.roundedRectangle(10))
         .padding(12)

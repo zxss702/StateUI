@@ -21,23 +21,23 @@ struct SecondTabPage: View {
                 SectionTitle("The other tab")
 
                 Text("Second")
-                    .fontSize(26)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 26))
+                    .bold()
 
-                Button("Show the first tab")
+                Button("Show the first tab", action: { nav.tab = .stack })
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { nav.tab = .stack }
+                    
 
                 TabsControls(nav: nav, thisTab: .second)
 
-                Button("Back to the Navigation samples")
-                    .contentPadding(20, 10)
+                Button("Back to the Navigation samples", action: { nav.openGroup("navigation") })
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { nav.openGroup("navigation") }
+                    
             }
             .spacing(14)
             .contentPadding(24)

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A colour, a size, a padding and a font size, each read off a state the host
 /// moves on its own frames.
@@ -40,28 +40,28 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
             .contentPadding($panelPadding)
             .frame(height: $panelHeight)
 
-            Button("Colour").onClicked {
+            Button("Colour", action: {
                 try await $panelColor.journey.move(to: AppColors.swiftOrangeDeep, .eased(500))
                 try await $captionColor.journey.move(to: AppColors.white, .eased(500))
-            }
+            })
 
-            Button("Size").onClicked {
+            Button("Size", action: {
                 wide.toggle()
                 try await $panelHeight.journey.move(to: wide ? 160 : 90,
                                                  .eased(400, .cubicInOut))
-            }
+            })
 
-            Button("Padding").onClicked {
+            Button("Padding", action: {
                 try await $panelPadding.journey.move(to: EdgeInsets(48), .eased(400))
                 try await $panelPadding.journey.move(to: EdgeInsets(16), .eased(400))
-            }
+            })
 
-            Button("Text size").onClicked {
+            Button("Text size", action: {
                 try await $captionSize.journey.move(to: 28, .eased(400, .cubicOut))
                 try await $captionSize.journey.move(to: 17, .eased(400, .cubicIn))
-            }
+            })
 
-            Button("Back").onClicked {
+            Button("Back", action: {
                 // EVERYTHING THE OTHER BUTTONS LEAVE CHANGED - the height and
                 // the two colours. The padding and the text size send
                 // themselves back, so there is nothing here for them; and
@@ -72,7 +72,7 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
                 try await $panelHeight.journey.move(to: 90, .eased(400, .cubicInOut))
                 try await $panelColor.journey.move(to: AppColors.lineDark, .eased(400))
                 try await $captionColor.journey.move(to: AppColors.ink, .eased(400))
-            }
+            })
         }
         """
 
@@ -150,12 +150,12 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
         VStack {
             Text("Each button moves a bound property on host frames. The build "
                 + "counter stays still while colour, size, padding and text move.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Size moves the panel between 90 and 160 points. Back restores "
                 + "the values that remain after their journeys.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -163,9 +163,9 @@ struct AnimatedPropertySample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

@@ -48,35 +48,35 @@ struct LevelPage: View {
             SectionTitle("Pushed page")
 
             Text("Level \(level)")
-                .fontSize(32)
-                .fontAttributes(.bold)
+                .font(.system(size: 32))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text("appeared \(arrivals)× · disappeared \(departures)×")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
             Text("navigated to \(navigatedTo)× · leaving \(leaving)× · left \(left)×")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
-            Button("Deeper")
+            Button("Deeper", action: { path.append(.level(level + 1)) })
                 .background(Palette.accent)
                 .foregroundStyle(.white)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { path.append(.level(level + 1)) }
+                
 
-            Button("Back")
-                .contentPadding(20, 10)
+            Button("Back", action: { path.removeLast() })
+                .contentPadding(EdgeInsets(20, 10))
                 .horizontalAlignment(.center)
-                .onClicked { path.removeLast() }
+                
 
             Text("Go deeper and come back: the same page counts a second arrival.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
         }

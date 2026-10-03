@@ -17,16 +17,12 @@ struct StepperSample: SampleContent, ExampleContent {
 
             Text("Servings: \\(Int(servings))")
 
-            Stepper($servings)
-                .minimum(1)
-                .maximum(12)
+            Stepper($servings, in: 1...12)
                 .step(1)
 
             // The same value, stepped by five - and written back by hand,
             // which is what the binding above does for you.
-            Stepper(servings)
-                .minimum(1)
-                .maximum(12)
+            Stepper(servings, in: 1...12)
                 .step(5)
                 .onValueChanged { value in servings = value }
         }
@@ -37,24 +33,20 @@ struct StepperSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("Servings: \(Int(servings))")
-                .fontSize(22)
+                .font(.system(size: 22))
                 .multilineTextAlignment(.center)
 
-            Stepper($servings)
+            Stepper($servings, in: 1...12)
                 .accessibilityIdentifier("stepper.servings")
                 .accessibilityLabel("Servings")
-                .minimum(1)
-                .maximum(12)
                 .step(1)
                 .horizontalAlignment(.center)
 
             SectionTitle("A bigger step")
 
-            Stepper(servings)
+            Stepper(servings, in: 1...12)
                 .accessibilityIdentifier("stepper.servings.bigStep")
                 .accessibilityLabel("Servings, five at a time")
-                .minimum(1)
-                .maximum(12)
                 .step(5)
                 .horizontalAlignment(.center)
                 .onValueChanged { value in servings = value }
@@ -67,12 +59,12 @@ struct StepperSample: SampleContent, ExampleContent {
             Text("A `Stepper` is a `Slider` for a value with few enough steps to name. This "
                 + "one goes from 1 to 12 and never lands between two servings - which is "
                 + "what a stepper is for.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The second holds the same value, stepped by five: `step` is how far "
                 + "one tap goes, and `minimum` and `maximum` are where the buttons stop.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

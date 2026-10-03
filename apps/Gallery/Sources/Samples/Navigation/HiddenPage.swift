@@ -22,21 +22,21 @@ struct HiddenPage: View {
                 SectionTitle("A row that is not there")
 
                 Text("Not in the list")
-                    .fontSize(26)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 26))
+                    .bold()
 
                 Text("The menu lists this page only when the Split view sample's "
                     + "switch says so.")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
 
-                Button("Back to the Navigation samples")
+                Button("Back to the Navigation samples", action: { nav.openGroup("navigation") })
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { nav.openGroup("navigation") }
+                    
             }
             .spacing(14)
             .contentPadding(24)

@@ -25,24 +25,23 @@ struct TabsPage: View {
                 SectionTitle("A section arranged as tabs")
 
                 Text("A TabView of two")
-                    .fontSize(26)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 26))
+                    .bold()
 
                 Text("Push a page, change tabs, come back: it is still on top.")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
 
-                Button("Push a page onto this tab")
+                Button("Push a page onto this tab", action: { path.append(.level(1)) })
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { path.append(.level(1)) }
+                    
 
                 Text("Depth here: \(path.count)")
-                    .fontSize(13)
-                    .fontFamily("Menlo")
+                    .font(.system(size: 13, design: .monospaced))
                     .foregroundStyle(Palette.accent)
                     .multilineTextAlignment(.center)
 
@@ -51,10 +50,10 @@ struct TabsPage: View {
                 // One move, landing where it says: the section becomes home
                 // and the group is pushed onto it, so the back button leads
                 // home from there.
-                Button("Back to the Navigation samples")
-                    .contentPadding(20, 10)
+                Button("Back to the Navigation samples", action: { nav.openGroup("navigation") })
+                    .contentPadding(EdgeInsets(20, 10))
                     .horizontalAlignment(.center)
-                    .onClicked { nav.openGroup("navigation") }
+                    
             }
             .spacing(14)
             .contentPadding(24)

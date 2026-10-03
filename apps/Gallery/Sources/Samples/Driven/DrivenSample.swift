@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A value both sides hold, moved by the host and read by arithmetic that
 /// describes nothing.
@@ -60,9 +60,9 @@ struct DrivenSample: SampleContent, ExampleContent {
             Text(law)
 
             HStack {
-                Button("Empty").onClicked { go(to: 0) }
-                Button("Half").onClicked { go(to: 0.5) }
-                Button("Full").onClicked { go(to: 1) }
+                Button("Empty", action: { go(to: 0) })
+                Button("Half", action: { go(to: 0.5) })
+                Button("Full", action: { go(to: 1) })
             }
 
             SwitchRow("Take the long way", $slowly)
@@ -118,12 +118,12 @@ struct DrivenSample: SampleContent, ExampleContent {
 
             Text()
                 .text($offset.journey.convert { "\(Int(($0.value / Self.run * 100).rounded()))%" })
-                .fontSize(28)
-                .fontAttributes(.bold)
+                .font(.system(size: 28))
+                .bold()
                 .horizontalAlignment(.center)
 
             Text("Sent under \(law)")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
                 .horizontalAlignment(.center)
 
@@ -149,7 +149,7 @@ struct DrivenSample: SampleContent, ExampleContent {
                 + "by one and says `for slowly`. The percentage is written off a driven "
                 + "value by a conversion; the caption under it is described from "
                 + "`slowly`, which is ordinary `@State`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A value the host holds is worn by a property the way a plain value is: "
@@ -159,7 +159,7 @@ struct DrivenSample: SampleContent, ExampleContent {
                 + "does not have. A journey is part of every `@State` the host can walk, "
                 + "so both values here are ordinary `@State`; nothing reads either in a "
                 + "body, and the run costs no render at all.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`$offset.journey` holds three things at once: `offset` itself is where "
@@ -170,7 +170,7 @@ struct DrivenSample: SampleContent, ExampleContent {
                 + "{ … }` writes the percentage from where the marker has got to, and a "
                 + "converted text is written only when its letters change, so a reading "
                 + "that rounds to the same number costs nothing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A conversion rewrites one value as another; an engine is for arithmetic "
@@ -178,7 +178,7 @@ struct DrivenSample: SampleContent, ExampleContent {
                 + "marker moves rather than resizing: a translation is a drawing field and "
                 + "costs nothing, while a width written per frame measures the layout again "
                 + "every time. Wherever a value moves quickly, reach for the transform.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
@@ -197,9 +197,9 @@ struct DrivenSample: SampleContent, ExampleContent {
 
     /// One of the buttons, all of which look the same.
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
-        Button(caption)
-            .fontSize(13)
-            .contentPadding(14, 6)
-            .onClicked(act)
+        Button(caption, action: act)
+            .font(.system(size: 13))
+            .contentPadding(EdgeInsets(14, 6))
+            
     }
 }

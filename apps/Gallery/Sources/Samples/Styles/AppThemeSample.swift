@@ -38,14 +38,14 @@ struct AppThemeSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(app.colorScheme)")
-                .fontSize(34)
-                .fontAttributes(.bold)
+                .font(.system(size: 34))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text(app.colorScheme == .dark
                 ? "lights off - a view can choose calmer artwork"
                 : "lights on - a view can choose vivid artwork")
-                .fontSize(15)
+                .font(.system(size: 15))
                 .multilineTextAlignment(.center)
         }
         .spacing(10)
@@ -55,14 +55,14 @@ struct AppThemeSample: SampleContent, ExampleContent {
         VStack {
             Text("Switch the SYSTEM's appearance and the word above follows "
                 + "in the same breath.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Use this for LOGIC - a different picture, a different word. A "
                 + "colour should not need it: a `Color(light:dark:)` reads the colorScheme "
                 + "as the view wearing it is built, so a colorScheme change builds exactly "
                 + "the views wearing one again.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

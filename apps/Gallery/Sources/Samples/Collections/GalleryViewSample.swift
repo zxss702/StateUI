@@ -106,16 +106,16 @@ struct GalleryViewSample: SampleContent, ExampleContent {
             .gridRow(1)
 
             HStack {
-                Button(shapes[shape].1)
-                    .onClicked { shape = (shape + 1) % shapes.count }
+                Button(shapes[shape].1, action: { shape = (shape + 1) % shapes.count })
+                    
 
-                Button("Back")
+                Button("Back", action: { shown -= 1 })
                     .disabled(shown <= 0)
-                    .onClicked { shown -= 1 }
+                    
 
-                Button("Next")
+                Button("Next", action: { shown += 1 })
                     .disabled(shown >= cards.count - 1)
-                    .onClicked { shown += 1 }
+                    
 
                 SwitchRow("Swipeable", $swipes)
                 SwitchRow("Shaded", $shaded)
@@ -199,7 +199,7 @@ struct GalleryViewSample: SampleContent, ExampleContent {
 
                 Text("\(Self.cards[min(max(shown, 0), Self.cards.count - 1)].name) · "
                     + "card \(shown + 1) of \(Self.cards.count) · \(opened)")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.subtle)
                     .multilineTextAlignment(.center)
             }
@@ -211,28 +211,28 @@ struct GalleryViewSample: SampleContent, ExampleContent {
                 // child on its own schedule, and a caption that changed inside
                 // one is drawn cut short until something else makes it measure
                 // again.
-                Button(Self.shapes[shape].1)
+                Button(Self.shapes[shape].1, action: { shape = (shape + 1) % Self.shapes.count })
                     .frame(width: 88)
-                    .padding(4, 0)
-                    .onClicked { shape = (shape + 1) % Self.shapes.count }
+                    .padding(EdgeInsets(4, 0))
+                    
 
-                Button("Back")
-                    .padding(4, 0)
+                Button("Back", action: { shown -= 1 })
+                    .padding(EdgeInsets(4, 0))
                     .disabled(shown <= 0)
-                    .onClicked { shown -= 1 }
+                    
 
-                Button("Next")
-                    .padding(4, 0)
+                Button("Next", action: { shown += 1 })
+                    .padding(EdgeInsets(4, 0))
                     .disabled(shown >= Self.cards.count - 1)
-                    .onClicked { shown += 1 }
+                    
 
-                    .padding(4, 0)
+                    .padding(EdgeInsets(4, 0))
 
                 SwitchRow("Swipeable", $swipes)
-                    .padding(4, 0)
+                    .padding(EdgeInsets(4, 0))
 
                 SwitchRow("Shaded", $shaded)
-                    .padding(4, 0)
+                    .padding(EdgeInsets(4, 0))
             }
             .spacing(8)
             .horizontalAlignment(.center)
@@ -271,11 +271,11 @@ struct GalleryViewSample: SampleContent, ExampleContent {
                     .aspect(.fill)
 
                 Text(card.name)
-                    .fontSize(18)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 18))
+                    .bold()
                     .foregroundStyle(Palette.onBrand)
                     .lineBreak(.tailTruncation)
-                    .contentPadding(12, 10)
+                    .contentPadding(EdgeInsets(12, 10))
                     .background(Color("#B3000000"))
                     .verticalAlignment(.end)
             }
@@ -292,7 +292,7 @@ struct GalleryViewSample: SampleContent, ExampleContent {
                 + "`.arrangement` choosing the shape they stand in - `.default` is a "
                 + "wheel, `.fan` a hand of cards, `.row` a strip. The cards TRAVEL "
                 + "between the three, so the shape button carries the whole run across.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Swipe, drag with the mouse or turn a wheel: the run settles on the "
@@ -304,14 +304,14 @@ struct GalleryViewSample: SampleContent, ExampleContent {
                 + "which is what Back and Next do. The dots under the cards are an "
                 + "`PositionIndicator` reading the same `@State`: neither control names the "
                 + "other, and one number joins them.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`Swipeable` is `.isSwipeEnabled(false)` - the user's "
                 + "hand is stopped and the buttons still move the run. A gallery is "
                 + "swiped to choose and tapped to open: `.onItemTapped` is handed the "
                 + "card in the MIDDLE, and a tap beside it answers nothing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("`Shaded` is `.shade(ColorPicker(Color(\"#000000\")).cornerRadius(16))`: "
@@ -320,13 +320,13 @@ struct GalleryViewSample: SampleContent, ExampleContent {
                 + "what shows through is the card behind it. The shade is a view because "
                 + "it has to wear the card's own corners, and `.fading(_:)` beside it "
                 + "says how much fade is left, from 0 to 1.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Nothing is described while the cards move: the one render is the "
                 + "card CHANGING. `.itemSize(width:height:)` says how big a card is, and "
                 + "the run scales down to fit a small window.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

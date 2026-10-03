@@ -26,22 +26,22 @@ struct StyleSample: SampleContent, ExampleContent {
                 .foregroundStyle(Palette.onAccent)
                 .background(Palette.accent)
                 .shape(.roundedRectangle(10))
-                .contentPadding(16, 11)
+                .contentPadding(EdgeInsets(16, 11))
                 .visualState(.disabled) { $0
                     .foregroundStyle(Palette.disabled)
                     .background(Palette.outline)
                 }
 
             Style<Text>("Headline")
-                .fontSize(32)
+                .font(.system(size: 32))
                 .multilineTextAlignment(.center)
 
             // One shape, stated once. The second style is the first plus
             // a colour - and inherits everything it does not mention.
             Style<Text>("Quote")
                 .foregroundStyle(Palette.subtle)
-                .fontSize(17)
-                .fontAttributes(.italic)
+                .font(.system(size: 17))
+                .italic()
                 .characterSpacing(0.3)
                 .multilineTextAlignment(.center)
 
@@ -63,11 +63,11 @@ struct StyleSample: SampleContent, ExampleContent {
                 Button("Cancel")
             }
 
-            Button(enabled ? "Enabled" : "Disabled")
+            Button(enabled ? "Enabled" : "Disabled", action: {})
                 .disabled(!enabled)
-                .onClicked {}
+                
 
-            Switch($enabled)
+            Toggle(isOn: $enabled)
 
             // The one style with a key, asked for by name.
             Text("Headline")
@@ -99,17 +99,17 @@ struct StyleSample: SampleContent, ExampleContent {
             // A style can say what a control looks like in a STATE; hearing
             // the control enter one is what .onVisualStateChanged is for, next
             // door in the Visual states sample.
-            Button(enabled ? "Enabled" : "Disabled")
+            Button(enabled ? "Enabled" : "Disabled", action: {})
                 .disabled(!enabled)
                 .horizontalAlignment(.center)
-                .onClicked {}
+                
 
             HStack {
                 Text("Enabled")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
 
-                Switch($enabled)
+                Toggle(isOn: $enabled)
                     .accessibilityIdentifier("styles.enabled")
                     .accessibilityLabel("Enabled")
             }
@@ -143,13 +143,13 @@ struct StyleSample: SampleContent, ExampleContent {
         VStack {
             Text("Nothing in the example sets a colour, a size or a corner: every "
                 + "button takes all of it from the gallery's one `Style<Button>`.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A style with no key is implicit: every control of its type wears it. "
                 + "`Headline` has a key and is asked for by name, and a keyed style "
                 + "REPLACES the implicit one, so it says everything it needs.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Both quotes are italic, both are 17 point, both are centred, both "
@@ -157,14 +157,14 @@ struct StyleSample: SampleContent, ExampleContent {
                 + "`QuoteLoud` is `.basedOn(\"Quote\")` and a text colour, which "
                 + "is the whole of its declaration. A property the child states "
                 + "wins; every property it leaves out comes from the parent.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Every colour the styles use is one `Color(light:dark:)`, a value "
                 + "for each colorScheme. None of this crosses the boundary: the styles are "
                 + "resolved in Swift, into the controls, so what the host receives is "
                 + "a button with its colours already on it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)

@@ -12,9 +12,9 @@ private struct LoadingList: ExampleContent {
         Grid {
             HStack {
                 Text(loading ? "Loading" : "\\(count) items")
-                Button("Start over")
+                Button("Start over", action: { count = 30 })
                     .disabled(count <= 30)
-                    .onClicked { count = 30 }
+                    
             }
             .gridRow(0)
 
@@ -22,7 +22,7 @@ private struct LoadingList: ExampleContent {
                 .gridRow(0)
 
             List(0..<count) { number in
-                Text("Item \\(number + 1)").contentPadding(14, 10)
+                Text("Item \\(number + 1)").contentPadding(EdgeInsets(14, 10))
             }
             // Within five items of the end, thirty more - once each time.
             .onEndReached(within: 5) {
@@ -42,15 +42,15 @@ private struct LoadingList: ExampleContent {
         Grid {
             HStack {
                 Text(loading ? "Loading" : "\(count) items")
-                    .fontSize(13)
+                    .font(.system(size: 13))
                     .foregroundStyle(Palette.accent)
                     .verticalAlignment(.center)
 
-                Button("Start over")
-                    .fontSize(13)
-                    .contentPadding(16, 6)
+                Button("Start over", action: { count = 30 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(16, 6))
                     .disabled(count <= 30)
-                    .onClicked { count = 30 }
+                    
             }
             .spacing(12)
             .gridRow(0)
@@ -60,8 +60,8 @@ private struct LoadingList: ExampleContent {
 
             List(0..<count) { number in
                 Text("Item \(number + 1)")
-                    .fontSize(14)
-                    .contentPadding(14, 10)
+                    .font(.system(size: 14))
+                    .contentPadding(EdgeInsets(14, 10))
             }
             .onEndReached(within: 5) {
                 guard !loading, count < 300 else { return }
@@ -75,11 +75,20 @@ private struct LoadingList: ExampleContent {
         }
         .rows(.auto, .fill)
         .rowSpacing(10)
+        // `.task` starts as the view appears and is cancelled as it leaves -
+        // here it stands in for the first page of a feed, fetched on show.
+        .task {
+            loading = true
+            try? await Task.sleep(for: .milliseconds(600))
+            loading = false
+        }
     }
 
     var notes: (any View)? {
-        Text("Scroll towards the end: thirty more arrive, up to three hundred.")
-            .fontSize(12)
+        Text("Scroll towards the end: thirty more arrive, up to three hundred. "
+            + "The first fetch is a `.task` - it would be cancelled if the "
+            + "page left before it answered.")
+            .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
 }

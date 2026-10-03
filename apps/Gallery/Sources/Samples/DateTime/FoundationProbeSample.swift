@@ -121,11 +121,11 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
             ForEach(rows, id: \.0) { row in
                 VStack {
                     Text(row.0)
-                        .fontSize(11)
+                        .font(.system(size: 11))
                         .foregroundStyle(Palette.subtle)
 
                     Text(row.1)
-                        .fontSize(15)
+                        .font(.system(size: 15))
                 }
                 .spacing(1)
             }
@@ -205,7 +205,7 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
                 + "is the application's own import. On Apple it is the system's; on "
                 + "Android it is swift-foundation, whose zones come from an ICU it "
                 + "carries itself.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Android cannot detect the current zone - its tz database is packed "
@@ -213,7 +213,7 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
                 + "GMT. The host knows the zone, so the handler asks it and sets TZ "
                 + "before Foundation first looks. Every row above depends on that one "
                 + "line.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Windows fails one step earlier: only FoundationEssentials is linked "
@@ -221,7 +221,7 @@ struct FoundationProbeSample: SampleContent, ExampleContent {
                 + "arithmetic, ISO8601 and JSON are right; TimeZone.current is GMT, a "
                 + "named zone is nil and Locale.current is a fallback. The host row is "
                 + "the answer on that platform, the way the host's time already is.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

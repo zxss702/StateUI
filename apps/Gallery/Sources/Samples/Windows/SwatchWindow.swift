@@ -31,20 +31,20 @@ struct SwatchPage: View {
                 .cornerRadius(12)
 
             Text("Swatch \(number)")
-                .fontSize(20)
-                .fontAttributes(.bold)
+                .font(.system(size: 20))
+                .bold()
                 .horizontalAlignment(.center)
 
             HStack {
-                Button("Next")
-                    .fontSize(13)
-                    .contentPadding(14, 6)
-                    .onClicked { number += 1 }
+                Button("Next", action: { number += 1 })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(14, 6))
+                    
 
-                Button("Done")
-                    .fontSize(13)
-                    .contentPadding(14, 6)
-                    .onClicked { try await window.close() }
+                Button("Done", action: { try await window.close() })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(14, 6))
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)

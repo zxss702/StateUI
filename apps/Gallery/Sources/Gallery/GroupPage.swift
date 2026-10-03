@@ -26,11 +26,11 @@ struct GroupPage: View {
         ScrollView {
             VStack {
                 Text(group.title)
-                    .fontSize(28)
-                    .fontAttributes(.bold)
+                    .font(.system(size: 28))
+                    .bold()
 
                 Text(group.summary)
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .foregroundStyle(Palette.subtle)
 
                 // Tapping PUSHES the sample's page: one more element on the

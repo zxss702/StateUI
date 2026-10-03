@@ -33,11 +33,10 @@ struct TaskSleepSample: SampleContent, ExampleContent {
 
             Text("\\(remaining)")
 
-            ProgressBar(total == 0 ? 0 : Double(remaining) / Double(total))
+            ProgressView(total == 0 ? 0 : Double(remaining) / Double(total))
 
             HStack {
-                Button(running ? "Stop" : "Start")
-                    .onClicked {
+                Button(running ? "Stop" : "Start", action: {
                         if running {
                             running = false
                             return
@@ -62,23 +61,24 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                         }
 
                         running = false
-                    }
+                    })
+                    
 
-                Button("Reset")
-                    .onClicked {
+                Button("Reset", action: {
                         running = false
                         remaining = total
-                    }
+                    })
+                    
             }
 
             HStack {
                 ForEach([10, 30, 60]) { length in
-                    Button("\\(length)s")
-                        .onClicked {
+                    Button("\\(length)s", action: {
                             running = false
                             total = length
                             remaining = length
-                        }
+                        })
+                        
                 }
             }
         }
@@ -90,19 +90,16 @@ struct TaskSleepSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(remaining)")
-                .fontSize(64)
-                .fontAttributes(.bold)
+                .font(.system(size: 64))
+                .bold()
                 .foregroundStyle(remaining == 0 ? Palette.subtle : Palette.accent)
                 .multilineTextAlignment(.center)
 
-            ProgressBar(total == 0 ? 0 : Double(remaining) / Double(total))
+            ProgressView(total == 0 ? 0 : Double(remaining) / Double(total))
                 .tint(Palette.accent)
 
             HStack {
-                Button(running ? "Stop" : "Start")
-                    .fontSize(13)
-                    .contentPadding(20, 6)
-                    .onClicked {
+                Button(running ? "Stop" : "Start", action: {
                         if running {
                             running = false
                             return
@@ -127,29 +124,32 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                         }
 
                         running = false
-                    }
+                    })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(20, 6))
+                    
 
-                Button("Reset")
-                    .fontSize(13)
-                    .contentPadding(20, 6)
-                    .onClicked {
+                Button("Reset", action: {
                         running = false
                         remaining = total
-                    }
+                    })
+                    .font(.system(size: 13))
+                    .contentPadding(EdgeInsets(20, 6))
+                    
             }
             .spacing(10)
             .horizontalAlignment(.center)
 
             HStack {
                 ForEach([10, 30, 60]) { length in
-                    Button("\(length)s")
-                        .fontSize(12)
-                        .contentPadding(14, 4)
-                        .onClicked {
+                    Button("\(length)s", action: {
                             running = false
                             total = length
                             remaining = length
-                        }
+                        })
+                        .font(.system(size: 12))
+                        .contentPadding(EdgeInsets(14, 4))
+                        
                 }
             }
             .spacing(8)
@@ -165,14 +165,14 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                 + "Android or Windows - so a timer here is a loop that sleeps. The "
                 + "handler resumes on the thread the host draws on, which is what makes "
                 + "writing state from it ordinary.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Leaving the page stops it: .onDisappear clears the flag, and the visit "
                 + "token retires a loop still asleep when the next one starts. Without one, "
                 + "coming back would start a second loop counting the same number down "
                 + "twice as fast.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A sleep of one second costs slightly MORE than one second, and a loop "
@@ -181,7 +181,7 @@ struct TaskSleepSample: SampleContent, ExampleContent {
                 + "avoids it. The Ticker sample beside this one is the same countdown "
                 + "with that fixed; the Analog clock takes the other route, asking the "
                 + "host the time each lap.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

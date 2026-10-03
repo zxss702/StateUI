@@ -379,12 +379,12 @@ struct InteropEventsSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("battery: \(battery)")
-                .fontSize(17)
+                .font(.system(size: 17))
 
             Text(log.isEmpty
                 ? "Plug or unplug the power."
                 : log.suffix(4).joined(separator: "\n"))
-                .fontSize(13)
+                .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(8)
@@ -412,20 +412,20 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 + "write `@State`. The head declares each event it raises with "
                 + "`StateUIEvents.raises`, so a handler listening for one nothing raises "
                 + "is told so once.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The subscriptions are made in `.onAppear` and cancelled in "
                 + "`.onDisappear`, so the page listens while it is in the tree. A raise "
                 + "nobody hears is an ordinary answer, so the host wires its sources "
                 + "unconditionally.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("A desktop with no battery reports nothing at all, and that is the "
                 + "honest answer rather than a failure: this page then keeps saying it "
                 + "has not heard.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)

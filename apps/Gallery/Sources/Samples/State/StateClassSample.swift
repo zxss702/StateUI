@@ -40,7 +40,7 @@ private struct NoteRow: View {
                 .placeholder("A note on the basket")
 
             Text(basket.note.isEmpty ? "No note yet" : "Note: \(basket.note)")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
         }
         .spacing(14)
@@ -98,18 +98,18 @@ struct StateClassSample: SampleContent, ExampleContent {
             Text(basket.summary)
 
             HStack {
-                Button("Add")
-                    .onClicked { basket.items.append("Item \\(basket.items.count + 1)") }
+                Button("Add", action: { basket.items.append("Item \\(basket.items.count + 1)") })
+                    
 
-                Button("Remove")
+                Button("Remove", action: { basket.items.removeLast() })
                     .disabled(basket.items.isEmpty)
-                    .onClicked { basket.items.removeLast() }
+                    
             }
 
             NoteRow(basket: $basket)
 
-            Button("Tap a plain property (\\(basket.plainTaps))")
-                .onClicked { basket.plainTaps += 1 }
+            Button("Tap a plain property (\\(basket.plainTaps))", action: { basket.plainTaps += 1 })
+                
         }
         """
 
@@ -118,45 +118,45 @@ struct StateClassSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(basket.items.count) item(s)")
-                .fontSize(22)
+                .font(.system(size: 22))
                 .multilineTextAlignment(.center)
 
             Text(basket.summary)
-                .fontSize(15)
+                .font(.system(size: 15))
                 .foregroundStyle(Palette.subtle)
                 .multilineTextAlignment(.center)
 
             HStack {
-                Button("Add")
+                Button("Add", action: { basket.items.append("Item \(basket.items.count + 1)") })
                     .background(Palette.accent)
                     .foregroundStyle(.white)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
-                    .onClicked { basket.items.append("Item \(basket.items.count + 1)") }
+                    .contentPadding(EdgeInsets(20, 10))
+                    
 
-                Button("Remove")
+                Button("Remove", action: { basket.items.removeLast() })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)
                     .foregroundStyle(Palette.subtle)
                     .shape(.roundedRectangle(8))
-                    .contentPadding(20, 10)
+                    .contentPadding(EdgeInsets(20, 10))
                     .disabled(basket.items.isEmpty)
-                    .onClicked { basket.items.removeLast() }
+                    
             }
             .spacing(12)
             .horizontalAlignment(.center)
 
             NoteRow(basket: $basket)
 
-            Button("Tap a plain property (\(basket.plainTaps))")
+            Button("Tap a plain property (\(basket.plainTaps))", action: { basket.plainTaps += 1 })
                 .stroke(Palette.outline)
                 .strokeWidth(1)
                 .background(.transparent)
                 .foregroundStyle(Palette.subtle)
                 .shape(.roundedRectangle(8))
-                .contentPadding(20, 10)
-                .onClicked { basket.plainTaps += 1 }
+                .contentPadding(EdgeInsets(20, 10))
+                
 
         }
         .spacing(14)
@@ -169,21 +169,21 @@ struct StateClassSample: SampleContent, ExampleContent {
                 + "write lands on the property's own @State, and that is what asks for the "
                 + "render. Both are needed: @State on the properties makes the writes "
                 + "visible, @State on the view keeps the instance across the rebuild.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The note is written by a child row the basket was lent to - @Binding, "
                 + "the same wrapper an Int is borrowed with. `basket.$note` is the note's "
                 + "own state, handed to the field whole, and it works the same off the "
                 + "view's own @State. No handler either way.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The plain property's count really is going up - press Add afterwards "
                 + "and it jumps to where it got to. A plain `var` is stored and nothing "
                 + "more: a cache, a scratch value, anything the interface does not draw - "
                 + "and writing it asks for nothing.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Swift's own @Observable is a different attribute reporting to a "
@@ -191,7 +191,7 @@ struct StateClassSample: SampleContent, ExampleContent {
                 + "marked with it can be held in @State, and its writes redraw nothing. "
                 + "The compiler says so on the line that holds it. What this library "
                 + "hears is @State - in a view or in a class alike.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

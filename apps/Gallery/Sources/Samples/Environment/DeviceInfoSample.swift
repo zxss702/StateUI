@@ -43,21 +43,21 @@ struct DeviceInfoSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text("\(app.name) \(app.versionString) (\(app.buildString))")
-                .fontSize(22)
-                .fontAttributes(.bold)
+                .font(.system(size: 22))
+                .bold()
                 .multilineTextAlignment(.center)
 
             Text(app.packageName)
-                .fontSize(15)
+                .font(.system(size: 15))
 
             Text("device · \(device.manufacturer) \(device.model)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("system · \(device.platform) \(device.versionString)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("formFactor · \(device.formFactor), \(device.deviceType)")
-                .fontSize(15)
+                .font(.system(size: 15))
             Text("name · \(device.name.isEmpty ? "not said" : device.name)")
-                .fontSize(15)
+                .font(.system(size: 15))
         }
         .spacing(10)
     }
@@ -69,13 +69,13 @@ struct DeviceInfoSample: SampleContent, ExampleContent {
                 + "where device.formFactor answers .desktop. It is known BEFORE the "
                 + "first render, so the first tree already has it - which "
                 + "pages exist is decided while the tree is built.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("Headless - a test, a host that could not say - everything "
                 + "here answers its default, .unknown included, which the "
                 + "catalog reads as \"show everything\".")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(10)

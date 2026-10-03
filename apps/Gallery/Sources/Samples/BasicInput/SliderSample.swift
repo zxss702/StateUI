@@ -22,9 +22,7 @@ struct SliderSample: SampleContent, ExampleContent {
 
             Text(soundOn ? "Volume: \\(Int(volume))" : "Muted")
 
-            Slider($volume)
-                .minimum(0)
-                .maximum(100)
+            Slider($volume, in: 0...100)
                 .disabled(!soundOn)
                 .onDragStarted { dragging = true }
                 .onDragCompleted { dragging = false }
@@ -35,7 +33,7 @@ struct SliderSample: SampleContent, ExampleContent {
                 Text("Sound")
                     .verticalAlignment(.center)
 
-                Switch($soundOn)
+                Toggle(isOn: $soundOn)
             }
         }
         """
@@ -45,29 +43,27 @@ struct SliderSample: SampleContent, ExampleContent {
             DebugInfoLabel()
 
             Text(soundOn ? "Volume: \(Int(volume))" : "Muted")
-                .fontSize(17)
+                .font(.system(size: 17))
                 .multilineTextAlignment(.center)
 
-            Slider($volume)
+            Slider($volume, in: 0...100)
                 .accessibilityIdentifier("slider.volume")
                 .accessibilityLabel("Volume")
-                .minimum(0)
-                .maximum(100)
                 .disabled(!soundOn)
                 .tint(Palette.accent)
                 .onDragStarted { dragging = true }
                 .onDragCompleted { dragging = false }
 
             Text(dragging ? "Dragging..." : "At rest")
-                .fontSize(13)
+                .font(.system(size: 13))
                 .multilineTextAlignment(.center)
 
             HStack {
                 Text("Sound")
-                    .fontSize(14)
+                    .font(.system(size: 14))
                     .verticalAlignment(.center)
 
-                Switch($soundOn)
+                Toggle(isOn: $soundOn)
                     .accessibilityIdentifier("slider.sound")
                     .accessibilityLabel("Sound on")
                     .tint(Palette.accent)
@@ -84,12 +80,12 @@ struct SliderSample: SampleContent, ExampleContent {
                 + "thumb is grabbed, `.onDragCompleted` as it is let go - and every step "
                 + "between them is an `.onValueChanged`. Work too heavy for every step "
                 + "belongs in the completed end.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
             Text("The value crosses the boundary as its own bits - nothing is formatted or "
                 + "parsed on the way, so no locale can touch it.")
-                .fontSize(12)
+                .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
