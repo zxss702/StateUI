@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (82) | Realization | Notes |
+| Host | Created | Members (89) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 38 ✅ · 1 ☑️ | `NSPopUpButton` |  |
 | UIKit | ✅ | 25 ✅ · 3 – | pop-up `UIButton` menu |  |
@@ -42,6 +42,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/PickerContract.swif
 | `isOpen` | property | `Bool` | native | · |  | · | ✅ |  |  | cannot read isOpen of Picker - AppKit's driver has no path for it yet; UIKit: not realized; Android Views: cannot open on Picker - Android's driver has no path for it yet; GTK 4: not realized |
 | `onOpened` (`opened`) | event |  | native | · | ⏸ | · | ✅ |  |  | cannot read isOpen of Picker - AppKit's driver has no path for it yet; UIKit: waits on Picker.isOpen, not realized yet; Android Views: cannot open on Picker - Android's driver has no path for it yet; GTK 4: not realized |
 | `options` | property | `[String]` | structure | ✅ | 🔌 | 🔌 | ✅ | ✅ |  | UIKit: only through the host's own: read options of Picker: the host's own choice, not the menu's; Android Views: only through the host's own: read options of Picker: the rows the relay keeps, not the spinner's |
+| `pickerStyle` | property | `PickerStyleKind` | native |  |  |  |  |  |  |  |
 | `selectedIndex` | property | `Int` | native | ✅ | 🔌 | ✅ | ✅ | ✅ |  | UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action |
 | `onSelectedIndexChanged` (`selectedIndexChanged`) | event | `Int` | native | 🔌 | 🔌 | ✅ | ✅ | ✅ |  | only through the host's own: choose on Picker: the host's action called, not the pop-up's; UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action |
 | `title` | property | `String` | native | ✅ | 🔌 | 🔌 | ✅ |  |  | UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action; Android Views: only through the host's own: read title of Picker: the rows the relay keeps, not the spinner's; GTK 4: not realized |
@@ -68,6 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | ⏸ |  | UIKit: Picker takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Picker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Picker.isFocusedChanged, not realized yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Picker - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -92,7 +94,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of Picker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of Picker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of Picker - GTK's driver has no path for it yet |
 | `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ | ⏸ |  | UIKit: Picker takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Picker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Picker.isFocusedChanged, not realized yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `zIndex` | property | `Int` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -109,12 +111,13 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `horizontalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ | · |  | only through the host's own: pan on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on Picker: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: cannot pan on Picker - GTK's driver has no path for it yet |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on Picker - GTK's driver has no path for it yet |
@@ -129,9 +132,10 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on Picker - GTK's driver has no path for it yet |
 | `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on Picker - GTK's driver has no path for it yet |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on Picker - GTK's driver has no path for it yet |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
 | `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on Picker - GTK's driver has no path for it yet |
 | `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on Picker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on Picker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on Picker - GTK's driver has no path for it yet |
-| `verticalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 
@@ -152,6 +156,9 @@ The font text is drawn in: its family, its size, its weight and slant, and wheth
 | `fontAutoScalingEnabled` | property | `Bool` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `fontFamily` | property | `Name` | native | ✅ |  | · | ✅ |  |  | UIKit: not realized; Android Views: cannot read fontFamily of Picker - Android's driver has no path for it yet; GTK 4: not realized |
 | `fontSize` | property | `Double` | native | ✅ |  | · | ✅ |  |  | UIKit: not realized; Android Views: cannot read fontSize of Picker - Android's driver has no path for it yet; GTK 4: not realized |
+| `fontTextStyle` | property | `FontTextStyle` | native |  |  |  |  |  |  |  |
+| `fontWeight` | property | `Weight` | native |  |  |  |  |  |  |  |
+| `fontDesign` | property | `FontDesign` | native |  |  |  |  |  |  |  |
 
 ## From [TextAlignmentElement](tiers/TextAlignmentElement.md)
 

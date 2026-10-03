@@ -3,17 +3,21 @@ ActivityIndicator
   tint
 Button
   background
+  buttonStyle
   contentPadding
   fontAttributes
   fontFamily
   fontSize
   foregroundStyle
+  isOn
   shape
+  shortcut
   stroke
   strokeWidth
   text
   textCase
   clicked()
+  toggled()
 CheckBox
   isOn
   toggled()
@@ -76,6 +80,7 @@ List
   endReachedWithin
   items
   itemsLayout
+  listStyle
   selectedItems
   selectionMode
   endReached()
@@ -96,6 +101,7 @@ Path
   strokeWidth
 Picker
   options
+  pickerStyle
   selectedIndex
   selectedIndexChanged()
 Polygon
@@ -245,6 +251,7 @@ TextField
   selectionLength
   text
   textContentType
+  textFieldStyle
   submitted()
   textChanged()
 VStack

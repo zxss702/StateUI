@@ -8,8 +8,8 @@ same vocabulary answers everywhere it is said.
 
 ```text
   application.animation = ...                  what every value uses by default
-  .animation(.none)                            what this element does instead
-  @State(animation: .none) var x               what this state does instead, wherever it is shown
+  .animation(nil)                              what this element does instead
+  @State(animation: nil) var x                 what this state does instead, wherever it is shown
   $fade.journey.move(to: 0.1, .spring())    what this one write does instead
 ```
 
@@ -112,6 +112,28 @@ answers for it, as a modifier written later does everywhere else. A plan
 written on a view goes over the plan the view is made of: its base replaces
 the view's own, and its rules come after, being the later word. The plan
 stays in the core, and only its resolved `Animation` answers reach a host.
+
+## Transactions
+
+A `withAnimation` or `withTransaction` body does not animate anything itself:
+it writes a `Transaction` - the animation the writes run under, and whether
+they animate at all - which the writes it makes carry. `Renderer.stateChanged`
+picks the calling thread's transaction up with the write, and the render it
+asks for answers it.
+
+The transaction rewrites only the render that answers the writes, never the
+standing instruction a view declared. `.animation(_:)` says how a change
+animates wherever it comes from; the transaction says how THIS change
+animates. So the differ keeps two answers: the plan's, which stays written on
+the element, and the render's, which the property transitions of this pass
+take. A `.transaction(_:)` on a view rewrites the transaction for the views
+below before either is asked, and `disablesAnimations` there answers `.none`
+for everything.
+
+`.animation(_:value:)` is a gate on the same idea: it compares the value it
+watches against the one the previous render saw, and only a render where it
+moved takes the gate's animation. The first render arms nothing, since there
+is no change yet to answer.
 
 ## Layout lanes
 

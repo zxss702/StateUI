@@ -14,3 +14,7 @@ How each of them realizes these members is on its own page.
 | --- | --- | --- | --- |
 | `icon` | property | `ImageSource` | adaptive |
 | `title` | property | `String` | native |
+| `badge` | property | `String` | native |
+| `presentationDetents` | property | `[PresentationDetent]` | native |
+| `presentationDragIndicator` | property | `Visibility` | native |
+| `interactiveDismissDisabled` | property | `Bool` | native |

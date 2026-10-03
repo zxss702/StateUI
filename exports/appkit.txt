@@ -3,15 +3,21 @@ ActivityIndicator
 Button
   aspect
   background
+  buttonStyle
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   icon
   iconPosition
   isEnabled
+  isOn
   lineBreak
   shape
+  shortcut
   stroke
   strokeWidth
   text
@@ -19,6 +25,7 @@ Button
   clicked()
   pressed()
   released()
+  toggled()
 Canvas
   drawable
   dragged()
@@ -36,8 +43,11 @@ ColorPicker
 DatePicker
   date
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   maximumDate
@@ -86,6 +96,7 @@ List
   endReachedWithin
   items
   itemsLayout
+  listStyle
   selectedItems
   selectionMode
   endReached()
@@ -110,13 +121,17 @@ Path
   strokeWidth
 Picker
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isOpen
   multilineTextAlignment
   options
+  pickerStyle
   selectedIndex
   tint
   title
@@ -153,8 +168,11 @@ ProgressBar
   progress
 RadioButton
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isOn
@@ -186,8 +204,11 @@ SearchField
   background
   cursorPosition
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isReadOnly
@@ -226,8 +247,11 @@ TextEditor
   background
   cursorPosition
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   growsWithText
   isEnabled
@@ -246,8 +270,11 @@ TextField
   background
   cursorPosition
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isPassword
@@ -261,12 +288,16 @@ TextField
   selectionLength
   text
   textCase
+  textFieldStyle
   submitted()
   textChanged()
 TimePicker
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   time

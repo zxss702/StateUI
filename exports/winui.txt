@@ -3,13 +3,16 @@ ActivityIndicator
   tint
 Button
   background
+  buttonStyle
   contentPadding
   fontAttributes
   fontFamily
   fontSize
   foregroundStyle
   isEnabled
+  isOn
   shape
+  shortcut
   stroke
   strokeWidth
   text
@@ -17,6 +20,7 @@ Button
   clicked()
   pressed()
   released()
+  toggled()
 Canvas
   drawable
   dragged()
@@ -99,6 +103,7 @@ List
   endReachedWithin
   items
   itemsLayout
+  listStyle
   selectedItems
   selectionMode
   endReached()
@@ -126,6 +131,7 @@ Picker
   isOpen
   multilineTextAlignment
   options
+  pickerStyle
   selectedIndex
   tint
   title
@@ -285,6 +291,7 @@ TextField
   text
   textCase
   textContentType
+  textFieldStyle
   submitted()
   textChanged()
 TimePicker

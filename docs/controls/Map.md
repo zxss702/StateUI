@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (74) | Realization | Notes |
+| Host | Created | Members (77) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  |  | `MKMapView` / `MKAnnotation` | not realized |
 | UIKit |  |  | `MKMapView` / `MKAnnotation` | not realized |
@@ -69,6 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `focus` | act | `() -> Bool` |  |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `frame` | property | `Rect` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `height` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isEnabled` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -93,7 +94,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `translationY` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `unfocus` | act | `() -> Void` |  |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `width` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `zIndex` | property | `Int` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -110,12 +111,13 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridColumn` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridColumnSpan` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridRow` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridRowSpan` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `horizontalAlignment` | property | `Alignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `horizontalAlignment` | property | `AxisAlignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `padding` | property | `EdgeInsets` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `panTouchCount` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -130,6 +132,7 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `swipeDirection` | property | `SwipeDirection` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `swipeThreshold` | property | `Double` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
 | `tapCount` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onTapGesture` (`tapGesture`) | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `verticalAlignment` | property | `Alignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `verticalAlignment` | property | `AxisAlignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |

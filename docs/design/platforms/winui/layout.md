@@ -32,6 +32,15 @@ measured its whole subtree again: some seven hundred sizings for one word six
 grids deep, and 2910 measures - 150 ms of a debug build's frame - for one
 card of the home page's run turned.
 
+Nothing is measured while WinUI arranges: `Measure` written on an element
+inside an arrangement marks it, the marked element is measured and arranged
+again, and eight passes that never settle end the process with a layout
+cycle. An arrangement asking a child's size is answered from what the pass
+already measured, and a marked element WinUI measures again inside its own
+arrangement is answered with what its last real measure said. The place a
+child is newly put in is measured once the pass ends, posted on the
+doorbell: the pass after measures it there, and the one after settles.
+
 ## A place between passes
 
 A child's `Arrange` written outside its parent's arrangement does nothing, so

@@ -189,6 +189,18 @@ travel as members, in order, each a value of its own rather than a run of
 numbers - a member and a quantity are different things to a host - and the
 one-value form sends a single `.enumeration`.
 
+## Composed modifiers
+
+A modifier whose effect is a *shape*, not a value - `.overlay { }`,
+`.background { }`, `.tag` on a picker's choices - is written over the
+composition machinery rather than a member: the overlay and the background
+build the `ZStack` their names spell, the tag lands on the child for its
+container to read. `.font(Font)` is the other shape: one modifier decomposing
+into the `fontTextStyle`/`fontSize`/`fontFamily`/`fontWeight`/
+`fontDesign` members it names, so a host reads the members it already knows
+and never one `font` object. Such a modifier has no binding twin: there is
+no one property a binding would drive.
+
 ## Environment
 
 `.environment(_:)` provides an object to a view and everything under it,

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (74) | Realization | Notes |
+| Host | Created | Members (77) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 28 ✅ · 3 – | custom `NSView` |  |
 | UIKit | ✅ | 31 ✅ · 3 – | custom `UIView` |  |
@@ -60,6 +60,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `focus` | act | `() -> Bool` |  | – | – | – | – | ⏸ |  | VStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: VStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: VStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: VStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on VStack.isFocusedChanged, not realized yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what reaches VStack - Android's driver has no path for it yet; GTK 4: cannot read what reaches VStack - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of VStack - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
@@ -84,7 +85,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of VStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of VStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of VStack - GTK's driver has no path for it yet |
 | `unfocus` | act | `() -> Void` |  | – | – | – | – | ⏸ |  | VStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: VStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: VStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: VStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on VStack.isFocusedChanged, not realized yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `zIndex` | property | `Int` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -101,12 +102,13 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `horizontalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ | · |  | only through the host's own: pan on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on VStack: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: cannot pan on VStack - GTK's driver has no path for it yet |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on VStack - GTK's driver has no path for it yet |
@@ -121,9 +123,10 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on VStack - GTK's driver has no path for it yet |
 | `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on VStack - GTK's driver has no path for it yet |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on VStack - GTK's driver has no path for it yet |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
 | `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on VStack - GTK's driver has no path for it yet |
 | `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on VStack: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on VStack: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on VStack - GTK's driver has no path for it yet |
-| `verticalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 
 ## From [Layout](tiers/Layout.md)
 

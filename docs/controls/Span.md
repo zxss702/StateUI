@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [TextElement](tiers
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (12) | Realization | Notes |
+| Host | Created | Members (15) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ |  | `NSTextField` label; `NSAttributedString` runs |  |
 | UIKit | ✅ |  | `UILabel`; `NSAttributedString` runs |  |
@@ -76,6 +76,9 @@ The font text is drawn in: its family, its size, its weight and slant, and wheth
 | `fontAutoScalingEnabled` | property | `Bool` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `fontFamily` | property | `Name` | native |  | · |  | ✅ |  |  | not realized; UIKit: cannot read fontFamily of Span - UIKit's driver has no path for it yet; Android Views: not realized; GTK 4: not realized |
 | `fontSize` | property | `Double` | native |  | · | · | ✅ | · |  | not realized; UIKit: cannot read fontSize of Span - UIKit's driver has no path for it yet; Android Views: cannot read fontSize of Span - Android's driver has no path for it yet; GTK 4: cannot read fontSize of Span - GTK's driver has no path for it yet |
+| `fontTextStyle` | property | `FontTextStyle` | native |  |  |  |  |  |  |  |
+| `fontWeight` | property | `Weight` | native |  |  |  |  |  |  |  |
+| `fontDesign` | property | `FontDesign` | native |  |  |  |  |  |  |  |
 
 ## From [LineHeightElement](tiers/LineHeightElement.md)
 

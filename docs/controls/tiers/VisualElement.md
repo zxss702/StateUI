@@ -22,6 +22,7 @@ How each of them realizes these members is on its own page.
 | `focus` | act | `() -> Bool` |  |
 | `frame` | property | `Rect` | structure |
 | `height` | property | `Double` | native |
+| `hint` | property | `String` | native |
 | `ignoresInput` | property | `Bool` | native |
 | `isAccessibilityHidden` | property | `Bool` | native |
 | `isEnabled` | property | `Bool` | native |
@@ -46,4 +47,4 @@ How each of them realizes these members is on its own page.
 | `translationY` | property | `Double` | native |
 | `unfocus` | act | `() -> Void` |  |
 | `width` | property | `Double` | native |
-| `zIndex` | property | `Int` | native |
+| `zIndex` | property | `Double` | native |

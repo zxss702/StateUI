@@ -18,3 +18,6 @@ How each of them realizes these members is on its own page.
 | `fontAutoScalingEnabled` | property | `Bool` | adaptive |
 | `fontFamily` | property | `Name` | native |
 | `fontSize` | property | `Double` | native |
+| `fontTextStyle` | property | `FontTextStyle` | native |
+| `fontWeight` | property | `Weight` | native |
+| `fontDesign` | property | `FontDesign` | native |

@@ -10,6 +10,7 @@ Button
   iconPosition
   iconSpacing
   isEnabled
+  isOn
   lineBreak
   contentPadding
   shape
@@ -21,6 +22,7 @@ Button
   clicked()
   pressed()
   released()
+  toggled()
 Canvas
   drawable
   dragged()

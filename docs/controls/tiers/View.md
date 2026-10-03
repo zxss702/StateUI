@@ -23,12 +23,13 @@ How each of them realizes these members is on its own page.
 | `dragText` | property | `String` | native |
 | `onDrop` (`drop`) | event | `String` | native |
 | `dropCompleted` | event |  | native |
+| `flex` | property | `Double` | stateUI |
 | `frameChanged` | event | `[Double]` | native |
 | `gridColumn` | property | `Int` | stateUI |
 | `gridColumnSpan` | property | `Int` | stateUI |
 | `gridRow` | property | `Int` | stateUI |
 | `gridRowSpan` | property | `Int` | stateUI |
-| `horizontalAlignment` | property | `Alignment` | native |
+| `horizontalAlignment` | property | `AxisAlignment` | native |
 | `padding` | property | `EdgeInsets` | native |
 | `panTouchCount` | property | `Int` | structure |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native |
@@ -43,6 +44,7 @@ How each of them realizes these members is on its own page.
 | `swipeDirection` | property | `SwipeDirection` | structure |
 | `swipeThreshold` | property | `Double` | structure |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native |
+| `tag` | property | `PropValue` | stateUI |
 | `tapCount` | property | `Int` | structure |
 | `onTapGesture` (`tapGesture`) | event |  | native |
-| `verticalAlignment` | property | `Alignment` | native |
+| `verticalAlignment` | property | `AxisAlignment` | native |

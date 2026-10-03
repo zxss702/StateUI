@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (80) | Realization | Notes |
+| Host | Created | Members (86) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 35 ✅ · 1 ☑️ | `NSDatePicker` |  |
 | UIKit | ✅ | 29 ✅ · 3 – | `UIDatePicker` |  |
@@ -69,6 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ |  |  | UIKit: DatePicker takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: DatePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
@@ -93,7 +94,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read translationY of DatePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of DatePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
 | `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ |  |  | UIKit: DatePicker takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: DatePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `zIndex` | property | `Int` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -110,12 +111,13 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `horizontalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 | `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ |  |  | only through the host's own: pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on DatePicker: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: not realized |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
@@ -130,9 +132,10 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
 | `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
 | `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: tap on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
 | `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: tap on DatePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on DatePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `verticalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 
@@ -153,3 +156,6 @@ The font text is drawn in: its family, its size, its weight and slant, and wheth
 | `fontAutoScalingEnabled` | property | `Bool` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `fontFamily` | property | `Name` | native | ✅ |  | · | ✅ |  |  | UIKit: not realized; Android Views: cannot read a family - Android's typeface keeps no family's name; GTK 4: not realized |
 | `fontSize` | property | `Double` | native | ✅ |  | ✅ | ✅ |  |  | UIKit: not realized; GTK 4: not realized |
+| `fontTextStyle` | property | `FontTextStyle` | native |  |  |  |  |  |  |  |
+| `fontWeight` | property | `Weight` | native |  |  |  |  |  |  |  |
+| `fontDesign` | property | `FontDesign` | native |  |  |  |  |  |  |  |

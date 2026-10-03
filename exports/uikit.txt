@@ -3,25 +3,28 @@ ActivityIndicator
   tint
 Button
   background
+  buttonStyle
   characterSpacing
+  contentPadding
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   icon
   iconPosition
   iconSpacing
   isEnabled
+  isOn
   lineBreak
-  contentPadding
   shape
   stroke
   strokeWidth
   text
   textCase
-  foregroundStyle
   clicked()
   pressed()
   released()
+  toggled()
 Canvas
   drawable
   dragged()
@@ -81,6 +84,7 @@ List
   endReachedWithin
   items
   itemsLayout
+  listStyle
   selectedItems
   selectionMode
   endReached()
@@ -134,6 +138,7 @@ Path
 Picker
   isEnabled
   options
+  pickerStyle
   selectedIndex
   title
   closed()
@@ -269,20 +274,21 @@ TextField
   fontAttributes
   fontFamily
   fontSize
-  multilineTextAlignment
-  textContentType
+  foregroundStyle
   isEnabled
   isPassword
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  foregroundStyle
+  textContentType
+  textFieldStyle
   submitted()
   textChanged()
 TimePicker

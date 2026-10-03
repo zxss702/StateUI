@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (76) | Realization | Notes |
+| Host | Created | Members (80) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 33 ✅ · 1 ☑️ | `NSCollectionView` / `NSTableView` |  |
 | UIKit | ✅ | 29 ✅ · 3 – | `UICollectionView` |  |
@@ -40,6 +40,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Collections/ListContract.swi
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `items` | property | `ItemsEntries` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `itemsLayout` | property | `ItemsLayout` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read where Text stands - GTK's driver has no path for it yet |
+| `listStyle` | property | `ListStyleKind` | native |  |  |  |  |  |  |  |
 | `selectionMode` | property | `SelectionMode` | native | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; Android Views: only through the host's own: read selectionMode of List: the mode the relay keeps, which its cells tell TalkBack; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
 | `selectedItems` | property | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
 | `selectionChanged` | event | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
@@ -71,6 +72,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `focus` | act | `() -> Bool` |  | ✅ | – | ✅ | ✅ | ⏸ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on List.isFocusedChanged, not realized yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of List - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
@@ -95,7 +97,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of List - GTK's driver has no path for it yet |
 | `unfocus` | act | `() -> Void` |  | ✅ | – | ✅ | ✅ | ⏸ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on List.isFocusedChanged, not realized yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `zIndex` | property | `Int` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -112,12 +114,13 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `horizontalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ | · |  | only through the host's own: pan on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on List: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: cannot pan on List - GTK's driver has no path for it yet |
 | `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on List - GTK's driver has no path for it yet |
@@ -132,6 +135,7 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on List - GTK's driver has no path for it yet |
 | `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on List - GTK's driver has no path for it yet |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on List - GTK's driver has no path for it yet |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
 | `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on List - GTK's driver has no path for it yet |
 | `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on List: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on List: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on List - GTK's driver has no path for it yet |
-| `verticalAlignment` | property | `Alignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

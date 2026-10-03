@@ -1,13 +1,17 @@
 # revision 1.1
 Grid.clipsContent: ✅
+Grid.hitShape: ✅
 Grid.ignoresSafeArea: not realized
 Grid.letsInputThrough: ◐ cannot read letsInputThrough of Grid - AppKit's driver has no path for it yet
 HStack.clipsContent: ✅
+HStack.hitShape: ✅
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: ◐ cannot read letsInputThrough of HStack - AppKit's driver has no path for it yet
 VStack.clipsContent: ✅
+VStack.hitShape: ✅
 VStack.ignoresSafeArea: not realized
 VStack.letsInputThrough: ◐ cannot read letsInputThrough of VStack - AppKit's driver has no path for it yet
 ZStack.clipsContent: ✅
+ZStack.hitShape: ✅
 ZStack.ignoresSafeArea: not realized
 ZStack.letsInputThrough: ◐ cannot read letsInputThrough of ZStack - AppKit's driver has no path for it yet
