@@ -38,6 +38,7 @@ final class AppKitItemsView: NSView, AppKitRoom, AppKitWidthConstrainedMeasuring
     private let scroller = NSScrollView()
     private var source: NSCollectionViewDiffableDataSource<Int, String>!
     private var layoutShape = ItemsLayout.list()
+    private var style = ListStyleKind.automatic
     private var mode = SelectionMode.none
     private var framed = (header: false, footer: false)
     /// The entries whose cells ask for another size, measured again on the next layout.
@@ -93,8 +94,15 @@ final class AppKitItemsView: NSView, AppKitRoom, AppKitWidthConstrainedMeasuring
 
     // MARK: - What the tree says
 
-    /// The entries, the layout, how many may be chosen and which are.
-    func apply(layout: ItemsLayout, mode: SelectionMode) {
+    /// The entries, the layout, how many may be chosen and which are. A
+    /// `.sidebar` list draws its choice as the source list's rounded fill, a
+    /// `.plain` one as a square band.
+    func apply(layout: ItemsLayout, style: ListStyleKind, mode: SelectionMode) {
+        if style != self.style {
+            self.style = style
+            AppKitItemCellView.selectionRadius = style == .plain ? 0 : 6
+            collection.visibleItems().forEach { ($0.view as? AppKitItemCellView)?.needsDisplay = true }
+        }
         let changes = cells.takeEntries()
         let framed = (header: cells.entries.header != nil, footer: cells.entries.footer != nil)
         if layout != layoutShape || framed != self.framed {

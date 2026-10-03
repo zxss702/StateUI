@@ -56,14 +56,14 @@
                     VStack {
                         reporting(element, across, [
                             Write(VisualElementContract.width, 100), Write(VisualElementContract.height, 20),
-                            Write(ViewContract.horizontalAlignment, Alignment.end),
+                            Write(ViewContract.horizontalAlignment, AxisAlignment.end),
                         ], id: "across")
                     }
                     .frame(width: 300)
                     HStack {
                         reporting(element, down, [
                             Write(VisualElementContract.width, 20), Write(VisualElementContract.height, 40),
-                            Write(ViewContract.verticalAlignment, Alignment.end),
+                            Write(ViewContract.verticalAlignment, AxisAlignment.end),
                         ], id: "down")
                     }
                     .frame(height: 100)

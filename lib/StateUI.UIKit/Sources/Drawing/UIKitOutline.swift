@@ -19,6 +19,13 @@ extension ContainerShape {
             return .rounded(rect, corners: Array(repeating: CGSize(width: fitted.width, height: fitted.height), count: 4))
         case .ellipse:
             return CGPath(ellipseIn: rect, transform: nil)
+        case .capsule:
+            return CGPath(roundedRect: rect, cornerWidth: min(rect.width, rect.height) / 2,
+                          cornerHeight: min(rect.width, rect.height) / 2, transform: nil)
+        case .circle:
+            let side = min(rect.width, rect.height)
+            return CGPath(ellipseIn: CGRect(
+                x: rect.midX - side / 2, y: rect.midY - side / 2, width: side, height: side), transform: nil)
         }
     }
 }

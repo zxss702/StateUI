@@ -41,7 +41,7 @@ enum StateLaw {
         switch lanes.first ?? 0 {
         case 1: return .inherited
         case 2: return .eased(UInt(max(lanes[1], 0)), Easing(rawValue: Int32(lanes[2])) ?? .cubicOut)
-        case 3: return .spring(response: UInt(max(lanes[1], 0)), damping: lanes[2])
+        case 3: return .spring(milliseconds: UInt(max(lanes[1], 0)), damping: lanes[2])
         case 4: return .custom
         default: return Animation.none
         }

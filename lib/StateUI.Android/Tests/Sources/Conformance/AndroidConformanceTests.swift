@@ -28,6 +28,7 @@ final class AndroidConformanceTests: XCTestCase {
             ("testMap", testMap),
             ("testPath", testPath),
             ("testPicker", testPicker),
+            ("testPopover", testPopover),
             ("testPolygon", testPolygon),
             ("testPolyline", testPolyline),
             ("testPositionIndicator", testPositionIndicator),
@@ -108,6 +109,7 @@ final class AndroidConformanceTests: XCTestCase {
     func testMap() throws { try conform(MapTests.self) }
     func testPath() throws { try conform(PathTests.self) }
     func testPicker() throws { try conform(PickerTests.self) }
+    func testPopover() throws { try conform(PopoverTests.self) }
     func testPolygon() throws { try conform(PolygonTests.self) }
     func testPolyline() throws { try conform(PolylineTests.self) }
     func testPositionIndicator() throws { try conform(PositionIndicatorTests.self) }

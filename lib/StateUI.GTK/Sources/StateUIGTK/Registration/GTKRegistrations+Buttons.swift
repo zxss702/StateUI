@@ -8,8 +8,13 @@ extension GTKRegistrations {
     /// A Button: its caption and its look, whether it takes a press, and the click.
     static func buttons(_ registry: Registry<GTKView>) {
         registry.add(ButtonContract.self, create: { reports in
-            let button = GTKButtonView()
+            // A toggle widget at heart: it draws an ordinary button until
+            // `isOn` gives it a state to keep.
+            let button = GTKButtonView(toggles: true)
             button.onClicked = { reports.raise(ButtonContract.clicked) }
+            button.onToggled = { on in
+                reports.report(ButtonContract.isOn, on, as: ButtonContract.toggled)
+            }
             return button
         }, members: { button in
             button.applies(TextMembers.members) { view, values in applyText(view, values) }
@@ -26,7 +31,17 @@ extension GTKRegistrations {
             button.property(VisualElementContract.isEnabled) { view, enabled in
                 view.setEnabled(enabled ?? true)
             }
+            button.property(ButtonContract.buttonStyle) { view, style in
+                view.setStyle(style)
+            }
+            button.property(ButtonContract.shortcut) { view, shortcut in
+                view.setShortcut(shortcut)
+            }
+            button.property(ButtonContract.isOn) { view, on in
+                view.setOn(on)
+            }
             button.raises(ButtonContract.clicked)
+            button.raises(ButtonContract.toggled)
         })
     }
 }

@@ -8,6 +8,7 @@
 
 #include "Relay.h"
 
+#include <limits>
 #include <vector>
 
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
@@ -100,6 +101,14 @@ extern "C" void stateui_winui_sheet_set(StateUIObjectRef handle, char const *tit
     }
 }
 
+extern "C" void stateui_winui_sheet_set_height(StateUIObjectRef handle, double height) {
+    try {
+        borrow<controls::Grid>(handle).Tag(winrt::box_value(height));
+    } catch (...) {
+        report("sizing a sheet");
+    }
+}
+
 extern "C" void stateui_winui_window_set_sheets(StateUIObjectRef handle, StateUIObjectRef const *sheets, int32_t count) {
     try {
         auto window = borrow<xaml::Window>(handle);
@@ -113,6 +122,14 @@ extern "C" void stateui_winui_window_set_sheets(StateUIObjectRef handle, StateUI
         while (kept < children.Size() && kept < shown.size() && children.GetAt(kept) == shown[kept]) ++kept;
         while (children.Size() > kept) children.RemoveAtEnd();
         for (auto index = kept; index < shown.size(); ++index) children.Append(shown[index]);
+        // Each card's asked height, measured against the window where it is a share.
+        auto room = window.Bounds().Height;
+        for (auto const &child : children) {
+            auto card = child.as<controls::Grid>().Children().GetAt(1).as<controls::Border>();
+            auto asked = winrt::unbox_value_or<double>(child.Tag(), 0.0);
+            card.Height(asked == 0 ? std::numeric_limits<double>::quiet_NaN()
+                                   : asked > 0 ? asked : -asked * room);
+        }
         held.Visibility(count > 0 ? xaml::Visibility::Visible : xaml::Visibility::Collapsed);
         // The top sheet takes the keyboard: its first place that does.
         if (count > kept && count > 0) {

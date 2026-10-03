@@ -88,7 +88,7 @@
                 Specimens.page(element, small(element) + paint + [
                     Write(ShapeContract.aspect, stretched.wrappedValue ? ContentMode.stretch : .fit),
                     Write(VisualElementContract.width, 80), Write(VisualElementContract.height, 40),
-                    Write(ViewContract.horizontalAlignment, Alignment.start),
+                    Write(ViewContract.horizontalAlignment, AxisAlignment.start),
                 ], beside: [Button("Stretch").onClicked { stretched.wrappedValue = true }.id("change")])
             }
             let shape = try s.specimen(element)

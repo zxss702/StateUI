@@ -74,6 +74,19 @@ extern "C" void stateui_winui_set_opacity(StateUIObjectRef handle, double opacit
     }
 }
 
+extern "C" void stateui_winui_set_tooltip(StateUIObjectRef handle, char const *utf8) {
+    try {
+        auto element = as<xaml::UIElement>(handle);
+        if (utf8 == nullptr) {
+            controls::ToolTipService::SetToolTip(element, nullptr);
+        } else {
+            controls::ToolTipService::SetToolTip(element, winrt::box_value(text(utf8)));
+        }
+    } catch (...) {
+        report("setting a tip");
+    }
+}
+
 extern "C" void stateui_winui_frame(StateUIObjectRef handle, double *frame) {
     try {
         auto element = as<xaml::UIElement>(handle);
@@ -120,14 +133,17 @@ extern "C" void stateui_winui_set_clip(
         }
         auto compositor = visual.Compositor();
         auto w = static_cast<float>(width), h = static_cast<float>(height);
-        if (outline == StateUIOutlineEllipse) {
+        if (outline == StateUIOutlineEllipse || outline == StateUIOutlineCircle) {
             auto ellipse = compositor.CreateEllipseGeometry();
+            auto radius = outline == StateUIOutlineEllipse ? winrt::float2{w / 2, h / 2}
+                : winrt::float2{std::min(w, h) / 2, std::min(w, h) / 2};
             ellipse.Center({w / 2, h / 2});
-            ellipse.Radius({w / 2, h / 2});
+            ellipse.Radius(radius);
             visual.Clip(compositor.CreateGeometricClip(ellipse));
         } else {
             auto rectangle = compositor.CreateRoundedRectangleGeometry();
-            auto r = outline == StateUIOutlineRounded ? std::min(static_cast<float>(radius), std::min(w, h) / 2) : 0.0f;
+            auto r = outline == StateUIOutlineRounded ? std::min(static_cast<float>(radius), std::min(w, h) / 2)
+                : outline == StateUIOutlineCapsule ? std::min(w, h) / 2 : 0.0f;
             rectangle.Size({w, h});
             rectangle.CornerRadius({r, r});
             visual.Clip(compositor.CreateGeometricClip(rectangle));

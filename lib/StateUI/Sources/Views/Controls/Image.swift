@@ -50,6 +50,33 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
         self.init(ImageSource(light: light, dark: dark))
     }
 
+    /// A symbol from the platform's own set, by its cross-platform name -
+    /// `Image(systemName: "star")` draws SF Symbols on Apple's platforms, the
+    /// Fluent icon of the name on Windows, the toolkit's theme icon elsewhere.
+    ///
+    /// The name is the contract, the glyph the host's: a name one platform's
+    /// set does not know draws that platform's fallback glyph there.
+    public init(systemName: String) {
+        self.init(.symbol(systemName))
+    }
+
+    /// The picture stretched to the frame it is given, proportions aside -
+    /// `.aspect(.stretch)` spelled SwiftUI's way.
+    public func resizable() -> Modified {
+        setValue(ImageElementContract.aspect, ContentMode.stretch)
+    }
+
+    /// The picture scaled to fit the frame it is given, its own proportions
+    /// kept - `.aspect(.fit)` spelled SwiftUI's way.
+    public func scaledToFit() -> Modified {
+        setValue(ImageElementContract.aspect, ContentMode.fit)
+    }
+
+    /// The picture scaled to fill the frame it is given, its own proportions
+    /// kept and the overflow clipped - `.aspect(.fill)` spelled SwiftUI's way.
+    public func scaledToFill() -> Modified {
+        setValue(ImageElementContract.aspect, ContentMode.fill)
+    }
 }
 
 extension Image {

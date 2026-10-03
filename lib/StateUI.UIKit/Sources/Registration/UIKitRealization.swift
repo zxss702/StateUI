@@ -26,8 +26,13 @@ enum UIKitRealization {
         .complete("MenuItemElement", "icon"),
         .complete("MenuItemElement", "isEnabled"),
         .complete("MenuItemElement", "text"),
+        .complete("PageElement", "badge"),
         .complete("PageElement", "icon"),
+        .complete("PageElement", "interactiveDismissDisabled"),
+        .complete("PageElement", "presentationDetents"),
+        .complete("PageElement", "presentationDragIndicator"),
         .complete("PageElement", "title"),
+        .complete("VisualElement", "hint"),
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own

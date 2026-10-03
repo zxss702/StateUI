@@ -51,7 +51,7 @@ extension View {
     /// from the frame. Writing the state moves nothing: the frame is the
     /// layout's answer. A layout reporting its frame gives its children their
     /// new sizes at once, and a size worked out from the frame elsewhere wants
-    /// `.animation(.none)`.
+    /// `.animation(nil)`.
     ///
     /// - Parameter state: the state the frame is written into.
     /// - Returns: the view, reporting its frame there.

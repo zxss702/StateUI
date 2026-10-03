@@ -48,7 +48,9 @@ extension AppKitElement {
         tabs.setItems(
             children.compactMap { child in
                 child.layoutItem.map {
-                    AppKitTabItem(layout: $0, title: child.string(.title), image: child.image(.icon))
+                    AppKitTabItem(
+                        layout: $0, title: child.string(.title), image: child.image(.icon),
+                        badge: child.string(.badge))
                 }
             },
             requestedIndex: whole(.currentPage))
@@ -122,4 +124,76 @@ enum AppKitMenus {
         return item
     }
 }
+
+/// The popover's own sink: hears when the user took it away.
+@MainActor
+final class AppKitPopoverSink: NSObject, NSPopoverDelegate {
+    var dismissed: (() -> Void)?
+
+    func popoverDidClose(_ notification: Notification) {
+        dismissed?()
+    }
+}
+
+extension AppKitElement {
+    /// The popover the element's `.popover` slot asks for: an `NSPopover` off its own view, shown and closed as the
+    /// slot's `isOpen` says, a user dismissal told back through the slot's `dismissed`.
+    func configurePopover() {
+        guard let view else {
+            // The slot is viewless: the change it carried lands here, and the
+            // answer stands on the anchor it hangs off.
+            if type == .popover { parent?.configurePopover() }
+            return
+        }
+        guard let slot = slot(.popover) else {
+            popover?.close()
+            popover = nil
+            popoverSink = nil
+            return
+        }
+
+        if popover == nil {
+            let made = NSPopover()
+            made.behavior = .transient
+            made.contentViewController = NSViewController()
+            let sink = AppKitPopoverSink()
+            sink.dismissed = { [weak self, weak slot] in
+                guard let handler = slot?.element.handler(.dismissed) else { return }
+                self?.host?.runtime.dispatch(handler)
+            }
+            made.delegate = sink
+            popover = made
+            popoverSink = sink
+        }
+        guard let popover, let controller = popover.contentViewController else { return }
+
+        if let content = slot.presentableViews.first, controller.view !== content {
+            controller.view = content
+            if let size = slot.children.first?.layoutItem?.fittingSize() {
+                popover.contentSize = size
+            }
+        }
+        let edge: NSRectEdge = switch slot.element.value(.arrowEdge).flatMap({ Edge(propValue: $0) }) {
+        case .top: .maxY
+        case .bottom: .minY
+        case .leading: .minX
+        case .trailing: .maxX
+        default: .maxY
+        }
+        let shown = slot.element.value(.isOpen)?.bool ?? false
+        if shown && !popover.isShown {
+            // A mount-time ask meets a window AppKit has not ordered yet:
+            // the ordering lands with the frame that mounted it, and the
+            // show is asked again once it has.
+            guard view.window?.isVisible == true else {
+                DispatchQueue.main.async { [weak self] in self?.configurePopover() }
+                return
+            }
+            popover.show(relativeTo: view.bounds, of: view, preferredEdge: edge)
+        } else if !shown && popover.isShown {
+            popover.close()
+        }
+    }
+}
+
 #endif

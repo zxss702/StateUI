@@ -131,3 +131,20 @@ extern "C" void stateui_winui_picker_choose_as_user(StateUIObjectRef handle, int
         report("choosing in a picker as the user");
     }
 }
+
+extern "C" void stateui_winui_picker_set_style(StateUIObjectRef handle, int32_t kind) {
+    try {
+        auto box = borrow<controls::ComboBox>(handle);
+        // The kind is logical: `inline` takes the chrome away so the pick sits
+        // in a row; the kinds a ComboBox cannot be stay its automatic look.
+        if (kind == 5) {
+            box.Background(xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent()));
+            box.BorderThickness({0, 0, 0, 0});
+        } else {
+            box.ClearValue(controls::Control::BackgroundProperty());
+            box.ClearValue(controls::Control::BorderThicknessProperty());
+        }
+    } catch (...) {
+        report("styling a picker");
+    }
+}

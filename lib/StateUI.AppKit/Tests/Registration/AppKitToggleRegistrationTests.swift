@@ -33,6 +33,56 @@ final class AppKitToggleRegistrationTests: XCTestCase {
             HostRealizedMember(element: "CheckBox", owner: "TintElement", member: "tint")))
     }
 
+    /// A button wearing `isOn` is a toggle in button's clothing: the registry
+    /// realizes its value and its event beside the members every button has.
+    @MainActor
+    func testTheRegistryRealizesTheToggleButton() {
+        let realization = AppKitRegistrations.registry.realization
+
+        XCTAssertTrue(realization.members.contains(
+            HostRealizedMember(element: "Button", owner: "Button", member: "isOn")))
+        XCTAssertTrue(realization.members.contains(
+            HostRealizedMember(element: "Button", owner: "Button", member: "toggled")))
+    }
+
+    /// The check the tree describes shows; a click flips it and reports what
+    /// the button now wears; and a button never given `isOn` stays a
+    /// momentary one, a click leaving nothing pressed.
+    @MainActor
+    func testAStayingPressedButtonKeepsAndReportsItsCheck() throws {
+        let on = State(wrappedValue: true)
+        let renderer = AppKitRenderer.running {
+            Toggle(isOn: on.projectedValue) { Text("Pin") }
+                .toggleStyle(.button)
+        }
+        defer { renderer.closeForTesting() }
+
+        let native = try XCTUnwrap(renderer.nativeViews(AppKitButtonView.self).first)
+        XCTAssertEqual(native.state, .on, "the tree's value shows")
+
+        native.clickForTesting()
+        settle(renderer) { !on.wrappedValue }
+
+        XCTAssertEqual(native.state, .off, "the staying-pressed kind flipped")
+        XCTAssertFalse(on.wrappedValue, "and the report reached the state")
+
+        let momentary = AppKitButtonView()
+        var heardMomentary = 0
+        momentary.onToggled = { _ in heardMomentary += 1 }
+        momentary.clickForTesting()
+        XCTAssertEqual(momentary.state, .off, "never toggleable, nothing keeps a press")
+        XCTAssertEqual(heardMomentary, 0, "and nothing reports a toggle")
+    }
+
+    /// Pumps until `done` holds.
+    @MainActor
+    private func settle(_ renderer: AppKitRenderer, until done: () -> Bool) {
+        for _ in 0..<150 where !done() {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
+            renderer.runtime.pump.turn()
+        }
+    }
+
     /// A switch shows what the tree says and takes the enabled state with it,
     /// and follows the tree when it says otherwise.
     @MainActor

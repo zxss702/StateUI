@@ -31,7 +31,7 @@
             for item in visible {
                 let margin = item.values.margin
                 let size = item.size(offered: childWidth.map { max(0, $0 - margin.left - margin.right) })
-                along += size.height + margin.top + margin.bottom
+                along += max(size.height, item.values.flex ?? 0) + margin.top + margin.bottom
                 across = max(across, size.width + margin.left + margin.right)
             }
             return LayoutSize(
@@ -42,7 +42,7 @@
             for item in visible {
                 let size = item.size(offered: nil)
                 let margin = item.values.margin
-                along += size.width + margin.left + margin.right
+                along += max(size.width, item.values.flex ?? 0) + margin.left + margin.right
                 across = max(across, size.height + margin.top + margin.bottom)
             }
             return LayoutSize(
@@ -68,14 +68,20 @@
         of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect
     ) -> [Rect?] {
         let content = bounds.inset(padding)
+        let naturals = items.map { item -> LayoutSize in
+            guard item.isShown else { return .zero }
+            let margin = item.values.margin
+            let cross = axis == .vertical ? content.width : content.height
+            return item.size(offered: axis == .vertical ? max(0, cross - margin.left - margin.right) : nil)
+        }
+        let extents = alongs(items, naturals: naturals, axis: axis, spacing: spacing, in: content)
         var offset = axis == .vertical ? content.y : content.x
 
-        return items.map { item in
+        return zip(items, zip(naturals, extents)).map { item, pair in
+            let (natural, along) = pair
             guard item.isShown else { return nil }
             let values = item.values
             let margin = values.margin
-            let cross = axis == .vertical ? content.width : content.height
-            let natural = item.size(offered: axis == .vertical ? max(0, cross - margin.left - margin.right) : nil)
 
             switch axis {
             case .vertical:
@@ -86,9 +92,8 @@
                     available: available, minimum: values.minimumWidth, maximum: values.maximumWidth)
                 let x = Extent.start(
                     option: values.horizontal, extent: width, start: content.x + margin.left, available: available)
-                let height = values.boundedHeight(natural.height)
-                let place = Rect(x: x, y: offset, width: width, height: height)
-                offset += height + margin.bottom + spacing
+                let place = Rect(x: x, y: offset, width: width, height: along)
+                offset += along + margin.bottom + spacing
                 return place
 
             case .horizontal:
@@ -99,12 +104,46 @@
                     available: available, minimum: values.minimumHeight, maximum: values.maximumHeight)
                 let y = Extent.start(
                     option: values.vertical, extent: height, start: content.y + margin.top, available: available)
-                let width = values.boundedWidth(natural.width)
-                let place = Rect(x: offset, y: y, width: width, height: height)
-                offset += width + margin.right + spacing
+                let place = Rect(x: offset, y: y, width: along, height: height)
+                offset += along + margin.right + spacing
                 return place
             }
         }
+    }
+
+    /// Each shown child's extent along `axis`: its natural one, and for a flexible child a share of
+    /// the room left over, never under the length it named - the others keep theirs where the room
+    /// runs short.
+    @MainActor
+    private static func alongs<Child: LayoutChild>(
+        _ items: [Child], naturals: [LayoutSize], axis: Axis, spacing: Double, in content: Rect
+    ) -> [Double] {
+        var extents = zip(items, naturals).map { item, natural -> Double in
+            guard item.isShown else { return 0 }
+            let base = axis == .vertical
+                ? item.values.boundedHeight(natural.height)
+                : item.values.boundedWidth(natural.width)
+            guard let minimum = item.values.flex else { return base }
+            return axis == .vertical
+                ? item.values.boundedHeight(max(minimum, base))
+                : item.values.boundedWidth(max(minimum, base))
+        }
+        var taken = spacing * Double(max(items.filter(\.isShown).count - 1, 0))
+        for (item, extent) in zip(items, extents) where item.isShown {
+            let margin = item.values.margin
+            taken += extent + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)
+        }
+        let room = (axis == .vertical ? content.height : content.width) - taken
+        let flexible = items.indices.filter { items[$0].isShown && items[$0].values.flex != nil }
+        guard room > 0, !flexible.isEmpty else { return extents }
+
+        let share = room / Double(flexible.count)
+        for index in flexible {
+            extents[index] = axis == .vertical
+                ? items[index].values.boundedHeight(extents[index] + share)
+                : items[index].values.boundedWidth(extents[index] + share)
+        }
+        return extents
     }
 }
 

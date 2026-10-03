@@ -37,8 +37,12 @@ public enum PickerContract: ElementContract {
     /// What the field says while nothing is chosen.
     public static let title = ElementProperty<Self, String>("title", layer: .native)
 
+    /// How the choices present - `.pickerStyle`'s value, the platform's own
+    /// drawing of the kind.
+    public static let pickerStyle = ElementProperty<Self, PickerStyleKind>("pickerStyle", layer: .native)
+
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        closed, isOpen, opened, options, selectedIndex, selectedIndexChanged, title,
+        closed, isOpen, opened, options, pickerStyle, selectedIndex, selectedIndexChanged, title,
     ]
 }

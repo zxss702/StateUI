@@ -27,7 +27,12 @@ enum WinUIRealization {
         .complete("MenuItemElement", "clicked"),
         .complete("MenuItemElement", "isEnabled"),
         .complete("MenuItemElement", "text"),
+        .complete("PageElement", "badge"),
+        .complete("PageElement", "interactiveDismissDisabled"),
+        .partial("PageElement", "presentationDetents", missing: "A WinUI sheet has no detents: the first one asked for alone sizes the card against its window."),
+        .notPlanned("PageElement", "presentationDragIndicator", reason: "A WinUI sheet has no drag indicator."),
         .complete("PageElement", "title"),
+        .complete("VisualElement", "hint"),
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own

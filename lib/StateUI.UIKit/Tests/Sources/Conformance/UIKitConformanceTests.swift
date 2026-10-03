@@ -26,6 +26,7 @@ final class UIKitConformanceTests: XCTestCase {
     @MainActor func testMap() { conform(MapTests.self) }
     @MainActor func testPath() { conform(PathTests.self) }
     @MainActor func testPicker() { conform(PickerTests.self) }
+    @MainActor func testPopover() { conform(PopoverTests.self) }
     @MainActor func testPolygon() { conform(PolygonTests.self) }
     @MainActor func testPolyline() { conform(PolylineTests.self) }
     @MainActor func testPositionIndicator() { conform(PositionIndicatorTests.self) }

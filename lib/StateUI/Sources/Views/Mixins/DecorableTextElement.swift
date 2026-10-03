@@ -12,6 +12,22 @@ extension DecorableTextElement {
     public func textDecorations(_ value: TextDecorations) -> Modified {
         setValue(DecorableTextElementContract.textDecorations, value)
     }
+
+    /// A line under the text - the SwiftUI spelling.
+    ///
+    ///     Text("Read more").underline()
+    public func underline(_ isActive: Bool = true) -> Modified {
+        var worn = node.props[.textDecorations].flatMap(TextDecorations.init(propValue:)) ?? .none
+        if isActive { worn.insert(.underline) } else { worn.remove(.underline) }
+        return textDecorations(worn)
+    }
+
+    /// A line through the text - the SwiftUI spelling.
+    public func strikethrough(_ isActive: Bool = true) -> Modified {
+        var worn = node.props[.textDecorations].flatMap(TextDecorations.init(propValue:)) ?? .none
+        if isActive { worn.insert(.strikethrough) } else { worn.remove(.strikethrough) }
+        return textDecorations(worn)
+    }
 }
 
 extension DecorableTextElement where Self: VisualElement {
@@ -20,4 +36,5 @@ extension DecorableTextElement where Self: VisualElement {
     public func textDecorations(_ state: Binding<TextDecorations>) -> Modified {
         plain(DecorableTextElementContract.textDecorations, by: state)
     }
+
 }

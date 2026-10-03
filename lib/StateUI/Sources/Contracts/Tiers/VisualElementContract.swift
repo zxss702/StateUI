@@ -42,6 +42,10 @@ public enum VisualElementContract: Contract {
     public static let height = ElementProperty<Self, Double>(
         "height", layer: .native, moves: .height)
 
+    /// The tip shown under the pointer resting on the element - a `.help`
+    /// text.
+    public static let hint = ElementProperty<Self, String>("hint", layer: .native)
+
     /// Whether input passes through the element to what is under it.
     public static let ignoresInput = ElementProperty<Self, Bool>("ignoresInput", layer: .native)
 
@@ -134,12 +138,12 @@ public enum VisualElementContract: Contract {
         "width", layer: .native, moves: .width)
 
     /// Which of its overlapping siblings in a grid or an absolute layout the element is drawn over.
-    public static let zIndex = ElementProperty<Self, Int>("zIndex", layer: .native, travels: false)
+    public static let zIndex = ElementProperty<Self, Double>("zIndex", layer: .native, travels: false)
 
     /// The tier's own members.
     public static let members: [any ContractMember] = [
         accessibilityHeadingLevel, accessibilityHint, accessibilityLabel,
-        automationExcludedWithChildren, background, focus, frame, height, ignoresInput,
+        automationExcludedWithChildren, background, focus, frame, height, hint, ignoresInput,
         isAccessibilityHidden, isEnabled, isFocusedChanged, isVisible, layoutDirection,
         maximumHeight, maximumWidth, minimumHeight, minimumWidth, opacity, pivotX, pivotY,
         rotation, rotationX, rotationY, scale, scaleX, scaleY, style, translationX,

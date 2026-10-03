@@ -30,13 +30,17 @@ final class GTKImageView: GTKPanelView {
         if let texture { g_object_unref(UnsafeMutableRawPointer(texture)) }
     }
 
-    /// Shows the picture `source` names, filling its room as `aspect` says.
+    /// Shows the picture `source` names, filling its room as `aspect` says. A source naming a symbol shows the
+    /// icon theme's icon for it - the platform's own symbols - or the missing-image icon where the name is
+    /// unknown.
     func apply(source: ImageSource?, aspect: ContentMode) {
         file = source?.file ?? ""
         self.aspect = aspect
-        path = GTKPictures.path(of: file)
+        path = if let symbol = source?.symbol { GTKSymbols.path(of: symbol) } else { GTKPictures.path(of: file) }
         found = path != nil
-        if !found, !file.isEmpty { GTKRenderer.log.error("no picture \(file) among the application's pictures") }
+        if !found, let name = source?.symbol ?? (file.isEmpty ? nil : file) {
+            GTKRenderer.log.error("no picture or symbol for \(name)")
+        }
 
         var width: Int32 = 0
         var height: Int32 = 0

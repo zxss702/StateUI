@@ -41,6 +41,11 @@ public final class Environment<Value: AnyObject>: @unchecked Sendable {
     /// Declares the slot. The differ fills it before the view's body builds.
     public init() {}
 
+    /// Declares the slot, the type said out loud - `@Environment(Helper.self)`.
+    /// - Parameter type: the type asked for; it only names what the inference
+    ///   already says.
+    public init(_ type: Value.Type) {}
+
     /// The nearest object of this type an ancestor provided - or, where no walk
     /// filled the slot, the standard provider of the type, which is what lets the
     /// application itself declare one.

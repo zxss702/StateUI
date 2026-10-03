@@ -19,6 +19,22 @@ class GTKTextFieldView: GTKView, GTKInputView {
     private var wordsClass: String?
     private var maximumLength: Int?
 
+    /// The class unrounding the entry's box, as a square style asks.
+    private var squareClass: String?
+
+    /// The logical style: plain is the entry unframed, square the same box
+    /// unrounded, and the rest the platform's own look.
+    func setStyle(_ style: TextFieldStyleKind?) {
+        let kind = style ?? .automatic
+        gtk_entry_set_has_frame(widget.of(GtkEntry.self), kind == .plain ? 0 : 1)
+        let square = kind == .squareBorder
+            ? GTKStyleSheet.box(fill: nil, stroke: nil, strokeWidth: nil, radius: 0)
+            : nil
+        if let squareClass, squareClass != square { gtk_widget_remove_css_class(widget, squareClass) }
+        if let square, square != squareClass { gtk_widget_add_css_class(widget, square) }
+        squareClass = square
+    }
+
     convenience init() {
         self.init { gtk_entry_new() }
     }

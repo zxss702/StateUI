@@ -25,6 +25,13 @@ extension LayoutProperties {
         setValue(LayoutContract.letsInputThrough, value)
     }
 
+    /// The outline input on the layout stays within - written by
+    /// `.contentShape`, which wraps the view it shapes in a layout.
+    @_spi(Host)
+    public func hitShape(_ value: ContainerShape) -> Modified {
+        setValue(LayoutContract.hitShape, value)
+    }
+
     /// Which parts of the screen's unsafe strip - the notch, the bars, the
     /// on-screen keyboard - this layout stays clear of, one value for all four
     /// edges.

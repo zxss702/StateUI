@@ -19,6 +19,7 @@ extension UIKitRegistrations {
         }, members: { field in
             field.applies(inputMembers) { view, values in applyInput(view, values) }
             field.property(TextFieldContract.isPassword) { view, hidden in view.isSecureTextEntry = hidden ?? false }
+            field.property(TextFieldContract.textFieldStyle) { view, style in view.setStyle(style) }
             field.raises(InputViewContract.textChanged)
             field.raises(TextFieldContract.submitted)
         })

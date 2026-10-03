@@ -221,6 +221,7 @@ final class AppKitTextFieldViewTests: XCTestCase {
             textPrediction: true,
             cursorPosition: nil,
             selectionLength: nil,
+            style: .automatic,
             writeSelection: false)
     }
 }

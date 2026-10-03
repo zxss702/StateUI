@@ -15,6 +15,24 @@ public enum PageElementContract: Contract {
     /// The title.
     public static let title = ElementProperty<Self, String>("title", layer: .native)
 
+    /// The mark the item wears on its icon - a count, a dot - as its container
+    /// draws it.
+    public static let badge = ElementProperty<Self, String>("badge", layer: .native)
+
+    /// The heights a presented page may stand at, first the one preferred.
+    public static let presentationDetents = ElementProperty<Self, [PresentationDetent]>(
+        "presentationDetents", layer: .native)
+
+    /// Whether a presented page shows its drag handle.
+    public static let presentationDragIndicator = ElementProperty<Self, Visibility>(
+        "presentationDragIndicator", layer: .native)
+
+    /// Whether the user may not dismiss a presented page.
+    public static let interactiveDismissDisabled = ElementProperty<Self, Bool>(
+        "interactiveDismissDisabled", layer: .native)
+
     /// The tier's own members.
-    public static let members: [any ContractMember] = [icon, title]
+    public static let members: [any ContractMember] = [
+        icon, title, badge, presentationDetents, presentationDragIndicator, interactiveDismissDisabled,
+    ]
 }

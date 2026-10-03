@@ -16,6 +16,10 @@ public enum ButtonContract: ElementContract {
         BorderElementContract.self, ImageElementContract.self,
     ]
 
+    /// The look `.buttonStyle` asks for - the platform's own drawing of the
+    /// kind.
+    public static let buttonStyle = ElementProperty<Self, ButtonStyleKind>("buttonStyle", layer: .native)
+
     /// The button was pressed and released on it.
     public static let clicked = ElementEvent<Self, Void>("clicked", layer: .native)
 
@@ -31,14 +35,32 @@ public enum ButtonContract: ElementContract {
     /// What happens to a caption too long for the button.
     public static let lineBreak = ElementProperty<Self, LineBreak>("lineBreak", layer: .native)
 
+    /// A button that keeps its pressed look while on - what a toggle's
+    /// `.button` style draws. The member's being there at all makes the
+    /// button a staying-pressed one; every press flips it, reported through
+    /// `toggled`.
+    public static let isOn = ElementProperty<Self, Bool>("isOn", layer: .native)
+
+    /// The staying-pressed button flipped - `true` for now pressed, `false`
+    /// for released.
+    public static let toggled = ElementEvent<Self, Bool>("toggled", layer: .native)
+
     /// A press began on the button: a finger, a pen or a mouse button went down.
     public static let pressed = ElementEvent<Self, Void>("pressed", layer: .native)
 
     /// The press ended, wherever the pointer ended up.
     public static let released = ElementEvent<Self, Void>("released", layer: .native)
 
+    /// What the button does to what it touches - ordinary, cancelling or
+    /// destructive: how the platform marks it, where it marks one.
+    public static let role = ElementProperty<Self, ButtonRole>("role", layer: .adaptive)
+
+    /// A keyboard shortcut that clicks the button from anywhere in its window.
+    public static let shortcut = ElementProperty<Self, KeyboardShortcut>("shortcut", layer: .native)
+
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        clicked, icon, iconPosition, iconSpacing, lineBreak, pressed, released,
+        buttonStyle, clicked, icon, iconPosition, iconSpacing, isOn, lineBreak, pressed, released,
+        role, shortcut, toggled,
     ]
 }

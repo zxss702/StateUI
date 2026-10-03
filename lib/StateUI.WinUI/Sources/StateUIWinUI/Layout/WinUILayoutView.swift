@@ -136,6 +136,10 @@ class WinUILayoutView: WinUIView {
     /// reads its size from `naturalSize(width:)`, and otherwise the room the children take, within the room offered.
     /// Design: docs/design/platforms/winui/layout.md#no-room-asked
     func measure(width: Double, height: Double) -> LayoutSize {
+        // WinUI arranging a marked element measures it first, inside the pass: the last answer stands, and no
+        // child is measured - measuring one now marks it, and the marked element is arranged again for ever.
+        guard WinUIView.arranging == 0 else { return answered ?? .zero }
+
         Self.measuring += 1
         defer { Self.measuring -= 1 }
 
@@ -145,8 +149,13 @@ class WinUILayoutView: WinUIView {
         let size = naturalSize(width: offered)
         reportChange(of: size, offered: offered)
         guard placingLayout == nil else { return .zero }
-        return LayoutSize(width: min(size.width, width), height: min(size.height, height))
+        let within = LayoutSize(width: min(size.width, width), height: min(size.height, height))
+        answered = within
+        return within
     }
+
+    /// What WinUI's last real measure of this layout was told; what a measure inside an arrangement repeats.
+    private var answered: LayoutSize?
 
     /// How many StateUI layouts are measuring, one inside another.
     private static var measuring = 0

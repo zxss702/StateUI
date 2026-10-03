@@ -6,18 +6,63 @@ import AppKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// The native font a caption is drawn in: the family where one is named, at
-/// the size given or the fallback's, bold and italic where the attributes say
-/// so. The host composes it from an element's values and a registration from
-/// the members it reads - one composition, either way.
+/// The native font a caption is drawn in: the text style's font where one is
+/// named, else the family where one is named, at the size given or the
+/// fallback's - shaped by the design, drawn at the weight, bold and italic
+/// where the attributes say so. The host composes it from an element's values
+/// and a registration from the members it reads - one composition, either way.
 @MainActor
-func appKitFont(family: String?, size: Double?, attributes: FontAttributes?, fallback: NSFont) -> NSFont {
-    let points = size ?? fallback.pointSize
+func appKitFont(
+    family: String?, size: Double?, attributes: FontAttributes?,
+    textStyle: FontTextStyle?, weight: Double?, design: FontDesign?,
+    fallback: NSFont
+) -> NSFont {
     let traits = attributes ?? .none
-    var font = family.flatMap { NSFont(name: $0, size: points) } ?? NSFont.systemFont(ofSize: points)
+    var font: NSFont
+    if let textStyle, let nsStyle = appKitTextStyle(textStyle) {
+        font = NSFont.preferredFont(forTextStyle: nsStyle)
+        if let size { font = NSFont(descriptor: font.fontDescriptor, size: size) ?? font }
+    } else {
+        let points = size ?? fallback.pointSize
+        if let weight, family == nil {
+            font = NSFont.systemFont(ofSize: points, weight: NSFont.Weight(rawValue: weight / 100.0))
+        } else {
+            font = family.flatMap { NSFont(name: $0, size: points) } ?? NSFont.systemFont(ofSize: points)
+        }
+    }
+    if let design, let shaped = font.fontDescriptor.withDesign(appKitFontDesign(design)) {
+        font = NSFont(descriptor: shaped, size: font.pointSize) ?? font
+    }
     if traits.contains(.bold) { font = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask) }
     if traits.contains(.italic) { font = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask) }
     return font
+}
+
+/// A StateUI text style as AppKit's own.
+func appKitTextStyle(_ style: FontTextStyle) -> NSFont.TextStyle? {
+    switch style {
+    case .largeTitle: .largeTitle
+    case .title: .title1
+    case .title2: .title2
+    case .title3: .title3
+    case .headline: .headline
+    case .subheadline: .subheadline
+    case .body: .body
+    case .callout: .callout
+    case .footnote: .footnote
+    case .caption: .caption1
+    case .caption2: .caption2
+    }
+}
+
+/// A StateUI font design as AppKit's own.
+func appKitFontDesign(_ design: FontDesign) -> NSFontDescriptor.SystemDesign {
+    switch design {
+    case .default: .default
+    case .serif: .serif
+    case .rounded: .rounded
+    case .monospaced: .monospaced
+    }
 }
 
 /// Words' attributes from how the host layer says they look (`TextLook`), drawn in `font`: their colour, else

@@ -1,0 +1,161 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+// The shapes a `.clipShape` cuts by, and the views that draw them.
+// Design: docs/design/types/vocabularies.md#written-out-and-appended
+
+/// What a `.clipShape` cuts by - the outline a shape stands for:
+///
+///     Image("avatar.png")
+///         .clipShape(Circle())
+///
+/// `Rectangle` and `Ellipse` answer for themselves; `RoundedRectangle`,
+/// `Capsule` and `Circle` are views of their own too, so the same word names
+/// what is drawn and what it cuts to.
+public protocol ClipShape {
+    /// The outline the shape stands for.
+    var outline: ContainerShape { get }
+}
+
+extension Rectangle: ClipShape {
+    /// A square-cornered box.
+    public var outline: ContainerShape { .rectangle }
+}
+
+extension Ellipse: ClipShape {
+    /// An oval the room's shape.
+    public var outline: ContainerShape { .ellipse }
+}
+
+/// How a rounded corner runs its bend - the plain quarter-circle, or the
+/// continuous curve Apple's platforms draw their own with.
+public enum RoundedCornerStyle: Sendable {
+    /// A quarter-circle's bend.
+    case circular
+
+    /// The continuous bend the platforms' own corners take. A host that
+    /// cannot draw it takes the circular bend at the same radius.
+    case continuous
+}
+
+/// A rectangle rounded by a radius, drawn or cut by:
+///
+///     RoundedRectangle(cornerRadius: 8).fill(.cornflowerBlue)
+///     Text("…").clipShape(RoundedRectangle(cornerRadius: 8))
+public struct RoundedRectangle: Shape, ClipShape {
+    /// The node this control describes.
+    public var node: Node
+
+    /// The radius every corner rounds by.
+    public let cornerRadius: Double
+
+    /// A rectangle whose corners round by `cornerRadius` device units.
+    public init(cornerRadius: Double) {
+        self.cornerRadius = cornerRadius
+        node = Node(contract: RectangleContract.self)
+        node.props[RectangleContract.cornerRadius.token] = CornerRadius.uniform(cornerRadius).propValue
+    }
+
+    /// A rectangle whose corners round by `cornerRadius`, in `style`'s bend -
+    /// `.continuous` drawing as the circular bend where the host has no
+    /// squircle.
+    public init(cornerRadius: Double, style: RoundedCornerStyle) {
+        self.init(cornerRadius: cornerRadius)
+    }
+
+    /// A rectangle rounded by `cornerRadius`.
+    public var outline: ContainerShape { .roundedRectangle(cornerRadius) }
+}
+
+/// A pill - a rectangle rounded by half its shorter side, drawn or cut by:
+///
+///     Capsule().fill(.tomato).frame(width: 80, height: 32)
+///     Text("…").clipShape(Capsule())
+public struct Capsule: Shape, ClipShape {
+    /// The node this control describes.
+    public var node: Node
+
+    /// A capsule: the shape a `Rectangle` draws with its radius as big as a
+    /// side ever is, the hosts' own fitted radius being the pill's.
+    public init() {
+        node = Rectangle().cornerRadius(1_000_000).node
+    }
+
+    /// A capsule in `style`'s bend - `.continuous` drawing as the circular
+    /// bend where the host has no squircle.
+    public init(style: RoundedCornerStyle) {
+        self.init()
+    }
+
+    /// A rectangle rounded by half its shorter side.
+    public var outline: ContainerShape { .capsule }
+}
+
+/// A circle, drawn or cut by - filling the room it is given, a circle where
+/// the room is square:
+///
+///     Circle().fill(.teal).frame(width: 24, height: 24)
+///     Image("avatar.png").clipShape(Circle())
+public struct Circle: Shape, ClipShape {
+    /// The node this control describes.
+    public var node: Node
+
+    /// A circle: what an `Ellipse` in a square draws.
+    public init() {
+        node = Ellipse().node
+    }
+
+    /// A circle as wide as the shorter side.
+    public var outline: ContainerShape { .circle }
+}
+
+extension View {
+    /// Cuts the view to `shape`'s outline - everything outside it away:
+    ///
+    ///     Image("avatar.png")
+    ///         .frame(width: 48, height: 48)
+    ///         .clipShape(Circle())
+    ///
+    /// The clip is the container the view is wrapped in's, so it cuts what the
+    /// view draws of its own too.
+    public func clipShape(_ shape: some ClipShape) -> ModifiedContent {
+        var wrapper = Node(contract: ZStackContract.self)
+        let content = node
+        wrapper.producer = { content.asChildren }
+        wrapper.props[BorderElementContract.shape.token] = shape.outline.propValue
+        wrapper.props[LayoutContract.clipsContent.token] = .bool(true)
+        return ModifiedContent(node: wrapper)
+    }
+
+    /// Cuts the view to its own bounds - a `.clipShape` by the bounds'
+    /// rectangle, the SwiftUI spelling of it:
+    ///
+    ///     Text("…").frame(maxHeight: 60).clipped()
+    ///
+    /// `antialiased` softens the cut where the platform draws one; the clip
+    /// being the bounds' own, there is no edge to soften.
+    public func clipped(antialiased: Bool = false) -> ModifiedContent {
+        clipShape(Rectangle())
+    }
+
+    /// Sets the outline input on the view stays within: a tap inside it
+    /// reaches the view and its gestures, one outside reaches nothing - even
+    /// the empty room between a stack's children counts:
+    ///
+    ///     HStack { … }
+    ///         .contentShape(Rectangle())
+    ///         .onTapGesture { picked() }
+    ///
+    ///     Button { } label: { Image("dot") }
+    ///         .contentShape(Circle())
+    ///
+    /// The shape is the container the view is wrapped in's, so the whole room
+    /// the view was given answers.
+    public func contentShape(_ shape: some ClipShape) -> ModifiedContent {
+        var wrapper = Node(contract: ZStackContract.self)
+        let content = node
+        wrapper.producer = { content.asChildren }
+        wrapper.props[LayoutContract.hitShape.token] = shape.outline.propValue
+        return ModifiedContent(node: wrapper)
+    }
+}

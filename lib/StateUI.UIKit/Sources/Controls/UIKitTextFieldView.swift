@@ -29,5 +29,14 @@ final class UIKitTextFieldView: UITextField, UIKitInputView {
         font = .stateUI(look, standing: madeFont)
         textColor = look.color.flatMap(UIColor.init(stateUI:)) ?? .label
     }
+
+    /// The logical style, as the border UITextField draws for it.
+    func setStyle(_ style: TextFieldStyleKind?) {
+        borderStyle = switch style ?? .automatic {
+        case .plain: .none
+        case .squareBorder: .line
+        default: .roundedRect
+        }
+    }
 }
 #endif

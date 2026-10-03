@@ -13,10 +13,11 @@
     public static var cases: [ConformanceCase] {
         Specimens.wearing(LayoutContract.self).flatMap { element in
             [
-                clipped(element), throughIt(element),
+                clipped(element), throughIt(element), shaped(element),
                 Aspects.holds(LayoutContract.ignoresSafeArea, on: element, .uniform(.container), then: .uniform(.none)),
                 Aspects.holds(LayoutContract.clipsContent, on: element, false, then: true),
                 Aspects.holds(LayoutContract.letsInputThrough, on: element, false, then: true),
+                Aspects.holds(LayoutContract.hitShape, on: element, .rectangle, then: .circle),
             ]
         }
     }
@@ -81,6 +82,31 @@
             s.expect(try s.reaches(beneath, at: Point(60, 60)), true, "let through where it holds nothing")
         }
     }
+
+    /// A press outside the layout's `hitShape` reaches what stands beneath it, while one inside the outline is the
+    /// layout's - the circle naming the room a `.contentShape(Circle())` leaves open.
+    static func shaped(_ element: String) -> ConformanceCase {
+        ConformanceCase("\(element).confinesAPressToTheShapeItNames", proves: [
+            Covered(LayoutContract.hitShape, on: element),
+        ]) { s in
+            s.start {
+                VStack {
+                    ZStack {
+                        ColorPicker(.blue).id("beneath")
+                        Holding.layout(element, hitShape: .circle) {
+                            ColorPicker(.red).frame(width: 20).frame(height: 20).horizontalAlignment(.start).verticalAlignment(.start)
+                        }
+                    }
+                    .frame(width: 100).frame(height: 100)
+                }
+                .horizontalAlignment(.start)
+                .verticalAlignment(.start)
+            }
+            let beneath = try s.element("beneath")
+            s.expect(try s.reaches(beneath, at: Point(50, 50)), false, "inside the shape, the layout takes the press")
+            s.expect(try s.reaches(beneath, at: Point(5, 95)), true, "outside it, the press reaches beneath")
+        }
+    }
 }
 
 /// A layout of each kind holding a view, as a layout's cases need it.
@@ -89,15 +115,19 @@ enum Holding {
     /// said where it is and then at its room's corner.
     static func layout(
         _ element: String, clips: Bool = false, through: Bool = false, width: Double? = nil, height: Double? = nil,
+        hitShape: ContainerShape = .rectangle,
         _ content: () -> any View
     ) -> any View {
         let held = content()
         var worn: [any Worn] = [Write(LayoutContract.clipsContent, clips), Write(LayoutContract.letsInputThrough, through)]
+        if hitShape != .rectangle {
+            worn += [Write(LayoutContract.hitShape, hitShape)]
+        }
         if let width {
-            worn += [Write(VisualElementContract.width, width), Write(ViewContract.horizontalAlignment, Alignment.start)]
+            worn += [Write(VisualElementContract.width, width), Write(ViewContract.horizontalAlignment, AxisAlignment.start)]
         }
         if let height {
-            worn += [Write(VisualElementContract.height, height), Write(ViewContract.verticalAlignment, Alignment.start)]
+            worn += [Write(VisualElementContract.height, height), Write(ViewContract.verticalAlignment, AxisAlignment.start)]
         }
         let dressing = Dressing(worn, id: "layout")
         switch element {

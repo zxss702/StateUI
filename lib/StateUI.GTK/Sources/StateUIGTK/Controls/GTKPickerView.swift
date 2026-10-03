@@ -43,6 +43,16 @@ final class GTKPickerView: GTKView {
         gtk_drop_down_set_selected(widget.opaque, write.chosen.map { guint($0) } ?? guint(GTK_INVALID_LIST_POSITION))
     }
 
+    /// `.inline` drops the button's frame so the pick sits in a row; kinds the
+    /// drop-down cannot be stay its automatic look.
+    func setStyle(_ style: PickerStyleKind) {
+        if style == .inline {
+            gtk_widget_add_css_class(widget, "flat")
+        } else {
+            gtk_widget_remove_css_class(widget, "flat")
+        }
+    }
+
     override func detach() {
         super.detach()
         onChosen = nil

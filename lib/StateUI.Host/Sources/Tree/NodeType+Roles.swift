@@ -13,9 +13,9 @@
     public static let viewlessTypes: Set<NodeType> = [
         .app, .scene, .windowScene, .modalStack, .titleBar, .content, .leadingContent, .trailingContent,
         .titleView, .toolbarItems, .toolbarItem, .menuBar, .contextMenu, .menu, .menuItem, .divider, .spans,
-        .span,
+        .span, .popover,
     ]
 
     /// A page's children that furnish its chrome rather than stand in its room.
-    public static let slotTypes: Set<NodeType> = [.toolbarItems, .titleView, .menuBar, .contextMenu]
+    public static let slotTypes: Set<NodeType> = [.toolbarItems, .titleView, .menuBar, .contextMenu, .popover]
 }

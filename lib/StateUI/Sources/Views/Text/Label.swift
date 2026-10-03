@@ -1,0 +1,101 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/// An icon beside its words - `Label("Star", systemImage: "star")`.
+///
+/// The icon is a platform symbol or a picture's file; the words any title a
+/// row would carry. Drawn as the platform draws a labeled icon, which is why
+/// it is one view and not an `HStack`: on a phone the icon leads, inside a
+/// menu the title may lead and the icon sit where the platform puts one.
+///
+///     Label("Star", systemImage: "star")
+///     Label("Done") { Image("check.png") }
+///
+/// `.labelsHidden` shows the icon alone where the context asks for it - a
+/// toolbar button whose title is still its accessibility label.
+public struct Label: View {
+    /// The words.
+    let title: any View
+
+    /// The picture - a symbol or a file, or `EmptyView` for a title-only one.
+    let icon: any View
+
+    /// Which halves draw - `.labelsHidden` above writes it.
+    @Environment private var style: LabelStyle
+
+    /// A label with its title made by the closure and no icon.
+    public init(@ViewBuilder title: () -> any View) {
+        self.title = title()
+        self.icon = EmptyView()
+    }
+
+    /// A label with its title and icon made by the closures.
+    public init(@ViewBuilder title: () -> any View, @ViewBuilder icon: () -> any View) {
+        self.title = title()
+        self.icon = icon()
+    }
+
+    /// A label with its words and a platform symbol - SwiftUI's
+    /// `Label("Star", systemImage: "star")`.
+    public init(_ title: String, systemImage: String) {
+        self.init(title: { Text(title) }, icon: { Image(systemName: systemImage) })
+    }
+
+    /// A label with its words and a picture's file.
+    public init(_ title: String, image: ImageSource) {
+        self.init(title: { Text(title) }, icon: { Image(image) })
+    }
+
+    /// The row itself.
+    public var body: some View {
+        HStack {
+            if style.showsIcon { icon }
+            if style.showsTitle { title }
+        }
+        .spacing(6)
+    }
+}
+
+/// How every `Label` in a branch draws - its icon beside its title, the icon
+/// alone, or the title alone:
+///
+///     SettingsPane().labelStyle(.iconOnly)
+///
+/// Written on a view above the labels it shapes; the nearest one wins.
+public final class LabelStyle: @unchecked Sendable {
+    /// Icon beside the title - the default.
+    public static let titleAndIcon = LabelStyle(icon: true, title: true)
+
+    /// The icon alone, the title kept for accessibility - what
+    /// `.labelsHidden` writes.
+    public static let iconOnly = LabelStyle(icon: true, title: false)
+
+    /// The title alone.
+    public static let titleOnly = LabelStyle(icon: false, title: true)
+
+    /// Whether the icon half draws.
+    let showsIcon: Bool
+
+    /// Whether the title half draws.
+    let showsTitle: Bool
+
+    private init(icon: Bool, title: Bool) {
+        self.showsIcon = icon
+        self.showsTitle = title
+    }
+}
+
+extension View {
+    /// How every `Label` in this branch arranges its icon against its words:
+    ///
+    ///     ToolbarRow().labelStyle(.iconOnly)
+    public func labelStyle(_ style: LabelStyle) -> ModifiedContent {
+        environment(style)
+    }
+
+    /// Shows only the icon of every `Label` in this branch - the title stays
+    /// its accessibility label.
+    public func labelsHidden() -> ModifiedContent {
+        labelStyle(.iconOnly)
+    }
+}

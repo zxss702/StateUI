@@ -10,6 +10,9 @@ extension WinUIRegistrations {
         registry.add(ButtonContract.self, create: { reports in
             let button = WinUIButtonView()
             button.onClicked = { reports.raise(ButtonContract.clicked) }
+            button.onToggled = { on in
+                reports.report(ButtonContract.isOn, on, as: ButtonContract.toggled)
+            }
             button.onPressed = { reports.raise(ButtonContract.pressed) }
             button.onReleased = { reports.raise(ButtonContract.released) }
             return button
@@ -28,9 +31,19 @@ extension WinUIRegistrations {
             button.property(VisualElementContract.isEnabled) { view, enabled in
                 view.setEnabled(enabled ?? true)
             }
+            button.property(ButtonContract.buttonStyle) { view, style in
+                view.setStyle(style)
+            }
+            button.property(ButtonContract.shortcut) { view, shortcut in
+                view.setShortcut(shortcut)
+            }
+            button.property(ButtonContract.isOn) { view, on in
+                view.setOn(on)
+            }
             button.raises(ButtonContract.clicked)
             button.raises(ButtonContract.pressed)
             button.raises(ButtonContract.released)
+            button.raises(ButtonContract.toggled)
         })
     }
 }

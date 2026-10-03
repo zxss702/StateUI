@@ -67,6 +67,12 @@ extension WinUIElement {
             switch property {
             case .opacity: view.setOpacity(value(.opacity)?.number ?? 1)
             case .isVisible: view.setShown(isShown)
+            case .hint:
+                if let hint = value(.hint)?.string {
+                    hint.withCString { stateui_winui_set_tooltip(view.handle, $0) }
+                } else {
+                    stateui_winui_set_tooltip(view.handle, nil)
+                }
             case .background: (view as? WinUILayoutView)?.setBackground(value(.background))
             case .contentPadding where type == .page:
                 (view as? WinUISingleChildView)?.padding = element.insets(.contentPadding)

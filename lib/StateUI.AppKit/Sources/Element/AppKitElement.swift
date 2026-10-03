@@ -40,6 +40,10 @@ final class AppKitElement: NSObject, NativeElement {
     /// The focus this element last reported, where it follows its focus.
     var reportedFocus = false
 
+    /// The popover the `.popover` slot presents, and its delegate.
+    var popover: NSPopover?
+    var popoverSink: AppKitPopoverSink?
+
     var tapRecognizer: AppKitTapRecognizer?
     var panRecognizer: AppKitPanRecognizer?
     var pinchRecognizer: AppKitPinchRecognizer?
@@ -109,6 +113,7 @@ final class AppKitElement: NSObject, NativeElement {
         if wasDescribed, changed.contains(.isVisible) { crossVisibility() }
         applyProperties(changed: changed)
         configureContextMenu()
+        configurePopover()
         configureGestures()
         configureLayoutMotion()
         arrangeChildren()
@@ -139,6 +144,7 @@ final class AppKitElement: NSObject, NativeElement {
         view.alphaValue = value(.opacity)?.number ?? 1
         let ignores = value(.ignoresInput)?.bool ?? false
         if let hitTestView = view as? AppKitHitTestView {
+            hitTestView.hitShape = value(.hitShape).flatMap(ContainerShape.init(propValue:))
             // The whole view and its children, or only its own empty area.
             hitTestView.applyInputTransparency(
                 element.isLeaving || ignores || value(.letsInputThrough)?.bool == true,
@@ -214,6 +220,9 @@ final class AppKitElement: NSObject, NativeElement {
     /// Presents one display frame of this element's own changed properties.
     func presentFrame(_ properties: Set<Prop>) {
         applyProperties(changed: properties)
+        // A popover slot is viewless: the driven `isOpen` lands here, and the
+        // show or close it asks for stands on the anchor it hangs off.
+        if type == .popover { parent?.configurePopover() }
     }
 
 }

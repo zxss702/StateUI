@@ -17,6 +17,9 @@ extension WinUIRegistrations {
         }, members: { field in
             field.applies(wordMembers) { view, values in applyWords(view, values) }
             field.applies(boxMembers) { view, values in applyBox(view, values) }
+            field.property(TextFieldContract.textFieldStyle) { view, style in
+                view.setStyle(style)
+            }
             field.raises(InputViewContract.textChanged)
             field.raises(TextFieldContract.submitted)
         })

@@ -10,6 +10,12 @@ extension ButtonProperties {
         setValue(ButtonContract.lineBreak, value)
     }
 
+    /// Where a too-long caption is cut, the SwiftUI spelling of the
+    /// truncating `lineBreak`s.
+    public func truncationMode(_ mode: TruncationMode) -> Modified {
+        lineBreak(mode.lineBreak)
+    }
+
     /// The picture beside the caption - a file among the application's image
     /// resources, by name; see `Image`. A button with an icon and no caption is
     /// `Button(icon:)`.
@@ -85,6 +91,53 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
         self = Button().text(text)
     }
 
+    /// A button captioned `title`, marked as a destructive or a cancelling
+    /// action where the platform marks one.
+    public init(_ title: String, role: ButtonRole) {
+        self.init(title)
+        node.write(ButtonContract.role, role)
+    }
+
+    /// A button captioned `title`, running `action` on a press - the SwiftUI
+    /// spelling of `Button(title).onClicked(action)`.
+    ///
+    ///     Button("Save") { save() }
+    public init(_ title: String, action: @escaping EventHandler) {
+        self = Button(title).onClicked(action)
+    }
+
+    /// An icon button running `action` on a press.
+    public init(icon: ImageSource, action: @escaping EventHandler) {
+        self = Button(icon: icon).onClicked(action)
+    }
+
+    /// The same, marked as a destructive or a cancelling action where the
+    /// platform marks one.
+    ///
+    ///     Button("Delete", role: .destructive) { remove() }
+    public init(_ title: String, role: ButtonRole, action: @escaping EventHandler) {
+        self = Button(title).onClicked(action)
+        node.write(ButtonContract.role, role)
+    }
+
+    /// A button whose label is a view - composed of it rather than the
+    /// platform's captioned control: the label stands alone and a tap on it
+    /// is the press.
+    ///
+    ///     Button { open(url) } label: { Label("Docs", systemImage: "book") }
+    public init(action: @escaping EventHandler, @ViewBuilder label: () -> any View) {
+        self.init()
+        let content = ContentButton(action: action, label: label())
+        node = Node.composed(content, type: "Button") { content.body.node }
+    }
+
+    /// The same, marked as a destructive or a cancelling action - the mark is
+    /// a note the label may take, not a look the button imposes on it.
+    public init(role: ButtonRole, action: @escaping EventHandler, @ViewBuilder label: () -> any View) {
+        self.init(action: action, label: label)
+        node.write(ButtonContract.role, role)
+    }
+
     // MARK: Events
 
     /// Runs when the button is pressed AND released on it - the ordinary one.
@@ -103,6 +156,58 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
     /// `onClicked`, which needs it to end on the button.
     public func onReleased(_ handler: @escaping EventHandler) -> Self {
         onEvent(ButtonContract.released, handler)
+    }
+
+    /// The staying-pressed look: worn at all the button keeps a press down
+    /// and lets the next one up, each flip reported by `.onToggled`. What a
+    /// `Toggle` in `.button` style is written with; for a button of your own,
+    /// say `Toggle`.
+    @_spi(Host)
+    public func isOn(_ value: Bool) -> Modified {
+        setValue(ButtonContract.isOn, value)
+    }
+
+    /// `isOn` from a state, `$x`: the host sets each new look as it stands.
+    @_spi(Host)
+    public func isOn(_ state: Binding<Bool>) -> Modified {
+        plain(ButtonContract.isOn, by: state)
+    }
+
+    /// Runs as a staying-pressed button flips - `true` for now pressed.
+    @_spi(Host)
+    public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
+        onEvent(ButtonContract.toggled, handler)
+    }
+}
+
+/// What a button does to what it touches, where the platform marks one.
+/// A closed vocabulary, numbered by StateUI: append a case, never insert one.
+/// Design: docs/design/types/vocabularies.md#written-out-and-appended
+public enum ButtonRole: Int32, Sendable, HostRepresentable {
+    /// An ordinary button - the default.
+    case normal = 0
+
+    /// Destroys what it touches - drawn warningly where the platform does.
+    case destructive = 1
+
+    /// Dismisses without acting - the Cancel a dialog offers.
+    case cancel = 2
+}
+
+extension ButtonRole: StateChoice {}
+
+/// What `Button(action:label:)` builds: the label, tapped - no caption, no
+/// border of the platform's own, which a content button does not wear.
+struct ContentButton: View {
+    /// What a press runs.
+    let action: EventHandler
+
+    /// The label the button shows.
+    let label: any View
+
+    /// The label, answering a tap.
+    var body: some View {
+        label.onTapGesture(action)
     }
 }
 

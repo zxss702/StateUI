@@ -25,6 +25,7 @@ final class GTKConformanceTests: XCTestCase {
     func testMap() { conform(MapTests.self) }
     func testPath() { conform(PathTests.self) }
     func testPicker() { conform(PickerTests.self) }
+    func testPopover() { conform(PopoverTests.self) }
     func testPolygon() { conform(PolygonTests.self) }
     func testPolyline() { conform(PolylineTests.self) }
     func testPositionIndicator() { conform(PositionIndicatorTests.self) }

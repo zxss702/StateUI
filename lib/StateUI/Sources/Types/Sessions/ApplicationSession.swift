@@ -45,10 +45,10 @@ public final class ApplicationSession {
 
     /// How every value in the application animates when it changes.
     ///
-    ///     application.animation = .spring(response: 260)
+    ///     application.animation = .spring(response: 0.26)
     ///
     /// A colour animates to its new colour, a view that grew to its new size.
-    /// `.none` turns animation off everywhere, for an application that draws
+    /// `nil` turns animation off everywhere, for an application that draws
     /// its own. A view overrides it with `.animation(_:)`, a state with
     /// `@State(animation:)`, and one write with `$state.journey.snap(to:)` or
     /// `$state.journey.move(to:_:)`.

@@ -47,6 +47,48 @@ final class LayoutArithmeticTests: XCTestCase {
         XCTAssertEqual(places[2], Rect(40, 17, 20, 10), "a centred child stands in the middle")
     }
 
+    /// A flexible child - a `Spacer` - takes the room a stack has left over along its axis, two of them
+    /// sharing it evenly; where the room runs short it keeps at least the length it named.
+    @MainActor
+    func testAFlexibleChildTakesTheRoomLeftOver() {
+        var spring = Child(width: 0, height: 0)
+        spring.values.flex = 0
+        var second = Child(width: 0, height: 0)
+        second.values.flex = 0
+
+        let pushed = StackArithmetic.places(
+            of: [Child(width: 20, height: 10), spring, Child(width: 30, height: 10)],
+            axis: .horizontal, spacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 10),
+            direction: .leftToRight)
+        let shared = StackArithmetic.places(
+            of: [spring, Child(width: 20, height: 10), second],
+            axis: .horizontal, spacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 10),
+            direction: .leftToRight)
+        let cramped = StackArithmetic.places(
+            of: [Child(width: 95, height: 10), { var s = Child(width: 0, height: 0); s.values.flex = 40; return s }()],
+            axis: .horizontal, spacing: 0, padding: EdgeInsets(0), in: Rect(0, 0, 100, 10),
+            direction: .leftToRight)
+
+        XCTAssertEqual(pushed[1], Rect(20, 0, 50, 10), "the spacer takes the room between its neighbours")
+        XCTAssertEqual(pushed[2], Rect(70, 0, 30, 10), "and pushes what follows it to the end")
+        XCTAssertEqual(shared[0]?.width, 40, "two spacers share the room evenly")
+        XCTAssertEqual(shared[2]?.width, 40)
+        XCTAssertEqual(cramped[1]?.width, 40, "a spacer keeps the length it named where the room runs short")
+    }
+
+    /// A column's natural height counts a spacer's minimum, so nothing asks for less than it needs.
+    @MainActor
+    func testAStackSizesAFlexibleChildAtItsMinimum() {
+        var spring = Child(width: 0, height: 0)
+        spring.values.flex = 30
+
+        let size = StackArithmetic.size(
+            of: [Child(width: 20, height: 10), spring], axis: .vertical, spacing: 5,
+            padding: EdgeInsets(0), width: nil)
+
+        XCTAssertEqual(size.height, 45)
+    }
+
     // MARK: - Right to left
 
     /// A row laid out right to left fills from the right, its padding and margins on the other sides;

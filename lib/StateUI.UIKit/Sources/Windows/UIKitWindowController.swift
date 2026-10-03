@@ -52,12 +52,14 @@ final class UIKitWindowController {
                 guard let runtime, let element else { return }
                 runtime.goBack(.dismissSheet(remaining: remaining), in: element)
             }
-            root.present(sheets.compactMap(\.uiKit.controller), animated: !runtime.reducesMotion())
+            root.present(
+                sheets.map { ($0.uiKit.controller, $0.visiblePage) },
+                animated: !runtime.reducesMotion())
         }
         presentation.arrangement?.uiKit.composeChrome()
         presentation.sheets.forEach { $0.uiKit.composeChrome() }
         let title = presentation.arrangement?.titledPage?.value(.title)?.string
-        window?.window?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
+        window?.windowScene?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
     }
 
     /// The menus of the page the user sees - the top sheet's, else the arrangement's - as UIKit's main menu takes
@@ -72,7 +74,7 @@ final class UIKitWindowController {
 
     /// The tree let the window go: its scene goes with it.
     func close() {
-        let session = window?.window?.session
+        let session = window?.windowScene?.session
         hide()
         guard let session else { return }
         UIApplication.shared.requestSceneSessionDestruction(session, options: nil)
@@ -83,7 +85,7 @@ final class UIKitWindowController {
     func hide() {
         root.letGo()
         window?.isHidden = true
-        window?.window = nil
+        window?.windowScene = nil
     }
 }
 
@@ -103,7 +105,7 @@ final class UIKitRootViewController: UIViewController, UIAdaptivePresentationCon
     var onSheetDismissed: ((Int) -> Void)?
 
     /// The sheets asked for before the window stood on screen, which UIKit presents over it only once it does.
-    private var waiting: (sheets: [UIViewController], animated: Bool)?
+    private var waiting: (sheets: [(controller: UIViewController?, page: MountedElement?)], animated: Bool)?
     private var appeared = false
 
     override func loadView() {
@@ -139,10 +141,10 @@ final class UIKitRootViewController: UIViewController, UIAdaptivePresentationCon
 
     /// Presents `sheets` over the arrangement: those shown and still asked for stay, the rest go from the top, and
     /// each new one comes over the one before once that one stands - UIKit presents over a controller only then.
-    func present(_ sheets: [UIViewController], animated: Bool) {
+    func present(_ sheets: [(controller: UIViewController?, page: MountedElement?)], animated: Bool) {
         guard appeared else { return waiting = (sheets, animated) }
         var common = 0
-        while common < self.sheets.count, common < sheets.count, self.sheets[common] === sheets[common] { common += 1 }
+        while common < self.sheets.count, common < sheets.count, self.sheets[common] === sheets[common].controller { common += 1 }
         let coming = Array(sheets[common...])
         guard common < self.sheets.count else { return presentEach(coming, animated: animated) }
         let presenter = common == 0 ? self : self.sheets[common - 1]
@@ -152,14 +154,43 @@ final class UIKitRootViewController: UIViewController, UIAdaptivePresentationCon
         }
     }
 
-    private func presentEach(_ coming: [UIViewController], animated: Bool) {
-        guard let sheet = coming.first else { return }
+    private func presentEach(
+        _ coming: [(controller: UIViewController?, page: MountedElement?)],
+        animated: Bool
+    ) {
+        guard let next = coming.first, let sheet = next.controller else { return }
         let presenter = sheets.last ?? self
         sheet.modalPresentationStyle = .pageSheet
+        apply(next.page, to: sheet)
         sheet.presentationController?.delegate = self
         sheets.append(sheet)
         presenter.present(sheet, animated: animated && coming.count == 1) { [weak self] in
             self?.presentEach(Array(coming.dropFirst()), animated: animated)
+        }
+    }
+
+    /// What the page asks of its sheet: the detents UIKit can truly run, the
+    /// grabber, and whether a swipe may take it away.
+    private func apply(_ page: MountedElement?, to sheet: UIViewController) {
+        sheet.isModalInPresentation = page?.value(.interactiveDismissDisabled)?.bool ?? false
+
+        guard let sheetController = sheet.sheetPresentationController else { return }
+        if let asked = page?.value(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
+           !asked.isEmpty {
+            sheetController.detents = asked.map { detent in
+                switch detent {
+                case .medium: return .medium()
+                case .large: return .large()
+                case .fraction(let part):
+                    return .custom { context in context.maximumDetentValue * CGFloat(part) }
+                case .height(let points):
+                    return .custom { _ in CGFloat(points) }
+                }
+            }
+        }
+        if let visibility = page?.value(.presentationDragIndicator).flatMap({ Visibility(propValue: $0) }),
+           visibility != .automatic {
+            sheetController.prefersGrabberVisible = visibility == .visible
         }
     }
 

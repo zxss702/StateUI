@@ -469,3 +469,23 @@ extern "C" int32_t stateui_winui_items_row_name(StateUIObjectRef handle, int64_t
         return 0;
     }
 }
+
+extern "C" void stateui_winui_items_set_style(StateUIObjectRef handle, int32_t kind) {
+    try {
+        auto list = borrow<controls::ItemsView>(handle);
+        // The kind is logical: `sidebar` sits on the platform's muted layer,
+        // `plain` on nothing.
+        if (kind == 2) {
+            if (auto brush = xaml::Application::Current().Resources().TryLookup(
+                    winrt::box_value(L"LayerFillColorDefaultBrush"))) {
+                list.Background(brush.as<xaml::Media::Brush>());
+            }
+        } else if (kind == 1) {
+            list.Background(xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent()));
+        } else {
+            list.ClearValue(controls::Control::BackgroundProperty());
+        }
+    } catch (...) {
+        report("styling an ItemsView");
+    }
+}

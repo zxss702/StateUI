@@ -26,6 +26,7 @@ final class AppKitButtonViewTests: XCTestCase {
             strokeWidth: 2,
             shape: .roundedRectangle(6),
             lineBreakMode: .byTruncatingTail,
+            style: .automatic,
             enabled: false)
 
         XCTAssertEqual(button.title, "Save")
@@ -53,6 +54,7 @@ final class AppKitButtonViewTests: XCTestCase {
             strokeWidth: 1,
             shape: .rectangle,
             lineBreakMode: .byClipping,
+            style: .automatic,
             enabled: true)
 
         XCTAssertEqual(button.title, "")
@@ -80,7 +82,7 @@ final class AppKitButtonViewTests: XCTestCase {
         button.apply(
             text: "Save", image: nil, imagePosition: .noImage, imageScaling: .scaleNone,
             font: .systemFont(ofSize: 13), foregroundStyle: .labelColor, backgroundColor: .systemBlue, strokeColor: nil,
-            strokeWidth: 0, shape: .rectangle, lineBreakMode: .byTruncatingTail, enabled: true)
+            strokeWidth: 0, shape: .rectangle, lineBreakMode: .byTruncatingTail, style: .automatic, enabled: true)
         let alpha = { Double(button.layer?.backgroundColor?.alpha ?? 0) }
         let crossing = { (type: NSEvent.EventType) in
             try XCTUnwrap(NSEvent.enterExitEvent(

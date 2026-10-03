@@ -14,10 +14,11 @@ extension GTKRegistrations {
             }
             return picker
         }, members: { picker in
-            picker.applies([PickerContract.options, PickerContract.selectedIndex]) { view, values in
+            picker.applies([PickerContract.options, PickerContract.selectedIndex, PickerContract.pickerStyle]) { view, values in
                 view.setChoices(
                     values[PickerContract.options] ?? [], chosen: values[PickerContract.selectedIndex] ?? -1,
                     writeChosen: values.changed(PickerContract.selectedIndex))
+                view.setStyle(values[PickerContract.pickerStyle] ?? .automatic)
             }
             picker.property(VisualElementContract.isEnabled) { view, enabled in view.setEnabled(enabled ?? true) }
             picker.raises(PickerContract.selectedIndexChanged)

@@ -12,6 +12,9 @@ extension AndroidRegistrations {
             button.onClicked = { reports.raise(ButtonContract.clicked) }
             button.onPressed = { reports.raise(ButtonContract.pressed) }
             button.onReleased = { reports.raise(ButtonContract.released) }
+            button.onToggled = { on in
+                reports.report(ButtonContract.isOn, on, as: ButtonContract.toggled)
+            }
             return button
         }, members: { button in
             button.applies(TextMembers.members) { view, values in applyText(view, values) }
@@ -31,15 +34,22 @@ extension AndroidRegistrations {
                     width: values[BorderElementContract.strokeWidth],
                     shape: values[BorderElementContract.shape]?.propValue)
             }
+            button.property(ButtonContract.buttonStyle) { view, style in
+                view.setStyle(style)
+            }
             button.property(ButtonContract.lineBreak) { view, breaking in
                 view.setLines(breaking: breaking ?? .wordWrap, maximum: nil)
             }
             button.property(VisualElementContract.isEnabled) { view, enabled in
                 view.setEnabled(enabled ?? true)
             }
+            button.property(ButtonContract.isOn) { view, on in
+                view.setOn(on)
+            }
             button.raises(ButtonContract.clicked)
             button.raises(ButtonContract.pressed)
             button.raises(ButtonContract.released)
+            button.raises(ButtonContract.toggled)
         })
     }
 }

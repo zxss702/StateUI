@@ -47,6 +47,11 @@ extension VisualElementProperties {
     /// A screen-reader user moves through a long page by its headings; a Text
     /// drawn big is not one until this says so.
     public func accessibilityHeadingLevel(_ value: HeadingLevel) -> Modified { setValue(VisualElementContract.accessibilityHeadingLevel, value) }
+
+    /// The tip the platform shows under a pointer resting on the view:
+    ///
+    ///     Button("Crop").help("Cuts the picture to what is selected")
+    public func help(_ value: String) -> Modified { setValue(VisualElementContract.hint, value) }
 }
 
 extension VisualElementProperties {
@@ -85,6 +90,12 @@ extension VisualElementProperties {
     public func accessibilityHint(_ state: Binding<String>) -> Modified {
         words(VisualElementContract.accessibilityHint, by: state)
     }
+
+    /// `help` from a state, `$x`: the host writes each new text, and no view is
+    /// rebuilt for it.
+    public func help(_ state: Binding<String>) -> Modified {
+        words(VisualElementContract.hint, by: state)
+    }
 }
 
 extension View {
@@ -113,6 +124,10 @@ extension View {
     /// That this view is a heading, and how deep.
     @_disfavoredOverload
     public func accessibilityHeadingLevel(_ value: HeadingLevel) -> ModifiedContent { setting(VisualElementContract.accessibilityHeadingLevel, value) }
+
+    /// The tip the platform shows under a pointer resting on the view.
+    @_disfavoredOverload
+    public func help(_ value: String) -> ModifiedContent { setting(VisualElementContract.hint, value) }
 }
 
 extension View {
@@ -149,6 +164,13 @@ extension View {
     @_disfavoredOverload
     public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> ModifiedContent {
         revised { $0.drivePlain(VisualElementContract.accessibilityHeadingLevel, by: state) }
+    }
+
+    /// `help` from a state, `$x`: the host writes each new text, and no view is
+    /// rebuilt for it.
+    @_disfavoredOverload
+    public func help(_ state: Binding<String>) -> ModifiedContent {
+        revised { $0.driveWords(VisualElementContract.hint, by: state) }
     }
 
     /// `accessibilityHint` from a state, `$x`: the host writes each new text,

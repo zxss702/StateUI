@@ -78,7 +78,8 @@ extern "C" void stateui_winui_set_foreground(StateUIObjectRef handle, bool has, 
                 if (has) control.Foreground(brush);
                 else control.ClearValue(controls::Control::ForegroundProperty());
                 // A button's template draws its words in its own colour under the pointer and pressed.
-                if (!control.try_as<controls::Button>()) return;
+                if (!control.try_as<controls::Button>()
+                    && !control.try_as<controls::Primitives::ToggleButton>()) return;
                 auto resources = control.Resources();
                 for (auto key : {L"ButtonForeground", L"ButtonForegroundPointerOver", L"ButtonForegroundPressed"}) {
                     auto name = winrt::box_value(key);

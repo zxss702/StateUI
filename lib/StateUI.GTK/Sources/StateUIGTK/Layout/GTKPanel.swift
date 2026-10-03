@@ -65,8 +65,18 @@ enum GTKPanel {
                 .assumingMemoryBound(to: GtkWidgetClass.self).pointee.contains
             widgetClass.pointee.contains = { widget, x, y in
                 let number = GTKPanel.number(of: widget)
-                let passes = MainActor.assumeIsolated { GTKPanel.view(number)?.passesBeside == true }
-                return passes ? 0 : GTKPanel.widgetContains?(widget, x, y) ?? 0
+                let (passes, inside) = MainActor.assumeIsolated {
+                    let view = GTKPanel.view(number)
+                    let inside = view?.hitShape.map {
+                        $0.contains(
+                            Point(x: x, y: y),
+                            in: Rect(x: 0, y: 0,
+                                     width: Double(gtk_widget_get_width(widget)),
+                                     height: Double(gtk_widget_get_height(widget))))
+                    } ?? true
+                    return (view?.passesBeside == true, inside)
+                }
+                return passes || !inside ? 0 : GTKPanel.widgetContains?(widget, x, y) ?? 0
             }
             let objectClass = theClass!.assumingMemoryBound(to: GObjectClass.self)
             GTKPanel.widgetDispose = g_type_class_peek(gtk_widget_get_type())!

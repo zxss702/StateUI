@@ -48,7 +48,7 @@ final class AppKitLayoutMotionTests: XCTestCase {
             var stack = HostPatch(id: .manual("stack"), type: .vStack)
             stack.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
             var label = HostPatch(id: .manual("caption"), type: .text)
-            label.properties = [.text: .string(text), .horizontalAlignment: .enumeration(Alignment.start.rawValue)]
+            label.properties = [.text: .string(text), .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue)]
             stack.children = .arranged([label])
             return stack
         }
@@ -126,7 +126,7 @@ final class AppKitLayoutMotionTests: XCTestCase {
         var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.properties[.width] = .number(50)
         box.properties[.height] = .number(50)
-        box.properties[.horizontalAlignment] = .enumeration(Alignment.end.rawValue)
+        box.properties[.horizontalAlignment] = .enumeration(AxisAlignment.end.rawValue)
         layout.children = .arranged([box])
 
         renderer.applyForTesting(layout)

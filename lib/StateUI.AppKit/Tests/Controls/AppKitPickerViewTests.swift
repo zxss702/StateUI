@@ -24,6 +24,7 @@ final class AppKitPickerViewTests: XCTestCase {
             tint: .systemOrange,
             alignment: .center,
             enabled: false,
+            style: .automatic,
             open: false,
             writeOpen: false)
 
@@ -49,6 +50,7 @@ final class AppKitPickerViewTests: XCTestCase {
             tint: .systemOrange,
             alignment: .natural,
             enabled: true,
+            style: .automatic,
             open: false,
             writeOpen: false)
 
@@ -73,6 +75,7 @@ final class AppKitPickerViewTests: XCTestCase {
             tint: nil,
             alignment: .natural,
             enabled: true,
+            style: .automatic,
             open: false,
             writeOpen: false)
         picker.chooseForTesting(index: 2)
@@ -94,6 +97,7 @@ final class AppKitPickerViewTests: XCTestCase {
             tint: nil,
             alignment: .natural,
             enabled: true,
+            style: .automatic,
             open: false,
             writeOpen: false)
 
@@ -107,6 +111,7 @@ final class AppKitPickerViewTests: XCTestCase {
             tint: nil,
             alignment: .natural,
             enabled: true,
+            style: .automatic,
             open: false,
             writeOpen: false)
 

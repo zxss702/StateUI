@@ -13,11 +13,12 @@ extension AppKitRegistrations {
     static func items(_ registry: Registry<NSView>) {
         registry.add(ListContract.self, madeByHost: AppKitItemsView.self) { list in
             list.applies([
-                ListContract.items, ListContract.itemsLayout, ListContract.selectionMode,
-                ListContract.selectedItems, ListContract.endReachedWithin,
+                ListContract.items, ListContract.itemsLayout, ListContract.listStyle,
+                ListContract.selectionMode, ListContract.selectedItems, ListContract.endReachedWithin,
             ]) { view, values in
                 view.apply(
                     layout: values[ListContract.itemsLayout] ?? .list(),
+                    style: values[ListContract.listStyle] ?? .automatic,
                     mode: values[ListContract.selectionMode] ?? .none)
             }
             list.raises(ListContract.selectionChanged)

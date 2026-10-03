@@ -20,6 +20,73 @@ extension FontElement {
     /// Whether the text grows with the system's text-size setting. On by
     /// default.
     public func fontAutoScalingEnabled(_ value: Bool) -> Modified { setValue(FontElementContract.fontAutoScalingEnabled, value) }
+
+    /// The font text is drawn in - the SwiftUI spelling:
+    ///
+    ///     Text("Chapter").font(.title)
+    ///     Text("Code").font(.system(size: 13, design: .monospaced))
+    ///
+    /// A named text style stands as `fontTextStyle`; an explicit size as
+    /// `fontSize`, a named family as `fontFamily` - the members the font
+    /// decomposes into, so a host reads it through the members it already
+    /// knows.
+    public func font(_ font: Font) -> Modified {
+        modified { node in
+            if let weight = font.weight {
+                node.write(FontElementContract.fontWeight, weight)
+            }
+            if let design = font.design {
+                node.write(FontElementContract.fontDesign, design)
+            }
+            switch font.basis {
+            case .textStyle(let style):
+                node.write(FontElementContract.fontTextStyle, style)
+            case .system(let size):
+                node.write(FontElementContract.fontSize, size)
+            case .custom(let family, let size):
+                node.write(FontElementContract.fontFamily, Name(family))
+                node.write(FontElementContract.fontSize, size)
+            }
+            if font.attributes != .none {
+                let worn = node.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none
+                node.write(FontElementContract.fontAttributes, worn.union(font.attributes))
+            }
+        }
+    }
+
+    /// The weight the text is drawn at - the SwiftUI spelling:
+    ///
+    ///     Text("Total").fontWeight(.semibold)
+    public func fontWeight(_ weight: Font.Weight) -> Modified {
+        setValue(FontElementContract.fontWeight, weight)
+    }
+
+    /// The letter shape of the system font - the SwiftUI spelling:
+    ///
+    ///     Text("Code").fontDesign(.monospaced)
+    public func fontDesign(_ design: FontDesign) -> Modified {
+        setValue(FontElementContract.fontDesign, design)
+    }
+
+    /// One of the platform's named text styles - what `.font(.title)` and the
+    /// rest write. The platform chooses its size and follows the user's
+    /// text-size setting.
+    ///
+    ///     Text("Caption").fontTextStyle(.caption)
+    public func fontTextStyle(_ style: FontTextStyle) -> Modified {
+        setValue(FontElementContract.fontTextStyle, style)
+    }
+
+    /// Bold text - the SwiftUI spelling of `.fontAttributes(.bold)`, added to
+    /// whatever attributes the text already wears.
+    public func bold() -> Modified {
+        fontAttributes((node.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none).union(.bold))
+    }
+
+    /// Italic text - `.fontAttributes(.italic)` added to what is worn.
+    public func italic() -> Modified {
+        fontAttributes((node.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none).union(.italic))
+    }
 }
 
 extension FontElement where Self: VisualElement {
@@ -39,5 +106,23 @@ extension FontElement where Self: VisualElement {
     /// new value, and no view is rebuilt for it.
     public func fontSize(_ state: Binding<Double>) -> Modified {
         journey(FontElementContract.fontSize, by: state)
+    }
+
+    /// `fontTextStyle` from a state, `$x`: the host sets each new value as it
+    /// stands, and no view is rebuilt for it.
+    public func fontTextStyle(_ state: Binding<FontTextStyle>) -> Modified {
+        plain(FontElementContract.fontTextStyle, by: state)
+    }
+
+    /// `fontWeight` from a state, `$x`: the host sets each new value as it
+    /// stands, and no view is rebuilt for it.
+    public func fontWeight(_ state: Binding<Font.Weight>) -> Modified {
+        plain(FontElementContract.fontWeight, by: state)
+    }
+
+    /// `fontDesign` from a state, `$x`: the host sets each new value as it
+    /// stands, and no view is rebuilt for it.
+    public func fontDesign(_ state: Binding<FontDesign>) -> Modified {
+        plain(FontElementContract.fontDesign, by: state)
     }
 }

@@ -61,6 +61,25 @@ extern "C" StateUIObjectRef stateui_winui_field_make(int64_t view) {
     }
 }
 
+extern "C" void stateui_winui_field_set_style(StateUIObjectRef handle, int kind) {
+    try {
+        auto box = boxOf(handle);
+        // The kind is logical: plain takes the chrome away, square is the same
+        // box unrounded, and everything else is the platform's own field.
+        if (kind == 1) {
+            box.BorderThickness({0, 0, 0, 0});
+            box.Background(xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent()));
+        } else {
+            box.ClearValue(controls::Control::BorderThicknessProperty());
+            box.ClearValue(controls::Control::BackgroundProperty());
+        }
+        if (kind == 3) box.CornerRadius({0, 0, 0, 0});
+        else box.ClearValue(controls::Control::CornerRadiusProperty());
+    } catch (...) {
+        report("styling a field");
+    }
+}
+
 extern "C" StateUIObjectRef stateui_winui_editor_make(int64_t view) {
     try {
         controls::TextBox editor;

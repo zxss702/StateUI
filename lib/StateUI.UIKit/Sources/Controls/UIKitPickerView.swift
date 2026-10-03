@@ -51,6 +51,22 @@ final class UIKitPickerView: UIButton {
         showCaption()
     }
 
+    /// How the picker presents: `.menu` and `.automatic` the pop-up button,
+    /// `.inline` its bare caption-and-choices form; the kinds this button
+    /// cannot be stay automatic.
+    func setStyle(_ style: PickerStyleKind) {
+        guard var configuration else { return }
+        switch style {
+        case .automatic, .menu:
+            configuration.indicator = .popup
+        case .inline:
+            configuration.indicator = .none
+        case .radioGroup, .segmented, .wheel:
+            configuration.indicator = .popup
+        }
+        self.configuration = configuration
+    }
+
     /// The user chose the choice at `place` in the menu.
     func userChose(_ place: Int) {
         guard written.choices.indices.contains(place) else { return }

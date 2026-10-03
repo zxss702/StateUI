@@ -40,6 +40,10 @@ final class AppKitModalWindowController: NSWindowController, NSWindowDelegate {
         nil
     }
 
+    /// Whether the user may take the sheet away; `false` where the page says
+    /// `interactiveDismissDisabled`.
+    private var allowsUserDismissal = true
+
     func synchronize(_ node: AppKitElement) {
         element = node.element
         guard let window else { return }
@@ -49,7 +53,31 @@ final class AppKitModalWindowController: NSWindowController, NSWindowDelegate {
             content.autoresizingMask = [.width, .height]
             window.contentView = content
         }
-        window.title = node.element.visiblePage?.value(.title)?.string ?? "StateUI"
+        let page = node.element.visiblePage
+        window.title = page?.value(.title)?.string ?? "StateUI"
+        allowsUserDismissal = !(page?.value(.interactiveDismissDisabled)?.bool ?? false)
+        window.standardWindowButton(.closeButton)?.isEnabled = allowsUserDismissal
+        sizeForDetents(of: page, window)
+    }
+
+    /// A macOS sheet has no detents: the first one asked for becomes the
+    /// sheet's height, measured against the parent.
+    private func sizeForDetents(of page: MountedElement?, _ window: NSWindow) {
+        guard let detents = page?.value(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
+              let first = detents.first,
+              let parent = window.sheetParent ?? window.parent ?? stateUIOwner?.window
+        else { return }
+
+        let room = parent.frame.height
+        let height: CGFloat? = switch first {
+        case .medium: room * 0.5
+        case .large: nil
+        case .fraction(let part): room * CGFloat(part)
+        case .height(let points): CGFloat(points)
+        }
+        guard let height else { return }
+
+        window.setContentSize(NSSize(width: window.contentLayoutRect.width, height: height))
     }
 
     func present(over parent: NSWindow, actuallyPresent: Bool) {
@@ -66,6 +94,7 @@ final class AppKitModalWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard allowsUserDismissal else { return false }
         stateUIOwner?.userDismissed(self)
         return false
     }

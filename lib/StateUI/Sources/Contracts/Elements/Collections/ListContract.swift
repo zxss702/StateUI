@@ -49,13 +49,17 @@ public enum ListContract: ElementContract {
     /// needs built.
     public static let realizedChanged = ElementEvent<Self, [String]>("realizedChanged", layer: .structure)
 
+    /// How the rows present - `.listStyle`'s value, the platform's own drawing
+    /// of the kind.
+    public static let listStyle = ElementProperty<Self, ListStyleKind>("listStyle", layer: .native)
+
     /// Scrolls until the item of an identity stands where the anchor says, as
     /// the platform scrolls.
     public static let scrollTo = ElementAct<Self, (String, ScrollAnchor), Void>("scrollTo")
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        items, itemsLayout, selectionMode, selectedItems, selectionChanged, itemActivated, endReachedWithin,
-        endReached, realizedChanged, scrollTo,
+        items, itemsLayout, listStyle, selectionMode, selectedItems, selectionChanged, itemActivated,
+        endReachedWithin, endReached, realizedChanged, scrollTo,
     ]
 }

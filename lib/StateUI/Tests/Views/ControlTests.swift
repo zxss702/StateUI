@@ -103,7 +103,11 @@ final class ControlTests: XCTestCase {
                             .background(.whiteSmoke)
                             .fontSize(13)
                             .fontFamily("Menlo")
+                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
                             .fontAttributes(.bold)
+                            .fontWeight(.medium)
+                            .fontDesign(.serif)
+                            .fontTextStyle(.caption)
                             .fontAutoScalingEnabled(false)
                             .characterSpacing(0.5)
                             .lineHeight(1.2)
@@ -112,7 +116,7 @@ final class ControlTests: XCTestCase {
                         TextSpan("counter").foregroundStyle(.steelBlue)
                     })
         let case1 =             ControlCase("Button", source: "Button.swift",
-                Button("Increment")
+                Button("Increment", role: .destructive)
                     .stroke(.gray)
                     .strokeWidth(1)
                     .shape(.roundedRectangle(8))
@@ -120,9 +124,13 @@ final class ControlTests: XCTestCase {
                     .icon("tab_list.png")
                     .iconPosition(.leading)
                     .iconSpacing(8)
+                    .isOn(true)
+                    .onToggled { _ in }
                     .onClicked {}
                     .onPressed {}
-                    .onReleased {})
+                    .onReleased {}
+                    .keyboardShortcut(.return)
+                    .buttonStyle(.borderedProminent))
         let case2 =             ControlCase("IconButton", source: "Button.swift",
                 Button(icon: "tab_list.png")
                     .aspect(.fit)
@@ -133,7 +141,8 @@ final class ControlTests: XCTestCase {
                     .submitLabel(.done)
                     .showsClearButton(true)
                     .onTextChanged { _ in }
-                    .onSubmitted {})
+                    .onSubmitted {}
+                    .textFieldStyle(.roundedBorder))
         let case4 =             ControlCase("TextEditor", source: "TextEditor.swift",
                 TextEditor("Notes")
                     .growsWithText(true)
@@ -150,7 +159,8 @@ final class ControlTests: XCTestCase {
                     .isOpen(false)
                     .onSelectedIndexChanged { _ in }
                     .onOpened {}
-                    .onClosed {})
+                    .onClosed {}
+                    .pickerStyle(.automatic))
         let case7 =             ControlCase("DatePicker", source: "DatePicker.swift",
                 DatePicker(CalendarDate(year: 2026, month: 8, day: 2))
                     .date(CalendarDate(year: 2026, month: 8, day: 9))
@@ -251,23 +261,19 @@ final class ControlTests: XCTestCase {
                 .rowSpacing(12)
                 .columnSpacing(8))
         let case21 =             ControlCase("VStack", source: "StackLayouts.swift",
-                VStack {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("One")
-                }
-                .spacing(12))
+                })
         let case22 =             ControlCase("HStack", source: "StackLayouts.swift",
-                HStack {
+                HStack(alignment: .top, spacing: 6) {
                     Text("One")
-                }
-                .spacing(6))
+                })
         let case23 =             ControlCase("ZStack", source: "ZStack.swift",
-                ZStack {
+                ZStack(alignment: .bottomTrailing) {
                     ColorPicker(.cornflowerBlue)
                         .area(.proportional(0, 0, 1, 0.5))
 
                     Text("Bottom right")
-                        .horizontalAlignment(.end)
-                        .verticalAlignment(.end)
                 }
                 .stroke(.lightGray)
                 .strokeWidth(1)
@@ -294,6 +300,7 @@ final class ControlTests: XCTestCase {
                     .selection(chosen.projectedValue)
                     .onItemActivated { _ in }
                     .onEndReached(within: 5) {}
+                    .listStyle(.sidebar)
                     .node.built)
         // Both halves of a map: the control, and the pins on it. A Pin is
         // not a control of its own - it is a marker on the map - so this
@@ -506,6 +513,8 @@ final class ControlTests: XCTestCase {
 
                         .automationExcludedWithChildren(false)
 
+                        .help("The shared tier")
+
                         .gridRow(1)
 
                         .gridColumn(2)
@@ -570,6 +579,7 @@ final class ControlTests: XCTestCase {
                 .ignoresSafeArea(.none, .keyboard, .container, .all)
                 .clipsContent(true)
                 .letsInputThrough(true)
+                .hitShape(.capsule)
                 .style("Card")
                 .contentPadding(24, 16, 24, 16)
                 .padding(4, 8, 4, 8)
@@ -599,6 +609,8 @@ final class ControlTests: XCTestCase {
                 .offset(y: 20)
                 .pivotX(0.25)
                 .pivotY(0.75)
+                .flex(0)
+                .tag("shared")
                 .zIndex(3)
                 // Every gesture StateUI has, on one view - which is legal, and the
                 // only way to check that each recognizer is asked for on its
@@ -778,8 +790,19 @@ final class ControlTests: XCTestCase {
             "minimumDate", "strokeDashPattern", "points", "options", "columns",
             "rows", "shape", "renderTransform", "transformEffect", "animation", "id",
             "assign", "area",
+            // Spellings over a flag set, whose driven half is the set itself.
+            "underline", "strikethrough",
+            // A compound over several members - no one member is its twin.
+            "font",
+            // Composed over the wrapping they write: a task, a clip, a fit,
+            // a truncation spelling or a colour's own.
+            "clipShape", "fixedSize", "task", "clipped", "truncationMode", "contentShape",
+            "hitShape",
+            // Style objects over the kind member they write - the driven form
+            // takes the kind, as `buttonStyle(Binding<ButtonStyleKind>)`.
+            "buttonStyle", "textFieldStyle", "pickerStyle", "listStyle",
             // An environment object, not a host property.
-            "toggleStyle",
+            "toggleStyle", "labelStyle",
             // Tiers no view wears.
             "barBackgroundColor", "barForegroundColor", "isScrollEnabled", "isZoomEnabled",
             "isTrafficEnabled", "showsUserLocation", "isDestructive", "title", "subtitle",

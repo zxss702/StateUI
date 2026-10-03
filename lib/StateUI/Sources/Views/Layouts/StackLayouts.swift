@@ -31,9 +31,43 @@ public struct VStack: StackBase {
 
     /// A column of whatever the closure describes, in the order written.
     /// The closure is kept and run when the differ describes the stack.
+    ///
+    /// Children stand by the host's default - filling the column's width -
+    /// the way `ScrollView` and `List` keep their greed. Where children
+    /// should stand narrower, name it: `VStack(alignment: .leading)`.
     public init(@ViewBuilder content: @escaping () -> any View) {
-        node = Node(contract: VStackContract.self)
+        self.init()
         node.producer = { content().node.asChildren }
+    }
+
+    /// A column whose children stand at `alignment` across its width - a
+    /// child that names its own `horizontalAlignment` keeps it.
+    ///
+    ///     VStack(alignment: .leading, spacing: 8) {
+    ///         Text("Title")
+    ///         Text("Body")
+    ///     }
+    public init(
+        alignment: HorizontalAlignment,
+        spacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(content: content)
+        if let spacing { node.write(StackBaseContract.spacing, spacing) }
+        let axis = alignment.axis
+        node.producer = {
+            var made = content().node.asChildren
+            made.alignChildren(horizontal: axis)
+            return made
+        }
+    }
+
+    /// The same, with the stack's own spacing.
+    public init(
+        alignment: HorizontalAlignment,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(alignment: alignment, spacing: nil, content: content)
     }
 }
 
@@ -58,8 +92,60 @@ public struct HStack: StackBase {
 
     /// A row of whatever the closure describes, in the order written.
     /// The closure is kept and run when the differ describes the stack.
+    ///
+    /// Children stand by the host's default - filling the row's height - the
+    /// way `ScrollView` and `List` keep their greed. Where children should
+    /// stand narrower, name it: `HStack(alignment: .top)`.
     public init(@ViewBuilder content: @escaping () -> any View) {
-        node = Node(contract: HStackContract.self)
+        self.init()
         node.producer = { content().node.asChildren }
+    }
+
+    /// A row whose children stand at `alignment` across its height - a child
+    /// that names its own `verticalAlignment` keeps it.
+    ///
+    ///     HStack(alignment: .top, spacing: 12) {
+    ///         Image("logo.png")
+    ///         Text("Title")
+    ///     }
+    public init(
+        alignment: VerticalAlignment,
+        spacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(content: content)
+        if let spacing { node.write(StackBaseContract.spacing, spacing) }
+        let axis = alignment.axis
+        node.producer = {
+            var made = content().node.asChildren
+            made.alignChildren(vertical: axis)
+            return made
+        }
+    }
+
+    /// The same, with the stack's own spacing.
+    public init(
+        alignment: VerticalAlignment,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(alignment: alignment, spacing: nil, content: content)
+    }
+}
+
+extension [Node] {
+    /// A stack's `alignment:` handed to each child that did not name its own.
+    /// Baselines are a per-child choice; a stack-level `.center` and friends
+    /// are what this writes.
+    mutating func alignChildren(horizontal axis: AxisAlignment) {
+        for index in indices where self[index].props[.horizontalAlignment] == nil {
+            self[index].props[.horizontalAlignment] = axis.propValue
+        }
+    }
+
+    /// The same, down the other axis.
+    mutating func alignChildren(vertical axis: AxisAlignment) {
+        for index in indices where self[index].props[.verticalAlignment] == nil {
+            self[index].props[.verticalAlignment] = axis.propValue
+        }
     }
 }

@@ -17,11 +17,13 @@ extension WinUIRegistrations {
             picker.onClosed = { reports.raise(PickerContract.closed) }
             return picker
         }, members: { picker in
-            picker.applies([PickerContract.options, PickerContract.selectedIndex, PickerContract.title]) {
-                view, values in
+            picker.applies([
+                PickerContract.options, PickerContract.selectedIndex, PickerContract.title, PickerContract.pickerStyle,
+            ]) { view, values in
                 view.setChoices(
                     values[PickerContract.options] ?? [], chosen: values[PickerContract.selectedIndex] ?? -1,
                     writeChosen: values.changed(PickerContract.selectedIndex), title: values[PickerContract.title] ?? "")
+                view.setStyle(values[PickerContract.pickerStyle] ?? .automatic)
             }
             picker.property(PickerContract.isOpen) { view, open in view.setOpen(open ?? false) }
             picker.applies([

@@ -576,12 +576,12 @@ final class CarriedStateTests: XCTestCase {
         let fade = State(wrappedValue: 1.0)
         let renders = Renders()
 
-        renders.render(Text("x").animation(.spring(response: 450, damping: 0.7))
+        renders.render(Text("x").animation(.spring(milliseconds: 450, damping: 0.7))
             .opacity(fade.projectedValue).id("one").node)
 
         XCTAssertEqual(
             standing(fade.number, as: JourneyLanes<Double>.self)?.animation,
-            .spring(response: 450, damping: 0.7))
+            .spring(milliseconds: 450, damping: 0.7))
     }
 
     /// And the IMAGE goes on saying what the author wrote. `.inherited` is a
@@ -619,7 +619,7 @@ final class CarriedStateTests: XCTestCase {
         let tint = State(wrappedValue: Color("#102030"))
         let renders = Renders()
 
-        renders.render(Text("x").animation(.none).animation(.eased(640, .cubicIn), .colour)
+        renders.render(Text("x").animation(nil).animation(.eased(640, .cubicIn), .colour)
             .background(tint.projectedValue).id("one").node)
 
         XCTAssertEqual(

@@ -17,6 +17,17 @@ final class AndroidButtonView: AndroidTextView {
     /// What the button does as the finger lets go, whether or not it clicked.
     var onReleased: (() -> Void)?
 
+    /// What a staying-pressed button reports when a tap flips it - `isOn`
+    /// worn on the element at all makes it one. The kept state is the view's
+    /// `selected` state, which a theme's drawables answer.
+    var onToggled: ((Bool) -> Void)?
+
+    /// Whether a tap keeps its pressed look - `isOn` worn at all.
+    private var toggleable = false
+
+    /// Whether the press keeps, read back when a click flips it.
+    private var on = false
+
     /// What the button draws itself with: a fill, an outline and its corners, in points.
     private var look = Look()
 
@@ -46,10 +57,22 @@ final class AndroidButtonView: AndroidTextView {
         Java.call(reference, JavaAPI.setMinimumHeight, .int(height))
     }
 
+    /// The staying-pressed look, or none: `nil` for a button that only
+    /// flashes under the touch.
+    func setOn(_ on: Bool?) {
+        toggleable = on != nil
+        self.on = on ?? false
+        Java.call(reference, JavaAPI.setSelected, .bool(self.on))
+    }
+
     /// A click is the button's own event, and a tap as any view's.
     override func clicked() {
         onClicked?()
         super.clicked()
+        guard toggleable else { return }
+        on.toggle()
+        Java.call(reference, JavaAPI.setSelected, .bool(on))
+        onToggled?(on)
     }
 
     override func held(_ holding: Bool) {
@@ -57,6 +80,18 @@ final class AndroidButtonView: AndroidTextView {
     }
 
     // MARK: - Its look
+
+    /// The logical style: plain and borderless draw nothing under the ripple,
+    /// and the rest the color scheme's own button look.
+    func setStyle(_ style: ButtonStyleKind?) {
+        switch style ?? .automatic {
+        case .plain, .borderless, .link:
+            look.fill = Color.transparent.propValue
+            drawLook()
+        default:
+            break
+        }
+    }
 
     /// The button's fill: its look is drawn again with it.
     override func setBackground(_ value: HostValue?) {

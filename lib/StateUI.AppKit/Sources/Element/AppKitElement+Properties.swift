@@ -92,6 +92,7 @@ extension AppKitElement {
         }
 
         applyVisibility()
+        view.toolTip = string(.hint)
         if let scroll = view as? AppKitScrollView {
             scroll.boxBackground = color(.background)
         } else if !(view is AppKitTravellingLayout) && !(view is AppKitColorBoxView) {
@@ -121,7 +122,10 @@ extension AppKitElement {
                 string: button.title,
                 attributes: [.font: buttonFont, .foregroundColor: foreground])
 
-            button.image = string(.icon).flatMap { image(named: $0) }
+            button.image = value(.icon).flatMap { ImageSource(propValue: $0) }.flatMap { source in
+                source.symbol.flatMap { NSImage(systemSymbolName: $0, accessibilityDescription: nil) }
+                    ?? (source.isEmpty ? nil : image(named: source.file))
+            }
             button.imagePosition = button.image == nil
                 ? .noImage
                 : (button.title.isEmpty ? .imageOnly : .imageLeading)
@@ -257,7 +261,8 @@ extension AppKitElement {
 
     func font(fallback: NSFont) -> NSFont {
         let look = element.textLook
-        return appKitFont(family: look.family, size: look.size, attributes: look.attributes, fallback: fallback)
+        return appKitFont(family: look.family, size: look.size, attributes: look.attributes,
+            textStyle: look.textStyle, weight: look.weight, design: look.design, fallback: fallback)
     }
 
     /// A label's words: its spans as runs over the label's own look (`MountedElement.textRuns`), else its own words
@@ -272,7 +277,9 @@ extension AppKitElement {
         for run in runs {
             let runLook = run.look.over(look)
             let font = appKitFont(
-                family: runLook.family, size: runLook.size, attributes: runLook.attributes, fallback: fallbackFont)
+                family: runLook.family, size: runLook.size, attributes: runLook.attributes,
+                textStyle: runLook.textStyle, weight: runLook.weight, design: runLook.design,
+                fallback: fallbackFont)
             result.append(NSAttributedString(
                 string: run.text, attributes: appKitAttributes(runLook, font: font, fallbackColor: .labelColor)))
         }

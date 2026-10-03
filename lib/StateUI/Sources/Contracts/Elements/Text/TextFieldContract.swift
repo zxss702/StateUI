@@ -28,6 +28,13 @@ public enum TextFieldContract: ElementContract {
     /// The return key was pressed.
     public static let submitted = ElementEvent<Self, Void>("submitted", layer: .native)
 
+    /// The look `.textFieldStyle` asks for - the platform's own box of the
+    /// kind, or none.
+    public static let textFieldStyle = ElementProperty<Self, TextFieldStyleKind>(
+        "textFieldStyle", layer: .native)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [isPassword, submitLabel, showsClearButton, submitted]
+    public static let members: [any ContractMember] = [
+        isPassword, submitLabel, showsClearButton, submitted, textFieldStyle,
+    ]
 }

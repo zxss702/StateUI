@@ -13,6 +13,7 @@ extension GTKRegistrations {
             stack.applies(boxMembers) { view, values in applyBox(view, values) }
             stack.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
             stack.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            stack.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(HStackContract.self, create: { _ in GTKStackView(axis: .horizontal) }) { stack in
@@ -20,6 +21,7 @@ extension GTKRegistrations {
             stack.applies(boxMembers) { view, values in applyBox(view, values) }
             stack.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
             stack.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            stack.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(GridContract.self, create: { _ in GTKGridView() }) { grid in
@@ -37,6 +39,7 @@ extension GTKRegistrations {
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
             grid.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(ZStackContract.self, create: { _ in GTKZStackView() }) { layout in
@@ -44,6 +47,7 @@ extension GTKRegistrations {
             layout.applies(boxMembers) { view, values in applyBox(view, values) }
             layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
             layout.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            layout.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         // Where the user moves it is reported by the element, on the display's frames.

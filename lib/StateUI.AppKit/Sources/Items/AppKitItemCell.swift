@@ -92,11 +92,14 @@ final class AppKitItemCellView: NSView {
         if holding?.taking != true { resized?() }
     }
 
+    /// The corner rounding a chosen item draws with: the list's style's.
+    static var selectionRadius: Double = 6
+
     override func draw(_ dirtyRect: NSRect) {
         guard chosen else { return }
         (emphasized ? NSColor.selectedContentBackgroundColor : NSColor.unemphasizedSelectedContentBackgroundColor)
             .setFill()
-        NSBezierPath(roundedRect: bounds, xRadius: 6, yRadius: 6).fill()
+        NSBezierPath(roundedRect: bounds, xRadius: Self.selectionRadius, yRadius: Self.selectionRadius).fill()
     }
 }
 

@@ -60,6 +60,29 @@
                 s.settle { heard.values.count == 2 }
                 s.expect(heard.values, ["pressed", "released"])
             },
+            ConformanceCase("aStayingPressedButtonKeepsItsCheckAndReportsEachTurn", proves: [
+                Covered(ButtonContract.isOn), Covered(ButtonContract.toggled),
+            ]) { s in
+                let on = State(wrappedValue: false)
+                s.start {
+                    VStack {
+                        Toggle(isOn: on.projectedValue) { Text("Pin") }
+                            .toggleStyle(.button)
+                    }
+                }
+                let pin = try s.element(ofType: .button)
+
+                s.expect(try s.held(ButtonContract.isOn, on: pin), false)
+
+                try s.perform(.activate, on: pin)
+                s.settle { on.wrappedValue }
+                s.expect(on.wrappedValue, true, "the turn the user made reached the state")
+                s.expect(try s.held(ButtonContract.isOn, on: pin), true, "and the check it made kept")
+
+                try s.perform(.activate, on: pin)
+                s.settle { !on.wrappedValue }
+                s.expect(on.wrappedValue, false, "the turn back reaches it too")
+            },
             Aspects.holds(ButtonContract.icon, on: "Button", "test_dot.png", then: "test_wide.png",
                           with: [Write(TextElementContract.text, "Go")]),
             Aspects.holds(ButtonContract.iconPosition, on: "Button", .leading, then: .top, with: [

@@ -52,7 +52,8 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
         needsLayout = true
     }
 
-    /// The picture as its contract names it: a file this host resolves.
+    /// The picture as its contract names it: a file this host resolves, or a
+    /// symbol SF Symbols knows by name.
     ///
     /// A registration hands a view the values its members declare, and a file
     /// NAME is what an `ImageSource` crosses as - so resolving it belongs to
@@ -60,12 +61,18 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     /// given rather than found.
     ///
     /// - Parameters:
-    ///   - source: the picture's file, or none to show nothing.
+    ///   - source: the picture's file or symbol, or none to show nothing.
     ///   - aspect: how it fills the room it is given.
     ///   - animationPlaying: whether an animated picture runs.
     func apply(source: ImageSource?, aspect: ContentMode, animationPlaying: Bool) {
         apply(
-            image: source.flatMap { $0.isEmpty ? nil : picture?($0.file) },
+            image: source.flatMap { source in
+                if let symbol = source.symbol {
+                    return NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+                        ?? NSImage(systemSymbolName: "questionmark.square", accessibilityDescription: nil)
+                }
+                return source.isEmpty ? nil : picture?(source.file)
+            },
             aspect: aspect,
             animationPlaying: animationPlaying)
     }

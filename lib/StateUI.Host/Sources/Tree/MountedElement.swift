@@ -435,6 +435,7 @@
         if let sides = value(.padding)?.numbers, sides.count >= 4 {
             values.margin = insets(.padding)
         }
+        values.flex = stated(.flex)
         values.horizontal = value(.horizontalAlignment)?.enumeration ?? 3
         values.vertical = value(.verticalAlignment)?.enumeration ?? 3
         values.width = stated(.width)
@@ -586,7 +587,7 @@
     ]
 
     private static let enumerationProperties: Set<Prop> = [
-        .aspect, .layoutDirection, .fontAttributes,
+        .aspect, .layoutDirection, .fontAttributes, .fontTextStyle, .fontDesign,
         .horizontalAlignment, .horizontalScrollIndicators,
         .multilineTextAlignment, .textContentType,
         .lineBreak, .orientation, .submitLabel, .textDecorations, .textCase,

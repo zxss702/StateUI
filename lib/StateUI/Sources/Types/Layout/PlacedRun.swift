@@ -9,7 +9,7 @@
 ///
 /// What an engine writes once it has worked out a layout: one placement per
 /// view, in the order the views stand in, and the animation of this write. Write
-/// at once (`.none`, the default) while a finger moves the run, and animate
+/// at once (`nil`, the default) while a finger moves the run, and animate
 /// when the layout changes shape; a write during an animation bends it rather
 /// than restarting it.
 ///
@@ -18,7 +18,7 @@ public struct PlacedRun: StateValue {
     /// Where each view goes, in the order they stand in the layout.
     public var placements: [Placement]
 
-    /// How this answer animates: `.none` places the views at once,
+    /// How this answer animates: `nil` places the views at once,
     /// `.inherited` uses the layout's own `.animation`, and any other animation is
     /// used as written.
     public var animation: Animation
@@ -30,7 +30,7 @@ public struct PlacedRun: StateValue {
     /// - Parameters:
     ///   - placements: where each view goes, in the order they stand in.
     ///   - animation: how this answer animates there. At once, unless said.
-    public init(_ placements: [Placement] = [], animation: Animation = .none) {
+    public init(_ placements: [Placement] = [], animation: Animation? = nil) {
         let order = Placement.drawingOrder(of: placements)
 
         self.placements = placements.indices.map { index in
@@ -39,7 +39,7 @@ public struct PlacedRun: StateValue {
             return placement
         }
 
-        self.animation = animation
+        self.animation = animation ?? .none
     }
 
     /// Every placement taken as it is: a run read back holds ranks already.

@@ -410,6 +410,10 @@ final class PageTests: XCTestCase {
             }
             .title("Home")
             .icon("house.png")
+            .badge("3")
+            .presentationDetents([.medium, .height(220), .large])
+            .presentationDragIndicator(.hidden)
+            .interactiveDismissDisabled()
             .node
             .built
             .props

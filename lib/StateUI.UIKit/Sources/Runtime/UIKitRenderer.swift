@@ -123,7 +123,7 @@ final class UIKitRenderer {
     /// tells no move it made before the window stood in it.
     private func tellStandingPhases() {
         for (element, controller) in roster.windows where controller.toldPhase == nil {
-            switch controller.window?.window?.activationState {
+            switch controller.window?.windowScene?.activationState {
             case .foregroundActive?: window(element, movedTo: .active)
             case .background?: window(element, movedTo: .background)
             default: break
@@ -207,7 +207,7 @@ final class UIKitRenderer {
     /// home screen once the scene in front goes.
     /// Design: docs/design/platforms/uikit/runtime.md#scenes
     private func bringBack(insteadOf closing: UIKitWindowController, staying: [MountedElement]) {
-        guard let state = closing.window?.window?.activationState,
+        guard let state = closing.window?.windowScene?.activationState,
               state == .foregroundActive || state == .foregroundInactive,
               let back = runtime.lifecycle.activatedLast(among: staying) ?? staying.first,
               let session = roster.windows.first(where: { $0.0 === back })?.1.session

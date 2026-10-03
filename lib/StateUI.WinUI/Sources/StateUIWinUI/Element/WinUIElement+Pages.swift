@@ -24,7 +24,15 @@ extension WinUIElement {
         case .tabView:
             guard let tabs = view as? WinUITabbedView else { return }
             tabs.tabsShownByWindow = element.tabsStandInWindow
-            tabs.show(children.map { $0.value(.title)?.string ?? "" }, requested: value(.currentPage)?.number.map { Int($0) })
+            tabs.show(
+                children.map { child in
+                    // A badge stands by its tab's title in brackets, the way
+                    // the platform counts in tab labels.
+                    let title = child.value(.title)?.string ?? ""
+                    guard let badge = child.value(.badge)?.string, !badge.isEmpty else { return title }
+                    return title.isEmpty ? badge : "\(title) (\(badge))"
+                },
+                requested: value(.currentPage)?.number.map { Int($0) })
             tabs.onSelection = { [weak self] previous, selected in self?.tabChosen(from: previous, to: selected) }
         case .navigationSplitView:
             guard let split = view as? WinUISplitView else { return }

@@ -18,8 +18,13 @@ extension ContainerShape {
         case .roundedRectangle(let radius):
             let fitted = BoxArithmetic.fitted(radius, width: rect.width, height: rect.height)
             return NSBezierPath(roundedRect: rect, xRadius: fitted.width, yRadius: fitted.height)
+        case .capsule:
+            let half = min(rect.width, rect.height) / 2
+            return NSBezierPath(roundedRect: rect, xRadius: half, yRadius: half)
         case .ellipse:
             return NSBezierPath(ovalIn: rect)
+        case .circle:
+            return NSBezierPath(ovalIn: ContainerShape.square(in: rect))
         }
     }
 
@@ -33,11 +38,15 @@ extension ContainerShape {
         case .roundedRectangle(let radius):
             layer.cornerRadius = min(radius, min(bounds.width, bounds.height) / 2)
             layer.mask = nil
-        case .ellipse:
+        case .capsule:
+            layer.cornerRadius = min(bounds.width, bounds.height) / 2
+            layer.mask = nil
+        case .ellipse, .circle:
             layer.cornerRadius = 0
             let mask = layer.mask as? CAShapeLayer ?? CAShapeLayer()
             mask.frame = bounds
-            mask.path = CGPath(ellipseIn: bounds, transform: nil)
+            let oval = self == .ellipse ? bounds : ContainerShape.square(in: bounds)
+            mask.path = CGPath(ellipseIn: oval, transform: nil)
             layer.mask = mask
         }
     }
@@ -48,8 +57,18 @@ extension ContainerShape {
         layer.cornerRadius = switch self {
         case .rectangle: 0
         case .roundedRectangle(let radius): min(radius, min(bounds.width, bounds.height) / 2)
-        case .ellipse: min(bounds.width, bounds.height) / 2
+        case .ellipse, .capsule, .circle: min(bounds.width, bounds.height) / 2
         }
+    }
+
+    /// The square in the middle of `rect`, as wide as its shorter side.
+    private static func square(in rect: NSRect) -> NSRect {
+        let side = min(rect.width, rect.height)
+        return NSRect(
+            x: rect.minX + (rect.width - side) / 2,
+            y: rect.minY + (rect.height - side) / 2,
+            width: side,
+            height: side)
     }
 }
 

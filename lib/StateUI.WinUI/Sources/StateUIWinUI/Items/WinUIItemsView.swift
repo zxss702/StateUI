@@ -17,6 +17,7 @@ final class WinUIItemsView: WinUILayoutView {
     let list = WinUIItemsList()
 
     private var shape = ItemsLayout.list()
+    private var style = ListStyleKind.automatic
     private var choice: Choice?
 
     /// Every cell the list asked for: the relay keeps each container for the list's life, so each cell is the list's.
@@ -45,8 +46,14 @@ final class WinUIItemsView: WinUILayoutView {
 
     // MARK: - What the tree says
 
-    /// The entries, the layout, how many may be chosen and which are.
-    func apply(layout: ItemsLayout, mode: SelectionMode) {
+    /// The entries, the layout, how many may be chosen and which are. A
+    /// `.sidebar` list sits on the platform's muted layer, a `.plain` one on
+    /// no ground.
+    func apply(layout: ItemsLayout, style: ListStyleKind, mode: SelectionMode) {
+        if style != self.style {
+            self.style = style
+            stateui_winui_items_set_style(list.handle, style.rawValue)
+        }
         if let changes = cells.takeEntries() { writeEntries(changes) }
         if layout != shape {
             shape = layout
@@ -114,7 +121,14 @@ final class WinUIItemsView: WinUILayoutView {
     }
 
     override func arrange(in bounds: Rect) {
-        _ = list.measure(width: bounds.width, height: bounds.height)
+        // The list is measured again at the room it stands in once the pass ends: measuring an element while
+        // WinUI arranges marks it, and the marked element is measured and arranged again for ever - a cycle.
+        if list.placed?.width != bounds.width || list.placed?.height != bounds.height {
+            WinUIDoorbell.afterPass { [weak self] in
+                guard let self, let placed = list.placed else { return }
+                _ = list.measure(width: placed.width, height: placed.height)
+            }
+        }
         list.layout(bounds)
     }
 

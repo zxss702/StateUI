@@ -379,7 +379,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
                 placements = PlacedRun(
                     (0..<count).map { place($0, count, room, shape) },
                     // Following the hand, placements arrive; a shape change animates.
-                    animation: travels ? .inherited : .none)
+                    animation: travels ? .inherited : nil)
 
                 // The middle card is named as the run passes halfway: one render
                 // per card crossed, none per frame.
@@ -525,7 +525,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     private static var held: Int { 60 }
 
     /// How the press animates, down and back: short, as an answer to a finger.
-    private static var pressing: Animation { .eased(50, .cubicOut) }
+    private static var pressing: Animation { .easeOut(duration: 0.05) }
 
     /// How far a far card fades unless said: all of it, or a quarter where a
     /// shade does the rest.

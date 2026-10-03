@@ -5,18 +5,8 @@
 // Design: docs/design/types/animation.md#easing-curves
 
 /// The curve an animation follows; with a duration, it makes an eased animation.
-///
-///     @State private var fade = 1.0
-///     …
-///     VStack { … }.opacity($fade)
-///     …
-///     try await $fade.journey.move(to: 0.1, .eased(400, .cubicOut))
-///
-/// `In` curves start slowly, `Out` curves end slowly, and `InOut` curves do
-/// both: `.cubicOut` suits something arriving on screen, `.cubicIn` something
-/// leaving it.
-public enum Easing: Int32, Sendable {
-    /// A straight line: the same speed from beginning to end.
+@_spi(Host) public enum Easing: Int32, Sendable {
+    /// The same speed from beginning to end.
     case linear = 0
 
     /// Slow at the end, following a sine curve.
@@ -28,17 +18,17 @@ public enum Easing: Int32, Sendable {
     /// Slow at both ends, following a sine curve.
     case sineInOut = 3
 
-    /// Slow at the start, and more pronounced than `.sineIn`.
+    /// Slow at the start, more pronounced than `.sineIn`.
     case cubicIn = 4
 
-    /// Slow at the end, and more pronounced than `.sineOut`. The usual choice for
+    /// Slow at the end, more pronounced than `.sineOut`: the usual choice for
     /// something appearing.
     case cubicOut = 5
 
-    /// Slow at both ends, and more pronounced than `.sineInOut`.
+    /// Slow at both ends, more pronounced than `.sineInOut`.
     case cubicInOut = 6
 
-    /// Overshoots at the end and settles back, twice.
+    /// Overshoots at the end and settles back.
     case bounceOut = 7
 
     /// Bounces before it sets off.

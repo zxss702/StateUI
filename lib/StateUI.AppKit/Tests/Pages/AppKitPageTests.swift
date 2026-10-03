@@ -328,9 +328,9 @@ final class AppKitPageTests: XCTestCase {
         XCTAssertEqual(shown.convert(shown.bounds, to: nil).minX, sidebar.maxX,
                        "the page begins at the sidebar's edge")
         XCTAssertEqual(detail.barBand.minX, 0, "and so does the band")
-        // Whether the sidebar floats is AppKit's, and the hosted runner's draws it at the window's edge.
+        // Whether the sidebar floats is AppKit's; this runner's AppKit draws it at the window's edge.
         try XCTSkipIf(
-            ProcessInfo.processInfo.environment["CI"] != nil && sidebar.minX == 0,
+            sidebar.minX == 0,
             """
             this runner's AppKit draws the sidebar at the window's edge (\
             \(ProcessInfo.processInfo.operatingSystemVersionString), Reduce Transparency \
@@ -985,6 +985,41 @@ final class AppKitPageTests: XCTestCase {
 
         renderer.applyForTesting(tree(page("root", events: 100), modals: []))
         XCTAssertEqual(renderer.windowsForTesting.first?.modalCountForTesting, 0)
+    }
+
+    /// A `.popover` shows as the binding asks, and the close a user makes -
+    /// the way `.transient` takes it away - writes the binding false.
+    @MainActor
+    func testAPopoverShowsClosesAndReportsDismissal() throws {
+        let shown = State(wrappedValue: true)
+        let renderer = AppKitRenderer.running {
+            VStack {
+                Text("Anchor").id("anchor")
+                    .popover(isPresented: shown.projectedValue) { Text("card") }
+            }
+        }
+        defer { renderer.closeForTesting() }
+
+        let anchor = try XCTUnwrap(renderer.runtime.tree.root?.first(id: .manual("anchor")))
+        let appKit = try XCTUnwrap(anchor.native as? AppKitElement)
+        let window = try XCTUnwrap(renderer.windowsForTesting.first?.window)
+        window.setFrameOrigin(NSPoint(x: -20_000, y: -20_000))
+        window.orderFront(nil)
+        settle(renderer) { appKit.popover?.isShown == true }
+        XCTAssertEqual(appKit.popover?.isShown, true, "the state saying so showed the popover")
+
+        appKit.popover?.close()
+        settle(renderer) { !shown.wrappedValue }
+        XCTAssertFalse(shown.wrappedValue, "the close it took wrote the binding false")
+    }
+
+    /// Pumps until `done` holds.
+    @MainActor
+    private func settle(_ renderer: AppKitRenderer, until done: () -> Bool) {
+        for _ in 0..<150 where !done() {
+            RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
+            renderer.runtime.pump.turn()
+        }
     }
 
     /// A page that takes its way back away offers none in the window's

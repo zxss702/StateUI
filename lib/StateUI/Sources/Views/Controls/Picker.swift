@@ -58,6 +58,49 @@ public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmen
         node.write(PickerContract.options, items)
     }
 
+    /// A picker of tagged choices - the SwiftUI spelling:
+    ///
+    ///     Picker("Branch", selection: $branch) {
+    ///         ForEach(branches, id: \.self) { Text($0).tag($0) }
+    ///     }
+    ///
+    /// Each child's `.tag` names its choice, its `Text` the words it shows -
+    /// a child with no tag is named by its own words. The picker's
+    /// `selectedIndex` follows `selection`, and a choice the user makes is
+    /// written back into it. A selection naming no choice shows none.
+    ///
+    /// - Parameters:
+    ///   - title: what the field says while nothing is chosen.
+    ///   - selection: the chosen value, borrowed two-way.
+    ///   - content: the choices, tagged.
+    public init<Selection: Hashable & HostRepresentable, Content: View>(
+        _ title: String,
+        selection: Binding<Selection>,
+        @ViewBuilder content: () -> Content
+    ) {
+        var options: [String] = []
+        var tags: [PropValue] = []
+        let tagProp = Prop.tag, textProp = Prop.text
+
+        for child in content().node.asChildren {
+            let tag = child.props[tagProp] ?? child.props[textProp] ?? .nothing
+            tags.append(tag)
+            options.append(child.props[textProp]?.string ?? tag.string ?? tag.name ?? "")
+        }
+
+        self.init(options)
+        node.write(PickerContract.title, title)
+        node.write(
+            PickerContract.selectedIndex,
+            tags.firstIndex(of: selection.wrappedValue.propValue) ?? -1)
+
+        self = onSelectedIndexChanged { index in
+            guard tags.indices.contains(index),
+                  let value = Selection(propValue: tags[index]) else { return }
+            selection.wrappedValue = value
+        }
+    }
+
     // MARK: Properties
 
     // Design: docs/design/views/bindings.md#two-way-controls

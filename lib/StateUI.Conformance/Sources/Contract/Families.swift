@@ -51,6 +51,7 @@
         MenuSeparatorTests.self,
         ModalStackTests.self,
         NavigationStackTests.self,
+        PopoverTests.self,
         OverlayTests.self,
         PageTests.self,
         PinTests.self,

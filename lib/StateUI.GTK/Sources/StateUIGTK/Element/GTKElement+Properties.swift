@@ -59,6 +59,9 @@ extension GTKElement {
             case .opacity: view.setOpacity(value(.opacity)?.number ?? 1)
             case .isEnabled: view.setEnabled(value(.isEnabled)?.bool ?? true)
             case .isVisible: view.setShown(isShown)
+            case .hint:
+                value(.hint)?.string?.withCString { gtk_widget_set_tooltip_text(view.widget, $0) }
+                    ?? gtk_widget_set_tooltip_text(view.widget, nil)
             case .background: (view as? GTKLayoutView)?.setBackground(value(.background))
             case .contentPadding where type == .page:
                 (view as? GTKSingleChildView)?.padding = element.insets(.contentPadding)

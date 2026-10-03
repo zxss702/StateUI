@@ -40,10 +40,14 @@ final class CompositionTests: XCTestCase {
     /// The property named `node` is exempt: it is `VisualElement`'s
     /// requirement, not a caller's knob.
     func testAComposedViewTakesNoConfigurationInItsInitializer() throws {
+        // A value type that IS a view - `Color` - keeps its own initializers:
+        // `Color(light:dark:)` configures the colour, not the view.
+        let valueTypes: Set<String> = ["Color"]
+
         var checked = 0
         var offenders: [String] = []
 
-        for view in try composedViews() {
+        for view in try composedViews() where !valueTypes.contains(view.name) {
             checked += 1
 
             for property in view.storedPropertiesWithDefaults where property.name != "node" {

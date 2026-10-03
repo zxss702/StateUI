@@ -16,6 +16,15 @@
     /// The font's family.
     public var family: String?
 
+    /// One of the platform's named text styles, where the words take one.
+    public var textStyle: FontTextStyle?
+
+    /// The font's weight on the 100-900 scale.
+    public var weight: Double?
+
+    /// The letter shape of the system font.
+    public var design: FontDesign?
+
     /// The words' colour, as the tree gives it.
     public var color: HostValue?
 
@@ -46,6 +55,9 @@
         look.size = size ?? other.size
         look.attributes = attributes.isEmpty ? other.attributes : attributes
         look.family = family ?? other.family
+        look.textStyle = textStyle ?? other.textStyle
+        look.weight = weight ?? other.weight
+        look.design = design ?? other.design
         look.color = color ?? other.color
         look.background = background ?? other.background
         look.letterSpacing = letterSpacing != 0 ? letterSpacing : other.letterSpacing
@@ -78,6 +90,9 @@ extension MountedElement {
         look.size = number(.fontSize)
         look.attributes = value(.fontAttributes)?.enumeration.map { FontAttributes(rawValue: $0) } ?? .none
         look.family = value(.fontFamily)?.name
+        look.textStyle = value(.fontTextStyle)?.enumeration.flatMap(FontTextStyle.init(rawValue:))
+        look.weight = value(.fontWeight)?.number
+        look.design = value(.fontDesign)?.enumeration.flatMap(FontDesign.init(rawValue:))
         look.color = value(.foregroundStyle)
         look.letterSpacing = number(.characterSpacing) ?? 0
         look.lineHeight = number(.lineHeight)

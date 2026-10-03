@@ -27,28 +27,40 @@ final class WinUIImageView: WinUIView {
         super.init { _ in stateui_winui_image_make() }
     }
 
+    /// Whether the current content is a platform symbol rather than a file.
+    private var symbol = false
+
     /// Shows the picture `source` names, filling its room as `aspect` says. Its layout is told itself: WinUI hears
-    /// nothing from a picture that asks it for no room.
+    /// nothing from a picture that asks it for no room. A source naming a symbol shows the Segoe Fluent Icons
+    /// glyph the name maps to, or the question mark where the name is unknown.
     func apply(source: ImageSource?, aspect: ContentMode) {
+        symbol = source?.symbol != nil
         file = source?.file ?? ""
         self.aspect = aspect
         var size = [0.0, 0.0]
-        let files = PictureArithmetic.files(for: file)
-        found = WinUIStrings.withCStrings(files) { names in
-            stateui_winui_image_set(handle, names, Int32(files.count), aspect.rawValue, &size)
+        if let name = source?.symbol {
+            found = stateui_winui_image_set_symbol(handle, WinUISymbols.glyph(named: name), aspect.rawValue)
+            if !found { WinUIRenderer.log.error("no symbol \(name) the platform knows") }
+        } else {
+            let files = PictureArithmetic.files(for: file)
+            found = WinUIStrings.withCStrings(files) { names in
+                stateui_winui_image_set(handle, names, Int32(files.count), aspect.rawValue, &size)
+            }
+            if !found { WinUIRenderer.log.error("no picture \(file) among the application's pictures") }
         }
-        if !found { WinUIRenderer.log.error("no picture \(file) among the application's pictures") }
         declared = size[0] > 0 && size[1] > 0 ? LayoutSize(width: size[0], height: size[1]) : nil
         drawn = nil
         if let placed { draw(in: placed) }
         placingLayout?.invalidateMeasurements()
     }
 
-    /// The picture's own size, whatever the room offered: an SVG's declared, a bitmap's once read. WinUI is asked
-    /// for no room, so the picture is drawn in the place its layout gives it.
+    /// The picture's own size, whatever the room offered: an SVG's declared, a bitmap's once read - and a
+    /// symbol's nominal glyph box. WinUI is asked for no room, so the picture is drawn in the place its layout
+    /// gives it.
     /// Design: docs/design/platforms/winui/controls.md#pictures
     override func measure(width: Double?, height: Double?) -> LayoutSize {
         _ = super.measure(width: 0, height: 0)
+        if symbol { return LayoutSize(width: 16, height: 16) }
         if let declared { return declared }
         var size = [0.0, 0.0]
         stateui_winui_image_size(handle, &size)

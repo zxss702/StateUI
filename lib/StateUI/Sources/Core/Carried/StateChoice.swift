@@ -4,7 +4,7 @@
 /// A choice the host can be handed as a channel: an alignment, a keyboard, a line
 /// break, a set of flags. This library's own.
 ///
-///     @State private var side = Alignment.start
+///     @State private var side = AxisAlignment.start
 ///
 ///     Text("Where am I?").horizontalAlignment($side)
 ///

@@ -22,7 +22,7 @@ extension AppKitRegistrations {
             entry.onSubmitted = { reports.raise(TextFieldContract.submitted) }
             return entry
         }, members: { entry in
-            entry.applies(Self.fieldMembers + [TextFieldContract.isPassword]) { view, values in
+            entry.applies(Self.fieldMembers + [TextFieldContract.isPassword, TextFieldContract.textFieldStyle]) { view, values in
                 let words = Self.words(values)
                 view.textCase = values[TextElementContract.textCase]
 
@@ -47,6 +47,7 @@ extension AppKitRegistrations {
                     textPrediction: values[InputViewContract.isTextPredictionEnabled] ?? true,
                     cursorPosition: values[InputViewContract.cursorPosition],
                     selectionLength: values[InputViewContract.selectionLength],
+                    style: values[TextFieldContract.textFieldStyle] ?? .automatic,
                     writeSelection: Self.writesSelection(values))
             }
             entry.raises(InputViewContract.textChanged)
@@ -134,7 +135,7 @@ extension AppKitRegistrations {
         TextElementContract.text, TextElementContract.textCase, InputViewContract.placeholder,
         InputViewContract.placeholderColor,
         TextStyleElementContract.foregroundStyle, VisualElementContract.background,
-        FontElementContract.fontFamily, FontElementContract.fontSize, FontElementContract.fontAttributes,
+        FontElementContract.fontFamily, FontElementContract.fontSize, FontElementContract.fontAttributes, FontElementContract.fontTextStyle, FontElementContract.fontWeight, FontElementContract.fontDesign,
         TextAlignmentElementContract.multilineTextAlignment, VisualElementContract.isEnabled,
         InputViewContract.isReadOnly, InputViewContract.maximumLength,
         InputViewContract.isSpellCheckEnabled, InputViewContract.isTextPredictionEnabled,

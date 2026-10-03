@@ -41,6 +41,11 @@ final class WinUIPickerView: WinUIView {
         stateui_winui_picker_set_alignment(handle, alignment.rawValue)
     }
 
+    /// How the box presents: `.inline` chrome-less, the rest the platform's own.
+    func setStyle(_ style: PickerStyleKind) {
+        stateui_winui_picker_set_style(handle, style.rawValue)
+    }
+
     /// Opens or closes the list; neither is the user's, so neither is reported.
     func setOpen(_ open: Bool) {
         if showing.programAsks(open: open, shown: isOpen) { stateui_winui_picker_set_open(handle, open) }

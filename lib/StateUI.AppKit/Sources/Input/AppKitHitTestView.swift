@@ -14,6 +14,10 @@ class AppKitHitTestView: NSView {
     private var ignoresInput = false
     private var transparencyReachesChildren = true
 
+    /// The outline input on the view stays within - a `.contentShape`'s - or
+    /// none, where a point anywhere inside the bounds counts.
+    var hitShape: ContainerShape?
+
     /// What an accessibility press performs, while the element answers a tap.
     var pressAction: (() -> Void)?
 
@@ -39,6 +43,10 @@ class AppKitHitTestView: NSView {
     }
 
     override func hitTest(_ point: NSPoint) -> NSView? {
+        if let hitShape {
+            let local = convert(point, from: superview)
+            guard hitShape.path(in: bounds).contains(local) else { return nil }
+        }
         guard ignoresInput else { return hitPassingIgnored(point) }
         guard !transparencyReachesChildren else { return nil }
 

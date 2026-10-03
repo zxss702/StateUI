@@ -22,6 +22,7 @@ enum JavaAPI {
     static let getRight = Java.method(view, "getRight", "()I")
     static let getBottom = Java.method(view, "getBottom", "()I")
     static let setEnabled = Java.method(view, "setEnabled", "(Z)V")
+    static let setSelected = Java.method(view, "setSelected", "(Z)V")
     static let setBackgroundColor = Java.method(view, "setBackgroundColor", "(I)V")
     static let getBackground = Java.method(view, "getBackground", "()Landroid/graphics/drawable/Drawable;")
     static let setBackground = Java.method(view, "setBackground", "(Landroid/graphics/drawable/Drawable;)V")

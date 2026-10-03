@@ -23,7 +23,7 @@ final class UIKitImageView: UIImageView {
     }
 
     /// The picture and how it fills the room it stands in.
-    func apply(source: ImageSource?, aspect: ContentMode) {
+    func apply(source: ImageSource?, aspect: StateUI.ContentMode) {
         self.source = source
         contentMode = switch aspect {
         case .fit: .scaleAspectFit
@@ -38,6 +38,11 @@ final class UIKitImageView: UIImageView {
     private func showPicture() {
         guard let source else {
             image = nil
+            return
+        }
+        if let symbol = source.symbol {
+            image = UIImage(systemName: symbol) ?? UIImage(systemName: "questionmark.square")
+            invalidateIntrinsicContentSize()
             return
         }
         let dark = traitCollection.userInterfaceStyle == .dark

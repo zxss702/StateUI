@@ -12,6 +12,7 @@
     public static let members: [any ContractMember] = [
         TextElementContract.text, TextElementContract.textCase, FontElementContract.fontSize,
         FontElementContract.fontAttributes, FontElementContract.fontFamily, TextStyleElementContract.foregroundStyle,
+        FontElementContract.fontTextStyle, FontElementContract.fontWeight, FontElementContract.fontDesign,
         PaddingElementContract.contentPadding,
     ]
 
@@ -28,6 +29,8 @@
     public static func look<Realized>(_ values: ElementValues<Realized>) -> TextLook? {
         guard values.changed(FontElementContract.fontSize) || values.changed(FontElementContract.fontAttributes)
             || values.changed(FontElementContract.fontFamily) || values.changed(TextStyleElementContract.foregroundStyle)
+            || values.changed(FontElementContract.fontTextStyle) || values.changed(FontElementContract.fontWeight)
+            || values.changed(FontElementContract.fontDesign)
         else { return nil }
         return look(of: values)
     }
@@ -38,6 +41,9 @@
         look.size = values[FontElementContract.fontSize]
         look.attributes = values[FontElementContract.fontAttributes] ?? .none
         look.family = values[FontElementContract.fontFamily]?.text
+        look.textStyle = values[FontElementContract.fontTextStyle]
+        look.weight = values[FontElementContract.fontWeight]?.value
+        look.design = values[FontElementContract.fontDesign]
         look.color = values[TextStyleElementContract.foregroundStyle]?.propValue
         return look
     }

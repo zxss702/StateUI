@@ -21,6 +21,9 @@ extension AppKitRegistrations {
             button.onClicked = { reports.raise(ButtonContract.clicked) }
             button.onPressed = { reports.raise(ButtonContract.pressed) }
             button.onReleased = { reports.raise(ButtonContract.released) }
+            button.onToggled = { on in
+                reports.report(ButtonContract.isOn, on, as: ButtonContract.toggled)
+            }
             return button
         }, members: { button in
             button.applies([
@@ -31,7 +34,9 @@ extension AppKitRegistrations {
                 BorderElementContract.shape, BorderElementContract.stroke,
                 BorderElementContract.strokeWidth, VisualElementContract.isEnabled,
                 FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes,
+                FontElementContract.fontAttributes, FontElementContract.fontTextStyle, FontElementContract.fontWeight,
+                FontElementContract.fontDesign,
+                ButtonContract.buttonStyle, ButtonContract.isOn,
             ]) { view, values in
                 // Each value is read into a name of its own: twelve arguments
                 // of `flatMap` and `??` in one call is more than the type
@@ -54,6 +59,7 @@ extension AppKitRegistrations {
                     stroke: stroke, width: values[BorderElementContract.strokeWidth])
                 let strokeColor = strokeWidth > 0 ? AppKitBrush(stroke).lineColor : nil
                 let breaking = NSLineBreakMode(values[ButtonContract.lineBreak] ?? .wordWrap)
+                let style: ButtonStyleKind = values[ButtonContract.buttonStyle] ?? .automatic
 
                 view.apply(
                     text: caption,
@@ -67,12 +73,56 @@ extension AppKitRegistrations {
                     strokeWidth: strokeWidth,
                     shape: BoxArithmetic.outline(values[BorderElementContract.shape]?.propValue),
                     lineBreakMode: breaking,
+                    style: style,
                     enabled: values[VisualElementContract.isEnabled] ?? true)
+                // A button wearing `isOn` at all is a staying-pressed one.
+                let isOn: Bool? = values[ButtonContract.isOn]
+                view.apply(toggleable: isOn != nil, on: isOn ?? false)
+            }
+            button.property(ButtonContract.shortcut) { view, shortcut in
+                view.keyEquivalent = shortcut.map(Self.keyEquivalent) ?? ""
+                view.keyEquivalentModifierMask = shortcut.map(Self.modifierFlags) ?? []
             }
             button.raises(ButtonContract.clicked)
             button.raises(ButtonContract.pressed)
             button.raises(ButtonContract.released)
+            button.raises(ButtonContract.toggled)
         })
+    }
+
+    /// The key equivalent a named key stands for: its character, or the
+    /// unicode the key is known by where a character cannot write it.
+    private static func keyEquivalent(_ shortcut: KeyboardShortcut) -> String {
+        switch shortcut.key.name {
+        case "return": return "\r"
+        case "escape": return "\u{1b}"
+        case "tab": return "\t"
+        case "space": return " "
+        case "delete": return "\u{8}"
+        case "deleteforward": return "\u{7f}"
+        case "up": return "\u{f700}"
+        case "down": return "\u{f701}"
+        case "left": return "\u{f702}"
+        case "right": return "\u{f703}"
+        case "home": return "\u{f729}"
+        case "end": return "\u{f72b}"
+        case "pageup": return "\u{f72c}"
+        case "pagedown": return "\u{f72d}"
+        case let name where name.hasPrefix("f"):
+            return Int(name.dropFirst()).flatMap { UnicodeScalar(0xf704 + $0 - 1) }.map(String.init)
+                ?? shortcut.key.name
+        default: return shortcut.key.name
+        }
+    }
+
+    /// The modifier mask the shortcut's bits stand for.
+    private static func modifierFlags(_ shortcut: KeyboardShortcut) -> NSEvent.ModifierFlags {
+        var flags: NSEvent.ModifierFlags = []
+        if shortcut.modifiers.contains(.command) { flags.insert(.command) }
+        if shortcut.modifiers.contains(.shift) { flags.insert(.shift) }
+        if shortcut.modifiers.contains(.option) { flags.insert(.option) }
+        if shortcut.modifiers.contains(.control) { flags.insert(.control) }
+        return flags
     }
 
     /// Where an icon sits beside its caption.

@@ -248,3 +248,25 @@ extension Binding: BorrowedState {
 /// writes through a binding from the pool.
 /// Design: docs/design/core/state.md#sendable-promises
 extension Binding: @unchecked Sendable {}
+
+extension Binding {
+    /// A copy of this binding whose writes run under `transaction`.
+    ///
+    ///     Toggle(isOn: $showDetails.transaction(.init(animation: .snappy)))
+    public func transaction(_ transaction: Transaction) -> Binding<Value> {
+        Binding(
+            read: read,
+            write: { value in withTransaction(transaction) { write(value) } },
+            lender: lender,
+            lent: lent)
+    }
+
+    /// A copy of this binding whose writes animate under `animation`.
+    ///
+    ///     Toggle(isOn: $showDetails.animation(.snappy))
+    public func animation(_ animation: Animation? = .default) -> Binding<Value> {
+        var transaction = Transaction()
+        transaction.animation = animation
+        return self.transaction(transaction)
+    }
+}

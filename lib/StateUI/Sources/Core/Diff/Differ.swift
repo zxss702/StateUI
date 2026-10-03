@@ -29,6 +29,10 @@ final class Differ {
     /// How a changed value animates where its element says nothing else.
     var animation: Animation = .standard
 
+    /// The transaction the writes this render answers ran under - what
+    /// `withAnimation` and `withTransaction` left for it; nil by default.
+    var transaction: Transaction?
+
     /// Whether the sheet moved at the top of this walk, which carries no view.
     /// Design: docs/design/core/identity-and-diffing.md#what-a-carry-cannot-see
     private(set) var stylesMoved = false

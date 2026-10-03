@@ -16,6 +16,7 @@ final class UIKitItemsView: UIView, UICollectionViewDelegate {
     private(set) var collection: UICollectionView
     private var source: UICollectionViewDiffableDataSource<Int, String>!
     private var layout = ItemsLayout.list()
+    private var style = ListStyleKind.automatic
     private var mode = SelectionMode.none
 
     /// Whether the layout stands the list's own header and footer - which UIKit fixes as the layout is made.
@@ -56,8 +57,18 @@ final class UIKitItemsView: UIView, UICollectionViewDelegate {
 
     // MARK: - What the tree says
 
-    /// The entries, the layout, how many may be chosen and which are.
-    func apply(layout: ItemsLayout, mode: SelectionMode) {
+    /// The entries, the layout, how many may be chosen and which are. A
+    /// `.sidebar` list sits on the platform's muted ground, a `.plain` one on
+    /// none.
+    func apply(layout: ItemsLayout, style: ListStyleKind, mode: SelectionMode) {
+        if style != self.style {
+            self.style = style
+            switch style {
+            case .sidebar: collection.backgroundColor = .secondarySystemBackground
+            case .plain: collection.backgroundColor = .clear
+            case .automatic: collection.backgroundColor = nil
+            }
+        }
         let changes = cells.takeEntries()
         let framed = (header: cells.entries.header != nil, footer: cells.entries.footer != nil)
         if layout != self.layout || framed != self.framed {

@@ -284,4 +284,56 @@ extension Color {
 
     /// Olive, #808000.
     public static let olive = Color("#808000")
+
+    /// Mint, #00C7BE.
+    public static let mint = Color("#00C7BE")
+}
+
+extension Color {
+    /// The same colour at `opacity`: 0 is invisible, 1 keeps it whole, and a
+    /// value between scales the alpha. Outside that range the ends are taken.
+    ///
+    ///     .secondary.opacity(0.5)
+    public func opacity(_ opacity: Double) -> Color {
+        let opacity = min(1, max(0, opacity))
+        func scaled(_ rgba: Rgba) -> Rgba {
+            Rgba(
+                red: rgba.red, green: rgba.green, blue: rgba.blue,
+                alpha: UInt8((Double(rgba.alpha) * opacity).rounded()))
+        }
+        return Color(scaled(light), dark: dark.map(scaled))
+    }
+}
+
+extension Color {
+    /// The system's text and picture colours, each a pair answering for the
+    /// two color schemes - the platforms' named colours as their documented
+    /// channels.
+
+    /// The colour a principal label or picture draws in - `NSColor.labelColor`.
+    public static let primary = Color(light: .black, dark: .white)
+
+    /// The colour a label of second importance draws in - the platforms'
+    /// secondary label colour.
+    public static let secondary = Color(
+        light: Color(red: 60, green: 60, blue: 67, alpha: 153),
+        dark: Color(red: 235, green: 235, blue: 245, alpha: 153))
+
+    /// The colour a label of third importance draws in.
+    public static let tertiary = Color(
+        light: Color(red: 60, green: 60, blue: 67, alpha: 77),
+        dark: Color(red: 235, green: 235, blue: 245, alpha: 77))
+
+    /// The colour a label of least importance draws in.
+    public static let quaternary = Color(
+        light: Color(red: 60, green: 60, blue: 67, alpha: 46),
+        dark: Color(red: 235, green: 235, blue: 245, alpha: 41))
+
+    /// The colour the system marks its own accents with - the blue a control
+    /// takes where nothing was chosen.
+    public static let accentColor = Color(
+        light: Color("#007AFF"), dark: Color("#0A84FF"))
+
+    /// The system's plain background colour, where one is needed as a colour.
+    public static let background = Color(light: .white, dark: .black)
 }

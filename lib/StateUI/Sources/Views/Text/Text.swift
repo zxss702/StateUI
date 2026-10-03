@@ -11,6 +11,12 @@ extension TextProperties {
         setValue(TextContract.lineBreak, value)
     }
 
+    /// Where a too-long line is cut, the SwiftUI spelling of the truncating
+    /// `lineBreak`s.
+    public func truncationMode(_ mode: TruncationMode) -> Modified {
+        lineBreak(mode.lineBreak)
+    }
+
     /// How many lines to show before the text is cut - what the cut LOOKS like
     /// is `lineBreak`'s business. A count of -1 means no limit, which is
     /// the default.

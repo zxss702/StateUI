@@ -220,9 +220,19 @@ extension Node {
 
     /// The page: the session's properties, its content first - so a page
     /// gaining a title view does not move its content - then what hangs off it.
+    /// A `.navigationTitle` or `.badge` written on the content's root names the
+    /// page itself, where the session has not already.
     private static func page(around content: Node, session: PageSession) -> Node {
         var node = Node(contract: PageContract.self, children: [content] + session.slots)
         node.props = session.props
+        for member in [
+            PageElementContract.title.token, PageElementContract.badge.token,
+            PageElementContract.presentationDetents.token,
+            PageElementContract.presentationDragIndicator.token,
+            PageElementContract.interactiveDismissDisabled.token
+        ] where node.props[member] == nil {
+            node.props[member] = content.props[member]
+        }
 
         node.addHandler(PageContract.appearing.token) { session.phase = .appearing }
         node.addHandler(PageContract.disappearing.token) { session.phase = .disappearing }

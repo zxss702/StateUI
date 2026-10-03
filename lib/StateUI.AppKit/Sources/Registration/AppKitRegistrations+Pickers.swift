@@ -22,8 +22,10 @@ extension AppKitRegistrations {
         }, members: { picker in
             picker.applies([
                 PickerContract.options, PickerContract.selectedIndex, PickerContract.title,
-                PickerContract.isOpen, FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
+                PickerContract.isOpen, PickerContract.pickerStyle,
+                FontElementContract.fontFamily, FontElementContract.fontSize,
+                FontElementContract.fontAttributes, FontElementContract.fontTextStyle, FontElementContract.fontWeight,
+                FontElementContract.fontDesign, TextStyleElementContract.foregroundStyle,
                 TintElementContract.tint, TextAlignmentElementContract.multilineTextAlignment,
                 VisualElementContract.isEnabled,
             ]) { view, values in
@@ -36,6 +38,9 @@ extension AppKitRegistrations {
                         family: values[FontElementContract.fontFamily]?.text,
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
+                        textStyle: values[FontElementContract.fontTextStyle],
+                        weight: values[FontElementContract.fontWeight]?.value,
+                        design: values[FontElementContract.fontDesign],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
                     foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
@@ -43,6 +48,7 @@ extension AppKitRegistrations {
                     alignment: appKitTextAlignment(
                         values[TextAlignmentElementContract.multilineTextAlignment]?.rawValue),
                     enabled: values[VisualElementContract.isEnabled] ?? true,
+                    style: values[PickerContract.pickerStyle] ?? .automatic,
                     open: values[PickerContract.isOpen] ?? false,
                     writeOpen: values.changed(PickerContract.isOpen))
             }
@@ -63,7 +69,8 @@ extension AppKitRegistrations {
             picker.applies([
                 DatePickerContract.date, DatePickerContract.minimumDate, DatePickerContract.maximumDate,
                 FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
+                FontElementContract.fontAttributes, FontElementContract.fontTextStyle, FontElementContract.fontWeight,
+                FontElementContract.fontDesign, TextStyleElementContract.foregroundStyle,
                 VisualElementContract.isEnabled,
             ]) { view, values in
                 view.apply(
@@ -75,6 +82,9 @@ extension AppKitRegistrations {
                         family: values[FontElementContract.fontFamily]?.text,
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
+                        textStyle: values[FontElementContract.fontTextStyle],
+                        weight: values[FontElementContract.fontWeight]?.value,
+                        design: values[FontElementContract.fontDesign],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
                     foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,
@@ -94,7 +104,8 @@ extension AppKitRegistrations {
         }, members: { picker in
             picker.applies([
                 TimePickerContract.time, FontElementContract.fontFamily, FontElementContract.fontSize,
-                FontElementContract.fontAttributes, TextStyleElementContract.foregroundStyle,
+                FontElementContract.fontAttributes, FontElementContract.fontTextStyle, FontElementContract.fontWeight,
+                FontElementContract.fontDesign, TextStyleElementContract.foregroundStyle,
                 VisualElementContract.isEnabled,
             ]) { view, values in
                 view.apply(
@@ -106,6 +117,9 @@ extension AppKitRegistrations {
                         family: values[FontElementContract.fontFamily]?.text,
                         size: values[FontElementContract.fontSize],
                         attributes: values[FontElementContract.fontAttributes],
+                        textStyle: values[FontElementContract.fontTextStyle],
+                        weight: values[FontElementContract.fontWeight]?.value,
+                        design: values[FontElementContract.fontDesign],
                         fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize)),
                     foregroundStyle: values[TextStyleElementContract.foregroundStyle]
                         .flatMap { nsColor($0.propValue) } ?? .controlTextColor,

@@ -89,6 +89,7 @@ final class AppKitPickerView: NSView, NSMenuDelegate {
         tint: NSColor?,
         alignment: NSTextAlignment,
         enabled: Bool,
+        style: PickerStyleKind,
         open: Bool,
         writeOpen: Bool
     ) {
@@ -104,6 +105,10 @@ final class AppKitPickerView: NSView, NSMenuDelegate {
             button.alignment = alignment
             button.isEnabled = enabled
             button.contentTintColor = tint
+            // `.inline` pulls the border off and lets the button sit in a
+            // row; the other kinds the pop-up button cannot be stay its
+            // automatic look.
+            button.isBordered = style != .inline
             styleItems(font: font, color: foregroundStyle, alignment: alignment)
 
             if write.writesChoice {

@@ -23,8 +23,15 @@ enum StandardEnvironment {
     nonisolated(unsafe) static let windowScene = WindowSession()
     nonisolated(unsafe) static let page = PageSession()
 
-    /// How a `Toggle` draws where nothing above it wrote `.toggleStyle`.
+    /// How a `Toggle` draws where nothing above it wrote `.toggleStyle`, and a
+    /// `Label` where nothing wrote `.labelStyle` or `.labelsHidden`; likewise
+    /// the control styles their modifiers name.
     static let toggleStyle = ToggleStyle.automatic
+    static let labelStyle = LabelStyle.titleAndIcon
+    static let buttonStyle = ButtonStyle.automatic
+    static let textFieldStyle = TextFieldStyle.automatic
+    static let pickerStyle = PickerStyle.automatic
+    static let listStyle = ListStyle.automatic
 
     /// What every render starts its scope with, keyed as `.environment()` keys.
     nonisolated(unsafe) static let scope: [(key: ObjectIdentifier, object: AnyObject)] = [
@@ -39,6 +46,11 @@ enum StandardEnvironment {
         (key: ObjectIdentifier(WindowSession.self), object: windowScene),
         (key: ObjectIdentifier(PageSession.self), object: page),
         (key: ObjectIdentifier(ToggleStyle.self), object: toggleStyle),
+        (key: ObjectIdentifier(LabelStyle.self), object: labelStyle),
+        (key: ObjectIdentifier(ButtonStyle.self), object: buttonStyle),
+        (key: ObjectIdentifier(TextFieldStyle.self), object: textFieldStyle),
+        (key: ObjectIdentifier(PickerStyle.self), object: pickerStyle),
+        (key: ObjectIdentifier(ListStyle.self), object: listStyle),
     ]
 
     /// The standard provider of a type: what an unfilled `@Environment` slot answers,

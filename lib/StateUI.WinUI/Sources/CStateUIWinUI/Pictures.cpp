@@ -171,12 +171,57 @@ extern "C" void stateui_winui_set_pictures(char const *utf8) {
     }
 }
 
+namespace {
+    /// The element `handle` made by `stateui_winui_image_make` holds: a grid
+    /// with the picture at [0] and a Viewbox with a FontIcon at [1], one
+    /// visible at a time.
+    controls::Grid imageGrid(StateUIObjectRef handle) {
+        return borrow<controls::Grid>(handle);
+    }
+
+    controls::Image imageChild(controls::Grid const &grid) {
+        return grid.Children().GetAt(0).as<controls::Image>();
+    }
+
+    controls::Viewbox symbolBox(controls::Grid const &grid) {
+        return grid.Children().GetAt(1).as<controls::Viewbox>();
+    }
+}
+
 extern "C" StateUIObjectRef stateui_winui_image_make(void) {
     try {
-        return detach(controls::Image());
+        controls::Grid grid;
+        grid.Children().Append(controls::Image());
+        controls::Viewbox box;
+        controls::FontIcon icon;
+        icon.FontFamily(xaml::Media::FontFamily(L"Segoe Fluent Icons"));
+        icon.FontSize(16);
+        box.Child(icon);
+        box.Stretch(xaml::Media::Stretch::Uniform);
+        box.Visibility(xaml::Visibility::Collapsed);
+        grid.Children().Append(box);
+        return detach(grid);
     } catch (...) {
         report("making an image");
         return nullptr;
+    }
+}
+
+extern "C" bool stateui_winui_image_set_symbol(StateUIObjectRef handle, uint32_t codepoint, int32_t aspect) {
+    try {
+        auto grid = imageGrid(handle);
+        auto image = imageChild(grid);
+        auto box = symbolBox(grid);
+        image.Source(nullptr);
+        image.Visibility(xaml::Visibility::Collapsed);
+        wchar_t glyph[2] = {static_cast<wchar_t>(codepoint), 0};
+        box.Child().as<controls::FontIcon>().Glyph(glyph);
+        box.Stretch(aspect == 2 ? xaml::Media::Stretch::Fill : xaml::Media::Stretch::Uniform);
+        box.Visibility(xaml::Visibility::Visible);
+        return true;
+    } catch (...) {
+        report("showing a symbol");
+        return false;
     }
 }
 
@@ -185,7 +230,10 @@ extern "C" bool stateui_winui_image_set(
 ) {
     size[0] = size[1] = 0;
     try {
-        auto image = borrow<controls::Image>(handle);
+        auto grid = imageGrid(handle);
+        symbolBox(grid).Visibility(xaml::Visibility::Collapsed);
+        auto image = imageChild(grid);
+        image.Visibility(xaml::Visibility::Visible);
         // StateUI's Aspect: fit, fill, stretch, centre - at the picture's own size, in the middle of the room.
         auto centred = aspect == 3;
         image.Stretch(aspect == 1 ? xaml::Media::Stretch::UniformToFill
@@ -244,7 +292,7 @@ extern "C" bool stateui_winui_image_set(
 extern "C" void stateui_winui_image_size(StateUIObjectRef handle, double *size) {
     size[0] = size[1] = 0;
     try {
-        auto bitmap = borrow<controls::Image>(handle).Source().try_as<imaging::BitmapImage>();
+        auto bitmap = imageChild(imageGrid(handle)).Source().try_as<imaging::BitmapImage>();
         if (!bitmap) return;
         size[0] = bitmap.PixelWidth();
         size[1] = bitmap.PixelHeight();
@@ -255,7 +303,7 @@ extern "C" void stateui_winui_image_size(StateUIObjectRef handle, double *size) 
 
 extern "C" void stateui_winui_image_draw(StateUIObjectRef handle, double width, double height) {
     try {
-        auto image = borrow<controls::Image>(handle);
+        auto image = imageChild(imageGrid(handle));
         auto drawn = image.Source().try_as<imaging::SvgImageSource>();
         if (!drawn) return;
         auto scale = image.XamlRoot() ? image.XamlRoot().RasterizationScale() : 1.0;

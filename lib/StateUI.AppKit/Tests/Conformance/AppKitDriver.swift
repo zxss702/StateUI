@@ -115,6 +115,14 @@ final class AppKitDriver: HostDriver {
         for window in restorable { Self.restore(window) }
         renderer.startForTesting()
         comeToTheFront(renderer.windowsForTesting.first?.window)
+        // A popover only stands off a window AppKit has ordered; the driver's
+        // windows stay off the user's screens, so a tree that asks for one has
+        // its window ordered where no screen reaches.
+        if renderer.runtime.tree.root?.first(type: .popover) != nil,
+           let window = renderer.windowsForTesting.first?.window {
+            window.setFrameOrigin(NSPoint(x: -20_000, y: -20_000))
+            window.orderFront(nil)
+        }
         return renderer.runtime.tree
     }
 
@@ -191,6 +199,11 @@ final class AppKitDriver: HostDriver {
         case (.isOn, let toggle as AppKitSwitchView): return (toggle.state == .on).propValue
         case (.isOn, let check as AppKitCheckBoxView): return (check.state == .on).propValue
         case (.isOn, let radio as AppKitRadioButtonView): return (radio.state == .on).propValue
+        case (.isOn, let button as AppKitButtonView): return (button.state == .on).propValue
+        case (.hitShape, let surface as AppKitHitTestView): return surface.hitShape?.propValue
+        case (.isOpen, _) where element.type == .popover:
+            // The slot is viewless: the answer stands on the anchor's popover.
+            return (((element.parent?.native as? AppKitElement)?.popover?.isShown) ?? false).propValue
         case (.value, let slider as AppKitSliderView): return slider.doubleValue.propValue
         case (.minimum, let slider as AppKitSliderView): return slider.minValue.propValue
         case (.maximum, let slider as AppKitSliderView): return slider.maxValue.propValue

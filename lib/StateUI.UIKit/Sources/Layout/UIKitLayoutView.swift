@@ -31,6 +31,10 @@ class UIKitLayoutView: UIView {
     /// Whether a touch beside every child goes on to what stands under the layout.
     var passesBeside = false
 
+    /// The outline a touch stays within - a `.contentShape`'s - or none,
+    /// where a touch anywhere inside the bounds counts.
+    var hitShape: ContainerShape?
+
     init() {
         super.init(frame: .zero)
     }
@@ -93,6 +97,7 @@ class UIKitLayoutView: UIView {
     }
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if let hitShape, !hitShape.path(in: bounds).contains(point) { return nil }
         let hit = super.hitTest(point, with: event)
         return passesBeside && hit === self ? nil : hit
     }

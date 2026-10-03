@@ -114,6 +114,9 @@ final class RenderedNode {
     /// And which parts of a child's place animated.
     var lanes: AnimationLanes = .all
 
+    /// The values `.animation(_:value:)` watched last render, for arming.
+    var gates: [AnyEquatableValue] = []
+
     /// What the user is doing to it that its visual states follow, and the state it is in; nil for an element that
     /// declares none.
     var visualInput: VisualInput?
@@ -127,6 +130,7 @@ final class RenderedNode {
         events: [Event: Int],
         animation: Animation? = nil,
         lanes: AnimationLanes = .all,
+        gates: [AnyEquatableValue] = [],
         key: String? = nil,
         views: [(
             type: String,
@@ -146,6 +150,7 @@ final class RenderedNode {
     ) {
         self.animation = animation
         self.lanes = lanes
+        self.gates = gates
         self.views = views
         self.placeholder = placeholder
         self.view = view

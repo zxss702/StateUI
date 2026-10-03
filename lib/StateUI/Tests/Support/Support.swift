@@ -733,6 +733,7 @@ enum SourceTree {
         "ToolbarItem", "Menu",
         "MenuItem", "Divider",
         "ContextMenu",
+        "Popover",
         "Pin",
     ]
 

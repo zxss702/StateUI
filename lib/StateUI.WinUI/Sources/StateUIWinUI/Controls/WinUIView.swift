@@ -162,10 +162,15 @@ class WinUIView {
         let resized = placed.map { $0.width != place.width || $0.height != place.height } ?? true
         placed = place
         if Self.arranging > 0 {
-            // A layout of StateUI's measures its own children at its place before it is put there.
+            // A layout of StateUI's is measured at the width it stands at; a new width is measured once the
+            // pass ends - measuring an element while WinUI arranges marks it for another pass, for ever.
             // Design: docs/design/platforms/winui/layout.md#measured-every-pass
             if let layout = self as? WinUILayoutView, placingLayout != nil {
-                _ = measure(width: place.width, height: nil)
+                if layout.standsAt != place.width {
+                    WinUIDoorbell.afterPass { [weak self] in
+                        _ = self?.measure(width: place.width, height: nil)
+                    }
+                }
                 layout.standsAt = place.width
             }
             let room = wordsRoom ?? place
@@ -237,6 +242,10 @@ class WinUIView {
 
     /// The user clicked the view.
     func clicked() {}
+
+    /// The user turned the view on or off: a switch, a check box, a button
+    /// that stays pressed.
+    func toggled(_ on: Bool) {}
 
     /// The user chose one of the view's entries by its place: an action of the window's chrome, or its way back (-1)
     /// or sidebar toggle (-2); a tab.

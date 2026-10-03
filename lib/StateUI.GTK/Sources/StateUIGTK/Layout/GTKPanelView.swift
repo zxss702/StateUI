@@ -11,6 +11,10 @@ class GTKPanelView: GTKView {
     /// Whether a click beside the panel's children goes on to what is under it: an overlay laid over a window's pages.
     var passesBeside = false
 
+    /// The outline a click stays within - a `.contentShape`'s - or none,
+    /// where a point anywhere inside the bounds counts.
+    var hitShape: ContainerShape?
+
     init() {
         super.init { number in GTKPanel.make(number: number) }
     }

@@ -75,6 +75,9 @@ enum AppKitRegistrations {
             family: values[FontElementContract.fontFamily]?.text,
             size: values[FontElementContract.fontSize],
             attributes: values[FontElementContract.fontAttributes],
+                        textStyle: values[FontElementContract.fontTextStyle],
+                        weight: values[FontElementContract.fontWeight]?.value,
+                        design: values[FontElementContract.fontDesign],
             fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize))
     }
 }

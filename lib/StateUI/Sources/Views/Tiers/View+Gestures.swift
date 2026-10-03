@@ -145,6 +145,18 @@ extension View {
         hearing(ViewContract.pointerExited, handler)
     }
 
+    /// Runs as a pointer's hover over the view begins and ends - `true` on
+    /// entering, `false` on leaving. The SwiftUI spelling of the pair above:
+    ///
+    ///     .onHover { hovering in isHovered = hovering }
+    ///
+    /// A pointer is a mouse, a trackpad or a pen; on a touch-only device it
+    /// never runs.
+    public func onHover(_ perform: @escaping (Bool) -> Void) -> ModifiedContent {
+        onPointerEntered { perform(true) }
+            .onPointerExited { perform(false) }
+    }
+
     /// Runs as the pointer moves over the view, with where it is in the view's
     /// own coordinates; a move the platform gives no position for does not run
     /// it.

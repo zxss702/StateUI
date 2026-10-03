@@ -55,15 +55,33 @@ final class WinUIWindowController {
 
         sheets = pages.map { page in
             let sheet = sheets.first { $0.element === page }?.sheet ?? WinUISheetView()
-            sheet.show(title: page.visiblePage?.value(.title)?.string ?? "", page: page.winUI.view)
+            let shown = page.visiblePage
+            sheet.show(title: shown?.value(.title)?.string ?? "", page: page.winUI.view, height: Self.height(shown))
             return (page, sheet)
         }
         window.showSheets(sheets.map(\.sheet))
     }
 
-    /// The user took the top sheet away - Escape, its dismissing: the window is told how many remain.
+    /// The height the page's first detent asks for, as `WinUISheetView.show` takes it: points over 0, a share of the
+    /// window under 0, the content's own where none is asked.
+    private static func height(_ page: MountedElement?) -> Double {
+        guard let detents = page?.value(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
+              let first = detents.first
+        else { return 0 }
+
+        return switch first {
+        case .medium: -0.5
+        case .large: 0
+        case .fraction(let part): -part
+        case .height(let points): points
+        }
+    }
+
+    /// The user took the top sheet away - Escape, its dismissing: the window is told how many remain. A page that
+    /// says `interactiveDismissDisabled` hears nothing of it.
     func dismissTopSheet(in runtime: HostRuntime) {
         guard let element, !presentation.sheets.isEmpty else { return }
+        guard !(presentation.sheets.last?.visiblePage?.value(.interactiveDismissDisabled)?.bool ?? false) else { return }
 
         runtime.goBack(.dismissSheet(remaining: presentation.sheets.count - 1), in: element)
     }

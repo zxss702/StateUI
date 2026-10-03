@@ -63,6 +63,19 @@ public struct Slider: VisualElement, TintElement, SliderProperties{
         self = Slider().value(value)
     }
 
+    /// A two-way slider over `bounds` - SwiftUI's `Slider(value:in:)` spelled
+    /// with the binding alone, the range told once in the initializer.
+    ///
+    ///     Slider($gain, in: -20...60)
+    public init(_ value: Binding<Double>, in bounds: ClosedRange<Double>) {
+        self = Slider(value).minimum(bounds.lowerBound).maximum(bounds.upperBound)
+    }
+
+    /// A one-way slider over `bounds`, reporting through `.onValueChanged`.
+    public init(_ value: Double, in bounds: ClosedRange<Double>) {
+        self = Slider(value).minimum(bounds.lowerBound).maximum(bounds.upperBound)
+    }
+
     // Design: docs/design/views/bindings.md#a-finger-takes-a-moving-thumb
     /// The same two-way value as `Slider($value)`, written as a modifier.
     ///

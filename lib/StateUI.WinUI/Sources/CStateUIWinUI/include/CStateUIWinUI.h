@@ -28,8 +28,15 @@ typedef struct {
     double const *offsets;
 } StateUIBrush;
 
-/// An outline: 0 a rectangle, 1 one rounded by `radius` DIPs, 2 an ellipse.
-typedef enum { StateUIOutlineRectangle, StateUIOutlineRounded, StateUIOutlineEllipse } StateUIOutline;
+/// An outline: 0 a rectangle, 1 one rounded by `radius` DIPs, 2 an ellipse, 3 a
+/// capsule, 4 a circle in the middle.
+typedef enum {
+    StateUIOutlineRectangle,
+    StateUIOutlineRounded,
+    StateUIOutlineEllipse,
+    StateUIOutlineCapsule,
+    StateUIOutlineCircle
+} StateUIOutline;
 
 /// What of the user's input a view listens for, each a bit: taps; the pointer entering, leaving, moving, and its
 /// button going down and up; a press dragged; two fingers pinching.
@@ -256,6 +263,10 @@ void stateui_winui_invalidate_measure(StateUIObjectRef element);
 void stateui_winui_set_shown(StateUIObjectRef element, bool shown);
 void stateui_winui_set_opacity(StateUIObjectRef element, double opacity);
 
+/// The tip shown under the pointer resting on the element - a `.help` text,
+/// or NULL for none.
+void stateui_winui_set_tooltip(StateUIObjectRef element, char const *utf8);
+
 /// Where `element`'s top left corner stands in its window's content, in DIPs, into `origin` (x, y).
 void stateui_winui_origin(StateUIObjectRef element, double *origin);
 
@@ -372,6 +383,15 @@ void stateui_winui_set_caption(StateUIObjectRef control, char const *utf8);
 void stateui_winui_button_set_look(StateUIObjectRef button, StateUIBrush background, StateUIBrush stroke,
                                    double strokeWidth, double cornerRadius, double underPointer, double pressed);
 
+/// A button's logical style kind: 2 accents it, 3 and 4 make it text, the rest the platform's own look.
+void stateui_winui_button_set_style(StateUIObjectRef button, int kind);
+
+/// A button's keyboard shortcut: a `VirtualKey` number, `VirtualKeyModifiers` flags in the same order - 0 for none.
+void stateui_winui_button_set_shortcut(StateUIObjectRef button, int32_t key, int32_t modifiers);
+
+/// Whether a button keeps its pressed look and whether it is down: `toggleable` wears `isOn` at all, `on` its state.
+void stateui_winui_button_set_on(StateUIObjectRef button, int32_t toggleable, int32_t on);
+
 /// Presses a button as UI Automation does, which raises its Click.
 void stateui_winui_button_invoke(StateUIObjectRef button);
 
@@ -385,6 +405,9 @@ void stateui_winui_set_tint(StateUIObjectRef control, uint32_t argb, bool tinted
 /// last on top. Escape takes the top one away, chosen on the window's chrome as -3.
 StateUIObjectRef stateui_winui_sheet_make(void);
 void stateui_winui_sheet_set(StateUIObjectRef sheet, char const *title, StateUIObjectRef page);
+/// How tall the sheet's card stands once shown: `height` over 0 in points, under 0 -height of the window's height, 0
+/// the content's own. Kept on the sheet; measured where it lands, so a parent that changes size keeps the share.
+void stateui_winui_sheet_set_height(StateUIObjectRef sheet, double height);
 void stateui_winui_window_set_sheets(StateUIObjectRef window, StateUIObjectRef const *sheets, int32_t count);
 
 /// Lays `overlay` over the window's page and its sheets, where the page stands; a click beside what it holds goes on
@@ -426,6 +449,9 @@ void stateui_winui_picker_set_options(StateUIObjectRef picker, char const *const
 void stateui_winui_picker_set(StateUIObjectRef picker, int32_t selected, bool writeSelected, char const *title);
 void stateui_winui_picker_set_alignment(StateUIObjectRef picker, int32_t alignment);
 void stateui_winui_picker_set_open(StateUIObjectRef picker, bool open);
+
+/// How the picker's box presents: a `PickerStyleKind` - 5 (`inline`) is chrome-less, the rest the platform's own.
+void stateui_winui_picker_set_style(StateUIObjectRef picker, int32_t kind);
 bool stateui_winui_picker_is_open(StateUIObjectRef picker);
 int32_t stateui_winui_picker_selected(StateUIObjectRef picker);
 
@@ -517,6 +543,9 @@ void stateui_winui_value_move(StateUIObjectRef control, double value);
 /// The words the user types, each change told through `textChanged`: a field on one line, whose Enter is
 /// `submitted`; an editor of several lines, whose Enter starts a new one; a search box, whose query is `submitted`.
 StateUIObjectRef stateui_winui_field_make(int64_t view);
+
+/// A field's logical style kind: 1 takes the chrome away, 3 unrounds it, the rest the platform's own look.
+void stateui_winui_field_set_style(StateUIObjectRef field, int kind);
 StateUIObjectRef stateui_winui_editor_make(int64_t view);
 StateUIObjectRef stateui_winui_search_make(int64_t view);
 void stateui_winui_field_set_text(StateUIObjectRef field, char const *utf8);
@@ -624,6 +653,10 @@ void stateui_winui_items_set_entries(StateUIObjectRef items, char const *const *
 /// How the entries stand: down (0), across (1), or in columns at least `minimumItemWidth` DIPs wide (2); `spacing`
 /// DIPs apart.
 void stateui_winui_items_set_layout(StateUIObjectRef items, int32_t shape, double spacing, double minimumItemWidth);
+
+/// How the items' surface presents: a `ListStyleKind` - 1 (`plain`) on no ground, 2 (`sidebar`) on the platform's
+/// muted layer, the rest the platform's own.
+void stateui_winui_items_set_style(StateUIObjectRef items, int32_t kind);
 
 /// How many items the user may choose - none (0), one (1), many (2) - the identities chosen, and whether an item is
 /// invoked.
@@ -807,6 +840,11 @@ void stateui_winui_set_pictures(char const *folder);
 StateUIObjectRef stateui_winui_image_make(void);
 bool stateui_winui_image_set(StateUIObjectRef image, char const *const *names, int32_t count, int32_t aspect,
                              double *size);
+
+/// A symbol in place of the picture: `codepoint` is the glyph number in Segoe Fluent Icons, which the logical
+/// symbol name was mapped to by the caller. The Fluent font is the platform's own symbol set, which is why the
+/// glyph and not the name crosses. Answers false for a missing element.
+bool stateui_winui_image_set_symbol(StateUIObjectRef image, uint32_t codepoint, int32_t aspect);
 
 /// The size of the bitmap `image` shows, in DIPs; zero until it is read, and for an SVG. Once it is read, the
 /// layout holding the image is asked to measure again.

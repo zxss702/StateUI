@@ -30,6 +30,8 @@
         switch kind {
         case 1: return .roundedRectangle(max(0, parts.count > 1 ? parts[1].number ?? 0 : 0))
         case 2: return .ellipse
+        case 3: return .capsule
+        case 4: return .circle
         default: return .rectangle
         }
     }

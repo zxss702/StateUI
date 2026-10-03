@@ -13,6 +13,10 @@ final class AppKitButtonView: NSButton, AppKitPictureResolving {
     var onReleased: (() -> Void)?
     var onClicked: (() -> Void)?
 
+    /// What a staying-pressed button reports when a press flips it - set by
+    /// `apply(toggleable:on:)` wearing `isOn` at all.
+    var onToggled: ((Bool) -> Void)?
+
     /// Resolves an icon's file name against the application's resources - the
     /// host's to answer, since the files and the cache over them are its.
     var picture: ((String) -> NSImage?)?
@@ -45,6 +49,7 @@ final class AppKitButtonView: NSButton, AppKitPictureResolving {
         strokeWidth: Double,
         shape: ContainerShape,
         lineBreakMode: NSLineBreakMode,
+        style: ButtonStyleKind,
         enabled: Bool
     ) {
         title = text
@@ -52,9 +57,10 @@ final class AppKitButtonView: NSButton, AppKitPictureResolving {
         self.font = font
         isEnabled = enabled
         cell?.lineBreakMode = lineBreakMode
-        attributedTitle = NSAttributedString(
-            string: text,
-            attributes: [.font: font, .foregroundColor: foregroundStyle])
+        let caption = style == .link ? NSColor.linkColor : foregroundStyle
+        var attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: caption]
+        if style == .link { attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue }
+        attributedTitle = NSAttributedString(string: text, attributes: attributes)
         self.imagePosition = image == nil ? .noImage : imagePosition
         self.imageScaling = imageScaling
 
@@ -65,7 +71,21 @@ final class AppKitButtonView: NSButton, AppKitPictureResolving {
         layer?.borderColor = strokeColor?.cgColor
         layer?.borderWidth = strokeColor == nil ? 0 : strokeWidth
         if let layer { shape.round(layer) }
-        isBordered = backgroundColor == nil && strokeColor == nil
+        isBordered = switch style {
+        case .borderless, .plain, .link: false
+        case .bordered, .borderedProminent: true
+        case .automatic: backgroundColor == nil && strokeColor == nil
+        }
+        bezelColor = style == .borderedProminent ? .controlAccentColor : nil
+    }
+
+    /// The staying-pressed look, or none: wearing `isOn` makes the button a
+    /// toggleable one, its state read from `on`; the member's absence leaves
+    /// the button a momentary one, whatever `on` says.
+    func apply(toggleable: Bool, on: Bool) {
+        isToggleable = toggleable
+        setButtonType(toggleable ? .pushOnPushOff : .momentaryPushIn)
+        state = on ? .on : .off
     }
 
     /// The shape the corners follow - an oval rounded into a capsule, which is what a layer's corners can draw.
@@ -118,13 +138,21 @@ final class AppKitButtonView: NSButton, AppKitPictureResolving {
 
     @objc private func clicked(_ sender: NSButton) {
         onClicked?()
+        // A staying-pressed button has already flipped its own state.
+        if isToggleable { onToggled?(state == .on) }
     }
+
+    /// Whether the button keeps its pressed look - what `apply(toggleable:)`
+    /// set, `isOn` worn on the element at all.
+    private var isToggleable = false
 
     /// The share of its opacity the fill keeps now.
     var reachForTesting: Double { reach }
 
     func clickForTesting() {
         onPressed?()
+        // AppKit flips a staying-pressed button's state before it acts.
+        if isToggleable { state = state == .on ? .off : .on }
         clicked(self)
         onReleased?()
     }

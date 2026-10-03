@@ -166,7 +166,7 @@ final class AppKitSharedMemberTests: XCTestCase {
                 view.properties = [
                     .width: .number(40),
                     .height: .number(20),
-                    .horizontalAlignment: .enumeration(Alignment.start.rawValue),
+                    .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue),
                     .ignoresInput: .bool(ignoresInput),
                 ]
                 return view
@@ -203,8 +203,8 @@ final class AppKitSharedMemberTests: XCTestCase {
             child.properties = [
                 .width: .number(20),
                 .height: .number(20),
-                .horizontalAlignment: .enumeration(Alignment.start.rawValue),
-                .verticalAlignment: .enumeration(Alignment.start.rawValue),
+                .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue),
+                .verticalAlignment: .enumeration(AxisAlignment.start.rawValue),
             ]
             var layout = HostPatch(id: .manual("layout"), type: type)
             layout.properties[.letsInputThrough] = .bool(true)

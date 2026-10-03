@@ -112,6 +112,11 @@ extension AppKitDriver {
             let window = try window(of: element)
             tell(NSWindow.didDeminiaturizeNotification, window)
             comeToTheFront(window)
+        case (.close, _) where element.type == .popover:
+            guard let popover = (element.parent?.native as? AppKitElement)?.popover else {
+                throw DriverCannot(act, on: element)
+            }
+            popover.close()
         case (.close, _) where element.type == .windowScene: try window(of: element).close()
         default: throw DriverCannot(act, on: element)
         }

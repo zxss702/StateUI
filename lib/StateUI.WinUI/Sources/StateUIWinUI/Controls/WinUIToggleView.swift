@@ -13,6 +13,10 @@ class WinUIToggleView: WinUIView {
     /// What the control does when the user turns it.
     var onToggled: ((Bool) -> Void)?
 
+    override func toggled(_ on: Bool) {
+        onToggled?(on)
+    }
+
     /// Whether the control stands on.
     var isOn: Bool { stateui_winui_toggle_is_on(handle) }
 

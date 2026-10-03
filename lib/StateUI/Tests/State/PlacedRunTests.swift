@@ -108,14 +108,14 @@ final class PlacedRunTests: XCTestCase {
     func testARunComesBackFromItsLanes() throws {
         let run = PlacedRun(
             [Placement(Rect(1, 2, 3, 4)), Placement(Rect(5, 6, 7, 8), opacity: 0.5)],
-            animation: .spring(response: 300, damping: 0.7))
+            animation: .spring(milliseconds: 300, damping: 0.7))
 
         let back = try XCTUnwrap(PlacedRun(carried: run.carried))
 
         XCTAssertEqual(back.placements.count, 2)
         XCTAssertEqual(back.placements[0].bounds, Rect(1, 2, 3, 4))
         XCTAssertEqual(back.placements[1].opacity, 0.5)
-        XCTAssertEqual(back.animation, .spring(response: 300, damping: 0.7))
+        XCTAssertEqual(back.animation, .spring(milliseconds: 300, damping: 0.7))
 
         XCTAssertEqual(PlacedRun(carried: .lanes([]))?.placements.count, 0)
         XCTAssertNil(PlacedRun(carried: .lanes([1, 2, 3, 4, 5])), "a width that is nobody's")

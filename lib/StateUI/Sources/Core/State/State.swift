@@ -164,7 +164,7 @@ extension State where Value: Walked {
     /// is shown, and who animates it.
     ///
     ///     @State(animation: .spring()) private var lift = 1.0    // a spring, wherever it is shown
-    ///     @State(animation: .none) private var box = Rect.zero    // lands at once, wherever it is written
+    ///     @State(animation: nil) private var box = Rect.zero      // lands at once, wherever it is written
     ///     @State(animation: .custom) private var ball = 0.0       // an engine of your own animates it
     ///
     /// The value's own law comes ahead of the element's `.animation(_:)`, the
@@ -173,11 +173,11 @@ extension State where Value: Walked {
     ///
     /// - Parameters:
     ///   - wrappedValue: what the state holds, and where the journey starts.
-    ///   - animation: the law the value animates under.
-    public convenience init(wrappedValue: @autoclosure @escaping () -> Value, animation: Animation) {
+    ///   - animation: the law the value animates under, `nil` for none.
+    public convenience init(wrappedValue: @autoclosure @escaping () -> Value, animation: Animation?) {
         self.init(making: wrappedValue)
 
-        storage.law = animation
+        storage.law = animation ?? .none
     }
 }
 

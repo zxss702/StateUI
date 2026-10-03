@@ -12,6 +12,14 @@ struct AppKitTabItem {
     let layout: AppKitLayoutItem
     let title: String?
     let image: NSImage?
+    let badge: String?
+
+    /// The tab's caption as AppKit draws it: its badge in brackets beside its
+    /// title, as the platform counts in tab labels.
+    var caption: String {
+        guard let badge, !badge.isEmpty else { return title ?? "" }
+        return title.map { "\($0) (\(badge))" } ?? badge
+    }
 }
 
 /// AppKit's presentation of a tabbed view: a native `NSTabView` over the
@@ -81,7 +89,7 @@ final class AppKitTabbedView: AppKitHitTestView, AppKitWidthConstrainedMeasuring
     /// Whether two runs of tabs show the same pages the same way.
     private static func sameTabs(_ left: [AppKitTabItem], _ right: [AppKitTabItem]) -> Bool {
         left.count == right.count && zip(left, right).allSatisfy {
-            $0.layout.arranges(like: $1.layout) && $0.title == $1.title && $0.image === $1.image
+            $0.layout.arranges(like: $1.layout) && $0.caption == $1.caption && $0.image === $1.image
         }
     }
 
@@ -93,9 +101,10 @@ final class AppKitTabbedView: AppKitHitTestView, AppKitWidthConstrainedMeasuring
         onSelection?(previous, next)
     }
 
-    /// What each tab shows in a selector: its title and its picture.
+    /// What each tab shows in a selector: its caption - title and badge - and
+    /// its picture.
     var segments: [(title: String, image: NSImage?)] {
-        items.map { ($0.title ?? "", $0.image) }
+        items.map { ($0.caption, $0.image) }
     }
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {

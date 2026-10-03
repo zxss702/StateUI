@@ -209,7 +209,7 @@
                 VStack {
                     Opened.framed(Specimens.view(element, [
                         Write(VisualElementContract.width, wide.wrappedValue ? 90 : 60), Write(VisualElementContract.height, 30),
-                        Write(ViewContract.horizontalAlignment, Alignment.start),
+                        Write(ViewContract.horizontalAlignment, AxisAlignment.start),
                     ]), into: room.projectedValue)
                     Button("Widen").onClicked { wide.wrappedValue = true }.id("change")
                 }

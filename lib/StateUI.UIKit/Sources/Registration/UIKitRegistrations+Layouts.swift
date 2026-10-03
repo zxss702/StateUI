@@ -15,6 +15,7 @@ extension UIKitRegistrations {
             stack.applies(boxMembers) { view, values in applyBox(view, values) }
             stack.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
             stack.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            stack.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(HStackContract.self, create: { _ in UIKitStackView(axis: .horizontal) }) { stack in
@@ -22,6 +23,7 @@ extension UIKitRegistrations {
             stack.applies(boxMembers) { view, values in applyBox(view, values) }
             stack.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
             stack.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            stack.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(GridContract.self, create: { _ in UIKitGridView() }) { grid in
@@ -39,6 +41,7 @@ extension UIKitRegistrations {
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
             grid.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
         registry.add(ZStackContract.self, create: { _ in UIKitZStackView() }) { layout in
@@ -46,6 +49,7 @@ extension UIKitRegistrations {
             layout.applies(boxMembers) { view, values in applyBox(view, values) }
             layout.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
             layout.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            layout.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
     }
 

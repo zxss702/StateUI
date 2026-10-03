@@ -230,7 +230,13 @@ final class AndroidRenderer {
     /// The way back the system's back takes: the host layer's, and a stack's top page going where the page hides its
     /// bar but keeps its way back - Android's back is the system's, not the bar's.
     private var systemWayBack: WayBack? {
-        if let way = presentation.wayBack { return way }
+        if let way = presentation.wayBack {
+            if case .dismissSheet = way,
+               presentation.sheets.last?.visiblePage?.value(.interactiveDismissDisabled)?.bool == true {
+                return nil
+            }
+            return way
+        }
         guard let stack = (presentation.sheets.last ?? presentation.arrangement)?.visibleNavigationStack,
               stack.children.count > 1, stack.children.last?.value(.hasBackButton)?.bool != false
         else { return nil }

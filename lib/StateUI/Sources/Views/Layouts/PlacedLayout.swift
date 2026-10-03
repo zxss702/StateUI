@@ -99,13 +99,14 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     ///     PlacedLayout(cards, id: \.self) { … }
     ///         .placement($run)
-    ///         .animation(.eased(300, .cubicOut))
+    ///         .animation(.easeOut(duration: 0.3))
     ///
-    /// - Parameter animation: how a run written `.inherited` animates.
+    /// - Parameter animation: how a run written `.inherited` animates; `nil`
+    ///   for none.
     /// - Returns: the layout, moving that way.
-    public func animation(_ animation: Animation) -> PlacedLayout {
+    public func animation(_ animation: Animation?) -> PlacedLayout {
         var copy = self
-        copy.travel = animation
+        copy.travel = animation ?? .none
         return copy
     }
 

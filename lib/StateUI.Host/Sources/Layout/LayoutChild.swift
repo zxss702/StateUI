@@ -27,6 +27,10 @@
     /// The space kept around the child, outside it.
     public var margin = EdgeInsets(0)
 
+    /// The least extent a flexible child takes along its stack's axis, sharing the room left over;
+    /// nil for a child that takes its natural size.
+    public var flex: Double?
+
     /// Across its slot: 0 start, 1 centre, 2 end, 3 fill.
     public var horizontal: Int32 = 3
 

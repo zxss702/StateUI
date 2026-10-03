@@ -42,7 +42,7 @@ final class AndroidLayoutMotionTests: XCTestCase {
                 var stack = HostPatch(id: .manual("stack"), type: .vStack)
                 stack.animation = HostLayoutMotion(animation: .eased(200, .linear), lanes: .all)
                 var label = HostPatch(id: .manual("caption"), type: .text)
-                label.properties = [.text: .string(text), .horizontalAlignment: .enumeration(Alignment.start.rawValue)]
+                label.properties = [.text: .string(text), .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue)]
                 stack.children = .arranged([label])
                 return stack
             }

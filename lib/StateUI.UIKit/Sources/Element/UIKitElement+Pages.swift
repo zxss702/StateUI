@@ -97,7 +97,10 @@ extension UIKitElement {
             guard let tabs = controller as? UIKitTabBarController else { return }
             tabs.show(
                 children.compactMap { tab in
-                    tab.controller.map { ($0, tab.value(.title)?.string ?? "", tab.value(.icon)?.string) }
+                    tab.controller.map {
+                        ($0, tab.value(.title)?.string ?? "", tab.value(.icon)?.string,
+                         tab.value(.badge)?.string)
+                    }
                 },
                 requested: value(.currentPage)?.number.map { Int($0) })
             tabs.onSelection = { [weak self] previous, selected in self?.tabChosen(from: previous, to: selected) }

@@ -160,7 +160,7 @@ public enum Inspector {
     private static func dock(_ place: Place?, in record: SceneRecord) {
         InspectorModel.shared.places[record.id] = place
         record.windowSession(SceneElement.mainKey).overlays[.inspector] = place.map {
-            InspectorPanel(scene: record.id, place: $0).zIndex(Int(Int32.max))
+            InspectorPanel(scene: record.id, place: $0).zIndex(Double(Int32.max))
         }
     }
 }

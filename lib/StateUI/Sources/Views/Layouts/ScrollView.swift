@@ -27,6 +27,21 @@ extension ScrollViewProperties {
     public func horizontalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
         setValue(ScrollViewContract.horizontalScrollIndicators, value)
     }
+
+    /// Whether the bars are drawn - the SwiftUI spelling, both axes at once:
+    ///
+    ///     ScrollView { … }.scrollIndicators(.hidden)
+    ///
+    /// `axes` is `.vertical`, `.horizontal`, or both.
+    public func scrollIndicators(
+        _ visibility: ScrollIndicatorVisibility,
+        axes: Axis.Set = .all
+    ) -> Modified {
+        modified { node in
+            if axes.contains(.vertical) { node.write(ScrollViewContract.verticalScrollIndicators, visibility) }
+            if axes.contains(.horizontal) { node.write(ScrollViewContract.horizontalScrollIndicators, visibility) }
+        }
+    }
 }
 
 /// A scrollable container.

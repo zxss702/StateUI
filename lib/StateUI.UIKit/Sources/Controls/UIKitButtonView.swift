@@ -15,12 +15,27 @@ final class UIKitButtonView: UIButton {
     var onPressed: (() -> Void)?
     var onReleased: (() -> Void)?
 
+    /// What a staying-pressed button reports when a tap flips it - `isOn`
+    /// worn on the element at all makes it one.
+    var onToggled: ((Bool) -> Void)?
+
+    /// Whether a tap keeps - `isOn` worn at all. What keeps nothing flips
+    /// `isSelected` and gives it back, so the press only lasts the touch.
+    private var toggleable = false
+
     private var look = TextLook()
 
     init() {
         super.init(frame: .zero)
         configuration = .plain()
-        addAction(UIAction { [weak self] _ in self?.onClicked?() }, for: .primaryActionTriggered)
+        addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            onClicked?()
+            if toggleable {
+                isSelected.toggle()
+                onToggled?(isSelected)
+            }
+        }, for: .primaryActionTriggered)
         addAction(UIAction { [weak self] _ in self?.onPressed?() }, for: .touchDown)
         addAction(UIAction { [weak self] _ in self?.onReleased?() }, for: [.touchUpInside, .touchUpOutside, .touchCancel])
     }
@@ -28,6 +43,14 @@ final class UIKitButtonView: UIButton {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("UIKitButtonView is made in code")
+    }
+
+    /// The staying-pressed look, or none: `nil` for a button that only
+    /// flashes under the touch; worn at all the selected look keeps, and the
+    /// user's flips come back through `onToggled`.
+    func setOn(_ on: Bool?) {
+        toggleable = on != nil
+        isSelected = on ?? false
     }
 
     /// The button's words.
@@ -54,8 +77,31 @@ final class UIKitButtonView: UIButton {
         configuration?.imagePadding = spacing ?? 8
     }
 
+    /// What `setBox` was last told, replayed when the style rebuilds the configuration.
+    private var box: (background: HostValue?, stroke: HostValue?, width: Double?, shape: HostValue?)
+
+    /// The logical style, as the configuration template it stands for.
+    func setStyle(_ style: ButtonStyleKind?) {
+        var made: UIButton.Configuration = switch style ?? .automatic {
+        case .borderedProminent: .filled()
+        case .bordered: .bordered()
+        case .plain, .borderless, .link: .plain()
+        default: .bordered()
+        }
+        made.title = configuration?.title
+        made.image = configuration?.image
+        made.imagePlacement = configuration?.imagePlacement ?? .leading
+        made.imagePadding = configuration?.imagePadding ?? 8
+        made.contentInsets = configuration?.contentInsets ?? made.contentInsets
+        configuration = made
+        let box = self.box
+        setBox(background: box.background, stroke: box.stroke, width: box.width, shape: box.shape)
+        showLook()
+    }
+
     /// What fills the button's box, its outline and its shape (`BoxArithmetic`).
     func setBox(background: HostValue?, stroke: HostValue?, width: Double?, shape: HostValue?) {
+        box = (background, stroke, width, shape)
         configuration?.background.backgroundColor = background.flatMap(UIColor.init(stateUI:))
         let outline = BoxArithmetic.outlineWidth(stroke: stroke, width: width)
         configuration?.background.strokeWidth = outline
@@ -67,7 +113,7 @@ final class UIKitButtonView: UIButton {
         case .roundedRectangle(let radius):
             configuration?.cornerStyle = .fixed
             configuration?.background.cornerRadius = radius
-        case .ellipse:
+        case .ellipse, .capsule, .circle:
             configuration?.cornerStyle = .capsule
         }
     }

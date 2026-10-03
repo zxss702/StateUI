@@ -6,7 +6,7 @@
 /// A animation written on a view applies to all of them unless it names some:
 ///
 ///     VStack { … }
-///         .animation(.spring(response: 240))
+///         .animation(.spring(response: 0.24))
 ///         .animation(.none, .size)
 ///
 /// The stack's children move to their new places on a spring and take their

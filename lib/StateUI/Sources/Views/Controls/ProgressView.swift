@@ -60,6 +60,13 @@ public struct ProgressView: View {
         self.init(value, total: total) { EmptyView() }
     }
 
+    /// Determinate - `value` of `total` done, the SwiftUI spelling.
+    ///
+    ///     ProgressView(value: downloaded, total: size)
+    public init(value: Double, total: Double) {
+        self.init(value, total: total) { EmptyView() }
+    }
+
     /// Determinate - the value is the fraction itself, 0…1.
     public init(_ value: Double) {
         self.init(value, total: 1.0) { EmptyView() }

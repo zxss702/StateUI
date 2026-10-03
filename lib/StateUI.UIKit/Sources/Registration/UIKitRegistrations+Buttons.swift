@@ -15,6 +15,9 @@ extension UIKitRegistrations {
             button.onClicked = { reports.raise(ButtonContract.clicked) }
             button.onPressed = { reports.raise(ButtonContract.pressed) }
             button.onReleased = { reports.raise(ButtonContract.released) }
+            button.onToggled = { on in
+                reports.report(ButtonContract.isOn, on, as: ButtonContract.toggled)
+            }
             return button
         }, members: { button in
             button.applies(TextMembers.members) { view, values in
@@ -30,6 +33,7 @@ extension UIKitRegistrations {
                 }
             }
             button.property(VisualElementContract.isEnabled) { view, enabled in view.isEnabled = enabled ?? true }
+            button.property(ButtonContract.buttonStyle) { view, style in view.setStyle(style) }
             button.property(TextStyleElementContract.characterSpacing) { view, spacing in
                 view.setLook { $0.letterSpacing = spacing ?? 0 }
             }
@@ -50,9 +54,11 @@ extension UIKitRegistrations {
                     shape: values[BorderElementContract.shape]?.propValue)
             }
             button.property(ButtonContract.lineBreak) { view, breaking in view.setLineBreak(breaking ?? .wordWrap) }
+            button.property(ButtonContract.isOn) { view, on in view.setOn(on) }
             button.raises(ButtonContract.clicked)
             button.raises(ButtonContract.pressed)
             button.raises(ButtonContract.released)
+            button.raises(ButtonContract.toggled)
         })
     }
 }

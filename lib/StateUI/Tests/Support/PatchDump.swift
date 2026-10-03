@@ -182,7 +182,7 @@ enum PatchDump {
         switch key {
         // The view tiers and the text mixins.
         case Prop.horizontalAlignment.name, Prop.verticalAlignment.name:
-            return spelled(member, as: Alignment.self)
+            return spelled(member, as: AxisAlignment.self)
         case Prop.multilineTextAlignment.name, Prop.verticalTextAlignment.name:
             return spelled(member, as: TextAlignment.self)
         case Prop.lineBreak.name:

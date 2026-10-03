@@ -25,6 +25,7 @@ final class GTKItemsView: GTKLayoutView {
     private let factory: OpaquePointer
 
     private var shape = ItemsLayout.list()
+    private var style = ListStyleKind.automatic
     private var mode = SelectionMode.none
     private var placement: ItemsPlacement?
 
@@ -83,8 +84,14 @@ final class GTKItemsView: GTKLayoutView {
 
     // MARK: - What the tree says
 
-    /// The entries, the layout, how many may be chosen and which are.
-    func apply(layout: ItemsLayout, mode: SelectionMode) {
+    /// The entries, the layout, how many may be chosen and which are. A
+    /// `.sidebar` list carries GTK's `navigation-sidebar` class, which draws
+    /// the choice as a rounded band over a muted background.
+    func apply(layout: ItemsLayout, style: ListStyleKind, mode: SelectionMode) {
+        if style != self.style {
+            self.style = style
+            styleList()
+        }
         let changes = cells.takeEntries()
         if Self.kind(of: layout) != Self.kind(of: shape) || layout.isAcross != shape.isAcross {
             shape = layout
@@ -133,7 +140,18 @@ final class GTKItemsView: GTKLayoutView {
         listenToChoice()
         gtk_scrolled_window_set_child(scroller.widget.opaque, made)
         list = made
+        styleList()
         placement = nil
+    }
+
+    /// The list's style class for its kind, written again as a list is remade
+    /// for another layout.
+    private func styleList() {
+        if style == .sidebar {
+            list.map { gtk_widget_add_css_class($0, "navigation-sidebar") }
+        } else {
+            list.map { gtk_widget_remove_css_class($0, "navigation-sidebar") }
+        }
     }
 
     /// A choice over the identities as `mode` says: none, one the user may take back, or many.

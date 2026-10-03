@@ -102,7 +102,7 @@ final class DrivenPatchTests: XCTestCase {
         let hint = State(wrappedValue: "Type here")
         let choice = State(wrappedValue: 1)
         let on = State(wrappedValue: false)
-        let side = State(wrappedValue: Alignment.center)
+        let side = State(wrappedValue: AxisAlignment.center)
 
         let page = try page(
             VStack {

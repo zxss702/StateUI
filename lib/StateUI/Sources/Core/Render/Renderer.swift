@@ -28,6 +28,10 @@ public final class Renderer: @unchecked Sendable {
     /// render build the whole tree.
     private var untracked = true
 
+    /// The transaction the next render runs under - what a `withAnimation` or
+    /// `withTransaction` write left behind.
+    private var pendingTransaction: Transaction?
+
     /// What the last root build read outside every element; a change to any of it
     /// builds the application again.
     /// Design: docs/design/core/render.md#three-roads
@@ -187,6 +191,10 @@ public final class Renderer: @unchecked Sendable {
     public func stateChanged(_ state: AnyObject) {
         let id = ObjectIdentifier(state)
 
+        // A write under `withAnimation` or `withTransaction` carries the
+        // transaction the render runs under.
+        let transaction = Transactions.current
+
         // Named while the object is in hand: a `@State` knows its property, anything
         // else is called by its type.
         let name = (state as? NamedState)?.origin
@@ -199,6 +207,10 @@ public final class Renderer: @unchecked Sendable {
 
             dirty = true
             changed.insert(id)
+
+            if let transaction {
+                pendingTransaction = transaction
+            }
 
             if let name = name {
                 names[id] = name
@@ -273,16 +285,19 @@ public final class Renderer: @unchecked Sendable {
         // Taken and cleared in one locked step, so a write landing during this render
         // asks for the next one.
         // Design: docs/design/core/render.md#taking-the-changes
-        let (changedNow, untrackedNow, namesNow):
-            (Set<ObjectIdentifier>, Bool, [ObjectIdentifier: String]) = guarded.withLock {
-            let taken = (changed, untracked, names)
+        let (changedNow, untrackedNow, namesNow, transactionNow):
+            (Set<ObjectIdentifier>, Bool, [ObjectIdentifier: String], Transaction?) = guarded.withLock {
+            let taken = (changed, untracked, names, pendingTransaction)
             changed.removeAll()
             names.removeAll()
             untracked = false
             dirty = false
+            pendingTransaction = nil
             rendering = true
             return taken
         }
+
+        differ.transaction = transactionNow
 
         // Taken once: naming a build must never reach a lock.
         differ.named = namesNow

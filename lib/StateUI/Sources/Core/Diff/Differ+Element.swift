@@ -387,6 +387,35 @@ extension Differ {
         // How this element's values animate: its own plan, or the application's.
         let plan = node.animation
         let standing = animation
+
+        // The `.animation(_:value:)` gates whose watched value moved this render.
+        let armed: Set<Int> = { () -> Set<Int> in
+            guard let plan, let previous, previous.gates.count == plan.gates.count else {
+                return []
+            }
+
+            return Set(plan.gates.indices.filter { !(previous.gates[$0] == plan.gates[$0].value) })
+        }()
+
+        // The transaction this render's writes ran under, with this element's
+        // `.transaction(_:)` rewrites over it.
+        let transacting = plan?.transaction(under: transaction) ?? transaction
+
+        // The animation a changed property takes this render: a `withAnimation`
+        // write wins, then an armed gate, then what the element resolves.
+        let animating = { (values: AnimationValues) -> Animation in
+            if transacting?.disablesAnimations == true { return .none }
+
+            let resolved = (plan?.animation(for: values, armed: armed) ?? .inherited)
+                .resolved(against: standing)
+
+            if let override = transacting?.animation, !resolved.isCustom { return override }
+
+            return resolved
+        }
+
+        // The standing instruction: what a change animates by where no write
+        // named one - gates and transactions do not rewrite it.
         let travel = { (values: AnimationValues) in
             (plan?.animation(for: values) ?? .inherited).resolved(against: standing)
         }
@@ -467,13 +496,14 @@ extension Differ {
         // Design: docs/design/core/identity-and-diffing.md#transitions
         let measured = sizesArrive || node.reportsFrame
 
-        if !describeAll, !replace, previous != nil, plan != nil || !travels.isNothing {
+        if !describeAll, !replace, previous != nil,
+            plan != nil || !travels.isNothing || transacting != nil {
             for (property, value) in patch.properties
             where value.moves && property.facts.travels
                 && patch.transitions[property] == nil {
                 if measured, !property.facts.moves.isDisjoint(with: [.width, .height]) { continue }
 
-                let moves = travel(value.kind.union(property.facts.moves))
+                let moves = animating(value.kind.union(property.facts.moves))
 
                 if moves.isNothing { continue }
 
@@ -555,6 +585,7 @@ extension Differ {
             events: events,
             animation: patch.animation?.animation ?? previous?.animation ?? .inherited,
             lanes: patch.animation?.lanes ?? previous?.lanes ?? .all,
+            gates: node.animation?.gates.map(\.value) ?? [],
             key: key,
             views: views,
             placeholder: placeholder,

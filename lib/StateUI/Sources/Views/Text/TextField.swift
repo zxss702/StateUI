@@ -65,6 +65,14 @@ public struct TextField: InputView, TextElement, FontElement, TextAlignmentEleme
         self = TextField().text(text)
     }
 
+    /// A field captioned `title` while it is empty, two-way on `text` - the
+    /// SwiftUI spelling of `TextField(text).placeholder(title)`.
+    ///
+    ///     TextField("Username", text: $name)
+    public init(_ title: String, text: Binding<String>) {
+        self = TextField(text).placeholder(title)
+    }
+
     // Design: docs/design/views/bindings.md#two-way-controls
     /// The same two-way text as `TextField($text)`, written as a modifier.
     ///

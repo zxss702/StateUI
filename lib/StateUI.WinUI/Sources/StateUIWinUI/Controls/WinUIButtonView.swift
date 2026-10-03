@@ -13,6 +13,10 @@ final class WinUIButtonView: WinUIView {
     var onPressed: (() -> Void)?
     var onReleased: (() -> Void)?
 
+    /// What a staying-pressed button reports when a press flips it - `isOn`
+    /// worn on the element at all makes it one.
+    var onToggled: ((Bool) -> Void)?
+
     init() {
         super.init { number in stateui_winui_button_make(number) }
     }
@@ -47,8 +51,63 @@ final class WinUIButtonView: WinUIView {
         }
     }
 
+    /// The logical style, mapped to the theme style WinUI names for it.
+    func setStyle(_ style: ButtonStyleKind?) {
+        stateui_winui_button_set_style(handle, (style ?? .automatic).rawValue)
+    }
+
+    /// The keyboard shortcut, as the `VirtualKey` and `VirtualKeyModifiers`
+    /// numbers C++ hands straight to the accelerator.
+    func setShortcut(_ shortcut: KeyboardShortcut?) {
+        let (key, modifiers) = shortcut.map(Self.numbers) ?? (0, 0)
+        stateui_winui_button_set_shortcut(handle, key, modifiers)
+    }
+
+    /// The key and modifiers as Windows numbers them: a character's ASCII,
+    /// the named keys their `VirtualKey`, the command modifier Control.
+    private static func numbers(_ shortcut: KeyboardShortcut) -> (Int32, Int32) {
+        var modifiers: Int32 = 0
+        if shortcut.modifiers.contains(.command) { modifiers |= 1 }
+        if shortcut.modifiers.contains(.shift) { modifiers |= 4 }
+        if shortcut.modifiers.contains(.option) { modifiers |= 2 }
+        if shortcut.modifiers.contains(.control) { modifiers |= 1 }
+        let key: Int32 = switch shortcut.key.name {
+        case "return": 13
+        case "escape": 27
+        case "tab": 9
+        case "space": 32
+        case "delete": 8
+        case "deleteforward": 46
+        case "left": 37
+        case "up": 38
+        case "right": 39
+        case "down": 40
+        case "home": 36
+        case "end": 35
+        case "pageup": 33
+        case "pagedown": 34
+        case let name where name.hasPrefix("f") && name.dropFirst().allSatisfy(\.isNumber):
+            Int32(name.dropFirst()).map { $0 >= 1 && $0 <= 24 ? 111 + $0 : 0 } ?? 0
+        case let name where name.count == 1:
+            Int32(name.uppercased().unicodeScalars.first?.value ?? 0)
+        default: 0
+        }
+        return (key, modifiers)
+    }
+
     func setEnabled(_ enabled: Bool) {
         stateui_winui_set_enabled(handle, enabled)
+    }
+
+    /// The staying-pressed look, or none: `nil` makes the button momentary
+    /// again; worn at all the press keeps, and the user's flips come back
+    /// through `onToggled`.
+    func setOn(_ on: Bool?) {
+        stateui_winui_button_set_on(handle, on != nil ? 1 : 0, (on ?? false) ? 1 : 0)
+    }
+
+    override func toggled(_ on: Bool) {
+        onToggled?(on)
     }
 
     override func clicked() {
@@ -64,5 +123,6 @@ final class WinUIButtonView: WinUIView {
         onClicked = nil
         onPressed = nil
         onReleased = nil
+        onToggled = nil
     }
 }

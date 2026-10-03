@@ -53,7 +53,7 @@ final class AppKitContainerTests: XCTestCase {
         let tab = NSView()
         containers.append(("tabbed view", tabs, {
             tabs.setItems(
-                [AppKitTabItem(layout: item(tab), title: "One", image: nil)],
+                [AppKitTabItem(layout: item(tab), title: "One", image: nil, badge: nil)],
                 requestedIndex: 0)
         }))
 
@@ -383,19 +383,19 @@ final class AppKitContainerTests: XCTestCase {
         column.children = .arranged([
             box("start", sized(30, [
                 .padding: .numbers([5, 2, 0, 3]),
-                .horizontalAlignment: .enumeration(Alignment.start.rawValue),
+                .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue),
             ])),
-            box("end", sized(30, [.horizontalAlignment: .enumeration(Alignment.end.rawValue)])),
-            box("center", sized(30, [.horizontalAlignment: .enumeration(Alignment.center.rawValue)])),
+            box("end", sized(30, [.horizontalAlignment: .enumeration(AxisAlignment.end.rawValue)])),
+            box("center", sized(30, [.horizontalAlignment: .enumeration(AxisAlignment.center.rawValue)])),
         ])
         var row = HostPatch(id: .manual("row"), type: .hStack)
         row.properties[.contentPadding] = .numbers([6, 4, 6, 4])
         row.children = .arranged([
             box("bottom", sized(10, [
                 .padding: .numbers([3, 0, 0, 0]),
-                .verticalAlignment: .enumeration(Alignment.end.rawValue),
+                .verticalAlignment: .enumeration(AxisAlignment.end.rawValue),
             ])),
-            box("middle", sized(10, [.verticalAlignment: .enumeration(Alignment.center.rawValue)])),
+            box("middle", sized(10, [.verticalAlignment: .enumeration(AxisAlignment.center.rawValue)])),
         ])
         let columnRenderer = arranged(column, in: NSSize(width: 200, height: 200))
         defer { columnRenderer.closeForTesting() }
@@ -492,7 +492,7 @@ final class AppKitContainerTests: XCTestCase {
         column.children = .arranged([
             box("raised", [
                 .height: .number(10),
-                .horizontalAlignment: .enumeration(Alignment.start.rawValue),
+                .horizontalAlignment: .enumeration(AxisAlignment.start.rawValue),
                 .minimumWidth: .number(50),
             ]),
             box("stopped", [.height: .number(10), .maximumWidth: .number(60)]),
@@ -501,7 +501,7 @@ final class AppKitContainerTests: XCTestCase {
         row.children = .arranged([
             box("tall", [
                 .width: .number(10),
-                .verticalAlignment: .enumeration(Alignment.start.rawValue),
+                .verticalAlignment: .enumeration(AxisAlignment.start.rawValue),
                 .minimumHeight: .number(40),
             ]),
             box("short", [.width: .number(10), .maximumHeight: .number(30)]),

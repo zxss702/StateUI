@@ -29,7 +29,12 @@ enum GTKRealization {
         .complete("MenuItemElement", "icon"),
         .complete("MenuItemElement", "isEnabled"),
         .complete("MenuItemElement", "text"),
+        .complete("PageElement", "badge"),
+        .notPlanned("PageElement", "interactiveDismissDisabled", reason: "GTK presents no modal stack yet."),
+        .notPlanned("PageElement", "presentationDetents", reason: "GTK presents no modal stack yet."),
+        .notPlanned("PageElement", "presentationDragIndicator", reason: "GTK presents no modal stack yet."),
         .complete("PageElement", "title"),
+        .complete("VisualElement", "hint"),
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own

@@ -7,11 +7,13 @@
 /// The automatic choice follows the device: a checkbox where windows stand
 /// beside each other, a switch where one screen is shown at a time.
 public final class ToggleStyle: @unchecked Sendable {
-    /// The shape the toggle takes - one of `checkbox`, `switch` or automatic.
+    /// The shape the toggle takes - one of `checkbox`, `switch`, `button` or
+    /// automatic.
     enum Kind: Int32 {
         case automatic = 0
         case checkbox = 1
         case `switch` = 2
+        case button = 3
     }
 
     /// The shape named.
@@ -27,6 +29,10 @@ public final class ToggleStyle: @unchecked Sendable {
 
     /// A sliding switch.
     public static let `switch` = ToggleStyle(.switch)
+
+    /// A button that holds its pressed look while the toggle is on - a
+    /// toolbar's, where each is one and any of them can be down at once.
+    public static let button = ToggleStyle(.button)
 }
 
 /// An on/off control and the words beside it - a `CheckBox` where the desktop
@@ -109,7 +115,9 @@ public struct Toggle: View {
             : style.kind
 
         return Group {
-            if kind == .switch {
+            if kind == .button {
+                ToggleButton(isOn: isOn, initial: initial, label: label)
+            } else if kind == .switch {
                 HStack {
                     label
                     if let isOn { Switch(isOn) } else { Switch(initial) }
@@ -123,6 +131,58 @@ public struct Toggle: View {
                 .spacing(8)
             }
         }
+    }
+}
+
+/// What `Toggle`'s `.button` shape builds: a `Button` element wearing
+/// `isOn`, which a host draws as the platform's staying-pressed button - a
+/// toolbar's. The label hands its words and picture over where it can - a
+/// `Text`'s, an `Image`'s, a `Label`'s - and draws beside the button where
+/// it cannot.
+private struct ToggleButton: View {
+    /// The two-way state, or none for a toggle that only shows.
+    let isOn: Binding<Bool>?
+
+    /// What it shows where no binding is given.
+    let initial: Bool
+
+    /// The toggle's label.
+    let label: any View
+
+    var body: some View {
+        var button: Button.Modified = isOn.map(Button().isOn) ?? Button().isOn(initial)
+        var label = label
+        if let (text, icon) = label.buttonCaption {
+            if let text { button = button.text(text) }
+            if let icon { button = button.icon(icon) }
+            label = EmptyView()
+        }
+        return HStack {
+            button.onEvent(ButtonContract.toggled) { isOn?.wrappedValue = $0 }
+            label
+        }
+        .spacing(8)
+    }
+}
+
+extension View {
+    /// What of this view a captioned button can carry - a `Text`'s words, an
+    /// `Image`'s picture, a `Label`'s both - or `nil` where nothing carries,
+    /// the view drawing beside the button then.
+    fileprivate var buttonCaption: (text: String?, icon: ImageSource?)? {
+        if let text = self as? Text {
+            return (text.node.props[.text]?.string, nil)
+        }
+        if let image = self as? Image {
+            return (nil, image.node.props[.source].flatMap(ImageSource.init(propValue:)))
+        }
+        if let label = self as? Label {
+            let text = (label.title as? Text)?.node.props[.text]?.string
+            let icon = (label.icon as? Image)?.node.props[.source]
+                .flatMap(ImageSource.init(propValue:))
+            return text != nil || icon != nil ? (text, icon) : nil
+        }
+        return nil
     }
 }
 

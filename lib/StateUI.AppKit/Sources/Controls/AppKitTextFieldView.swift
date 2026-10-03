@@ -61,6 +61,7 @@ final class AppKitTextFieldView: NSView, NSTextFieldDelegate {
         textPrediction: Bool,
         cursorPosition: Int?,
         selectionLength: Int?,
+        style: TextFieldStyleKind,
         writeSelection: Bool
     ) {
         if secure != isSecure {
@@ -89,6 +90,12 @@ final class AppKitTextFieldView: NSView, NSTextFieldDelegate {
         textField.isEnabled = enabled
         textField.isEditable = !readOnly
         textField.isSelectable = true
+        textField.isBezeled = style != .plain
+        switch style {
+        case .roundedBorder: textField.bezelStyle = .roundedBezel
+        case .squareBorder: textField.bezelStyle = .squareBezel
+        case .automatic, .plain: textField.bezelStyle = .roundedBezel
+        }
         textField.isAutomaticTextCompletionEnabled = textPrediction
         textField.alignment = alignment(horizontalAlignment)
 

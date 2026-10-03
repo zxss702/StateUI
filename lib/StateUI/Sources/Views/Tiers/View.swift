@@ -88,6 +88,28 @@ extension View {
     ) -> ModifiedContent {
         setting(property.token, value.propValue)
     }
+
+    /// A marker the view's container reads to name it - a `Picker`'s choice
+    /// or a `TabView`'s tab - for a view composed of others.
+    @_disfavoredOverload
+    public func tag<V: Hashable & HostRepresentable>(_ value: V) -> ModifiedContent {
+        setting(ViewContract.tag, value.propValue)
+    }
+
+    /// What the keyboard's return key is captioned - Go, Search, Send, Next -
+    /// on a view holding a field that submits. A `SecureField`, or any
+    /// composition whose field is inside rather than the view itself.
+    public func submitLabel(_ value: ReturnKey) -> ModifiedContent {
+        setting(TextFieldContract.submitLabel.token, value.propValue)
+    }
+
+    /// The accent colour the controls inside this view draw with - on a
+    /// `ProgressView`, a `Toggle`, or any composition whose tintable element
+    /// is inside rather than the view itself.
+    @_disfavoredOverload
+    public func tint(_ value: Color) -> ModifiedContent {
+        setting(TintElementContract.tint.token, value.propValue)
+    }
 }
 
 extension View {
@@ -160,23 +182,41 @@ extension ViewProperties {
     ///
     ///     Text("Total").padding(16)                        // all four sides
     ///     Text("Total").padding(EdgeInsets(16, 0, 0, 0))   // the left edge only
+    ///     Text("Total").padding(.horizontal, 16)           // left and right
+    ///     Text("Total").padding()                          // the library's default
     public func padding(_ value: EdgeInsets) -> Modified {
         setValue(ViewContract.padding, value)
     }
 
-    /// Left and right, then top and bottom.
+    /// The same space on the edges named, `nil` for the library's default.
+    ///
+    ///     Text("Total").padding(.horizontal, 16)
+    ///     Text("Total").padding(.top)
+    public func padding(_ edges: Edge.Set = .all, _ length: Double? = nil) -> Modified {
+        let amount = length ?? libraryDefaultPadding
+        var insets = EdgeInsets(0, 0, 0, 0)
+        if edges.contains(.leading) { insets.left = amount }
+        if edges.contains(.top) { insets.top = amount }
+        if edges.contains(.trailing) { insets.right = amount }
+        if edges.contains(.bottom) { insets.bottom = amount }
+        return padding(insets)
+    }
+
+    /// Left and right, then top and bottom. This library's own.
+    @_spi(Host)
     public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> Modified {
         padding(EdgeInsets(horizontalSize, verticalSize))
     }
 
-    /// Each side in turn: left, top, right, bottom.
+    /// Each side in turn: left, top, right, bottom. This library's own.
+    @_spi(Host)
     public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> Modified {
         padding(EdgeInsets(left, top, right, bottom))
     }
 
     /// The same space on all four sides.
-    public func padding(_ all: Double) -> Modified {
-        padding(EdgeInsets(all, all, all, all))
+    public func padding(_ length: Double) -> Modified {
+        padding(EdgeInsets(length, length, length, length))
     }
 
     /// The same space on all four sides, as a number literal.
@@ -185,44 +225,75 @@ extension ViewProperties {
     }
 
     /// `padding` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
+    /// new value, and no view is rebuilt for it. This library's own.
+    @_spi(Host)
     public func padding(_ state: Binding<EdgeInsets>) -> Modified {
         journey(ViewContract.padding, by: state)
     }
 
-    /// The same space on all four sides, from a state, `$x`.
+    /// The same space on all four sides, from a state, `$x`. This library's own.
+    @_spi(Host)
     public func padding(_ state: Binding<Double>) -> Modified {
         padding(state.convert { EdgeInsets($0, $0, $0, $0) })
     }
 
-    /// The same space on all four sides, from a state holding a whole number, `$x`.
+    /// The same space on all four sides, from a state holding a whole number, `$x`. This library's own.
+    @_spi(Host)
     public func padding(_ state: Binding<Int>) -> Modified {
         padding(state.convert { EdgeInsets(Double($0)) })
     }
 
     /// How the view uses the width its parent offers - filling it, or sitting
-    /// at one end of it.
+    /// at one end of it. This library's own: `VStack(alignment:)` and
+    /// `.frame(alignment:)` are the view-facing shapes.
     ///
     ///     Button("Save").horizontalAlignment(.center)
-    public func horizontalAlignment(_ value: Alignment) -> Modified {
+    public func horizontalAlignment(_ value: AxisAlignment) -> Modified {
         setValue(ViewContract.horizontalAlignment, value)
     }
 
     /// The same, for the height.
-    public func verticalAlignment(_ value: Alignment) -> Modified {
+    public func verticalAlignment(_ value: AxisAlignment) -> Modified {
         setValue(ViewContract.verticalAlignment, value)
     }
 
     /// `horizontalAlignment` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
-    public func horizontalAlignment(_ state: Binding<Alignment>) -> Modified {
+    public func horizontalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
         plain(ViewContract.horizontalAlignment, by: state)
     }
 
     /// `verticalAlignment` from a state, `$x`: the host sets each new value as
     /// it stands, and no view is rebuilt for it.
-    public func verticalAlignment(_ state: Binding<Alignment>) -> Modified {
+    public func verticalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
         plain(ViewContract.verticalAlignment, by: state)
+    }
+
+    /// The view shares the room its stack has left over along the stack's axis,
+    /// never less than `minimum` long. What a `Spacer` is written with; for
+    /// anything else, `.frame(maxWidth:)` says it better.
+    @_spi(Host)
+    public func flex(_ minimum: Double) -> Modified {
+        setValue(ViewContract.flex, minimum)
+    }
+
+    /// `flex` from a state, `$x`: the host sets each new value as it stands,
+    /// and no view is rebuilt for it.
+    @_spi(Host)
+    public func flex(_ state: Binding<Double>) -> Modified {
+        plain(ViewContract.flex, by: state)
+    }
+
+    /// A marker the view's container reads to name it - a `Picker`'s choice
+    /// or a `TabView`'s tab. Any value that crosses, compared by its own
+    /// `==`.
+    ///
+    ///     Picker("Size", selection: $size) {
+    ///         Text("Small").tag(Size.small)
+    ///         Text("Large").tag(Size.large)
+    ///     }
+    public func tag<V: Hashable & HostRepresentable>(_ value: V) -> Modified {
+        setValue(ViewContract.tag, value.propValue)
     }
 }
 
@@ -290,27 +361,40 @@ extension View {
     ///
     ///     Text("Total").padding(16)                        // all four sides
     ///     Text("Total").padding(EdgeInsets(16, 0, 0, 0))   // the left edge only
+    ///     Text("Total").padding(.horizontal, 16)           // left and right
+    ///     Text("Total").padding()                          // the library's default
     @_disfavoredOverload
     public func padding(_ value: EdgeInsets) -> ModifiedContent {
         setting(ViewContract.padding, value)
     }
 
-    /// Left and right, then top and bottom.
+    /// The same space on the edges named, `nil` for the library's default.
+    ///
+    ///     Text("Total").padding(.horizontal, 16)
+    ///     Text("Total").padding(.top)
     @_disfavoredOverload
+    public func padding(_ edges: Edge.Set = .all, _ length: Double? = nil) -> ModifiedContent {
+        padding(paddingInsets(edges, length))
+    }
+
+    /// Left and right, then top and bottom. This library's own.
+    @_disfavoredOverload
+    @_spi(Host)
     public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> ModifiedContent {
         padding(EdgeInsets(horizontalSize, verticalSize))
     }
 
-    /// Each side in turn: left, top, right, bottom.
+    /// Each side in turn: left, top, right, bottom. This library's own.
     @_disfavoredOverload
+    @_spi(Host)
     public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> ModifiedContent {
         padding(EdgeInsets(left, top, right, bottom))
     }
 
     /// The same space on all four sides.
     @_disfavoredOverload
-    public func padding(_ all: Double) -> ModifiedContent {
-        padding(EdgeInsets(all, all, all, all))
+    public func padding(_ length: Double) -> ModifiedContent {
+        padding(EdgeInsets(length, length, length, length))
     }
 
     /// The same space on all four sides, as a number literal.
@@ -320,54 +404,94 @@ extension View {
     }
 
     /// `padding` from a state, `$x`: the host animates the property to each
-    /// new value, and no view is rebuilt for it.
+    /// new value, and no view is rebuilt for it. This library's own.
     @_disfavoredOverload
+    @_spi(Host)
     public func padding(_ state: Binding<EdgeInsets>) -> ModifiedContent {
         revised { node in
             node.driveJourney(ViewContract.padding, by: state)
         }
     }
 
-    /// The same space on all four sides, from a state, `$x`.
+    /// The same space on all four sides, from a state, `$x`. This library's own.
     @_disfavoredOverload
+    @_spi(Host)
     public func padding(_ state: Binding<Double>) -> ModifiedContent {
         padding(state.convert { EdgeInsets($0, $0, $0, $0) })
     }
 
-    /// The same space on all four sides, from a state holding a whole number, `$x`.
+    /// The same space on all four sides, from a state holding a whole number, `$x`. This library's own.
     @_disfavoredOverload
+    @_spi(Host)
     public func padding(_ state: Binding<Int>) -> ModifiedContent {
         padding(state.convert { EdgeInsets(Double($0)) })
     }
 
     /// How the view uses the width its parent offers - filling it, or sitting
-    /// at one end of it.
+    /// at one end of it. This library's own: `VStack(alignment:)` and
+    /// `.frame(alignment:)` are the view-facing shapes.
     ///
     ///     Button("Save").horizontalAlignment(.center)
     @_disfavoredOverload
-    public func horizontalAlignment(_ value: Alignment) -> ModifiedContent {
+    public func horizontalAlignment(_ value: AxisAlignment) -> ModifiedContent {
         setting(ViewContract.horizontalAlignment, value)
     }
 
     /// The same, for the height.
     @_disfavoredOverload
-    public func verticalAlignment(_ value: Alignment) -> ModifiedContent {
+    public func verticalAlignment(_ value: AxisAlignment) -> ModifiedContent {
         setting(ViewContract.verticalAlignment, value)
     }
 
     /// `horizontalAlignment` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
     @_disfavoredOverload
-    public func horizontalAlignment(_ state: Binding<Alignment>) -> ModifiedContent {
+    public func horizontalAlignment(_ state: Binding<AxisAlignment>) -> ModifiedContent {
         revised { $0.drivePlain(ViewContract.horizontalAlignment, by: state) }
     }
 
     /// `verticalAlignment` from a state, `$x`: the host sets each new value as
     /// it stands, and no view is rebuilt for it.
     @_disfavoredOverload
-    public func verticalAlignment(_ state: Binding<Alignment>) -> ModifiedContent {
+    public func verticalAlignment(_ state: Binding<AxisAlignment>) -> ModifiedContent {
         revised { $0.drivePlain(ViewContract.verticalAlignment, by: state) }
     }
+
+    /// Keeps the view at its own size on the axes asked, rather than taking
+    /// what its parent offers - centered in the room it is given:
+    ///
+    ///     Text("…")
+    ///         .fixedSize()
+    ///
+    ///     Label("Amount")
+    ///         .fixedSize(horizontal: false, vertical: true)
+    public func fixedSize(horizontal: Bool, vertical: Bool) -> ModifiedContent {
+        var modified = ModifiedContent(node: node)
+        if horizontal { modified = modified.horizontalAlignment(.center) }
+        if vertical { modified = modified.verticalAlignment(.center) }
+        return modified
+    }
+
+    /// The same, on both axes.
+    public func fixedSize() -> ModifiedContent {
+        fixedSize(horizontal: true, vertical: true)
+    }
+}
+
+/// The padding `.padding()` writes, the same on every platform: sixteen
+/// device units - wide enough for a control's edge, narrow enough for
+/// ordinary text.
+private let libraryDefaultPadding: Double = 16
+
+/// The insets `padding(_:_:)` writes - shared by `ViewProperties` and `View`.
+private func paddingInsets(_ edges: Edge.Set, _ length: Double?) -> EdgeInsets {
+    let amount = length ?? libraryDefaultPadding
+    var insets = EdgeInsets(0, 0, 0, 0)
+    if edges.contains(.leading) { insets.left = amount }
+    if edges.contains(.top) { insets.top = amount }
+    if edges.contains(.trailing) { insets.right = amount }
+    if edges.contains(.bottom) { insets.bottom = amount }
+    return insets
 }
 
 extension View {
@@ -400,28 +524,49 @@ extension View {
 extension View {
     /// How this view's values animate when they change.
     ///
-    ///     VStack { … }.animation(.spring(response: 260))
-    ///     Text(count).animation(.none)
+    ///     VStack { … }.animation(.spring(response: 0.26))
+    ///     Text(count).animation(nil)
     ///
-    /// A changed value animates to its new setting by default; `.none` snaps,
+    /// A changed value animates to its new setting by default; `nil` snaps,
     /// which is what a value rewritten every frame wants. It applies to this
     /// view only, not to the views inside it; `application.animation` sets the
     /// whole application.
     ///
-    /// - Parameter animation: how its values animate.
+    /// - Parameter animation: how its values animate, or `nil` for none.
     /// - Returns: the view, with the animation on it.
-    public func animation(_ animation: Animation) -> ModifiedContent {
+    public func animation(_ animation: Animation?) -> ModifiedContent {
         revised { node in
             var plan = node.animation ?? AnimationPlan(base: nil)
-            plan.base = animation
+            plan.base = animation ?? Animation.none
+            node.animation = plan
+        }
+    }
+
+    /// How this view's values animate when `value` changes - and only then.
+    ///
+    ///     Text(message).animation(.bouncy, value: message)
+    ///
+    /// The animation applies to the render a change to `value` causes; a render
+    /// where `value` stands the same leaves the view animating as it otherwise
+    /// would.
+    ///
+    /// - Parameters:
+    ///   - animation: the animation to use, or `nil` for none.
+    ///   - value: what changes to animate on.
+    /// - Returns: the view, with the trigger on it.
+    public func animation<V: Equatable>(_ animation: Animation?, value: V) -> ModifiedContent {
+        revised { node in
+            var plan = node.animation ?? AnimationPlan(base: nil)
+            plan.gates.append((value: AnyEquatableValue(value), animation: animation))
             node.animation = plan
         }
     }
 
     /// How some of this view's values animate, leaving the rest as they were.
+    /// This library's own: `value:` is the public shape.
     ///
     ///     VStack { … }
-    ///         .animation(.spring(response: 240))
+    ///         .animation(.spring(response: 0.24))
     ///         .animation(.none, .size)
     ///
     /// The last rule that names a value answers for it. The usual use is a view
@@ -432,10 +577,26 @@ extension View {
     ///   - animation: how those values animate.
     ///   - values: which of them. See `AnimationValues` for what each name covers.
     /// - Returns: the view, with the rule on it.
+    @_spi(Host)
     public func animation(_ animation: Animation, _ values: AnimationValues) -> ModifiedContent {
         revised { node in
             var plan = node.animation ?? AnimationPlan(base: nil)
             plan.rules.append((values: values, animation: animation))
+            node.animation = plan
+        }
+    }
+
+    /// Rewrites the transaction the views below this one run their changes
+    /// under.
+    ///
+    ///     Row(item).transaction { $0.disablesAnimations = true }
+    ///
+    /// - Parameter transform: what to do to the transaction.
+    /// - Returns: the view, with the rewrite on it.
+    public func transaction(_ transform: @escaping @Sendable (inout Transaction) -> Void) -> ModifiedContent {
+        revised { node in
+            var plan = node.animation ?? AnimationPlan(base: nil)
+            plan.transactions.append(TransactionTransform(transform))
             node.animation = plan
         }
     }

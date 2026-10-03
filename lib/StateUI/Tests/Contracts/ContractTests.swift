@@ -174,8 +174,9 @@ final class ContractTests: XCTestCase {
             [Draw.fillColor(.gold)] as [DrawCommand],
             WindowType("document"),
             FontAttributes([.bold, .italic]), TextDecorations(rawValue: 1),
+            FontTextStyle(rawValue: 9)!, FontDesign(rawValue: 2)!, Font.Weight.semibold,
             Area.absolute(0, 0, 120, 40), Area.proportional(0.5, 0, 0.5, 1), SwipeDirection.all,
-            Alignment(rawValue: 1)!, TextAlignment.center, LineBreak(rawValue: 1)!, TextCase(rawValue: 1)!,
+            AxisAlignment(rawValue: 1)!, TextAlignment.center, LineBreak(rawValue: 1)!, TextCase(rawValue: 1)!,
             InputPurpose(rawValue: 1)!, ReturnKey(rawValue: 1)!, Axis(rawValue: 1)!,
             PinType(rawValue: 1)!, ContentMode(rawValue: 1)!, LayoutDirection(rawValue: 1)!,
             HeadingLevel(rawValue: 1)!, ScrollIndicatorVisibility(rawValue: 1)!,
@@ -183,9 +184,16 @@ final class ContractTests: XCTestCase {
             FillRule(rawValue: 1)!, IndicatorShape(rawValue: 1)!, ToolbarItemPlacement(rawValue: 1)!,
             SafeArea(rawValue: 1)!, IconPosition(rawValue: 1)!, MapType(rawValue: 1)!,
             WebNavigationEvent(rawValue: 1)!, WebNavigationResult(rawValue: 1)!, GesturePhase.running,
+            ButtonRole.destructive, PropValue.number(7),
+            ButtonStyleKind.borderedProminent, TextFieldStyleKind.roundedBorder,
+            PickerStyleKind.segmented, ListStyleKind.sidebar,
+            KeyboardShortcut(.return, modifiers: [.command, .shift]),
             ItemsLayout.list(), ItemsLayout.row(spacing: 8), ItemsLayout.grid(minimumItemWidth: 120, spacing: 4),
             SelectionMode.multiple, ScrollAnchor.center,
             ItemsEntries(header: "h", sections: [ItemsEntries.Section(footer: "f", items: ["1", "2"])]),
+            Visibility.hidden,
+            [PresentationDetent.medium, .large, .fraction(0.4), .height(220)] as [PresentationDetent],
+            Edge.trailing,
         ]
 
         for sample in samples {

@@ -10,7 +10,7 @@
 ///     ColorPicker().opacity($fade)
 ///
 ///     fade = 0.2                                         // the destination: the box animates there
-///     try await $fade.journey.move(to: 0.2, .eased(400, .cubicOut))   // the same, awaited
+///     try await $fade.journey.move(to: 0.2, .easeOut(duration: 0.4))   // the same, awaited
 ///     $fade.journey.value                                // where it has got to this frame
 ///     $fade.journey.velocity                             // and how fast
 ///     $fade.journey.stop()                               // leaves it where it is
@@ -102,7 +102,7 @@ public struct Journey<Value: Walked> {
 
     /// The law this value animates under, wherever it is shown.
     ///
-    ///     $rotation.journey.animation = .spring()
+    ///     $rotation.journey.animation = .spring(duration:)
     ///
     /// On the value rather than the view: `.animation(_:)` says how an element animates,
     /// this says how this value does. `.inherited` is the element's own. `.custom` is
@@ -148,7 +148,7 @@ public struct Journey<Value: Walked> {
 
     /// Sends the value there under `animation`, and suspends until it arrives.
     ///
-    ///     try await $fade.journey.move(to: 0.1, .eased(400, .cubicOut))
+    ///     try await $fade.journey.move(to: 0.1, .easeOut(duration: 0.4))
     ///
     /// True means it got there; false means something else ended the journey - a
     /// newer destination, a value written over it, or `stop()`. With nothing to

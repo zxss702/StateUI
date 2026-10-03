@@ -24,6 +24,12 @@ public enum LayoutContract: Contract {
     /// it.
     public static let letsInputThrough = ElementProperty<Self, Bool>("letsInputThrough", layer: .native)
 
+    /// The outline input stays within - a `.contentShape`'s, where a tap
+    /// outside it reaches nothing the layout holds.
+    public static let hitShape = ElementProperty<Self, ContainerShape>("hitShape", layer: .native)
+
     /// The tier's own members.
-    public static let members: [any ContractMember] = [ignoresSafeArea, clipsContent, letsInputThrough]
+    public static let members: [any ContractMember] = [
+        ignoresSafeArea, clipsContent, letsInputThrough, hitShape,
+    ]
 }

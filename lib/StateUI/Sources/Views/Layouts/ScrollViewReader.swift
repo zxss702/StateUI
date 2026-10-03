@@ -226,7 +226,7 @@ public struct ScrollViewReader: View {
 
                         PlacedLayout(Self.parts, id: \.self) { part in
                             ColorPicker(Color("#00000000"))
-                                .animation(.none)
+                                .animation(nil)
                                 .tapping(part == Self.parts[1] ? tap : nil)
                                 // Both boxes take the drag: the second lies over the first.
                                 .dragging(drag)
@@ -252,13 +252,13 @@ public struct ScrollViewReader: View {
                                             want.width,
                                             want.height)),
                                 ],
-                                animation: .none)
+                                animation: nil)
                         }
                     } else {
                         ColorPicker(Color("#00000000"))
                             .frame(width: long)
                             .frame(height: tall)
-                            .animation(.none)
+                            .animation(nil)
                             .tapping(tap)
                             .dragging(drag)
                     }

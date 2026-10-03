@@ -41,6 +41,10 @@ public enum ViewContract: Contract {
     /// window's x and y, and the safe area's x and y.
     public static let frameChanged = ElementEvent<Self, [Double]>("frameChanged", layer: .native)
 
+    /// The view stretches to share the room left over along its layout's axis,
+    /// never less than this long. What a `Spacer` writes.
+    public static let flex = ElementProperty<Self, Double>("flex", layer: .stateUI, travels: false)
+
     /// Which column of a Grid the view sits in.
     public static let gridColumn = ElementProperty<Self, Int>("gridColumn", layer: .stateUI, travels: false)
 
@@ -55,7 +59,7 @@ public enum ViewContract: Contract {
     public static let gridRowSpan = ElementProperty<Self, Int>("gridRowSpan", layer: .stateUI, travels: false)
 
     /// How the view uses the width its layout offers.
-    public static let horizontalAlignment = ElementProperty<Self, Alignment>(
+    public static let horizontalAlignment = ElementProperty<Self, AxisAlignment>(
         "horizontalAlignment", layer: .native)
 
     /// The space kept outside the view, between it and its neighbours.
@@ -109,6 +113,11 @@ public enum ViewContract: Contract {
     /// The view was swiped, the one dominant direction it went.
     public static let swiped = ElementEvent<Self, SwipeDirection>("swiped", layer: .native)
 
+    /// A marker the view's container reads to name it - what a `Picker`'s
+    /// selection or a `TabView`'s current tab is matched against. Never
+    /// crosses on its own; the container reads it off the child.
+    public static let tag = ElementProperty<Self, PropValue>("tag", layer: .stateUI, travels: false)
+
     /// How many taps in a row a tap on the view takes.
     public static let tapCount = ElementProperty<Self, Int>(
         "tapCount", layer: .structure, travels: false, cleared: false)
@@ -117,16 +126,16 @@ public enum ViewContract: Contract {
     public static let tapGesture = ElementEvent<Self, Void>("tapGesture", layer: .native)
 
     /// How the view uses the height its layout offers.
-    public static let verticalAlignment = ElementProperty<Self, Alignment>(
+    public static let verticalAlignment = ElementProperty<Self, AxisAlignment>(
         "verticalAlignment", layer: .native)
 
     /// The tier's own members.
     public static let members: [any ContractMember] = [
         allowDrop, area, canDrag, dragLeave,
-        dragOver, dragStarting, dragText, drop, dropCompleted, frameChanged, gridColumn,
+        dragOver, dragStarting, dragText, drop, dropCompleted, flex, frameChanged, gridColumn,
         gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, padding, panTouchCount,
         panUpdated, panXChannel, panYChannel, pinchUpdated, pointerEntered, pointerExited,
         pointerMoved, pointerPressed, pointerReleased, swipeDirection, swipeThreshold, swiped,
-        tapCount, tapGesture, verticalAlignment,
+        tag, tapCount, tapGesture, verticalAlignment,
     ]
 }

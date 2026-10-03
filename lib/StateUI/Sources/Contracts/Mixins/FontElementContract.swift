@@ -23,8 +23,20 @@ public enum FontElementContract: Contract {
     /// The font size, in device units.
     public static let fontSize = ElementProperty<Self, Double>("fontSize", layer: .native, moves: .text)
 
+    /// One of the platform's named text styles - the size the platform
+    /// chooses for it, following the user's text-size setting. Where it
+    /// stands, `fontSize` is a floor to the style's size only where larger.
+    public static let fontTextStyle = ElementProperty<Self, FontTextStyle>("fontTextStyle", layer: .native)
+
+    /// The font's weight on the 100-900 scale - `Font.Weight`.
+    public static let fontWeight = ElementProperty<Self, Font.Weight>("fontWeight", layer: .native)
+
+    /// The letter shape of the system font.
+    public static let fontDesign = ElementProperty<Self, FontDesign>("fontDesign", layer: .native)
+
     /// The tier's own members.
     public static let members: [any ContractMember] = [
         fontAttributes, fontAutoScalingEnabled, fontFamily, fontSize,
+        fontTextStyle, fontWeight, fontDesign,
     ]
 }

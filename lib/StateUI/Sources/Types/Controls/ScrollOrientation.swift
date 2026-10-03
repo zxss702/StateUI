@@ -20,5 +20,27 @@ public enum Axis: Int32, Sendable {
     case neither = 3
 }
 
+extension Axis {
+    /// A set of axes - what `.scrollIndicators(_:axes:)` takes.
+    public struct Set: OptionSet, Sendable {
+        /// The flag bits.
+        public let rawValue: Int32
+
+        /// From the raw bits.
+        public init(rawValue: Int32) {
+            self.rawValue = rawValue
+        }
+
+        /// The sideways axis.
+        public static let horizontal = Set(rawValue: 1 << 0)
+
+        /// The up-and-down axis.
+        public static let vertical = Set(rawValue: 1 << 1)
+
+        /// Both.
+        public static let all: Set = [.horizontal, .vertical]
+    }
+}
+
 extension Axis: HostRepresentable {}
 extension Axis: StateChoice {}

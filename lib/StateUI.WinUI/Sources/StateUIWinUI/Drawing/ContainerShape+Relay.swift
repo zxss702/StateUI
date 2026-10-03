@@ -14,6 +14,8 @@ extension ContainerShape {
         case .rectangle: (StateUIOutlineRectangle, 0)
         case .roundedRectangle(let radius): (StateUIOutlineRounded, radius)
         case .ellipse: (StateUIOutlineEllipse, 0)
+        case .capsule: (StateUIOutlineCapsule, 0)
+        case .circle: (StateUIOutlineCircle, 0)
         }
     }
 }

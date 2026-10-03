@@ -375,7 +375,7 @@ final class AppKitMeasurementTests: XCTestCase {
         page.setItem(AppKitLayoutItem(view: label))
         let tabs = AppKitTabbedView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
         tabs.setItems(
-            [AppKitTabItem(layout: AppKitLayoutItem(view: page), title: "One", image: nil)],
+            [AppKitTabItem(layout: AppKitLayoutItem(view: page), title: "One", image: nil, badge: nil)],
             requestedIndex: 0)
         tabs.layoutSubtreeIfNeeded()
 
@@ -477,7 +477,7 @@ final class AppKitMeasurementTests: XCTestCase {
         var box = HostPatch(id: .manual("box"), type: .colorPicker)
         box.properties[.width] = .number(120)
         box.properties[.height] = .number(56)
-        box.properties[.horizontalAlignment] = .enumeration(Alignment.start.rawValue)
+        box.properties[.horizontalAlignment] = .enumeration(AxisAlignment.start.rawValue)
         var button = HostPatch(id: .manual("size"), type: .button)
         button.properties[.text] = .string("Size")
 
