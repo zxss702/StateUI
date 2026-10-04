@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A page pushed for one thing chosen from the search box.
 ///

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A window FOR A VALUE: one per swatch number, the number lent to the window
 /// as its own - so writing it makes the same window about another swatch, and

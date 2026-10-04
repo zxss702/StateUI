@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The panel every tab of the demonstration carries: what the tab list is, what
 /// the selection sends the host, and the buttons that change that list while a

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Where `@State` may be written from, and the one move that is forbidden.
 ///

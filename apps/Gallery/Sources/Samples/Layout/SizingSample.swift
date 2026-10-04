@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// How big a view asks to be, the bounds on that request, and clipping.
 struct SizingSample: SampleContent, ExampleContent {

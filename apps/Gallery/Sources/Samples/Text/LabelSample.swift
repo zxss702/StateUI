@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 struct LabelSample: SampleContent, ExampleContent {
     static let id = "label"
@@ -28,7 +28,7 @@ struct LabelSample: SampleContent, ExampleContent {
                 .lineLimit(1)
 
             Text("Letters spaced out")
-                .characterSpacing(3)
+                .tracking(3)
 
             // The height of a line as a MULTIPLE of the font's own: the same
             // two lines packed tight, then opened out.
@@ -89,7 +89,7 @@ struct LabelSample: SampleContent, ExampleContent {
 
             Text("Letters spaced out")
                 .font(.system(size: 16))
-                .characterSpacing(3)
+                .tracking(3)
 
             // The height of a line as a MULTIPLE of the font's own: the same
             // two lines packed tight, then opened out.

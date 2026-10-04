@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// One level of the drill-down. Every push makes another of these: identity on
 /// a stack is the depth together with the route, so a stack may hold the same

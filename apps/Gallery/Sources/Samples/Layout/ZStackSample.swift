@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Children drawn one over another, each in the whole room or in the area it
 /// names, and which of them is on top.

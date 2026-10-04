@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Where the gallery's appearance actually comes from.
 struct StyleSample: SampleContent, ExampleContent {
@@ -42,7 +42,7 @@ struct StyleSample: SampleContent, ExampleContent {
                 .foregroundStyle(Palette.subtle)
                 .font(.system(size: 17))
                 .italic()
-                .characterSpacing(0.3)
+                .tracking(0.3)
                 .multilineTextAlignment(.center)
 
             Style<Text>("QuoteLoud")

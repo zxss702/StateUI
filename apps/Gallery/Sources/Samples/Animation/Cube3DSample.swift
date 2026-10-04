@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-import StateUI
+@_spi(Host) import StateUI
 
 /// A cube the host draws on the GPU - Metal on AppKit and UIKit, OpenGL 3.3 on GTK, Direct3D 11.1 on WinUI,
 /// OpenGL ES 3.0 on Android - with everything about it described from this side.

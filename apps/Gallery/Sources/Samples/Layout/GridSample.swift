@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Rows and columns with each child's place written on the child.
 struct GridSample: SampleContent {

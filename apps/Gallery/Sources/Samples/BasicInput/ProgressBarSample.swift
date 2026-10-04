@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Two bars over one job: how much of it is done, and how much is left.
 struct ProgressBarSample: SampleContent, ExampleContent {

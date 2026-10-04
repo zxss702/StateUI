@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native modal stack owned by application state.
 struct ModalSample: SampleContent, ExampleContent {

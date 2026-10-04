@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The two non-wrapping stack directions.
 struct StackLayoutSample: SampleContent, ExampleContent {

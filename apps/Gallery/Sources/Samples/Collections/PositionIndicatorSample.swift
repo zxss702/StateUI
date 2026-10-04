@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Dots marking a place in a sequence: their shape, their cap and a lone one.
 struct PositionIndicatorSample: SampleContent, ExampleContent {

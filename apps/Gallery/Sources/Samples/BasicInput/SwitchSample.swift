@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A switch bound to a flag, reporting each flip as the value it now has.
 struct SwitchSample: SampleContent, ExampleContent {

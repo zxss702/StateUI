@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A run of cards swiped through, in a shape one word chooses.
 struct GalleryViewSample: SampleContent, ExampleContent {

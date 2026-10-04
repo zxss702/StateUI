@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// One gallery - a SESSION of the application. *File ▸ New WindowScene* opens
 /// another, and so does the windows sample's "Open another gallery"; each has

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Two buttons whose content is an icon, each drawn once per color scheme.
 struct IconButtonSample: SampleContent, ExampleContent {

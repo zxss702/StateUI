@@ -1,6 +1,6 @@
 // A sample that holds its page still, shown as tabs.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// One tab of a sample whose examples hold the page still.
 enum SampleTab: Hashable {
@@ -66,10 +66,10 @@ struct SampleTabPage: View {
     let nav: Navigation
 
     var body: some View {
-        GeometryReader { frame in
+        GeometryReader { proxy in
             held
-                .frame(height: frame.height)
-                .frame(width: frame.width)
+                .frame(height: proxy.size.height)
+                .frame(width: proxy.size.width)
                 .verticalAlignment(.start)
                 .horizontalAlignment(.start)
         }

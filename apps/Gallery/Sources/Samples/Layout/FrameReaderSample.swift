@@ -36,8 +36,8 @@ struct FrameReaderSample: SampleContent, ExampleContent {
                 // is the reader's own @State. The three handlers write the
                 // page's states instead, and the lines below print them - so
                 // a settled frame builds the reader AND the page's braces.
-                GeometryReader { frame in
-                    Text("\\(Int(frame.width)) × \\(Int(frame.height))")
+                GeometryReader { proxy in
+                    Text("\\(Int(proxy.size.width)) × \\(Int(proxy.size.height))")
                 }
                 // Driven: the host carries the width, and no render
                 // describes it.
@@ -92,8 +92,8 @@ struct FrameReaderSample: SampleContent, ExampleContent {
                 // is the reader's own @State. The three handlers write the
                 // page's states instead, and the three lines below print
                 // them - so a settled frame builds the reader AND the page.
-                GeometryReader { frame in
-                    Text("\(Int(frame.width)) × \(Int(frame.height))")
+                GeometryReader { proxy in
+                    Text("\(Int(proxy.size.width)) × \(Int(proxy.size.height))")
                         .font(.system(size: 22))
                         .bold()
                         .foregroundStyle(Palette.onAccent)

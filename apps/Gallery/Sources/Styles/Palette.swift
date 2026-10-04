@@ -10,7 +10,7 @@
 // and almost everything reaches it through here; the colours that must not
 // follow the color scheme, and a sample showing a colour of its own, read it directly.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// What the gallery draws with: one name per job, each right on both themes.
 ///

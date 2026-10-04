@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A ticker that does not repeat, restarted by the work it started.
 struct PollSample: SampleContent, ExampleContent {

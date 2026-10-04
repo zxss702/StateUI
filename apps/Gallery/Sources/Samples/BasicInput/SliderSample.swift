@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native slider driven by one shared StateUI journey.
 struct SliderSample: SampleContent, ExampleContent {

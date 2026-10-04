@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The two layers of reactivity side by side, and then what each costs.
 ///

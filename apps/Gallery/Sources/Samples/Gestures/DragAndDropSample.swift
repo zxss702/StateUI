@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Text dragged from one view and dropped on another.
 struct DragAndDropSample: SampleContent, ExampleContent {

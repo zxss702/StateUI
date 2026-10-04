@@ -10,7 +10,7 @@
 // keyword and every type name in a listing is ASCII, and anything else
 // falls through as plain text, which is the right answer for it anyway.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// One run of source that is all the same colour.
 struct CodeRun {

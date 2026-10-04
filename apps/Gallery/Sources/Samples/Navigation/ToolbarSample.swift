@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Page-owned native toolbar and menu items.
 struct ToolbarSample: SampleContent, ExampleContent {

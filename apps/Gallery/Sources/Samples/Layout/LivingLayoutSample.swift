@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A layout whose children travel to their new places when the layout changes.
 struct LivingLayoutSample: SampleContent, ExampleContent {
@@ -76,7 +76,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
 
             Text("A stack")
                 .font(.system(size: 11))
-                .characterSpacing(1)
+                .tracking(1)
                 .foregroundStyle(Palette.subtle)
 
             VStack {
@@ -116,7 +116,7 @@ struct LivingLayoutSample: SampleContent, ExampleContent {
 
             Text("A grid, its columns changing width")
                 .font(.system(size: 11))
-                .characterSpacing(1)
+                .tracking(1)
                 .foregroundStyle(Palette.subtle)
 
             Grid {

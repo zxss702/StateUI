@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Two fingers scaling a view, and every report the pinch sends as it arrives.
 struct PinchSample: SampleContent, ExampleContent {

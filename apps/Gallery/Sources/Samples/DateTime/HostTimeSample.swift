@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The library's own way to tell the time: acts, not Foundation.
 struct HostTimeSample: SampleContent, ExampleContent {

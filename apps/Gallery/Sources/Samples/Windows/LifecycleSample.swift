@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The native window lifecycle recorded through `WindowSession.phase`.
 struct LifecycleSample: SampleContent, ExampleContent {

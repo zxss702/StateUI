@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Which way a finger swiped, heard every way or narrowed to two.
 struct SwipeSample: SampleContent, ExampleContent {

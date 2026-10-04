@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// `.onAppear` and `.onDisappear`: what runs as an element comes into the
 /// tree and as it leaves, once each.

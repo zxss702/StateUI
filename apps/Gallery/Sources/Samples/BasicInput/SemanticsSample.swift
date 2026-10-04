@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The accessible meaning and stable external identity of a StateUI view.
 struct SemanticsSample: SampleContent, ExampleContent {
@@ -82,7 +82,7 @@ struct SemanticsSample: SampleContent, ExampleContent {
 
             ColorPicker(Palette.outline)
                 .frame(height: 1)
-                .isAccessibilityHidden(true)
+                .accessibilityHidden(true)
         }
 
         private var describedButton: any View {
@@ -231,7 +231,7 @@ struct SemanticsSample: SampleContent, ExampleContent {
             // A rule is decoration: a stop that would waste the user's time.
             ColorPicker(Palette.outline)
                 .frame(height: 1)
-                .isAccessibilityHidden(true)
+                .accessibilityHidden(true)
         }
         .spacing(12)
     }

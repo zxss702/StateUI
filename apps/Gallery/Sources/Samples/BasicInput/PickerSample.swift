@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// One choice out of a list, opened by the user or by a button.
 struct PickerSample: SampleContent, ExampleContent {

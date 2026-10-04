@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Explicit native focus and soft-input actions.
 struct KeyboardSample: SampleContent, ExampleContent {
@@ -22,12 +22,10 @@ struct KeyboardSample: SampleContent, ExampleContent {
             // `said` is read here, so the answer below builds this closure.
             DebugInfoLabel()
 
-            TextField($name)
-                .placeholder("Name")
+            TextField("Name", text: $name)
                 .aim(first)
 
-            TextField($note)
-                .placeholder("Note")
+            TextField("Note", text: $note)
 
             HStack {
                 Button("Focus first", action: { try await first.focus() })

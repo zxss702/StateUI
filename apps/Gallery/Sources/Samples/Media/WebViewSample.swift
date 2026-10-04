@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A page of the web: fetched by URL, and HTML written in place.
 struct WebViewSample: SampleContent {

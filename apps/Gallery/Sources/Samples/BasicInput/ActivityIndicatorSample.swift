@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A spinner started and stopped by one flag.
 struct ActivityIndicatorSample: SampleContent, ExampleContent {

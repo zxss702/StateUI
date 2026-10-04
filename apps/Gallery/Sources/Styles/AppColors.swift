@@ -21,7 +21,7 @@
 // that file; the colours that must not follow the color scheme, and a sample showing a
 // colour of its own, read them directly.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// Every colour the gallery is built from, named for what it is rather than
 /// what it is for.

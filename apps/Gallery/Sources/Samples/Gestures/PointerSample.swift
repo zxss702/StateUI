@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A pointer's hover, movement and button over one view.
 struct PointerSample: SampleContent, ExampleContent {

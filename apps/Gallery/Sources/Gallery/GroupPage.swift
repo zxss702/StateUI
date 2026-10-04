@@ -1,6 +1,6 @@
 // One category, listing what is in it.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The page behind a sidebar entry: every sample in that group, one card each.
 ///

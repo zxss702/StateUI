@@ -1,6 +1,6 @@
 // One on/off option: what it is called, and the switch that answers it.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// An option a user turns on and off, written as the control that means
 /// exactly that: a caption beside a `Switch`.

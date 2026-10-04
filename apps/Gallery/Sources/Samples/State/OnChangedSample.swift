@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Running something when a value is not what it was last render.
 struct OnChangedSample: SampleContent, ExampleContent {

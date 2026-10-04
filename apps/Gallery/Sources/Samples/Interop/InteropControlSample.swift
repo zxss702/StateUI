@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-import StateUI
+@_spi(Host) import StateUI
 
 /// A control the application registers with its host, described here like any
 /// other.

@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The other tab: a plain page, and the one that writes the selection.
 ///

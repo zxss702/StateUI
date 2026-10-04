@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 import Foundation
 
 #if canImport(Android)

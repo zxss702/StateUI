@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// One row laid out left to right, right to left, and as the view above says.
 struct LayoutDirectionSample: SampleContent, ExampleContent {

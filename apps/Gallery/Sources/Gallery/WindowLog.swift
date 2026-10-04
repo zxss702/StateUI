@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// What a gallery's main window has said about its life, numbered, newest
 /// last - kept by the gallery's scene, written by `MainWindow` as the window

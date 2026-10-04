@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Three buttons in one group, with one state for what is chosen.
 struct RadioButtonSample: SampleContent, ExampleContent {

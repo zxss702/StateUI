@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A number stepped one at a time, and the same number stepped by five.
 struct StepperSample: SampleContent, ExampleContent {

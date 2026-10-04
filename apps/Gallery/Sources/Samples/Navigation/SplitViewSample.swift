@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native split view whose sidebar is an ordinary StateUI page.
 struct SplitViewSample: SampleContent, ExampleContent {

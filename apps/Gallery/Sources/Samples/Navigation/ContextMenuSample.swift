@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native context menu attached to any StateUI view.
 struct ContextMenuSample: SampleContent, ExampleContent {

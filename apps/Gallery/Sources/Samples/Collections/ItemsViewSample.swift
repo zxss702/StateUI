@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A thousand rows, of which only the ones on screen are built.
 private struct LongList: ExampleContent {

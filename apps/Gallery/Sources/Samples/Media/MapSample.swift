@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The platform's own map, with pins, a region to move to, and what it draws.
 struct MapSample: SampleContent, ExampleContent {

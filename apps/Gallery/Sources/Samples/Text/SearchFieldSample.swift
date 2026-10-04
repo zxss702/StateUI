@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A search box on the page, narrowing a list as the user types.
 struct SearchFieldSample: SampleContent, ExampleContent {
@@ -20,7 +20,7 @@ struct SearchFieldSample: SampleContent, ExampleContent {
 
             SearchField($query)
                 .placeholder("Search the list")
-                .onSubmitted { searched = query }
+                .onSubmit { searched = query }
 
             VStack {
                 ForEach(matches) { item in
@@ -58,7 +58,7 @@ struct SearchFieldSample: SampleContent, ExampleContent {
                 .accessibilityIdentifier("searchBar.query")
                 .accessibilityLabel("Search the list")
                 .placeholder("Search the list")
-                .onSubmitted { searched = query }
+                .onSubmit { searched = query }
 
             VStack {
                 ForEach(matches) { item in
@@ -90,7 +90,7 @@ struct SearchFieldSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         VStack {
             Text("Two events: `.onTextChanged` on every edit - which runs after the binding "
-                + "has landed the words on `query` - and `.onSubmitted` when the "
+                + "has landed the words on `query` - and `.onSubmit` when the "
                 + "user says they mean it.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)

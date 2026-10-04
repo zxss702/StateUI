@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A time of day in a picker - bound, and one-way with the write back by hand.
 struct TimePickerSample: SampleContent, ExampleContent {

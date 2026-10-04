@@ -5,7 +5,7 @@
 // page around it, the card that links to it and the route that reaches it are
 // the same for all of them.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// What a sample is called and the examples it shows.
 ///

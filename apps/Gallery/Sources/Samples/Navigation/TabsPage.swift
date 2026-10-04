@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The first tab of the tabs demonstration - the one holding a stack of its own.
 ///

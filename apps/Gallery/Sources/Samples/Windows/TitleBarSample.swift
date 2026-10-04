@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Values changed by the sample and presented by the gallery window.
 final class TitleBarState {

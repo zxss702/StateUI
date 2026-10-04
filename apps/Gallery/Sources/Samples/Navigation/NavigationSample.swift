@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native navigation stack kept in step with one application array.
 struct NavigationSample: SampleContent, ExampleContent {

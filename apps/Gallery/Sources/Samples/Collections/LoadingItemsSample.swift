@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A list that asks for thirty more as the user nears its end.
 private struct LoadingList: ExampleContent {

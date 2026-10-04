@@ -86,21 +86,21 @@ struct JourneySample: SampleContent, ExampleContent {
 
             Text("A change that travels")
                 .font(.system(size: 11))
-                .characterSpacing(1)
+                .tracking(1)
                 .foregroundStyle(Palette.subtle)
 
             panel(travels: true)
 
             Text("The same, told to stay still")
                 .font(.system(size: 11))
-                .characterSpacing(1)
+                .tracking(1)
                 .foregroundStyle(Palette.subtle)
 
             panel(travels: false)
 
             Text("The same, holding only its size still")
                 .font(.system(size: 11))
-                .characterSpacing(1)
+                .tracking(1)
                 .foregroundStyle(Palette.subtle)
 
             sized()

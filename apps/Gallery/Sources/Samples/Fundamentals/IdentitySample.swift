@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The item is a row's identity - what keeps a control across a change to
 /// the list around it, and what a written `.id()` overrides.

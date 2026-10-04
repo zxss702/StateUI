@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// An author holds a CONTROL as well as values, and declares it with `@Aim`:
 /// on a value you write, on a control you call.
@@ -38,8 +38,7 @@ struct AimSample: SampleContent, ExampleContent {
             // and an aim, neither of which reads anything.
             DebugInfoLabel()
 
-            TextField($text)
-                .placeholder("The first field")
+            TextField("The first field", text: $text)
                 .aim(field)
 
             TextField()

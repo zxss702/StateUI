@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// `@State` owns a value, `@Binding` borrows one - the whole of how this library
 /// remembers anything.
@@ -43,8 +43,7 @@ struct StateSample: SampleContent, ExampleContent {
                         // reader of nobody.
                         DebugInfoLabel()
 
-                        TextField($name)
-                            .placeholder("And the same for text")
+                        TextField("And the same for text", text: $name)
 
                         Text(name.isEmpty ? "Hello, stranger" : "Hello, \\(name)!")
                     }
@@ -69,7 +68,7 @@ struct StateSample: SampleContent, ExampleContent {
             VStack {
                 Text("This closure reads `counter`")
                     .font(.system(size: 11))
-                    .characterSpacing(1)
+                    .tracking(1)
                     .foregroundStyle(Palette.accent)
 
                 DebugInfoLabel()
@@ -102,7 +101,7 @@ struct StateSample: SampleContent, ExampleContent {
                     VStack {
                         Text("And this one reads `name`")
                             .font(.system(size: 11))
-                            .characterSpacing(1)
+                            .tracking(1)
                             .foregroundStyle(Palette.accent)
 
                         DebugInfoLabel()

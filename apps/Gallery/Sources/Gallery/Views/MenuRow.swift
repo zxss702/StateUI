@@ -1,6 +1,6 @@
 // One row of the menu.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// A picture, a caption, and somewhere to go.
 ///

@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-import StateUI
+@_spi(Host) import StateUI
 
 /// Events the host raises on its own, heard with no control behind them.
 struct InteropEventsSample: SampleContent, ExampleContent {

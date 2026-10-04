@@ -1,6 +1,6 @@
 // A stable name for a view, built from what it shows.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The gallery's rule for `.accessibilityIdentifier`: a ROLE and the caption the user
 /// can see, joined with a dot - `handle("switch", "Runs sideways")` is

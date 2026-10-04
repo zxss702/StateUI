@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The build reading for the closure this call sits in, drawn in its top right
 /// corner.

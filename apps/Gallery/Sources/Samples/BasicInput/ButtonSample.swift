@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A button wired to a click, beside an outlined one and a disabled one.
 struct ButtonSample: SampleContent, ExampleContent {

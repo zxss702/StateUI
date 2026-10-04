@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A native tab arrangement and the selection binding that says which tab is showing.
 ///

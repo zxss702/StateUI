@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A layout's own box: its background and its outline on the shape it names, and what it holds cut to that shape.
 struct OutlineSample: SampleContent, ExampleContent {

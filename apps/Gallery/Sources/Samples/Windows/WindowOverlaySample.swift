@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 extension OverlayKey {
     /// The sample's notice.

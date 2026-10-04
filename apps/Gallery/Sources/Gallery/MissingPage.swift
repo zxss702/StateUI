@@ -1,6 +1,6 @@
 // What a route asks for that the catalog does not have.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// A sample route with no sample behind it.
 ///

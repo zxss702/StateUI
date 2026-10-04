@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Whether the internet is reachable, and by what.
 struct ConnectivitySample: SampleContent, ExampleContent {

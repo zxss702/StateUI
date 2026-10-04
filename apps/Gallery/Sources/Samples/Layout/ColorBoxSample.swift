@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Rectangles of colour - square, rounded, round and faded - and a divider.
 struct ColorBoxSample: SampleContent, ExampleContent {

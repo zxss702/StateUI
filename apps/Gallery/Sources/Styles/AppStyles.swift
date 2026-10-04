@@ -17,7 +17,7 @@
 //     NavigationStack and TabView are written on the arrangement itself -
 //     see MainWindow.detail.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The application's styles, as the sheet the differ resolves against.
 enum AppStyles {
@@ -41,7 +41,7 @@ enum AppStyles {
                 .foregroundStyle(Palette.text)
                 .font(.system(size: 32))
                 .bold()
-                .characterSpacing(-0.5)
+                .tracking(-0.5)
                 .horizontalAlignment(.center)
                 .multilineTextAlignment(.center)
 
@@ -53,7 +53,7 @@ enum AppStyles {
                 .foregroundStyle(Palette.subtle)
                 .font(.system(size: 17))
                 .italic()
-                .characterSpacing(0.3)
+                .tracking(0.3)
                 .multilineTextAlignment(.center)
 
             Style<Text>("QuoteLoud")

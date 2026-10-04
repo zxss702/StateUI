@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// How dark the gallery's own demonstration paints - kept as the text it is
 /// spelled with, which is what makes conformance one line.
@@ -73,8 +73,7 @@ struct PersistentStateSample: SampleContent, ExampleContent {
                     
             }
 
-            TextField($who)
-                .placeholder("Your name")
+            TextField("Your name", text: $who)
 
             Text(who.isEmpty ? "Welcome back" : "Welcome back, \\(who)")
 

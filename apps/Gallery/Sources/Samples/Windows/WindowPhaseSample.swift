@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The three lifecycle scopes available to every view in a window.
 struct WindowPhaseSample: SampleContent, ExampleContent {

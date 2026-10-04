@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// What a basket holds, as a class rather than a pile of `@State` in the view.
 ///

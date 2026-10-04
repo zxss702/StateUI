@@ -1,6 +1,6 @@
 // The menu that slides in from the side.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The gallery's sidebar - and it is an ordinary page.
 ///
@@ -92,7 +92,7 @@ struct MenuPage: View {
             Text("StateUI")
                 .font(.system(size: 24))
                 .bold()
-                .characterSpacing(-0.5)
+                .tracking(-0.5)
                 .foregroundStyle(Palette.onBrand)
 
             Text("Native interfaces, written in Swift")

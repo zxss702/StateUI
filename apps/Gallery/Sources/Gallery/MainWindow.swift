@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A gallery's main window: what it is called, how big it opens, what is
 /// presented over it - and THE ARRANGEMENT, which is the reason this is a type

@@ -19,7 +19,7 @@ private func tileStrip() -> ScrollView {
         .spacing(20)
     }
     .orientation(.horizontal)
-    .horizontalScrollIndicators(.never)
+    .scrollIndicators(.hidden, axes: .horizontal)
 }
 
 /// Forty numbered lines - the same strip in all three columns below, so the
@@ -547,8 +547,8 @@ private struct BarStrips: ExampleContent {
         struct BarStrips: View {
             var body: some View {
                 Grid {
-                    barCase(.always).gridColumn(0)
-                    barCase(.never).gridColumn(1)
+                    barCase(.visible).gridColumn(0)
+                    barCase(.hidden).gridColumn(1)
                 }
                 .columns(.fill, .fill)
                 .columnSpacing(12)
@@ -563,17 +563,17 @@ private struct BarStrips: ExampleContent {
                         }
                     }
                 }
-                .verticalScrollIndicators(visibility)
+                .scrollIndicators(visibility, axes: .vertical)
             }
         }
         """
 
     var body: some View {
         Grid {
-            barCase(.always, "verticalScrollIndicators(.always)")
+            barCase(.visible, "scrollIndicators(.visible, axes: .vertical)")
                 .gridColumn(0)
 
-            barCase(.never, "verticalScrollIndicators(.never)")
+            barCase(.hidden, "scrollIndicators(.hidden, axes: .vertical)")
                 .gridColumn(1)
         }
         .columns(.fill, .fill)
@@ -596,7 +596,7 @@ private struct BarStrips: ExampleContent {
                     }
                 }
             }
-            .verticalScrollIndicators(visibility)
+            .scrollIndicators(visibility, axes: .vertical)
             .gridRow(0)
 
             Text(caption)
@@ -610,7 +610,7 @@ private struct BarStrips: ExampleContent {
     }
 
     var notes: (any View)? {
-        Text("`.never` takes the bar away and nothing brings it back; `.always` asks for "
+        Text("`.hidden` takes the bar away and nothing brings it back; `.visible` asks for "
             + "one that stays whether or not a drag is under way. Where the platform draws "
             + "an overlay bar that fades on its own, the two look alike until the scroller "
             + "is dragged.")

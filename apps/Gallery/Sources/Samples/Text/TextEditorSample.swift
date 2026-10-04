@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Text of several lines, in an editor of a stated height and one that grows.
 struct TextEditorSample: SampleContent, ExampleContent {

@@ -1,6 +1,6 @@
 // The Swift behind an example.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The code that produced an example, in a box of its own.
 ///
@@ -26,11 +26,10 @@ struct CodeBlock: View {
     }
 
     var body: some View {
-        ScrollView {
+        ScrollView(.horizontal) {
             snippet
         }
-        .orientation(.horizontal)
-        .verticalScrollIndicators(.never)
+        .scrollIndicators(.hidden, axes: .vertical)
         .background(Palette.raised)
         .stroke(Palette.outline)
         .strokeWidth(1)

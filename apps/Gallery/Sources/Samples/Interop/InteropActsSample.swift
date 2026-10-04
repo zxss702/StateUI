@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-import StateUI
+@_spi(Host) import StateUI
 
 /// Functions the application registers with its host, called like the acts the
 /// library ships: typed arguments in, typed values back, a thrown error on

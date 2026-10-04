@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A tab the USER added - the reason the tab list is something that changes
 /// rather than a fixed set.

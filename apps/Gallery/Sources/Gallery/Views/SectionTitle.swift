@@ -1,6 +1,6 @@
 // The heading above a section.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The heading over a section of a page - "Example", "Notes", "In Swift".
 ///

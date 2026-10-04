@@ -1,6 +1,6 @@
 // One row of the menu, and everything under it.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// A category of samples - one menu row, one page listing what is in it.
 ///

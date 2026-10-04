@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A `SearchField` on the navigation bar in place of the title, and the rows it filters.
 struct SearchSample: SampleContent, ExampleContent {

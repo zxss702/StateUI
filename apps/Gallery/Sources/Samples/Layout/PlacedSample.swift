@@ -169,7 +169,7 @@ struct PlacedSample: SampleContent, ExampleContent {
         // over, which a stack cannot give a child.
         Grid {
             Grid {
-                // WHAT MOVES IT. A ScrollViewReader lays an empty scroller over
+                // WHAT MOVES IT. A ScrollReader lays an empty scroller over
                 // the cards and writes its offset into the value; `.panX`
                 // writes a drag into one instead, for a ring that is taken
                 // hold of rather than scrolled.
@@ -179,7 +179,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                     }
                     .panX($dragged)
                 } else {
-                    ScrollViewReader(across: Double(cards.count - 1) * 90) {
+                    ScrollReader(across: Double(cards.count - 1) * 90) {
                         board
                     }
                     .scrollOffset($scrolled)
@@ -389,7 +389,7 @@ struct PlacedSample: SampleContent, ExampleContent {
                     // offset is the value. A finger drag, a two-finger
                     // trackpad swipe and a mouse wheel are ONE thing to a
                     // scroller and three different things to anything else.
-                    ScrollViewReader(across: Double(Self.cards.count - 1) * Self.reach) {
+                    ScrollReader(across: Double(Self.cards.count - 1) * Self.reach) {
                         cards
                     }
                     .scrollOffset($scrolled)
@@ -640,7 +640,7 @@ struct PlacedSample: SampleContent, ExampleContent {
             Text("Swipe left or right to turn the ring; it settles on the card it is "
                 + "nearest, and `Back` and `Next` do the same without the hand. With `Turn by "
                 + "panning` on, the cards are taken hold of instead and follow the finger, "
-                + "with no scroller over them. Otherwise a `ScrollViewReader` lays an empty "
+                + "with no scroller over them. Otherwise a `ScrollReader` lays an empty "
                 + "scroller over them and writes its offset into the value, so a finger "
                 + "drag, a two-finger trackpad swipe and a mouse wheel all turn the ring.")
                 .font(.system(size: 12))

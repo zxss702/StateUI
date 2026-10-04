@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A box ticked or not, on its own and several at once.
 struct CheckBoxSample: SampleContent, ExampleContent {

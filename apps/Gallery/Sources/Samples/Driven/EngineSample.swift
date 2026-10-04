@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// An ENGINE: arithmetic the host runs on its own frames, keeping what it
 /// remembers in `@State` nobody reads.

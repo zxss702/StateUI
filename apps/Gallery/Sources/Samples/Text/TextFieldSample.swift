@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Single-line text fields, with focus, caret, selection and keyboard choices.
 struct TextFieldSample: SampleContent, ExampleContent {
@@ -30,8 +30,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
             // password builds nothing at all.
             DebugInfoLabel()
 
-            TextField($name)
-                .placeholder("Type your name")
+            TextField("Type your name", text: $name)
                 .showsClearButton(true)
                 .focused($editing)
 
@@ -47,8 +46,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
             // underline and its next-word guesses only get in the way, the
             // caret can be put where the user did not, and every letter
             // typed stands in capitals, as a serial number's do.
-            TextField($code)
-                .placeholder("a serial number")
+            TextField("a serial number", text: $code)
                 .textCase(.uppercase)
                 .isSpellCheckEnabled(false)
                 .isTextPredictionEnabled(false)
@@ -71,11 +69,10 @@ struct TextFieldSample: SampleContent, ExampleContent {
 
             // The keyboard the platform brings up, a cap on the length, and
             // what the return key does when it is pressed.
-            TextField($email)
-                .placeholder("an address, capped at 20")
+            TextField("an address, capped at 20", text: $email)
                 .textContentType(.email)
                 .maximumLength(20)
-                .onSubmitted { done += 1 }
+                .onSubmit { done += 1 }
         }
         """
 
@@ -151,7 +148,7 @@ struct TextFieldSample: SampleContent, ExampleContent {
                 .placeholder("an address, capped at 20")
                 .textContentType(.email)
                 .maximumLength(20)
-                .onSubmitted { done += 1 }
+                .onSubmit { done += 1 }
                 .help("Submitted to nobody - this is a gallery")
 
             // `.textFieldStyle` is the field's look as a logical value; each

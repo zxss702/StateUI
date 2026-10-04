@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// A tap and a double tap on a whole view.
 struct TapSample: SampleContent, ExampleContent {

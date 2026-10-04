@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The same countdown as Task.sleep, out of the library's own timer.
 struct TickerSample: SampleContent, ExampleContent {

@@ -6,7 +6,7 @@
 // puts none on the bar: the native navigation surface owns a leading sidebar
 // toggle on the root and gives that slot to the back button on pushed pages.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The gallery's home button - the StateUI type, given one more way to make
 /// itself. It is declared here rather than in the library because there is
@@ -29,17 +29,13 @@ extension ToolbarItem {
     /// and there is no other stack anywhere to go stale - the page the user
     /// was looking at does not linger under the group it came from.
     static func home(_ nav: Navigation) -> ToolbarItem {
-        ToolbarItem("Home")
+        ToolbarItem("Home", systemImage: "house") { nav.home() }
             .id("home")
             // THE ONE CONTROL ON EVERY PAGE, and the only way back from a
             // sample that does not go through the sidebar - so it is the handle
             // a script reaches for most. `.id` is the DIFFER's identity and
             // never leaves this side; this is the platform's own.
             .accessibilityIdentifier("chrome.home")
-            // A symbol, not a file: every platform draws the home glyph its
-            // own icon set knows, in the theme the system wears.
-            .icon(.symbol("house"))
-            .onClicked { nav.home() }
     }
 
 }

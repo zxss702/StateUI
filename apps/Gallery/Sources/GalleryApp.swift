@@ -26,7 +26,7 @@
 // Nothing lists these files: the build discovers them by globbing this
 // directory, subdirectories and all.
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The gallery application.
 ///

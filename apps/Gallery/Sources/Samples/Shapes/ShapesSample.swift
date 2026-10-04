@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// Six outlines, filled and stroked - with dashes, joins and a fill rule.
 struct ShapesSample: SampleContent, ExampleContent {
