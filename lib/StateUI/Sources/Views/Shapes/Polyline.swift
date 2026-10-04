@@ -13,7 +13,7 @@ extension PolylineProperties {
     ///
     /// The numbers are device units in the shape's own space, which `.aspect`
     /// fits to the room the layout gives it.
-    public func points(_ value: [Point]) -> Modified {
+    @_spi(Host) public func points(_ value: [Point]) -> Modified {
         setValue(PolylineContract.points, value)
     }
 
@@ -22,7 +22,7 @@ extension PolylineProperties {
     ///
     /// A filled polyline is painted as though its last point were joined back
     /// to the first, so this matters only on a filled line that crosses itself.
-    public func fillRule(_ value: FillRule) -> Modified {
+    @_spi(Host) public func fillRule(_ value: FillRule) -> Modified {
         setValue(PolylineContract.fillRule, value)
     }
 }

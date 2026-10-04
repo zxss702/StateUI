@@ -91,7 +91,7 @@ public nonisolated(nonsending) func stateUICall<
 /// - Parameters:
 ///   - act: the member, written with its contract.
 ///   - arguments: its arguments, in the order the contract declares them.
-public func stateUISend<Owner: ApplicationTier, each Argument: HostRepresentable, Answer>(
+@_spi(Host) public func stateUISend<Owner: ApplicationTier, each Argument: HostRepresentable, Answer>(
     _ act: ElementAct<Owner, (repeat each Argument), Answer>,
     _ arguments: repeat each Argument
 ) {

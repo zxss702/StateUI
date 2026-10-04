@@ -64,9 +64,11 @@ extension AppKitDriver {
             // A quick run of clicks, each told with its place in the run, as AppKit's click recognizer tells them.
             for run in 1...max(count, 1) { native?.tapRecognizer?.clicked(run: run) }
         case (.pan(let offset), _) where native?.panRecognizer != nil:
-            native?.panRecognizer?.dragged(.started, x: 0, y: 0)
-            native?.panRecognizer?.dragged(.running, x: offset.x, y: offset.y)
-            native?.panRecognizer?.dragged(.completed, x: offset.x, y: offset.y)
+            let from = Point(x: 50, y: 50)
+            let at = Point(x: from.x + offset.x, y: from.y + offset.y)
+            native?.panRecognizer?.dragged(.started, x: 0, y: 0, at: from, from: from)
+            native?.panRecognizer?.dragged(.running, x: offset.x, y: offset.y, at: at, from: from)
+            native?.panRecognizer?.dragged(.completed, x: offset.x, y: offset.y, at: at, from: from)
         case (.pinch(let scale, let point), _) where native?.pinchRecognizer != nil:
             native?.pinchRecognizer?.pinched(.started, scale: 1, at: point)
             native?.pinchRecognizer?.pinched(.running, scale: scale, at: point)

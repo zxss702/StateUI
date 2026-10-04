@@ -35,7 +35,7 @@ final class AppKitCollection: NSCollectionView {
 final class AppKitItemsView: NSView, AppKitRoom, AppKitWidthConstrainedMeasuring, NSCollectionViewDelegate {
     let cells: ItemsCells
     let collection = AppKitCollection()
-    private let scroller = NSScrollView()
+    let scroller = NSScrollView()
     private var source: NSCollectionViewDiffableDataSource<Int, String>!
     private var layoutShape = ItemsLayout.list()
     private var style = ListStyleKind.automatic

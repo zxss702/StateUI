@@ -94,8 +94,8 @@ extension AppKitRegistrations {
     /// unicode the key is known by where a character cannot write it.
     private static func keyEquivalent(_ shortcut: KeyboardShortcut) -> String {
         switch shortcut.key.name {
-        case "return": return "\r"
-        case "escape": return "\u{1b}"
+        case "return", "defaultaction": return "\r"
+        case "escape", "cancelaction": return "\u{1b}"
         case "tab": return "\t"
         case "space": return " "
         case "delete": return "\u{8}"

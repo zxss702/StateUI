@@ -134,6 +134,16 @@ public struct Animation: Equatable, Sendable {
 extension Animation {
     /// The animation the library uses where none is named: a short ease-out.
     public static var `default`: Animation { .standard }
+
+    /// This animation run faster - the time it takes divided by `speed`:
+    /// `.snappy.speed(2)` lands in half the time.
+    ///
+    ///     withAnimation(.snappy.speed(2)) { … }
+    public func speed(_ speed: Double) -> Animation {
+        Animation(
+            law: law, millis: UInt32(truncatingIfNeeded: UInt(max(1, Double(millis) / max(speed, 0.001)))),
+            curve: curve, factor: factor, isInherited: isInherited, isCustom: isCustom)
+    }
 }
 
 // MARK: - Eased

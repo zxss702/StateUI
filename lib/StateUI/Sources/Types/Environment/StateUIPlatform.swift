@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// Which platform and architecture this library was compiled for.
-public func stateUIPlatform() -> String {
+@_spi(Host) public func stateUIPlatform() -> String {
     #if os(Windows)
         let name = "Windows"
     #elseif os(Android)

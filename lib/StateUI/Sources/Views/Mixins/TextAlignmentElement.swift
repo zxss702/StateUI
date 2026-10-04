@@ -12,7 +12,7 @@ extension TextAlignmentElement {
     }
 
     /// Where the text sits within the control's own height.
-    public func verticalTextAlignment(_ value: TextAlignment) -> Modified {
+    @_spi(Host) public func verticalTextAlignment(_ value: TextAlignment) -> Modified {
         setValue(TextAlignmentElementContract.verticalTextAlignment, value)
     }
 }
@@ -26,7 +26,7 @@ extension TextAlignmentElement where Self: VisualElement {
 
     /// `verticalTextAlignment` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
-    public func verticalTextAlignment(_ state: Binding<TextAlignment>) -> Modified {
+    @_spi(Host) public func verticalTextAlignment(_ state: Binding<TextAlignment>) -> Modified {
         plain(TextAlignmentElementContract.verticalTextAlignment, by: state)
     }
 }

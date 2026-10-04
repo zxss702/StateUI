@@ -43,6 +43,11 @@ final class Differ {
     /// What each changed state is called, for `debugInfo()` (Builds.swift).
     var named: [ObjectIdentifier: String] = [:]
 
+    /// The code objects a host pulls by element id - a `CustomLayout`'s
+    /// layout box and the `.layoutValue` tags a child carries. They ride the
+    /// node, never the wire; the element's number is how the host asks.
+    var codeObjects: [ElementId: NodeCode] = [:]
+
     /// The handlers this walk found to run - `.onChanged`, `.onAppear` - in order.
     /// Design: docs/design/core/render.md#handlers-in-the-message
     var fired: [EventHandler] = []
@@ -52,6 +57,10 @@ final class Differ {
 
     /// The environments in scope where the walk stands, nearest last.
     var scope: [(key: ObjectIdentifier, object: AnyObject)] = []
+
+    /// The keyed environment values in scope where the walk stands - what
+    /// `.environment(\.key, _)` wrote on the elements above.
+    var envValues = EnvironmentValues()
 
     /// The composed views whose bodies the walk is inside, outermost first.
     var bodies: [String] = []
@@ -159,12 +168,37 @@ final class Differ {
             patch.children = .changed(changedChildren)
         }
 
+        // A kept element folds its subtree's preference answers again - a
+        // descendant's write may have moved - and any listener hearing a new
+        // answer fires.
+        // Design: docs/design/core/identity-and-diffing.md#preferences
+        rendered.preferenceValues = foldedPreferences(
+            seeds: rendered.preferenceSeeds,
+            transforms: rendered.preferenceTransforms,
+            children: rendered.children)
+
+        for index in rendered.preferenceWatches.indices {
+            let watch = rendered.preferenceWatches[index]
+            let answer = rendered.preferenceValues[watch.box.key]?.value ?? watch.box.makeDefault()
+
+            guard !watch.box.same(watch.last, answer) else { continue }
+
+            let heard = watch.last
+            rendered.preferenceWatches[index].last = answer
+            fired.append { try await watch.run(heard, answer) }
+        }
+
         return (rendered, patch)
     }
 
     /// What an element's event runs, or nothing if the id is unknown.
     func handler(_ id: Int) -> EventHandler? {
         handlers[id]
+    }
+
+    /// The code objects the element of `id` lent its host, or nothing.
+    func codeObjects(for id: ElementId) -> NodeCode? {
+        codeObjects[id]
     }
 
     /// The handlers the last walk found - what left first, then the rest - taken so
@@ -182,6 +216,9 @@ final class Differ {
         for id in node.events.values {
             handlers.removeValue(forKey: id)
         }
+
+        // Its code objects: no host asks of an element that left.
+        codeObjects.removeValue(forKey: node.id)
 
         // Its engines: nothing is left to ask for their frames.
         for id in node.engines {

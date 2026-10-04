@@ -32,15 +32,54 @@ enum WinUIRealization {
         .partial("PageElement", "presentationDetents", missing: "A WinUI sheet has no detents: the first one asked for alone sizes the card against its window."),
         .notPlanned("PageElement", "presentationDragIndicator", reason: "A WinUI sheet has no drag indicator."),
         .complete("PageElement", "title"),
+        .notPlanned("VisualElement", "contentTransition",
+            reason: "WinUI swaps a control's words with no transition yet."),
+        .notPlanned("VisualElement", "matchedGeometry",
+            reason: "WinUI's layout motion flies no matched child into place yet."),
+        .notPlanned("VisualElement", "matchedGeometrySource",
+            reason: "WinUI's layout motion flies no matched child into place yet."),
+        .notPlanned("VisualElement", "symbolEffect",
+            reason: "WinUI's icons are painted, not animated as symbols."),
+        .notPlanned("VisualElement", "symbolEffectActive",
+            reason: "WinUI's icons are painted, not animated as symbols."),
+        .notPlanned("VisualElement", "symbolEffectOptions",
+            reason: "WinUI's icons are painted, not animated as symbols."),
+        .notPlanned("VisualElement", "symbolEffectValue",
+            reason: "WinUI's icons are painted, not animated as symbols."),
+        .notPlanned("VisualElement", "blendMode",
+            reason: "WinUI composites every element normally; a blend pass over its own content draws nothing yet."),
         .complete("VisualElement", "hint"),
         .complete("VisualElement", "style"),
+        .complete("View", "layoutPriority"),
+        .partial("View", "horizontalGuide",
+            missing: "WinUI's items name no text baseline: the baseline guides land on edges; the rest align."),
+        .partial("View", "verticalGuide",
+            missing: "WinUI's items name no text baseline: the baseline guides land on edges; the rest align."),
+        .notPlanned("View", "pointerStyle",
+            reason: "WinUI's ProtectedCursor is not wired to elements yet."),
 
         // MARK: Entries - a control's or a part's own
         .partial("DatePicker", "format", missing: "WinUI writes \"D\" and \"d\" in the user's own way, and any other pattern as \"d\"."),
         .unrealized("List", "style", why: "No style can name an List: a style names its control by an "
             + "initializer that sets nothing, which a list of some items has not."),
+        .unrealized("MenuButton", "style", why: "No style can name a MenuButton: the `Menu` view makes one, "
+            + "and no `Menu()` means anything; its closed style vocabulary crosses as `.menuStyle`."),
         .complete("Menu", "isEnabled"),
         .complete("Menu", "text"),
+        .notPlanned("MenuButton", "isEnabled",
+            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
+        .notPlanned("MenuButton", "menuIndicator",
+            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
+        .notPlanned("MenuButton", "menuStyle",
+            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
+        .notPlanned("Text", "minimumScaleFactor",
+            reason: "A TextBlock scale-factor pass is not wired to the property yet."),
+        .partial("Text", "textRenderer",
+            missing: "A native control draws the words itself: a renderer watching layout degrades to the default draw pass; its own draw never runs."),
+        .partial("ProgressBar", "progressStyle",
+            missing: "The bar WinUI draws is linear; `circular` falls back to it rather than the ring."),
+        .partial("Image", "renderingMode",
+            missing: "WinUI shows the picture as loaded; `template` does not retint it against the theme."),
         .complete("NavigationStack", "popped"),
         .complete("Page", "appearing"),
         .complete("Page", "background"),
@@ -104,7 +143,9 @@ enum WinUIRealization {
         let registry = WinUIRegistrations.registry
         return HostDeclaration(
             realization: registry.realization, shared: registry.sharedNames,
-            acts: (HostActs.performed + [AppContract.persistSceneValue, ListContract.scrollTo]).map(\.name))
+            acts: (HostActs.performed + [
+                AppContract.persistSceneValue, ListContract.scrollTo, ScrollViewContract.scrollToDescendant]
+            ).map(\.name))
     }
 
     /// What WinUI realizes, member by member: these records before what its registry says.

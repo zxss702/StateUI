@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// What a specimen wears: a member's value, or a handler of one of its events.
 public protocol Worn: Sendable {
@@ -83,6 +83,34 @@ where First: HostRepresentable & Sendable, Second: HostRepresentable & Sendable,
     public func worn<Element: ModifiableElement>(by element: Element) -> Element where Element.Modified == Element {
         let handler = handler
         return element.onEvent(event) { first, second, third in try await handler(first, second, third) }
+    }
+}
+
+/// One event carrying five values, and what hears them - a pan's.
+public struct HearFive<Owner: Contract, First, Second, Third, Fourth, Fifth>: Worn
+where First: HostRepresentable & Sendable, Second: HostRepresentable & Sendable,
+      Third: HostRepresentable & Sendable, Fourth: HostRepresentable & Sendable,
+      Fifth: HostRepresentable & Sendable {
+    /// The event.
+    public let event: ElementEvent<Owner, (First, Second, Third, Fourth, Fifth)>
+
+    /// What hears it.
+    public let handler: @Sendable (First, Second, Third, Fourth, Fifth) async throws -> Void
+
+    /// `event` heard by `handler`.
+    public init(
+        _ event: ElementEvent<Owner, (First, Second, Third, Fourth, Fifth)>,
+        _ handler: @escaping @Sendable (First, Second, Third, Fourth, Fifth) async throws -> Void
+    ) {
+        self.event = event
+        self.handler = handler
+    }
+
+    public func worn<Element: ModifiableElement>(by element: Element) -> Element where Element.Modified == Element {
+        let handler = handler
+        return element.onEvent(event) { first, second, third, fourth, fifth in
+            try await handler(first, second, third, fourth, fifth)
+        }
     }
 }
 

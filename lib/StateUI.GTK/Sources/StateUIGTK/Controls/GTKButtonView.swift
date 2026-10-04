@@ -40,12 +40,13 @@ final class GTKButtonView: GTKView {
         guard let shortcut else { return }
         let keyval = Self.keyval(shortcut.key.name)
         guard keyval != GDK_KEY_VoidSymbol else { return }
-        var modifiers = GdkModifierType(rawValue: 0)
+        var mask = GdkModifierType(rawValue: 0).rawValue
         if shortcut.modifiers.contains(.command) || shortcut.modifiers.contains(.control) {
-            modifiers.insert(GDK_CONTROL_MASK)
+            mask |= GDK_CONTROL_MASK.rawValue
         }
-        if shortcut.modifiers.contains(.shift) { modifiers.insert(GDK_SHIFT_MASK) }
-        if shortcut.modifiers.contains(.option) { modifiers.insert(GDK_ALT_MASK) }
+        if shortcut.modifiers.contains(.shift) { mask |= GDK_SHIFT_MASK.rawValue }
+        if shortcut.modifiers.contains(.option) { mask |= GDK_ALT_MASK.rawValue }
+        let modifiers = GdkModifierType(rawValue: mask)
         guard let controller = gtk_shortcut_controller_new(),
               let trigger = gtk_keyval_trigger_new(keyval, modifiers),
               let action = gtk_callback_action_new({ target, _, _ in
@@ -62,8 +63,8 @@ final class GTKButtonView: GTKView {
     /// character by itself.
     private static func keyval(_ name: String) -> guint {
         let gdk: String = switch name {
-        case "return": "Return"
-        case "escape": "Escape"
+        case "return", "defaultaction": "Return"
+        case "escape", "cancelaction": "Escape"
         case "tab": "Tab"
         case "space": "space"
         case "delete": "BackSpace"
@@ -132,7 +133,7 @@ final class GTKButtonView: GTKView {
     func setBox(fill: HostValue?, stroke: HostValue?, strokeWidth: Double?, shape: HostValue?) {
         let radius: Double? = switch shape.map(BoxArithmetic.outline) {
         case .roundedRectangle(let radius)?: radius
-        case .ellipse?: 9999
+        case .ellipse?, .capsule?, .circle?: 9999
         case .rectangle?: 0
         case nil: nil
         }

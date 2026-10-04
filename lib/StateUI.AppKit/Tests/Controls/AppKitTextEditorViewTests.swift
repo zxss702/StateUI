@@ -31,7 +31,9 @@ final class AppKitTextEditorViewTests: XCTestCase {
             cursorPosition: nil,
             selectionLength: nil,
             writeSelection: false,
-            growsWithText: false)
+            growsWithText: false,
+            contentInset: nil,
+            scrollContentBackground: nil)
 
         XCTAssertEqual(editor.textView.string, "First\nSecond")
         XCTAssertEqual(editor.textView.font?.pointSize, 16)
@@ -138,7 +140,9 @@ final class AppKitTextEditorViewTests: XCTestCase {
             cursorPosition: nil,
             selectionLength: nil,
             writeSelection: false,
-            growsWithText: growsWithText)
+            growsWithText: growsWithText,
+            contentInset: nil,
+            scrollContentBackground: nil)
     }
 }
 

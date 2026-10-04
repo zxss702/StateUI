@@ -22,6 +22,7 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
 
     private(set) var orientation = Axis.vertical
     private(set) var padding = NSEdgeInsets()
+    private(set) var isScrollDisabled = false
     private var verticalBarVisibility: Int32 = 0
     private var horizontalBarVisibility: Int32 = 0
 
@@ -48,6 +49,10 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
         borderType = .noBorder
         // Design: docs/design/platforms/appkit/views.md#scroll-bars
         scrollerStyle = .overlay
+        // Offsets the tree writes are content-relative: StateUI keeps its own
+        // safe-area accounts, so AppKit's title-bar inset must not move the
+        // viewport the contract measures.
+        automaticallyAdjustsContentInsets = false
         contentView.postsBoundsChangedNotifications = true
         documentView = documentSurface
         movement.onFramesWanted = { [weak self] in self?.onFramesWanted?() }
@@ -62,6 +67,11 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
             padding: NSEdgeInsets(),
             verticalBarVisibility: 0,
             horizontalBarVisibility: 0,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
 
         NotificationCenter.default.addObserver(
@@ -91,13 +101,13 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
     }
 
     func setItems(_ items: [AppKitLayoutItem]) {
-        if items.count > 1 { usesStackWrapper = true }
+        if items.occupying.count > 1 { usesStackWrapper = true }
 
         if usesStackWrapper {
             stackWrapper.setItems(items)
             documentSurface.item = AppKitLayoutItem(view: stackWrapper)
         } else {
-            documentSurface.item = items.first
+            documentSurface.item = items.occupying.first
         }
     }
 
@@ -106,20 +116,45 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
         padding: NSEdgeInsets,
         verticalBarVisibility: Int32,
         horizontalBarVisibility: Int32,
+        isScrollDisabled: Bool,
+        scrollBounceBehavior: Int32,
+        scrollContentBackground: Bool?,
+        clipsContent: Bool?,
+        defaultAnchor: [NSNumber]?,
         offset: NSPoint?
     ) {
         self.orientation = Axis(rawValue: orientation) ?? .vertical
         self.padding = padding
+        self.isScrollDisabled = isScrollDisabled
         self.verticalBarVisibility = verticalBarVisibility
         self.horizontalBarVisibility = horizontalBarVisibility
         documentSurface.padding = padding
         documentSurface.orientation = self.orientation
+
+        // `.scrollClipDisabled` lets the document draw past the viewport;
+        // a scroller clips by contract default.
+        if let clipsContent {
+            clipsToBounds = clipsContent
+            contentView.clipsToBounds = clipsContent
+        }
 
         let allowsHorizontal = self.orientation == .horizontal || self.orientation == .both
         let allowsVertical = self.orientation == .vertical || self.orientation == .both
         hasHorizontalScroller = allowsHorizontal && horizontalBarVisibility != 2
         hasVerticalScroller = allowsVertical && verticalBarVisibility != 2
         autohidesScrollers = verticalBarVisibility != 1 && horizontalBarVisibility != 1
+
+        // `.always` is elastic both ways; `.basedOnSize` and the platform's own
+        // share AppKit's automatic.
+        let elasticity: NSScrollView.Elasticity =
+            ScrollBounceBehavior(rawValue: scrollBounceBehavior) == .always ? .allowed : .automatic
+        horizontalScrollElasticity = allowsHorizontal ? elasticity : .none
+        verticalScrollElasticity = allowsVertical ? elasticity : .none
+
+        if let scrollContentBackground { drawsBackground = scrollContentBackground }
+        if let defaultAnchor, defaultAnchor.count == 2 {
+            self.defaultAnchor = (x: defaultAnchor[0].doubleValue, y: defaultAnchor[1].doubleValue)
+        }
 
         // Design: docs/design/host/layout.md#an-offset-the-tree-writes
         if let target = writtenOffset.written(
@@ -158,6 +193,12 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
     private var boxShape = ContainerShape.rectangle
     private var boxOutline: (colour: CGColor, width: CGFloat)?
 
+    /// Where the scroller rests before anything is written: the anchor's
+    /// fractions across and down the content and the room. Applied once, on
+    /// the first layout with a document to place.
+    private var defaultAnchor: (x: Double, y: Double)?
+    private var anchoredOnce = false
+
     // AppKit repaints a scroller's layer as it displays it, its colour and outline cleared: the box is put back
     // each time.
     override func updateLayer() {
@@ -188,6 +229,13 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
 
         if let target = writtenOffset.laidOutNow() {
             move(to: NSPoint(x: target.x, y: target.y), asUser: false)
+        } else if let defaultAnchor, !anchoredOnce, documentSurface.frame.width > 0 {
+            anchoredOnce = true
+            let document = documentSurface.frame.size
+            let room = contentView.bounds.size
+            move(to: reachable(NSPoint(
+                x: defaultAnchor.x * document.width - defaultAnchor.x * room.width,
+                y: defaultAnchor.y * document.height - defaultAnchor.y * room.height)), asUser: false)
         } else {
             move(to: contentView.bounds.origin, asUser: false)
         }
@@ -228,7 +276,7 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
     }
 
     private func scroller(followingDirectionOf event: NSEvent) -> WheelScroller? {
-        if orientation == .neither { return .enclosing }
+        if isScrollDisabled || orientation == .neither { return .enclosing }
         let horizontal = abs(event.scrollingDeltaX)
         let vertical = abs(event.scrollingDeltaY)
         guard max(horizontal, vertical) > 0.000_001 else { return nil }
@@ -326,6 +374,35 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
             return leading
         }
         return min(leading, max(0, content - viewport))
+    }
+
+    /// Scrolls until `descendant` - a view somewhere in the document - stands
+    /// where the anchor says: `a` means the point `a` across the target is
+    /// brought to the point `a` across the room, on each axis the scroller
+    /// moves. Absent, it moves only where the target is not wholly in view -
+    /// the shorter way, as `nearest` does on an items view.
+    func scroll(toDescendant descendant: NSView, anchorX: Double?, anchorY: Double?) {
+        let target = descendant.convert(descendant.bounds, to: documentSurface)
+        let visible = contentView.bounds
+        var place = visible.origin
+
+        if orientation == .horizontal || orientation == .both {
+            place.x = anchorX.map { target.minX + $0 * target.width - $0 * visible.width }
+                ?? Self.nearest(of: target.minX, length: target.width, in: visible.width, at: visible.minX)
+        }
+        if orientation == .vertical || orientation == .both {
+            place.y = anchorY.map { target.minY + $0 * target.height - $0 * visible.height }
+                ?? Self.nearest(of: target.minY, length: target.height, in: visible.height, at: visible.minY)
+        }
+
+        move(to: place, asUser: false)
+    }
+
+    /// Where the room stands for the target to be wholly in view, moved the
+    /// shorter way - nowhere where it already is.
+    private static func nearest(of start: CGFloat, length: CGFloat, in room: CGFloat, at now: CGFloat) -> CGFloat {
+        if start >= now, start + length <= now + room { return now }
+        return start < now ? start : start + length - room
     }
 
     func beginMovementForTesting() {

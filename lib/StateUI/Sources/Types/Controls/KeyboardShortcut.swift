@@ -45,6 +45,11 @@ public struct KeyEquivalent: Equatable, Sendable, ExpressibleByStringLiteral {
     public static let pageUp = KeyEquivalent("pageup")
     /// The Page Down key.
     public static let pageDown = KeyEquivalent("pagedown")
+
+    /// The platform's accept key - Return, as the default button's shortcut.
+    public static let defaultAction = KeyEquivalent("defaultaction")
+    /// The platform's cancel key - Escape, as the cancel button's.
+    public static let cancelAction = KeyEquivalent("cancelaction")
 }
 
 /// The modifier keys held with a key: `.command` by default, as shortcuts

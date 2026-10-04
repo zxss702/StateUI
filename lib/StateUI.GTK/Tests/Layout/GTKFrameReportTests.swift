@@ -22,7 +22,7 @@ private struct FramesPage: View {
                 .frame(height: 60)
                 .frame($room)
                 .onFrameChanged { frame in said = "\(Int(frame.width))x\(Int(frame.height))" }
-            GeometryReader { frame in Text("reader \(Int(frame.width))") }
+            GeometryReader { proxy in Text("reader \(Int(proxy.size.width))") }
                 .frame(width: 90)
                 .frame(height: 20)
             Button("Widen").onClicked { wide = true }

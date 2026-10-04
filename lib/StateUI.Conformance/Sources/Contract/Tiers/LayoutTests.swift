@@ -131,6 +131,7 @@ enum Holding {
         }
         let dressing = Dressing(worn, id: "layout")
         switch element {
+        case "CustomLayout": return dressing.dress(SpecimenLayout { held })
         case "Grid": return dressing.dress(Grid { held })
         case "HStack": return dressing.dress(HStack { held })
         case "ZStack": return dressing.dress(ZStack { held })

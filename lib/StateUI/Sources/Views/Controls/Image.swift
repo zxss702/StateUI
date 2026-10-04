@@ -6,7 +6,7 @@ public protocol ImageProperties: PropertyContainer {}
 
 extension ImageProperties {
     /// Whether an animated picture - a GIF, an animated WebP - is running.
-    public func isAnimating(_ value: Bool) -> Modified {
+    @_spi(Host) public func isAnimating(_ value: Bool) -> Modified {
         setValue(ImageContract.isAnimating, value)
     }
 }
@@ -80,9 +80,18 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
 }
 
 extension Image {
+    /// Whether the picture draws in its own colours or as a stencil of the
+    /// foreground one - `.template` for a symbol that takes its tint.
+    ///
+    ///     Image("logo.png")
+    ///         .renderingMode(.original)
+    public func renderingMode(_ mode: TemplateRenderingMode) -> Modified {
+        setValue(ImageContract.renderingMode, mode)
+    }
+
     /// `isAnimating` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func isAnimating(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isAnimating(_ state: Binding<Bool>) -> Modified {
         plain(.isAnimating, by: state)
     }
 }

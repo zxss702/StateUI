@@ -41,6 +41,24 @@ extension View {
     ) -> Layered<Self, Content> {
         Layered(base: self, layer: content(), alignment: alignment, over: false)
     }
+
+    /// What the container this view's page stands in draws behind it - its
+    /// window, its sheet - reaching the view's own background where the view
+    /// is clear:
+    ///
+    ///     DetailView()
+    ///         .containerBackground(for: .window) { Color.defaultBackground }
+    ///
+    /// Composed as a `.background` under the view: a solid colour reads the
+    /// same, and where the content is a material the window's own
+    /// `windowBackground` says it closer still.
+    public func containerBackground<Content: View>(
+        for placement: ContainerBackgroundPlacement,
+        alignment: Alignment = .center,
+        @ViewBuilder content: () -> Content
+    ) -> Layered<Self, Content> {
+        Layered(base: self, layer: content(), alignment: alignment, over: false)
+    }
 }
 
 /// What `.overlay {}` and `.background {}` make: two views in a `ZStack`, the

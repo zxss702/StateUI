@@ -52,7 +52,8 @@ final class AppKitGestureTests: XCTestCase {
         XCTAssertEqual(onePointer.count, 1)
         XCTAssertTrue(twoPointers.isEmpty)
 
-        onePointer.first?.dragged(.running, x: 8, y: 5)
+        onePointer.first?.dragged(
+            .running, x: 8, y: 5, at: Point(x: 18, y: 15), from: Point(x: 10, y: 10))
 
         XCTAssertEqual(totals.values, [8])
     }

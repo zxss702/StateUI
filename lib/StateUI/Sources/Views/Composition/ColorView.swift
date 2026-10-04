@@ -6,8 +6,8 @@
 
 extension Color: View {
     /// The colour, filling whatever room it is given - a `Rectangle` painted
-    /// with it.
+    /// with it, stretching to its room.
     public var body: some View {
-        Rectangle().fill(self)
+        Rectangle().fill(self).flex(0)
     }
 }

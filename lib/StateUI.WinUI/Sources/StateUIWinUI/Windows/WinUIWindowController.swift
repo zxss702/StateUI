@@ -151,8 +151,11 @@ final class WinUIWindowController {
             split: tabbed.parent?.enclosing(type: .navigationSplitView)?.winUI.view as? WinUISplitView)
     }
 
-    /// The page's corner in the window, in DIPs: where content stands clear of the window's chrome.
-    var safeAreaOrigin: Point {
-        window.content?.origin ?? Point(x: 0, y: 0)
+    /// The page's frame in the window, in DIPs: where content stands clear of the window's chrome.
+    var safeArea: Rect {
+        guard let content = window.content else { return Rect(x: 0, y: 0, width: 0, height: 0) }
+        let corner = content.origin
+        let size = content.placedFrame
+        return Rect(x: corner.x, y: corner.y, width: size.width, height: size.height)
     }
 }

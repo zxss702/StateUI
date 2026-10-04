@@ -105,7 +105,7 @@ enum Input {
         case let (.box(a), .box(b)):
             return a.lender === b.lender
         case let (.slot(a), .slot(b)):
-            return a.filled === b.filled
+            return a.same(as: b)
         case let (.parts(a), .parts(b)):
             return a == b
         default:
@@ -260,10 +260,15 @@ extension Node {
         /// The scene this view is, where it is one (SceneRecord.swift).
         let scene: SceneRecord?
 
-        /// Fills every slot with the nearest provided object of its type; a slot nobody
-        /// provided for is left for its read to report.
-        func resolve(from scope: [(key: ObjectIdentifier, object: AnyObject)]) {
+        /// Fills every slot with the nearest provided object of its type, and
+        /// every keyed slot from the values above it; a slot nobody provided
+        /// for is left for its read to report.
+        func resolve(
+            from scope: [(key: ObjectIdentifier, object: AnyObject)],
+            under values: EnvironmentValues
+        ) {
             for slot in slots {
+                slot.fill(values: values)
                 if let found = scope.last(where: { $0.key == slot.wants }) {
                     slot.fill(found.object)
                 }
@@ -279,12 +284,14 @@ extension Node {
             // wrote on the view lands on each child the body splices in.
             if node.type == .fragment {
                 node.environments = written.environments + node.environments
+                node.environmentValues = node.environmentValues.overlaid(with: written.environmentValues)
                 node.children = node.children.map { landing($0, written: written) }
 
                 // A body of one view is that view: it stands in the view's place.
                 if node.children.count == 1 {
                     var child = node.children[0]
                     child.environments = node.environments + child.environments
+                    child.environmentValues = child.environmentValues.overlaid(with: node.environmentValues)
                     node = child
                 }
 
@@ -293,6 +300,7 @@ extension Node {
 
             node.props.merge(written.props) { _, wrote in wrote }
             node.environments = written.environments + node.environments
+            node.environmentValues = node.environmentValues.overlaid(with: written.environmentValues)
             node.driven.merge(written.driven) { _, wrote in wrote }
             node.animation = AnimationPlan.merged(node.animation, under: written.animation)
 
@@ -347,18 +355,24 @@ extension Node {
     /// This node with every placeholder built, recursively, with no state carried
     /// over - for tests that read a tree structurally, resolving the standard
     /// environment as a render does.
-    var built: Node { built(within: StandardEnvironment.scope) }
+    var built: Node { built(within: StandardEnvironment.scope, under: EnvironmentValues()) }
 
-    /// The same, resolving `@Environment` from `scope` as a render at this place would.
-    func built(within scope: [(key: ObjectIdentifier, object: AnyObject)]) -> Node {
+    /// The same, resolving `@Environment` from `scope` and `values` as a render
+    /// at this place would.
+    func built(
+        within scope: [(key: ObjectIdentifier, object: AnyObject)],
+        under values: EnvironmentValues
+    ) -> Node {
         var node = self
         var scope = scope
+        var values = values.overlaid(with: node.environmentValues)
         scope.append(contentsOf: node.environments)
 
         while true {
             if let stateful = node.stateful {
-                stateful.resolve(from: scope)
+                stateful.resolve(from: scope, under: values)
                 node = stateful.expand(over: node)
+                values = values.overlaid(with: node.environmentValues)
                 scope.append(contentsOf: node.environments)
                 continue
             }
@@ -367,7 +381,7 @@ extension Node {
         }
 
         node.materialize()
-        node.children = node.children.map { $0.built(within: scope) }
+        node.children = node.children.map { $0.built(within: scope, under: values) }
         return node
     }
 
@@ -406,9 +420,54 @@ extension NodeType {
 }
 
 extension Node {
-    /// This node spliced into a parent's child list: a fragment's children, any
-    /// other node itself.
+    /// This node spliced into a parent's child list: a fragment's children
+    /// with the fragment's per-child writes landed on each, any other node
+    /// itself. The spread recurses, so a fragment among the children hands
+    /// its own writes on down rather than dropping them.
     var asChildren: [Node] {
-        type == .fragment ? children : [self]
+        guard type == .fragment else { return [self] }
+
+        return children.flatMap { child -> [Node] in
+            var child = child
+            child.absorbFragmentWrites(of: self)
+            return child.asChildren
+        }
+    }
+
+    /// What a fragment writes on each child it stands for. A fragment keeps
+    /// no element of its own, so a modifier on it lands on the children it
+    /// splices in - the fragment's own answer winning where both wrote the
+    /// same thing, the child's where it wrote alone. `environments` spreads
+    /// the fragment's scopes onto the child too; false where the differ has
+    /// them in scope already.
+    mutating func absorbFragmentWrites(of fragment: Node, environments: Bool = true) {
+        props.merge(fragment.props) { _, wrote in wrote }
+        driven.merge(fragment.driven) { _, wrote in wrote }
+        animation = AnimationPlan.merged(animation, under: fragment.animation)
+
+        for (name, handler) in fragment.events.sorted(by: { $0.key < $1.key }) {
+            addHandler(name, handler)
+        }
+
+        watches += fragment.watches
+        created += fragment.created
+        destroying += fragment.destroying
+        engines += fragment.engines
+        preferenceSeeds = fragment.preferenceSeeds + preferenceSeeds
+        preferenceObservers += fragment.preferenceObservers
+        preferenceTransforms += fragment.preferenceTransforms
+        layoutValues.merge(fragment.layoutValues) { _, wrote in wrote }
+        destinations.merge(fragment.destinations) { _, wrote in wrote }
+        if itemDestination == nil { itemDestination = fragment.itemDestination }
+        if textRenderer == nil { textRenderer = fragment.textRenderer }
+        if customLayout == nil { customLayout = fragment.customLayout }
+
+        if environments {
+            self.environments = fragment.environments + self.environments
+            environmentValues = environmentValues.overlaid(with: fragment.environmentValues)
+        }
+
+        if session == nil { session = fragment.session }
+        if aim == nil { aim = fragment.aim }
     }
 }

@@ -55,14 +55,14 @@ public struct ItemsGroup<Items: RandomAccessCollection, Id: Hashable> {
     }
 
     /// A view standing before the group's items.
-    public func header(_ view: any View) -> Self {
+    @_spi(Host) public func header(_ view: any View) -> Self {
         var copy = self
         copy.header = view
         return copy
     }
 
     /// A view standing after the group's items.
-    public func footer(_ view: any View) -> Self {
+    @_spi(Host) public func footer(_ view: any View) -> Self {
         var copy = self
         copy.footer = view
         return copy

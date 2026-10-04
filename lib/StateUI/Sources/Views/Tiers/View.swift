@@ -103,12 +103,41 @@ extension View {
         setting(TextFieldContract.submitLabel.token, value.propValue)
     }
 
+    /// `submitLabel` from a state, `$x`: the host sets each new value as it
+    /// stands, and no view is rebuilt for it.
+    @_disfavoredOverload @_spi(Host)
+    public func submitLabel(_ state: Binding<ReturnKey>) -> ModifiedContent {
+        revised { $0.drivePlain(TextFieldContract.submitLabel.token, by: state) }
+    }
+
     /// The accent colour the controls inside this view draw with - on a
     /// `ProgressView`, a `Toggle`, or any composition whose tintable element
     /// is inside rather than the view itself.
     @_disfavoredOverload
     public func tint(_ value: Color) -> ModifiedContent {
         setting(TintElementContract.tint.token, value.propValue)
+    }
+
+    /// The shadow this view drops - the SwiftUI spelling:
+    ///
+    ///     ColorPicker(.cornflowerBlue)
+    ///         .shadow(radius: 4)
+    ///         .shadow(color: .black.opacity(0.2), radius: 8, y: 2)
+    public func shadow(
+        color: Color = .black.opacity(1.0 / 3), radius: Double, x: Double = 0, y: Double = 0
+    ) -> ModifiedContent {
+        setting(VisualElementContract.shadow, DropShadow(color: color, radius: radius, x: x, y: y))
+    }
+
+    /// How big the controls inside this view draw - the SwiftUI spelling:
+    ///
+    ///     ProgressView()
+    ///         .controlSize(.small)
+    ///
+    /// Set on a control it sizes that control; set on a container it sizes
+    /// every control inside, the way `.controlSize` is inherited in SwiftUI.
+    public func controlSize(_ size: ControlSize) -> ModifiedContent {
+        revised { $0.writeInherited(ControlSizeElementContract.controlSize, size) }
     }
 }
 
@@ -203,14 +232,12 @@ extension ViewProperties {
     }
 
     /// Left and right, then top and bottom. This library's own.
-    @_spi(Host)
-    public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> Modified {
+    @_spi(Host) public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> Modified {
         padding(EdgeInsets(horizontalSize, verticalSize))
     }
 
     /// Each side in turn: left, top, right, bottom. This library's own.
-    @_spi(Host)
-    public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> Modified {
+    @_spi(Host) public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> Modified {
         padding(EdgeInsets(left, top, right, bottom))
     }
 
@@ -226,20 +253,17 @@ extension ViewProperties {
 
     /// `padding` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it. This library's own.
-    @_spi(Host)
-    public func padding(_ state: Binding<EdgeInsets>) -> Modified {
+    @_spi(Host) public func padding(_ state: Binding<EdgeInsets>) -> Modified {
         journey(ViewContract.padding, by: state)
     }
 
     /// The same space on all four sides, from a state, `$x`. This library's own.
-    @_spi(Host)
-    public func padding(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func padding(_ state: Binding<Double>) -> Modified {
         padding(state.convert { EdgeInsets($0, $0, $0, $0) })
     }
 
     /// The same space on all four sides, from a state holding a whole number, `$x`. This library's own.
-    @_spi(Host)
-    public func padding(_ state: Binding<Int>) -> Modified {
+    @_spi(Host) public func padding(_ state: Binding<Int>) -> Modified {
         padding(state.convert { EdgeInsets(Double($0)) })
     }
 
@@ -248,39 +272,37 @@ extension ViewProperties {
     /// `.frame(alignment:)` are the view-facing shapes.
     ///
     ///     Button("Save").horizontalAlignment(.center)
-    public func horizontalAlignment(_ value: AxisAlignment) -> Modified {
+    @_spi(Host) public func horizontalAlignment(_ value: AxisAlignment) -> Modified {
         setValue(ViewContract.horizontalAlignment, value)
     }
 
     /// The same, for the height.
-    public func verticalAlignment(_ value: AxisAlignment) -> Modified {
+    @_spi(Host) public func verticalAlignment(_ value: AxisAlignment) -> Modified {
         setValue(ViewContract.verticalAlignment, value)
     }
 
     /// `horizontalAlignment` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
-    public func horizontalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
+    @_spi(Host) public func horizontalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
         plain(ViewContract.horizontalAlignment, by: state)
     }
 
     /// `verticalAlignment` from a state, `$x`: the host sets each new value as
     /// it stands, and no view is rebuilt for it.
-    public func verticalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
+    @_spi(Host) public func verticalAlignment(_ state: Binding<AxisAlignment>) -> Modified {
         plain(ViewContract.verticalAlignment, by: state)
     }
 
     /// The view shares the room its stack has left over along the stack's axis,
     /// never less than `minimum` long. What a `Spacer` is written with; for
     /// anything else, `.frame(maxWidth:)` says it better.
-    @_spi(Host)
-    public func flex(_ minimum: Double) -> Modified {
+    @_spi(Host) public func flex(_ minimum: Double) -> Modified {
         setValue(ViewContract.flex, minimum)
     }
 
     /// `flex` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    @_spi(Host)
-    public func flex(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func flex(_ state: Binding<Double>) -> Modified {
         plain(ViewContract.flex, by: state)
     }
 
@@ -379,15 +401,13 @@ extension View {
 
     /// Left and right, then top and bottom. This library's own.
     @_disfavoredOverload
-    @_spi(Host)
-    public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> ModifiedContent {
+    @_spi(Host) public func padding(_ horizontalSize: Double, _ verticalSize: Double) -> ModifiedContent {
         padding(EdgeInsets(horizontalSize, verticalSize))
     }
 
     /// Each side in turn: left, top, right, bottom. This library's own.
     @_disfavoredOverload
-    @_spi(Host)
-    public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> ModifiedContent {
+    @_spi(Host) public func padding(_ left: Double, _ top: Double, _ right: Double, _ bottom: Double) -> ModifiedContent {
         padding(EdgeInsets(left, top, right, bottom))
     }
 
@@ -406,8 +426,7 @@ extension View {
     /// `padding` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it. This library's own.
     @_disfavoredOverload
-    @_spi(Host)
-    public func padding(_ state: Binding<EdgeInsets>) -> ModifiedContent {
+    @_spi(Host) public func padding(_ state: Binding<EdgeInsets>) -> ModifiedContent {
         revised { node in
             node.driveJourney(ViewContract.padding, by: state)
         }
@@ -415,15 +434,13 @@ extension View {
 
     /// The same space on all four sides, from a state, `$x`. This library's own.
     @_disfavoredOverload
-    @_spi(Host)
-    public func padding(_ state: Binding<Double>) -> ModifiedContent {
+    @_spi(Host) public func padding(_ state: Binding<Double>) -> ModifiedContent {
         padding(state.convert { EdgeInsets($0, $0, $0, $0) })
     }
 
     /// The same space on all four sides, from a state holding a whole number, `$x`. This library's own.
     @_disfavoredOverload
-    @_spi(Host)
-    public func padding(_ state: Binding<Int>) -> ModifiedContent {
+    @_spi(Host) public func padding(_ state: Binding<Int>) -> ModifiedContent {
         padding(state.convert { EdgeInsets(Double($0)) })
     }
 
@@ -481,7 +498,7 @@ extension View {
 /// The padding `.padding()` writes, the same on every platform: sixteen
 /// device units - wide enough for a control's edge, narrow enough for
 /// ordinary text.
-private let libraryDefaultPadding: Double = 16
+let libraryDefaultPadding: Double = 16
 
 /// The insets `padding(_:_:)` writes - shared by `ViewProperties` and `View`.
 private func paddingInsets(_ edges: Edge.Set, _ length: Double?) -> EdgeInsets {
@@ -577,8 +594,7 @@ extension View {
     ///   - animation: how those values animate.
     ///   - values: which of them. See `AnimationValues` for what each name covers.
     /// - Returns: the view, with the rule on it.
-    @_spi(Host)
-    public func animation(_ animation: Animation, _ values: AnimationValues) -> ModifiedContent {
+    @_spi(Host) public func animation(_ animation: Animation, _ values: AnimationValues) -> ModifiedContent {
         revised { node in
             var plan = node.animation ?? AnimationPlan(base: nil)
             plan.rules.append((values: values, animation: animation))
@@ -646,6 +662,25 @@ extension View {
     /// branch.
     public func environment<Value: AnyObject>(_ object: Value) -> ModifiedContent {
         revised { $0.environments.append((key: ObjectIdentifier(Value.self), object: object)) }
+    }
+
+    /// Writes a keyed environment value to this view and everything under it,
+    /// read below with `@Environment(\.key)`. A nearer write of the same key
+    /// overrides for its own branch, and a view that reads one is rebuilt when
+    /// what it resolves to moves.
+    ///
+    ///     ChildView()
+    ///         .environment(\.textEditorWraps, false)
+    ///
+    /// - Parameters:
+    ///   - keyPath: the `EnvironmentValues` property to write - writable, so a
+    ///     custom entry declares get and set alike.
+    ///   - value: what the key reads below.
+    public func environment<Value>(
+        _ keyPath: WritableKeyPath<EnvironmentValues, Value>,
+        _ value: Value
+    ) -> ModifiedContent {
+        revised { $0.environmentValues[keyPath: keyPath] = value }
     }
 
     /// The keyed style from the application's style sheet that this view wears.

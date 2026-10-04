@@ -18,7 +18,7 @@ extension BarElement {
     ///     .barBackgroundColor(.cornflowerBlue)
     ///
     /// Leave it unwritten to retain the native material and appearance.
-    public func barBackgroundColor(_ value: Color) -> Modified {
+    @_spi(Host) public func barBackgroundColor(_ value: Color) -> Modified {
         setValue(BarElementContract.barBackgroundColor, value)
     }
 }

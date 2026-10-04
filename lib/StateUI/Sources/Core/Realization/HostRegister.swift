@@ -32,7 +32,7 @@
     /// This register with what the host's runtime realizes behind it. What is written comes first: a runtime says
     /// presence alone, where a written record may say what is missing, so a member the written half speaks for -
     /// on its owner, or on a tier the owner wears - is dropped from the runtime's records.
-    public func and(_ runtime: [HostRecord]) -> HostRegister {
+    @_spi(Host) public func and(_ runtime: [HostRecord]) -> HostRegister {
         let written = Set(records.map { "\($0.owner).\($0.member)" })
         let realized = runtime.filter { record in
             !written.contains("\(record.owner).\(record.member)")
@@ -43,13 +43,13 @@
     }
 
     /// This register with a host's declaration of what its runtime realizes behind it.
-    public func and(_ declaration: HostDeclaration) -> HostRegister {
+    @_spi(Host) public func and(_ declaration: HostDeclaration) -> HostRegister {
         and(Self.records(of: declaration))
     }
 
     /// What the host's records say of `member` on `element`: the element's own record, else the record of the tier
     /// the member comes from; nil where the host does not realize it.
-    public func judgement(of member: String, on element: String, from tier: String?) -> HostRecord.Judgement? {
+    @_spi(Host) public func judgement(of member: String, on element: String, from tier: String?) -> HostRecord.Judgement? {
         switch judgement(ofElement: element) {
         case nil: return nil
         case .notPlanned(let reason)?: return .notPlanned(reason: reason)
@@ -65,13 +65,13 @@
 
     /// What the host says of `element` itself: never, with why, where its family never has it; made where it
     /// realizes it; nil where it realizes none of it.
-    public func judgement(ofElement element: String) -> HostRecord.Judgement? {
+    @_spi(Host) public func judgement(ofElement element: String) -> HostRecord.Judgement? {
         if let reason = notPlanned[element] { return .notPlanned(reason: reason) }
         return unrealized.contains(element) ? nil : .complete
     }
 
     /// Whether the host realizes `member` on `element` - in full or in part - so a test of it runs there.
-    public func realizes(_ member: String, on element: String, from tier: String?) -> Bool {
+    @_spi(Host) public func realizes(_ member: String, on element: String, from tier: String?) -> Bool {
         switch judgement(of: member, on: element, from: tier) {
         case .complete?, .partial?: true
         case .notPlanned?, .unrealized?, nil: false

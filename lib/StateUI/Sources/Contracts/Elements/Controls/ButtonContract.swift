@@ -14,6 +14,7 @@ public enum ButtonContract: ElementContract {
     public static let tiers: [any Contract.Type] = [
         ViewContract.self, TextElementContract.self, FontElementContract.self, PaddingElementContract.self,
         BorderElementContract.self, ImageElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// The look `.buttonStyle` asks for - the platform's own drawing of the

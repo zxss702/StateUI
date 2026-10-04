@@ -22,6 +22,10 @@ public enum ShapeContract: Contract {
     /// What the outline is painted with.
     public static let stroke = ElementProperty<Self, Brush>("stroke", layer: .stateUI)
 
+    /// The outline drawn inside the shape's own bounds - `.strokeBorder`
+    /// writes it where `.stroke` would straddle them.
+    public static let strokeBorder = ElementProperty<Self, Brush>("strokeBorder", layer: .stateUI)
+
     /// How far into the dash pattern the outline starts.
     public static let strokeDashOffset = ElementProperty<Self, Double>("strokeDashOffset", layer: .stateUI)
 
@@ -44,7 +48,7 @@ public enum ShapeContract: Contract {
 
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        aspect, fill, renderTransform, stroke, strokeDashOffset, strokeDashPattern,
+        aspect, fill, renderTransform, stroke, strokeBorder, strokeDashOffset, strokeDashPattern,
         strokeLineCap, strokeLineJoin, strokeMiterLimit, strokeWidth,
     ]
 }

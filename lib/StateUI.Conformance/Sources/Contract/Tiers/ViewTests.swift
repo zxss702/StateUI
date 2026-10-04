@@ -195,8 +195,11 @@
                     Opened.pannedAcross(Specimens.view(element, [
                         Write(VisualElementContract.width, 100), Write(VisualElementContract.height, 100),
                         Write(ViewContract.panTouchCount, 1),
-                        HearThree(ViewContract.panUpdated) { phase, totalX, totalY in
-                            heard.values.append("\(phase) \(Int(totalX)) \(Int(totalY))")
+                        HearFive(ViewContract.panUpdated) { phase, totalX, totalY, start, location in
+                            heard.values.append(
+                                "\(phase) \(Int(totalX)) \(Int(totalY))"
+                                    + (location.map { " at \(Int($0.x)),\(Int($0.y))" } ?? "")
+                                    + (start.map { " from \(Int($0.x)),\(Int($0.y))" } ?? ""))
                         },
                     ]), carrying: x.projectedValue)
                 }
@@ -206,7 +209,9 @@
             try s.perform(.pan(by: Point(-60, 20)), on: s.element("specimen"))
             s.settle { heard.values.last?.hasPrefix("completed") == true }
             s.expect(heard.values.first?.hasPrefix("started"), true, "heard as it starts")
-            s.expect(heard.values.contains("running -60 20"), true, "running, with how far it went")
+            s.expect(
+                heard.values.contains(where: { $0.hasPrefix("running -60 20") }),
+                true, "running, with how far it went")
             s.expect(heard.values.last?.hasPrefix("completed"), true, "and as it ends")
             s.expect(x.wrappedValue, -50, "the state carried as far as the hand went across")
         }

@@ -57,6 +57,10 @@
     /// The element leaves the tree: everything it attached outside the tree lets go of it.
     func leave()
 
+    /// The room the element's view last stood at inside its parent, which a
+    /// removal `move` measures its slide by; nil where the host cannot say.
+    var departingRoom: Rect? { get }
+
     /// The tab the user chose on a tabbed view, which the tree may not say yet; nil where none.
     var chosenTab: Int? { get }
 
@@ -65,6 +69,9 @@
 }
 
 @_spi(Host) extension NativeElement {
+    /// A host that cannot say where a departing view stood.
+    public var departingRoom: Rect? { nil }
+
     /// No tab chosen apart from the tree.
     public var chosenTab: Int? { nil }
 

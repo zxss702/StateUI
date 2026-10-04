@@ -271,6 +271,22 @@ final class AppKitWindowController: NSWindowController {
         window.isOpaque = !isTranslucent
         content.isTranslucent = isTranslucent
         window.level = traits.floatsOnTop ? .floating : .normal
+
+        switch traits.resizability {
+        case WindowResizability.contentSize.rawValue:
+            let fitting = content.fittingSize
+            window.contentMinSize = fitting
+            window.contentMaxSize = fitting
+            window.styleMask.remove(.resizable)
+        case WindowResizability.contentMinSize.rawValue:
+            window.contentMinSize = content.fittingSize
+        default:
+            if !window.styleMask.contains(.resizable) {
+                window.styleMask.insert(.resizable)
+                window.contentMaxSize = NSSize(
+                    width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+            }
+        }
     }
 
     /// Takes the window off the screen while its scene hides it, and back once it does not.

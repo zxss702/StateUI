@@ -41,6 +41,9 @@ extension AppKitElement {
              .divider, .spans, .span:
             return nil
 
+        case .menuButton:
+            return AppKitMenuButtonView()
+
         case .navigationStack:
             return AppKitNavigationView()
 
@@ -58,6 +61,12 @@ extension AppKitElement {
 
         case .zStack:
             return AppKitZStackView()
+
+        case .masked:
+            return AppKitMaskedView()
+
+        case .customLayout:
+            return AppKitCustomLayoutView()
 
 
         case .scrollView:
@@ -93,6 +102,10 @@ extension AppKitElement {
 
         applyVisibility()
         view.toolTip = string(.hint)
+        if let control = view as? NSControl {
+            control.controlSize = value(.controlSize)
+                .flatMap(ControlSize.init(propValue:)).map(nsControlSize) ?? .regular
+        }
         if let scroll = view as? AppKitScrollView {
             scroll.boxBackground = color(.background)
         } else if !(view is AppKitTravellingLayout) && !(view is AppKitColorBoxView) {
@@ -108,6 +121,25 @@ extension AppKitElement {
             changed, to: view, of: type,
             reading: { self.value($0) },
             carriedIn: { self.driven[$0]?.mode == .in })
+
+        if let menu = view as? AppKitMenuButtonView {
+            menu.opensMenu = value(.isEnabled)?.bool ?? true
+            menu.showsChrome = string(.menuStyle) != "borderlessButton"
+            menu.showsIndicator = (value(.menuIndicator)?.enumeration ?? 0) != 2
+            menu.menuEntries = slot(.contextMenu)
+                .map { AppKitMenus.items(MenuEntry.entries(of: $0.element)) } ?? []
+        }
+
+        applyPointerStyle()
+
+        // A composite mode is drawn by the layer the view's contents are
+        // composited through; `normal` takes it back off.
+        if let mode = value(.blendMode)?.enumeration {
+            view.wantsLayer = true
+            view.layer?.compositingFilter = Self.blendFilter(mode)
+        } else {
+            view.layer?.compositingFilter = nil
+        }
 
         if type == .toolbarItem, let button = view as? NSButton {
             button.title = string(.text) ?? ""
@@ -146,6 +178,10 @@ extension AppKitElement {
         if let layers = view as? AppKitZStackView {
             layers.placement = placement(.area)
             layers.padding = insets(.contentPadding)
+        }
+
+        if let custom = view as? AppKitCustomLayoutView {
+            custom.padding = insets(.contentPadding)
         }
 
         if let layout = view as? AppKitTravellingLayout {
@@ -217,6 +253,7 @@ extension AppKitElement {
         }
 
         drawing?.own = element.drawingTransform
+        configureDropTarget(for: view)
         // Last, so the words meet the control as configured above - a text
         // field may just have swapped in a password field.
         applyAccessibility(to: view)
@@ -334,6 +371,16 @@ extension AppKitElement {
     /// How the element's words break, as the tree says; word wrapping where it says nothing.
     var lineBreak: LineBreak {
         enumeration(.lineBreak).flatMap(LineBreak.init(rawValue:)) ?? .wordWrap
+    }
+    /// A control's size in AppKit's own cases - `.extraLarge` stands in with
+    /// the largest AppKit has.
+    func nsControlSize(_ size: ControlSize) -> NSControl.ControlSize {
+        switch size {
+        case .mini: .mini
+        case .small: .small
+        case .regular: .regular
+        case .large, .extraLarge: .large
+        }
     }
 }
 

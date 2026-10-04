@@ -45,7 +45,7 @@ final class UIKitScrollView: UIKitLayoutView, UIScrollViewDelegate {
         scroller.contentInsetAdjustmentBehavior = .never
         scroller.addSubview(document)
         addSubview(scroller)
-        configure(vertical: .default, horizontal: .default)
+        configure(vertical: .automatic, horizontal: .automatic)
     }
 
     /// The content: one child, or several stacked down.
@@ -139,8 +139,38 @@ final class UIKitScrollView: UIKitLayoutView, UIScrollViewDelegate {
         scroller.isScrollEnabled = orientation != .neither
         scroller.alwaysBounceVertical = orientation == .vertical || orientation == .both
         scroller.alwaysBounceHorizontal = orientation == .horizontal || orientation == .both
-        scroller.showsVerticalScrollIndicator = vertical != .never && orientation != .horizontal
-        scroller.showsHorizontalScrollIndicator = horizontal != .never && orientation != .vertical
+        scroller.showsVerticalScrollIndicator = vertical != .hidden && orientation != .horizontal
+        scroller.showsHorizontalScrollIndicator = horizontal != .hidden && orientation != .vertical
+    }
+
+    /// Scrolls until `descendant` stands where the anchors say: fractions
+    /// across and down it and the room, an absent one for "only where it is
+    /// not wholly in view".
+    func scroll(toDescendant descendant: UIView, anchorX: Double?, anchorY: Double?) {
+        let target = descendant.convert(descendant.bounds, to: document)
+        let room = scroller.bounds.size
+        var place = (x: scroller.contentOffset.x, y: scroller.contentOffset.y)
+
+        if orientation == .horizontal || orientation == .both {
+            place.x = Self.target(
+                at: target.minX, length: target.width, in: room.width, now: place.x, anchor: anchorX)
+        }
+        if orientation == .vertical || orientation == .both {
+            place.y = Self.target(
+                at: target.minY, length: target.height, in: room.height, now: place.y, anchor: anchorY)
+        }
+        move(to: Point(x: place.x, y: place.y))
+    }
+
+    /// Where the room stands for `anchor` - the fraction across the child and
+    /// the room - or, absent one, for the child wholly in view the shorter
+    /// way, nowhere where it already is.
+    private static func target(
+        at start: CGFloat, length: CGFloat, in room: CGFloat, now: CGFloat, anchor: Double?
+    ) -> CGFloat {
+        if let anchor { return start + CGFloat(anchor) * length - CGFloat(anchor) * room }
+        if start >= now, start + length <= now + room { return now }
+        return start < now ? start : start + length - room
     }
 
     /// Moves the scroller to `target`, kept within what it reaches, as the program's move.

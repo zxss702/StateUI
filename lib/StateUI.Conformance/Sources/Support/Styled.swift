@@ -20,6 +20,7 @@ enum Styled {
             dimmed(Canvas.self)
             dimmed(CheckBox.self)
             dimmed(ColorPicker.self)
+            dimmed(CustomLayoutStyleTarget.self)
             dimmed(DatePicker.self)
             dimmed(Ellipse.self)
             dimmed(Grid.self)
@@ -28,6 +29,7 @@ enum Styled {
             dimmed(Text.self)
             dimmed(Line.self)
             dimmed(Map.self)
+            dimmed(MaskedStyleTarget.self)
             dimmed(Path.self)
             dimmed(Picker.self)
             dimmed(Polygon.self)
@@ -56,6 +58,24 @@ enum Styled {
         StyleBuilder.buildExpression(
             Style<Target>(key(Target().node.type.name)).setValue(VisualElementContract.opacity, 0.5))
     }
+}
+
+/// The target a style for `CustomLayout` is written against: the container is generic over its layout, so a
+/// bare stand-in gives the style the node type it reads.
+private struct CustomLayoutStyleTarget: StyleTarget {
+    /// A `CustomLayout` node.
+    var node = Node(contract: CustomLayoutContract.self)
+
+    init() {}
+}
+
+/// The target a style for `Masked` is written against: `.mask` writes the
+/// node, so a bare stand-in gives the style the node type it reads.
+private struct MaskedStyleTarget: StyleTarget {
+    /// A `Masked` node.
+    var node = Node(contract: MaskedContract.self)
+
+    init() {}
 }
 
 /// A page whose application wears `Styled.sheet`, holding `inner`.

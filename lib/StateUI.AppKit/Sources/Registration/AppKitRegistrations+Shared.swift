@@ -18,8 +18,12 @@ extension AppKitRegistrations {
         registry.everyElementRealizes(VisualElementContract.ignoresInput)
         registry.everyElementRealizes(VisualElementContract.isVisible)
         registry.everyElementRealizes(VisualElementContract.opacity)
+        registry.everyElementRealizes(VisualElementContract.blur)
+        registry.everyElementRealizes(VisualElementContract.shadow)
+        registry.everyElementRealizes(VisualElementContract.transition)
         registry.everyElementRealizes(LayoutContract.letsInputThrough)
         registry.everyElementRealizes(LayoutContract.hitShape)
+        registry.everyElementRealizes(ControlSizeElementContract.controlSize)
         registry.everyElementRaises(VisualElementContract.isFocusedChanged)
     }
 }

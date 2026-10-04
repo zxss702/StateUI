@@ -13,6 +13,7 @@ public enum PickerContract: ElementContract {
     public static let tiers: [any Contract.Type] = [
         ViewContract.self, TextStyleElementContract.self, FontElementContract.self,
         TextAlignmentElementContract.self, TintElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// The user has closed the list of choices.

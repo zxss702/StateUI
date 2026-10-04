@@ -3,6 +3,7 @@
 
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
+import CStateUIGTK
 
 /// The widget: made, and given the element's properties.
 extension GTKElement {
@@ -73,6 +74,7 @@ extension GTKElement {
             view.setAccessibility(element.accessibilityWords)
         }
         if let layers = view as? GTKZStackView { layers.placement = element.placement }
+        if own.contains(.allowDrop) || view.drop != nil { configureDropTarget(for: view) }
 
         if !changed.subtracting(element.ownPlacementRun).isSubset(of: MountedElement.unmeasuredProperties) {
             invalidateMeasurements()

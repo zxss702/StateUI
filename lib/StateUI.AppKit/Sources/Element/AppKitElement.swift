@@ -112,6 +112,7 @@ final class AppKitElement: NSObject, NativeElement {
     func applied(changed: Set<Prop>, wasDescribed: Bool) {
         if wasDescribed, changed.contains(.isVisible) { crossVisibility() }
         applyProperties(changed: changed)
+        applyEffects(changed: changed, wasDescribed: wasDescribed)
         configureContextMenu()
         configurePopover()
         configureGestures()
@@ -121,6 +122,7 @@ final class AppKitElement: NSObject, NativeElement {
     }
 
     func leave() {
+        retireMatchedFrame()
         releaseNativeAttachments()
     }
 
@@ -137,20 +139,39 @@ final class AppKitElement: NSObject, NativeElement {
     }
 
     /// Shows, hides and fades the view as the tree says - kept visible and
-    /// deaf to input while it fades out.
+    /// deaf to input while it fades out or departs.
     func applyVisibility() {
         guard let view else { return }
         view.isHidden = !element.standsShown
         view.alphaValue = value(.opacity)?.number ?? 1
+        if let radius = value(.blur)?.number, radius > 0 {
+            view.wantsLayer = true
+            let blur = CIFilter(name: "CIGaussianBlur")
+            blur?.setValue(radius, forKey: kCIInputRadiusKey)
+            view.contentFilters = blur.map { [$0] } ?? []
+        } else if !view.contentFilters.isEmpty {
+            view.contentFilters = []
+        }
+        if let drop = value(.shadow).flatMap(DropShadow.init(propValue:)) {
+            view.wantsLayer = true
+            let shadow = NSShadow()
+            shadow.shadowColor = nsColor(drop.color.propValue) ?? NSColor(white: 0, alpha: 1.0 / 3)
+            shadow.shadowBlurRadius = CGFloat(drop.radius)
+            // AppKit's shadow offset grows upward in a view drawn from the bottom.
+            shadow.shadowOffset = NSSize(width: drop.x, height: view.isFlipped ? drop.y : -drop.y)
+            view.shadow = shadow
+        } else if view.shadow != nil {
+            view.shadow = nil
+        }
         let ignores = value(.ignoresInput)?.bool ?? false
+        let deaf = element.isLeaving || element.isDeparting || ignores
         if let hitTestView = view as? AppKitHitTestView {
             hitTestView.hitShape = value(.hitShape).flatMap(ContainerShape.init(propValue:))
             // The whole view and its children, or only its own empty area.
             hitTestView.applyInputTransparency(
-                element.isLeaving || ignores || value(.letsInputThrough)?.bool == true,
-                cascades: element.isLeaving || ignores)
+                deaf || value(.letsInputThrough)?.bool == true, cascades: deaf)
         } else {
-            AppKitIgnoredInput.set(view, ignores: element.isLeaving || ignores)
+            AppKitIgnoredInput.set(view, ignores: deaf)
         }
     }
 
@@ -211,10 +232,16 @@ final class AppKitElement: NSObject, NativeElement {
         view != nil && element.fadesIn(presentsOpacity: TransitionSurface.presents(.opacity, on: type))
     }
 
-    /// Fades this element in as it joins a layout already standing, by the host layer's rule.
-    func fadeIn(under animation: Animation) {
+    /// Fades this element in as it joins a layout already standing, by the host layer's rule; `room` is
+    /// the place it lands at.
+    func fadeIn(under animation: Animation, room: Rect) {
         guard fadesIn else { return }
-        element.fadeIn(self, under: animation)
+        element.fadeIn(self, room: room, under: animation)
+    }
+
+    /// The room its view last stood at, which a removal `move` measures by.
+    var departingRoom: Rect? {
+        view == nil ? nil : placedFrame
     }
 
     /// Presents one display frame of this element's own changed properties.

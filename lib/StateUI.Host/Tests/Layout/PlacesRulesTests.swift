@@ -69,12 +69,13 @@ final class PlacesRulesTests: XCTestCase {
         XCTAssertEqual(child.placedFrame.x, 0, "and the child sets out from where it stood")
     }
 
-    /// A frame report is the place in the parent, the corner in the window, and the corner from the content's.
-    func testAFrameReportIsItsEightNumbers() {
+    /// A frame report is the place in the parent, the corner in the window, and the safe area's frame there.
+    func testAFrameReportIsItsTenNumbers() {
         XCTAssertEqual(
             MountedElement.frameNumbers(
-                place: Rect(x: 1, y: 2, width: 30, height: 40), corner: Point(x: 11, y: 52), content: Point(x: 0, y: 32)),
-            [1, 2, 30, 40, 11, 52, 11, 20])
+                place: Rect(x: 1, y: 2, width: 30, height: 40), corner: Point(x: 11, y: 52),
+                safeArea: Rect(x: 0, y: 32, width: 100, height: 200)),
+            [1, 2, 30, 40, 11, 52, 0, 32, 100, 200])
     }
 
     /// What only paints, places a cursor, reports a value or is read by assistive technology never asks for a new

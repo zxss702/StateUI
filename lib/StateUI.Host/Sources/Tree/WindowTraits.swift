@@ -20,6 +20,9 @@
     /// Whether the window floats over the application's other windows: it says so, and the application is in front.
     public var floatsOnTop: Bool
 
+    /// How the window settles its size against its content, where said - `WindowResizability`'s number.
+    public var resizability: Int32?
+
     /// What `window` says now, standing in `lifecycle`; a trait it leaves unsaid is false, but for the two the
     /// toolkit keeps.
     @MainActor public init(of window: MountedElement, in lifecycle: ApplicationLifecycle) {
@@ -27,5 +30,6 @@
         isMinimizable = window.value(.isMinimizable)?.bool
         isTranslucent = window.value(.isTranslucent)?.bool == true
         floatsOnTop = lifecycle.floats(window)
+        resizability = window.value(.resizability)?.enumeration
     }
 }

@@ -14,6 +14,15 @@ extension GTKElement {
             return arrangeRuns(of: label)
         }
         let arranged = element.arrangedChildren.map(\.gtk)
+
+        if let menu = view as? GTKMenuButtonView {
+            menu.setFace(arranged.first { $0.type != .contextMenu }?.view?.widget)
+            menu.setEntries(
+                arranged.first { $0.type == .contextMenu }
+                    .map { MenuEntry.entries(of: $0.element) } ?? [],
+                clicked: { entry in entry.gtk.send(.clicked, []) })
+            return
+        }
         (view as? GTKNavigationView)?.titles = arranged.map { child in
             // A badge stands by its page's title in brackets, the way the
             // platform counts in tab labels.
@@ -22,6 +31,14 @@ extension GTKElement {
             return title.isEmpty ? badge : "\(title) (\(badge))"
         }
         (view as? GTKSplitView)?.framedPanes = arranged.map { Self.framedTypes.contains($0.type) }
+        (view as? GTKSplitView)?.sidebarWidthBounds = arranged.first?.element.value(.preferredColumnWidth)?.numbers
+        if let custom = view as? GTKCustomLayoutView {
+            custom.direction = element.layoutDirection
+            custom.setItems(
+                arranged.compactMap(\.layoutItem),
+                layout: CoreLink().customLayout(for: element.id))
+            return
+        }
         let layout = view as? GTKLayoutView
         layout?.direction = element.layoutDirection
         layout?.setItems(arranged.compactMap(\.layoutItem))
@@ -47,8 +64,10 @@ extension GTKElement {
 
         var item = GTKLayoutItem(view: view, values: element.layoutValues, isShown: isShown)
         item.mount = element.mount
+        item.codeId = element.id
+        item.departing = element.isDeparting
         if fadesIn {
-            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
+            item.fadeIn = { [weak self] animation, room in self?.fadeIn(under: animation, room: room) }
         }
         return item
     }

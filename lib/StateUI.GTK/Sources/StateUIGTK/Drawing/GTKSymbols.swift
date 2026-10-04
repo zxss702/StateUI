@@ -20,8 +20,7 @@ enum GTKSymbols {
         defer { g_object_unref(UnsafeMutableRawPointer(icon)) }
         let scale = 1
         let paintable = gtk_icon_theme_lookup_by_gicon(
-            theme, UnsafeMutableRawPointer(icon).assumingMemoryBound(to: _GIcon.self),
-            size, Int32(scale), GTK_TEXT_DIR_LTR, GTK_ICON_LOOKUP_FORCE_SYMBOLIC)
+            theme, icon, size, Int32(scale), GTK_TEXT_DIR_LTR, GTK_ICON_LOOKUP_FORCE_SYMBOLIC)
         guard let paintable, let file = gtk_icon_paintable_get_file(paintable) else { return nil }
         defer {
             g_object_unref(UnsafeMutableRawPointer(paintable))

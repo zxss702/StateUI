@@ -18,6 +18,11 @@ public enum ImageContract: ElementContract {
     /// The picture shown.
     public static let source = ElementProperty<Self, ImageSource>("source", layer: .native)
 
+    /// Whether the picture draws in its own colours or as a stencil of the
+    /// foreground one; `.renderingMode` writes it.
+    public static let renderingMode = ElementProperty<Self, TemplateRenderingMode>(
+        "renderingMode", layer: .native)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [isAnimating, source]
+    public static let members: [any ContractMember] = [isAnimating, renderingMode, source]
 }

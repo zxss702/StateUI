@@ -10,7 +10,7 @@ extension TimePickerProperties {
     ///
     /// Settable, so a button elsewhere on the page can open it - and the
     /// platform closes it by itself, which is what `onClosed` is for.
-    public func isOpen(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOpen(_ value: Bool) -> Modified {
         setValue(TimePickerContract.isOpen, value)
     }
 
@@ -18,7 +18,7 @@ extension TimePickerProperties {
     /// draws. Usually given in the initializer.
     ///
     ///     TimePicker().time(ClockTime(hour: 7, minute: 30))
-    public func time(_ value: ClockTime) -> Modified {
+    @_spi(Host) public func time(_ value: ClockTime) -> Modified {
         setValue(TimePickerContract.time, value)
     }
 
@@ -80,7 +80,7 @@ public struct TimePicker: VisualElement, TextStyleElement, FontElement, TimePick
     /// - Parameter value: the state shown, and written back into when a time
     ///   is chosen.
     /// - Returns: the control, wearing and reporting that time.
-    public func time(_ value: Binding<ClockTime>) -> Modified {
+    @_spi(Host) public func time(_ value: Binding<ClockTime>) -> Modified {
         value.image == nil
             ? described(.time, value, on: .timeChanged)
             : plain(.time, by: value, mode: .inOut)
@@ -90,18 +90,18 @@ public struct TimePicker: VisualElement, TextStyleElement, FontElement, TimePick
 
     /// Fires when a time is chosen, with the new one. Runs after a binding's
     /// write.
-    public func onTimeChanged(_ handler: @escaping ValueEventHandler<ClockTime>) -> Self {
+    @_spi(Host) public func onTimeChanged(_ handler: @escaping ValueEventHandler<ClockTime>) -> Self {
         onEvent(TimePickerContract.timeChanged, handler)
     }
 
     /// The user has opened the clock face. Opening it with `isOpen(true)` raises
     /// nothing: the application already knows.
-    public func onOpened(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onOpened(_ handler: @escaping EventHandler) -> Self {
         onEvent(TimePickerContract.opened, handler)
     }
 
     /// It has closed - by a choice, by a tap outside, or by the platform.
-    public func onClosed(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onClosed(_ handler: @escaping EventHandler) -> Self {
         onEvent(TimePickerContract.closed, handler)
     }
 }

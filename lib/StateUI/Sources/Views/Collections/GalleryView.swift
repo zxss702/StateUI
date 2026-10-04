@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // A run of cards the user swipes through, in a shape one word chooses: a
-// PlacedLayout for the cards, a ScrollViewReader for the hand, and a state between.
+// PlacedLayout for the cards, a ScrollReader for the hand, and a state between.
 // Design: docs/design/views/measured-layouts.md#gallery-view
 
 /// One card at a time, swiped through, in a shape one word chooses.
@@ -149,7 +149,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter style: the arrangement.
     /// - Returns: the gallery, in that shape.
-    public func arrangement(_ style: GalleryArrangement) -> Self {
+    @_spi(Host) public func arrangement(_ style: GalleryArrangement) -> Self {
         var copy = self
         copy.look = style
         return copy
@@ -179,7 +179,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter handler: what to run, given the card's index.
     /// - Returns: the gallery, telling that handler.
-    public func onPositionChanged(_ handler: @escaping ValueEventHandler<Int>) -> Self {
+    @_spi(Host) public func onPositionChanged(_ handler: @escaping ValueEventHandler<Int>) -> Self {
         var copy = self
         copy.moved = handler
         return copy
@@ -196,7 +196,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter handler: what to run, given the middle item.
     /// - Returns: the gallery, answering a tap.
-    public func onItemTapped(_ handler: @escaping ValueEventHandler<Items.Element>) -> Self {
+    @_spi(Host) public func onItemTapped(_ handler: @escaping ValueEventHandler<Items.Element>) -> Self {
         var copy = self
         copy.tapped = handler
         return copy
@@ -213,7 +213,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///   - width: how wide a card is, against its height.
     ///   - height: how tall.
     /// - Returns: the gallery, with cards that shape.
-    public func itemSize(width: Double, height: Double) -> Self {
+    @_spi(Host) public func itemSize(width: Double, height: Double) -> Self {
         var copy = self
         copy.cardWidth = max(1, width)
         copy.cardHeight = max(1, height)
@@ -225,7 +225,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter value: whether a finger, a trackpad or a wheel moves it.
     /// - Returns: the gallery, hearing the user or not.
-    public func isSwipeEnabled(_ value: Bool) -> Self {
+    @_spi(Host) public func isSwipeEnabled(_ value: Bool) -> Self {
         var copy = self
         copy.swipes = value
         return copy
@@ -235,7 +235,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter view: what stands in for the cards.
     /// - Returns: the gallery, showing that instead of nothing.
-    public func emptyView(_ view: any View) -> Self {
+    @_spi(Host) public func emptyView(_ view: any View) -> Self {
         var copy = self
         copy.empty = view
         return copy
@@ -256,7 +256,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///   - amount: how dark the furthest card goes, from 0 (not at all) to 1
     ///     (as far as the shape says). The whole of it, unless said.
     /// - Returns: the gallery, darkening its far cards.
-    public func shade(_ view: Element, amount: Double = 1) -> Self {
+    @_spi(Host) public func shade(_ view: Element, amount: Double = 1) -> Self {
         var copy = self
         copy.mask = view
         copy.shades = Self.fraction(amount, "shade(_:amount:)")
@@ -273,7 +273,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter amount: how far a far card fades.
     /// - Returns: the gallery, fading that much.
-    public func fading(_ amount: Double) -> Self {
+    @_spi(Host) public func fading(_ amount: Double) -> Self {
         var copy = self
         copy.fades = Self.fraction(amount, "fading(_:)")
         return copy
@@ -435,7 +435,7 @@ public struct GalleryView<Items: RandomAccessCollection, Id: Hashable>: View {
             }
         }
 
-        var reader = ScrollViewReader(across: Double(count - 1) * step) { cards }
+        var reader = ScrollReader(across: Double(count - 1) * step) { cards }
             .scrollOffset($scrolled)
             // The run comes to rest on the nearest card, by a write.
             .onScrollStopped {

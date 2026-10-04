@@ -22,7 +22,8 @@ extension AppKitElement {
                 verticalAlignment: AppKitVerticalTextAlignment(
                     rawValue: enumeration(.verticalTextAlignment) ?? 0) ?? .start,
                 breaking: lineBreak,
-                maximumNumberOfLines: lineLimit())
+                maximumNumberOfLines: lineLimit(),
+                selectable: value(.selectable)?.bool ?? false)
             return
         }
 
@@ -32,6 +33,9 @@ extension AppKitElement {
         }
 
         if let split = view as? AppKitSplitView {
+            split.apply(
+                sidebarWidth: children.first?.value(.preferredColumnWidth)?.numbers,
+                detailWidth: children.count > 1 ? children[1].value(.preferredColumnWidth)?.numbers : nil)
             split.setItems(items)
             return
         }
@@ -46,8 +50,18 @@ extension AppKitElement {
             return
         }
 
+        if let menu = view as? AppKitMenuButtonView {
+            menu.setItem(items.occupying.first)
+            return
+        }
+
+        if let custom = view as? AppKitCustomLayoutView {
+            custom.setItems(items, layout: CoreLink().customLayout(for: element.id))
+            return
+        }
+
         if let page = view as? AppKitSingleChildView {
-            page.setItem(items.first)
+            page.setItem(items.occupying.first)
             return
         }
 
@@ -70,11 +84,14 @@ extension AppKitElement {
         guard let view = presentableViews.first else { return nil }
         var item = AppKitLayoutItem(view: view)
         item.values = element.layoutValues
+        item.codeId = element.id
         item.drawing = presentableDrawing
         item.mount = mount
         item.placed = presentableNode
+        item.departing = element.isDeparting
+        item.matchedStart = matchedStart()
         if fadesIn {
-            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
+            item.fadeIn = { [weak self] animation, room in self?.fadeIn(under: animation, room: room) }
         }
         return item
     }

@@ -8,7 +8,7 @@ public protocol ActivityIndicatorProperties: PropertyContainer {}
 extension ActivityIndicatorProperties {
     /// Whether it is spinning. A still indicator is invisible on most
     /// platforms, so this alone shows and hides it.
-    public func isRunning(_ value: Bool) -> Modified {
+    @_spi(Host) public func isRunning(_ value: Bool) -> Modified {
         setValue(ActivityIndicatorContract.isRunning, value)
     }
 }
@@ -43,7 +43,18 @@ public struct ActivityIndicator: VisualElement, TintElement, ActivityIndicatorPr
 extension ActivityIndicator {
     /// `isRunning` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func isRunning(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isRunning(_ state: Binding<Bool>) -> Modified {
         plain(.isRunning, by: state)
+    }
+}
+
+extension ActivityIndicator {
+    /// How the control draws - `.circular` keeps the wheel; `.linear` asks the
+    /// host's bar, which every platform may or may not have:
+    ///
+    ///     ActivityIndicator(loading)
+    ///         .progressViewStyle(.circular)
+    public func progressViewStyle(_ style: some ProgressViewStyle) -> Modified {
+        setValue(ActivityIndicatorContract.progressStyle, style.progressStyleToken)
     }
 }

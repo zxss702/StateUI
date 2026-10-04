@@ -37,7 +37,7 @@ extension VisualElement {
     /// On a composed view, write it directly on the initializer's result.
     ///
     /// - Parameter aim: the aim the control answers to.
-    public func aim(_ aim: Aim<Self>) -> Modified {
+    @_spi(Host) public func aim(_ aim: Aim<Self>) -> Modified {
         modified { $0.aim = aim.box }
     }
 
@@ -55,7 +55,7 @@ extension View {
     ///
     /// - Parameter aim: the aim the view answers to.
     @_disfavoredOverload
-    public func aim(_ aim: Aim<Self>) -> ModifiedContent {
+    @_spi(Host) public func aim(_ aim: Aim<Self>) -> ModifiedContent {
         revised { $0.aim = aim.box }
     }
 }

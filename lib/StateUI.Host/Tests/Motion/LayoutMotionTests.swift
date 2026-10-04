@@ -270,7 +270,7 @@ private final class HandWoundLayout {
             var values = LayoutValues()
             values.width = measured.contains(child.mount) ? nil : 100
             values.height = heights[child.mount]
-            places.place(child.view, mount: child.mount, at: child.place, values: values) { [unowned self] law in
+            places.place(child.view, mount: child.mount, at: child.place, values: values) { [unowned self] law, _ in
                 self.fades[child.mount] = law
             }
         }

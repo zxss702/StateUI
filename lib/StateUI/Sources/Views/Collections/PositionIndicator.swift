@@ -10,7 +10,7 @@ extension PositionIndicatorProperties {
     ///
     /// The other way to say it is `PositionIndicator(items) { … }`, which counts
     /// its items itself - one or the other, never both.
-    public func count(_ value: Int) -> Modified {
+    @_spi(Host) public func count(_ value: Int) -> Modified {
         setValue(PositionIndicatorContract.count, value)
     }
 
@@ -21,32 +21,32 @@ extension PositionIndicatorProperties {
     }
 
     /// The colour of a dot that is not the current one.
-    public func indicatorColor(_ value: Color) -> Modified {
+    @_spi(Host) public func indicatorColor(_ value: Color) -> Modified {
         setValue(PositionIndicatorContract.indicatorColor, value)
     }
 
     /// And of the one that is.
-    public func selectedIndicatorColor(_ value: Color) -> Modified {
+    @_spi(Host) public func selectedIndicatorColor(_ value: Color) -> Modified {
         setValue(PositionIndicatorContract.selectedIndicatorColor, value)
     }
 
     /// How big each dot is, in device units.
-    public func indicatorSize(_ value: Double) -> Modified {
+    @_spi(Host) public func indicatorSize(_ value: Double) -> Modified {
         setValue(PositionIndicatorContract.indicatorSize, value)
     }
 
     /// The most dots to draw, however many items there are.
-    public func maximumVisible(_ value: Int) -> Modified {
+    @_spi(Host) public func maximumVisible(_ value: Int) -> Modified {
         setValue(PositionIndicatorContract.maximumVisible, value)
     }
 
     /// A dot or a square, for every dot.
-    public func indicatorsShape(_ value: IndicatorShape) -> Modified {
+    @_spi(Host) public func indicatorsShape(_ value: IndicatorShape) -> Modified {
         setValue(PositionIndicatorContract.indicatorsShape, value)
     }
 
     /// Whether one lonely dot is hidden rather than drawn. True by default.
-    public func hideSingle(_ value: Bool) -> Modified {
+    @_spi(Host) public func hideSingle(_ value: Bool) -> Modified {
         setValue(PositionIndicatorContract.hideSingle, value)
     }
 }
@@ -93,43 +93,43 @@ public struct PositionIndicator: VisualElement, PositionIndicatorProperties{
 extension PositionIndicator {
     /// `count` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func count(_ state: Binding<Int>) -> Modified {
+    @_spi(Host) public func count(_ state: Binding<Int>) -> Modified {
         plain(.count, by: state)
     }
 
     /// `hideSingle` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func hideSingle(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func hideSingle(_ state: Binding<Bool>) -> Modified {
         plain(.hideSingle, by: state)
     }
 
     /// `indicatorColor` from a state, `$x`: the host animates the property to
     /// each new value, and no view is rebuilt for it.
-    public func indicatorColor(_ state: Binding<Color>) -> Modified {
+    @_spi(Host) public func indicatorColor(_ state: Binding<Color>) -> Modified {
         journey(.indicatorColor, by: state)
     }
 
     /// `indicatorSize` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func indicatorSize(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func indicatorSize(_ state: Binding<Double>) -> Modified {
         plain(.indicatorSize, by: state)
     }
 
     /// `indicatorsShape` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func indicatorsShape(_ state: Binding<IndicatorShape>) -> Modified {
+    @_spi(Host) public func indicatorsShape(_ state: Binding<IndicatorShape>) -> Modified {
         plain(.indicatorsShape, by: state)
     }
 
     /// `maximumVisible` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func maximumVisible(_ state: Binding<Int>) -> Modified {
+    @_spi(Host) public func maximumVisible(_ state: Binding<Int>) -> Modified {
         plain(.maximumVisible, by: state)
     }
 
     /// `selectedIndicatorColor` from a state, `$x`: the host animates the
     /// property to each new value, and no view is rebuilt for it.
-    public func selectedIndicatorColor(_ state: Binding<Color>) -> Modified {
+    @_spi(Host) public func selectedIndicatorColor(_ state: Binding<Color>) -> Modified {
         journey(.selectedIndicatorColor, by: state)
     }
 }

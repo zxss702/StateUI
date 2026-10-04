@@ -99,6 +99,7 @@ private struct Session: Scene {
             WindowGroup(.fonts) { FontsWindow() }
                 .hidesWhenInactive(true)
                 .floatsOnTop(true)
+                .windowResizability(.contentMinSize)
             WindowGroup(.document, for: Int.self) { $number in DocumentWindow(number: $number) }
         } main: {
             MainWindow(shade: $shade)
@@ -364,6 +365,7 @@ final class SceneTests: XCTestCase {
         XCTAssertEqual(
             whole.children[1].children.map(\.id), [.manual("main"), .manual("fonts 1")])
         XCTAssertEqual(texts(in: whole.children[1].children[1]), ["teal"])
+        XCTAssertEqual(whole.children[1].children[1].props[.resizability], .enumeration(1))
     }
 
     // MARK: - What a scene's session says
@@ -923,6 +925,7 @@ final class SceneTests: XCTestCase {
         XCTAssertEqual(opened.patch.at(.manual("1"), fonts)?.props, [
             "title": .string("Fonts"), "windowType": .name("fonts"),
             "floatsOnTop": .bool(true), "hidesWhenInactive": .bool(true),
+            "resizability": .enumeration(1),
         ])
         for path in [[.manual("1"), main], [.manual("1"), fonts], [.manual("2"), main]] as [[ElementId]] {
             XCTAssertEqual(opened.patch.at(path)?.eventNames, windowEvents)

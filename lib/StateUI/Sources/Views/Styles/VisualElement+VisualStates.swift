@@ -17,7 +17,7 @@ extension VisualElement where Self: StyleTarget {
     ///   - state: which state these setters describe. What is offered after
     ///     the dot is the states this control actually enters.
     ///   - setters: the property values in force while the control is there.
-    public func visualState(
+    @_spi(Host) public func visualState(
         _ state: VisualState<Self>,
         _ setters: (StyleBag<Self, StyleState>) -> StyleBag<Self, StyleState>
     ) -> Modified {
@@ -33,7 +33,7 @@ extension VisualElement where Self: StyleTarget {
     ///         .visualState(.pressed) { $0.opacity(0.6) }
     ///
     /// - Parameter state: the state, changing nothing.
-    public func visualState(_ state: VisualState<Self>) -> Modified {
+    @_spi(Host) public func visualState(_ state: VisualState<Self>) -> Modified {
         declare(DeclaredState(name: state.name))
     }
 
@@ -54,7 +54,7 @@ extension VisualElement where Self: StyleTarget {
     /// control declares, and `.normal`.
     ///
     /// - Parameter perform: what to run, given the state entered.
-    public func onVisualStateChanged(
+    @_spi(Host) public func onVisualStateChanged(
         _ states: VisualState<Self>...,
         perform handler: @escaping ValueEventHandler<VisualState<Self>>
     ) -> Modified {

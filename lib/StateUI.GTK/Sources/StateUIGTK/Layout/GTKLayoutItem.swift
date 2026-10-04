@@ -18,15 +18,20 @@ struct GTKLayoutItem: LayoutChild {
     /// The mounted element whose place its layout animates; 0 for none.
     var mount: UInt64 = 0
 
+    /// The element id a child's `.layoutValue` tags ride under; nil for a view no element presents.
+    var codeId: ElementId?
+
     /// Fades the view in as it joins a standing layout; nil for a view that simply appears.
-    var fadeIn: ((Animation) -> Void)?
+    var fadeIn: ((Animation, Rect) -> Void)?
+
+    /// Whether the view animates out where it stood: kept in the subviews, taking no room.
+    var departing = false
 
     /// The view's size for the width offered it, margin taken out (`LayoutValues.offer`, `sized`).
     func size(offered width: Double?) -> LayoutSize {
         values.sized(view.measure(width: values.offer(width), height: nil))
     }
 
-    /// Whether a parent would place this item as it places `other`.
     func arranges(like other: GTKLayoutItem) -> Bool {
         view === other.view && values == other.values && isShown == other.isShown
     }

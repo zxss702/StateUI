@@ -20,6 +20,9 @@ struct Popover<Content: View>: View {
         var node = Node(contract: PopoverContract.self, children: content().node.asChildren)
         node.props[.arrowEdge] = arrowEdge.propValue
         node.drivePlain(PopoverContract.isOpen, by: isPresented)
+        node.environmentValues[keyPath: \.dismiss] = DismissAction { [isPresented] in
+            isPresented.wrappedValue = false
+        }
         node.addHandler(PopoverContract.dismissed.token) {
             isPresented.wrappedValue = false
         }

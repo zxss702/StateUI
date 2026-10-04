@@ -190,3 +190,30 @@ public struct UnitPoint: Equatable, Sendable {
     /// The bottom right corner.
     public static let bottomTrailing = UnitPoint(x: 1, y: 1)
 }
+
+extension UnitPoint: HostRepresentable {
+    /// The two fractions.
+    public var propValue: PropValue { .numbers([x, y]) }
+
+    /// The point those numbers stand for, or nil where they are not two.
+    /// - Parameter propValue: what the host sent.
+    public init?(propValue: PropValue) {
+        guard let numbers = propValue.numbers, numbers.count == 2 else { return nil }
+        self.init(x: numbers[0], y: numbers[1])
+    }
+}
+
+extension UnitPoint: StateValue {
+    /// The two fractions, as lanes.
+    public var carried: StateCarried { .lanes([x, y]) }
+
+    /// The point those lanes stand for.
+    /// - Parameter carried: what the state holds.
+    public init?(carried: StateCarried) {
+        guard case .lanes(let lanes) = carried, lanes.count == 2 else { return nil }
+        self.init(x: lanes[0], y: lanes[1])
+    }
+
+    /// Two.
+    public static var lanes: Int { 2 }
+}

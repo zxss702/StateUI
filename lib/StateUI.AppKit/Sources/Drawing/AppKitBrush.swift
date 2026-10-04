@@ -22,10 +22,10 @@ struct AppKitBrush {
         if case .solid(let color) = brush { nsColor(color) } else { nil }
     }
 
-    /// Whether it is a gradient, which a layer's colour cannot paint.
+    /// Whether it is a gradient or a material, which a layer's colour cannot paint.
     var isGradient: Bool {
         switch brush {
-        case .linear, .radial: true
+        case .linear, .radial, .material: true
         case .none, .solid: false
         }
     }
@@ -60,7 +60,26 @@ struct AppKitBrush {
                 radius: HostBrush.reach(of: radius, width: bounds.width, height: bounds.height),
                 options: [])
             NSGraphicsContext.restoreGraphicsState()
+        case .material(let kind):
+            Self.materialColor(kind)?.setFill()
+            path.fill()
         }
+    }
+
+    /// What a material paints as where it is drawn in a fill: the room's own
+    /// colour, as translucent as the material is thin - the platform's frosted
+    /// backing being a view of its own, a fill takes this approximation.
+    private static func materialColor(_ kind: Int32) -> NSColor? {
+        let alpha: CGFloat = switch kind {
+        case 1: 0.2   // ultraThin
+        case 2: 0.35  // thin
+        case 3: 0.5   // regular
+        case 4: 0.65  // thick
+        case 5: 0.8   // ultraThick
+        case 6: 0.5   // bar
+        default: 0.5
+        }
+        return NSColor.controlBackgroundColor.withAlphaComponent(alpha)
     }
 
     /// Strokes `path` `width` wide in the brush's line colour.

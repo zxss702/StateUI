@@ -74,8 +74,8 @@ final class GTKScrollerView: GTKView {
     private static func policy(scrolls: Bool, _ bar: ScrollIndicatorVisibility) -> GtkPolicyType {
         guard scrolls else { return GTK_POLICY_NEVER }
         return switch bar {
-        case .always: GTK_POLICY_ALWAYS
-        case .never: GTK_POLICY_EXTERNAL
+        case .visible: GTK_POLICY_ALWAYS
+        case .hidden: GTK_POLICY_EXTERNAL
         default: GTK_POLICY_AUTOMATIC
         }
     }

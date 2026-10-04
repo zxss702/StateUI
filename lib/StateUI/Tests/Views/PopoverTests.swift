@@ -69,4 +69,17 @@ final class PopoverTests: XCTestCase {
 
         XCTAssertFalse(shown, "a dismissal the user made writes the binding false")
     }
+
+    /// `@Environment(\.dismiss)` inside the card resolves to its own closer -
+    /// what a `dismiss()` in popover content runs.
+    func testTheCardDismissesItselfThroughTheEnvironment() throws {
+        shown = true
+        let card = try XCTUnwrap(popover(Text("anchor")
+            .popover(isPresented: $shown) { Text("card") }))
+        let dismiss = card.environmentValues[keyPath: \.dismiss]
+
+        dismiss()
+
+        XCTAssertFalse(shown, "the card's own `dismiss()` writes the binding false")
+    }
 }

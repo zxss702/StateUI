@@ -30,6 +30,6 @@ extension UIKitRegistrations {
     }
 
     /// The acts an List answers itself.
-    static let itemsActs: [any ContractMember] = [ListContract.scrollTo]
+    static let itemsActs: [any ContractMember] = [ListContract.scrollTo, ScrollViewContract.scrollToDescendant]
 }
 #endif

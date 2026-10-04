@@ -1,0 +1,121 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+extension View {
+    /// Whether a scroll view inside answers the hand - a scroller that takes
+    /// none hands its gesture to whatever lies under it:
+    ///
+    ///     ScrollView(.horizontal) { … }
+    ///         .scrollDisabled(true)
+    ///
+    /// - Parameter disabled: `true` to leave it where it stands.
+    public func scrollDisabled(_ disabled: Bool) -> ModifiedContent {
+        revised { $0.writeInherited(ScrollViewContract.isScrollDisabled, disabled) }
+    }
+
+    /// Whether a scroll view inside springs back past its content's end:
+    ///
+    ///     ScrollView { … }.scrollBounceBehavior(.basedOnSize)
+    ///
+    /// - Parameter behavior: `.automatic`, `.always`, or `.basedOnSize`.
+    public func scrollBounceBehavior(_ behavior: ScrollBounceBehavior) -> ModifiedContent {
+        revised { $0.writeInherited(ScrollViewContract.scrollBounceBehavior, behavior) }
+    }
+
+    /// Whether a scroll view inside cuts its content at its own edges -
+    /// `true` lets a shadow or a bleed draw outside them:
+    ///
+    ///     ScrollView { … }.scrollClipDisabled()
+    ///
+    /// - Parameter disabled: `true` to draw past the edges.
+    public func scrollClipDisabled(_ disabled: Bool = true) -> ModifiedContent {
+        revised { $0.writeInherited(LayoutContract.clipsContent, !disabled) }
+    }
+
+    /// Whether the platform's own canvas shows behind a scrollable view's
+    /// content - a list's or an editor's:
+    ///
+    ///     List(rows) { … }.scrollContentBackground(.hidden)
+    ///
+    /// - Parameter visibility: `.hidden` for the content alone, or the
+    ///   platform's own.
+    public func scrollContentBackground(_ visibility: Visibility) -> ModifiedContent {
+        revised { $0.writeInherited(ScrollContentElementContract.scrollContentBackground, visibility) }
+    }
+
+    /// Marks a layout's children as the targets a scroller settles on:
+    ///
+    ///     LazyVStack { … }.scrollTargetLayout()
+    ///
+    /// - Parameter isEnabled: `false` to unmark it.
+    public func scrollTargetLayout(_ isEnabled: Bool = true) -> ModifiedContent {
+        revised { $0.writeInherited(LayoutContract.scrollTargetLayout, isEnabled) }
+    }
+
+    /// How a scroll view inside settles when the hand leaves it - on a
+    /// target's edge, or one page at a time:
+    ///
+    ///     ScrollView { … }.scrollTargetBehavior(.viewAligned(anchor: .bottom))
+    ///
+    /// - Parameter behavior: `.viewAligned(anchor:)` or `.paging`.
+    public func scrollTargetBehavior(_ behavior: ScrollTargetBehavior) -> ModifiedContent {
+        revised { $0.writeInherited(ScrollViewContract.scrollTargetBehavior, behavior) }
+    }
+
+    /// Where a scroll view inside rests before anything is written - a chat
+    /// pinned to its end:
+    ///
+    ///     ScrollView { … }.defaultScrollAnchor(.bottom)
+    ///
+    /// - Parameter anchor: the fraction across and down the content and the
+    ///   room it rests at.
+    public func defaultScrollAnchor(_ anchor: UnitPoint) -> ModifiedContent {
+        revised { $0.writeInherited(ScrollViewContract.defaultScrollAnchor, anchor) }
+    }
+
+    /// Room kept inside the view's own edges, between them and its content -
+    /// the SwiftUI spelling for what `contentPadding` names:
+    ///
+    ///     TextEditor(text: $body).safeAreaPadding(.vertical, 12)
+    ///
+    /// - Parameters:
+    ///   - edges: the edges it stands clear by, `.all` for each.
+    ///   - amount: how far, the library's default for `nil`.
+    public func safeAreaPadding(_ edges: Edge.Set = .all, _ amount: Double? = nil) -> ModifiedContent {
+        let inset = amount ?? libraryDefaultPadding
+        var insets = EdgeInsets(0, 0, 0, 0)
+        if edges.contains(.leading) { insets.left = inset }
+        if edges.contains(.top) { insets.top = inset }
+        if edges.contains(.trailing) { insets.right = inset }
+        if edges.contains(.bottom) { insets.bottom = inset }
+        return revised { $0.writeInherited(PaddingElementContract.contentPadding, insets) }
+    }
+
+    /// Scrolls so the child `.id` names stands at `anchor`, every time `id`
+    /// moves - a write of the binding scrolls the scroll view this sits on:
+    ///
+    ///     ScrollView {
+    ///         LazyVStack { … .id(row.id) }
+    ///     }
+    ///     .scrollPosition(id: $position, anchor: .top)
+    ///
+    /// the SwiftUI spelling; reading the position the host scrolled to is not
+    /// reported yet - the binding is written from, not into.
+    ///
+    /// - Parameters:
+    ///   - id: what `.id(_:)` on the child names; `nil` scrolls nowhere.
+    ///   - anchor: where on the child it stands - `nil` moves only to make it
+    ///     wholly visible.
+    public func scrollPosition<Id: Hashable>(
+        id: Binding<Id?>, anchor: UnitPoint? = nil
+    ) -> ModifiedContent {
+        let aim = Aim(ScrollView.self)
+        return revised { $0.aim = aim.box }
+            .onChange(of: id.wrappedValue) { _, newID in
+                guard let newID else { return }
+                let name = String(describing: newID)
+                let (x, y) = (anchor?.x, anchor?.y)
+                Task { try? await aim.call(ScrollViewContract.scrollToDescendant, name, x, y) }
+            }
+    }
+}

@@ -26,7 +26,15 @@ extension AppKitWindowController {
         let barColor = chrome.background.flatMap(nsColor)
         let foreground = chrome.foreground.flatMap(nsColor)
         window.title = chrome.title ?? "StateUI"
-        window.subtitle = ""
+        window.subtitle = chrome.subtitle ?? ""
+        window.representedURL = chrome.document.map { URL(fileURLWithPath: $0) }
+        window.backgroundColor = chrome.windowBackground.flatMap(nsColor) ?? .windowBackgroundColor
+        if let visibility = chrome.toolbarVisibility?.enumeration {
+            window.toolbar?.isVisible = visibility != Visibility.hidden.rawValue
+        }
+        if let visibility = chrome.toolbarBackground?.enumeration {
+            window.toolbar?.showsBaselineSeparator = visibility != Visibility.hidden.rawValue
+        }
         // A page's title view stands in for its title, and over a painted band
         // the title stands in the bar's foreground: either way the window
         // keeps its name for the system and hides the one it would draw.

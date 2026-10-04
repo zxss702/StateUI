@@ -35,6 +35,12 @@ class GTKView {
     /// What assistive technology meets of the view, as the host last wrote it; nil before the element said any.
     var accessibility: AccessibilityWords?
 
+    /// The `GtkDropTarget` the widget listens through, and the element its
+    /// messages go to, weakly so the widget outliving its element loses them
+    /// rather than dangling; nil while it takes no drops. The widget holds
+    /// the target once attached.
+    var drop: (target: OpaquePointer, recipient: () -> GTKElement?)?
+
     /// The words the view shows of itself, which name it where it is a heading; nil where it shows none.
     var shownWords: String? { nil }
 
@@ -157,23 +163,39 @@ class GTKView {
         return LayoutSize(width: measuredWidth, height: Double(natural))
     }
 
-    /// Where the view stands, in logical pixels: its frame in its parent, its place in the window, and that place
-    /// from the top left of its page's content, beneath the page's header bar; nil while it stands in no window
-    /// or no layout has placed it yet.
+    /// Where the view stands, in logical pixels: its frame in its parent, its place in the window, and the frame
+    /// of its page's content - beneath the page's header bar - there, the window's whole bounds for a view whose
+    /// page keeps no bar; nil while it stands in no window or no layout has placed it yet.
     /// Design: docs/design/platforms/gtk/layout.md#where-a-view-stands
     func frameReport() -> [Double]? {
         guard let root = gtk_widget_get_root(widget).map(GTKWidget.init), isLaidOut else { return nil }
-        var page = Point(x: 0, y: 0)
+        var safeArea = Rect(
+            x: 0, y: 0,
+            width: Double(gtk_widget_get_width(root)), height: Double(gtk_widget_get_height(root)))
         var ancestor = gtk_widget_get_parent(widget)
         while let each = ancestor {
             if g_type_check_instance_is_a(each.of(GTypeInstance.self), adw_toolbar_view_get_type()) != 0,
                let content = adw_toolbar_view_get_content(each.opaque) {
-                page = Self.origin(of: content, in: root)
+                var bounds = graphene_rect_t()
+                if gtk_widget_compute_bounds(content, root, &bounds) != 0 {
+                    safeArea = Rect(
+                        x: Double(bounds.origin.x), y: Double(bounds.origin.y),
+                        width: Double(bounds.size.width), height: Double(bounds.size.height))
+                }
                 break
             }
             ancestor = gtk_widget_get_parent(each)
         }
-        return MountedElement.frameNumbers(place: placedFrame, corner: Self.origin(of: widget, in: root), content: page)
+        return MountedElement.frameNumbers(place: placedFrame, corner: Self.origin(of: widget, in: root), safeArea: safeArea)
+    }
+
+    /// The widget's frame in its window, in logical pixels; nil in no window.
+    func windowRect() -> Rect? {
+        guard let root = gtk_widget_get_root(widget).map(GTKWidget.init) else { return nil }
+        let origin = Self.origin(of: widget, in: root)
+        return Rect(
+            x: origin.x, y: origin.y,
+            width: Double(gtk_widget_get_width(widget)), height: Double(gtk_widget_get_height(widget)))
     }
 
     /// Whether a layout has placed the view: StateUI's, or GTK's allocation giving it a size.

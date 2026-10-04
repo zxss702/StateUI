@@ -5,19 +5,11 @@
 /// `Style<SearchField>`.
 public protocol SearchFieldProperties: PropertyContainer {}
 
-extension SearchFieldProperties {
-    /// What the keyboard's return key is captioned, `.search` unless said. What
-    /// the key does is `.onSubmitted`.
-    public func submitLabel(_ value: ReturnKey) -> Modified {
-        setValue(SearchFieldContract.submitLabel, value)
-    }
-}
-
 /// A text field for what to search for, shown as the platform's search field.
 ///
 ///     SearchField($query)
 ///         .placeholder("Search the list")
-///         .onSubmitted { runTheSearch() }
+///         `.onSubmit` { runTheSearch() }
 ///
 /// A TextField that says what it is for: the platform draws the magnifier and the
 /// cancel button, and the keyboard's return key searches.
@@ -52,20 +44,9 @@ public struct SearchField: InputView, TextElement, FontElement, TextAlignmentEle
         self = SearchField().text(text)
     }
 
-    // Design: docs/design/views/bindings.md#two-way-controls
     /// The same two-way text as `SearchField($text)`, written as a modifier.
-    ///
-    ///     SearchField($query)
-    ///     SearchField().text($query)
-    ///
-    /// The host shows the state's text and writes back what the user types,
-    /// with no view rebuilt for it: a keystroke costs a render only in a body
-    /// that reads the state.
-    ///
-    /// - Parameter value: the state shown, and written back into as the user
-    ///   types.
-    /// - Returns: the control, wearing and reporting that text.
-    public func text(_ value: Binding<String>) -> Modified {
+    /// Design: docs/design/views/bindings.md#two-way-controls
+    @_spi(Host) public func text(_ value: Binding<String>) -> Modified {
         value.image == nil
             ? described(TextElementContract.text.token, value, on: .textChanged)
             : words(TextElementContract.text.token, by: value, mode: .inOut)
@@ -75,7 +56,7 @@ public struct SearchField: InputView, TextElement, FontElement, TextAlignmentEle
 
     /// Fires when the search is submitted - the return key, or the magnifier
     /// where a platform draws a button.
-    public func onSubmitted(_ handler: @escaping EventHandler) -> Self {
+    public func onSubmit(_ handler: @escaping EventHandler) -> Self {
         onEvent(SearchFieldContract.submitted, handler)
     }
 }

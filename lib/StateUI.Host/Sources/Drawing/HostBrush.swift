@@ -28,6 +28,11 @@
     /// Colours out from a centre to a radius.
     case radial(center: Point, radius: Double, stops: [Stop])
 
+    /// The platform's material, as `Material.Kind` numbers them - a frosted
+    /// translucency the platform draws, or a soft translucent fill where it
+    /// draws none.
+    case material(Int32)
+
     /// The brush the tree's `value` describes: a bare colour is one colour; a gradient's stops stand between 0
     /// and 1, its geometry what it gives - top to bottom, or from the middle to the edge, where it gives none; a
     /// gradient of one stop is its colour, of none nothing.
@@ -42,6 +47,10 @@
         }
         if kind == 1 {
             self = parts.count > 1 && parts[1].color != nil ? .solid(parts[1]) : .none
+            return
+        }
+        if kind == 4 {
+            self = parts.count > 1 ? (parts[1].enumeration.map { .material($0) } ?? .none) : .none
             return
         }
 
@@ -69,10 +78,10 @@
         max(width, height) * radius
     }
 
-    /// The brush's colour, or its first stop's: what a line of one colour draws with it.
+    /// The brush's colour, or its first stop's: what a line of one colour draws with it. A material has none.
     public var firstColor: HostValue? {
         switch self {
-        case .none: nil
+        case .none, .material: nil
         case .solid(let color): color
         case .linear(_, _, let stops), .radial(_, _, let stops): stops.first?.color
         }

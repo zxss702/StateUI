@@ -17,7 +17,7 @@ extension ModifiableElement {
     ///   - event: the member, written with its contract.
     ///   - handler: what runs.
     /// - Returns: the element, with the handler on it.
-    public func onEvent<Owner: Contract>(
+    @_spi(Host) public func onEvent<Owner: Contract>(
         _ event: ElementEvent<Owner, Void>,
         _ handler: @escaping EventHandler
     ) -> Modified {
@@ -42,7 +42,7 @@ extension ModifiableElement {
     ///   - event: the member, written with its contract.
     ///   - handler: given the value.
     /// - Returns: the element, with the handler on it.
-    public func onEvent<Owner: Contract, Value: HostRepresentable>(
+    @_spi(Host) public func onEvent<Owner: Contract, Value: HostRepresentable>(
         _ event: ElementEvent<Owner, Value>,
         _ handler: @escaping ValueEventHandler<Value>
     ) -> Modified {
@@ -63,7 +63,7 @@ extension ModifiableElement {
     ///   - event: the member, written with its contract.
     ///   - handler: given the values.
     /// - Returns: the element, with the handler on it.
-    public func onEvent<Owner: Contract, First: HostRepresentable, Second: HostRepresentable>(
+    @_spi(Host) public func onEvent<Owner: Contract, First: HostRepresentable, Second: HostRepresentable>(
         _ event: ElementEvent<Owner, (First, Second)>,
         _ handler: @escaping ValueEventHandler<First, Second>
     ) -> Modified {
@@ -83,7 +83,7 @@ extension ModifiableElement {
     ///   - event: the member, written with its contract.
     ///   - handler: given the values.
     /// - Returns: the element, with the handler on it.
-    public func onEvent<
+    @_spi(Host) public func onEvent<
         Owner: Contract, First: HostRepresentable, Second: HostRepresentable, Third: HostRepresentable
     >(
         _ event: ElementEvent<Owner, (First, Second, Third)>,
@@ -95,6 +95,25 @@ extension ModifiableElement {
             else { return }
 
             try await handler(first, second, third)
+        }
+    }
+
+    /// Hears one of this element's events that carries five values, through
+    /// the contract that declares it - a pan's full report.
+    @_spi(Host) public func onEvent<
+        Owner: Contract, First: HostRepresentable, Second: HostRepresentable,
+        Third: HostRepresentable, Fourth: HostRepresentable, Fifth: HostRepresentable
+    >(
+        _ event: ElementEvent<Owner, (First, Second, Third, Fourth, Fifth)>,
+        _ handler: @escaping ValueEventHandler<First, Second, Third, Fourth, Fifth>
+    ) -> Modified {
+        addHandler(event.token) {
+            guard let (first, second, third, fourth, fifth) = MemberValues.carried(
+                EventBuffer.current, by: event.name,
+                as: First.self, Second.self, Third.self, Fourth.self, Fifth.self)
+            else { return }
+
+            try await handler(first, second, third, fourth, fifth)
         }
     }
 

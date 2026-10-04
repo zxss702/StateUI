@@ -18,6 +18,6 @@ public struct ModifiedContent: VisualElement {
 
 /// A modified view still takes the tiers' modifiers: what the view behind it
 /// is decides which of them draw anything.
-extension ModifiedContent: Layout, TextElement, FontElement, TextAlignmentElement,
+extension ModifiedContent: LayoutView, TextElement, FontElement, TextAlignmentElement,
     ImageElement, TintElement, LineHeightElement, DecorableTextElement, BarElement,
     PageElement {}

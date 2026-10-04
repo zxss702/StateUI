@@ -10,17 +10,17 @@ extension DatePickerProperties {
     ///
     /// Settable, so a button elsewhere on the page can open it - and the
     /// platform closes it by itself, which is what `onClosed` is for.
-    public func isOpen(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOpen(_ value: Bool) -> Modified {
         setValue(DatePickerContract.isOpen, value)
     }
 
     /// The day the field shows. Usually given in the initializer.
-    public func date(_ value: CalendarDate) -> Modified {
+    @_spi(Host) public func date(_ value: CalendarDate) -> Modified {
         setValue(DatePickerContract.date, value)
     }
 
     /// The earliest day the calendar offers - everything before it is refused.
-    public func minimumDate(_ value: CalendarDate) -> Modified {
+    @_spi(Host) public func minimumDate(_ value: CalendarDate) -> Modified {
         setValue(DatePickerContract.minimumDate, value)
     }
 
@@ -31,7 +31,7 @@ extension DatePickerProperties {
     ///
     /// There is no `today` to hand: a page whose limit is the current day
     /// holds that day in state.
-    public func maximumDate(_ value: CalendarDate) -> Modified {
+    @_spi(Host) public func maximumDate(_ value: CalendarDate) -> Modified {
         setValue(DatePickerContract.maximumDate, value)
     }
 
@@ -90,7 +90,7 @@ public struct DatePicker: VisualElement, TextStyleElement, FontElement, DatePick
     /// - Parameter value: the state shown, and written back into when a day is
     ///   chosen.
     /// - Returns: the control, wearing and reporting that day.
-    public func date(_ value: Binding<CalendarDate>) -> Modified {
+    @_spi(Host) public func date(_ value: Binding<CalendarDate>) -> Modified {
         value.image == nil
             ? described(.date, value, on: .dateChanged)
             : plain(.date, by: value, mode: .inOut)
@@ -100,18 +100,18 @@ public struct DatePicker: VisualElement, TextStyleElement, FontElement, DatePick
 
     /// Fires when a date is chosen. Runs after a binding's write, if there is
     /// one.
-    public func onDateChanged(_ handler: @escaping ValueEventHandler<CalendarDate>) -> Self {
+    @_spi(Host) public func onDateChanged(_ handler: @escaping ValueEventHandler<CalendarDate>) -> Self {
         onEvent(DatePickerContract.dateChanged, handler)
     }
 
     /// The user has opened the calendar. Opening it with `isOpen(true)` raises
     /// nothing: the application already knows.
-    public func onOpened(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onOpened(_ handler: @escaping EventHandler) -> Self {
         onEvent(DatePickerContract.opened, handler)
     }
 
     /// It has closed - by a choice, by a tap outside, or by the platform.
-    public func onClosed(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onClosed(_ handler: @escaping EventHandler) -> Self {
         onEvent(DatePickerContract.closed, handler)
     }
 }
@@ -119,7 +119,7 @@ public struct DatePicker: VisualElement, TextStyleElement, FontElement, DatePick
 extension DatePicker {
     /// `isOpen` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func isOpen(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isOpen(_ state: Binding<Bool>) -> Modified {
         plain(DatePickerContract.isOpen.token, by: state)
     }
 }

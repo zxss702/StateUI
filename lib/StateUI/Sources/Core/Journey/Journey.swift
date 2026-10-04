@@ -142,7 +142,7 @@ public struct Journey<Value: Walked> {
     /// decided it. Synchronous: nothing is booked and nobody waits.
     ///
     /// - Parameter value: where it now is, and stays.
-    public func snap(to value: Value) {
+    @_spi(Host) public func snap(to value: Value) {
         state.land(value)
     }
 
@@ -201,7 +201,7 @@ public struct Journey<Value: Walked> {
 
     /// Stops an animation where it stands; whoever waits on it hears it did not run
     /// to the end. A value that was not moving is unaffected.
-    public func stop() {
+    @_spi(Host) public func stop() {
         guard let (_, image, standing) = walking() else {
             complain("`stop` was called on a part of a state, a binding made from closures, "
                 + "or a state the host carries as the value itself, none of which it walks.")

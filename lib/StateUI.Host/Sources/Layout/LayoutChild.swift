@@ -70,6 +70,18 @@
     /// The part of a ZStack's room the child stands in; the whole room where it names none.
     public var area: Area?
 
+    /// How loudly the child asks for its natural size when the room runs
+    /// short - a higher one keeps its size while lower ones give theirs up.
+    public var priority: Double = 0
+
+    /// The horizontal alignment slot the child overrides, and the point in
+    /// its own frame it aligns by where that alignment is asked for.
+    public var horizontalGuide: AlignmentGuide?
+
+    /// The vertical alignment slot the child overrides, and the point in
+    /// its own frame it aligns by where that alignment is asked for.
+    public var verticalGuide: AlignmentGuide?
+
     /// Values with every part at its default.
     public init() {}
 
@@ -98,6 +110,23 @@
     }
 }
 
+/// One alignment's answer a child overrides: the slot it answers for and the
+/// point in its own frame that lands on the alignment's place - what
+/// `.alignmentGuide` writes.
+@_spi(Host) public struct AlignmentGuide: Equatable, Sendable {
+    /// The alignment's axis case - 0 start, 1 centre, 2 end, 4 and 5 the baselines.
+    public var slot: Int32
+
+    /// The point in the child's own frame, from its near edge.
+    public var offset: Double
+
+    /// A guide for `slot` standing `offset` into the child.
+    public init(slot: Int32, offset: Double) {
+        self.slot = slot
+        self.offset = offset
+    }
+}
+
 /// A child as the layout arithmetic sees it; a toolkit's child measures its own view.
 @_spi(Host) @MainActor public protocol LayoutChild {
     /// What the layout reads of the child.
@@ -109,6 +138,21 @@
     /// The child's own size for the width offered to it, its margin already taken out - the layout owns the
     /// margin, both ways; its stated sizes and bounds applied.
     func size(offered width: Double?) -> LayoutSize
+
+    /// The child's first text baseline measured from its top, where it has one;
+    /// nil for a child with no text to stand on.
+    var firstBaseline: Double? { get }
+
+    /// The child's last text baseline measured from its top, where it has one.
+    var lastBaseline: Double? { get }
+}
+
+extension LayoutChild {
+    /// No baseline: a child that keeps silent about one aligns by its edges.
+    public var firstBaseline: Double? { nil }
+
+    /// No baseline.
+    public var lastBaseline: Double? { nil }
 }
 
 /// The arithmetic of one child's extent and place along one axis of its slot.
@@ -143,6 +187,23 @@
         case 2: return start + max(0, available - extent)
         default: return start
         }
+    }
+
+    /// Where a child's alignment point stands in its slot: the alignment's
+    /// place on the child - 0 at its near edge, its middle, its far edge - or
+    /// `guide` where `.alignmentGuide` named one, landed on the point the
+    /// alignment means in the slot.
+    public static func start(
+        option: Int32, extent: Double, start: Double, available: Double, guide: Double?
+    ) -> Double {
+        guard let guide else { return Self.start(option: option, extent: extent, start: start, available: available) }
+        let point: Double
+        switch option {
+        case 1, 3: point = start + available / 2
+        case 2: point = start + available
+        default: point = start
+        }
+        return point - guide
     }
 }
 

@@ -46,8 +46,15 @@
     /// Whether the element fades out on its way to being hidden, which it still stands shown for.
     public internal(set) var isLeaving = false
 
+    /// Whether the element rides a removal transition - kept in its parent's
+    /// children and shown while it goes.
+    public internal(set) var isDeparting = false
+
     /// The frame report this element last said, which a report the same says again to nobody.
     var reportedFrame: [Double] = []
+
+    /// The named spaces the element last reported enclosing it.
+    var reportedNamedFrames: [NamedSpaceFrame] = []
 
     /// Where the states a press dragged carries stood as it began.
     var dragStart = Point(x: 0, y: 0)
@@ -76,6 +83,8 @@
     /// Applies a patch of this element.
     public func apply(_ patch: HostPatch) {
         guard let tree else { return }
+        // A patch re-described a departing element: its removal turns around.
+        if isDeparting { revive() }
 
         let sceneBegan: ContinuousClock.Instant? = tree.tally != nil && patch.type == .scene ? .now : nil
         tree.tally?.nodes += 1
@@ -184,7 +193,7 @@
         let before = children
         let previous = Dictionary(uniqueKeysWithValues: children.map { ($0.id, $0) })
 
-        children = patches.map { patch in
+        var arranged = patches.map { patch in
             if let child = previous[patch.id], child.type == patch.type, !patch.replace {
                 child.parent = self
                 child.apply(patch)
@@ -193,6 +202,16 @@
 
             return MountedElement(patch, tree: tree, parent: self)
         }
+        // A child the patch drops begins its removal transition here where it
+        // has one, and keeps its seat - and its view - until the last component
+        // lands.
+        let staying = Set(arranged.map(ObjectIdentifier.init))
+        for child in before where !staying.contains(ObjectIdentifier(child)) {
+            if child.depart(room: child.native.departingRoom, closed: { [weak self] in
+                self?.departed(child)
+            }) { arranged.append(child) }
+        }
+        children = arranged
         leave(before)
     }
 
@@ -240,6 +259,13 @@
         for child in previous where !staying.contains(ObjectIdentifier(child)) {
             child.leave()
         }
+    }
+
+    /// A departure that landed: the child leaves, and its parent's layout drops
+    /// its view.
+    private func departed(_ child: MountedElement) {
+        children.removeAll { $0 === child }
+        native.arrangeChildren()
     }
 
     /// Ties this element to the channels of the states its properties wear.
@@ -446,6 +472,13 @@
         values.maximumHeight = stated(.maximumHeight)
         values.row = whole(.gridRow) ?? 0
         values.column = whole(.gridColumn) ?? 0
+        values.priority = stated(.layoutPriority) ?? 0
+        if let guide = value(.horizontalGuide)?.numbers, guide.count >= 2 {
+            values.horizontalGuide = AlignmentGuide(slot: Int32(guide[0]), offset: guide[1])
+        }
+        if let guide = value(.verticalGuide)?.numbers, guide.count >= 2 {
+            values.verticalGuide = AlignmentGuide(slot: Int32(guide[0]), offset: guide[1])
+        }
         values.rowSpan = max(whole(.gridRowSpan) ?? 1, 1)
         values.columnSpan = max(whole(.gridColumnSpan) ?? 1, 1)
         values.area = value(.area).flatMap(Area.init(propValue:))

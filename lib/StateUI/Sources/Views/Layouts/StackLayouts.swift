@@ -69,6 +69,15 @@ public struct VStack: StackBase {
     ) {
         self.init(alignment: alignment, spacing: nil, content: content)
     }
+
+    /// The same, centered with the stack's own spacing - the SwiftUI spelling
+    /// for `VStack(alignment: .center, spacing:)`.
+    public init(
+        spacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(alignment: .center, spacing: spacing, content: content)
+    }
 }
 
 /// Stacks its children left to right, each as wide as it asks to be.
@@ -129,6 +138,15 @@ public struct HStack: StackBase {
         @ViewBuilder content: @escaping () -> any View
     ) {
         self.init(alignment: alignment, spacing: nil, content: content)
+    }
+
+    /// The same, centered with the stack's own spacing - the SwiftUI spelling
+    /// for `HStack(alignment: .center, spacing:)`.
+    public init(
+        spacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(alignment: .center, spacing: spacing, content: content)
     }
 }
 

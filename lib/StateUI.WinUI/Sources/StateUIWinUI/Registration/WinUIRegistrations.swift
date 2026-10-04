@@ -37,6 +37,7 @@ enum WinUIRegistrations {
         registry.everyElementMeetsAssistiveTechnology()
         registry.everyElementRealizes(VisualElementContract.opacity)
         registry.everyElementRealizes(VisualElementContract.isVisible)
+        registry.everyElementRealizes(VisualElementContract.transition)
         registry.everyElementTakesItsPlace()
         registry.everyElementRealizes(VisualElementContract.translationX)
         registry.everyElementRealizes(VisualElementContract.translationY)

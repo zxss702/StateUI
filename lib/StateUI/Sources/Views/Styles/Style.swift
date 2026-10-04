@@ -75,7 +75,7 @@ extension StyleBag where Context == StyleBase {
     ///
     /// The one it names must be in the same sheet. A key naming nothing is
     /// ignored, and a chain that comes back round to itself stops there.
-    public func basedOn(_ key: String) -> Self {
+    @_spi(Host) public func basedOn(_ key: String) -> Self {
         var copy = self
         copy.basedOn = key
         return copy
@@ -93,7 +93,7 @@ extension StyleBag where Context == StyleBase {
     ///   - state: which state these setters describe. What is offered after
     ///     the dot is the states this target actually enters.
     ///   - setters: the property values in force while the control is there.
-    public func visualState(
+    @_spi(Host) public func visualState(
         _ state: VisualState<Target>,
         _ setters: (StyleBag<Target, StyleState>) -> StyleBag<Target, StyleState>
     ) -> Self {
@@ -110,7 +110,7 @@ extension StyleBag where Context == StyleBase {
     ///         .visualState(.disabled) { $0.foregroundStyle(.gray) }
     ///
     /// - Parameter state: the state, changing nothing.
-    public func visualState(_ state: VisualState<Target>) -> Self {
+    @_spi(Host) public func visualState(_ state: VisualState<Target>) -> Self {
         var copy = self
         copy.states = written(copy.states, adding: DeclaredState(name: state.name))
         return copy

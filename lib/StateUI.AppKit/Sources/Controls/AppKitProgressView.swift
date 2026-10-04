@@ -28,12 +28,36 @@ final class AppKitProgressView: NSProgressIndicator {
     func apply(progress: Double) {
         doubleValue = min(max(progress.isFinite ? progress : 0, 0), 1)
     }
+
+    /// `"circular"` draws the wheel AppKit's progress indicator turns to;
+    /// `"linear"` is the bar it was made as.
+    func apply(style token: String) {
+        switch token {
+        case "circular":
+            style = .spinning
+            usesThreadedAnimation = true
+        default:
+            style = .bar
+        }
+    }
 }
 
 /// AppKit's indeterminate indicator, visible exactly while work is running.
 @MainActor
 final class AppKitActivityIndicatorView: NSProgressIndicator {
     private(set) var isSpinning = false
+
+    /// `"linear"` draws the barber pole AppKit's indeterminate bar is;
+    /// `"circular"` is the wheel it was made as.
+    func apply(style token: String) {
+        switch token {
+        case "linear":
+            style = .bar
+        default:
+            style = .spinning
+        }
+        if isSpinning { startAnimation(nil) }
+    }
 
     /// A stopped indicator keeps its place and draws nothing, natively, so
     /// whether it is hidden stays the view's visibility alone.

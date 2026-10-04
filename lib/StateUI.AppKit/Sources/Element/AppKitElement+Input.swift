@@ -173,7 +173,7 @@ extension AppKitElement {
         return MountedElement.frameNumbers(
             place: parentFrame.placed,
             corner: Point(x: Double(windowFrame.minX), y: Double(windowFrame.minY)),
-            content: Point(x: Double(safeArea.minX), y: Double(safeArea.minY)))
+            safeArea: safeArea.placed)
     }
 
 
@@ -191,7 +191,12 @@ extension AppKitElement: FrameReporter {
     /// Says where the element stands, where that changed (`MountedElement.reportFrame`).
     func reportFrame() {
         guard let host, let numbers = frameNumbers() else { return }
-        element.reportFrame(numbers, in: host.runtime)
+        let named = element.namedSpaceFrames { ancestor in
+            guard let ancestorView = (ancestor.native as? AppKitElement)?.view,
+                  let content = ancestorView.window?.contentView else { return nil }
+            return topLeftFrame(ancestorView.convert(ancestorView.bounds, to: content), in: content).placed
+        }
+        element.reportFrame(numbers, named: named, in: host.runtime)
     }
 }
 #endif

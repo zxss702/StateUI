@@ -27,8 +27,13 @@ final class ContractPayloadTests: XCTestCase {
         check(ViewContract.dragStarting)
         check(ViewContract.drop, [.string("dropped")])
         check(ViewContract.dropCompleted)
+        check(ViewContract.dropPaths, [.strings(["/tmp/a.txt"]), .numbers([4, 6])])
         check(ViewContract.frameChanged, [.numbers(frame)])
-        check(ViewContract.panUpdated, [.enumeration(1), .number(3), .number(4)])
+        check(ViewContract.namedFramesChanged, [
+            .values([.values([.string("Page"), .numbers([0, 0, 100, 40])])])])
+        check(ViewContract.panUpdated, [
+            .enumeration(1), .number(3), .number(4), .numbers([1, 2]), .numbers([4, 6]),
+        ])
         check(ViewContract.pinchUpdated, [.enumeration(1), .number(1.5), .numbers([10, 20])])
         check(ViewContract.pointerEntered)
         check(ViewContract.pointerExited)
@@ -166,6 +171,21 @@ final class ContractPayloadTests: XCTestCase {
         checked.insert("\(Owner.name).\(event.name)")
         XCTAssertNotNil(
             MemberValues.decode(payload, as: First.self, Second.self, Third.self),
+            "\(Owner.name).\(event.name) refuses \(payload)", file: file, line: line)
+    }
+
+    /// An event that carries five values - a pan's, its phase and totals and
+    /// where it began and stands.
+    private func check<Owner: Contract, First: HostRepresentable, Second: HostRepresentable,
+                       Third: HostRepresentable, Fourth: HostRepresentable, Fifth: HostRepresentable>(
+        _ event: ElementEvent<Owner, (First, Second, Third, Fourth, Fifth)>,
+        _ payload: [PropValue],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        checked.insert("\(Owner.name).\(event.name)")
+        XCTAssertNotNil(
+            MemberValues.decode(payload, as: First.self, Second.self, Third.self, Fourth.self, Fifth.self),
             "\(Owner.name).\(event.name) refuses \(payload)", file: file, line: line)
     }
 }

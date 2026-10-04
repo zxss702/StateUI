@@ -12,6 +12,7 @@ enum GTKBrush: Equatable {
     case solid(GdkRGBA)
     case linear(from: (Double, Double), to: (Double, Double), stops: [GTKColorStop])
     case radial(center: (Double, Double), radius: Double, stops: [GTKColorStop])
+    case material(Int32)
 
     /// The brush the tree's `value` describes, read by the host layer's rule (`HostBrush`), in GDK's colours.
     init(_ value: HostValue?) {
@@ -22,6 +23,7 @@ enum GTKBrush: Equatable {
             self = .linear(from: (from.x, from.y), to: (to.x, to.y), stops: GTKBrush.stops(stops))
         case .radial(let center, let radius, let stops):
             self = .radial(center: (center.x, center.y), radius: radius, stops: GTKBrush.stops(stops))
+        case .material(let kind): self = .material(kind)
         }
     }
 
@@ -30,13 +32,29 @@ enum GTKBrush: Equatable {
         stops.compactMap { stop in rgba(stop.color).map { GTKColorStop(offset: stop.offset, color: $0) } }
     }
 
-    /// The brush's colour, or its first stop's - what a line of one colour draws with it.
+    /// The brush's colour, or its first stop's - what a line of one colour draws with it. A material answers its
+    /// approximation: the room's colour, as translucent as the material is thin.
     var firstColor: GdkRGBA? {
         switch self {
         case .none: nil
         case .solid(let color): color
         case .linear(_, _, let stops), .radial(_, _, let stops): stops.first?.color
+        case .material(let kind): GTKBrush.materialColor(kind)
         }
+    }
+
+    /// What a material paints as where no frosted backing is drawn: a grey the theme's surfaces stand for, as
+    /// translucent as `Material.Kind` is thin.
+    static func materialColor(_ kind: Int32) -> GdkRGBA {
+        let alpha: Float = switch kind {
+        case 1: 0.2   // ultraThin
+        case 2: 0.35  // thin
+        case 3: 0.5   // regular
+        case 4: 0.65  // thick
+        case 5: 0.8   // ultraThick
+        default: 0.5  // bar, and anything else
+        }
+        return GdkRGBA(red: 0.5, green: 0.5, blue: 0.55, alpha: alpha)
     }
 
     /// A colour as GDK's.
@@ -78,6 +96,9 @@ enum GTKBrush: Equatable {
                 gtk_snapshot_append_radial_gradient(
                     snapshot, &bounds, &middle, reach, reach, 0, 1, $0.baseAddress, gsize($0.count))
             }
+        case .material(let kind):
+            var color = GTKBrush.materialColor(kind)
+            gtk_snapshot_append_color(snapshot, &color, &bounds)
         }
     }
 
@@ -87,6 +108,7 @@ enum GTKBrush: Equatable {
         case (.solid(let a), .solid(let b)): GTKColorStop.same(a, b)
         case (.linear(let a, let b, let c), .linear(let d, let e, let f)): a == d && b == e && c == f
         case (.radial(let a, let b, let c), .radial(let d, let e, let f)): a == d && b == e && c == f
+        case (.material(let a), .material(let b)): a == b
         default: false
         }
     }

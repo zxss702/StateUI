@@ -20,6 +20,13 @@ public enum CoordinateSpace: Sendable {
     /// its page's content reads zero on every platform. With no platform, in a
     /// test, it agrees with `.global`.
     case safeArea
+
+    /// The view's own bounds: zero origin, its own size.
+    case local
+
+    /// The space an ancestor declared with `.coordinateSpace(.named(name))`:
+    /// the frame measured from that ancestor's top left.
+    case named(String)
 }
 
 extension View {
@@ -39,7 +46,7 @@ extension View {
     /// - Parameters:
     ///   - space: Which coordinates to answer in - the parent's unless said.
     ///   - handler: What to run with each settled frame.
-    public func onFrameChanged(
+    @_spi(Host) public func onFrameChanged(
         in space: CoordinateSpace = .parent,
         _ handler: @escaping ValueEventHandler<Rect>
     ) -> ModifiedContent {
@@ -47,8 +54,9 @@ extension View {
         // own answer is unchanged.
         let last = LastFrame()
 
-        return hearing(ViewContract.frameChanged) { numbers in
-            guard let report = FrameReport(numbers) else { return }
+        nonisolated(nonsending) func report() async throws {
+            guard var report = last.report else { return }
+            report.named = last.named
 
             let frame = report.frame(in: space)
             guard frame != last.rect else { return }
@@ -56,90 +64,157 @@ extension View {
             last.rect = frame
             try await handler(frame)
         }
+
+        return hearing(ViewContract.frameChanged) { numbers in
+            guard let arrived = FrameReport(numbers) else { return }
+            last.report = arrived
+            try await report()
+        }
+        .hearing(ViewContract.namedFramesChanged) { frames in
+            last.named = frames
+            try await report()
+        }
     }
 }
 
 /// What a frame handler last handed over, remembered across reports; a
 /// rebuilt view starts it afresh, costing one repeated report.
 private final class LastFrame: @unchecked Sendable {
+    /// The last numbers report.
+    var report: FrameReport?
+
+    /// The named spaces the last report travelled with.
+    var named: [NamedSpaceFrame] = []
+
     /// The rectangle the handler last ran with.
     var rect: Rect?
 }
 
-/// A container whose content is built from the space it was given.
-///
-///     GeometryReader { frame in
-///         Text("half of \(Int(frame.width)) is \(Int(frame.width / 2))")
-///             .frame(width: frame.width / 2)
-///     }
-///
-/// The closure runs again whenever the frame settles somewhere new; before the
-/// first layout it is given a zero rectangle. Several views stack on top of
-/// each other, as in a `Grid`. To report a frame rather than build from it,
-/// write `.onFrameChanged` on the view.
-public struct GeometryReader: View {
-    /// The last frame the layout settled on - zero until the first report.
-    @State private var frame = Rect(0, 0, 0, 0)
+/// What a `GeometryReader` hands its content: the view's size, where the safe
+/// area cuts into it, and its frame in the space asked for.
+public struct GeometryProxy: Sendable {
+    /// The report this proxy reads.
+    let report: FrameReport
 
-    /// Which coordinates the closure is handed.
-    private let space: CoordinateSpace
+    /// The size the view was laid out at.
+    public var size: Size { Size(report.frame.width, report.frame.height) }
 
-    /// What to show, given the space it will live in.
-    private let build: (Rect) -> any View
+    /// Where the safe area still covers this view's bounds: positive on each
+    /// side the view reaches past where content can safely sit.
+    public var safeAreaInsets: EdgeInsets { report.safeAreaInsets }
 
-    /// A reader handing its content closure the frame in its parent's
-    /// coordinates.
-    ///
-    /// - Parameter content: What to show, built again as each measurement
-    ///   settles.
-    public init(@ViewBuilder _ content: @escaping (Rect) -> any View) {
-        self.init(in: .parent, content)
-    }
-
-    /// The same, in the coordinates named - `.global` for where this sits in
-    /// the window, `.safeArea` for where it sits inside what is not covered.
-    ///
-    /// - Parameters:
-    ///   - space: Which coordinates to hand over.
-    ///   - content: What to show, built again as each measurement settles.
-    public init(
-        in space: CoordinateSpace,
-        @ViewBuilder _ content: @escaping (Rect) -> any View
-    ) {
-        self.space = space
-        self.build = content
-    }
-
-    /// The content, in a Grid that fills the offered space and writes its own
-    /// frame into the state this body reads.
-        public var body: some View { AnyView(content) }
-
-        private var content: any View {
-        Grid {
-            build(frame)
-        }
-        .onFrameChanged(in: space) { frame = $0 }
+    /// The view's frame in the space named - `.local` for its own bounds,
+    /// `.global` for the window, `.parent` where the parent placed it,
+    /// `.safeArea` inside what is not covered, `.named(name)` measured from
+    /// the ancestor `.coordinateSpace(.named(name))` declared, `.zero` for a
+    /// name nobody declared.
+    public func frame(in space: CoordinateSpace) -> Rect {
+        report.frame(in: space)
     }
 }
 
-/// One measurement as the host sends it: every space in eight numbers.
-struct FrameReport {
+/// A container whose content is built from the space it was given.
+///
+///     GeometryReader { proxy in
+///         Text("half of \(Int(proxy.size.width)) is \(Int(proxy.size.width / 2))")
+///             .frame(width: proxy.size.width / 2)
+///     }
+///
+/// The closure runs again whenever the frame settles somewhere new; before the
+/// first layout it reads a zero size. Several views stack on top of each
+/// other, as in a `Grid`. To report a frame rather than build from it, write
+/// `.onFrameChanged` on the view.
+public struct GeometryReader: View {
+    /// The last report the layout settled on - zero until the first one.
+    @State private var report = FrameReport.zero
+
+    /// The named spaces the last report travelled with.
+    @State private var named: [NamedSpaceFrame] = []
+
+    /// What to show, given the space it will live in.
+    private let build: (GeometryProxy) -> any View
+
+    /// A reader handing its content closure a proxy of the last report,
+    /// rebuilt whenever any space's answer moves.
+    ///
+    /// - Parameter content: What to show, built again as each measurement
+    ///   settles.
+    public init(@ViewBuilder _ content: @escaping (GeometryProxy) -> any View) {
+        self.build = content
+    }
+
+    /// The content, in a Grid that fills the offered space and writes each
+    /// report into the state this body reads.
+        public var body: some View { AnyView(content) }
+
+        private var content: any View {
+        var report = report
+        report.named = named
+
+        return Grid {
+            build(GeometryProxy(report: report))
+        }
+        .hearing(ViewContract.namedFramesChanged) { frames in
+            guard frames != self.named else { return }
+            self.named = frames
+        }
+        .hearing(ViewContract.frameChanged) { numbers in
+            guard let report = FrameReport(numbers), report != self.report else { return }
+            self.report = report
+        }
+    }
+}
+
+/// One measurement as the host sends it: place, corner and safe area in ten
+/// numbers, and the named spaces enclosing the view.
+struct FrameReport: Equatable, Sendable {
     /// The frame in the parent's coordinates.
     let frame: Rect
 
     /// The same rectangle with its origin in the window's.
     let global: Rect
 
-    /// And measured from where content can safely sit.
-    let safeArea: Rect
+    /// The window's safe area, in the window's coordinates.
+    let safeAreaRect: Rect
 
-    /// Reads the eight numbers of one report - x, y, width, height, windowX,
-    /// windowY, safeX, safeY; any other count is nil.
+    /// The named spaces enclosing the view, innermost first, each in window
+    /// coordinates; carried by `namedFramesChanged`, which travels with a
+    /// report rather than inside its numbers.
+    var named: [NamedSpaceFrame] = []
+
+    /// A report of nothing, before the host's first answer.
+    static let zero = FrameReport(
+        frame: Rect(0, 0, 0, 0), global: Rect(0, 0, 0, 0), safeAreaRect: Rect(0, 0, 0, 0))
+
+    /// The view's frame measured from the safe area's top left.
+    var safeArea: Rect {
+        Rect(global.x - safeAreaRect.x, global.y - safeAreaRect.y, frame.width, frame.height)
+    }
+
+    /// Where the safe area still covers the view's bounds: positive on each
+    /// side the view reaches past it.
+    var safeAreaInsets: EdgeInsets {
+        EdgeInsets(
+            top: max(0, safeAreaRect.y - global.y),
+            leading: max(0, safeAreaRect.x - global.x),
+            bottom: max(0, global.y + frame.height - safeAreaRect.y - safeAreaRect.height),
+            trailing: max(0, global.x + frame.width - safeAreaRect.x - safeAreaRect.width))
+    }
+
+    /// Reads the ten numbers of one report - x, y, width, height, windowX,
+    /// windowY, safeX, safeY, safeWidth, safeHeight; any other count is nil.
     init?(_ numbers: [Double]) {
-        guard numbers.count == 8 else { return nil }
+        guard numbers.count == 10 else { return nil }
         frame = Rect(numbers[0], numbers[1], numbers[2], numbers[3])
         global = Rect(numbers[4], numbers[5], numbers[2], numbers[3])
-        safeArea = Rect(numbers[6], numbers[7], numbers[2], numbers[3])
+        safeAreaRect = Rect(numbers[6], numbers[7], numbers[8], numbers[9])
+    }
+
+    /// Assembles a report from its parts - tests and the empty state.
+    init(frame: Rect, global: Rect, safeAreaRect: Rect) {
+        self.frame = frame
+        self.global = global
+        self.safeAreaRect = safeAreaRect
     }
 
     /// The rectangle a space means.
@@ -148,6 +223,73 @@ struct FrameReport {
         case .parent: return frame
         case .global: return global
         case .safeArea: return safeArea
+        case .local: return Rect(0, 0, frame.width, frame.height)
+        case .named(let name):
+            guard let space = named.first(where: { $0.name == name }) else { return Rect(0, 0, 0, 0) }
+            return Rect(global.x - space.frame.x, global.y - space.frame.y, frame.width, frame.height)
         }
+    }
+}
+
+/// One named space enclosing a view: the name an ancestor declared and that
+/// ancestor's frame in window coordinates.
+public struct NamedSpaceFrame: Equatable, Sendable {
+    /// The name `.coordinateSpace` declared.
+    public let name: String
+
+    /// The declaring view's frame in window coordinates.
+    public let frame: Rect
+
+    /// A space of `name` standing at `frame` in its window.
+    public init(name: String, frame: Rect) {
+        self.name = name
+        self.frame = frame
+    }
+}
+
+extension NamedSpaceFrame: HostRepresentable {
+    /// A name and a frame cross as a string and four numbers.
+    public var propValue: PropValue {
+        .values([.string(name), .numbers([frame.x, frame.y, frame.width, frame.height])])
+    }
+
+    /// - Parameter propValue: what the host sent.
+    public init?(propValue: PropValue) {
+        guard let values = propValue.values, values.count == 2,
+              let name = values[0].string, let numbers = values[1].numbers, numbers.count == 4
+        else { return nil }
+
+        self.init(name: name, frame: Rect(numbers[0], numbers[1], numbers[2], numbers[3]))
+    }
+}
+
+extension View {
+    /// Declares this view a named coordinate space: measurements inside it can
+    /// ask for their frame in `.named(name)` and read it from here.
+    ///
+    ///     ScrollView { … }
+    ///         .coordinateSpace(.named("CodeEditCoordinateSpace"))
+    ///
+    ///     GeometryReader { proxy in
+    ///         … proxy.frame(in: .named("CodeEditCoordinateSpace")) …
+    ///     }
+    ///
+    /// Only `.named` declares a space; the fixed spaces need no declaring.
+    ///
+    /// - Parameter space: The space to declare.
+    public func coordinateSpace(_ space: CoordinateSpace) -> ModifiedContent {
+        guard case .named(let name) = space else {
+            complain("`coordinateSpace` declares named spaces only - the fixed ones need no declaring")
+            return revised { _ in }
+        }
+        return setting(ViewContract.coordinateSpaceName, name)
+    }
+
+    /// Declares this view a named coordinate space under `name` - the older
+    /// spelling of `.coordinateSpace(.named(name))`.
+    ///
+    /// - Parameter name: The space's name.
+    public func coordinateSpace(name: String) -> ModifiedContent {
+        coordinateSpace(.named(name))
     }
 }

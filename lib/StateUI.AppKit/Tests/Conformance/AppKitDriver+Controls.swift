@@ -18,6 +18,8 @@ extension AppKitDriver {
         if let held = try boxHolds(property, view) { return held }
         if let button = view as? AppKitButtonView, let held = buttonHolds(property, button) { return held }
         switch (property, view) {
+        // A scroller clips at its clip view, not its own bounds.
+        case (.clipsContent, let scroll as NSScrollView): return scroll.contentView.clipsToBounds.propValue
         case (.clipsContent, _) where !(view is NSControl): return view.clipsToBounds.propValue
         case (.scrollOffset, let scroll as NSScrollView):
             let origin = scroll.contentView.bounds.origin
@@ -160,7 +162,7 @@ extension AppKitDriver {
 
     /// A scroll bar's showing: none, always, or as AppKit decides it - hidden until the user scrolls.
     private static func bar(shown: Bool, hides: Bool) -> ScrollIndicatorVisibility {
-        !shown ? .never : hides ? .default : .always
+        !shown ? .hidden : hides ? .automatic : .visible
     }
 }
 

@@ -18,6 +18,21 @@ class AppKitHitTestView: NSView {
     /// none, where a point anywhere inside the bounds counts.
     var hitShape: ContainerShape?
 
+    /// The pointer's look while it is over the view - a `.pointerStyle`'s; nil
+    /// for whatever the view draws already.
+    var pointerStyle: NSCursor? {
+        didSet { window?.invalidateCursorRects(for: self) }
+    }
+
+    /// The cursor `pointerStyle` names covers the whole view; a view that keeps
+    /// its own answer still wins where it is a control's own.
+    override func resetCursorRects() {
+        super.resetCursorRects()
+        if let pointerStyle {
+            addCursorRect(bounds, cursor: pointerStyle)
+        }
+    }
+
     /// What an accessibility press performs, while the element answers a tap.
     var pressAction: (() -> Void)?
 

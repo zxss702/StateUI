@@ -139,7 +139,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///   - x: how far along.
     ///   - y: how far down.
     /// - Returns: the transform, moved.
-    public func translate(_ x: Double, _ y: Double) -> ViewTransform {
+    @_spi(Host) public func translate(_ x: Double, _ y: Double) -> ViewTransform {
         var copy = self
         copy.tx += x
         copy.ty += y
@@ -182,7 +182,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///
     /// - Parameter factor: 1 is as drawn.
     /// - Returns: the transform, sized across.
-    public func scaleX(_ factor: Double) -> ViewTransform {
+    @_spi(Host) public func scaleX(_ factor: Double) -> ViewTransform {
         sized(factor, 1)
     }
 
@@ -190,7 +190,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///
     /// - Parameter factor: 1 is as drawn.
     /// - Returns: the transform, sized down.
-    public func scaleY(_ factor: Double) -> ViewTransform {
+    @_spi(Host) public func scaleY(_ factor: Double) -> ViewTransform {
         sized(1, factor)
     }
 
@@ -207,7 +207,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///
     /// - Parameter degrees: how far to turn away; either sign draws the same.
     /// - Returns: the transform, turned away.
-    public func turn(_ degrees: Double) -> ViewTransform {
+    @_spi(Host) public func turn(_ degrees: Double) -> ViewTransform {
         sized(ViewTransform.flat(degrees), 1)
     }
 
@@ -216,7 +216,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///
     /// - Parameter degrees: how far to tip away.
     /// - Returns: the transform, tipped away.
-    public func tilt(_ degrees: Double) -> ViewTransform {
+    @_spi(Host) public func tilt(_ degrees: Double) -> ViewTransform {
         sized(1, ViewTransform.flat(degrees))
     }
 
@@ -231,7 +231,7 @@ public struct ViewTransform: Equatable, Sendable {
     ///   - x: the lean along, in degrees.
     ///   - y: the lean down, in degrees.
     /// - Returns: the transform, leaned over.
-    public func skew(_ x: Double, _ y: Double) -> ViewTransform {
+    @_spi(Host) public func skew(_ x: Double, _ y: Double) -> ViewTransform {
         let along = tan(x * Double.pi / 180)
         let down = tan(y * Double.pi / 180)
 

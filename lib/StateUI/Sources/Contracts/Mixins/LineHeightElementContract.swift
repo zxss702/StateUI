@@ -12,6 +12,9 @@ public enum LineHeightElementContract: Contract {
     /// The height of one line, as a multiple of the font's own.
     public static let lineHeight = ElementProperty<Self, Double>("lineHeight", layer: .native, moves: .text)
 
+    /// Extra space between lines, in device units - SwiftUI's `.lineSpacing`.
+    public static let lineSpacing = ElementProperty<Self, Double>("lineSpacing", layer: .native, moves: .text)
+
     /// The tier's own members.
-    public static let members: [any ContractMember] = [lineHeight]
+    public static let members: [any ContractMember] = [lineHeight, lineSpacing]
 }

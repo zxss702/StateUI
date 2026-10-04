@@ -35,9 +35,8 @@ extension ContainerShape {
     /// a `.contentShape`'s test of what input counts.
     func contains(_ point: Point, in bounds: Rect) -> Bool {
         var rect = graphene_rect_t()
-        var origin = graphene_point_t(x: Float(bounds.x), y: Float(bounds.y))
-        var size = graphene_size_t(width: Float(bounds.width), height: Float(bounds.height))
-        graphene_rect_init(&rect, &origin, &size)
+        graphene_rect_init(
+            &rect, Float(bounds.x), Float(bounds.y), Float(bounds.width), Float(bounds.height))
         var rounded = self.rounded(rect)
         var at = graphene_point_t(x: Float(point.x), y: Float(point.y))
         return gsk_rounded_rect_contains_point(&rounded, &at) != 0

@@ -13,11 +13,17 @@ extension AppKitRegistrations {
             bar.property(ProgressBarContract.progress) { view, progress in
                 view.apply(progress: progress ?? 0)
             }
+            bar.property(ProgressBarContract.progressStyle) { view, style in
+                view.apply(style: style ?? "linear")
+            }
         }
 
         registry.add(ActivityIndicatorContract.self, create: { _ in AppKitActivityIndicatorView() }) { activity in
             activity.property(ActivityIndicatorContract.isRunning) { view, running in
                 view.apply(running: running ?? false)
+            }
+            activity.property(ActivityIndicatorContract.progressStyle) { view, style in
+                view.apply(style: style ?? "circular")
             }
         }
     }

@@ -815,4 +815,30 @@ extension StateTests {
         XCTAssertTrue(Renderer.shared.needsRender, "and the next one, at once as well")
         _ = reader
     }
+
+    /// `@FocusState` is a `@State` the focus speaks through: the walk finds the
+    /// box inside the wrapper, a write asks for a render, and `$focused` hands
+    /// `.focused(_:)` the `Binding` it takes.
+    func testAFocusStateReadsWritesAndLends() {
+        let renders = Renders()
+        let field = FocusField()
+
+        let first = renders.render(stack([field.node], id: "root"))
+        XCTAssertEqual(first.child(.auto(1))?.props["text"], .string("unfocused"))
+
+        field.focused = true
+        let patch = renders.revisit(changed: Renderer.shared.pendingChanges)
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("focused"),
+                       "a write through the wrapper reaches the reader")
+    }
+
+    /// `TextField($name)` borrows focus state the way SCE's fields do.
+    private struct FocusField: View {
+        @FocusState var focused: Bool
+
+        var body: some View {
+            ModifiedContent(node: label(focused ? "focused" : "unfocused"))
+                .focused($focused)
+        }
+    }
 }

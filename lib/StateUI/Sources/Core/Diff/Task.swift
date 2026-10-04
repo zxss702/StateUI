@@ -17,18 +17,120 @@ extension View {
     /// outliving its view is cancelled, so a load in flight is dropped rather
     /// than written into state nobody shows.
     ///
-    /// - Parameter work: what to run; cancelled as the view leaves.
+    /// - Parameters:
+    ///   - priority: the job's scheduling weight, as `Task` takes it.
+    ///   - work: what to run; cancelled as the view leaves.
     public func task(
+        priority: TaskPriority = .userInitiated,
         _ work: @escaping @Sendable () async -> Void
     ) -> ModifiedContent {
         let box = TaskBox()
         return onAppear {
-            box.task = Task { await work() }
+            box.task = Task(priority: priority) { await work() }
         }
         .onDisappear {
             box.task?.cancel()
         }
     }
+
+    /// As `.task`, and again whenever `id` moves: a view showing `id`'s
+    /// question asks it afresh as `id` becomes another's, the stale answer's
+    /// job cancelled first.
+    ///
+    ///     Text(answer)
+    ///         .task(id: question) {
+    ///             answer = await ask(question)
+    ///         }
+    ///
+    /// - Parameters:
+    ///   - id: what the job's answer is for.
+    ///   - priority: the job's scheduling weight, as `Task` takes it.
+    ///   - work: what to run; cancelled as `id` moves or the view leaves.
+    public func task<ID: Equatable>(
+        id: ID,
+        priority: TaskPriority = .userInitiated,
+        _ work: @escaping @Sendable () async -> Void
+    ) -> ModifiedContent {
+        let box = TaskBox()
+        return onAppear {
+            box.task = Task(priority: priority) { await work() }
+        }
+        .onChange(of: id) {
+            box.task?.cancel()
+            box.task = Task(priority: priority) { await work() }
+        }
+        .onDisappear {
+            box.task?.cancel()
+        }
+    }
+}
+
+extension View {
+    /// Performs `action` for each value an `AsyncSequence` produces while the
+    /// view is on screen:
+    ///
+    ///     Text(clock)
+    ///         .onReceive(ticks) { clock = $0 }
+    ///
+    /// The subscription is the `.task` it rides: starts when the view appears,
+    /// cancelled when it leaves - so a sequence outliving its view stops
+    /// writing state nobody shows. The sequence's own errors end the job the
+    /// way a `.task` error does.
+    ///
+    /// Combine-shaped `.onReceive` callers on Darwin can pass any `Publisher`
+    /// through `publisher.values`; on Linux an `AsyncSequence` is the honest
+    /// currency type since Combine is an Apple framework.
+    ///
+    /// - Parameters:
+    ///   - sequence: what produces the values.
+    ///   - action: what runs per produced value, in receive order.
+    public func onReceive<S: AsyncSequence>(
+        _ sequence: S,
+        perform action: @escaping @Sendable (S.Element) -> Void
+    ) -> ModifiedContent {
+        // The sequence itself is no longer Sendable once produced (an
+        // AsyncPublisher is not); the box carries it across the task's
+        // boundary since only its elements matter there.
+        let box = OnReceiveBox(sequence)
+        return task {
+            do {
+                for try await element in box.sequence {
+                    if Swift.Task.isCancelled { break }
+                    action(element)
+                }
+            } catch {
+                // A sequence that throws ends the job; Combine-shaped callers
+                // require `Failure == Never` anyway.
+            }
+        }
+    }
+}
+
+#if canImport(Combine)
+import Combine
+
+extension View {
+    /// Performs `action` for each value a Combine `Publisher` emits while the
+    /// view is on screen - the SwiftUI signature on platforms that have
+    /// Combine. The subscription lives as long as the `.task` it rides.
+    ///
+    ///     Text(tick)
+    ///         .onReceive(timer) { tick = $0 }
+    public func onReceive<P: Publisher>(
+        _ publisher: P,
+        perform action: @escaping @Sendable (P.Output) -> Void
+    ) -> ModifiedContent where P.Failure == Never {
+        onReceive(publisher.values, perform: action)
+    }
+}
+#endif
+
+/// Carries a not-necessarily-Sendable sequence into the `.task` job;
+/// only its elements move through the job's work.
+private final class OnReceiveBox<S: AsyncSequence>: @unchecked Sendable {
+    /// The sequence being listened to.
+    let sequence: S
+    init(_ sequence: S) { self.sequence = sequence }
 }
 
 /// The running job a `.task` started, so its disappear can cancel it.

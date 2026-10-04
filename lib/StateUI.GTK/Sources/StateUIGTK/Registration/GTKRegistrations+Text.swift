@@ -15,6 +15,9 @@ extension GTKRegistrations {
                     breaking: values[TextContract.lineBreak] ?? .wordWrap,
                     maximum: values[TextContract.lineLimit])
             }
+            label.property(TextContract.selectable) { view, selectable in
+                view.setSelectable(selectable ?? false)
+            }
             label.property(TextAlignmentElementContract.multilineTextAlignment) { view, alignment in
                 view.setAlignment(horizontal: alignment ?? .start)
             }

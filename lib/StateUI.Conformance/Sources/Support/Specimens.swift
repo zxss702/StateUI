@@ -21,6 +21,7 @@
         case "ColorPicker": return dressing.dress(ColorPicker())
         case "DatePicker": return dressing.dress(DatePicker())
         case "Ellipse": return dressing.dress(Ellipse())
+        case "CustomLayout": return dressing.dress(SpecimenLayout { Text("Laid") })
         case "Grid": return dressing.dress(Grid())
         case "HStack": return dressing.dress(HStack())
         case "Image": return dressing.dress(Image())
@@ -28,6 +29,18 @@
         case "Text": return dressing.dress(Text())
         case "Line": return dressing.dress(Line())
         case "Map": return dressing.dress(Map())
+        case "Masked": return dressing.dress(Text("Masked").mask { Rectangle() })
+        case "MenuButton":
+            var menu = dressing.wear(
+                Menu {
+                    MenuItem("One")
+                    Divider()
+                    MenuItem("Two")
+                } label: {
+                    Text("Pick")
+                })
+            menu.node.id = dressing.id
+            return menu
         case "Path": return dressing.dress(Path())
         case "Picker": return dressing.dress(Picker())
         case "Polygon": return dressing.dress(Polygon())
@@ -132,5 +145,37 @@ public struct SessionPage: View {
         return VStack { [Text("Page")] + beside }
             .onAppear { write(page, window) }
             .onChange(of: key) { write(page, window) }
+    }
+}
+
+/// The layout a `CustomLayout` specimen arranges by: each child in a row, at
+/// its own size - the simplest arrangement a real layout runs.
+@_spi(Host) public struct SpecimenLayout: Layout {
+    /// A row layout.
+    public init() {}
+
+    /// The tallest child high, all of them wide.
+    public func sizeThatFits(
+        proposal: ProposedViewSize, subviews: Subviews, cache: inout Void
+    ) -> Size {
+        subviews.reduce(Size(width: 0, height: 0)) { size, subview in
+            let measured = subview.sizeThatFits(proposal)
+            return Size(
+                width: size.width + measured.width,
+                height: max(size.height, measured.height))
+        }
+    }
+
+    /// Each child in a row, top leading.
+    public func placeSubviews(
+        in bounds: Rect, proposal: ProposedViewSize,
+        subviews: Subviews, cache: inout Void
+    ) {
+        var x = bounds.x
+        for subview in subviews {
+            let measured = subview.sizeThatFits(proposal)
+            subview.place(at: Point(x: x, y: bounds.y), proposal: proposal)
+            x += measured.width
+        }
     }
 }

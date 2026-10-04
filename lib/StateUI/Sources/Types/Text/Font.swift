@@ -143,7 +143,7 @@ public struct Font: Sendable, Equatable {
     }
 
     /// The same font, drawn in `design`.
-    public func design(_ design: Design) -> Font {
+    @_spi(Host) public func design(_ design: Design) -> Font {
         var font = self
         font.design = design
         return font

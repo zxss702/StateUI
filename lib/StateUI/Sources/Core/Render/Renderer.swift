@@ -130,7 +130,7 @@ public final class Renderer: @unchecked Sendable {
     ///
     /// - Parameter application: the application, made once what an earlier
     ///   registration wrote into the application's session is forgotten.
-    public func setApplication(_ application: @autoclosure () -> any App) {
+    @_spi(Host) public func setApplication(_ application: @autoclosure () -> any App) {
         StandardEnvironment.app.forget()
 
         // A new application is a new tree: the old one is let go, and every element of
@@ -166,7 +166,7 @@ public final class Renderer: @unchecked Sendable {
 
     /// Asks for a render without naming what changed, so the next render builds
     /// the whole tree. Safe from any thread; it wakes the host.
-    public func setNeedsRender() {
+    @_spi(Host) public func setNeedsRender() {
         guarded.withLock {
             dirty = true
             untracked = true
@@ -181,14 +181,14 @@ public final class Renderer: @unchecked Sendable {
     ///
     /// - Returns: whether a build was open to record it.
     @discardableResult
-    public func stateRead(_ state: AnyObject) -> Bool {
+    @_spi(Host) public func stateRead(_ state: AnyObject) -> Bool {
         ReadScope.note(ObjectIdentifier(state))
     }
 
     /// Records that a state was written and asks for a render that rebuilds only
     /// the views that read it. A state no live element reads asks for nothing.
     /// Safe from any thread; it wakes the host.
-    public func stateChanged(_ state: AnyObject) {
+    @_spi(Host) public func stateChanged(_ state: AnyObject) {
         let id = ObjectIdentifier(state)
 
         // A write under `withAnimation` or `withTransaction` carries the

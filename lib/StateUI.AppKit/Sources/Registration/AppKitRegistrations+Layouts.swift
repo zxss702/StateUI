@@ -33,7 +33,12 @@ extension AppKitRegistrations {
                 ScrollViewContract.orientation,
                 ScrollViewContract.verticalScrollIndicators,
                 ScrollViewContract.horizontalScrollIndicators,
+                ScrollViewContract.isScrollDisabled,
+                ScrollViewContract.scrollBounceBehavior,
                 ScrollViewContract.scrollOffset,
+                ScrollViewContract.defaultScrollAnchor,
+                ScrollContentElementContract.scrollContentBackground,
+                LayoutContract.clipsContent,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 // The offset is written only where the tree moved it.
@@ -46,9 +51,17 @@ extension AppKitRegistrations {
                     orientation: (values[ScrollViewContract.orientation] ?? .vertical).rawValue,
                     padding: Self.edgeInsets(values[PaddingElementContract.contentPadding]),
                     verticalBarVisibility:
-                        (values[ScrollViewContract.verticalScrollIndicators] ?? .default).rawValue,
+                        (values[ScrollViewContract.verticalScrollIndicators] ?? .automatic).rawValue,
                     horizontalBarVisibility:
-                        (values[ScrollViewContract.horizontalScrollIndicators] ?? .default).rawValue,
+                        (values[ScrollViewContract.horizontalScrollIndicators] ?? .automatic).rawValue,
+                    isScrollDisabled: values[ScrollViewContract.isScrollDisabled] ?? false,
+                    scrollBounceBehavior:
+                        (values[ScrollViewContract.scrollBounceBehavior] ?? .automatic).rawValue,
+                    scrollContentBackground: values[ScrollContentElementContract.scrollContentBackground]
+                        .map { $0 != .hidden },
+                    clipsContent: values[LayoutContract.clipsContent],
+                    defaultAnchor: values[ScrollViewContract.defaultScrollAnchor]
+                        .map { [NSNumber(value: $0.x), NSNumber(value: $0.y)] },
                     offset: offset)
             }
             scroll.applies([

@@ -7,13 +7,13 @@ public protocol RadioButtonProperties: PropertyContainer {}
 
 extension RadioButtonProperties {
     /// Whether this is the chosen one.
-    public func isOn(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOn(_ value: Bool) -> Modified {
         setValue(RadioButtonContract.isOn, value)
     }
 
     /// Which set this belongs to: picking one clears every other button with
     /// the same name in the window.
-    public func groupName(_ value: String) -> Modified {
+    @_spi(Host) public func groupName(_ value: String) -> Modified {
         setValue(RadioButtonContract.groupName, Name(value))
     }
 }
@@ -65,7 +65,7 @@ public struct RadioButton: VisualElement, TextElement, FontElement, PaddingEleme
     /// - Parameter binding: the state shown, and written back into as the
     ///   user picks or clears it.
     /// - Returns: the button, wearing and reporting that value.
-    public func isOn(_ binding: Binding<Bool>) -> Self {
+    @_spi(Host) public func isOn(_ binding: Binding<Bool>) -> Self {
         binding.image == nil
             ? described(RadioButtonContract.isOn.token, binding, on: RadioButtonContract.toggled.token)
             : plain(RadioButtonContract.isOn.token, by: binding, mode: .inOut)
@@ -76,7 +76,7 @@ public struct RadioButton: VisualElement, TextElement, FontElement, PaddingEleme
     /// Fires when this button is picked or cleared, with the new value: picking
     /// one raises it on two buttons, false on the one chosen before and true on
     /// the new one. Runs after a binding's write.
-    public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
+    @_spi(Host) public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
         onEvent(RadioButtonContract.toggled, handler)
     }
 }

@@ -11,20 +11,44 @@ extension ScrollViewProperties {
     /// `.neither` is for a scroller with nothing to scroll, such as an emptied
     /// list: it goes back to the beginning. To stop the user's hand and leave
     /// the scroller where it stands, write `.allowsHitTesting(!true)` instead.
-    public func orientation(_ value: Axis) -> Modified {
+    @_spi(Host) public func orientation(_ value: Axis) -> Modified {
         setValue(ScrollViewContract.orientation, value)
+    }
+
+    /// Where the scroller rests before anything is written - the anchor's
+    /// fractions across and down the content and the room.
+    @_spi(Host) public func defaultScrollAnchor(_ value: UnitPoint) -> Modified {
+        setValue(ScrollViewContract.defaultScrollAnchor, value)
+    }
+
+    /// Whether the hand's scroll is answered. The default is answered.
+    ///
+    /// `ScrollView`'s own spelling of `.scrollDisabled` - the scroller written
+    /// to, not every view.
+    @_spi(Host) public func isScrollDisabled(_ value: Bool) -> Modified {
+        setValue(ScrollViewContract.isScrollDisabled, value)
+    }
+
+    /// Whether it springs back past its content's end.
+    @_spi(Host) public func scrollBounceBehavior(_ value: ScrollBounceBehavior) -> Modified {
+        setValue(ScrollViewContract.scrollBounceBehavior, value)
+    }
+
+    /// How it settles when the hand leaves it.
+    @_spi(Host) public func scrollTargetBehavior(_ value: ScrollTargetBehavior) -> Modified {
+        setValue(ScrollViewContract.scrollTargetBehavior, value)
     }
 
     /// Whether the bar down the side is drawn.
     ///
     /// `.never` is what a scroller inside a page of cards usually wants - the
     /// bar says the same thing the content already does.
-    public func verticalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
+    @_spi(Host) public func verticalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
         setValue(ScrollViewContract.verticalScrollIndicators, value)
     }
 
     /// The same, along the bottom.
-    public func horizontalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
+    @_spi(Host) public func horizontalScrollIndicators(_ value: ScrollIndicatorVisibility) -> Modified {
         setValue(ScrollViewContract.horizontalScrollIndicators, value)
     }
 
@@ -49,7 +73,7 @@ extension ScrollViewProperties {
 ///     ScrollView {
 ///         VStack { … }
 ///     }
-///     .verticalScrollIndicators(.never)
+///     .verticalScrollIndicators(.hidden)
 ///
 /// `.padding` is inside the scroller and moves with the content; `.margin` is
 /// outside it and stays put. A ScrollView describes every child it holds,
@@ -75,26 +99,20 @@ public struct ScrollView: VisualElement, PaddingElement, BorderElement, ScrollVi
         node.producer = { content().node.asChildren }
     }
 
-    /// Where the scroller stands, in device units from the content's top-left
-    /// corner, both ways: the host writes the user's scrolling into the state,
-    /// and a value written there moves the scroller.
+    /// A scroller along `axes` - `.horizontal`, `.vertical` or both - around
+    /// what the closure describes: the SwiftUI spelling.
     ///
-    ///     @State private var offset = Point.zero
-    ///
-    ///     ScrollView { VStack { … } }.scrollOffset($offset)
-    ///
-    ///     Button("Top").onClicked { offset = .zero }
-    ///
-    /// `offset` is where it is going and `$offset.journey.value` where it is. A
-    /// write animates under the element's animation, `$offset.journey.snap(to:)`
-    /// jumps, and `try await $offset.journey.move(to:)` waits for the arrival.
-    /// Handing `$offset` over reads nothing: a body that reads `offset` renders
-    /// on every report, and `.samples($offset, into:, .every(100))` holds a
-    /// reading to ten a second.
-    ///
-    /// - Parameter state: the state the offset is carried on.
-    /// - Returns: the scroller, moving with that state and reporting into it.
-    public func scrollOffset(_ state: Binding<Point>) -> Self {
+    ///     ScrollView(.horizontal) { HStack { … } }
+    public init(_ axes: Axis.Set, @ViewBuilder content: @escaping () -> any View) {
+        self.init(content: content)
+        if axes == .horizontal { node.write(ScrollViewContract.orientation, Axis.horizontal) }
+        else if axes == [.horizontal, .vertical] { node.write(ScrollViewContract.orientation, Axis.both) }
+    }
+
+    /// Where the scroller stands, both ways - the host writes the user's
+    /// scrolling into the state and a value written there moves the scroller.
+    /// Design: docs/design/views/bindings.md#feeds
+    @_spi(Host) public func scrollOffset(_ state: Binding<Point>) -> Self {
         journey(.scrollOffset, by: state)
     }
 
@@ -108,27 +126,44 @@ public struct ScrollView: VisualElement, PaddingElement, BorderElement, ScrollVi
     /// runs once per movement the user makes - a drag let go, a throw that ran
     /// out, a wheel, a key - and not for one that leaves the offset where it
     /// was, nor for one the application wrote.
-    public func onScrollStopped(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onScrollStopped(_ handler: @escaping EventHandler) -> Self {
         onEvent(ScrollViewContract.scrollStopped, handler)
     }
 }
 
 extension ScrollView {
-    /// `horizontalScrollIndicators` from a state, `$x`: the host sets each
-    /// new value as it stands, and no view is rebuilt for it.
-    public func horizontalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
+    /// `horizontalScrollIndicators` from a state, `$x`.
+    @_spi(Host) public func horizontalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
         plain(.horizontalScrollIndicators, by: state)
     }
 
-    /// `orientation` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func orientation(_ state: Binding<Axis>) -> Modified {
+    /// `defaultScrollAnchor` from a state, `$x`.
+    @_spi(Host) public func defaultScrollAnchor(_ state: Binding<UnitPoint>) -> Modified {
+        plain(.defaultScrollAnchor, by: state)
+    }
+
+    /// `isScrollDisabled` from a state, `$x`.
+    @_spi(Host) public func isScrollDisabled(_ state: Binding<Bool>) -> Modified {
+        plain(.isScrollDisabled, by: state)
+    }
+
+    /// `orientation` from a state, `$x`.
+    @_spi(Host) public func orientation(_ state: Binding<Axis>) -> Modified {
         plain(.orientation, by: state)
     }
 
-    /// `verticalScrollIndicators` from a state, `$x`: the host sets each new
-    /// value as it stands, and no view is rebuilt for it.
-    public func verticalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
+    /// `scrollBounceBehavior` from a state, `$x`.
+    @_spi(Host) public func scrollBounceBehavior(_ state: Binding<ScrollBounceBehavior>) -> Modified {
+        plain(.scrollBounceBehavior, by: state)
+    }
+
+    /// `scrollTargetBehavior` from a state, `$x`.
+    @_spi(Host) public func scrollTargetBehavior(_ state: Binding<ScrollTargetBehavior>) -> Modified {
+        plain(.scrollTargetBehavior, by: state)
+    }
+
+    /// `verticalScrollIndicators` from a state, `$x`.
+    @_spi(Host) public func verticalScrollIndicators(_ state: Binding<ScrollIndicatorVisibility>) -> Modified {
         plain(.verticalScrollIndicators, by: state)
     }
 }

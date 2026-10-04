@@ -48,7 +48,7 @@
     ///   - create: makes the view, once per element, handed the reports its events
     ///     and the user's values leave through.
     ///   - members: registers the members the view realizes.
-    public func add<Realized: ElementContract, Made: AnyObject>(
+    @_spi(Host) public func add<Realized: ElementContract, Made: AnyObject>(
         _ contract: Realized.Type,
         create: @escaping (Reports<Realized>) -> Made,
         members: (Registration<Realized, Made>) -> Void = { _ in }
@@ -86,7 +86,7 @@
     ///   - contract: the element's contract.
     ///   - view: the class the host makes for it, which every applier takes.
     ///   - members: registers the members this registration realizes.
-    public func add<Realized: ElementContract, Made: AnyObject>(
+    @_spi(Host) public func add<Realized: ElementContract, Made: AnyObject>(
         _ contract: Realized.Type,
         madeByHost view: Made.Type,
         members: (Registration<Realized, Made>) -> Void
@@ -143,7 +143,7 @@
     /// visibility - rather than one registration.
     ///
     /// - Parameter member: the property, written with its contract.
-    public func everyElementRealizes<Owner: Contract, Value>(_ member: ElementProperty<Owner, Value>) {
+    @_spi(Host) public func everyElementRealizes<Owner: Contract, Value>(_ member: ElementProperty<Owner, Value>) {
         everyElement.append((owner: Owner.self, member: member.name))
     }
 
@@ -152,7 +152,7 @@
     /// registration.
     ///
     /// - Parameter event: the event, written with its contract.
-    public func everyElementRaises<Owner: Contract, Payload>(_ event: ElementEvent<Owner, Payload>) {
+    @_spi(Host) public func everyElementRaises<Owner: Contract, Payload>(_ event: ElementEvent<Owner, Payload>) {
         everyElement.append((owner: Owner.self, member: event.name))
     }
 
@@ -168,7 +168,7 @@
     ///     registry.raises(GalleryContract.batteryChanged)
     ///
     /// - Parameter event: the member, written with its contract.
-    public func raises<Owner: ApplicationTier, Payload>(_ event: ElementEvent<Owner, Payload>) {
+    @_spi(Host) public func raises<Owner: ApplicationTier, Payload>(_ event: ElementEvent<Owner, Payload>) {
         applicationEvents.insert(
             HostRealizedMember(element: AppContract.name, owner: Owner.name, member: event.name))
     }
@@ -182,7 +182,7 @@
     ///   - carry: given each value the user changed in the view: the property, the
     ///     event to raise for it, and the value.
     /// - Returns: the view, or nil.
-    public func makeView(
+    @_spi(Host) public func makeView(
         for type: NodeType,
         sending send: @escaping (Event, [HostValue]) -> Void,
         reporting carry: @escaping (Prop, Event, HostValue) -> Void
@@ -266,7 +266,7 @@
     /// - Parameters:
     ///   - member: the property, written with its contract.
     ///   - apply: puts the value on the view.
-    public func property<Owner: Contract, Value: HostRepresentable>(
+    @_spi(Host) public func property<Owner: Contract, Value: HostRepresentable>(
         _ member: ElementProperty<Owner, Value>,
         _ apply: @escaping (Made, Value?) -> Void
     ) {
@@ -301,7 +301,7 @@
     /// - Parameters:
     ///   - members: the properties it reads, written with their contracts.
     ///   - apply: puts the element's values on the view.
-    public func applies(_ members: [any ContractMember], _ apply: @escaping (Made, ElementValues<Realized>) -> Void) {
+    @_spi(Host) public func applies(_ members: [any ContractMember], _ apply: @escaping (Made, ElementValues<Realized>) -> Void) {
         var keys: Set<Prop> = []
 
         for member in members {
@@ -327,7 +327,7 @@
     /// wear is refused, and said once.
     ///
     /// - Parameter event: the member, written with its contract.
-    public func raises<Owner: Contract, Payload>(_ event: ElementEvent<Owner, Payload>) {
+    @_spi(Host) public func raises<Owner: Contract, Payload>(_ event: ElementEvent<Owner, Payload>) {
         guard Self.wears(Owner.self, for: event.name) else { return }
 
         members.insert(HostRealizedMember(element: Realized.name, owner: Owner.name, member: event.name))

@@ -233,6 +233,10 @@ public struct Node {
     /// element and its subtree by type. Never crosses.
     var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
 
+    /// The keyed values `.environment(\.key, _)` wrote here, provided to this
+    /// element and its subtree, nearer writes winning. Never crosses.
+    var environmentValues = EnvironmentValues()
+
     /// What this element holds for its life, where it asks for something - a page's
     /// session (ElementSession.swift). Never crosses.
     var session: ElementSession?
@@ -276,7 +280,7 @@ public struct Node {
 
     /// Whether this element reports its own frame, so its own size never animates.
     var reportsFrame: Bool {
-        events[.frameChanged] != nil || driven[.frame] != nil
+        events[.frameChanged] != nil || events[.namedFramesChanged] != nil || driven[.frame] != nil
     }
 
     /// Whether this layout's children take their sizes at once: it or one of them is
@@ -297,6 +301,49 @@ public struct Node {
 
     /// What `.onDisappear` runs, in written order.
     var destroying: [EventHandler] = []
+
+    /// The pages `.navigationDestination` registered on this node: a page
+    /// factory per presented value's type, and one an item binding drives.
+    /// The enclosing navigation stack reads them from its root. Never crosses.
+    var destinations: [ObjectIdentifier: (Any) -> Node] = [:]
+    var itemDestination: ItemDestination?
+
+    /// The `.preference`/`.anchorPreference` writes this node offers upward,
+    /// in written order. Folded by the differ, never crossing the wire
+    /// (Preferences.swift).
+    var preferenceSeeds: [PreferenceSeed] = []
+
+    /// The `.onPreferenceChange` listeners this node carries, in written
+    /// order; the differ fires each whose key's folded answer moved.
+    var preferenceObservers: [PreferenceObserver] = []
+
+    /// The `.transformPreference` rewrites of what this node's subtree
+    /// answers, applied after its own and its children's offers fold.
+    var preferenceTransforms: [PreferenceTransform] = []
+
+    /// A custom text renderer `.textRenderer` attached. A code object riding
+    /// the node like `destinations` do - never crosses the wire; the prop
+    /// `textRenderer` carries the `"custom"` marker hosts declare against.
+    var textRenderer: (any TextRenderer)?
+
+    /// A custom `Layout` object the element arranges its children by. A code
+    /// object like `textRenderer` - registered with the differ so a host can
+    /// pull it by the element's id; nothing of it crosses.
+    var customLayout: LayoutBox?
+
+    /// The `.layoutValue` tags this child carries for a custom `Layout`,
+    /// by the key's identity; pulled by a host building `LayoutSubview`s.
+    var layoutValues: [ObjectIdentifier: Any] = [:]
+
+    /// A page `.navigationDestination(item:)` presents while its item is set.
+    /// Design: docs/design/views/pages.md#navigation-destinations
+    struct ItemDestination {
+        /// The pushed page's node, or nil while the item is nil.
+        var make: () -> Node?
+
+        /// What a way back off the pushed page runs - clears the item.
+        var dismiss: @Sendable () -> Void
+    }
 
     /// The engines this element runs, in written order; the differ registers them
     /// under numbers the element keeps (Engine.swift).

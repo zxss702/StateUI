@@ -50,7 +50,11 @@ class AppKitTravellingLayout: AppKitHitTestView, AppKitDirectedLayout {
             item.view.frame = frame
             return
         }
-        places.place(placed, mount: item.mount, at: frame.placed, values: item.values, fadeIn: item.fadeIn)
+        let arrivedFrom = item.matchedStart.map { start in
+            convert(NSRect(placed: start), from: nil).placed
+        }
+        places.place(placed, mount: item.mount, at: frame.placed, values: item.values,
+                     fadeIn: item.fadeIn, arrivedFrom: arrivedFrom)
     }
 }
 

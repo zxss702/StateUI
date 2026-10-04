@@ -16,7 +16,8 @@ extension GTKElement: FrameReporter {
     /// nowhere yet.
     func reportFrame() {
         guard let host, let numbers = view?.frameReport() else { return }
-        element.reportFrame(numbers, in: host.runtime)
+        let named = element.namedSpaceFrames { ($0.native as? GTKElement)?.view?.windowRect() }
+        element.reportFrame(numbers, named: named, in: host.runtime)
     }
 }
 

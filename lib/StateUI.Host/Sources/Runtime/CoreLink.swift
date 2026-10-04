@@ -91,6 +91,16 @@
         HostBoundary.gestureValue(state: state)
     }
 
+    /// The layout object a `CustomLayout` element arranges its children by, or nil where it has none.
+    @MainActor public func customLayout(for element: ElementId) -> LayoutBox? {
+        HostBoundary.customLayout(for: element)
+    }
+
+    /// The `.layoutValue` tags the element carries, by key identity.
+    @MainActor public func layoutValues(for element: ElementId) -> [ObjectIdentifier: Any] {
+        HostBoundary.layoutValues(for: element)
+    }
+
     /// Moves a one-lane state named by a native gesture.
     @discardableResult
     public func moveGestureValue(_ value: Double, state: Int32) -> Bool {

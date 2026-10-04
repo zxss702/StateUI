@@ -42,7 +42,7 @@
     /// - Parameters:
     ///   - event: the member, written with its contract.
     ///   - value: what it carries, in the order its contract declares.
-    public func raise<each Value: HostRepresentable>(
+    @_spi(Host) public func raise<each Value: HostRepresentable>(
         _ event: ElementEvent<Realized, (repeat each Value)>,
         _ value: repeat each Value
     ) {
@@ -67,7 +67,7 @@
     ///   - property: the value's member, written with its contract.
     ///   - value: what the user made it.
     ///   - event: the member the element raises for that change.
-    public func report<Owner: Contract, Raised: Contract, Value: HostRepresentable>(
+    @_spi(Host) public func report<Owner: Contract, Raised: Contract, Value: HostRepresentable>(
         _ property: ElementProperty<Owner, Value>,
         _ value: Value,
         as event: ElementEvent<Raised, Value>

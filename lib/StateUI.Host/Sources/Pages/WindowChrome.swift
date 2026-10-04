@@ -12,6 +12,21 @@
     /// which leaves the host's own.
     public var title: String?
 
+    /// The second line the naming page asks the title area to show; nil where it asks none.
+    public var subtitle: String?
+
+    /// The document the naming page stands for, as its path; nil where it stands for none.
+    public var document: String?
+
+    /// The colour the naming page asks the window to paint behind everything; nil where it asks none.
+    public var windowBackground: HostValue?
+
+    /// Whether the naming page shows the window's own toolbar: nil for the platform's own choice.
+    public var toolbarVisibility: HostValue?
+
+    /// Whether the naming page has the window's own toolbar paint its background: nil for the platform's own.
+    public var toolbarBackground: HostValue?
+
     /// The stack whose top page the way back takes, and the way back's words.
     public var back: (stack: MountedElement, title: String)?
 
@@ -47,6 +62,16 @@
         let page = arrangement?.visiblePage
         let titleBar = window.children.first { $0.type == .titleBar }
         title = arrangement?.titledPage?.value(.title)?.string ?? window.value(.title)?.string
+        subtitle = arrangement?.titledPage?.value(.subtitle)?.string
+            ?? arrangement?.value(.subtitle)?.string
+        document = arrangement?.titledPage?.value(.document)?.string
+            ?? arrangement?.value(.document)?.string
+        windowBackground = arrangement?.titledPage?.value(.windowBackground)
+            ?? arrangement?.value(.windowBackground)
+        toolbarVisibility = arrangement?.titledPage?.value(.toolbarVisibility)
+            ?? arrangement?.value(.toolbarVisibility)
+        toolbarBackground = arrangement?.titledPage?.value(.toolbarBackground)
+            ?? arrangement?.value(.toolbarBackground)
         back = arrangement?.visibleBackStack.map { stack in
             (stack, stack.children[stack.children.count - 2].value(.backButtonTitle)?.string ?? "Back")
         }

@@ -14,6 +14,7 @@ public enum RadioButtonContract: ElementContract {
     public static let tiers: [any Contract.Type] = [
         ViewContract.self, TextElementContract.self, FontElementContract.self, PaddingElementContract.self,
         BorderElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// Which set it belongs to: picking one clears every other button of the

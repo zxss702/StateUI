@@ -48,7 +48,9 @@
     /// Stands `view`, the mounted element `mount`'s, at `place`, or on its way there; its `values` say which sides
     /// it sizes itself, and `fadeIn` fades it in as it joins a standing layout.
     public func place(
-        _ view: any PlacedView, mount: UInt64, at place: Rect, values: LayoutValues, fadeIn: ((Animation) -> Void)?
+        _ view: any PlacedView, mount: UInt64, at place: Rect, values: LayoutValues,
+        fadeIn: ((Animation, Rect) -> Void)?,
+        arrivedFrom: Rect? = nil
     ) {
         guard let layoutMotion else {
             view.placedFrame = place
@@ -58,6 +60,7 @@
         var stated: AnimationLanes = []
         if values.width != nil { stated.insert(.width) }
         if values.height != nil { stated.insert(.height) }
-        layoutMotion.place(view, mount: mount, at: place, stated: stated, fadeIn: fadeIn, in: arrangement)
+        layoutMotion.place(view, mount: mount, at: place, stated: stated,
+                           fadeIn: fadeIn, arrivedFrom: arrivedFrom, in: arrangement)
     }
 }

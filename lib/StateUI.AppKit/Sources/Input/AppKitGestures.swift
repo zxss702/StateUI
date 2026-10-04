@@ -53,8 +53,8 @@ final class AppKitPanRecognizer: NSPanGestureRecognizer {
     }
 
     /// A press dragged, at `phase`, `x` across and `y` down from where it began.
-    func dragged(_ phase: GesturePhase, x: Double, y: Double) {
-        hearing(.drag(phase, x: x, y: y))
+    func dragged(_ phase: GesturePhase, x: Double, y: Double, at: Point, from: Point) {
+        hearing(.drag(phase, x: x, y: y, at: at, from: from))
     }
 
     private func recognized(_ recognizer: NSPanGestureRecognizer) {
@@ -69,7 +69,9 @@ final class AppKitPanRecognizer: NSPanGestureRecognizer {
         default: nil
         }
         guard let phase else { return }
-        dragged(phase, x: Double(moved.x), y: Double(down))
+        let at = recognizer.view.map { $0.topLeft(recognizer.location(in: $0)) } ?? Point(x: 0, y: 0)
+        let from = Point(x: at.x - Double(moved.x), y: at.y - Double(down))
+        dragged(phase, x: Double(moved.x), y: Double(down), at: at, from: from)
     }
 }
 

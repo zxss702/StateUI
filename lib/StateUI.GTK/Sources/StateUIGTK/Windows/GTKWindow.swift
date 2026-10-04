@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
+@_spi(Host) import StateUI
+@_spi(Host) import StateUIHost
 import CStateUIGTK
 
 /// An application window of libadwaita, showing a page in a frame of its own - its header bar the window's title
@@ -32,6 +34,9 @@ final class GTKWindow {
     private var size: (width: Double?, height: Double?) = (nil, nil)
     private var minimumSize: (width: Double?, height: Double?) = (nil, nil)
 
+    /// The window's fill class last given; nil for the platform's own.
+    private var fillClass: String?
+
     init(application: UnsafeMutablePointer<GtkApplication>) {
         widget = adw_application_window_new(application)!
         g_object_ref(widget)
@@ -54,6 +59,21 @@ final class GTKWindow {
         guard self.title != .some(title) else { return }
         self.title = .some(title)
         gtk_window_set_title(widget.of(GtkWindow.self), title)
+    }
+
+    /// Whether the user resizes the window, as `WindowResizability` says: `.contentSize` fixes the window to its
+    /// content, the rest leave it to the user.
+    func setResizable(_ resizability: Int32?) {
+        gtk_window_set_resizable(widget.of(GtkWindow.self), resizability == 2 ? 0 : 1)
+    }
+
+    /// The colour the window paints behind everything; nil for the platform's own.
+    func setBackground(_ value: HostValue?) {
+        let wanted = GTKBrush(value).firstColor.map(GTKStyleSheet.fill)
+        guard wanted != fillClass else { return }
+        if let fillClass { gtk_widget_remove_css_class(widget, fillClass) }
+        if let wanted { gtk_widget_add_css_class(widget, wanted) }
+        fillClass = wanted
     }
 
     /// The window's size as it opens, where the window element says one; a window already open takes it too.

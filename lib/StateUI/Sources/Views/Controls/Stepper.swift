@@ -13,19 +13,19 @@ extension StepperProperties {
 
     /// The lowest it goes - the minus button stops here.
     /// It is 0 until told otherwise.
-    public func minimum(_ value: Double) -> Modified {
+    @_spi(Host) public func minimum(_ value: Double) -> Modified {
         setValue(StepperContract.minimum, value)
     }
 
     /// The highest it goes - the plus button stops here.
     /// It is 100 until told otherwise.
-    public func maximum(_ value: Double) -> Modified {
+    @_spi(Host) public func maximum(_ value: Double) -> Modified {
         setValue(StepperContract.maximum, value)
     }
 
     /// How far one tap moves the value.
     /// It is 1 until told otherwise.
-    public func step(_ value: Double) -> Modified {
+    @_spi(Host) public func step(_ value: Double) -> Modified {
         setValue(StepperContract.step, value)
     }
 }
@@ -99,7 +99,7 @@ public struct Stepper: VisualElement, StepperProperties{
 
     /// Fires on every tap of either button, with the value stepped to. Runs
     /// after a binding's write, if there is one.
-    public func onValueChanged(_ handler: @escaping ValueEventHandler<Double>) -> Self {
+    @_spi(Host) public func onValueChanged(_ handler: @escaping ValueEventHandler<Double>) -> Self {
         onEvent(StepperContract.valueChanged, handler)
     }
 }
@@ -107,7 +107,7 @@ public struct Stepper: VisualElement, StepperProperties{
 extension Stepper {
     /// `step` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func step(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func step(_ state: Binding<Double>) -> Modified {
         plain(.step, by: state)
     }
 }

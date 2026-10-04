@@ -15,7 +15,7 @@ extension CanvasProperties {
     ///
     /// Usually given in the initializer instead; this is how a `Style<Canvas>`
     /// states one.
-    public func drawable(@DrawingBuilder _ drawing: () -> [DrawCommand]) -> Modified {
+    @_spi(Host) public func drawable(@DrawingBuilder _ drawing: () -> [DrawCommand]) -> Modified {
         setValue(CanvasContract.drawable, drawing())
     }
 }
@@ -57,18 +57,18 @@ public struct Canvas: VisualElement, CanvasProperties{
     ///
     /// The point is in the canvas's own coordinates - the same ones the drawing
     /// instructions use, so what arrives can be drawn where it happened.
-    public func onPressed(_ handler: @escaping ValueEventHandler<Point>) -> Self {
+    @_spi(Host) public func onPressed(_ handler: @escaping ValueEventHandler<Point>) -> Self {
         onEvent(CanvasContract.pressed, handler)
     }
 
     /// It moved while still down, with where it is now - the canvas's own
     /// coordinates again.
-    public func onDragged(_ handler: @escaping ValueEventHandler<Point>) -> Self {
+    @_spi(Host) public func onDragged(_ handler: @escaping ValueEventHandler<Point>) -> Self {
         onEvent(CanvasContract.dragged, handler)
     }
 
     /// It was lifted, with where it left off.
-    public func onReleased(_ handler: @escaping ValueEventHandler<Point>) -> Self {
+    @_spi(Host) public func onReleased(_ handler: @escaping ValueEventHandler<Point>) -> Self {
         onEvent(CanvasContract.released, handler)
     }
 }

@@ -14,7 +14,7 @@ extension TextEditorProperties {
     /// growing, the default, it keeps the height it was given and scrolls the
     /// text inside it. A growing editor wants a ScrollView above it, having no
     /// height of its own to stop at.
-    public func growsWithText(_ value: Bool) -> Modified {
+    @_spi(Host) public func growsWithText(_ value: Bool) -> Modified {
         setValue(TextEditorContract.growsWithText, value)
     }
 }
@@ -52,20 +52,9 @@ public struct TextEditor: InputView, TextElement, FontElement, TextAlignmentElem
         self = TextEditor().text(text)
     }
 
-    // Design: docs/design/views/bindings.md#two-way-controls
     /// The same two-way text as `TextEditor($text)`, written as a modifier.
-    ///
-    ///     TextEditor($query)
-    ///     TextEditor().text($query)
-    ///
-    /// The host shows the state's text and writes back what the user types,
-    /// with no view rebuilt for it: a keystroke costs a render only in a body
-    /// that reads the state.
-    ///
-    /// - Parameter value: the state shown, and written back into as the user
-    ///   types.
-    /// - Returns: the control, wearing and reporting that text.
-    public func text(_ value: Binding<String>) -> Modified {
+    /// Design: docs/design/views/bindings.md#two-way-controls
+    @_spi(Host) public func text(_ value: Binding<String>) -> Modified {
         value.image == nil
             ? described(TextElementContract.text.token, value, on: .textChanged)
             : words(TextElementContract.text.token, by: value, mode: .inOut)
@@ -74,9 +63,8 @@ public struct TextEditor: InputView, TextElement, FontElement, TextAlignmentElem
 }
 
 extension TextEditor {
-    /// `growsWithText` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func growsWithText(_ state: Binding<Bool>) -> Modified {
+    /// `growsWithText` from a state, `$x`.
+    @_spi(Host) public func growsWithText(_ state: Binding<Bool>) -> Modified {
         plain(.growsWithText, by: state)
     }
 }

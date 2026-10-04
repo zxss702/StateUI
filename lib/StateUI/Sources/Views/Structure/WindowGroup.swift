@@ -37,6 +37,14 @@ public struct WindowGroup {
     /// Whether its windows float above the application's other windows.
     var floats = false
 
+    /// How its windows settle their size against their content; nil for the
+    /// platform's ordinary sizing.
+    var resizability: WindowResizability? = nil
+
+    /// The size its windows open at, in device units; nil for the platform's
+    /// own.
+    var defaultSize: (width: Double, height: Double)? = nil
+
     /// A group that opens one window, in any scene that declares it.
     ///
     ///     WindowGroup(.debugInspector) { DebugInspector() }
@@ -92,7 +100,7 @@ public struct WindowGroup {
     ///
     ///     WindowGroup(.fonts) { FontsWindow() }
     ///         .hidesWhenInactive(true)
-    public func hidesWhenInactive(_ hides: Bool) -> WindowGroup {
+    @_spi(Host) public func hidesWhenInactive(_ hides: Bool) -> WindowGroup {
         var copy = self
         copy.hides = hides
         return copy
@@ -105,9 +113,37 @@ public struct WindowGroup {
     ///
     ///     WindowGroup(.fonts) { FontsWindow() }
     ///         .floatsOnTop(true)
-    public func floatsOnTop(_ floats: Bool) -> WindowGroup {
+    @_spi(Host) public func floatsOnTop(_ floats: Bool) -> WindowGroup {
         var copy = self
         copy.floats = floats
+        return copy
+    }
+
+    /// How the group's windows settle their size against their content -
+    /// `.contentSize` has the window take the size its content asks for and
+    /// no other:
+    ///
+    ///     WindowGroup(.settings) { SettingsWindow() }
+    ///         .windowResizability(.contentSize)
+    ///
+    /// A host that cannot fix a window's size takes what it can of the
+    /// constraint - `.contentMinSize` binds its least size.
+    public func windowResizability(_ resizability: WindowResizability) -> WindowGroup {
+        var copy = self
+        copy.resizability = resizability
+        return copy
+    }
+
+    /// The size the group's windows open at, in device units:
+    ///
+    ///     WindowGroup(.main) { MainWindow() }
+    ///         .defaultSize(width: 1280, height: 800)
+    ///
+    /// The platform's own size stands where none is asked for, and a size the
+    /// user later gives the window is its own.
+    public func defaultSize(width: Double, height: Double) -> WindowGroup {
+        var copy = self
+        copy.defaultSize = (width: width, height: height)
         return copy
     }
 }

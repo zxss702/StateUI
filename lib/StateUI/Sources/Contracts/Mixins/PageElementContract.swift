@@ -31,8 +31,35 @@ public enum PageElementContract: Contract {
     public static let interactiveDismissDisabled = ElementProperty<Self, Bool>(
         "interactiveDismissDisabled", layer: .native)
 
+    /// A second line naming the current document or section, shown in the
+    /// title area where the platform takes one.
+    public static let subtitle = ElementProperty<Self, String>("subtitle", layer: .adaptive)
+
+    /// The path of the document the page stands for, where a platform shows
+    /// one in its window's chrome.
+    public static let document = ElementProperty<Self, String>("document", layer: .adaptive)
+
+    /// The width a split view's column prefers, as least, ideal and most -
+    /// a single number for a fixed width.
+    public static let preferredColumnWidth = ElementProperty<Self, [Double]>(
+        "preferredColumnWidth", layer: .adaptive)
+
+    /// Whether the window's own toolbar shows over the page.
+    public static let toolbarVisibility = ElementProperty<Self, Visibility>(
+        "toolbarVisibility", layer: .adaptive)
+
+    /// Whether the window's own toolbar paints its background.
+    public static let toolbarBackground = ElementProperty<Self, Visibility>(
+        "toolbarBackground", layer: .adaptive)
+
+    /// The colour the window paints behind the page's own background.
+    public static let windowBackground = ElementProperty<Self, Color>(
+        "windowBackground", layer: .adaptive)
+
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        icon, title, badge, presentationDetents, presentationDragIndicator, interactiveDismissDisabled,
+        badge, document, icon, interactiveDismissDisabled, preferredColumnWidth, presentationDetents,
+        presentationDragIndicator, subtitle, title, toolbarBackground, toolbarVisibility,
+        windowBackground,
     ]
 }

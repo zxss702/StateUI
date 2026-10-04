@@ -20,6 +20,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(top: 3, left: 5, bottom: 7, right: 11),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 2,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
 
         XCTAssertEqual(scroll.intrinsicContentSize.width, 516, accuracy: 0.001)
@@ -60,6 +65,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(),
             verticalBarVisibility: 0,
             horizontalBarVisibility: 0,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: NSPoint(x: 0, y: 160))
         scroll.layoutSubtreeIfNeeded()
 
@@ -87,6 +97,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(),
             verticalBarVisibility: 0,
             horizontalBarVisibility: 0,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
         scroll.layoutSubtreeIfNeeded()
 
@@ -101,6 +116,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(top: 2, left: 3, bottom: 4, right: 5),
             verticalBarVisibility: 1,
             horizontalBarVisibility: 2,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
 
         XCTAssertFalse(scroll.hasVerticalScroller)
@@ -146,6 +166,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 0,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
         page.addSubview(inner)
 
@@ -218,6 +243,11 @@ final class AppKitScrollViewTests: XCTestCase {
             padding: NSEdgeInsets(),
             verticalBarVisibility: 2,
             horizontalBarVisibility: 0,
+            isScrollDisabled: false,
+            scrollBounceBehavior: ScrollBounceBehavior.automatic.rawValue,
+            scrollContentBackground: nil,
+            clipsContent: nil,
+            defaultAnchor: nil,
             offset: nil)
         page.addSubview(inner)
         return (outer, inner)
@@ -251,8 +281,8 @@ final class AppKitScrollViewTests: XCTestCase {
         let renderer = AppKitRenderer.running {
             VStack {
                 ScrollView { Text("Default") }
-                ScrollView { Text("Never") }.verticalScrollIndicators(.never)
-                ScrollView { Text("Always") }.verticalScrollIndicators(.always)
+                ScrollView { Text("Never") }.verticalScrollIndicators(.hidden)
+                ScrollView { Text("Always") }.verticalScrollIndicators(.visible)
             }
         }
         defer { renderer.closeForTesting() }
@@ -272,10 +302,10 @@ final class AppKitScrollViewTests: XCTestCase {
                     .orientation(.horizontal)
                 ScrollView { Text("Never") }
                     .orientation(.horizontal)
-                    .horizontalScrollIndicators(.never)
+                    .horizontalScrollIndicators(.hidden)
                 ScrollView { Text("Always") }
                     .orientation(.horizontal)
-                    .horizontalScrollIndicators(.always)
+                    .horizontalScrollIndicators(.visible)
             }
         }
         defer { renderer.closeForTesting() }
@@ -439,7 +469,7 @@ private struct TappedRun: View {
     @State private var across = Point.zero
 
     var body: some View {
-        ScrollViewReader(across: 300) {
+        ScrollReader(across: 300) {
             ColorPicker(Color("#3366FF"))
         }
         .scrollOffset($across)

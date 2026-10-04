@@ -143,7 +143,8 @@ final class AndroidActToolkit: ActToolkit {
     /// A web view's own acts - stepping back or forward, loading again, running a script, which answers by ticket -
     /// and an List's scroll to an item.
     func performOwn(_ call: HostActCall) -> Bool {
-        guard [.goBack, .goForward, .reload, .evaluateJavaScript, .scrollTo].contains(call.act) else { return false }
+        guard [.goBack, .goForward, .reload, .evaluateJavaScript, .scrollTo, .scrollToDescendant]
+            .contains(call.act) else { return false }
         let element: MountedElement
         do {
             element = try tree().aimed(call)
@@ -159,6 +160,26 @@ final class AndroidActToolkit: ActToolkit {
             items.scroll(
                 to: call.arguments.value(1)?.string ?? "",
                 anchor: call.arguments.value(2).flatMap(ScrollAnchor.init(propValue:)) ?? .nearest)
+            core.reply(call, [])
+            return true
+        }
+        if call.act == .scrollToDescendant {
+            guard let scroller = (element.native as? AndroidElement)?.view as? AndroidScrollView else {
+                core.fail(call, "scrollToDescendant is an act of a ScrollView",
+                          log: { AndroidRenderer.log.error($0) })
+                return true
+            }
+            let name = call.arguments.value(1)?.string ?? ""
+            guard let target = element.first(id: .manual(name)),
+                  let descendant = (target.native as? AndroidElement)?.view else {
+                core.fail(call, "there is no view '\(name)' inside the scroll view",
+                          log: { AndroidRenderer.log.error($0) })
+                return true
+            }
+            scroller.scroll(
+                toDescendant: descendant,
+                anchorX: call.arguments.value(2)?.number,
+                anchorY: call.arguments.value(3)?.number)
             core.reply(call, [])
             return true
         }

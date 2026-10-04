@@ -39,8 +39,9 @@ extension AndroidElement {
 
         var item = AndroidLayoutItem(view: view, values: element.layoutValues, isShown: isShown)
         item.mount = element.mount
+        item.departing = element.isDeparting
         if fadesIn {
-            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
+            item.fadeIn = { [weak self] animation, room in self?.fadeIn(under: animation, room: room) }
         }
         return item
     }

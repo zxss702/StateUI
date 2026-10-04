@@ -33,6 +33,7 @@ final class GestureTests: XCTestCase {
         renders.fire(events["swiped"] ?? -1, with: [.enumeration(SwipeDirection.left.rawValue)])
         renders.fire(events["panUpdated"] ?? -1, with: [
             .enumeration(GesturePhase.running.rawValue), .number(12.5), .number(-3),
+            .numbers([10, 20]), .numbers([22.5, 17]),
         ])
         renders.fire(events["pinchUpdated"] ?? -1, with: [
             .enumeration(GesturePhase.completed.rawValue), .number(1.25), .numbers([0.5, 0.75]),
@@ -44,6 +45,8 @@ final class GestureTests: XCTestCase {
         XCTAssertEqual(pans.first?.phase, .running)
         XCTAssertEqual(pans.first?.totalX, 12.5)
         XCTAssertEqual(pans.first?.totalY, -3)
+        XCTAssertEqual(pans.first?.startLocation, Point(x: 10, y: 20))
+        XCTAssertEqual(pans.first?.location, Point(x: 22.5, y: 17))
 
         XCTAssertEqual(pinches.first?.phase, .completed)
         XCTAssertEqual(pinches.first?.scale, 1.25)
@@ -77,6 +80,7 @@ final class GestureTests: XCTestCase {
 
         renders.fire(id, with: [
             .enumeration(GesturePhase.started.rawValue), .number(0), .number(0),
+            .numbers([10, 10]), .numbers([10, 10]),
         ])
         XCTAssertEqual(pans, 1)
     }
@@ -209,6 +213,70 @@ final class GestureTests: XCTestCase {
         XCTAssertEqual(second, 1, "the second handler ran too, rather than replacing the first")
     }
 
+    /// A `DragGesture` attached with `.gesture` hears the same pan reports the
+    /// platform sends: `onChanged` from the drag's first move until its last,
+    /// `onEnded` as it lets go, each handed where the press began, where it is
+    /// and how far it has come.
+    func testADragGestureReportsItsValue() {
+        let renders = Renders()
+        var changed: [DragGesture.Value] = []
+        var ended: [DragGesture.Value] = []
+
+        let patch = renders.render(
+            ColorPicker()
+                .gesture(
+                    DragGesture(minimumDistance: 5)
+                        .onChanged { changed.append($0) }
+                        .onEnded { ended.append($0) })
+                .node)
+        let id = patch.events?["panUpdated"] ?? -1
+
+        func pan(_ phase: GesturePhase, _ x: Double, _ y: Double) {
+            renders.fire(id, with: [
+                .enumeration(phase.rawValue), .number(x), .number(y),
+                .numbers([100, 100]), .numbers([100 + x, 100 + y]),
+            ])
+        }
+
+        pan(.started, 0, 0)
+        pan(.running, 2, 0)          // below the distance: not yet a drag
+        XCTAssertTrue(changed.isEmpty)
+
+        pan(.running, 6, 0)          // past it: the drag's first move
+        pan(.running, 8, 2)
+        pan(.completed, 8, 2)
+
+        XCTAssertEqual(changed.count, 2)
+        XCTAssertEqual(changed.last?.startLocation, Point(x: 100, y: 100))
+        XCTAssertEqual(changed.last?.location, Point(x: 108, y: 102))
+        XCTAssertEqual(changed.last?.translation, Size(width: 8, height: 2))
+
+        XCTAssertEqual(ended.count, 1)
+        XCTAssertEqual(ended.first?.translation, Size(width: 8, height: 2))
+    }
+
+    /// A press that never becomes a drag - let go below the distance - ends
+    /// without a word: nothing began, so nothing ends.
+    func testADragBelowTheDistanceEndsSilently() {
+        let renders = Renders()
+        var ran = 0
+
+        let patch = renders.render(
+            ColorPicker()
+                .gesture(DragGesture(minimumDistance: 10)
+                    .onChanged { _ in ran += 1 }
+                    .onEnded { _ in ran += 1 })
+                .node)
+        let id = patch.events?["panUpdated"] ?? -1
+
+        renders.fire(id, with: [
+            .enumeration(GesturePhase.completed.rawValue), .number(3), .number(0),
+            .numbers([50, 50]), .numbers([53, 50]),
+        ])
+
+        XCTAssertEqual(ran, 0)
+    }
+
     func testWhatADragCarriesIsDecidedBeforeItStarts() {
         let renders = Renders()
         var dropped: [String] = []
@@ -237,5 +305,30 @@ final class GestureTests: XCTestCase {
 
         renders.fire(target?.events?["drop"] ?? -1, with: [.string("Alpha")])
         XCTAssertEqual(dropped, ["Alpha"])
+    }
+
+    /// The SwiftUI spelling: `dropPaths` decodes as the paths and the point,
+    /// and `isTargeted` hears a drag come in, land and leave.
+    func testAFileDropHandsThePathsAndThePoint() {
+        let renders = Renders()
+        var dropped: [String] = []
+        var landed = Point.zero
+        var targeted: [Bool] = []
+
+        let patch = renders.render(
+            Text("Drop here")
+                .dropDestination { paths, point in
+                    dropped = paths
+                    landed = point
+                } isTargeted: { targeted.append($0) }
+                .node)
+
+        renders.fire(patch.events?["dragOver"] ?? -1)
+        renders.fire(patch.events?["dropPaths"] ?? -1, with: [.strings(["/tmp/a.txt", "/tmp/b.txt"]), .numbers([4, 6])])
+        stateUIRunJobs()
+
+        XCTAssertEqual(dropped, ["/tmp/a.txt", "/tmp/b.txt"])
+        XCTAssertEqual(landed, Point(4, 6))
+        XCTAssertEqual(targeted, [true, false])
     }
 }

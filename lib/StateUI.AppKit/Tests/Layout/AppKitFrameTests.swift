@@ -87,7 +87,7 @@ final class AppKitFrameTests: XCTestCase {
         parent.addSubview(measured)
         measured.frame = NSRect(x: 10, y: 20, width: 100, height: 40)
 
-        XCTAssertEqual(node.frameNumbers(), [10, 20, 100, 40, 35, 50, 30, 40])
+        XCTAssertEqual(node.frameNumbers(), [10, 20, 100, 40, 35, 50, 5, 10, 395, 290])
     }
 
     @MainActor

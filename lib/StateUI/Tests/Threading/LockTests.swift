@@ -3,7 +3,7 @@
 
 import Dispatch
 import XCTest
-@testable import StateUI
+@_spi(Host) @testable import StateUI
 
 /// State more than one thread touches stands behind a `Lock` - Lock.swift.
 final class LockTests: XCTestCase {

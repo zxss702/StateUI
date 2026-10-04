@@ -16,13 +16,14 @@
 /// A brush is where a gradient goes: `.background` takes one colour or one of
 /// these.
 public struct Brush: Equatable, Sendable, HostRepresentable {
-    /// Which of the three brushes this is, as the number that crosses; the
+    /// Which of the brushes this is, as the number that crosses; the
     /// kinds number from 1.
     /// Design: docs/design/types/vocabularies.md#a-kind-first
     enum Kind: Int32, Sendable {
         case solidColor = 1
         case linearGradient = 2
         case radialGradient = 3
+        case material = 4
     }
 
     let kind: Kind
@@ -34,10 +35,15 @@ public struct Brush: Equatable, Sendable, HostRepresentable {
     /// The colours; one for a solid brush, whose offset does not cross.
     let stops: [GradientStop]
 
-    private init(_ kind: Kind, geometry: [Double] = [], stops: [GradientStop]) {
+    /// Which material a material brush is, as `Material.Kind` numbers them;
+    /// nothing for any other brush.
+    let material: Int32
+
+    private init(_ kind: Kind, geometry: [Double] = [], stops: [GradientStop], material: Int32 = 0) {
         self.kind = kind
         self.geometry = geometry
         self.stops = stops
+        self.material = material
     }
 
     /// One colour, everywhere.
@@ -96,7 +102,25 @@ public struct Brush: Equatable, Sendable, HostRepresentable {
         Brush(.radialGradient, geometry: [center.x, center.y, radius], stops: stops)
     }
 
-    /// The kind, then its geometry and its stops.
+    /// The platform's material `material` numbers - a `Material` seen as a
+    /// brush, for a property that takes only a brush. A host paints it with
+    /// the platform's frosted translucency where the platform draws one;
+    /// elsewhere it stands for a soft translucent fill.
+    static func material(_ material: Int32) -> Brush {
+        Brush(.material, stops: [], material: material)
+    }
+
+    /// The brush's one colour, or its first stop's: what a painter taking
+    /// only a colour draws with it. A material has none.
+    var firstColor: Color? {
+        switch kind {
+        case .solidColor: stops.first?.color
+        case .linearGradient, .radialGradient: stops.first?.color
+        case .material: nil
+        }
+    }
+
+    /// The kind, then what that kind is made of.
     public var propValue: PropValue {
         var values: [PropValue] = [.enumeration(kind.rawValue)]
 
@@ -107,6 +131,9 @@ public struct Brush: Equatable, Sendable, HostRepresentable {
         case .linearGradient, .radialGradient:
             values.append(.numbers(geometry))
             values += stops.flatMap { [.number($0.offset), $0.color.propValue] }
+
+        case .material:
+            values.append(.enumeration(material))
         }
 
         return .values(values)
@@ -142,6 +169,11 @@ public struct Brush: Equatable, Sendable, HostRepresentable {
             }
 
             self.init(kind, geometry: geometry, stops: stops)
+
+        case .material:
+            guard values.count == 2, let material = values[1].enumeration else { return nil }
+
+            self.init(.material, stops: [], material: material)
         }
     }
 }

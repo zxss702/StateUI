@@ -18,7 +18,13 @@ extension UIKitElement: FrameReporter {
     /// Says where the element stands, where that changed (`MountedElement.reportFrame`).
     func reportFrame() {
         guard let host, let numbers = frameNumbers() else { return }
-        element.reportFrame(numbers, in: host.runtime)
+        let named = element.namedSpaceFrames { ancestor in
+            guard let ancestorView = (ancestor.native as? UIKitElement)?.view,
+                  let window = ancestorView.window else { return nil }
+            let frame = ancestorView.convert(ancestorView.bounds, to: window)
+            return Rect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height)
+        }
+        element.reportFrame(numbers, named: named, in: host.runtime)
     }
 
     /// Where the view stands now: in its parent, in its window, and from the safe area the window's pages stand in;
@@ -26,9 +32,13 @@ extension UIKitElement: FrameReporter {
     func frameNumbers() -> [Double]? {
         guard let view, let window = view.window, isPlaced || view.bounds.size != .zero else { return nil }
         let corner = view.convert(view.bounds, to: window).origin
+        let insets = window.safeAreaInsets
         return MountedElement.frameNumbers(
             place: placedFrame, corner: Point(x: corner.x, y: corner.y),
-            content: Point(x: window.safeAreaInsets.left, y: window.safeAreaInsets.top))
+            safeArea: Rect(
+                x: insets.left, y: insets.top,
+                width: window.bounds.width - insets.left - insets.right,
+                height: window.bounds.height - insets.top - insets.bottom))
     }
 }
 

@@ -82,3 +82,35 @@ public struct AnyView: View {
         node = content.node
     }
 }
+
+/// A view marked safe to build again only when its value has moved - what
+/// `.equatable()` makes.
+///
+/// StateUI reads a view's stored properties as its inputs and rebuilds it
+/// where they differ; an `Equatable` view's inputs already compare by value,
+/// which is what the wrapper declares.
+public struct EquatableView<Content: View & Equatable>: View, Equatable {
+    /// The wrapped view.
+    public var content: Content
+
+    /// The wrapped view's node, as written.
+    public var node: Node { content.node }
+
+    /// Wraps `content`, declared `Equatable`.
+    public init(content: Content) {
+        self.content = content
+    }
+}
+
+extension View where Self: Equatable {
+    /// Marks this view safe to build again only when its value has moved:
+    ///
+    ///     Row(item: item)
+    ///         .equatable()
+    ///
+    /// The view's `Equatable` conformance - often synthesized - is what the
+    /// differ compares it by.
+    public func equatable() -> EquatableView<Self> {
+        EquatableView(content: self)
+    }
+}

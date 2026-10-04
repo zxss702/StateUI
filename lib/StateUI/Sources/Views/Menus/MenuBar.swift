@@ -21,7 +21,7 @@
 ///     ]
 ///
 /// Not a view: a menu belongs to a page, written into the page's session.
-public struct Menu: View {
+public struct Menu: View, ModifiableElement {
     /// The node this menu describes.
     public var node: Node
 
@@ -53,6 +53,58 @@ public struct Menu: View {
     public func disabled(_ value: Bool) -> Self {
         var copy = self
         copy.node.write(MenuContract.isEnabled, value)
+        return copy
+    }
+
+    /// A menu that lives in the view: a button whose label opens `content`'s
+    /// entries - `MenuItem`s, `Divider`s and nested `Menu`s:
+    ///
+    ///     Menu {
+    ///         ForEach(providers) { MenuItem($0.name).onClicked { pick($0) } }
+    ///     } label: {
+    ///         Text(chosen.name)
+    ///     }
+    ///     .menuStyle(.borderlessButton)
+    ///
+    /// The label is the trigger the menu opens from; the entries are a slot
+    /// child, as a context menu's are, never laid out.
+    ///
+    /// - Parameters:
+    ///   - content: the entries, in the order they are shown.
+    ///   - label: the trigger shown in the view.
+    public init(@ViewBuilder content: () -> any View, @ViewBuilder label: () -> any View) {
+        node = Node(contract: MenuButtonContract.self)
+        node.children = label().node.asChildren
+        node.children.append(
+            Node(contract: ContextMenuContract.self, children: content().node.asChildren))
+    }
+
+    /// A menu button captioned `text`.
+    ///
+    /// The label is spelled out rather than inferred: `Menu("x") { ... }`
+    /// alone names the menu-bar menu, so the button form keeps its own
+    /// signature.
+    public init(title text: String, @ViewBuilder content: () -> any View) {
+        self.init(content: content) { Text(text) }
+    }
+}
+
+extension Menu {
+    /// How the trigger draws - `.borderlessButton` for a bare label that opens
+    /// its menu, `.bordered` for the desktop's ordinary menu button:
+    ///
+    ///     Menu { MenuItem("One").onClicked { pick(1) } } label: { Text("Pick") }
+    ///         .menuStyle(.borderlessButton)
+    public func menuStyle(_ style: some MenuStyle) -> Self {
+        var copy = self
+        copy.node.write(MenuButtonContract.menuStyle, style.menuStyleToken)
+        return copy
+    }
+
+    /// Whether the trigger shows the mark that says it opens a menu.
+    public func menuIndicator(_ visibility: MenuIndicatorVisibility) -> Self {
+        var copy = self
+        copy.node.write(MenuButtonContract.menuIndicator, visibility)
         return copy
     }
 }

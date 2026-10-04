@@ -90,6 +90,23 @@ final class RenderedNode {
     /// What the element holds for its life, where it asked for one.
     var session: AnyObject?
 
+    /// The `.preference` offers this element wrote, kept for the clean walk
+    /// which rebuilds the folded answers from them and its children.
+    var preferenceSeeds: [PreferenceSeed] = []
+
+    /// The `.transformPreference` rewrites of this element's offer, same
+    /// keeping.
+    var preferenceTransforms: [PreferenceTransform] = []
+
+    /// What this element's subtree answers each key that asked, folded - the
+    /// parents read from it; kept for the clean walk.
+    var preferenceValues: [ObjectIdentifier: FoldedPreference] = [:]
+
+    /// The `.onPreferenceChange` listeners of its last build, with the answer
+    /// each last heard; the clean walk fires them, the full build compares
+    /// them.
+    var preferenceWatches: [PreferenceWatch] = []
+
     /// The numbers its engines are registered under, in written order; the closures
     /// live on the board.
     var engines: [Int] = []

@@ -156,12 +156,21 @@ final class AndroidRenderer {
 
     /// The safe area's top left in the window, in points: where the page's root stands.
     var safeAreaOrigin: Point {
+        let area = safeArea
+        return Point(x: area.x, y: area.y)
+    }
+
+    /// The safe area's frame in the window, in points: where the page's root stands, and how big it is.
+    var safeArea: Rect {
         let window = Java.ints([0, 0])
         Java.call(root.reference, JavaAPI.getLocationInWindow, .object(window))
         var pixels: [Int32] = [0, 0]
         pixels.withUnsafeMutableBufferPointer { Java.jni.GetIntArrayRegion(Java.env, window, 0, 2, $0.baseAddress) }
         Java.release(local: window)
-        return Point(x: Double(pixels[0]) / density, y: Double(pixels[1]) / density)
+        return Rect(
+            x: Double(pixels[0]) / density, y: Double(pixels[1]) / density,
+            width: Double(Java.callInt(root.reference, JavaAPI.getWidth)) / density,
+            height: Double(Java.callInt(root.reference, JavaAPI.getHeight)) / density)
     }
 
     /// Names the activity after the first window.

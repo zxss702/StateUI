@@ -79,7 +79,7 @@
 
     /// The transform as one matrix, for a view of the given size, in the
     /// view's own space: the origin at its top left corner.
-    public func matrix(width: Double, height: Double) -> HostMatrix {
+    @_spi(Host) public func matrix(width: Double, height: Double) -> HostMatrix {
         let pivotX = pivotX * width
         let pivotY = pivotY * height
         let tips = rotationX != 0 || rotationY != 0

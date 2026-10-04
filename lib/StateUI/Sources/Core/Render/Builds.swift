@@ -107,7 +107,7 @@ extension Element {
     /// says nothing is being described.
     ///
     /// - Returns: what is being described here, how often, and why.
-    public func debugInfo() -> String {
+    @_spi(Host) public func debugInfo() -> String {
         BuildScope.sentence()
     }
 }

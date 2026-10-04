@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@testable import StateUI
+@_spi(Host) @testable import StateUI
 import XCTest
 
 /// A window's value written down as text and read back: what a restored window is opened for. A value that does not

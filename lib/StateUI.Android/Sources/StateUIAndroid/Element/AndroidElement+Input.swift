@@ -40,8 +40,15 @@ extension AndroidElement: FrameReporter {
     /// Design: docs/design/platforms/android/layout.md#where-a-view-stands
     func reportFrame() {
         guard let host, let view, readsFrame, view.isLaidOut else { return }
+        let named = element.namedSpaceFrames { ancestor in
+            guard let ancestorView = (ancestor.native as? AndroidElement)?.view, ancestorView.isLaidOut
+            else { return nil }
+            let corner = ancestorView.cornerInWindow
+            let size = ancestorView.standingFrame
+            return Rect(x: corner.x, y: corner.y, width: size.width, height: size.height)
+        }
         element.reportFrame(
-            MountedElement.frameNumbers(place: view.standingFrame, corner: view.cornerInWindow, content: host.safeAreaOrigin),
-            in: host.runtime)
+            MountedElement.frameNumbers(place: view.standingFrame, corner: view.cornerInWindow, safeArea: host.safeArea),
+            named: named, in: host.runtime)
     }
 }

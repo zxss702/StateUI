@@ -64,7 +64,7 @@ extension AndroidDriver {
         case .verticalScrollIndicators, .horizontalScrollIndicators:
             guard let scroller = (view as? AndroidScrollView)?.scrollers.first else { return nil }
             let bar = Self.read(scroller.reference, property == .verticalScrollIndicators ? "verticalBar" : "horizontalBar")
-            let bars: [String: ScrollIndicatorVisibility] = ["never": .never, "always": .always, "default": .default]
+            let bars: [String: ScrollIndicatorVisibility] = ["hidden": .hidden, "visible": .visible, "automatic": .automatic]
             return bar.flatMap { bars[$0] }?.propValue
         case .aspect where view is AndroidImageView:
             let aspects: [String: ContentMode] = ["FIT_CENTER": .fit, "CENTER_CROP": .fill, "FIT_XY": .stretch, "CENTER": .center]

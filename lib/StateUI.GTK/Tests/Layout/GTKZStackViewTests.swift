@@ -12,7 +12,7 @@ import XCTest
 /// another green by a bound one.
 struct LayeredBoxes: View {
     @State private var blueInFront = false
-    @State private var green = 0
+    @State private var green = 0.0
 
     var body: some View {
         VStack {

@@ -41,4 +41,24 @@ extension Node {
     ) {
         props.describe(property, value)
     }
+
+    /// Writes one member's value here and on every element below wearing its
+    /// contract - what an inheriting modifier writes, the way `.controlSize`
+    /// reaches a `ProgressView`'s bar inside it. An element that names the
+    /// member itself keeps its own, the way SwiftUI's inherited modifiers
+    /// lose to an explicit one.
+    mutating func writeInherited<Owner: Contract, Value: HostRepresentable>(
+        _ property: ElementProperty<Owner, Value>,
+        _ value: Value
+    ) {
+        materialize()
+        let owner = ObjectIdentifier(Owner.self)
+        if LibraryContracts.byType[type]?.worn.contains(where: { ObjectIdentifier($0) == owner }) == true,
+            props[property.token] == nil {
+            write(property, value)
+        }
+        for index in children.indices {
+            children[index].writeInherited(property, value)
+        }
+    }
 }

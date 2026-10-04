@@ -48,13 +48,15 @@ extension WinUIRegistrations {
             scroll.applies([
                 ScrollViewContract.orientation, ScrollViewContract.verticalScrollIndicators,
                 ScrollViewContract.horizontalScrollIndicators, ScrollViewContract.scrollOffset,
+                ScrollViewContract.defaultScrollAnchor,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.apply(
                     orientation: values[ScrollViewContract.orientation] ?? .vertical,
                     padding: values[PaddingElementContract.contentPadding] ?? EdgeInsets(0),
-                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .default,
-                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .default,
+                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .automatic,
+                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .automatic,
+                    defaultAnchor: values[ScrollViewContract.defaultScrollAnchor],
                     offset: values.changed(ScrollViewContract.scrollOffset) ? values[ScrollViewContract.scrollOffset] : nil)
             }
             scroll.applies([

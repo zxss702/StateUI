@@ -570,8 +570,14 @@ final class StyleTests: XCTestCase {
         var read = 0
 
         // A style names its control by an initializer that sets nothing, which a
-        // generic composed view has not: an List is a list OF something.
-        let unnamed: Set<String> = ["List"]
+        // generic composed view has not: an List is a list OF something. A
+        // MenuButton has no type of its own either - the `Menu` view makes one,
+        // and no `Menu()` means anything - while its closed style vocabulary
+        // crosses as `.menuStyle`. A CustomLayout is generic over the author's
+        // layout the same way - `Layout()` is no more writable than `Menu()`.
+        // A Masked stands the same: it is `.mask` written out, with no
+        // `Masked()` of its own.
+        let unnamed: Set<String> = ["CustomLayout", "List", "Masked", "MenuButton"]
 
         for source in try SourceTree.controlSources() {
             for type in try SourceTree.nodeTypes(in: source).sorted()
@@ -605,7 +611,7 @@ final class StyleTests: XCTestCase {
             let text = try SourceTree.text(in: source)
 
             for surface in text.occurrences(between: "public protocol ", and: ":")
-            where surface.hasSuffix("Properties") {
+            where surface.hasSuffix("Properties") && surface.allSatisfy(\.isLetter) {
                 let target = String(surface.dropLast("Properties".count))
 
                 read += 1

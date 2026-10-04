@@ -24,7 +24,10 @@ struct UIKitLayoutItem: LayoutChild {
     /// How the view is drawn over its place, which a placing layout adds its own drawing to.
     weak var drawing: UIKitViewDrawing?
 
-    var fadeIn: ((Animation) -> Void)?
+    var fadeIn: ((Animation, Rect) -> Void)?
+
+    /// Whether the view animates out where it stood: kept in the subviews, taking no room.
+    var departing = false
 
     init(view: UIView, values: LayoutValues = LayoutValues(), isShown: Bool = true) {
         self.view = view

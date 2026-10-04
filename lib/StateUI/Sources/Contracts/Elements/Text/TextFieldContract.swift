@@ -13,6 +13,7 @@ public enum TextFieldContract: ElementContract {
     public static let tiers: [any Contract.Type] = [
         InputViewContract.self, TextElementContract.self, FontElementContract.self,
         TextAlignmentElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// Whether what is typed is hidden behind the platform's secure-entry

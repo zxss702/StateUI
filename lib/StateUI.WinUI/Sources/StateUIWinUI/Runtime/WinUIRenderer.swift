@@ -161,8 +161,8 @@ final class WinUIRenderer {
     }
 
     /// The page's corner in the window `element` stands in, in DIPs: where content stands clear of its chrome.
-    func safeAreaOrigin(of element: MountedElement) -> Point {
-        (controller(of: element) ?? windows.first)?.safeAreaOrigin ?? Point(x: 0, y: 0)
+    func safeArea(of element: MountedElement) -> Rect {
+        (controller(of: element) ?? windows.first)?.safeArea ?? Rect(x: 0, y: 0, width: 0, height: 0)
     }
 }
 

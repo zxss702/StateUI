@@ -47,7 +47,7 @@ import CRT
     }
 
     /// Where the matrix draws a point of the view's plane.
-    public func applied(to x: Double, _ y: Double) -> (x: Double, y: Double) {
+    @_spi(Host) public func applied(to x: Double, _ y: Double) -> (x: Double, y: Double) {
         let w = x * m14 + y * m24 + m44
         return ((x * m11 + y * m21 + m41) / w, (x * m12 + y * m22 + m42) / w)
     }

@@ -227,9 +227,15 @@ extension Node {
         node.props = session.props
         for member in [
             PageElementContract.title.token, PageElementContract.badge.token,
+            PageElementContract.subtitle.token, PageElementContract.document.token,
+            PageElementContract.preferredColumnWidth.token,
             PageElementContract.presentationDetents.token,
             PageElementContract.presentationDragIndicator.token,
-            PageElementContract.interactiveDismissDisabled.token
+            PageElementContract.interactiveDismissDisabled.token,
+            PageElementContract.toolbarVisibility.token,
+            PageElementContract.toolbarBackground.token,
+            PageElementContract.windowBackground.token,
+            PageContract.hasBackButton.token,
         ] where node.props[member] == nil {
             node.props[member] = content.props[member]
         }
@@ -263,6 +269,6 @@ private struct ShownView {
 /// - Parameter application: the application, made here with a fresh
 ///   application session and kept for the life of the process, so `@State`
 ///   declared on it outlives every window.
-public func stateUIUseApp(_ application: @autoclosure () -> any App) {
+@_spi(Host) public func stateUIUseApp(_ application: @autoclosure () -> any App) {
     Renderer.shared.setApplication(application())
 }

@@ -75,6 +75,18 @@
             return item.size(offered: axis == .vertical ? max(0, cross - margin.left - margin.right) : nil)
         }
         let extents = alongs(items, naturals: naturals, axis: axis, spacing: spacing, in: content)
+
+        // A baseline is a line the row shares: its place is the deepest
+        // baseline any shown child asks for, each child landing its own on it.
+        // Only the cross axis of a horizontal layout answers baseline slots.
+        var baseline = 0.0
+        if axis == .horizontal {
+            baseline = content.y + (zip(items, naturals).map { item, natural -> Double in
+                guard item.isShown, item.values.vertical == 4 || item.values.vertical == 5 else { return 0 }
+                return guide(item.values.verticalGuide, in: item, natural: natural.height,
+                             slot: item.values.vertical)
+            }.max() ?? 0)
+        }
         var offset = axis == .vertical ? content.y : content.x
 
         return zip(items, zip(naturals, extents)).map { item, pair in
@@ -91,7 +103,10 @@
                     option: values.horizontal, stated: values.width, natural: natural.width,
                     available: available, minimum: values.minimumWidth, maximum: values.maximumWidth)
                 let x = Extent.start(
-                    option: values.horizontal, extent: width, start: content.x + margin.left, available: available)
+                    option: values.horizontal, extent: width, start: content.x + margin.left,
+                    available: available,
+                    guide: values.horizontalGuide?.slot == values.horizontal
+                        ? values.horizontalGuide?.offset : nil)
                 let place = Rect(x: x, y: offset, width: width, height: along)
                 offset += along + margin.bottom + spacing
                 return place
@@ -102,8 +117,17 @@
                 let height = Extent.of(
                     option: values.vertical, stated: values.height, natural: natural.height,
                     available: available, minimum: values.minimumHeight, maximum: values.maximumHeight)
-                let y = Extent.start(
-                    option: values.vertical, extent: height, start: content.y + margin.top, available: available)
+                let y: Double
+                if values.vertical == 4 || values.vertical == 5 {
+                    y = baseline - guide(values.verticalGuide, in: item,
+                                         natural: height, slot: values.vertical)
+                } else {
+                    y = Extent.start(
+                        option: values.vertical, extent: height, start: content.y + margin.top,
+                        available: available,
+                        guide: values.verticalGuide?.slot == values.vertical
+                            ? values.verticalGuide?.offset : nil)
+                }
                 let place = Rect(x: offset, y: y, width: along, height: height)
                 offset += along + margin.right + spacing
                 return place
@@ -133,7 +157,34 @@
             let margin = item.values.margin
             taken += extent + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)
         }
-        let room = (axis == .vertical ? content.height : content.width) - taken
+        var room = (axis == .vertical ? content.height : content.width) - taken
+
+        // Short of room, the children that speak the least keep what is left:
+        // each priority group below the loudest gives up its natural size in
+        // turn, lowest first, until the deficit is made or they reach nothing.
+        // A stated size is not negotiated: `.frame(height: 60)` means sixty,
+        // and what it cannot take it overflows, as SwiftUI's does.
+        if room < 0 {
+            let shown = items.indices.filter {
+                items[$0].isShown && items[$0].values.flex == nil
+                    && (axis == .vertical ? items[$0].values.height == nil
+                                          : items[$0].values.width == nil)
+            }
+            var deficit = -room
+            var priorities = shown.map { items[$0].values.priority }.sorted()
+            while deficit > 0, let lowest = priorities.first {
+                let group = shown.filter { items[$0].values.priority == lowest }
+                let part = deficit / Double(group.count)
+                for index in group {
+                    let gave = min(part, extents[index])
+                    extents[index] -= gave
+                    deficit -= gave
+                }
+                priorities = priorities.filter { $0 > lowest }
+            }
+            room = 0
+        }
+
         let flexible = items.indices.filter { items[$0].isShown && items[$0].values.flex != nil }
         guard room > 0, !flexible.isEmpty else { return extents }
 
@@ -144,6 +195,21 @@
                 : items[index].values.boundedWidth(extents[index] + share)
         }
         return extents
+    }
+
+    /// The point a child answers `slot` with: its explicit guide where
+    /// `.alignmentGuide` named one for it, its measured baseline where the
+    /// host reads one, its extent's far edge for a last baseline.
+    @MainActor
+    private static func guide<Child: LayoutChild>(
+        _ explicit: AlignmentGuide?, in child: Child, natural: Double, slot: Int32
+    ) -> Double {
+        if let explicit, explicit.slot == slot { return explicit.offset }
+        switch slot {
+        case 4: return child.firstBaseline ?? natural
+        case 5: return child.lastBaseline ?? natural
+        default: return natural / 2
+        }
     }
 }
 

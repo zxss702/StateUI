@@ -87,7 +87,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter number: the run of placements.
     /// - Returns: the layout, placed by that state.
-    public func placement(_ number: Binding<PlacedRun>) -> PlacedLayout {
+    @_spi(Host) public func placement(_ number: Binding<PlacedRun>) -> PlacedLayout {
         var copy = self
         copy.run = number
         return copy
@@ -122,7 +122,7 @@ public struct PlacedLayout<Items: RandomAccessCollection, Id: Hashable>: View {
     ///
     /// - Parameter view: what to draw over each placed view.
     /// - Returns: the layout, shaded.
-    public func shade(_ view: Element) -> PlacedLayout {
+    @_spi(Host) public func shade(_ view: Element) -> PlacedLayout {
         var copy = self
         copy.mask = view
         return copy

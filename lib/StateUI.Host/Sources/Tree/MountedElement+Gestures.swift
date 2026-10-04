@@ -31,8 +31,8 @@ extension MountedElement {
         case .pointer(let event, let point):
             let said: [HostValue] = event == .pointerEntered || event == .pointerExited ? [] : [.numbers([point.x, point.y])]
             send(event, said, in: runtime)
-        case .drag(let phase, let x, let y):
-            dragged(phase, x: x, y: y, in: runtime)
+        case .drag(let phase, let x, let y, let at, let from):
+            dragged(phase, x: x, y: y, at: at, from: from, in: runtime)
         case .pinch(let phase, let scale, let at):
             send(.pinchUpdated, [.enumeration(phase.rawValue), .number(scale), .numbers([at.x, at.y])], in: runtime)
         }
@@ -49,7 +49,7 @@ extension MountedElement {
 
     /// A press dragged moves the states it carries by how far it has come, from where they stood as it began, and
     /// says so, in one of the user's transactions; ended, it is a swipe where it went far enough.
-    private func dragged(_ phase: GesturePhase, x: Double, y: Double, in runtime: HostRuntime) {
+    private func dragged(_ phase: GesturePhase, x: Double, y: Double, at: Point, from: Point, in runtime: HostRuntime) {
         let across = channel(.panXChannel)
         let down = channel(.panYChannel)
         if phase == .started {
@@ -62,8 +62,13 @@ extension MountedElement {
                 if let across { runtime.takeGestureValue(dragStart.x + x, state: across) }
                 if let down { runtime.takeGestureValue(dragStart.y + y, state: down) }
             }
-            let moved = phase == .running ? (x, y) : (0, 0)
-            send(.panUpdated, [.enumeration(phase.rawValue), .number(moved.0), .number(moved.1)], in: runtime)
+            send(
+                .panUpdated,
+                [
+                    .enumeration(phase.rawValue), .number(x), .number(y),
+                    .numbers([from.x, from.y]), .numbers([at.x, at.y]),
+                ],
+                in: runtime)
         }
 
         guard phase == .completed, handler(.swiped) != nil else { return }

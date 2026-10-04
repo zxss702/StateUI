@@ -161,7 +161,7 @@ final class AppKitTextFieldViewTests: XCTestCase {
     func testReturnInATextFieldReachesItsSubmitHandler() throws {
         let submitted = Received<String>()
         let renderer = AppKitRenderer.running {
-            TextField("Ada").onSubmitted { submitted.values.append("submitted") }
+            TextField("Ada").onSubmit { submitted.values.append("submitted") }
         }
         defer { renderer.closeForTesting() }
         let field = try XCTUnwrap(renderer.nativeViews(AppKitTextFieldView.self).first)

@@ -42,9 +42,10 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     /// the host's to answer, since the files and the cache over them are its.
     var picture: ((String) -> NSImage?)?
 
-    func apply(image: NSImage?, aspect: ContentMode, animationPlaying: Bool) {
+    func apply(image: NSImage?, aspect: ContentMode, animationPlaying: Bool, template: Bool = false) {
         let imageChanged = imageView.image !== image
         imageView.image = image
+        imageView.image?.isTemplate = template
         imageView.animates = animationPlaying
         self.aspect = aspect
 
@@ -64,7 +65,7 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     ///   - source: the picture's file or symbol, or none to show nothing.
     ///   - aspect: how it fills the room it is given.
     ///   - animationPlaying: whether an animated picture runs.
-    func apply(source: ImageSource?, aspect: ContentMode, animationPlaying: Bool) {
+    func apply(source: ImageSource?, aspect: ContentMode, animationPlaying: Bool, template: Bool = false) {
         apply(
             image: source.flatMap { source in
                 if let symbol = source.symbol {
@@ -74,7 +75,8 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
                 return source.isEmpty ? nil : picture?(source.file)
             },
             aspect: aspect,
-            animationPlaying: animationPlaying)
+            animationPlaying: animationPlaying,
+            template: template)
     }
 
     override var intrinsicContentSize: NSSize {

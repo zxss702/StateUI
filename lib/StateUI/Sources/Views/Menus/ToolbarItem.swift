@@ -37,6 +37,38 @@ public struct ToolbarItem: View, MenuItemElement {
         node.write(MenuItemElementContract.text, text)
     }
 
+    /// An item captioned `text`, running `action` when it is picked.
+    public init(_ text: String, action: @escaping EventHandler) {
+        self.init(text)
+        node.addHandler(MenuItemElementContract.clicked.token, action)
+    }
+
+    /// An item captioned `text`, in `placement`, running `action`.
+    public init(_ text: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
+        self.init(text, action: action)
+        node.write(ToolbarItemContract.placement, placement)
+    }
+
+    /// An icon item running `action`, its caption as the platform's tooltip -
+    /// `ToolbarItem("Back", icon: .symbol("chevron.left")) { back() }`.
+    public init(_ text: String, icon: ImageSource, action: @escaping EventHandler) {
+        self.init(text, action: action)
+        node.write(MenuItemElementContract.icon, icon)
+    }
+
+    /// The same, a system symbol by name - the SwiftUI `systemImage` spelling.
+    ///
+    ///     ToolbarItem("Home", systemImage: "house") { nav.home() }
+    public init(_ text: String, systemImage: String, action: @escaping EventHandler) {
+        self.init(text, icon: .symbol(systemImage), action: action)
+    }
+
+    /// An icon item in `placement`, running `action`.
+    public init(_ text: String, systemImage: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
+        self.init(text, systemImage: systemImage, action: action)
+        node.write(ToolbarItemContract.placement, placement)
+    }
+
     /// The node this item describes.
 
     /// Who this item is among the page's others, so an item inserted in the
@@ -51,10 +83,10 @@ public struct ToolbarItem: View, MenuItemElement {
     }
 
     /// Whether it sits on the bar itself or behind the overflow menu.
-    public func placement(_ value: ToolbarItemPlacement) -> Self { setValue(ToolbarItemContract.placement, value) }
+    @_spi(Host) public func placement(_ value: ToolbarItemPlacement) -> Self { setValue(ToolbarItemContract.placement, value) }
 
     /// Where this item sorts among items in the same order group.
     ///
     /// Lower values appear first; items of equal priority keep their order.
-    public func priority(_ value: Int) -> Self { setValue(ToolbarItemContract.priority, value) }
+    @_spi(Host) public func priority(_ value: Int) -> Self { setValue(ToolbarItemContract.priority, value) }
 }

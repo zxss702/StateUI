@@ -28,8 +28,11 @@ public enum LayoutContract: Contract {
     /// outside it reaches nothing the layout holds.
     public static let hitShape = ElementProperty<Self, ContainerShape>("hitShape", layer: .native)
 
+    /// Whether the layout's children are the targets a scroller settles on.
+    public static let scrollTargetLayout = ElementProperty<Self, Bool>("scrollTargetLayout", layer: .adaptive)
+
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        ignoresSafeArea, clipsContent, letsInputThrough, hitShape,
+        ignoresSafeArea, clipsContent, letsInputThrough, hitShape, scrollTargetLayout,
     ]
 }

@@ -24,7 +24,11 @@ extension AppKitElement {
         target.setAccessibilityHelp(string(.accessibilityHint))
 
         let excludesChildren = value(.automationExcludedWithChildren)?.bool == true
-        if excludesChildren {
+        let childBehavior = enumeration(.accessibilityChildBehavior)
+        let suppressChildren = excludesChildren
+            || childBehavior == AccessibilityChildBehavior.ignore.rawValue
+            || childBehavior == AccessibilityChildBehavior.combine.rawValue
+        if suppressChildren {
             view.setAccessibilityChildren([])
             accessibilityChildrenSuppressed = true
         } else if accessibilityChildrenSuppressed {
@@ -32,10 +36,14 @@ extension AppKitElement {
             accessibilityChildrenSuppressed = false
         }
 
+        let traits = AccessibilityTraits(rawValue: enumeration(.accessibilityTraits) ?? 0)
+        target.setAccessibilitySelected(traits.contains(.isSelected))
+
         let headingLevel = max(0, enumeration(.accessibilityHeadingLevel) ?? 0)
         let carriesSemantics = string(.accessibilityLabel) != nil
             || string(.accessibilityHint) != nil
             || headingLevel > 0
+            || !traits.isEmpty
         // An element that answers a tap is a button to assistive technology,
         // pressed by the handler a click runs. See `AppKitHitTestView`.
         let pressable = events[.tapGesture] != nil && view is AppKitHitTestView
@@ -46,10 +54,20 @@ extension AppKitElement {
                 ? false
                 : (authoredElement ?? (carriesSemantics || pressable ? true : defaults.isElement)))
 
-        if headingLevel > 0 {
+        if headingLevel > 0 || traits.contains(.isHeader) {
             target.setAccessibilityRole(NSAccessibility.Role(rawValue: "AXHeading"))
-        } else if pressable {
+        } else if traits.contains(.isLink) {
+            target.setAccessibilityRole(.link)
+        } else if traits.contains(.isButton) || pressable {
             target.setAccessibilityRole(.button)
+        } else if traits.contains(.isToggle) {
+            target.setAccessibilityRole(.checkBox)
+        } else if traits.contains(.isSearchField) {
+            target.setAccessibilityRole(NSAccessibility.Role(rawValue: "AXSearchField"))
+        } else if traits.contains(.isImage) {
+            target.setAccessibilityRole(.image)
+        } else if traits.contains(.isStaticText) {
+            target.setAccessibilityRole(.staticText)
         } else {
             target.setAccessibilityRole(defaults.role)
         }

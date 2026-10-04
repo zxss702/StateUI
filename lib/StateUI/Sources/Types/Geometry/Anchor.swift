@@ -1,0 +1,71 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+/// A reference to a view's frame, resolved later against a `GeometryProxy`'s
+/// coordinate space - as `.anchorPreference` produces one and
+/// `proxy[anchor]` reads it.
+///
+///     .anchorPreference(key: LayoutKey.self, value: .bounds) { bounds in
+///         [MarkdownLayout(blockId: id, bounds: bounds)]
+///     }
+///
+///     GeometryReader { proxy in
+///         … proxy[layout.bounds] …
+///     }
+///
+/// The anchor reads nothing until a proxy answers it: what it holds is which
+/// element's frame it is and the last frame the host reported for it.
+public struct Anchor<Value>: Sendable {
+    /// The frame source the anchor watches.
+    let box: AnchorBox
+
+    /// How the watched frame becomes `Value`, given the resolving view's own
+    /// frame in window coordinates.
+    let read: @Sendable (Rect, Rect) -> Value
+
+    /// An anchor over `box` reading through `read`.
+    init(box: AnchorBox, read: @escaping @Sendable (Rect, Rect) -> Value) {
+        self.box = box
+        self.read = read
+    }
+}
+
+extension Anchor: Equatable {
+    /// Two anchors agree when they watch the same element.
+    public static func == (one: Anchor, other: Anchor) -> Bool {
+        one.box === other.box
+    }
+}
+
+/// Which part of a view an anchor watches - `.bounds` today, as SwiftUI
+/// spells the kind of source.
+public struct AnchorSource<Value>: Sendable {
+    /// The source kind.
+    let kind: Kind
+
+    enum Kind {
+        /// The view's whole frame.
+        case bounds
+    }
+}
+
+extension AnchorSource where Value == Rect {
+    /// The view's bounds, resolved by a `GeometryProxy` into its own space.
+    public static var bounds: AnchorSource<Rect> { AnchorSource(kind: .bounds) }
+}
+
+/// The element frame an `Anchor` watches, written by the `frameChanged` event
+/// the anchor's modifier hears; `@unchecked Sendable` as every write and read
+/// happens on the render's own thread.
+final class AnchorBox: @unchecked Sendable {
+    /// The last frame the host reported, in window coordinates.
+    var frame: Rect?
+}
+
+extension GeometryProxy {
+    /// The anchored view's frame in this proxy's coordinate space, or zero
+    /// where the host has reported none yet.
+    public subscript<Value>(anchor: Anchor<Value>) -> Value {
+        anchor.read(anchor.box.frame ?? Rect(0, 0, 0, 0), report.global)
+    }
+}

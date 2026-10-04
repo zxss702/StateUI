@@ -10,12 +10,12 @@ extension WebViewProperties {
     /// Left unwritten it is the platform's own browser string, which is what a
     /// site expects. Writing one is for a server that answers differently by
     /// client - an application's own name and version, say.
-    public func userAgent(_ value: String) -> Modified {
+    @_spi(Host) public func userAgent(_ value: String) -> Modified {
         setValue(WebViewContract.userAgent, value)
     }
 
     /// The page it shows, by URL.
-    public func source(_ url: String) -> Modified {
+    @_spi(Host) public func source(_ url: String) -> Modified {
         setValue(WebViewContract.source, .url(url))
     }
 
@@ -26,7 +26,7 @@ extension WebViewProperties {
     /// - Parameter html: The document itself, not a path to one.
     /// - Parameter baseUrl: What relative links in it resolve against, when
     ///   there are any.
-    public func source(html: String, baseUrl: String? = nil) -> Modified {
+    @_spi(Host) public func source(html: String, baseUrl: String? = nil) -> Modified {
         setValue(WebViewContract.source, .html(html, baseUrl: baseUrl))
     }
 }
@@ -64,7 +64,7 @@ public struct WebView: VisualElement, WebViewProperties{
 
     /// Whether there is a page behind this one - what enables a Back button -
     /// written into the binding by the platform after every navigation.
-    public func canGoBack(_ binding: Binding<Bool>) -> Self {
+    @_spi(Host) public func canGoBack(_ binding: Binding<Bool>) -> Self {
         onEvent(WebViewContract.canGoBackChanged) { can in
             binding.wrappedValue = can
         }
@@ -72,7 +72,7 @@ public struct WebView: VisualElement, WebViewProperties{
 
     /// Whether there is a page ahead of this one - true only after going back,
     /// and what enables a Forward button - written into the binding.
-    public func canGoForward(_ binding: Binding<Bool>) -> Self {
+    @_spi(Host) public func canGoForward(_ binding: Binding<Bool>) -> Self {
         onEvent(WebViewContract.canGoForwardChanged) { can in
             binding.wrappedValue = can
         }
@@ -82,7 +82,7 @@ public struct WebView: VisualElement, WebViewProperties{
 
     /// Fires as a navigation starts, with where it is going. Observing only: it
     /// cannot cancel the navigation.
-    public func onNavigating(_ handler: @escaping ValueEventHandler<WebNavigation>) -> Self {
+    @_spi(Host) public func onNavigating(_ handler: @escaping ValueEventHandler<WebNavigation>) -> Self {
         onEvent(WebViewContract.navigating) { event, url in
             try await handler(WebNavigation(event: event, url: url))
         }
@@ -90,7 +90,7 @@ public struct WebView: VisualElement, WebViewProperties{
 
     /// Fires when a navigation finished, with how it ended - the place to
     /// clear a spinner, or to say a page could not be fetched.
-    public func onNavigated(_ handler: @escaping ValueEventHandler<WebNavigated>) -> Self {
+    @_spi(Host) public func onNavigated(_ handler: @escaping ValueEventHandler<WebNavigated>) -> Self {
         onEvent(WebViewContract.navigated) { result, event, url in
             try await handler(WebNavigated(result: result, event: event, url: url))
         }
@@ -98,7 +98,7 @@ public struct WebView: VisualElement, WebViewProperties{
 
     /// Fires when the platform's web process died under the view - out of
     /// memory, usually - leaving it blank. `reload()` is the recovery.
-    public func onProcessTerminated(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onProcessTerminated(_ handler: @escaping EventHandler) -> Self {
         onEvent(WebViewContract.processTerminated, handler)
     }
 }

@@ -23,10 +23,16 @@ extension GTKElement {
         view != nil && element.fadesIn(presentsOpacity: GTKTransitionSurface.presents(.opacity, on: type))
     }
 
-    /// Fades the element in as it joins a layout already standing, by the host layer's rule.
-    func fadeIn(under animation: Animation) {
+    /// Fades the element in as it joins a layout already standing, by the host layer's rule; `room`
+    /// is the place it lands at.
+    func fadeIn(under animation: Animation, room: Rect) {
         guard fadesIn, let view else { return }
-        element.fadeIn(view, under: animation)
+        element.fadeIn(view, room: room, under: animation)
+    }
+
+    /// The room its view last stood at, which a removal `move` measures by.
+    var departingRoom: Rect? {
+        view?.placedFrame
     }
 
     /// Crosses a change of visibility by the host layer's rule; as a fade out ends, the layout closes over it.

@@ -12,6 +12,7 @@ public enum DatePickerContract: ElementContract {
     /// A date picker is a view whose text has a colour, a spacing and a font.
     public static let tiers: [any Contract.Type] = [
         ViewContract.self, TextStyleElementContract.self, FontElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// The calendar has closed - by a choice, a tap outside, or the platform.

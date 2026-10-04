@@ -529,7 +529,7 @@ final class CarriedStateTests: XCTestCase {
 
     // MARK: - The reader
 
-    /// A `ScrollViewReader` lays an empty scroller over what it holds, as long as
+    /// A `ScrollReader` lays an empty scroller over what it holds, as long as
     /// the room plus how far the run goes beyond it, reporting into the
     /// state - and hearing the scroller come to rest.
     func testAScrollReaderReportsIntoItsState() {
@@ -537,7 +537,7 @@ final class CarriedStateTests: XCTestCase {
         let renders = Renders()
 
         let patch = renders.render(
-            ScrollViewReader(across: 540) { Text("under") }
+            ScrollReader(across: 540) { Text("under") }
                 .scrollOffset(across.projectedValue)
                 .onScrollStopped {}
                 .id("reader")

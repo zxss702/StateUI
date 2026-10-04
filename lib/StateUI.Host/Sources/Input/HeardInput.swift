@@ -12,8 +12,9 @@
     /// The pointer over the view: the View tier's event, and where it is, in points of the view.
     case pointer(Event, Point)
 
-    /// A press dragged: its phase, and how far it has moved since it began.
-    case drag(GesturePhase, x: Double, y: Double)
+    /// A press dragged: its phase, how far it has moved since it began, and
+    /// where it began and is now, in the view's own coordinates.
+    case drag(GesturePhase, x: Double, y: Double, at: Point, from: Point)
 
     /// A pinch: its phase, its scale since the last step, and where, as shares of the view's size.
     case pinch(GesturePhase, scale: Double, at: Point)

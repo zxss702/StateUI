@@ -8,7 +8,7 @@ public protocol ProgressBarProperties: PropertyContainer {}
 extension ProgressBarProperties {
     /// How far along, as a fraction from 0 to 1. The host clamps anything
     /// outside that range.
-    public func progress(_ value: Double) -> Modified {
+    @_spi(Host) public func progress(_ value: Double) -> Modified {
         setValue(ProgressBarContract.progress, value)
     }
 }
@@ -45,7 +45,18 @@ public struct ProgressBar: VisualElement, TintElement, ProgressBarProperties{
 extension ProgressBar {
     /// `progress` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it.
-    public func progress(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func progress(_ state: Binding<Double>) -> Modified {
         journey(.progress, by: state)
+    }
+}
+
+extension ProgressBar {
+    /// How the control draws - `.linear` keeps the bar; `.circular` asks the
+    /// host's wheel, which every platform may or may not have:
+    ///
+    ///     ProgressBar(done)
+    ///         .progressViewStyle(.linear)
+    public func progressViewStyle(_ style: some ProgressViewStyle) -> Modified {
+        setValue(ProgressBarContract.progressStyle, style.progressStyleToken)
     }
 }

@@ -287,7 +287,7 @@ extension Binding where Value: StateValue {
     ///
     /// - Parameter transform: the source's value, from the derived one.
     /// - Returns: the same derived state, now reporting back.
-    public func convertBack<Source: StateValue>(_ transform: @escaping (Value) -> Source) -> Binding<Value> {
+    @_spi(Host) public func convertBack<Source: StateValue>(_ transform: @escaping (Value) -> Source) -> Binding<Value> {
         guard let derived = described,
               let conversion = derived.conversion,
               conversion.sources.count == 1,
@@ -312,7 +312,7 @@ extension Binding where Value: StateValue {
     ///
     /// - Parameter transform: both sources' values, from the derived one.
     /// - Returns: the same derived state, now reporting back.
-    public func convertBack<First: StateValue, Second: StateValue>(
+    @_spi(Host) public func convertBack<First: StateValue, Second: StateValue>(
         _ transform: @escaping (Value) -> (First, Second)
     ) -> Binding<Value> {
         guard let derived = described,

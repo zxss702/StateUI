@@ -112,3 +112,22 @@ public struct ProgressView: View {
         .spacing(6)
     }
 }
+
+extension View {
+    /// How `ProgressView`s inside this view draw - `.circular` for a wheel,
+    /// `.linear` for a bar; a control keeping its own wins over the
+    /// inherited one:
+    ///
+    ///     ProgressView()
+    ///         .progressViewStyle(.circular)
+    ///
+    ///     ProgressView(value: done)
+    ///         .progressViewStyle(.linear)
+    @_disfavoredOverload
+    public func progressViewStyle(_ style: some ProgressViewStyle) -> ModifiedContent {
+        revised {
+            $0.writeInherited(ProgressBarContract.progressStyle, style.progressStyleToken)
+            $0.writeInherited(ActivityIndicatorContract.progressStyle, style.progressStyleToken)
+        }
+    }
+}

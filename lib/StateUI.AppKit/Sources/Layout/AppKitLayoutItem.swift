@@ -17,11 +17,25 @@ struct AppKitLayoutItem: LayoutChild {
     /// The mounted identity of the element the view presents; 0 for a view no element presents.
     var mount: UInt64 = 0
 
+    /// The identity the element's code objects ride under - a custom layout
+    /// reads a child's `.layoutValue` tags by it; nil for a view no element
+    /// presents.
+    var codeId: ElementId?
+
     /// The element that places the view as its layout animates it; nil for a view no element presents.
     weak var placed: (any PlacedView)?
 
-    /// Fades the view in as it joins a standing layout; nil for a view that simply appears.
-    var fadeIn: ((Animation) -> Void)?
+    /// Fades the view in as it joins a standing layout - its law, and the place
+    /// it lands at; nil for a view that simply appears.
+    var fadeIn: ((Animation, Rect) -> Void)?
+
+    /// Whether the view animates out where it stood: it keeps its seat in the
+    /// subviews but takes no room in the layout.
+    var departing = false
+
+    /// The window-coordinate frame a `matchedGeometry` match left, which this
+    /// new child flies from instead of appearing in place.
+    var matchedStart: Rect?
 
     /// How the view is drawn over its frame, for a layout that places it.
     var drawing: AppKitViewDrawing?
@@ -39,6 +53,21 @@ struct AppKitLayoutItem: LayoutChild {
     }
 
     var isShown: Bool { !view.isHidden }
+
+    /// The view's first text baseline from its top; nil where AppKit names
+    /// none - a view with no text answers its bottom edge.
+    var firstBaseline: Double? {
+        let baseline = view.firstBaselineOffsetFromTop
+        return baseline.isFinite && baseline <= view.bounds.height ? Double(baseline) : nil
+    }
+
+    /// The view's last text baseline from its top; where AppKit names only
+    /// the distance from the bottom, it is the height short of it.
+    var lastBaseline: Double? {
+        let fromBottom = view.baselineOffsetFromBottom
+        guard fromBottom.isFinite else { return nil }
+        return Double(view.bounds.height - fromBottom)
+    }
 
     /// The child's margin, in AppKit's units.
     var margin: NSEdgeInsets {
@@ -86,6 +115,11 @@ struct AppKitLayoutItem: LayoutChild {
         default: false
         }
     }
+}
+
+extension Array where Element == AppKitLayoutItem {
+    /// The items taking layout room; a departing one animates out where it stood.
+    var occupying: [AppKitLayoutItem] { filter { !$0.departing } }
 }
 
 #endif

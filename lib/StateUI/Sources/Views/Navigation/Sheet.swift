@@ -85,7 +85,12 @@ struct SheetAnchor<Content: View>: View {
                     // window's own modal stack is not this one's to take down.
                     if shown {
                         tickets = [0]
-                        window.modalStack = ModalStack($tickets) { _ in sheet() }
+                        window.modalStack = ModalStack($tickets) { _ in
+                            sheet().environment(
+                                \.dismiss, DismissAction { [presented] in
+                                    presented.wrappedValue = false
+                                })
+                        }
                     } else if !tickets.isEmpty {
                         tickets = []
                         window.modalStack = nil
@@ -121,9 +126,12 @@ struct ItemSheetAnchor<Item: Hashable, Content: View>: View {
             base
             EmptyView()
                 .onChange(of: item.wrappedValue != nil, initial: true) { _, shown in
-                    if shown, let item = item.wrappedValue {
-                        tickets = [item]
-                        window.modalStack = ModalStack($tickets, destination: sheet)
+                    if shown, let presented = item.wrappedValue {
+                        tickets = [presented]
+                        window.modalStack = ModalStack($tickets) { [item] shown in
+                            sheet(shown).environment(
+                                \.dismiss, DismissAction { item.wrappedValue = nil })
+                        }
                     } else if !tickets.isEmpty {
                         tickets = []
                         window.modalStack = nil

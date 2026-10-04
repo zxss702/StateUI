@@ -53,8 +53,8 @@ extension AndroidRegistrations {
                 view.apply(
                     orientation: values[ScrollViewContract.orientation] ?? .vertical,
                     padding: values[PaddingElementContract.contentPadding] ?? EdgeInsets(0),
-                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .default,
-                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .default,
+                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .automatic,
+                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .automatic,
                     offset: values.changed(ScrollViewContract.scrollOffset) ? values[ScrollViewContract.scrollOffset] : nil)
             }
             scroll.applies([

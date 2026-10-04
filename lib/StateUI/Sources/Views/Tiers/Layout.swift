@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The properties every layout has, shared by the control and its `Style`.
-public protocol LayoutProperties: ViewProperties {}
+public protocol LayoutViewProperties: ViewProperties {}
 
 /// A view that arranges children.
-public protocol Layout: VisualElement, LayoutProperties, PaddingElement, BorderElement {}
+public protocol LayoutView: VisualElement, LayoutViewProperties, PaddingElement, BorderElement {}
 
-extension LayoutProperties {
+extension LayoutViewProperties {
     /// Whether a child drawn outside the layout's bounds is cut off at them.
-    public func clipsContent(_ value: Bool) -> Modified {
+    @_spi(Host) public func clipsContent(_ value: Bool) -> Modified {
         setValue(LayoutContract.clipsContent, value)
     }
 
@@ -21,14 +21,13 @@ extension LayoutProperties {
     ///
     /// `.allowsHitTesting(!true)` is the other half: the view and everything in it
     /// let input through. Where both are set, `ignoresInput` wins.
-    public func letsInputThrough(_ value: Bool) -> Modified {
+    @_spi(Host) public func letsInputThrough(_ value: Bool) -> Modified {
         setValue(LayoutContract.letsInputThrough, value)
     }
 
     /// The outline input on the layout stays within - written by
     /// `.contentShape`, which wraps the view it shapes in a layout.
-    @_spi(Host)
-    public func hitShape(_ value: ContainerShape) -> Modified {
+    @_spi(Host) public func hitShape(_ value: ContainerShape) -> Modified {
         setValue(LayoutContract.hitShape, value)
     }
 
@@ -81,7 +80,7 @@ extension LayoutProperties {
     }
 }
 
-extension Layout {
+extension LayoutView {
     /// `letsInputThrough` from a state, `$x`: the host sets each new value as
     /// it stands, and no view is rebuilt for it.
     public func letsInputThrough(_ state: Binding<Bool>) -> Modified {

@@ -26,6 +26,12 @@ extension Renderer {
         return true
     }
 
+    /// The code objects the element of `id` lent its host - a `CustomLayout`'s
+    /// layout box, a child's `.layoutValue` tags.
+    func codeObjects(for id: ElementId) -> NodeCode? {
+        differ.codeObjects(for: id)
+    }
+
     /// Starts a dispatched event's handler - the road a test exercises too.
     func start(_ handler: @escaping EventHandler) {
         // Read now: a handler that suspends keeps the payload it started with.

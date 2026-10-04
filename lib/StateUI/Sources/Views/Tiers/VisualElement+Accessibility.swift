@@ -24,13 +24,16 @@ extension VisualElementProperties {
 
     /// Whether a screen reader skips this view.
     ///
-    ///     ColorPicker(.silver).isAccessibilityHidden(true)
+    ///     ColorPicker(.silver).accessibilityHidden(true)
     ///
     /// For decoration: a rule, a shadow, a picture repeating the words beside
     /// it. Left unsaid, the platform decides, which is nearly always right; say
     /// `false` where a platform left something out, and never hide a view the
     /// user has to act on.
-    public func isAccessibilityHidden(_ value: Bool) -> Modified { setValue(VisualElementContract.isAccessibilityHidden, value) }
+    public func accessibilityHidden(_ value: Bool) -> Modified { setValue(VisualElementContract.isAccessibilityHidden, value) }
+
+    /// The member's own spelling, kept for code that already says it.
+    @_spi(Host) public func isAccessibilityHidden(_ value: Bool) -> Modified { accessibilityHidden(value) }
 
     /// Whether a screen reader skips this view and everything inside it.
     ///
@@ -38,7 +41,7 @@ extension VisualElementProperties {
     ///
     /// For a panel on screen that is not the user's business - a decorative
     /// header, a card standing behind the one in front.
-    public func automationExcludedWithChildren(_ value: Bool) -> Modified { setValue(VisualElementContract.automationExcludedWithChildren, value) }
+    @_spi(Host) public func automationExcludedWithChildren(_ value: Bool) -> Modified { setValue(VisualElementContract.automationExcludedWithChildren, value) }
 
     /// That this view is a heading, and how deep.
     ///
@@ -46,7 +49,7 @@ extension VisualElementProperties {
     ///
     /// A screen-reader user moves through a long page by its headings; a Text
     /// drawn big is not one until this says so.
-    public func accessibilityHeadingLevel(_ value: HeadingLevel) -> Modified { setValue(VisualElementContract.accessibilityHeadingLevel, value) }
+    @_spi(Host) public func accessibilityHeadingLevel(_ value: HeadingLevel) -> Modified { setValue(VisualElementContract.accessibilityHeadingLevel, value) }
 
     /// The tip the platform shows under a pointer resting on the view:
     ///
@@ -63,14 +66,19 @@ extension VisualElementProperties {
 
     /// `automationExcludedWithChildren` from a state, `$x`: the host sets each
     /// new value as it stands, and no view is rebuilt for it.
-    public func automationExcludedWithChildren(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func automationExcludedWithChildren(_ state: Binding<Bool>) -> Modified {
         plain(VisualElementContract.automationExcludedWithChildren, by: state)
     }
 
-    /// `isAccessibilityHidden` from a state, `$x`: the host sets each new value
+    /// `accessibilityHidden` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
-    public func isAccessibilityHidden(_ state: Binding<Bool>) -> Modified {
+    public func accessibilityHidden(_ state: Binding<Bool>) -> Modified {
         plain(VisualElementContract.isAccessibilityHidden, by: state)
+    }
+
+    /// The member's own spelling, kept for code that already says it.
+    @_spi(Host) public func isAccessibilityHidden(_ state: Binding<Bool>) -> Modified {
+        accessibilityHidden(state)
     }
 
     /// `accessibilityLabel` from a state, `$x`: the host writes each new text,
@@ -81,7 +89,7 @@ extension VisualElementProperties {
 
     /// `accessibilityHeadingLevel` from a state, `$x`: the host sets each new
     /// value as it stands, and no view is rebuilt for it.
-    public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> Modified {
+    @_spi(Host) public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> Modified {
         plain(VisualElementContract.accessibilityHeadingLevel, by: state)
     }
 
@@ -115,15 +123,47 @@ extension View {
 
     /// Whether a screen reader skips this view.
     @_disfavoredOverload
-    public func isAccessibilityHidden(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.isAccessibilityHidden, value) }
+    public func accessibilityHidden(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.isAccessibilityHidden, value) }
 
     /// Whether a screen reader skips this view and everything inside it.
     @_disfavoredOverload
-    public func automationExcludedWithChildren(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.automationExcludedWithChildren, value) }
+    @_spi(Host) public func automationExcludedWithChildren(_ value: Bool) -> ModifiedContent { setting(VisualElementContract.automationExcludedWithChildren, value) }
 
     /// That this view is a heading, and how deep.
     @_disfavoredOverload
-    public func accessibilityHeadingLevel(_ value: HeadingLevel) -> ModifiedContent { setting(VisualElementContract.accessibilityHeadingLevel, value) }
+    @_spi(Host) public func accessibilityHeadingLevel(_ value: HeadingLevel) -> ModifiedContent { setting(VisualElementContract.accessibilityHeadingLevel, value) }
+
+    /// Adds to what a screen reader says this view is and does.
+    ///
+    ///     row.accessibilityAddTraits(selected ? .isSelected : [])
+    @_disfavoredOverload
+    public func accessibilityAddTraits(_ traits: AccessibilityTraits) -> ModifiedContent {
+        revised {
+            let standing = AccessibilityTraits(
+                rawValue: $0.props[VisualElementContract.accessibilityTraits.token]?.enumeration ?? 0)
+            $0.props[VisualElementContract.accessibilityTraits.token] = standing.union(traits).propValue
+        }
+    }
+
+    /// Takes away part of what a screen reader says this view is and does.
+    @_disfavoredOverload
+    public func accessibilityRemoveTraits(_ traits: AccessibilityTraits) -> ModifiedContent {
+        revised {
+            let standing = AccessibilityTraits(
+                rawValue: $0.props[VisualElementContract.accessibilityTraits.token]?.enumeration ?? 0)
+            $0.props[VisualElementContract.accessibilityTraits.token] = standing.subtracting(traits).propValue
+        }
+    }
+
+    /// How this view's children take part in accessibility: `.ignore` leaves
+    /// only the view itself, `.combine` merges them into it, `.contain` lets
+    /// each stand on its own.
+    ///
+    ///     VStack { dots }.accessibilityElement(children: .ignore)
+    @_disfavoredOverload
+    public func accessibilityElement(children: AccessibilityChildBehavior) -> ModifiedContent {
+        setting(VisualElementContract.accessibilityChildBehavior, children)
+    }
 
     /// The tip the platform shows under a pointer resting on the view.
     @_disfavoredOverload
@@ -141,14 +181,14 @@ extension View {
     /// `automationExcludedWithChildren` from a state, `$x`: the host sets each
     /// new value as it stands, and no view is rebuilt for it.
     @_disfavoredOverload
-    public func automationExcludedWithChildren(_ state: Binding<Bool>) -> ModifiedContent {
+    @_spi(Host) public func automationExcludedWithChildren(_ state: Binding<Bool>) -> ModifiedContent {
         revised { $0.drivePlain(VisualElementContract.automationExcludedWithChildren, by: state) }
     }
 
-    /// `isAccessibilityHidden` from a state, `$x`: the host sets each new value
+    /// `accessibilityHidden` from a state, `$x`: the host sets each new value
     /// as it stands, and no view is rebuilt for it.
     @_disfavoredOverload
-    public func isAccessibilityHidden(_ state: Binding<Bool>) -> ModifiedContent {
+    public func accessibilityHidden(_ state: Binding<Bool>) -> ModifiedContent {
         revised { $0.drivePlain(VisualElementContract.isAccessibilityHidden, by: state) }
     }
 
@@ -162,7 +202,7 @@ extension View {
     /// `accessibilityHeadingLevel` from a state, `$x`: the host sets each new
     /// value as it stands, and no view is rebuilt for it.
     @_disfavoredOverload
-    public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> ModifiedContent {
+    @_spi(Host) public func accessibilityHeadingLevel(_ state: Binding<HeadingLevel>) -> ModifiedContent {
         revised { $0.drivePlain(VisualElementContract.accessibilityHeadingLevel, by: state) }
     }
 

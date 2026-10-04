@@ -13,7 +13,7 @@ extension ImageElement {
     /// `.fill` fills the room and crops what will not fit. `.stretch`
     /// stretches, which distorts, and `.center` draws the picture at its own
     /// size in the middle, scaling nothing.
-    public func aspect(_ value: ContentMode) -> Modified {
+    @_spi(Host) public func aspect(_ value: ContentMode) -> Modified {
         setValue(ImageElementContract.aspect, value)
     }
 
@@ -22,7 +22,7 @@ extension ImageElement {
 extension ImageElement where Self: VisualElement {
     /// `aspect` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func aspect(_ state: Binding<ContentMode>) -> Modified {
+    @_spi(Host) public func aspect(_ state: Binding<ContentMode>) -> Modified {
         plain(ImageElementContract.aspect, by: state)
     }
 }

@@ -60,7 +60,8 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
         horizontalAlignment: NSTextAlignment,
         verticalAlignment: AppKitVerticalTextAlignment,
         breaking: LineBreak,
-        maximumNumberOfLines: Int
+        maximumNumberOfLines: Int,
+        selectable: Bool = false
     ) {
         let lineBreakMode = NSLineBreakMode(breaking)
         let styled = paragraphStyled(
@@ -71,12 +72,14 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
             && self.lineBreakMode == lineBreakMode
             && self.maximumNumberOfLines == max(0, maximumNumberOfLines)
             && NSEdgeInsetsEqual(self.padding, padding)
+            && textField.isSelectable == selectable
         guard !unchanged else { return }
 
         textField.attributedStringValue = styled
         textField.alignment = horizontalAlignment
         textField.maximumNumberOfLines = max(0, maximumNumberOfLines)
         textField.lineBreakMode = lineBreakMode
+        textField.isSelectable = selectable
         textField.cell?.wraps = breaking.wraps
         textField.cell?.isScrollable = false
 

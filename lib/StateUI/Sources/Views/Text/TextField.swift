@@ -7,22 +7,14 @@ public protocol TextFieldProperties: PropertyContainer {}
 
 extension TextFieldProperties {
     /// Whether what is typed is hidden behind the platform's secure-entry marks.
-    public func isPassword(_ value: Bool) -> Modified {
+    @_spi(Host) public func isPassword(_ value: Bool) -> Modified {
         setValue(TextFieldContract.isPassword, value)
-    }
-
-    /// What the keyboard's return key is captioned - Go, Search, Send, Next.
-    /// The caption only; what the key does is `.onSubmitted`, which it raises
-    /// whatever it says. A host with a hardware keyboard may have no caption
-    /// to change and still reports the submission.
-    public func submitLabel(_ value: ReturnKey) -> Modified {
-        setValue(TextFieldContract.submitLabel, value)
     }
 
     /// Whether the field shows the native button that empties it - while
     /// there is text and the field has the focus, on platforms whose ordinary
     /// text field provides one. It does unless told otherwise.
-    public func showsClearButton(_ value: Bool) -> Modified {
+    @_spi(Host) public func showsClearButton(_ value: Bool) -> Modified {
         setValue(TextFieldContract.showsClearButton, value)
     }
 }
@@ -86,7 +78,7 @@ public struct TextField: InputView, TextElement, FontElement, TextAlignmentEleme
     /// - Parameter value: the state shown, and written back into as the user
     ///   types.
     /// - Returns: the control, wearing and reporting that text.
-    public func text(_ value: Binding<String>) -> Modified {
+    @_spi(Host) public func text(_ value: Binding<String>) -> Modified {
         value.image == nil
             ? described(TextElementContract.text.token, value, on: .textChanged)
             : words(TextElementContract.text.token, by: value, mode: .inOut)
@@ -96,7 +88,7 @@ public struct TextField: InputView, TextElement, FontElement, TextAlignmentEleme
 
     /// Fires when the return key is pressed - the moment to move to the next
     /// field or run the search.
-    public func onSubmitted(_ handler: @escaping EventHandler) -> Self {
+    public func onSubmit(_ handler: @escaping EventHandler) -> Self {
         onEvent(TextFieldContract.submitted, handler)
     }
 }
@@ -104,19 +96,14 @@ public struct TextField: InputView, TextElement, FontElement, TextAlignmentEleme
 extension TextField {
     /// `showsClearButton` from a state, `$x`: the host sets each new value as
     /// it stands, and no view is rebuilt for it.
-    public func showsClearButton(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func showsClearButton(_ state: Binding<Bool>) -> Modified {
         plain(.showsClearButton, by: state)
     }
 
     /// `isPassword` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func isPassword(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isPassword(_ state: Binding<Bool>) -> Modified {
         plain(.isPassword, by: state)
     }
 
-    /// `submitLabel` from a state, `$x`: the host sets each new value as it
-    /// stands, and no view is rebuilt for it.
-    public func submitLabel(_ state: Binding<ReturnKey>) -> Modified {
-        plain(TextFieldContract.submitLabel.token, by: state)
-    }
 }

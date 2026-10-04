@@ -7,7 +7,7 @@
 
 extension StyleBag: VisualElementProperties {}
 extension StyleBag: ViewProperties where Target: View {}
-extension StyleBag: LayoutProperties where Target: Layout {}
+extension StyleBag: LayoutViewProperties where Target: LayoutView {}
 extension StyleBag: StackBaseProperties where Target: StackBase {}
 extension StyleBag: ShapeProperties where Target: Shape {}
 extension StyleBag: PaddingElement where Target: PaddingElement {}

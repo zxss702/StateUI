@@ -148,7 +148,7 @@ struct InspectorView: View {
             .spacing(6)
         }
         .orientation(.horizontal)
-        .horizontalScrollIndicators(.never)
+        .horizontalScrollIndicators(.hidden)
 
         guard place == .bottom else { return actions }
 

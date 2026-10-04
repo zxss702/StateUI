@@ -12,13 +12,13 @@ extension SliderProperties {
     }
 
     /// The value at the near end of the track, 0 until told otherwise.
-    public func minimum(_ value: Double) -> Modified {
+    @_spi(Host) public func minimum(_ value: Double) -> Modified {
         setValue(SliderContract.minimum, value)
     }
 
     /// The value at the far end of the track, 1 until told otherwise - so a
     /// slider meant to run to 100 must say so.
-    public func maximum(_ value: Double) -> Modified {
+    @_spi(Host) public func maximum(_ value: Double) -> Modified {
         setValue(SliderContract.maximum, value)
     }
 }
@@ -96,19 +96,19 @@ public struct Slider: VisualElement, TintElement, SliderProperties{
 
     /// Fires on every step of a drag, with the value dragged to, after a
     /// binding's write. Heavy work belongs in `.onDragCompleted`.
-    public func onValueChanged(_ handler: @escaping ValueEventHandler<Double>) -> Self {
+    @_spi(Host) public func onValueChanged(_ handler: @escaping ValueEventHandler<Double>) -> Self {
         onEvent(SliderContract.valueChanged, handler)
     }
 
     /// Runs when the thumb is grabbed - the start of a drag whose every step
     /// is an `onValueChanged`.
-    public func onDragStarted(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onDragStarted(_ handler: @escaping EventHandler) -> Self {
         onEvent(SliderContract.dragStarted, handler)
     }
 
     /// Runs when the thumb is let go - where work too heavy for every step of
     /// the drag belongs.
-    public func onDragCompleted(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onDragCompleted(_ handler: @escaping EventHandler) -> Self {
         onEvent(SliderContract.dragCompleted, handler)
     }
 }
@@ -116,13 +116,13 @@ public struct Slider: VisualElement, TintElement, SliderProperties{
 extension Slider {
     /// `maximum` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func maximum(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func maximum(_ state: Binding<Double>) -> Modified {
         plain(SliderContract.maximum.token, by: state)
     }
 
     /// `minimum` from a state, `$x`: the host sets each new value as it stands,
     /// and no view is rebuilt for it.
-    public func minimum(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func minimum(_ state: Binding<Double>) -> Modified {
         plain(SliderContract.minimum.token, by: state)
     }
 }

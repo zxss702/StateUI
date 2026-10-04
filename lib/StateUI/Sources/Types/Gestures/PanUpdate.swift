@@ -30,10 +30,21 @@ public struct PanUpdate: Equatable, Sendable {
     /// Design: docs/design/types/gestures.md#a-pan-is-measured-from-its-start
     public var totalY: Double
 
-    /// One report, from the three values a pan carries: phase, totalX, totalY.
-    init(phase: GesturePhase, totalX: Double, totalY: Double) {
+    /// Where the pan began in the view's own coordinates, where the platform
+    /// says it.
+    public var startLocation: Point?
+
+    /// Where the pointer is now in the view's own coordinates, where the
+    /// platform says it.
+    public var location: Point?
+
+    /// One report, from the values a pan carries: phase, totalX, totalY, and
+    /// where it began and is now, where the platform says them.
+    init(phase: GesturePhase, totalX: Double, totalY: Double, start: Point?, location: Point?) {
         self.phase = phase
         self.totalX = totalX
         self.totalY = totalY
+        startLocation = start
+        self.location = location
     }
 }

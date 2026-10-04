@@ -25,6 +25,23 @@ public enum TextContract: ElementContract {
     public static let lineLimit = ElementProperty<Self, Int>(
         "lineLimit", layer: .native, travels: false)
 
+    /// Whether the user can drag a range out of the text and copy it.
+    public static let selectable = ElementProperty<Self, Bool>(
+        "selectable", layer: .native, cleared: false)
+
+    /// The fraction of its size the text may shrink to before it is cut;
+    /// `.minimumScaleFactor` writes it.
+    public static let minimumScaleFactor = ElementProperty<Self, Double>(
+        "minimumScaleFactor", layer: .native)
+
+    /// Whether a custom text renderer owns drawing - `"custom"` when
+    /// `.textRenderer` attaches one, absent for the default. The renderer
+    /// itself is a code object and rides the node, not the wire; this token
+    /// records the intent so hosts can declare what they do with it.
+    public static let textRenderer = ElementProperty<Self, String>(
+        "textRenderer", layer: .native)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [lineBreak, lineLimit]
+    public static let members: [any ContractMember] = [
+        lineBreak, lineLimit, minimumScaleFactor, selectable, textRenderer]
 }

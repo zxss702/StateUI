@@ -22,14 +22,16 @@
 /// visibility crossed - out, fading and then hidden; back from where it stands; in from nothing.
 /// Design: docs/design/host/animation.md#showing-and-hiding
 extension MountedElement {
-    /// Whether the element stands shown: as the tree says, or while it fades out.
+    /// Whether the element stands shown: as the tree says, or while it fades
+    /// out, or while it rides its removal transition.
     public var standsShown: Bool {
-        isLeaving || value(.isVisible)?.bool != false
+        isLeaving || isDeparting || value(.isVisible)?.bool != false
     }
 
-    /// Whether the element fades in as it joins a standing layout: its view `presentsOpacity`, and no state owns it.
+    /// Whether the element fades in as it joins a standing layout: it was described
+    /// with a transition, or its view `presentsOpacity` and no state owns it.
     public func fadesIn(presentsOpacity: Bool) -> Bool {
-        presentsOpacity && driven[.opacity] == nil
+        transition != nil || (presentsOpacity && driven[.opacity] == nil)
     }
 
     /// Fades the element in on `view` as it joins a layout already standing, under `animation`; an opacity already on its
@@ -79,5 +81,116 @@ extension MountedElement {
         view.setShown(standsShown)
         view.setOpacity(value(.opacity)?.number ?? 1)
         closed()
+    }
+}
+
+// MARK: - Transitions
+
+extension MountedElement {
+    /// The transition the element was described with; nil for none.
+    public var transition: AnyTransition? {
+        resolvedValue(.transition).flatMap(AnyTransition.init(propValue:))
+    }
+
+    /// Fades the element in as it joins a layout already standing - the
+    /// transition it was described with where it has one, the plain opacity
+    /// crossing where it has not; `room` is the place the layout gave it, which
+    /// a `move` measures its slide by.
+    public func fadeIn(_ view: some FadingView, room: Rect? = nil, under animation: Animation) {
+        guard let transition else { fadeIn(view, under: animation); return }
+        guard let tree else { return }
+
+        let law = transition.animation ?? animation
+        for (property, standing) in phaseValues(transition.insertion, room: room) {
+            _ = tree.receiveProperty(
+                mount: mount, property: property, standing: standing,
+                target: resolvedValue(property) ?? resting(of: property), animation: law)
+        }
+    }
+
+    /// Begins the removal transition if one is described and anything animates:
+    /// the element stays mounted and shown while it goes, and `leave()`s itself
+    /// - `closed` lets the parent drop its view - as the last component lands.
+    /// Answers whether it goes by transition (else it should leave at once).
+    ///
+    /// `room` is the place its view last stood at, which a `move` measures by.
+    public func depart(room: Rect?, closed: @escaping () -> Void) -> Bool {
+        guard !isDeparting, let tree, let transition else { return false }
+        let components = phaseValues(transition.removal, room: room)
+        guard !components.isEmpty,
+              let law = transition.animation ?? tree.layoutMotion.law(of: animation)
+        else { return false }
+
+        isDeparting = true
+        var pending = components.count
+        for (property, target) in components {
+            _ = tree.receiveProperty(
+                mount: mount, property: property,
+                standing: value(property) ?? resting(of: property),
+                target: target, animation: law) { [weak self] in
+                    pending -= 1
+                    guard pending == 0, let self else { return }
+                    self.isDeparting = false
+                    self.leave()
+                    closed()
+                }
+        }
+        return true
+    }
+
+    /// A departure reversed mid-flight: a patch described the element again.
+    /// Each removal component rides back to the value the tree says.
+    func revive() {
+        guard isDeparting, let transition else { return }
+        isDeparting = false
+
+        guard let tree else { return }
+        let law = transition.animation ?? tree.layoutMotion.law(of: animation) ?? .standard
+        for (property, _) in phaseValues(transition.removal, room: nil) {
+            _ = tree.receiveProperty(
+                mount: mount, property: property, standing: value(property),
+                target: resolvedValue(property) ?? resting(of: property), animation: law)
+        }
+    }
+
+    /// The values a phase's components stand at, by property - a component the
+    /// element already drives stays the state's.
+    private func phaseValues(_ phase: AnyTransition.Phase, room: Rect?) -> [(Prop, HostValue)] {
+        var values: [(Prop, HostValue)] = []
+        var offset = phase.offset ?? Point(0, 0)
+        if let move = phase.move {
+            let across = room?.width ?? 0, down = room?.height ?? 0
+            switch move {
+            case .leading: offset = Point(offset.x - across, offset.y)
+            case .trailing: offset = Point(offset.x + across, offset.y)
+            case .top: offset = Point(offset.x, offset.y - down)
+            case .bottom: offset = Point(offset.x, offset.y + down)
+            }
+        }
+
+        if let opacity = phase.opacity, driven[.opacity] == nil {
+            values.append((.opacity, .number(opacity)))
+        }
+        if phase.offset != nil || phase.move != nil {
+            if driven[.translationX] == nil { values.append((.translationX, .number(offset.x))) }
+            if driven[.translationY] == nil { values.append((.translationY, .number(offset.y))) }
+        }
+        if let scaleX = phase.scaleX, driven[.scaleX] == nil { values.append((.scaleX, .number(scaleX))) }
+        if let scaleY = phase.scaleY, driven[.scaleY] == nil { values.append((.scaleY, .number(scaleY))) }
+        if let pivot = phase.pivot {
+            values.append((.pivotX, .number(pivot.x)))
+            values.append((.pivotY, .number(pivot.y)))
+        }
+        if let blur = phase.blur, driven[.blur] == nil { values.append((.blur, .number(blur))) }
+        return values
+    }
+
+    /// The value a transition property rests at where the element says none.
+    private func resting(of property: Prop) -> HostValue {
+        switch property {
+        case .opacity, .scaleX, .scaleY: .number(1)
+        case .pivotX, .pivotY: .number(0.5)
+        default: .number(0)
+        }
     }
 }

@@ -7,19 +7,19 @@ public protocol FontElement: PropertyContainer {}
 
 extension FontElement {
     /// How big the text is, in device units.
-    public func fontSize(_ value: Double) -> Modified { setValue(FontElementContract.fontSize, value) }
+    @_spi(Host) public func fontSize(_ value: Double) -> Modified { setValue(FontElementContract.fontSize, value) }
 
     /// Which font, by the alias the app registered it under - not the file name.
-    public func fontFamily(_ value: String) -> Modified { setValue(FontElementContract.fontFamily, Name(value)) }
+    @_spi(Host) public func fontFamily(_ value: String) -> Modified { setValue(FontElementContract.fontFamily, Name(value)) }
 
     /// Bold, italic, or both.
     ///
     ///     Text("Total").fontAttributes([.bold, .italic])
-    public func fontAttributes(_ value: FontAttributes) -> Modified { setValue(FontElementContract.fontAttributes, value) }
+    @_spi(Host) public func fontAttributes(_ value: FontAttributes) -> Modified { setValue(FontElementContract.fontAttributes, value) }
 
     /// Whether the text grows with the system's text-size setting. On by
     /// default.
-    public func fontAutoScalingEnabled(_ value: Bool) -> Modified { setValue(FontElementContract.fontAutoScalingEnabled, value) }
+    @_spi(Host) public func fontAutoScalingEnabled(_ value: Bool) -> Modified { setValue(FontElementContract.fontAutoScalingEnabled, value) }
 
     /// The font text is drawn in - the SwiftUI spelling:
     ///
@@ -73,7 +73,7 @@ extension FontElement {
     /// text-size setting.
     ///
     ///     Text("Caption").fontTextStyle(.caption)
-    public func fontTextStyle(_ style: FontTextStyle) -> Modified {
+    @_spi(Host) public func fontTextStyle(_ style: FontTextStyle) -> Modified {
         setValue(FontElementContract.fontTextStyle, style)
     }
 
@@ -92,25 +92,25 @@ extension FontElement {
 extension FontElement where Self: VisualElement {
     /// `fontAttributes` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func fontAttributes(_ state: Binding<FontAttributes>) -> Modified {
+    @_spi(Host) public func fontAttributes(_ state: Binding<FontAttributes>) -> Modified {
         plain(FontElementContract.fontAttributes, by: state)
     }
 
     /// `fontAutoScalingEnabled` from a state, `$x`: the host sets each new
     /// value as it stands, and no view is rebuilt for it.
-    public func fontAutoScalingEnabled(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func fontAutoScalingEnabled(_ state: Binding<Bool>) -> Modified {
         plain(FontElementContract.fontAutoScalingEnabled, by: state)
     }
 
     /// `fontSize` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it.
-    public func fontSize(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func fontSize(_ state: Binding<Double>) -> Modified {
         journey(FontElementContract.fontSize, by: state)
     }
 
     /// `fontTextStyle` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func fontTextStyle(_ state: Binding<FontTextStyle>) -> Modified {
+    @_spi(Host) public func fontTextStyle(_ state: Binding<FontTextStyle>) -> Modified {
         plain(FontElementContract.fontTextStyle, by: state)
     }
 

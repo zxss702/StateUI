@@ -14,8 +14,9 @@ public enum FrameReport {
         Array(place(numbers).dropFirst(2))
     }
 
-    /// Where the view's corner stands from the corner of its window's content, clear of the chrome: x, y.
+    /// Where the view's corner stands from the corner of its window's content, clear of the chrome: x, y - the
+    /// window corner minus the safe area's.
     public static func inContent(_ numbers: [Double]) -> [Double] {
-        numbers.count >= 8 ? [numbers[6].rounded(), numbers[7].rounded()] : []
+        numbers.count >= 10 ? [(numbers[4] - numbers[6]).rounded(), (numbers[5] - numbers[7]).rounded()] : []
     }
 }

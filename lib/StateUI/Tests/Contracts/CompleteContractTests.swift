@@ -140,8 +140,17 @@ final class CompleteContractTests: XCTestCase {
 
         for section in sections {
             for name in Self.backticked(inTableOf: section, in: document).sorted() {
-                let handler = name.hasPrefix("on") && name.count > 2
-                    && events.contains(name.dropFirst(2).prefix(1).lowercased() + name.dropFirst(3))
+                let derived = name.dropFirst(2).prefix(1).lowercased() + name.dropFirst(3)
+                var handler = name.hasPrefix("on") && name.count > 2 && events.contains(derived)
+                // `onSubmit` (`submitted`): a SwiftUI spelling names its event
+                // right beside it - the pair in the row is the derivation.
+                if !handler, name.hasPrefix("on"), document.contains("`\(name)` (`"), let open = document.range(
+                    of: "`\(name)` (`"
+                ), let close = document.range(of: ")", range: open.upperBound..<document.endIndex) {
+                    let paired = String(document[open.upperBound..<close.lowerBound])
+                        .replacingOccurrences(of: "`", with: "")
+                    handler = events.contains(paired)
+                }
                 if !types.contains(name) && !members.contains(name) && !handler && !coreAPI.contains(name) {
                     stranger.append("\(section): `\(name)`")
                 }
@@ -226,8 +235,14 @@ final class CompleteContractTests: XCTestCase {
         "WindowSession.swift": ["WindowScene"],
         "PageSession.swift": ["Page"],
         "PlacedLayout.swift": ["ZStack"],
+        // The tier's protocols read as `LayoutView` so a `Layout` is free to
+        // be a custom arrangement; the contract they write is still Layout's.
+        "Layout.swift": ["Layout"],
         "StyleSheet.swift": ["VisualElement"],
         "Toggle.swift": ["Button", "Image"],
+        // `.safeAreaInset` is written out as a VStack or an HStack holding
+        // the view and its bar - the stacks' `spacing` is theirs to write.
+        "View+SafeArea.swift": ["VStack", "HStack"],
     ]
 
     /// The contracts a source names by its protocols and extensions -

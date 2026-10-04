@@ -43,7 +43,7 @@
     ///         : values[TextElementContract.text]
     ///
     /// - Parameter member: the property, written with its contract.
-    public func carriedIn<Owner: Contract, Value: HostRepresentable>(
+    @_spi(Host) public func carriedIn<Owner: Contract, Value: HostRepresentable>(
         _ member: ElementProperty<Owner, Value>
     ) -> Bool {
         carried(member.token)
@@ -70,7 +70,7 @@
     ///
     /// - Parameter member: the property, written with its contract.
     /// - Returns: whether the patch changed it.
-    public func changed<Owner: Contract, Value: HostRepresentable>(_ member: ElementProperty<Owner, Value>) -> Bool {
+    @_spi(Host) public func changed<Owner: Contract, Value: HostRepresentable>(_ member: ElementProperty<Owner, Value>) -> Bool {
         changes.contains(member.token)
     }
 }

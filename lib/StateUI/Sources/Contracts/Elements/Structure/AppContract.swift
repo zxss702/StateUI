@@ -38,6 +38,14 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// See `Dialogs.confirm`.
     public static let confirm = ElementAct<Self, (String, String, String, String), Bool>("confirm")
 
+    /// Asks the user for files in the platform's own panel - whether several
+    /// may be picked, and the extensions that narrow the panel's offering, an
+    /// empty list for any file - answering the paths picked, empty where the
+    /// panel was cancelled.
+    ///
+    /// See `View.fileImporter`.
+    public static let chooseFiles = ElementAct<Self, (Bool, [String]), [String]>("chooseFiles")
+
     /// The host's local time of day, as four numbers: hour, minute, second,
     /// millisecond.
     ///
@@ -83,7 +91,7 @@ public enum AppContract: ElementContract, ApplicationTier {
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        alert, announce, chooseAction, confirm, currentTime, currentTimeZone, handlerFailed,
+        alert, announce, chooseAction, chooseFiles, confirm, currentTime, currentTimeZone, handlerFailed,
         hideOnScreenKeyboard, persistSceneValue, persistValue, prompt, utcOffset,
     ]
 }

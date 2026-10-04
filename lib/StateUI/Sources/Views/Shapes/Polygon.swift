@@ -11,7 +11,7 @@ extension PolygonProperties {
     ///
     /// The numbers are device units in the shape's own space, which `.aspect`
     /// fits to the room the layout gives it.
-    public func points(_ value: [Point]) -> Modified {
+    @_spi(Host) public func points(_ value: [Point]) -> Modified {
         setValue(PolygonContract.points, value)
     }
 
@@ -21,7 +21,7 @@ extension PolygonProperties {
     /// Only the fill looks at it; the outline is drawn the same either way.
     /// The choice shows on a shape whose edges cross - a five-pointed star,
     /// where `.evenOdd` leaves the middle hollow and `.nonzero` fills it.
-    public func fillRule(_ value: FillRule) -> Modified {
+    @_spi(Host) public func fillRule(_ value: FillRule) -> Modified {
         setValue(PolygonContract.fillRule, value)
     }
 }
@@ -53,7 +53,7 @@ public struct Polygon: Shape, PolygonProperties {
 extension Polygon {
     /// `fillRule` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func fillRule(_ state: Binding<FillRule>) -> Modified {
+    @_spi(Host) public func fillRule(_ state: Binding<FillRule>) -> Modified {
         plain(PolygonContract.fillRule.token, by: state)
     }
 }

@@ -28,13 +28,13 @@ extension PageElement {
     ///
     /// Not the text on a navigation bar, which belongs to the page on top of
     /// the stack; a title on the `NavigationStack` itself names the whole stack.
-    public func title(_ value: String) -> Modified {
+    @_spi(Host) public func title(_ value: String) -> Modified {
         setValue(PageElementContract.title, value)
     }
 
     /// The picture that stands for the page: a tab's icon. A page not shown as
     /// an item of something else has nowhere to draw it.
-    public func icon(_ value: ImageSource) -> Modified {
+    @_spi(Host) public func icon(_ value: ImageSource) -> Modified {
         setValue(PageElementContract.icon, value)
     }
 
@@ -131,5 +131,123 @@ extension View {
     @_disfavoredOverload
     public func interactiveDismissDisabled(_ state: Binding<Bool>) -> ModifiedContent {
         revised { $0.drivePlain(PageElementContract.interactiveDismissDisabled, by: state) }
+    }
+
+    /// The title the page holding this view shows, from a `Text` - its words,
+    /// its styling left with the page's own conventions:
+    ///
+    ///     Form { … }
+    ///         .navigationTitle(Text(name))
+    ///
+    /// Written on a page's root view it names the page itself, as `page.title`
+    /// does from inside.
+    public func navigationTitle(_ title: Text) -> ModifiedContent {
+        setting(PageElementContract.title, title.words)
+    }
+
+    /// The second line the page's title area shows, where the platform takes
+    /// one - a macOS window's subtitle:
+    ///
+    ///     ContentView()
+    ///         .navigationSubtitle("New conversation")
+    ///
+    /// Written on a page's root view it names the page itself.
+    public func navigationSubtitle(_ subtitle: String) -> ModifiedContent {
+        setting(PageElementContract.subtitle, subtitle)
+    }
+
+    /// `navigationSubtitle` from a `Text` - its words, its styling left with
+    /// the page's own conventions.
+    public func navigationSubtitle(_ subtitle: Text) -> ModifiedContent {
+        navigationSubtitle(subtitle.words)
+    }
+
+    /// The document the page stands for, as its path - where a platform shows
+    /// one in the window's chrome, as a macOS window's proxy icon and path do:
+    ///
+    ///     EditorView()
+    ///         .navigationDocument(documentPath)
+    ///
+    /// Written on a page's root view it names the page itself.
+    public func navigationDocument(_ documentPath: String) -> ModifiedContent {
+        setting(PageElementContract.document, documentPath)
+    }
+
+    /// Whether the page's way back - the navigation stack's back button -
+    /// shows over it. `true` where the argument is left out, as SwiftUI's
+    /// no-argument form is:
+    ///
+    ///     PushedPage()
+    ///         .navigationBarBackButtonHidden()
+    ///
+    /// Written on a page's root view it speaks for the page itself.
+    public func navigationBarBackButtonHidden(_ hidesBackButton: Bool = true) -> ModifiedContent {
+        setting(PageContract.hasBackButton, !hidesBackButton)
+    }
+
+    /// The width the split-view column this view leads asks for - its least,
+    /// its ideal, and its most:
+    ///
+    ///     SidebarView()
+    ///         .navigationSplitViewColumnWidth(min: 256, ideal: 280, max: 400)
+    ///
+    /// Written on a column's root view it speaks for the column itself; a
+    /// platform that fixes its columns takes the ideal where it can.
+    public func navigationSplitViewColumnWidth(
+        min: Double? = nil, ideal: Double? = nil, max: Double? = nil
+    ) -> ModifiedContent {
+        setting(PageElementContract.preferredColumnWidth, [min, ideal, max].compactMap { $0 })
+    }
+
+    /// A fixed width for the split-view column this view leads.
+    public func navigationSplitViewColumnWidth(_ width: Double) -> ModifiedContent {
+        navigationSplitViewColumnWidth(min: width, ideal: width, max: width)
+    }
+
+    /// Whether the window's own toolbar shows over the page holding this
+    /// view:
+    ///
+    ///     ContentView()
+    ///         .toolbarVisibility(.hidden, for: .windowToolbar)
+    ///
+    /// Written on a page's root view it speaks for the page itself. A
+    /// placement other than `.windowToolbar` has no bar of its own yet and is
+    /// left to the platform.
+    public func toolbarVisibility(
+        _ visibility: Visibility, for bars: ToolbarPlacement = .automatic
+    ) -> ModifiedContent {
+        revised {
+            if bars.contains(.windowToolbar) || bars == .automatic {
+                $0.write(PageElementContract.toolbarVisibility, visibility)
+            }
+        }
+    }
+
+    /// Whether the window's own toolbar paints its background over the page
+    /// holding this view:
+    ///
+    ///     ContentView()
+    ///         .toolbarBackground(.hidden, for: .windowToolbar)
+    ///
+    /// Written on a page's root view it speaks for the page itself.
+    public func toolbarBackground(
+        _ visibility: Visibility, for bars: ToolbarPlacement = .automatic
+    ) -> ModifiedContent {
+        revised {
+            if bars.contains(.windowToolbar) || bars == .automatic {
+                $0.write(PageElementContract.toolbarBackground, visibility)
+            }
+        }
+    }
+
+    /// The colour the window paints behind the page's own background - a
+    /// material colour reaching the window itself:
+    ///
+    ///     Color.clear.windowBackground(.windowBackground)
+    ///
+    /// Written on a page's root view it speaks for the window the page stands
+    /// in.
+    public func windowBackground(_ background: Color) -> ModifiedContent {
+        setting(PageElementContract.windowBackground, background)
     }
 }

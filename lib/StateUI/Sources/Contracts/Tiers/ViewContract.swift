@@ -37,9 +37,37 @@ public enum ViewContract: Contract {
     /// A drag that started on the view ended, wherever it ended.
     public static let dropCompleted = ElementEvent<Self, Void>("dropCompleted", layer: .native)
 
-    /// The view settled on a frame: eight numbers - x, y, width, height, the
-    /// window's x and y, and the safe area's x and y.
+    /// Files were dropped on the view: their paths, and where the drop landed
+    /// in the view's own frame.
+    public static let dropPaths = ElementEvent<Self, ([String], Point)>("dropPaths", layer: .native)
+
+    /// The name this view gives its own coordinate space, which measurements
+    /// inside it read through `.named(name)`; `.coordinateSpace` writes it.
+    public static let coordinateSpaceName = ElementProperty<Self, String>(
+        "coordinateSpaceName", layer: .stateUI, travels: false)
+
+    /// The view settled on a frame: ten numbers - x, y, width, height, the
+    /// window's x and y, and the safe area's frame in the window.
     public static let frameChanged = ElementEvent<Self, [Double]>("frameChanged", layer: .native)
+
+    /// The pointer's look while it is over the view; `.pointerStyle` writes it.
+    public static let pointerStyle = ElementProperty<Self, PointerStyle>("pointerStyle", layer: .native)
+
+    /// How loudly the view asks for its natural size when the layout runs
+    /// short - a higher one keeps its size while lower ones give theirs up;
+    /// `.layoutPriority` writes it.
+    public static let layoutPriority = ElementProperty<Self, Double>(
+        "layoutPriority", layer: .stateUI, travels: false)
+
+    /// The horizontal alignment slot this view overrides, and the point in its
+    /// own frame it aligns by - [slot, offset]; `.alignmentGuide` writes it.
+    public static let horizontalGuide = ElementProperty<Self, [Double]>(
+        "horizontalGuide", layer: .stateUI, travels: false)
+
+    /// The vertical alignment slot this view overrides, and the point in its
+    /// own frame it aligns by - [slot, offset]; `.alignmentGuide` writes it.
+    public static let verticalGuide = ElementProperty<Self, [Double]>(
+        "verticalGuide", layer: .stateUI, travels: false)
 
     /// The view stretches to share the room left over along its layout's axis,
     /// never less than this long. What a `Spacer` writes.
@@ -62,6 +90,12 @@ public enum ViewContract: Contract {
     public static let horizontalAlignment = ElementProperty<Self, AxisAlignment>(
         "horizontalAlignment", layer: .native)
 
+    /// The named coordinate spaces enclosing the view, innermost first, each
+    /// its declaring view's frame in window coordinates; sent with a frame
+    /// report, ahead of its numbers.
+    public static let namedFramesChanged = ElementEvent<Self, [NamedSpaceFrame]>(
+        "namedFramesChanged", layer: .native)
+
     /// The space kept outside the view, between it and its neighbours.
     public static let padding = ElementProperty<Self, EdgeInsets>("padding", layer: .native, moves: .spacing)
 
@@ -69,9 +103,10 @@ public enum ViewContract: Contract {
     public static let panTouchCount = ElementProperty<Self, Int>(
         "panTouchCount", layer: .structure, travels: false, cleared: false)
 
-    /// The view is being dragged: the phase, and how far across and down since
-    /// the pan began.
-    public static let panUpdated = ElementEvent<Self, (GesturePhase, Double, Double)>(
+    /// The view is being dragged: the phase, how far across and down since the
+    /// pan began, and where it began and is now, in the view's own
+    /// coordinates, where the platform says them.
+    public static let panUpdated = ElementEvent<Self, (GesturePhase, Double, Double, Point?, Point?)>(
         "panUpdated", layer: .native)
 
     /// The number of the state a drag's distance across is written into.
@@ -131,11 +166,12 @@ public enum ViewContract: Contract {
 
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        allowDrop, area, canDrag, dragLeave,
-        dragOver, dragStarting, dragText, drop, dropCompleted, flex, frameChanged, gridColumn,
-        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, padding, panTouchCount,
+        allowDrop, area, canDrag, coordinateSpaceName, dragLeave,
+        dragOver, dragStarting, dragText, drop, dropCompleted, dropPaths, flex, frameChanged, gridColumn,
+        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, horizontalGuide, layoutPriority,
+        namedFramesChanged, padding, panTouchCount,
         panUpdated, panXChannel, panYChannel, pinchUpdated, pointerEntered, pointerExited,
-        pointerMoved, pointerPressed, pointerReleased, swipeDirection, swipeThreshold, swiped,
-        tag, tapCount, tapGesture, verticalAlignment,
+        pointerMoved, pointerPressed, pointerReleased, pointerStyle, swipeDirection, swipeThreshold, swiped,
+        tag, tapCount, tapGesture, verticalAlignment, verticalGuide,
     ]
 }

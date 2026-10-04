@@ -323,4 +323,140 @@ final class EnvironmentTests: XCTestCase {
         renders.revisit(changed: changed)
         XCTAssertEqual(reader.count, 1, "the same provider is not a reason to build the view")
     }
+
+    // MARK: - Keyed values: `.environment(\.key, _)` and `@Environment(\.key)`
+
+    func testAChildResolvesWhatAnAncestorWrote() {
+        let renders = Renders()
+
+        let patch = renders.render(
+            stack([TintLabel(builds: Builds()).environment(\.pageTint, "plum").node], id: "root"))
+
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("plum"))
+    }
+
+    func testAKeyedValueReadsItsDefaultWhereNothingWrote() {
+        let renders = Renders()
+
+        let patch = renders.render(stack([TintLabel(builds: Builds()).node], id: "root"))
+
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("gray"))
+    }
+
+    func testTheNearerWriteWinsForItsBranch() {
+        let renders = Renders()
+
+        let patch = renders.render(
+            stack(
+                [TintLabel(builds: Builds()).environment(\.pageTint, "inner").node],
+                id: "root"
+            ).environmentValuesWriting(\.pageTint, "outer"))
+
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("inner"))
+    }
+
+    func testAMovedKeyedValueRebuildsItsReader() {
+        let renders = Renders()
+        let reader = Builds()
+        let holder = TintHolder(reader: reader)
+
+        renders.render(stack([holder.node], id: "root"))
+        XCTAssertEqual(reader.count, 1)
+
+        holder.tint = "plum"
+        let patch = renders.revisit(changed: changed)
+
+        XCTAssertEqual(reader.count, 2, "a keyed value that moved is a reason to build the view")
+        XCTAssertEqual(patch.child(.auto(1))?.child("t")?.props["text"], .string("plum"))
+    }
+
+    func testAnUnmovedKeyedValueLeavesACarriedViewAlone() {
+        let renders = Renders()
+        let reader = Builds()
+        let holder = TintHolder(reader: reader)
+
+        renders.render(stack([holder.node], id: "root"))
+
+        holder.title = "T"
+        renders.revisit(changed: changed)
+        XCTAssertEqual(reader.count, 1, "the same keyed value is not a reason to build the view")
+    }
+
+    func testAnOptionalObjectReadsNilWhereNothingProvided() {
+        let renders = Renders()
+
+        let patch = renders.render(stack([MaybeSessionLabel().node], id: "root"))
+
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("none"))
+    }
+
+    func testAnOptionalObjectResolvesWhereProvided() {
+        let renders = Renders()
+        let session = Session()
+
+        let patch = renders.render(stack([MaybeSessionLabel().environment(session).node], id: "root"))
+
+        XCTAssertEqual(patch.child(.auto(1))?.props["text"], .string("guest"))
+    }
+}
+
+/// The keyed environment's test key: `\.pageTint` writes and reads a `String`.
+private struct PageTintKey: EnvironmentKey {
+    static let defaultValue = "gray"
+}
+
+extension EnvironmentValues {
+    /// The tint this branch was written with.
+    fileprivate var pageTint: String {
+        get { self[PageTintKey.self] }
+        set { self[PageTintKey.self] = newValue }
+    }
+}
+
+/// A `.environment(\.key, _)` spelled on a bare `Node`, for the stack helper's
+/// own node (the modifier lives on `View`; a built stack writes directly).
+private extension Node {
+    func environmentValuesWriting<Value>(
+        _ keyPath: WritableKeyPath<EnvironmentValues, Value>, _ value: Value
+    ) -> Node {
+        var node = self
+        node.environmentValues[keyPath: keyPath] = value
+        return node
+    }
+}
+
+/// Reads `\.pageTint` - the keyed environment's reader.
+private struct TintLabel: View {
+    let builds: Builds
+    @Environment(\.pageTint) var tint
+
+    var body: some View {
+        builds.count += 1
+        return ModifiedContent(node: label(tint))
+    }
+}
+
+/// Owns a keyed write and an unrelated state - the writer a moved value and
+/// an unmoved one are told apart through.
+private struct TintHolder: View {
+    let reader: Builds
+    @State var tint = "gray"
+    @State var title = "t"
+
+    var body: some View {
+        VStack {
+            Text(title)
+            TintLabel(builds: reader).id("t")
+        }
+        .environment(\.pageTint, tint)
+    }
+}
+
+/// Reads an object that may not be there - `@Environment(T.self) var t: T?`.
+private struct MaybeSessionLabel: View {
+    @Environment(Session.self) var session: Session?
+
+    var body: some View {
+        ModifiedContent(node: label(session?.name ?? "none"))
+    }
 }

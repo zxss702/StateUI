@@ -144,7 +144,7 @@ final class GTKGesturesTests: XCTestCase {
             GTKTestHost.emit(drag, "drag-update", [-60, 5])
             GTKTestHost.emit(drag, "drag-end", [-60, 5])
             GTKTestHost.emit(press, "drag-end", [-60, 5])
-            let expected = "x -50 pressed 70; pan 0 0; pan 1 -60; pan 2 0; swiped 2; released 10; "
+            let expected = "x -50 pressed 70; pan 0 0; pan 1 -60; pan 2 -60; swiped 2; released 10; "
             host.settle { host.texts.first == expected }
 
             XCTAssertEqual(host.texts.first, expected)

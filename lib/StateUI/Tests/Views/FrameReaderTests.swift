@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // `.onFrameChanged` hands its handler the four values its space means, out of
-// the one eight-number report the host sends - and a GeometryReader builds its
+// the one ten-number report the host sends - and a GeometryReader builds its
 // content FROM that measurement, holding it in a @State of its own. See
 // GeometryReader.swift.
 
@@ -17,8 +17,9 @@ final class FrameReaderTests: XCTestCase {
     }
 
     /// One report, as a host composes it: parent x, y, width, height,
-    /// then the origin in the window, then in the safe area.
-    private let payload: [PropValue] = [.numbers([10, 20, 300, 400, 110, 220, 110, 176])]
+    /// then the corner in the window, then the safe area's frame there -
+    /// an origin of (0, 44) leaving the view's corner (110, 176) inside it.
+    private let payload: [PropValue] = [.numbers([10, 20, 300, 400, 110, 220, 0, 44, 400, 600])]
 
     // MARK: - The modifier
 
@@ -47,6 +48,106 @@ final class FrameReaderTests: XCTestCase {
 
     func testTheSafeAreaSpaceMovesItPastTheInsets() {
         XCTAssertEqual(frame(in: .safeArea), Rect(110, 176, 300, 400))
+    }
+
+    func testTheLocalSpaceIsTheViewsOwnBounds() {
+        XCTAssertEqual(frame(in: .local), Rect(0, 0, 300, 400))
+    }
+
+    /// A named space measures the frame from the declaring ancestor's top
+    /// left: the window corner less the space's own - which arrives ahead of
+    /// the numbers, as the host sends it.
+    func testANamedSpaceMeasuresFromItsDeclaringView() {
+        let renders = Renders()
+        let heard = Heard()
+
+        let patch = renders.render(
+            VStack {}
+                .onFrameChanged(in: .named("Page")) { heard.frames.append($0) }
+                .node)
+
+        renders.fire(patch.events?["namedFramesChanged"] ?? -1, with: [
+            .values([.values([.string("Page"), .numbers([100, 200, 800, 600])])])])
+        renders.fire(patch.events?["frameChanged"] ?? -1, with: payload)
+
+        XCTAssertEqual(heard.frames.last, Rect(10, 20, 300, 400))
+    }
+
+    /// A space no ancestor declared has nothing to answer with: `.zero`.
+    func testANamedSpaceNobodyDeclaredReadsZero() {
+        XCTAssertEqual(frame(in: .named("Nowhere")), Rect(0, 0, 0, 0))
+    }
+
+    /// `.coordinateSpace` writes the name the host walks ancestors for.
+    func testACoordinateSpaceWritesItsName() {
+        let renders = Renders()
+
+        let patch = renders.render(
+            VStack {}
+                .coordinateSpace(.named("Page"))
+                .node)
+
+        XCTAssertEqual(patch.props["coordinateSpaceName"], .string("Page"))
+    }
+
+    /// A proxy answers `.named` from the same two reports the handler reads.
+    func testAProxyAnswersANamedSpace() {
+        let renders = Renders()
+
+        func tree() -> Node {
+            Node(type: "WindowScene", children: [
+                VStack {
+                    GeometryReader { proxy in
+                        let frame = proxy.frame(in: .named("Page"))
+                        return Text("\(Int(frame.x)),\(Int(frame.y))")
+                    }
+                }.node,
+            ])
+        }
+
+        let first = renders.render(tree())
+        let grid = first.children.first?.children.first
+
+        Renderer.shared.clearInvalidation()
+        renders.fire(grid?.events?["namedFramesChanged"] ?? -1, with: [
+            .values([.values([.string("Page"), .numbers([100, 200, 800, 600])])])])
+        renders.fire(grid?.events?["frameChanged"] ?? -1, with: payload)
+        let second = renders.render(tree(), changed: Renderer.shared.pendingChanges)
+
+        XCTAssertEqual(
+            second.children.first?.children.first?.children.first?.props["text"],
+            .string("10,20"))
+        Renderer.shared.clearInvalidation()
+    }
+
+    /// A reader whose view reaches above and below the safe area reads the
+    /// covered strips as insets; sides inside it read zero.
+    func testAProxyReadsTheSafeAreasCoverAsInsets() {
+        let renders = Renders()
+
+        func tree() -> Node {
+            Node(type: "WindowScene", children: [
+                VStack {
+                    GeometryReader { proxy in
+                        Text("\(Int(proxy.safeAreaInsets.top))/\(Int(proxy.safeAreaInsets.bottom))")
+                    }
+                }.node,
+            ])
+        }
+
+        let first = renders.render(tree())
+        let grid = first.children.first?.children.first
+
+        Renderer.shared.clearInvalidation()
+        // A full-window view, its safe area starting 44 down and ending 56 up.
+        renders.fire(grid?.events?["frameChanged"] ?? -1,
+            with: [.numbers([0, 0, 400, 800, 0, 0, 0, 44, 400, 700])])
+        let second = renders.render(tree(), changed: Renderer.shared.pendingChanges)
+
+        XCTAssertEqual(
+            second.children.first?.children.first?.children.first?.props["text"],
+            .string("44/56"))
+        Renderer.shared.clearInvalidation()
     }
 
     func testTheDefaultSpaceIsTheParent() {
@@ -96,10 +197,10 @@ final class FrameReaderTests: XCTestCase {
 
         let id = patch.events?["frameChanged"] ?? -1
 
-        renders.fire(id, with: [.numbers([10, 20, 300, 400, 110, 220, 110, 176])])
+        renders.fire(id, with: [.numbers([10, 20, 300, 400, 110, 220, 0, 44, 400, 600])])
 
         // What a scroll sends: the same parent frame, a moved window origin.
-        renders.fire(id, with: [.numbers([10, 20, 300, 400, 110, 470, 110, 426])])
+        renders.fire(id, with: [.numbers([10, 20, 300, 400, 110, 470, 0, 44, 400, 600])])
 
         XCTAssertEqual(parents.frames, [Rect(10, 20, 300, 400)],
             "the parent-space handler heard a scroll that never changed its answer")
@@ -162,8 +263,8 @@ final class FrameReaderTests: XCTestCase {
         func tree() -> Node {
             Node(type: "WindowScene", children: [
                 VStack {
-                    GeometryReader { frame in
-                        Text("\(Int(frame.width)) wide")
+                    GeometryReader { proxy in
+                        Text("\(Int(proxy.size.width)) wide")
                     }
                 }.node,
             ])
@@ -198,8 +299,8 @@ final class FrameReaderTests: XCTestCase {
         func tree() -> Node {
             Node(type: "WindowScene", children: [
                 VStack {
-                    GeometryReader { frame in
-                        Text("\(Int(frame.width)) wide")
+                    GeometryReader { proxy in
+                        Text("\(Int(proxy.size.width)) wide")
                     }
 
                     Text("sibling")

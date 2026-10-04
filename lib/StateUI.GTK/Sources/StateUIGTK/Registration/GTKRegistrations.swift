@@ -33,6 +33,7 @@ enum GTKRegistrations {
     static func shared(_ registry: Registry<GTKView>) {
         registry.everyElementRealizes(VisualElementContract.opacity)
         registry.everyElementRealizes(VisualElementContract.isVisible)
+        registry.everyElementRealizes(VisualElementContract.transition)
         registry.everyElementRealizes(VisualElementContract.isEnabled)
         // GTK 4.14 gives an accessible no identifier of its own: it is met by its role, its label and its place.
         registry.everyElementMeetsAssistiveTechnology(identifying: false)
@@ -45,9 +46,11 @@ enum GTKRegistrations {
     static let acts: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
         AppContract.alert, AppContract.announce, AppContract.chooseAction,
+        AppContract.chooseFiles,
         AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
         AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
         AppContract.prompt, AppContract.utcOffset, ListContract.scrollTo,
+        ScrollViewContract.scrollToDescendant,
     ]
 
 }

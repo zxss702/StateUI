@@ -40,7 +40,7 @@ enum AndroidRegistrations {
         AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
         AppContract.prompt, AppContract.utcOffset,
         WebViewContract.evaluateJavaScript, WebViewContract.goBack, WebViewContract.goForward, WebViewContract.reload,
-        ListContract.scrollTo,
+        ListContract.scrollTo, ScrollViewContract.scrollToDescendant,
     ]
 
     /// What `AndroidElement` puts on every view wearing each member's contract, by the host layer's rules.
@@ -51,6 +51,7 @@ enum AndroidRegistrations {
         registry.everyElementIsDrawnOverItsPlace()
         registry.everyElementRealizes(VisualElementContract.opacity)
         registry.everyElementRealizes(VisualElementContract.isVisible)
+        registry.everyElementRealizes(VisualElementContract.transition)
         registry.everyElementRealizes(VisualElementContract.background)
         registry.everyElementRaises(VisualElementContract.isFocusedChanged)
     }

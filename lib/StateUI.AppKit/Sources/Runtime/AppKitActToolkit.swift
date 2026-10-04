@@ -3,6 +3,7 @@
 
 #if os(macOS)
 import AppKit
+import UniformTypeIdentifiers
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
@@ -100,24 +101,63 @@ final class AppKitActToolkit: ActToolkit {
         return true
     }
 
-    /// An List's scroll to an item.
+    /// An List's scroll to an item, or a ScrollView's to a child `.id()` names.
     func performOwn(_ call: HostActCall) -> Bool {
-        guard call.act == .scrollTo else { return false }
+        if call.act == .chooseFiles { chooseFiles(call); return true }
+        guard call.act == .scrollTo || call.act == .scrollToDescendant else { return false }
         let core = CoreLink()
         do {
             let element = try renderer.runtime.tree.aimed(call)
-            guard let items = (element.native as? AppKitElement)?.view as? AppKitItemsView else {
-                core.fail(call, "scrollTo is an act of an List", log: { AppKitRenderer.log.error($0) })
+            let view = (element.native as? AppKitElement)?.view
+            if let items = view as? AppKitItemsView {
+                items.scroll(
+                    to: call.arguments.value(1)?.string ?? "",
+                    anchor: call.arguments.value(2).flatMap(ScrollAnchor.init(propValue:)) ?? .nearest)
+            } else if let scroller = view as? AppKitScrollView {
+                let name = call.arguments.value(1)?.string ?? ""
+                guard let target = element.first(id: .manual(name)),
+                      let descendant = (target.native as? AppKitElement)?.view
+                else {
+                    core.fail(call, "there is no view '\(name)' inside the scroll view",
+                              log: { AppKitRenderer.log.error($0) })
+                    return true
+                }
+                scroller.scroll(
+                    toDescendant: descendant,
+                    anchorX: call.arguments.value(2)?.number,
+                    anchorY: call.arguments.value(3)?.number)
+            } else {
+                core.fail(call, "scrollTo is an act of an List or a ScrollView",
+                          log: { AppKitRenderer.log.error($0) })
                 return true
             }
-            items.scroll(
-                to: call.arguments.value(1)?.string ?? "",
-                anchor: call.arguments.value(2).flatMap(ScrollAnchor.init(propValue:)) ?? .nearest)
             core.reply(call, [])
         } catch {
             core.fail(call, error.reason, log: { AppKitRenderer.log.error($0) })
         }
         return true
+    }
+
+    /// The platform's file-open panel for `chooseFiles`: a sheet on the window
+    /// the user is looking at where one is, its answer the picked paths or an
+    /// empty list for a cancel.
+    private func chooseFiles(_ call: HostActCall) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = call.arguments.value(0)?.bool ?? false
+        let types = call.arguments.value(1)?.strings ?? []
+        if !types.isEmpty {
+            panel.allowedContentTypes = types.compactMap { UTType(filenameExtension: $0) }
+        }
+        let answer = { (response: NSApplication.ModalResponse) in
+            CoreLink().reply(call, [.strings(response == .OK ? panel.urls.map(\.path) : [])])
+        }
+        if let window = renderer.userWindow {
+            panel.beginSheetModal(for: window, completionHandler: answer)
+        } else {
+            answer(panel.runModal())
+        }
     }
 
     func performRegistered(_ call: HostActCall) -> Bool {

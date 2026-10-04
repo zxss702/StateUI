@@ -13,6 +13,7 @@ public enum SearchFieldContract: ElementContract {
     public static let tiers: [any Contract.Type] = [
         InputViewContract.self, TextElementContract.self, FontElementContract.self,
         TextAlignmentElementContract.self, TintElementContract.self,
+        ControlSizeElementContract.self,
     ]
 
     /// What the keyboard's return key is captioned.

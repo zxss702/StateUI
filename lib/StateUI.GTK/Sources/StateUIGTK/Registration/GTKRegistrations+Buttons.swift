@@ -7,6 +7,20 @@
 extension GTKRegistrations {
     /// A Button: its caption and its look, whether it takes a press, and the click.
     static func buttons(_ registry: Registry<GTKView>) {
+        // A Menu living in the view: the `Menu` view makes the element and the
+        // `GtkMenuButton` opens its entries; the contract's own members are all it takes.
+        registry.add(MenuButtonContract.self, create: { _ in GTKMenuButtonView() }) { menu in
+            menu.property(VisualElementContract.isEnabled) { view, enabled in
+                view.opensMenu = enabled ?? true
+            }
+            menu.property(MenuButtonContract.menuStyle) { view, style in
+                view.borderless = style == "borderlessButton"
+            }
+            menu.property(MenuButtonContract.menuIndicator) { view, indicator in
+                view.showsArrow = (indicator ?? .automatic) != .hidden
+            }
+        }
+
         registry.add(ButtonContract.self, create: { reports in
             // A toggle widget at heart: it draws an ordinary button until
             // `isOn` gives it a state to keep.

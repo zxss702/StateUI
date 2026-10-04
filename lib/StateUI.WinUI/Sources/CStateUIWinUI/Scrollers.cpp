@@ -7,6 +7,7 @@
 
 #include "Relay.h"
 
+#include <cmath>
 #include <winrt/Windows.Foundation.h>
 
 using namespace stateui;
@@ -67,6 +68,46 @@ extern "C" void stateui_winui_scroller_move(StateUIObjectRef handle, double x, d
             winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
     } catch (...) {
         report("moving a scroller");
+    }
+}
+
+extern "C" void stateui_winui_scroller_place_for(
+    StateUIObjectRef handle, StateUIObjectRef descendant, double anchorX, double anchorY,
+    int32_t *found, double *place)
+{
+    try {
+        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto element = as<xaml::UIElement>(descendant);
+        auto content = scroller.Content().try_as<xaml::UIElement>();
+        if (!element || !content) { *found = 0; return; }
+
+        auto bounds = element.TransformToVisual(content).TransformBounds(
+            winrt::Windows::Foundation::Rect(
+                0, 0, (float)element.ActualWidth(), (float)element.ActualHeight()));
+
+        auto nearest = [](double start, double length, double room, double now) {
+            if (start >= now && start + length <= now + room) return now;
+            return start < now ? start : start + length - room;
+        };
+
+        double x = scroller.HorizontalOffset();
+        double y = scroller.VerticalOffset();
+        if (scroller.HorizontalScrollMode() == controls::ScrollMode::Enabled) {
+            x = std::isnan(anchorX)
+                ? nearest(bounds.X, bounds.Width, scroller.ViewportWidth(), x)
+                : bounds.X + anchorX * bounds.Width - anchorX * scroller.ViewportWidth();
+        }
+        if (scroller.VerticalScrollMode() == controls::ScrollMode::Enabled) {
+            y = std::isnan(anchorY)
+                ? nearest(bounds.Y, bounds.Height, scroller.ViewportHeight(), y)
+                : bounds.Y + anchorY * bounds.Height - anchorY * scroller.ViewportHeight();
+        }
+        place[0] = x;
+        place[1] = y;
+        *found = 1;
+    } catch (...) {
+        report("placing for a descendant");
+        *found = 0;
     }
 }
 

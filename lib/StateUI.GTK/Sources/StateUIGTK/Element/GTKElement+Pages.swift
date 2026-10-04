@@ -33,6 +33,7 @@ extension GTKElement {
             var chrome = element.selectedTab?.visiblePage?.gtk.chrome ?? GTKPageChrome()
             chrome.title = element.titledPage?.value(.title)?.string
                 ?? element.enclosing(type: .windowScene)?.value(.title)?.string ?? ""
+            chrome.subtitle = element.titledPage?.value(.subtitle)?.string ?? ""
             chrome.tabs = (view as? GTKTabbedView)?.switcher
             chrome.showsBar = value(.hasNavigationBar)?.bool != false
             chrome.offersBack = value(.hasBackButton)?.bool != false
@@ -42,6 +43,7 @@ extension GTKElement {
 
         var chrome = GTKPageChrome()
         chrome.title = value(.title)?.string ?? ""
+        chrome.subtitle = value(.subtitle)?.string ?? ""
         chrome.titleView = element.slotContent(.titleView)?.gtk.view
         chrome.showsBar = value(.hasNavigationBar)?.bool != false
         chrome.offersBack = value(.hasBackButton)?.bool != false

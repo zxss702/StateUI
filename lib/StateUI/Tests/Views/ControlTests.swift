@@ -92,7 +92,11 @@ final class ControlTests: XCTestCase {
                 Text("Total")
                     .lineBreak(.tailTruncation)
                     .lineHeight(1.5)
+                    .lineSpacing(8)
                     .lineLimit(2)
+                    .minimumScaleFactor(0.5)
+                    .textRenderer(ProbeTextRenderer())
+                    .textSelection(.enabled)
                     .textDecorations([.underline, .strikethrough])
                     // The runs go here rather than in a case of their own: a
                     // Span is not a view, so it has no case, and Text.swift
@@ -114,7 +118,9 @@ final class ControlTests: XCTestCase {
                             .textDecorations(.underline)
 
                         TextSpan("counter").foregroundStyle(.steelBlue)
-                    })
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader))
         let case1 =             ControlCase("Button", source: "Button.swift",
                 Button("Increment", role: .destructive)
                     .stroke(.gray)
@@ -138,10 +144,10 @@ final class ControlTests: XCTestCase {
         let case3 =             ControlCase("TextField", source: "TextField.swift",
                 TextField("Ada")
                     .isPassword(false)
-                    .submitLabel(.done)
                     .showsClearButton(true)
                     .onTextChanged { _ in }
-                    .onSubmitted {}
+                    .onSubmit {}
+                    .submitLabel(.done)
                     .textFieldStyle(.roundedBorder))
         let case4 =             ControlCase("TextEditor", source: "TextEditor.swift",
                 TextEditor("Notes")
@@ -149,6 +155,7 @@ final class ControlTests: XCTestCase {
                     .onTextChanged { _ in })
         let case5 =             ControlCase("Image", source: "Image.swift",
                 Image("tab_list.png")
+                    .renderingMode(.original)
                     .aspect(.fill)
                     .isAnimating(true))
         let case6 =             ControlCase("Picker", source: "Picker.swift",
@@ -216,16 +223,18 @@ final class ControlTests: XCTestCase {
                     .onValueChanged { _ in })
         let case14 =             ControlCase("SearchField", source: "SearchField.swift",
                 SearchField("al")
-                    .submitLabel(.search)
-                    .tint(.gray)
                     .onTextChanged { _ in }
-                    .onSubmitted {})
+                    .onSubmit {}
+                    .submitLabel(.search)
+                    .tint(.gray))
         let case15 =             ControlCase("ActivityIndicator", source: "ActivityIndicator.swift",
                 ActivityIndicator(true)
+                    .progressViewStyle(.circular)
                     .isRunning(true)
                     .tint(.cornflowerBlue))
         let case16 =             ControlCase("ProgressBar", source: "ProgressBar.swift",
                 ProgressBar(0.4)
+                    .progressViewStyle(.linear)
                     .progress(0.4)
                     .tint(.cornflowerBlue))
         let case17 =             ControlCase("ColorPicker", source: "ColorPicker.swift",
@@ -284,8 +293,12 @@ final class ControlTests: XCTestCase {
                     Text("content")
                 }
                 .orientation(.both)
-                .verticalScrollIndicators(.never)
-                .horizontalScrollIndicators(.always)
+                .defaultScrollAnchor(.bottom)
+                .isScrollDisabled(!false)
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollTargetBehavior(.viewAligned())
+                .verticalScrollIndicators(.hidden)
+                .horizontalScrollIndicators(.visible)
                 // The offset is ONE POINT - both axes on one state - written
                 // by the host on its own frames and walked by it on a write.
                 .scrollOffset(offset.projectedValue)
@@ -359,6 +372,7 @@ final class ControlTests: XCTestCase {
         // Elements case below; each of these carries only its own.
         let case29 =             ControlCase("Rectangle", source: "Rectangle.swift",
                 Rectangle()
+                    .strokeBorder(.firebrick, lineWidth: 2)
                     .cornerRadius(topLeft: 16, topRight: 16, bottomLeft: 0, bottomRight: 0))
         let case30 =             ControlCase("Ellipse", source: "Ellipse.swift", Ellipse())
         let case31 =             ControlCase("Line", source: "Line.swift",
@@ -463,6 +477,8 @@ final class ControlTests: XCTestCase {
 
                         .strokeMiterLimit(4)
 
+                        .strokeBorder(.tomato, lineWidth: 3)
+
                         .aspect(.fill)
 
                         // The one transform, on the geometry: a matrix with a
@@ -509,7 +525,7 @@ final class ControlTests: XCTestCase {
 
                         .accessibilityHeadingLevel(.level2)
 
-                        .isAccessibilityHidden(false)
+                        .accessibilityHidden(false)
 
                         .automationExcludedWithChildren(false)
 
@@ -591,6 +607,17 @@ final class ControlTests: XCTestCase {
                 .layoutDirection(.rightToLeft)
 
         let elv2 = elv1                .opacity(0.5)
+                .blur(radius: 4)
+                .shadow(radius: 6, y: 2)
+                .transition(.blur.combined(with: .offset(y: 12)))
+                .controlSize(.small)
+                .scrollDisabled(false)
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollClipDisabled()
+                .scrollContentBackground(.hidden)
+                .scrollTargetLayout()
+                .scrollTargetBehavior(.paging)
+                .safeAreaPadding(.vertical, 8)
                 .background(.whiteSmoke)
                 .frame(width: 200)
                 .frame(height: 100)
@@ -599,7 +626,15 @@ final class ControlTests: XCTestCase {
                 .frame(maxWidth: 400)
                 .frame(maxHeight: 300)
 
-        let elv3 = elv2                .rotationEffect(15)
+        let ns = Namespace().wrappedValue
+        let elv3 = elv2                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isSelected)
+                .matchedGeometryEffect(id: "shared", in: ns)
+                .matchedGeometryEffect(id: "follower", in: ns, isSource: false)
+                .symbolEffect(.bounce, value: 1)
+                .symbolEffect(.pulse, options: .repeating, isActive: true)
+                .contentTransition(.numericText())
+                .rotationEffect(15)
                 .rotation3DEffect(x: 30)
                 .rotation3DEffect(y: 45)
                 .scaleEffect(1.5)
@@ -629,11 +664,80 @@ final class ControlTests: XCTestCase {
                 .onDrop { _ in }
                 .onDragOver {}
                 .onDragLeave {}
+                .pointerStyle(.link)
+                .layoutPriority(1)
+                .alignmentGuide(.leading) { _ in 10 }
+                .alignmentGuide(.top) { _ in 5 }
+                .blendMode(.multiply)
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .progressViewStyle(.linear)
         let case36 = ControlCase("Elements", sources: SourceTree.sharedTier, elv3)
 
+        let case37 = ControlCase("MenuButton", source: "MenuBar.swift",
+            Menu {
+                MenuItem("One")
+                Divider()
+                Menu("Sub") {
+                    MenuItem("Three")
+                }
+            } label: {
+                Text("Pick")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .disabled(false))
+
+        let case38 = ControlCase("CustomLayout", source: "CustomLayout.swift",
+            CaseRow {
+                Text("one").layoutValue(key: CaseGap.self, value: 4)
+                Text("two")
+            })
+
+        let case39 = ControlCase("Masked", source: "ClipShape.swift",
+            Text("one")
+                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .contentShape(Rectangle())
+                .mask { RoundedRectangle(cornerRadius: 8).fill(.tomato) })
+
         return [
-            case0, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36,
+            case0, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36, case37, case38, case39,
         ]
+    }
+
+    /// A renderer the test attaches - the modifier writes the marker and the
+    /// node keeps the object; no draw pass runs under a test.
+    private struct ProbeTextRenderer: TextRenderer {}
+
+    /// A layout tag for the CustomLayout case.
+    private enum CaseGap: LayoutValueKey {
+        static let defaultValue = 0.0
+    }
+
+    /// The arrangement the CustomLayout case arranges by: each child in a
+    /// row, at its own size.
+    private struct CaseRow: Layout {
+        func sizeThatFits(
+            proposal: ProposedViewSize, subviews: Subviews, cache: inout Void
+        ) -> Size {
+            subviews.reduce(Size(width: 0, height: 0)) { size, subview in
+                let measured = subview.sizeThatFits(proposal)
+                return Size(
+                    width: size.width + measured.width,
+                    height: max(size.height, measured.height))
+            }
+        }
+
+        func placeSubviews(
+            in bounds: Rect, proposal: ProposedViewSize,
+            subviews: Subviews, cache: inout Void
+        ) {
+            var x = bounds.x
+            for subview in subviews {
+                subview.place(at: Point(x: x, y: bounds.y), proposal: proposal)
+                x += subview.sizeThatFits(proposal).width
+            }
+        }
     }
 
     // MARK: - What a host is handed
@@ -807,13 +911,53 @@ final class ControlTests: XCTestCase {
             "barBackgroundColor", "barForegroundColor", "isScrollEnabled", "isZoomEnabled",
             "isTrafficEnabled", "showsUserLocation", "isDestructive", "title", "subtitle",
             "mapType", "ignoresSafeArea",
+            // A structure the host reads whole at insert and remove, not a
+            // value a state animates.
+            "transition", "contentTransition",
+            // A space's name - declared like `style` or `id`, not a value.
+            "coordinateSpace",
+            // A gesture the view answers, whose state is the gesture's own.
+            "gesture",
+            // A compound drawn as one, and a size the control's own keeps.
+            "shadow", "controlSize",
+            // Spellings that write through to a scroll view inside, whose
+            // driven halves are the members' own.
+            "scrollDisabled", "scrollBounceBehavior", "scrollClipDisabled",
+            "scrollContentBackground", "scrollTargetLayout", "scrollTargetBehavior",
+            "defaultScrollAnchor",
+            // Page chrome, lifted to the page and window records - no driven
+            // half crosses that way.
+            "navigationBarBackButtonHidden", "navigationDocument", "navigationSubtitle",
+            "navigationTitle", "navigationSplitViewColumnWidth", "windowBackground",
+            "toolbarVisibility", "toolbarBackground",
+            // A spelling over another member or a flag set - the member's own
+            // twin is the driven form.
+            "gridColumnAlignment", "accessibilityAddTraits", "accessibilityRemoveTraits",
+            "accessibilityElement",
+            // Style objects over the kind member they write - the driven form
+            // takes the kind, as `buttonStyle(Binding<ButtonStyleKind>)`.
+            "menuStyle", "progressViewStyle",
+            // Enum spellings and markers a host reads at apply, not animated
+            // from a state.
+            "pointerStyle", "menuIndicator", "renderingMode", "blendMode",
+            // A layout quantity and a text scale the host reads at measure,
+            // not driven through the value channel.
+            "layoutPriority", "minimumScaleFactor",
+            // A closed protocol the driven form cannot name.
+            "textSelection",
+            // A style the host cannot be handed whole; the colour twin is
+            // `foregroundStyle(Binding<Color>)`.
+            "foregroundStyle",
         ]
         var values: Set<String> = []
         var twins: Set<String> = []
 
         for (path, text) in try SourceTree.allSources() where path.contains("Views") {
             for raw in text.split(whereSeparator: \.isNewline) {
-                let line = raw.drop(while: { $0 == " " })
+                var line = raw.drop(while: { $0 == " " })[...]
+                // `@_spi(Host) public func` on one line counts as a public
+                // func, the shape spi members were declared in before inline.
+                if line.hasPrefix("@_spi(Host) ") { line = line.dropFirst("@_spi(Host) ".count) }
 
                 // ONE VALUE AND NOTHING ELSE: a handler, a second parameter or
                 // a generic is a different shape of member, and none of them is

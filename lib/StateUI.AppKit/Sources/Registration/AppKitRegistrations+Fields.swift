@@ -61,7 +61,12 @@ extension AppKitRegistrations {
             }
             return editor
         }, members: { editor in
-            editor.applies(Self.fieldMembers + [TextEditorContract.growsWithText]) { view, values in
+            editor.applies(
+                Self.fieldMembers + [
+                    TextEditorContract.growsWithText, PaddingElementContract.contentPadding,
+                    ScrollContentElementContract.scrollContentBackground,
+                ]
+            ) { view, values in
                 let words = Self.words(values)
                 view.textCase = values[TextElementContract.textCase]
 
@@ -86,7 +91,14 @@ extension AppKitRegistrations {
                     cursorPosition: values[InputViewContract.cursorPosition],
                     selectionLength: values[InputViewContract.selectionLength],
                     writeSelection: Self.writesSelection(values),
-                    growsWithText: values[TextEditorContract.growsWithText] == true)
+                    growsWithText: values[TextEditorContract.growsWithText] == true,
+                    contentInset: values[PaddingElementContract.contentPadding].map {
+                        // `textContainerInset` is one amount a side, so the
+                        // four edges meet in the middle.
+                        NSSize(width: ($0.left + $0.right) / 2, height: ($0.top + $0.bottom) / 2)
+                    },
+                    scrollContentBackground: values[ScrollContentElementContract.scrollContentBackground]
+                        .map { $0 != .hidden })
             }
             editor.raises(InputViewContract.textChanged)
         })

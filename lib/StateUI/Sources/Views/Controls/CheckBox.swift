@@ -7,7 +7,7 @@ public protocol CheckBoxProperties: PropertyContainer {}
 
 extension CheckBoxProperties {
     /// Whether the box is ticked. Usually given in the initializer.
-    public func isOn(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOn(_ value: Bool) -> Modified {
         setValue(CheckBoxContract.isOn, value)
     }
 }
@@ -55,7 +55,7 @@ public struct CheckBox: VisualElement, TintElement, CheckBoxProperties{
     /// - Parameter value: the state shown, and written back into as the user
     ///   ticks it.
     /// - Returns: the box, wearing and reporting that value.
-    public func isOn(_ value: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isOn(_ value: Binding<Bool>) -> Modified {
         value.image == nil
             ? described(CheckBoxContract.isOn.token, value, on: CheckBoxContract.toggled.token)
             : plain(CheckBoxContract.isOn.token, by: value, mode: .inOut)
@@ -65,7 +65,7 @@ public struct CheckBox: VisualElement, TintElement, CheckBoxProperties{
 
     /// Fires when it is ticked or unticked, with the new value. Runs after a
     /// binding's write, if there is one.
-    public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
+    @_spi(Host) public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
         onEvent(CheckBoxContract.toggled, handler)
     }
 }

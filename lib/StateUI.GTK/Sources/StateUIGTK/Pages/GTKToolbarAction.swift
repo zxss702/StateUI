@@ -25,6 +25,7 @@ struct GTKToolbarAction {
 @MainActor
 struct GTKPageChrome {
     var title = ""
+    var subtitle = ""
     var titleView: GTKView?
 
     /// A tabbed view's switcher, which stands in a bar of its own beneath the header bar; nil for none.

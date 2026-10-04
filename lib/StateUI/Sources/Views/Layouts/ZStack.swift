@@ -17,7 +17,7 @@
 /// `horizontalAlignment` and `verticalAlignment` where it names them - and
 /// fills it unless it says otherwise. A later child is drawn over an earlier
 /// one; `zIndex` reorders them without moving anything.
-public struct ZStack: Layout {
+public struct ZStack: LayoutView {
     /// The node this control describes.
     public var node: Node
 

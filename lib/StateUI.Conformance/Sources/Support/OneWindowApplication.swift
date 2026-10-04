@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import StateUI
+@_spi(Host) import StateUI
 
 /// The smallest complete application around one page: one scene, one window.
 public struct OneWindowApplication: App {

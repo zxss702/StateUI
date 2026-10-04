@@ -7,7 +7,7 @@ public protocol TextProperties: PropertyContainer {}
 extension TextProperties {
     /// What happens to text too long for the space: wrap it, or cut it and say
     /// so.
-    public func lineBreak(_ value: LineBreak) -> Modified {
+    @_spi(Host) public func lineBreak(_ value: LineBreak) -> Modified {
         setValue(TextContract.lineBreak, value)
     }
 
@@ -22,6 +22,42 @@ extension TextProperties {
     /// the default.
     public func lineLimit(_ value: Int) -> Modified {
         setValue(TextContract.lineLimit, value)
+    }
+
+    /// Whether the user can drag a range out of the text and copy it.
+    ///
+    ///     Text(output).textSelection(.enabled)
+    public func textSelection(_ selectability: some TextSelectability) -> Modified {
+        setValue(TextContract.selectable, selectability.isSelectable)
+    }
+
+    /// The fraction of its own size the text may shrink to fit the room it
+    /// was given before the host cuts it: 0 shrinks it to nothing said, 1
+    /// keeps it whole.
+    ///
+    ///     Text(longName).minimumScaleFactor(0.5)
+    public func minimumScaleFactor(_ factor: Double) -> Modified {
+        setValue(TextContract.minimumScaleFactor, factor)
+    }
+}
+
+extension View {
+    /// Whether the text inside this view lets the user drag a range out of it
+    /// and copy it - a `Text` keeping its own wins over the inherited one.
+    ///
+    ///     Text(output).textSelection(.enabled)
+    @_disfavoredOverload
+    public func textSelection(_ selectability: some TextSelectability) -> ModifiedContent {
+        revised { $0.writeInherited(TextContract.selectable, selectability.isSelectable) }
+    }
+
+    /// The fraction `Text`s inside this view may shrink to before they are
+    /// cut - a `Text` keeping its own wins over the inherited one.
+    ///
+    ///     Text(longName).minimumScaleFactor(0.5)
+    @_disfavoredOverload
+    public func minimumScaleFactor(_ factor: Double) -> ModifiedContent {
+        revised { $0.writeInherited(TextContract.minimumScaleFactor, factor) }
     }
 }
 
@@ -74,7 +110,7 @@ public struct Text: VisualElement, TextElement, FontElement, TextAlignmentElemen
     ///     }
     ///
     /// A Text given both runs and a `text` shows the runs.
-    public func spans(@ViewBuilder _ spans: () -> any View) -> Self {
+    @_spi(Host) public func spans(@ViewBuilder _ spans: () -> any View) -> Self {
         modified {
             $0.children = [Node(contract: SpansContract.self, children: spans().node.asChildren)]
         }
@@ -116,5 +152,30 @@ extension Text {
     /// stands, and no view is rebuilt for it.
     public func lineLimit(_ state: Binding<Int>) -> Modified {
         plain(.lineLimit, by: state)
+    }
+}
+
+extension Text {
+    /// A custom renderer for this text, as `.textRenderer` names one:
+    ///
+    ///     Text(body)
+    ///         .textRenderer(MyRenderer())
+    ///
+    /// The renderer is a code object: it rides the node and a host that draws
+    /// text natively keeps its own drawing, so a renderer that only watches
+    /// layout still works but its draw pass does not run.
+    public func textRenderer(_ renderer: some TextRenderer) -> Self {
+        var copy = self
+        copy.node.write(TextContract.textRenderer, "custom")
+        copy.node.textRenderer = renderer
+        return copy
+    }
+}
+
+extension Text {
+    /// The words a `Text` node carries - what `navigationTitle` reads of one
+    /// written for it.
+    var words: String {
+        node.props[TextElementContract.text.token]?.string ?? ""
     }
 }

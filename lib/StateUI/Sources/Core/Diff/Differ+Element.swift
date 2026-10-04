@@ -90,8 +90,10 @@ extension Differ {
         // What `.environment()` provided here joins the scope before anything below
         // resolves; the count is kept for the clean walk.
         var pushed = node.environments.count
+        let outerValues = envValues
+        envValues = envValues.overlaid(with: node.environmentValues)
         scope.append(contentsOf: node.environments)
-        defer { scope.removeLast(pushed) }
+        defer { scope.removeLast(pushed); envValues = outerValues }
 
         // What the element holds for its life - a page's session - handed back on every
         // build (ElementSession.swift).
@@ -176,7 +178,7 @@ extension Differ {
                     type: stateful.viewType, boxes: stateful.boxes, inputs: stateful.inputs))
 
                 // Slots resolve against everything provided so far, before the body builds.
-                stateful.resolve(from: scope)
+                stateful.resolve(from: scope, under: envValues)
 
                 // A composed view built with the same inputs that read nothing that moved is
                 // carried whole; decided on the outermost view alone.
@@ -224,6 +226,7 @@ extension Differ {
                     BuildScope.within(built) { stateful.expand(over: node) }
                 }
                 pushed += node.environments.count
+                envValues = envValues.overlaid(with: node.environmentValues)
                 scope.append(contentsOf: node.environments)
                 continue
             }
@@ -282,20 +285,7 @@ extension Differ {
             var grouped = node
             grouped.children = node.children.flatMap(\.asChildren).map { child in
                 var child = child
-                child.props.merge(node.props) { _, wrote in wrote }
-                child.driven.merge(node.driven) { _, wrote in wrote }
-                child.animation = AnimationPlan.merged(child.animation, under: node.animation)
-
-                for (name, handler) in node.events.sorted(by: { $0.key < $1.key }) {
-                    child.addHandler(name, handler)
-                }
-
-                child.watches += node.watches
-                child.created += node.created
-                child.destroying += node.destroying
-                child.engines += node.engines
-                if child.session == nil { child.session = node.session }
-                if child.aim == nil { child.aim = node.aim }
+                child.absorbFragmentWrites(of: node, environments: false)
                 return child
             }
 
@@ -323,6 +313,9 @@ extension Differ {
                 provided: Array(scope.suffix(pushed)),
                 seen: seen,
                 children: children)
+            // Its writes and listeners fanned out into the children above; what
+            // a parent's fold reads of it is theirs alone.
+            result.preferenceValues = foldedPreferences(seeds: [], transforms: [], children: children)
             result.session = session
             return (result, patch)
         }
@@ -578,6 +571,32 @@ extension Differ {
         let children = reconcileChildren(
             of: previous, node: node, into: &patch, sizesArrive: node.childSizesArrive)
 
+        // What the subtree answers each preference key, folded over the
+        // children's settled answers; each observer fires once its answer
+        // moves - and once on first mount, as `.onPreferenceChange` always
+        // tells the value it found.
+        // Design: docs/design/core/identity-and-diffing.md#preferences
+        let folded = foldedPreferences(
+            seeds: node.preferenceSeeds,
+            transforms: node.preferenceTransforms,
+            children: children)
+
+        let preferenceWatches: [PreferenceWatch] = node.preferenceObservers.enumerated()
+            .map { index, observer in
+                let answer = folded[observer.box.key]?.value ?? observer.box.makeDefault()
+
+                if previous?.preferenceWatches.count == node.preferenceObservers.count,
+                    let heard = previous?.preferenceWatches[index].last {
+                    if !observer.box.same(heard, answer) {
+                        fired.append { try await observer.run(heard, answer) }
+                    }
+                } else {
+                    fired.append { try await observer.run(answer, answer) }
+                }
+
+                return PreferenceWatch(box: observer.box, last: answer, run: observer.run)
+            }
+
         let result = RenderedNode(
             id: id,
             type: node.type,
@@ -603,6 +622,17 @@ extension Differ {
         result.sizesArrive = sizesArrive
         result.visualInput = visualInput
         result.visualState = visualState
+        result.preferenceSeeds = node.preferenceSeeds
+        result.preferenceTransforms = node.preferenceTransforms
+        result.preferenceValues = folded
+        result.preferenceWatches = preferenceWatches
+
+        // What a host pulls mid-layout: the element's code objects by its id.
+        if node.customLayout != nil || !node.layoutValues.isEmpty {
+            codeObjects[id] = NodeCode(layout: node.customLayout, values: node.layoutValues)
+        } else {
+            codeObjects.removeValue(forKey: id)
+        }
 
         // What it runs as it leaves: this build's closures, the newest.
         result.destroying = node.destroying

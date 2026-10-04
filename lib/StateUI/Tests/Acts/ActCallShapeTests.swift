@@ -105,6 +105,14 @@ final class ActCallShapeTests: XCTestCase {
         }
     }
 
+    /// The file-open panel: multiple-selection first, then the extensions it
+    /// narrows to; the picked paths ride the reply.
+    func testChoosingFilesCrossesWithItsArgumentsInPlace() async throws {
+        try await check("chooseFiles", [.bool(true), .strings(["md", "markdown"])]) {
+            _ = try await stateUICall(AppContract.chooseFiles, true, ["md", "markdown"])
+        }
+    }
+
     /// Title, cancel, destruction, then the buttons as ONE argument - the list
     /// of their captions, an argument being one value. An absent caption
     /// crosses as NOTHING, never as an empty string: an empty string is a
@@ -191,6 +199,20 @@ final class ActCallShapeTests: XCTestCase {
         }
         try await check("scrollTo", [.string("list"), .string("Fruit\u{1F}Pear"), .enumeration(ScrollAnchor.nearest.rawValue)]) {
             try await named("list", ListContract.self).scrollTo("Pear", inGroup: "Fruit")
+        }
+    }
+
+    /// A scroll view scrolls to a child its `.id()` names - the name, then
+    /// the anchor's two fractions, each nothing for "only where it is not
+    /// wholly in view".
+    func testScrollingAScrollViewCrossesWithItsArgumentsInPlace() async throws {
+        try await check("scrollToDescendant", [.string("scroller"), .string("bottom"), .number(0.5), .number(1)]) {
+            try await named("scroller", ScrollViewContract.self).call(
+                ScrollViewContract.scrollToDescendant, "bottom", 0.5, 1.0)
+        }
+        try await check("scrollToDescendant", [.string("scroller"), .string("tail"), .nothing, .nothing]) {
+            try await named("scroller", ScrollViewContract.self).call(
+                ScrollViewContract.scrollToDescendant, "tail", nil, nil)
         }
     }
 

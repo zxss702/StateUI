@@ -77,6 +77,21 @@ final class GTKSplitView: GTKLayoutView {
         ProgramWrite.perform { adw_overlay_split_view_set_show_sidebar(native, shows ? 1 : 0) }
     }
 
+    /// The sidebar's least and most width the tree asks, `nil` leaving the
+    /// split's own. A fixed width binds both; an ideal has no home in
+    /// `AdwOverlaySplitView` and is left with it.
+    var sidebarWidthBounds: [Double]? {
+        didSet {
+            guard let bounds = sidebarWidthBounds, !bounds.isEmpty else { return }
+            adw_overlay_split_view_set_min_sidebar_width(native, bounds[0])
+            if bounds.count > 2 {
+                adw_overlay_split_view_set_max_sidebar_width(native, bounds[2])
+            } else if bounds.count == 1 {
+                adw_overlay_split_view_set_max_sidebar_width(native, bounds[0])
+            }
+        }
+    }
+
     /// The sidebar showed or hid of its own accord: said, where it was not the program's.
     private func sidebarMoved() {
         let shows = adw_overlay_split_view_get_show_sidebar(native) != 0

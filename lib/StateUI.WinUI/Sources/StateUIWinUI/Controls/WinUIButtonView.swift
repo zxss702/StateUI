@@ -72,8 +72,8 @@ final class WinUIButtonView: WinUIView {
         if shortcut.modifiers.contains(.option) { modifiers |= 2 }
         if shortcut.modifiers.contains(.control) { modifiers |= 1 }
         let key: Int32 = switch shortcut.key.name {
-        case "return": 13
-        case "escape": 27
+        case "return", "defaultaction": 13
+        case "escape", "cancelaction": 27
         case "tab": 9
         case "space": 32
         case "delete": 8

@@ -17,11 +17,13 @@ extension AppKitRegistrations {
         registry.add(ImageContract.self, create: { _ in AppKitImageView() }) { image in
             image.applies([
                 ImageContract.source, ImageElementContract.aspect, ImageContract.isAnimating,
+                ImageContract.renderingMode,
             ]) { view, values in
                 view.apply(
                     source: values[ImageContract.source],
                     aspect: values[ImageElementContract.aspect] ?? .fit,
-                    animationPlaying: values[ImageContract.isAnimating] ?? false)
+                    animationPlaying: values[ImageContract.isAnimating] ?? false,
+                    template: values[ImageContract.renderingMode] == .template)
             }
         }
     }

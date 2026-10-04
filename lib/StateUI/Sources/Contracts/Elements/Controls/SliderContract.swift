@@ -10,7 +10,7 @@ public enum SliderContract: ElementContract {
     public static let layer: ElementLayer = .native
 
     /// A slider is a view, tinted.
-    public static let tiers: [any Contract.Type] = [ViewContract.self, TintElementContract.self]
+    public static let tiers: [any Contract.Type] = [ViewContract.self, TintElementContract.self, ControlSizeElementContract.self]
 
     /// The thumb was let go.
     public static let dragCompleted = ElementEvent<Self, Void>("dragCompleted", layer: .native)

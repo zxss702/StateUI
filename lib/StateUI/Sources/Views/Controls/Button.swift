@@ -6,7 +6,7 @@ public protocol ButtonProperties: PropertyContainer {}
 
 extension ButtonProperties {
     /// What happens to a caption too long for the button.
-    public func lineBreak(_ value: LineBreak) -> Modified {
+    @_spi(Host) public func lineBreak(_ value: LineBreak) -> Modified {
         setValue(ButtonContract.lineBreak, value)
     }
 
@@ -21,7 +21,7 @@ extension ButtonProperties {
     /// `Button(icon:)`.
     ///
     ///     Button("Surprise me").icon("nav_surprise.png")
-    public func icon(_ value: ImageSource) -> Modified {
+    @_spi(Host) public func icon(_ value: ImageSource) -> Modified {
         setValue(ButtonContract.icon, value)
     }
 
@@ -33,12 +33,12 @@ extension ButtonProperties {
     ///         .icon("nav_surprise.png")
     ///         .iconPosition(.leading)
     ///         .iconSpacing(8)
-    public func iconPosition(_ value: IconPosition) -> Modified {
+    @_spi(Host) public func iconPosition(_ value: IconPosition) -> Modified {
         setValue(ButtonContract.iconPosition, value)
     }
 
     /// The gap between the icon and the caption, in device units.
-    public func iconSpacing(_ value: Double) -> Modified {
+    @_spi(Host) public func iconSpacing(_ value: Double) -> Modified {
         setValue(ButtonContract.iconSpacing, value)
     }
 }
@@ -143,18 +143,18 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
     /// Runs when the button is pressed AND released on it - the ordinary one.
     /// A second `.onClicked` runs beside the first, like every typed event
     /// modifier.
-    public func onClicked(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onClicked(_ handler: @escaping EventHandler) -> Self {
         onEvent(ButtonContract.clicked, handler)
     }
 
     /// Runs the moment a press begins, before it ends.
-    public func onPressed(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onPressed(_ handler: @escaping EventHandler) -> Self {
         onEvent(ButtonContract.pressed, handler)
     }
 
     /// Runs when the press ends, wherever the pointer ends up - unlike
     /// `onClicked`, which needs it to end on the button.
-    public func onReleased(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onReleased(_ handler: @escaping EventHandler) -> Self {
         onEvent(ButtonContract.released, handler)
     }
 
@@ -162,20 +162,17 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
     /// and lets the next one up, each flip reported by `.onToggled`. What a
     /// `Toggle` in `.button` style is written with; for a button of your own,
     /// say `Toggle`.
-    @_spi(Host)
-    public func isOn(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOn(_ value: Bool) -> Modified {
         setValue(ButtonContract.isOn, value)
     }
 
     /// `isOn` from a state, `$x`: the host sets each new look as it stands.
-    @_spi(Host)
-    public func isOn(_ state: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isOn(_ state: Binding<Bool>) -> Modified {
         plain(ButtonContract.isOn, by: state)
     }
 
     /// Runs as a staying-pressed button flips - `true` for now pressed.
-    @_spi(Host)
-    public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
+    @_spi(Host) public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
         onEvent(ButtonContract.toggled, handler)
     }
 }
@@ -231,19 +228,19 @@ extension IconPosition: StateChoice {}
 extension Button {
     /// `iconPosition` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func iconPosition(_ state: Binding<IconPosition>) -> Modified {
+    @_spi(Host) public func iconPosition(_ state: Binding<IconPosition>) -> Modified {
         plain(.iconPosition, by: state)
     }
 
     /// `iconSpacing` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it.
-    public func iconSpacing(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func iconSpacing(_ state: Binding<Double>) -> Modified {
         journey(.iconSpacing, by: state)
     }
 
     /// `lineBreak` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func lineBreak(_ state: Binding<LineBreak>) -> Modified {
+    @_spi(Host) public func lineBreak(_ state: Binding<LineBreak>) -> Modified {
         plain(ButtonContract.lineBreak.token, by: state)
     }
 }

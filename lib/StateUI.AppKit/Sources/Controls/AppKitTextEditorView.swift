@@ -110,7 +110,9 @@ final class AppKitTextEditorView: NSView, NSTextViewDelegate {
         cursorPosition: Int?,
         selectionLength: Int?,
         writeSelection: Bool,
-        growsWithText: Bool
+        growsWithText: Bool,
+        contentInset: NSSize?,
+        scrollContentBackground: Bool?
     ) {
         self.maximumLength = maximumLength.map { max(0, $0) }
         self.growsWithText = growsWithText
@@ -119,7 +121,9 @@ final class AppKitTextEditorView: NSView, NSTextViewDelegate {
 
         textView.textColor = foregroundStyle
         textView.backgroundColor = backgroundColor ?? .textBackgroundColor
-        textView.drawsBackground = true
+        textView.drawsBackground = scrollContentBackground ?? true
+        scrollView.drawsBackground = scrollContentBackground ?? scrollView.drawsBackground
+        if let contentInset { textView.textContainerInset = contentInset }
         textView.font = font
         textView.alignment = nativeAlignment(horizontalAlignment)
         textView.isEditable = enabled && !readOnly

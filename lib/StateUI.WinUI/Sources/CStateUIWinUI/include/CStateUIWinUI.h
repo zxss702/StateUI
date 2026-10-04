@@ -636,6 +636,12 @@ void stateui_winui_scroller_set(StateUIObjectRef scroller, StateUIObjectRef cont
 /// it stands through `scrolled` once it has moved.
 void stateui_winui_scroller_move(StateUIObjectRef scroller, double x, double y);
 
+/// Where the scroller's view would stand for `descendant` where the anchors say, in DIPs, read into `place`: the
+/// fraction of each across the child and the room, `NAN` for "only where it is not wholly in view". `found` says
+/// whether the descendant lies inside the scroller's document.
+void stateui_winui_scroller_place_for(StateUIObjectRef scroller, StateUIObjectRef descendant,
+                                      double anchorX, double anchorY, int32_t *found, double *place);
+
 /// Where the scroller's view stands, then the farthest it reaches across and down, in DIPs: four values.
 void stateui_winui_scroller_offset(StateUIObjectRef scroller, double *offset);
 

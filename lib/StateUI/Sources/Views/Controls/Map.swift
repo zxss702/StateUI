@@ -6,22 +6,22 @@ public protocol MapProperties: PropertyContainer {}
 
 extension MapProperties {
     /// How the world is drawn - streets, satellite photography, or both.
-    public func mapType(_ value: MapType) -> Modified {
+    @_spi(Host) public func mapType(_ value: MapType) -> Modified {
         setValue(MapContract.mapType, value)
     }
 
     /// Whether a drag pans it.
-    public func isScrollEnabled(_ value: Bool) -> Modified {
+    @_spi(Host) public func isScrollEnabled(_ value: Bool) -> Modified {
         setValue(MapContract.isScrollEnabled, value)
     }
 
     /// Whether a pinch zooms it.
-    public func isZoomEnabled(_ value: Bool) -> Modified {
+    @_spi(Host) public func isZoomEnabled(_ value: Bool) -> Modified {
         setValue(MapContract.isZoomEnabled, value)
     }
 
     /// Whether the roads are coloured by traffic.
-    public func isTrafficEnabled(_ value: Bool) -> Modified {
+    @_spi(Host) public func isTrafficEnabled(_ value: Bool) -> Modified {
         setValue(MapContract.isTrafficEnabled, value)
     }
 
@@ -29,7 +29,7 @@ extension MapProperties {
     /// platform's location permission: on iOS an app without
     /// `NSLocationWhenInUseUsageDescription` in its Info.plist is killed the
     /// moment this turns on, and Android needs the permission granted.
-    public func showsUserLocation(_ value: Bool) -> Modified {
+    @_spi(Host) public func showsUserLocation(_ value: Bool) -> Modified {
         setValue(MapContract.showsUserLocation, value)
     }
 }
@@ -83,7 +83,7 @@ public struct Map: VisualElement, MapProperties{
 
     /// The pins on it, replacing whatever was pinned before. A `Pin` is not a
     /// view, and goes here and nowhere else.
-    public func pins(@ViewBuilder _ content: () -> any View) -> Self {
+    @_spi(Host) public func pins(@ViewBuilder _ content: () -> any View) -> Self {
         var copy = self
 
         // The pins go before the context menu's slot, which stays last.
@@ -99,7 +99,7 @@ public struct Map: VisualElement, MapProperties{
     // MARK: Events
 
     /// Fires when the map itself is tapped - not a pin - with where.
-    public func onMapClicked(_ handler: @escaping ValueEventHandler<Location>) -> Self {
+    @_spi(Host) public func onMapClicked(_ handler: @escaping ValueEventHandler<Location>) -> Self {
         onEvent(MapContract.mapClicked, handler)
     }
 }
@@ -128,14 +128,14 @@ public struct Pin: View {
 
     /// The callout's first line, in bold. The initializer takes the same
     /// value and is where a pin usually gets it.
-    public func label(_ value: String) -> Self {
+    @_spi(Host) public func label(_ value: String) -> Self {
         var copy = self
         copy.node.write(PinContract.label, value)
         return copy
     }
 
     /// The line under the label in the callout.
-    public func address(_ value: String) -> Self {
+    @_spi(Host) public func address(_ value: String) -> Self {
         var copy = self
         copy.node.write(PinContract.address, value)
         return copy
@@ -143,7 +143,7 @@ public struct Pin: View {
 
     /// What the pin stands for, which is what decides the icon the platform
     /// draws for it.
-    public func type(_ value: PinType) -> Self {
+    @_spi(Host) public func type(_ value: PinType) -> Self {
         var copy = self
         copy.node.write(PinContract.type, value)
         return copy
@@ -158,7 +158,7 @@ public struct Pin: View {
 
     /// Fires when the pin is tapped. Observing only: it cannot keep the
     /// callout shut.
-    public func onPinClicked(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onPinClicked(_ handler: @escaping EventHandler) -> Self {
         var copy = self
         copy.node.addHandler(PinContract.pinClicked.token, handler)
         return copy
@@ -166,7 +166,7 @@ public struct Pin: View {
 
     /// Fires when the callout above the pin - its details - is tapped: the
     /// place a navigation usually goes.
-    public func onPinDetailsClicked(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onPinDetailsClicked(_ handler: @escaping EventHandler) -> Self {
         var copy = self
         copy.node.addHandler(PinContract.pinDetailsClicked.token, handler)
         return copy

@@ -15,11 +15,15 @@ extension AppKitRegistrations {
             list.applies([
                 ListContract.items, ListContract.itemsLayout, ListContract.listStyle,
                 ListContract.selectionMode, ListContract.selectedItems, ListContract.endReachedWithin,
+                ScrollContentElementContract.scrollContentBackground,
             ]) { view, values in
                 view.apply(
                     layout: values[ListContract.itemsLayout] ?? .list(),
                     style: values[ListContract.listStyle] ?? .automatic,
                     mode: values[ListContract.selectionMode] ?? .none)
+                if let background = values[ScrollContentElementContract.scrollContentBackground] {
+                    view.scroller.drawsBackground = background != .hidden
+                }
             }
             list.raises(ListContract.selectionChanged)
             list.raises(ListContract.itemActivated)

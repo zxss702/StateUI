@@ -40,6 +40,8 @@ final class GTKActPerformer {
             let (ticket, showsNow) = questions.ask(asked)
             asked.ticket = ticket
             if showsNow { asked.show() }
+        case .chooseFiles:
+            chooseFiles(call, window: window)
         case .announce:
             if let window, Self.reachesAScreenReader(window.widget) {
                 gtk_accessible_announce(
@@ -61,6 +63,8 @@ final class GTKActPerformer {
                 to: call.arguments.value(1)?.string ?? "",
                 anchor: call.arguments.value(2).flatMap(ScrollAnchor.init(propValue:)) ?? .nearest)
             reply(call, [])
+        case .scrollToDescendant:
+            scrollToDescendant(call, in: tree)
         case .handlerFailed:
             GTKRenderer.log.error("a handler failed: \(call.arguments.first?.string ?? "")")
             reply(call, [])
@@ -76,6 +80,85 @@ final class GTKActPerformer {
             call, in: tree, core: core, view: { ($0.native as? GTKElement)?.view }, log: { GTKRenderer.log.error($0) })
         else { return }
         fail(call, "the GTK host does not perform the act '\(call.act.name)'")
+    }
+
+    /// The platform's file dialog for `chooseFiles` - the picked paths answer
+    /// it, an empty list a cancel; a `Choice` keeps the dialog and the call
+    /// until GTK is heard.
+    private func chooseFiles(_ call: HostActCall, window: GTKWindow?) {
+        guard let window else { return fail(call, "there is no window to ask in") }
+
+        let dialog = gtk_file_dialog_new()!
+        let multiple = call.arguments.value(0)?.bool ?? false
+        let types = call.arguments.value(1)?.strings ?? []
+        if !types.isEmpty {
+            let filter = gtk_file_filter_new()!
+            for type in types { gtk_file_filter_add_suffix(filter, type) }
+            let filters = g_list_store_new(gtk_file_filter_get_type())!
+            g_list_store_append(filters, UnsafeMutableRawPointer(filter))
+            gtk_file_dialog_set_filters(dialog, filters)
+            g_object_unref(UnsafeMutableRawPointer(filter))
+            g_object_unref(UnsafeMutableRawPointer(filters))
+        }
+
+        let choice = Choice(call: call, dialog: dialog, multiple: multiple, core: core)
+        let data = Unmanaged.passRetained(choice).toOpaque()
+        let ready: GAsyncReadyCallback = { _, result, data in
+            guard let data, let result else { return }
+            let choice = Unmanaged<GTKActPerformer.Choice>.fromOpaque(data).takeRetainedValue()
+            MainActor.assumeIsolated { choice.finish(result) }
+        }
+        if multiple {
+            gtk_file_dialog_open_multiple(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+        } else {
+            gtk_file_dialog_open(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+        }
+    }
+
+    /// A `chooseFiles` act waiting on its dialog: the dialog keeps living
+    /// under it, and its `finish` answers the call with the paths GTK heard -
+    /// or an empty list, which is how a cancel reads.
+    final class Choice {
+        let call: HostActCall
+        let dialog: OpaquePointer
+        let multiple: Bool
+        let core: CoreLink
+
+        init(call: HostActCall, dialog: OpaquePointer, multiple: Bool, core: CoreLink) {
+            self.call = call
+            self.dialog = dialog
+            self.multiple = multiple
+            self.core = core
+        }
+
+        deinit { g_object_unref(UnsafeMutableRawPointer(dialog)) }
+
+        /// The answer: every picked file's path, an empty list for a cancel.
+        func finish(_ result: OpaquePointer) {
+            var error: UnsafeMutablePointer<GError>?
+            var paths: [String] = []
+            if multiple {
+                if let files = gtk_file_dialog_open_multiple_finish(dialog, result, &error) {
+                    for index in 0 ..< g_list_model_get_n_items(files) {
+                        guard let file = g_list_model_get_item(files, index) else { continue }
+                        if let path = g_file_get_path(OpaquePointer(file)) {
+                            paths.append(String(cString: path))
+                            g_free(path)
+                        }
+                        g_object_unref(UnsafeMutableRawPointer(file))
+                    }
+                    g_object_unref(UnsafeMutableRawPointer(files))
+                }
+            } else if let file = gtk_file_dialog_open_finish(dialog, result, &error) {
+                if let path = g_file_get_path(file) {
+                    paths.append(String(cString: path))
+                    g_free(path)
+                }
+                g_object_unref(UnsafeMutableRawPointer(file))
+            }
+            if let error { g_error_free(error) }
+            core.reply(call, [.strings(paths)])
+        }
     }
 
     /// The question under `ticket` was answered by the response `id`; the next question shows.
@@ -132,6 +215,29 @@ final class GTKActPerformer {
             gtk_root_set_focus(root, nil)
         }
         reply(call, [])
+    }
+
+    /// Scrolls until the aimed ScrollView's descendant `.id()` names stands
+    /// where the anchor says.
+    private func scrollToDescendant(_ call: HostActCall, in tree: MountedTree) {
+        do {
+            let element = try tree.aimed(call)
+            guard let scroller = (element.native as? GTKElement)?.view as? GTKScrollView else {
+                return fail(call, "scrollToDescendant is an act of a ScrollView")
+            }
+            let name = call.arguments.value(1)?.string ?? ""
+            guard let target = element.first(id: .manual(name)),
+                  let descendant = (target.native as? GTKElement)?.view else {
+                return fail(call, "there is no view '\(name)' inside the scroll view")
+            }
+            scroller.scroll(
+                toDescendant: descendant.widget,
+                anchorX: call.arguments.value(2)?.number,
+                anchorY: call.arguments.value(3)?.number)
+            reply(call, [])
+        } catch {
+            fail(call, error.reason)
+        }
     }
 
     /// The view the act is aimed at (`MountedTree.aimed`); nil, the act failed, where there is none.

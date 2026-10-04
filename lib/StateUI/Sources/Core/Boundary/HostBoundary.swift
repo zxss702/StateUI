@@ -271,6 +271,20 @@
             refused: renderer.refusedWrites, alive: renderer.liveNodes)
     }
 
+    /// The layout object a `CustomLayout` element arranges its children by,
+    /// or nil where the element has none. A host asks this where it lays out.
+    @MainActor public static func customLayout(for element: ElementId) -> LayoutBox? {
+        Renderer.shared.codeObjects(for: element)?.layout
+    }
+
+    /// The `.layoutValue` tags the element of `element` carries, by key
+    /// identity - what a host reads building its `LayoutSubview`s.
+    @MainActor public static func layoutValues(
+        for element: ElementId
+    ) -> [ObjectIdentifier: Any] {
+        Renderer.shared.codeObjects(for: element)?.values ?? [:]
+    }
+
     /// Reports a native event and runs its handler on StateUI's UI executor.
     @discardableResult
     public static func dispatch(_ handler: Int32, payload: [HostValue] = []) -> Bool {

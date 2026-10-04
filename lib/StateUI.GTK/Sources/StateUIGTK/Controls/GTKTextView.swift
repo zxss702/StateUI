@@ -94,6 +94,11 @@ class GTKTextView: GTKView {
         gtk_label_set_lines(label, breaking.wraps ? Int32(lines ?? -1) : -1)
     }
 
+    /// Whether the user drags a range out of the words and copies it.
+    func setSelectable(_ selectable: Bool) {
+        gtk_label_set_selectable(widget.opaque, selectable ? 1 : 0)
+    }
+
     /// Where the lines stand across the label: from its leading edge, in its middle, or at its trailing edge.
     func setAlignment(horizontal: TextAlignment) {
         let (share, justification): (Float, GtkJustification) = switch horizontal {

@@ -179,6 +179,43 @@ final class AndroidScrollView: AndroidLayoutView {
             y: vertical.map { Double(Java.callInt($0.reference, JavaAPI.getScrollY)) / density } ?? 0)
     }
 
+    /// Scrolls until `descendant` stands where the anchors say: fractions
+    /// across and down it and the room, an absent one for "only where it is
+    /// not wholly in view".
+    func scroll(toDescendant descendant: AndroidView, anchorX: Double?, anchorY: Double?) {
+        guard let outer = scrollers.first else { return }
+
+        let start = Point(
+            x: descendant.cornerInWindow.x - document.cornerInWindow.x,
+            y: descendant.cornerInWindow.y - document.cornerInWindow.y)
+        let size = Point(
+            x: Double(Java.callInt(descendant.reference, JavaAPI.getWidth)) / density,
+            y: Double(Java.callInt(descendant.reference, JavaAPI.getHeight)) / density)
+        let room = Point(
+            x: Double(Java.callInt(outer.reference, JavaAPI.getWidth)) / density,
+            y: Double(Java.callInt(outer.reference, JavaAPI.getHeight)) / density)
+        var place = offset
+
+        if orientation == .horizontal || orientation == .both {
+            place.x = Self.target(at: start.x, length: size.x, in: room.x, now: offset.x, anchor: anchorX)
+        }
+        if orientation == .vertical || orientation == .both {
+            place.y = Self.target(at: start.y, length: size.y, in: room.y, now: offset.y, anchor: anchorY)
+        }
+        move(to: place)
+    }
+
+    /// Where the room stands for `anchor` - the fraction across the child and
+    /// the room - or, absent one, for the child wholly in view the shorter
+    /// way, nowhere where it already is.
+    private static func target(at start: Double, length: Double, in room: Double, now: Double, anchor: Double?)
+        -> Double
+    {
+        if let anchor { return start + anchor * length - anchor * room }
+        if start >= now, start + length <= now + room { return now }
+        return start < now ? start : start + length - room
+    }
+
     /// Moves Android's scrollers to `target` as the program's write; each keeps it within what it can reach.
     private func move(to target: Point) {
         ProgramWrite.perform {

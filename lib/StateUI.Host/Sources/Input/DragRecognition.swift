@@ -32,6 +32,7 @@
     public private(set) var isDragging = false
 
     private var start: Point?
+    private var current = Point(x: 0, y: 0)
     private var moved = Point(x: 0, y: 0)
 
     /// No press yet, a drag past `distance`.
@@ -42,6 +43,7 @@
     /// A press went down at `point`: whatever came before is over.
     public mutating func pressed(at point: Point) {
         start = point
+        current = point
         moved = Point(x: 0, y: 0)
         isDragging = false
     }
@@ -51,13 +53,14 @@
     public mutating func moved(to point: Point) -> [HeardInput] {
         guard let start else { return [] }
 
+        current = point
         moved = Point(x: point.x - start.x, y: point.y - start.y)
-        let running = HeardInput.drag(.running, x: moved.x, y: moved.y)
+        let running = HeardInput.drag(.running, x: moved.x, y: moved.y, at: current, from: start)
         if isDragging { return [running] }
         guard distance.isPassed(by: moved) else { return [] }
 
         isDragging = true
-        return [.drag(.started, x: 0, y: 0), running]
+        return [.drag(.started, x: 0, y: 0, at: start, from: start), running]
     }
 
     /// The press let go, or the platform took it away: the drag's end, where the press was one.
@@ -66,8 +69,8 @@
             start = nil
             isDragging = false
         }
-        guard isDragging else { return nil }
+        guard isDragging, let start else { return nil }
 
-        return .drag(letGo ? .completed : .canceled, x: moved.x, y: moved.y)
+        return .drag(letGo ? .completed : .canceled, x: moved.x, y: moved.y, at: current, from: start)
     }
 }

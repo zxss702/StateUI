@@ -16,6 +16,8 @@ final class StillClock: FrameClock {
 @MainActor
 final class NoView: NativeElement {
     let presentsView = true
+    var room: Rect?
+    var departingRoom: Rect? { room }
     func standingValue(_ property: Prop) -> HostValue? { nil }
     func animates(_ property: Prop) -> Bool { false }
     func applied(changed: Set<Prop>, wasDescribed: Bool) {}

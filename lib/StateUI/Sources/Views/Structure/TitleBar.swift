@@ -6,19 +6,19 @@ public protocol TitleBarProperties: PropertyContainer {}
 
 extension TitleBarProperties {
     /// Adds a second line that identifies the current document or section.
-    public func subtitle(_ value: String) -> Modified {
+    @_spi(Host) public func subtitle(_ value: String) -> Modified {
         setValue(TitleBarContract.subtitle, value)
     }
 
     /// Places a small image beside the authored title.
-    public func icon(_ value: ImageSource) -> Modified {
+    @_spi(Host) public func icon(_ value: ImageSource) -> Modified {
         setValue(TitleBarContract.icon, value)
     }
 
     /// The colour the bar draws its authored title and subtitle in.
     ///
     /// Use `background(_:)` for the title area's background.
-    public func barForegroundColor(_ value: Color) -> Modified {
+    @_spi(Host) public func barForegroundColor(_ value: Color) -> Modified {
         setValue(TitleBarContract.barForegroundColor, value)
     }
 }
@@ -83,7 +83,7 @@ public struct TitleBar: VisualElement, TitleBarProperties{
     ///
     /// A closure producing nothing empties the slot, which is what an `if` in
     /// one is for.
-    public func leadingContent(@ViewBuilder _ content: () -> any View) -> Self {
+    @_spi(Host) public func leadingContent(@ViewBuilder _ content: () -> any View) -> Self {
         slot(LeadingContentContract.self, content())
     }
 
@@ -95,14 +95,14 @@ public struct TitleBar: VisualElement, TitleBarProperties{
     ///         }
     ///
     /// A closure producing nothing empties the slot.
-    public func content(@ViewBuilder _ content: () -> any View) -> Self {
+    @_spi(Host) public func content(@ViewBuilder _ content: () -> any View) -> Self {
         slot(ContentContract.self, content())
     }
 
     /// Places one root view at the far end of the title area.
     ///
     /// A closure producing nothing empties the slot.
-    public func trailingContent(@ViewBuilder _ content: () -> any View) -> Self {
+    @_spi(Host) public func trailingContent(@ViewBuilder _ content: () -> any View) -> Self {
         slot(TrailingContentContract.self, content())
     }
 

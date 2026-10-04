@@ -7,24 +7,24 @@ public protocol PickerProperties: PropertyContainer {}
 extension PickerProperties {
     /// Shows or dismisses the list of choices. The user may still close it by
     /// choosing, clicking away or pressing Escape, which `onClosed` reports.
-    public func isOpen(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOpen(_ value: Bool) -> Modified {
         setValue(PickerContract.isOpen, value)
     }
 
     /// The captions to choose from, in order. Choosing among models, format
     /// them here and find the chosen one by its index.
-    public func options(_ value: [String]) -> Modified {
+    @_spi(Host) public func options(_ value: [String]) -> Modified {
         setValue(PickerContract.options, value)
     }
 
     /// Which item is chosen, counted from zero; -1 for none.
-    public func selectedIndex(_ value: Int) -> Modified {
+    @_spi(Host) public func selectedIndex(_ value: Int) -> Modified {
         setValue(PickerContract.selectedIndex, value)
     }
 
     /// What the field says while nothing is chosen. A host can also reuse it
     /// as the heading of a separate native choice surface.
-    public func title(_ value: String) -> Modified {
+    @_spi(Host) public func title(_ value: String) -> Modified {
         setValue(PickerContract.title, value)
     }
 }
@@ -110,7 +110,7 @@ public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmen
     /// - Parameter binding: the state shown, and written back into as the
     ///   user chooses.
     /// - Returns: the picker, wearing and reporting that choice.
-    public func selectedIndex(_ binding: Binding<Int>) -> Self {
+    @_spi(Host) public func selectedIndex(_ binding: Binding<Int>) -> Self {
         binding.image == nil
             ? described(.selectedIndex, binding, on: .selectedIndexChanged)
             : plain(.selectedIndex, by: binding, mode: .inOut)
@@ -120,19 +120,19 @@ public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmen
 
     /// Fires when the user changes the choice, with the new index - after the
     /// choice has landed on a state handed as `$size`.
-    public func onSelectedIndexChanged(_ handler: @escaping ValueEventHandler<Int>) -> Self {
+    @_spi(Host) public func onSelectedIndexChanged(_ handler: @escaping ValueEventHandler<Int>) -> Self {
         onEvent(PickerContract.selectedIndexChanged, handler)
     }
 
     /// The user has opened the list of choices. Opening it with `isOpen(true)`
     /// raises nothing: the application already knows.
-    public func onOpened(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onOpened(_ handler: @escaping EventHandler) -> Self {
         onEvent(PickerContract.opened, handler)
     }
 
     /// The user has closed it - by a choice, a click outside or the platform's
     /// own dismissal.
-    public func onClosed(_ handler: @escaping EventHandler) -> Self {
+    @_spi(Host) public func onClosed(_ handler: @escaping EventHandler) -> Self {
         onEvent(PickerContract.closed, handler)
     }
 }

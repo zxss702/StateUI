@@ -194,6 +194,16 @@ final class ContractTests: XCTestCase {
             Visibility.hidden,
             [PresentationDetent.medium, .large, .fraction(0.4), .height(220)] as [PresentationDetent],
             Edge.trailing,
+            AnyTransition.blur.combined(with: .scale(scale: 0.8, anchor: .top)).animation(.bouncy),
+            ControlSize.small,
+            DropShadow(color: .black.opacity(0.25), radius: 4, x: 1, y: 2),
+            ScrollBounceBehavior.basedOnSize, ScrollTargetBehavior.paging,
+            ScrollTargetBehavior.viewAligned(anchor: .bottom),
+            UnitPoint.bottomTrailing,
+            AccessibilityTraits(rawValue: 1), AccessibilityChildBehavior(rawValue: 1)!,
+            WindowResizability(rawValue: 1)!,
+            BlendMode(rawValue: 1)!, PointerStyle.horizontalText,
+            TemplateRenderingMode.template, MenuIndicatorVisibility.hidden,
         ]
 
         for sample in samples {

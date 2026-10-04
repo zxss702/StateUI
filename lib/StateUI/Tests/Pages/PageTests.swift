@@ -74,7 +74,9 @@ private struct EveryPropertyPage: View {
 
                     Divider()
                 }
-                .disabled(!true),
+                .disabled(!true)
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden),
             ]
         }
     }
@@ -414,6 +416,13 @@ final class PageTests: XCTestCase {
             .presentationDetents([.medium, .height(220), .large])
             .presentationDragIndicator(.hidden)
             .interactiveDismissDisabled()
+            .toolbarVisibility(.hidden, for: .windowToolbar)
+            .toolbarBackground(.hidden, for: .windowToolbar)
+            .navigationSubtitle("Sub")
+            .navigationDocument("/tmp/doc.md")
+            .navigationBarBackButtonHidden(true)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 240)
+            .windowBackground(.black)
             .node
             .built
             .props
@@ -430,6 +439,28 @@ final class PageTests: XCTestCase {
             PageElement.swift declares \(missing.joined(separator: ", ")), which \
             this test does not write.
             """)
+    }
+
+    /// The page-chrome modifiers a view wears land on the page it stands in:
+    /// each is read off the page's props, whichever root view carried it.
+    func testPageChromeModifiersLandOnThePage() throws {
+        let page = Self.arrived(
+            Text("content")
+                .navigationSubtitle("Sub")
+                .navigationDocument("/tmp/doc.md")
+                .navigationBarBackButtonHidden(true)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 240)
+                .toolbarVisibility(.hidden, for: .windowToolbar)
+                .toolbarBackground(.hidden, for: .windowToolbar)
+                .windowBackground(.black))
+
+        XCTAssertEqual(page.props[.subtitle], .string("Sub"))
+        XCTAssertEqual(page.props[.document], .string("/tmp/doc.md"))
+        XCTAssertEqual(page.props[.hasBackButton], .bool(false))
+        XCTAssertEqual(page.props[.preferredColumnWidth], .numbers([180, 240]))
+        XCTAssertEqual(page.props[.toolbarVisibility], .enumeration(2))
+        XCTAssertEqual(page.props[.toolbarBackground], .enumeration(2))
+        XCTAssertEqual(page.props[.windowBackground], Color.black.propValue)
     }
 
     /// And the two spellings are ONE property - the same key in the patch, so

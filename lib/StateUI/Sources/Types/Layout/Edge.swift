@@ -63,3 +63,22 @@ extension Edge: HostRepresentable {
         self = edge
     }
 }
+
+/// An edge on the vertical axis: the top, or the bottom - what
+/// `.safeAreaInset(edge:)` names.
+public enum VerticalEdge: Int8, Sendable {
+    /// The top edge.
+    case top = 1
+
+    /// The bottom edge.
+    case bottom = 4
+}
+
+/// An edge on the horizontal axis: the leading, or the trailing.
+public enum HorizontalEdge: Int8, Sendable {
+    /// The leading edge - the left, left-to-right.
+    case leading = 2
+
+    /// The trailing edge - the right, left-to-right.
+    case trailing = 8
+}

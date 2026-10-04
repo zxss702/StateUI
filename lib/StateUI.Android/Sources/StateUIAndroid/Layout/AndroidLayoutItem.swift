@@ -20,7 +20,10 @@ struct AndroidLayoutItem: LayoutChild {
     var mount: UInt64 = 0
 
     /// Fades the view in as it joins a standing layout; nil for a view that simply appears.
-    var fadeIn: ((Animation) -> Void)?
+    var fadeIn: ((Animation, Rect) -> Void)?
+
+    /// Whether the view animates out where it stood: kept in the subviews, taking no room.
+    var departing = false
 
     /// The view's size for the width offered to it, its stated sizes and bounds applied. A stated width is the
     /// width it is measured at, so words wrap to it; a most width bounds the offer.

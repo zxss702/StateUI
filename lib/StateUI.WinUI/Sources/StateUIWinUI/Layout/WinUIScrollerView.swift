@@ -35,8 +35,8 @@ final class WinUIScrollerView: WinUIView {
 
     private static func bar(_ visibility: ScrollIndicatorVisibility) -> Int32 {
         switch visibility {
-        case .always: 1
-        case .never: 2
+        case .visible: 1
+        case .hidden: 2
         default: 0
         }
     }

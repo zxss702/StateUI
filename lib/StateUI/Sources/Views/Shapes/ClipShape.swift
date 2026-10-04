@@ -158,4 +158,55 @@ extension View {
         wrapper.props[LayoutContract.hitShape.token] = shape.outline.propValue
         return ModifiedContent(node: wrapper)
     }
+
+    /// Draws the view only where `mask`'s alpha allows: where the mask paints
+    /// opaque the view shows, where it paints clear nothing does - and the
+    /// mask itself never draws:
+    ///
+    ///     Image("cover")
+    ///         .mask { RoundedRectangle(cornerRadius: 8) }
+    ///
+    ///     cell
+    ///         .mask {
+    ///             HStack(spacing: 0) {
+    ///                 LinearGradient(colors: [.clear, .black],
+    ///                     startPoint: .leading, endPoint: .trailing).frame(width: 32)
+    ///                 Color.black
+    ///                 LinearGradient(colors: [.black, .clear],
+    ///                     startPoint: .leading, endPoint: .trailing).frame(width: 32)
+    ///             }
+    ///         }
+    ///
+    /// The mask is laid out in the same room the view is, so a gradient fades
+    /// an edge and a shape cuts a silhouette.
+    public func mask<Mask: View>(@ViewBuilder _ mask: () -> Mask) -> ModifiedContent {
+        var wrapper = Node(contract: MaskedContract.self)
+        let content = node
+        let maskNode = mask().node
+        wrapper.producer = { content.asChildren + maskNode.asChildren }
+        return ModifiedContent(node: wrapper)
+    }
+}
+
+/// A shape's outline filled by a brush - what `.background(_:in:)` paints
+/// behind a view.
+struct OutlinedFill: View {
+    /// The outline drawn.
+    let outline: ContainerShape
+
+    /// The fill.
+    let brush: Brush
+
+    /// The shape view standing for the outline, filled.
+    var node: Node {
+        var node = switch outline {
+        case .rectangle: Rectangle().node
+        case .roundedRectangle(let radius): RoundedRectangle(cornerRadius: radius).node
+        case .ellipse: Ellipse().node
+        case .capsule: Capsule().node
+        case .circle: Circle().node
+        }
+        node.props[ShapeContract.fill.token] = brush.propValue
+        return node
+    }
 }

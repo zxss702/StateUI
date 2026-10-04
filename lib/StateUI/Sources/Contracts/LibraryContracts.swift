@@ -28,17 +28,19 @@
         BarElementContract.self,
         MenuItemElementContract.self,
         PageElementContract.self,
+        ControlSizeElementContract.self,
+        ScrollContentElementContract.self,
     ]
 
     /// Every element: one contract per node type the library declares.
     public static let elements: [any ElementContract.Type] = [
         ActivityIndicatorContract.self, AppContract.self,
         ButtonContract.self, CanvasContract.self, CheckBoxContract.self,
-        ColorPickerContract.self, ContentContract.self, ContextMenuContract.self, PopoverContract.self, DatePickerContract.self,
+        ColorPickerContract.self, ContentContract.self, ContextMenuContract.self, PopoverContract.self, CustomLayoutContract.self, MaskedContract.self, DatePickerContract.self,
         EllipseContract.self, GridContract.self, HStackContract.self, ImageContract.self, ListContract.self,
         TextContract.self,
         LeadingContentContract.self, LineContract.self, MapContract.self, MenuBarContract.self,
-        MenuContract.self, MenuItemContract.self, DividerContract.self, ModalStackContract.self,
+        MenuContract.self, MenuButtonContract.self, MenuItemContract.self, DividerContract.self, ModalStackContract.self,
         NavigationStackContract.self, OverlayContract.self, PageContract.self, PathContract.self,
         PickerContract.self, PinContract.self, PolygonContract.self, PolylineContract.self,
         PositionIndicatorContract.self, ProgressBarContract.self, RadioButtonContract.self,
@@ -53,6 +55,14 @@
 
     /// Every contract.
     static let all: [any Contract.Type] = tiers + elements.map { $0 as any Contract.Type }
+
+    /// Every element's contract, by the node type it declares - how a modifier
+    /// answers "does this element wear that tier" without knowing the view.
+    static let byType: [NodeType: any ElementContract.Type] = {
+        var byType: [NodeType: any ElementContract.Type] = [:]
+        for element in elements { byType[element.nodeType] = element }
+        return byType
+    }()
 
     /// Every property's facts, by the name it crosses under - what the differ
     /// asks of a property it holds only a token for. The first member met

@@ -25,10 +25,11 @@ extension UIKitElement {
 
         var item = UIKitLayoutItem(view: view, values: element.layoutValues, isShown: element.standsShown)
         item.mount = element.mount
+        item.departing = element.isDeparting
         item.placed = self
         item.drawing = drawing
         if fadesIn {
-            item.fadeIn = { [weak self] animation in self?.fadeIn(under: animation) }
+            item.fadeIn = { [weak self] animation, room in self?.fadeIn(under: animation, room: room) }
         }
         return item
     }

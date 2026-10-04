@@ -10,7 +10,7 @@ public enum ColorPickerContract: ElementContract {
     public static let layer: ElementLayer = .native
 
     /// A box is a view.
-    public static let tiers: [any Contract.Type] = [ViewContract.self]
+    public static let tiers: [any Contract.Type] = [ViewContract.self, ControlSizeElementContract.self]
 
     /// What the rectangle is filled with.
     public static let color = ElementProperty<Self, Color>("color", layer: .native)

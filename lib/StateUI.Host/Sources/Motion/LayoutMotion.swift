@@ -87,7 +87,8 @@ extension PlacedView {
         mount: UInt64,
         at target: Rect,
         stated: AnimationLanes,
-        fadeIn: ((Animation) -> Void)?,
+        fadeIn: ((Animation, Rect) -> Void)?,
+        arrivedFrom: Rect? = nil,
         in arrangement: Arrangement
     ) {
         guard mount != 0 else {
@@ -95,14 +96,20 @@ extension PlacedView {
             return
         }
 
-        // A child with no seat yet is already where it belongs; one joining a standing layout fades in.
-        guard let seat = seats[mount] else {
+        // A child with no seat yet is already where it belongs - unless a
+        // `matchedGeometry` match left it a frame to fly from; one joining a
+        // standing layout fades in.
+        if seats[mount] == nil {
             seats[mount] = Seat(view: view)
-            view.placedFrame = target
-            if arrangement.fades { fadeIn?(arrangement.law) }
-            return
+            guard let arrivedFrom, !arrangement.lanes.isEmpty, Self.isReal(arrivedFrom) else {
+                view.placedFrame = target
+                if arrangement.fades { fadeIn?(arrangement.law, target) }
+                return
+            }
+            view.placedFrame = arrivedFrom
         }
 
+        let seat = seats[mount]!
         seats[mount]?.view = view
         let key = AnimationTarget.placed(mount)
         let destination = Self.lanes(target)

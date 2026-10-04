@@ -12,7 +12,8 @@ public enum TextEditorContract: ElementContract {
     /// An editor is an input of text in a font, aligned.
     public static let tiers: [any Contract.Type] = [
         InputViewContract.self, TextElementContract.self, FontElementContract.self,
-        TextAlignmentElementContract.self,
+        TextAlignmentElementContract.self, ScrollContentElementContract.self,
+        PaddingElementContract.self, ControlSizeElementContract.self,
     ]
 
     /// Whether the editor grows as the text does.

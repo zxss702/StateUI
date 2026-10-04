@@ -5,7 +5,7 @@
 // how long the run the user swipes is, and what the one number the scroller
 // sends it does.
 //
-// A GalleryView is made of things that already exist - a ScrollViewReader over a
+// A GalleryView is made of things that already exist - a ScrollReader over a
 // PlacedLayout, with a number between them - so there is nothing in a host to
 // check it against and everything worth pinning is here.
 
@@ -33,9 +33,9 @@ final class GalleryViewTests: XCTestCase {
         }
     }
 
-    /// One frame report: eight numbers, of which these tests use the size.
+    /// One frame report: ten numbers, of which these tests use the size.
     private func frame(width: Double, height: Double) -> [PropValue] {
-        [.numbers([0, 0, width, height, 0, 0, 0, 0])]
+        [.numbers([0, 0, width, height, 0, 0, 0, 0, width, height])]
     }
 
     /// The first node of a kind, however deep it sits.

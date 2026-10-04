@@ -54,7 +54,9 @@ private struct BarredPage: View {
                     .disabled(!true)
                 }
                 .id("file")
-                .disabled(!true),
+                .disabled(!true)
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden),
             ]
         }
     }

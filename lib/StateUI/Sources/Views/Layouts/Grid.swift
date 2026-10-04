@@ -13,7 +13,7 @@ extension GridProperties {
     /// `.auto` fits what is in the row, `.fill` and `.proportional` take a
     /// share of what is left over, and `.fixed` is that many device units. A
     /// grid told nothing has one row and one column.
-    public func rows(_ lengths: GridLength...) -> Modified {
+    @_spi(Host) public func rows(_ lengths: GridLength...) -> Modified {
         setValue(GridContract.rows, lengths)
     }
 
@@ -23,18 +23,18 @@ extension GridProperties {
     ///     .columns(.fill, .proportional(2))
     ///
     /// The same kinds of length as `rows`.
-    public func columns(_ lengths: GridLength...) -> Modified {
+    @_spi(Host) public func columns(_ lengths: GridLength...) -> Modified {
         setValue(GridContract.columns, lengths)
     }
 
     /// The gap between one row and the next, in device units - between the rows
     /// only; the space around the whole grid is `.padding`.
-    public func rowSpacing(_ value: Double) -> Modified {
+    @_spi(Host) public func rowSpacing(_ value: Double) -> Modified {
         setValue(GridContract.rowSpacing, value)
     }
 
     /// The gap between one column and the next, in device units.
-    public func columnSpacing(_ value: Double) -> Modified {
+    @_spi(Host) public func columnSpacing(_ value: Double) -> Modified {
         setValue(GridContract.columnSpacing, value)
     }
 }
@@ -61,7 +61,7 @@ extension GridProperties {
 ///
 /// A child that says nothing sits in row 0, column 0 - which is how two
 /// children end up on top of one another if that was not intended.
-public struct Grid: Layout, GridProperties {
+public struct Grid: LayoutView, GridProperties {
     /// The node this control describes.
     public var node: Node
 
@@ -82,13 +82,13 @@ public struct Grid: Layout, GridProperties {
 extension Grid {
     /// `columnSpacing` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func columnSpacing(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func columnSpacing(_ state: Binding<Double>) -> Modified {
         plain(.columnSpacing, by: state)
     }
 
     /// `rowSpacing` from a state, `$x`: the host sets each new value as it
     /// stands, and no view is rebuilt for it.
-    public func rowSpacing(_ state: Binding<Double>) -> Modified {
+    @_spi(Host) public func rowSpacing(_ state: Binding<Double>) -> Modified {
         plain(.rowSpacing, by: state)
     }
 }

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The properties every stack has, shared by the control and its `Style`.
-public protocol StackBaseProperties: LayoutProperties {}
+public protocol StackBaseProperties: LayoutViewProperties {}
 
 /// A layout that stacks its children in one direction.
-public protocol StackBase: Layout, StackBaseProperties {}
+public protocol StackBase: LayoutView, StackBaseProperties {}
 
 extension StackBaseProperties {
     /// The gap left between children, in device units - not before the first

@@ -29,6 +29,9 @@ struct SceneElement: Element {
         node.environments = SceneElement.offered(by: scene)
             + [(key: ObjectIdentifier(SceneSession.self), object: record.session)]
 
+        // `\.openWindow` acts on this scene's groups, wherever below it is read.
+        node.environmentValues[keyPath: \.openWindow] = OpenWindowAction(record: record)
+
         return node
     }
 
@@ -65,6 +68,13 @@ struct SceneElement: Element {
             window.describe(WindowSceneContract.windowValue, opened.text)
             window.write(WindowSceneContract.hidesWhenInactive, group.hides)
             window.write(WindowSceneContract.floatsOnTop, group.floats)
+            if let resizability = group.resizability {
+                window.write(WindowSceneContract.resizability, resizability)
+            }
+            if let size = group.defaultSize {
+                window.write(WindowSceneContract.width, size.width)
+                window.write(WindowSceneContract.height, size.height)
+            }
 
             children.append(window)
         }

@@ -35,7 +35,7 @@
             },
             ConformanceCase("enterSubmitsAFieldOnce", proves: [Covered(TextFieldContract.submitted)]) { s in
                 let heard = Received<String>()
-                s.start { VStack { TextField("").onSubmitted { heard.values.append("submitted") }.id("field") } }
+                s.start { VStack { TextField("").onSubmit { heard.values.append("submitted") }.id("field") } }
 
                 try s.perform(.submit, on: s.element("field"))
                 s.settle { !heard.values.isEmpty }

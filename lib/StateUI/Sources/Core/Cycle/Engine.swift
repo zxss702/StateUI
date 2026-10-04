@@ -192,7 +192,7 @@ extension View {
     ///   - sync: which clock it runs on. The display's own frame.
     ///   - priority: where it comes in the order, ascending. 0 unless said.
     ///   - run: the arithmetic, handed the instant and how long it has been.
-    public func engine(
+    @_spi(Host) public func engine(
         following first: any Followable,
         _ more: any Followable...,
         sync: Sync = .display,
@@ -241,7 +241,7 @@ extension View {
     ///   - sync: which clock it runs on. The display's own frame.
     ///   - priority: where it comes in the order, ascending. 0 unless said.
     ///   - run: the arithmetic, answering whether to run again next cycle.
-    public func engine<each Value>(
+    @_spi(Host) public func engine<each Value>(
         following: repeat Binding<each Value>,
         sync: Sync = .display,
         priority: Double = 0,

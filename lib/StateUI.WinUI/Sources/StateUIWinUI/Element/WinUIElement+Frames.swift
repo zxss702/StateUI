@@ -15,7 +15,14 @@ extension WinUIElement: FrameReporter {
     /// Says where the element stands, where that changed (`MountedElement.reportFrame`).
     func reportFrame() {
         guard let host, let view else { return }
-        element.reportFrame(view.frameReport(safeArea: host.safeAreaOrigin(of: element)), in: host.runtime)
+        let named = element.namedSpaceFrames { ancestor in
+            guard let ancestorView = (ancestor.native as? WinUIElement)?.view else { return nil }
+            let origin = ancestorView.origin
+            let frame = ancestorView.laidOutFrame
+            return Rect(x: origin.x, y: origin.y, width: frame.width, height: frame.height)
+        }
+        element.reportFrame(
+            view.frameReport(safeArea: host.safeArea(of: element)), named: named, in: host.runtime)
     }
 }
 

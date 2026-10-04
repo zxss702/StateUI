@@ -121,7 +121,7 @@ final class AppKitSearchFieldViewTests: XCTestCase {
     func testReturnInASearchFieldReachesItsSubmitHandler() throws {
         let submitted = Received<String>()
         let renderer = AppKitRenderer.running {
-            SearchField("Ada").onSubmitted { submitted.values.append("submitted") }
+            SearchField("Ada").onSubmit { submitted.values.append("submitted") }
         }
         defer { renderer.closeForTesting() }
         let search = try XCTUnwrap(renderer.nativeViews(AppKitSearchFieldView.self).first)

@@ -39,7 +39,7 @@ final class WinUIScrollView: WinUILayoutView {
     /// The offset the tree writes, kept for the first layout where it comes before it.
     private var writtenOffset = WrittenScrollOffset()
 
-    private var bars = (vertical: ScrollIndicatorVisibility.default, horizontal: ScrollIndicatorVisibility.default)
+    private var bars = (vertical: ScrollIndicatorVisibility.automatic, horizontal: ScrollIndicatorVisibility.automatic)
 
     override init() {
         super.init()
@@ -73,10 +73,17 @@ final class WinUIScrollView: WinUILayoutView {
         wrapper.forgetMeasurements()
     }
 
-    /// The scroller's orientation, padding, bars, and an offset the tree moved it to.
+    /// Where a `.defaultScrollAnchor` asks the scroller to begin: fractions
+    /// across and down the content and the room. Applied once, on the first
+    /// layout with a document to place.
+    private var defaultAnchor: (x: Double, y: Double)?
+    private var anchoredOnce = false
+
+    /// The scroller's orientation, padding, bars, where a reader's default
+    /// anchor asks it to begin, and an offset the tree moved it to.
     func apply(
         orientation: Axis, padding: EdgeInsets, verticalBar: ScrollIndicatorVisibility,
-        horizontalBar: ScrollIndicatorVisibility, offset: Point?
+        horizontalBar: ScrollIndicatorVisibility, defaultAnchor: UnitPoint?, offset: Point?
     ) {
         if orientation != self.orientation || verticalBar != bars.vertical || horizontalBar != bars.horizontal {
             self.orientation = orientation
@@ -85,6 +92,7 @@ final class WinUIScrollView: WinUILayoutView {
         }
         document.padding = padding
         document.orientation = orientation
+        if let defaultAnchor { self.defaultAnchor = (defaultAnchor.x, defaultAnchor.y) }
 
         if let target = writtenOffset.written(offset, standing: self.offset, orientation: orientation) {
             move(to: target)
@@ -107,10 +115,17 @@ final class WinUIScrollView: WinUILayoutView {
         return super.measure(width: width, height: height)
     }
 
-    /// Stands WinUI's scroller over the whole of the room, then an offset the tree wrote before there was one.
+    /// Stands WinUI's scroller over the whole of the room, then an offset the tree wrote before there was one - or,
+    /// first time only, the default anchor a reader asked it to open at.
     override func arrange(in bounds: Rect) {
         scroller.layout(bounds)
-        if let target = writtenOffset.laidOutNow() { move(to: target) }
+        if let target = writtenOffset.laidOutNow() {
+            move(to: target)
+        } else if let defaultAnchor, !anchoredOnce {
+            anchoredOnce = true
+            let reach = scroller.standing.reach
+            move(to: Point(x: defaultAnchor.x * reach.x, y: defaultAnchor.y * reach.y))
+        }
     }
 
     // MARK: - The user's movement
@@ -168,6 +183,18 @@ final class WinUIScrollView: WinUILayoutView {
     private func configure() {
         scroller.set(
             content: document, orientation: orientation, verticalBar: bars.vertical, horizontalBar: bars.horizontal)
+    }
+
+    /// Scrolls until `descendant` stands where the anchors say: fractions
+    /// across and down it and the room, an absent one for "only where it is
+    /// not wholly in view".
+    func scroll(toDescendant descendant: WinUIView, anchorX: Double?, anchorY: Double?) {
+        var place = [0.0, 0.0]
+        var found: Int32 = 0
+        stateui_winui_scroller_place_for(
+            scroller.handle, descendant.handle, anchorX ?? .nan, anchorY ?? .nan, &found, &place)
+        guard found != 0 else { return }
+        move(to: Point(x: place[0], y: place[1]))
     }
 
     /// Moves the scroller to `target`, kept within what it reaches, as the program's move; one already there is

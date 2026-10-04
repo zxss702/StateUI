@@ -644,7 +644,9 @@ final class HostContractTests: XCTestCase {
             .filter { $0.hasSuffix(".swift") }
         for file in files {
             let source = try SourceTree.text(in: file)
-            for former in ["func barTextColor(", "func foregroundColor(", "func autoHide("] {
+            // `foregroundColor` is deliberately not here: it is back as a
+            // SwiftUI alias over `foregroundStyle`, one name the subset keeps.
+            for former in ["func barTextColor(", "func autoHide("] {
                 XCTAssertFalse(source.contains(former), "\(file) still says \(former)")
             }
         }

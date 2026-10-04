@@ -124,6 +124,7 @@ final class GTKRenderer {
         }
         window.setSize(width: element.value(.width)?.number, height: element.value(.height)?.number)
         window.setMinimumSize(width: element.value(.minimumWidth)?.number, height: element.value(.minimumHeight)?.number)
+        window.setResizable(element.value(.resizability)?.enumeration)
 
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let (_, arrangement) = changes.arrangement {
@@ -148,8 +149,9 @@ final class GTKRenderer {
         }
         arrangement?.composeChrome()
         adaptSplitViews(in: window)
-        let title = WindowChrome(window: element.element, arrangement: presentation.arrangement).title
-        window.setTitle(title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
+        let chrome = WindowChrome(window: element.element, arrangement: presentation.arrangement)
+        window.setTitle(chrome.title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
+        window.setBackground(chrome.windowBackground)
     }
 
     /// Collapses the window's split view where the window is narrow.

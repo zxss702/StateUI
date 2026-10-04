@@ -23,7 +23,7 @@
                     VStack {
                         SearchField(query.projectedValue)
                             .onTextChanged { heard.values.append($0) }
-                            .onSubmitted { heard.values.append("submitted") }
+                            .onSubmit { heard.values.append("submitted") }
                             .id("search")
                         Button("Tea").onClicked { query.wrappedValue = "tea" }.id("tea")
                     }
@@ -43,7 +43,7 @@
             ConformanceCase("eachSubmissionIsHeardOnce", proves: [Covered(SearchFieldContract.submitted)]) { s in
                 let heard = Received<String>()
                 s.start {
-                    VStack { SearchField(State(wrappedValue: "tea").projectedValue).onSubmitted { heard.values.append("s") }.id("search") }
+                    VStack { SearchField(State(wrappedValue: "tea").projectedValue).onSubmit { heard.values.append("s") }.id("search") }
                 }
                 let search = try s.element("search")
 

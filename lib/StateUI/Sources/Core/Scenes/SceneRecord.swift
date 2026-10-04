@@ -75,6 +75,19 @@ final class SceneRecord: @unchecked Sendable {
             OpenedWindow(type: type, serial: nextSerial(), value: key, text: try ValueText.write(value)))
     }
 
+    /// Opens the window `\.openWindow` asks for - the type-erased spelling of
+    /// `open(_:value:)`, its value and the value's written text already made.
+    func open(_ type: WindowType, valueType: Any.Type?, value: AnyHashable?, text: String?) throws {
+        try check(type, takes: valueType)
+
+        guard Scenes.opensWindows else { throw WindowError.unsupported }
+        guard !windows.contains(where: { $0.type == type && $0.value == value }) else {
+            throw WindowError.alreadyOpen
+        }
+
+        windows.append(OpenedWindow(type: type, serial: nextSerial(), value: value, text: text))
+    }
+
     /// Closes the window of a group that opens one.
     func close(_ type: WindowType) throws {
         try check(type, takes: nil)

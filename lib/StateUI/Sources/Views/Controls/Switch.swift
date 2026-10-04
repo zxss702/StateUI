@@ -6,7 +6,7 @@ public protocol SwitchProperties: PropertyContainer {}
 
 extension SwitchProperties {
     /// Which way it is thrown - true for on. Usually given in the initializer.
-    public func isOn(_ value: Bool) -> Modified {
+    @_spi(Host) public func isOn(_ value: Bool) -> Modified {
         setValue(SwitchContract.isOn, value)
     }
 }
@@ -55,7 +55,7 @@ public struct Switch: VisualElement, TintElement, SwitchProperties{
     /// - Parameter value: the state shown, and written back into as the user
     ///   flips it.
     /// - Returns: the switch, wearing and reporting that value.
-    public func isOn(_ value: Binding<Bool>) -> Modified {
+    @_spi(Host) public func isOn(_ value: Binding<Bool>) -> Modified {
         value.image == nil
             ? described(SwitchContract.isOn.token, value, on: SwitchContract.toggled.token)
             : plain(SwitchContract.isOn.token, by: value, mode: .inOut)
@@ -65,7 +65,7 @@ public struct Switch: VisualElement, TintElement, SwitchProperties{
 
     /// Fires when it is flipped, with the way it was flipped to. Runs after a
     /// binding's write.
-    public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
+    @_spi(Host) public func onToggled(_ handler: @escaping ValueEventHandler<Bool>) -> Self {
         onEvent(SwitchContract.toggled, handler)
     }
 }

@@ -11,6 +11,10 @@ public enum VisualElementContract: Contract {
     /// Every drawn element carries values in the tree.
     public static let tiers: [any Contract.Type] = [PropertyContainerContract.self]
 
+    /// How the element's children take part in accessibility.
+    public static let accessibilityChildBehavior = ElementProperty<Self, AccessibilityChildBehavior>(
+        "accessibilityChildBehavior", layer: .native)
+
     /// How deep a heading the element is, for a user moving by headings.
     public static let accessibilityHeadingLevel = ElementProperty<Self, HeadingLevel>(
         "accessibilityHeadingLevel", layer: .native)
@@ -22,6 +26,11 @@ public enum VisualElementContract: Contract {
     /// What a screen reader says the element is.
     public static let accessibilityLabel = ElementProperty<Self, String>(
         "accessibilityLabel", layer: .native)
+
+    /// What a screen reader says the element is and does - its button-ness,
+    /// chosen-ness and the rest, as a bit set.
+    public static let accessibilityTraits = ElementProperty<Self, AccessibilityTraits>(
+        "accessibilityTraits", layer: .native)
 
     /// Whether the element and everything in it are left out of what a screen
     /// reader reads.
@@ -140,13 +149,66 @@ public enum VisualElementContract: Contract {
     /// Which of its overlapping siblings in a grid or an absolute layout the element is drawn over.
     public static let zIndex = ElementProperty<Self, Double>("zIndex", layer: .native, travels: false)
 
+    /// The blur the element is drawn with, in device units - 0 for none.
+    public static let blur = ElementProperty<Self, Double>(
+        "blur", layer: .native, moves: .opacity)
+
+    /// How the element's drawing composites with what stands under it;
+    /// `.blendMode` writes it.
+    public static let blendMode = ElementProperty<Self, BlendMode>("blendMode", layer: .native)
+
+    /// How the element looks as it is inserted and as it is removed.
+    public static let transition = ElementProperty<Self, AnyTransition>(
+        "transition", layer: .native)
+
+    /// The shadow the element drops, nil for none.
+    public static let shadow = ElementProperty<Self, DropShadow>(
+        "shadow", layer: .native)
+
+    /// How the element swaps its drawn content - the kind `.contentTransition`
+    /// names, as a word the host plays the closest swap it has for.
+    public static let contentTransition = ElementProperty<Self, String>(
+        "contentTransition", layer: .native)
+
+    /// The matched-geometry identity `namespace:id` - an element with the same
+    /// identity arriving where one left continues its frame across the change.
+    public static let matchedGeometry = ElementProperty<Self, String>(
+        "matchedGeometry", layer: .native)
+
+    /// Whether a matched-geometry element provides its frame for others; an
+    /// element written `isSource: false` takes part only as a destination.
+    public static let matchedGeometrySource = ElementProperty<Self, Bool>(
+        "matchedGeometrySource", layer: .native, cleared: false)
+
+    /// The symbol effect the element plays, as a word - `"bounce"`, `"pulse"`
+    /// and the like.
+    public static let symbolEffect = ElementProperty<Self, String>(
+        "symbolEffect", layer: .native)
+
+    /// The effect's options as bits: 1 keeps it repeating.
+    public static let symbolEffectOptions = ElementProperty<Self, Int>(
+        "symbolEffectOptions", layer: .native)
+
+    /// Whether a continuous effect is on.
+    public static let symbolEffectActive = ElementProperty<Self, Bool>(
+        "symbolEffectActive", layer: .native, cleared: false)
+
+    /// The value a triggered effect fired on, as text - a change replays it.
+    public static let symbolEffectValue = ElementProperty<Self, String>(
+        "symbolEffectValue", layer: .native, cleared: false)
+
     /// The tier's own members.
     public static let members: [any ContractMember] = [
-        accessibilityHeadingLevel, accessibilityHint, accessibilityLabel,
-        automationExcludedWithChildren, background, focus, frame, height, hint, ignoresInput,
+        blendMode,
+        accessibilityChildBehavior, accessibilityHeadingLevel, accessibilityHint, accessibilityLabel,
+        accessibilityTraits, automationExcludedWithChildren, background, blur, contentTransition,
+        focus, frame, height, hint,
+        ignoresInput,
         isAccessibilityHidden, isEnabled, isFocusedChanged, isVisible, layoutDirection,
-        maximumHeight, maximumWidth, minimumHeight, minimumWidth, opacity, pivotX, pivotY,
-        rotation, rotationX, rotationY, scale, scaleX, scaleY, style, translationX,
+        matchedGeometry, matchedGeometrySource, maximumHeight, maximumWidth, minimumHeight,
+        minimumWidth, opacity, pivotX, pivotY,
+        rotation, rotationX, rotationY, scale, scaleX, scaleY, shadow, style, symbolEffect,
+        symbolEffectActive, symbolEffectOptions, symbolEffectValue, transition, translationX,
         translationY, unfocus, width, zIndex,
     ]
 }

@@ -8,7 +8,7 @@ import AppKit
 
 /// A ZStack: its children one over another, each in its area, or where an engine's placement run puts it.
 @MainActor
-final class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeasuring,
+class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeasuring,
     AppKitMeasurementCaching {
     let measurements = MeasurementCache()
     var placement: HostPlacementRun? {
@@ -44,7 +44,7 @@ final class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeas
     }
 
     private func measuredContentSize(width: CGFloat?) -> NSSize {
-        NSSize(ZStackArithmetic.size(of: items, padding: EdgeInsets(padding), width: width.map(Double.init)))
+        NSSize(ZStackArithmetic.size(of: items.occupying, padding: EdgeInsets(padding), width: width.map(Double.init)))
     }
 
     override func layout() {
@@ -56,10 +56,10 @@ final class AppKitZStackView: AppKitTravellingLayout, AppKitWidthConstrainedMeas
         }
 
         beginArrangement()
-        for item in items { drawUnplaced(item) }
+        for item in items.occupying { drawUnplaced(item) }
         let places = ZStackArithmetic.places(
-            of: items, in: bounds.placed, padding: EdgeInsets(padding), direction: direction)
-        for (item, place) in zip(items, places) {
+            of: items.occupying, in: bounds.placed, padding: EdgeInsets(padding), direction: direction)
+        for (item, place) in zip(items.occupying, places) {
             if let place { self.place(item, at: NSRect(placed: place)) }
         }
     }

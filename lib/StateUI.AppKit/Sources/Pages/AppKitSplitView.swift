@@ -136,6 +136,36 @@ final class AppKitSplitView: AppKitHitTestView {
         setSidebarPresented(presented, reporting: false)
     }
 
+    /// Bounds the panes the tree asks: each column's least, ideal and most
+    /// width as `preferredColumnWidth` carries them, `nil` keeping the
+    /// split's own. An ideal stands the divider there the first time it is
+    /// asked - the user's own dragging after stands.
+    func apply(sidebarWidth: [Double]?, detailWidth: [Double]?) {
+        if let widths = sidebarWidth, !widths.isEmpty {
+            sidebarItem.minimumThickness = CGFloat(widths[0])
+            if widths.count > 2 {
+                sidebarItem.maximumThickness = max(CGFloat(widths[0]), CGFloat(widths[2]))
+            }
+            if widths.count > 1, sidebarItem.maximumThickness >= CGFloat(widths[1]),
+               sidebarWidthAsked != widths[1] {
+                sidebarWidthAsked = widths[1]
+                if !sidebarItem.isCollapsed {
+                    splitController.splitView.setPosition(CGFloat(widths[1]), ofDividerAt: 0)
+                }
+            }
+        }
+        if let widths = detailWidth, !widths.isEmpty {
+            detailItem.minimumThickness = CGFloat(widths[0])
+            if widths.count > 2 {
+                detailItem.maximumThickness = max(CGFloat(widths[0]), CGFloat(widths[2]))
+            }
+        }
+    }
+
+    /// The sidebar width the tree last asked, so a repeated ask does not pull
+    /// the divider back from where the user put it.
+    private var sidebarWidthAsked: Double?
+
     override var intrinsicContentSize: NSSize {
         let sidebar = sidebarSurface.intrinsicContentSize
         let detail = detailSurface.intrinsicContentSize

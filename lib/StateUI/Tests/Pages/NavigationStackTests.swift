@@ -307,4 +307,20 @@ final class NavigationStackTests: XCTestCase {
         XCTAssertTrue(renders.fire(patch.events?["popped"] ?? -1, with: [.string("one")]))
         XCTAssertEqual(path.wrappedValue, [.detail("a"), .level(2)])
     }
+
+    /// `@Environment(\.dismiss)` inside a pushed page backs the stack out of
+    /// THAT page - truncating the path to its own depth, so pages above it
+    /// leave too, as the platform's back does.
+    func testAPushedPageDismissesItselfThroughTheEnvironment() throws {
+        let path = State<[Route]>([.detail("a"), .level(2)])
+        let node = stack(path.projectedValue).node.built
+
+        let page = try XCTUnwrap(node.children.last, "the deepest pushed page")
+        let dismiss = page.environmentValues[keyPath: \.dismiss]
+
+        dismiss()
+
+        XCTAssertEqual(path.wrappedValue, [.detail("a")],
+                       "dismiss at depth one keeps only what is under it")
+    }
 }

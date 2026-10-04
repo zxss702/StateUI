@@ -42,7 +42,23 @@ extension GTKRegistrations {
             grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
+        registry.add(CustomLayoutContract.self, create: { _ in GTKCustomLayoutView() }) { layout in
+            layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
+            layout.applies(boxMembers) { view, values in applyBox(view, values) }
+            layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            layout.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            layout.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+        }
+
         registry.add(ZStackContract.self, create: { _ in GTKZStackView() }) { layout in
+            layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
+            layout.applies(boxMembers) { view, values in applyBox(view, values) }
+            layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            layout.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            layout.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+        }
+
+        registry.add(MaskedContract.self, create: { _ in GTKMaskedView() }) { layout in
             layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
             layout.applies(boxMembers) { view, values in applyBox(view, values) }
             layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
@@ -56,13 +72,15 @@ extension GTKRegistrations {
             scroll.applies([
                 ScrollViewContract.orientation, ScrollViewContract.verticalScrollIndicators,
                 ScrollViewContract.horizontalScrollIndicators, ScrollViewContract.scrollOffset,
+                ScrollViewContract.defaultScrollAnchor,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.apply(
                     orientation: values[ScrollViewContract.orientation] ?? .vertical,
                     padding: values[PaddingElementContract.contentPadding] ?? EdgeInsets(0),
-                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .default,
-                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .default,
+                    verticalBar: values[ScrollViewContract.verticalScrollIndicators] ?? .automatic,
+                    horizontalBar: values[ScrollViewContract.horizontalScrollIndicators] ?? .automatic,
+                    defaultAnchor: values[ScrollViewContract.defaultScrollAnchor],
                     offset: values.changed(ScrollViewContract.scrollOffset) ? values[ScrollViewContract.scrollOffset] : nil)
             }
             scroll.applies([
