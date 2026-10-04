@@ -6,8 +6,11 @@ Button
   buttonStyle
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isOn
   shape
@@ -24,6 +27,16 @@ CheckBox
 ColorPicker
   color
   cornerRadius
+CustomLayout
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  letsInputThrough
+  shape
+  stroke
+  strokeWidth
 Ellipse
   aspect
   fill
@@ -41,6 +54,7 @@ Grid
   columnSpacing
   columns
   contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
   rowSpacing
@@ -52,6 +66,7 @@ HStack
   background
   clipsContent
   contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
   shape
@@ -87,6 +102,9 @@ List
   itemActivated()
   realizedChanged()
   selectionChanged()
+MenuButton
+  menuIndicator
+  menuStyle
 Path
   aspect
   data
@@ -136,8 +154,11 @@ ProgressBar
 RadioButton
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isOn
   text
@@ -158,6 +179,7 @@ Rectangle
 ScrollView
   background
   contentPadding
+  defaultScrollAnchor
   horizontalScrollIndicators
   orientation
   scrollOffset
@@ -205,13 +227,17 @@ Text
   characterSpacing
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   lineBreak
   lineHeight
   lineLimit
   multilineTextAlignment
+  selectable
   text
   textCase
   textDecorations
@@ -258,6 +284,7 @@ VStack
   background
   clipsContent
   contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
   shape
@@ -268,6 +295,7 @@ ZStack
   background
   clipsContent
   contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
   shape
@@ -309,6 +337,7 @@ ZStack
   swipeDirection
   swipeThreshold
   tapCount
+  transition
   translationX
   translationY
   verticalAlignment
@@ -327,6 +356,7 @@ ZStack
   alert()
   announce()
   chooseAction()
+  chooseFiles()
   confirm()
   currentTime()
   currentTimeZone()
@@ -336,5 +366,6 @@ ZStack
   persistValue()
   prompt()
   scrollTo()
+  scrollToDescendant()
   unfocus()
   utcOffset()

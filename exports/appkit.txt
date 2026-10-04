@@ -1,5 +1,6 @@
 ActivityIndicator
   isRunning
+  progressStyle
 Button
   aspect
   background
@@ -76,6 +77,7 @@ HStack
 Image
   aspect
   isAnimating
+  renderingMode
   source
 Line
   aspect
@@ -97,6 +99,7 @@ List
   items
   itemsLayout
   listStyle
+  scrollContentBackground
   selectedItems
   selectionMode
   endReached()
@@ -166,6 +169,7 @@ Polyline
   strokeWidth
 ProgressBar
   progress
+  progressStyle
 RadioButton
   fontAttributes
   fontDesign
@@ -192,9 +196,14 @@ Rectangle
   strokeMiterLimit
   strokeWidth
 ScrollView
+  clipsContent
   contentPadding
+  defaultScrollAnchor
   horizontalScrollIndicators
+  isScrollDisabled
   orientation
+  scrollBounceBehavior
+  scrollContentBackground
   scrollOffset
   shape
   stroke
@@ -245,6 +254,7 @@ Switch
   toggled()
 TextEditor
   background
+  contentPadding
   cursorPosition
   fontAttributes
   fontDesign
@@ -262,6 +272,7 @@ TextEditor
   multilineTextAlignment
   placeholder
   placeholderColor
+  scrollContentBackground
   selectionLength
   text
   textCase
@@ -312,12 +323,15 @@ VStack
   accessibilityLabel
   area
   automationExcludedWithChildren
+  blur
+  controlSize
   frame
   gridColumn
   gridColumnSpan
   gridRow
   gridRowSpan
   height
+  hitShape
   horizontalAlignment
   ignoresInput
   isAccessibilityHidden
@@ -340,9 +354,11 @@ VStack
   scale
   scaleX
   scaleY
+  shadow
   swipeDirection
   swipeThreshold
   tapCount
+  transition
   translationX
   translationY
   verticalAlignment
@@ -362,6 +378,7 @@ VStack
   alert()
   announce()
   chooseAction()
+  chooseFiles()
   confirm()
   currentTime()
   currentTimeZone()
@@ -372,5 +389,6 @@ VStack
   persistValue()
   prompt()
   scrollTo()
+  scrollToDescendant()
   unfocus()
   utcOffset()

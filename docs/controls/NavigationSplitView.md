@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [PageElement](tiers
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (9) | Realization | Notes |
+| Host | Created | Members (15) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 3 ✅ | `NSSplitViewController` |  |
 | UIKit | ✅ | 5 ✅ | `UISplitViewController` |  |
@@ -55,9 +55,15 @@ What a page shows about itself where another container presents it as an item - 
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `icon` | property | `ImageSource` | adaptive | · | ✅ | · |  |  |  | cannot read icon of NavigationSplitView - AppKit's driver has no path for it yet; Android Views: cannot read icon of NavigationSplitView - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `title` | property | `String` | native | · | ✅ | · | ✅ | · |  | cannot read title of NavigationSplitView - AppKit's driver has no path for it yet; Android Views: cannot read title of NavigationSplitView - Android's driver has no path for it yet; GTK 4: cannot read title of NavigationSplitView - GTK's driver has no path for it yet |
 | `badge` | property | `String` | native |  |  |  |  |  |  |  |
+| `document` | property | `String` | adaptive |  |  |  |  |  |  |  |
+| `icon` | property | `ImageSource` | adaptive | · | ✅ | · |  |  |  | cannot read icon of NavigationSplitView - AppKit's driver has no path for it yet; Android Views: cannot read icon of NavigationSplitView - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
+| `interactiveDismissDisabled` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `preferredColumnWidth` | property | `[Double]` | adaptive |  |  |  |  |  |  |  |
 | `presentationDetents` | property | `[PresentationDetent]` | native |  |  |  |  |  |  |  |
 | `presentationDragIndicator` | property | `Visibility` | native |  |  |  |  |  |  |  |
-| `interactiveDismissDisabled` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `subtitle` | property | `String` | adaptive |  |  |  |  |  |  |  |
+| `title` | property | `String` | native | · | ✅ | · | ✅ | · |  | cannot read title of NavigationSplitView - AppKit's driver has no path for it yet; Android Views: cannot read title of NavigationSplitView - Android's driver has no path for it yet; GTK 4: cannot read title of NavigationSplitView - GTK's driver has no path for it yet |
+| `toolbarBackground` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
+| `toolbarVisibility` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
+| `windowBackground` | property | `Color` | adaptive |  |  |  |  |  |  |  |

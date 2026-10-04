@@ -158,6 +158,19 @@ offered to every page with `.environment(_:)`, naming the moves itself. The
 library ships no router: its names would be the library's, and the array is
 the whole mechanism.
 
+## Navigation destinations
+
+`.navigationDestination(for:)` registers a page factory for a presented
+value's type on the view it is written on - the enclosing navigation stack
+reads the factories off its root's node, so the registration never crosses to
+the host: `Node.destinations` holds a `Node` builder per type, looked up as a
+value of that type arrives at the stack. `.navigationDestination(item:)`
+holds one factory an item binding drives instead: a non-nil item builds the
+pushed page, a way back off it writes the item nil again. Both are the same
+closure-over-author-type the stack's own `destination:` argument is - the
+modifier is where the registration lives when the destination belongs to a
+view inside the root rather than to the stack itself.
+
 ## An arrangement keys its pages
 
 A page in an arrangement is keyed by the arrangement, never by the author. The

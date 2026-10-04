@@ -6,7 +6,7 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 
 Wears: [View](View.md) · [PaddingElement](PaddingElement.md) · [BorderElement](BorderElement.md)
 
-Worn by: [Grid](../Grid.md) · [HStack](../HStack.md) · [VStack](../VStack.md) · [ZStack](../ZStack.md)
+Worn by: [CustomLayout](../CustomLayout.md) · [Grid](../Grid.md) · [HStack](../HStack.md) · [Masked](../Masked.md) · [ScrollView](../ScrollView.md) · [VStack](../VStack.md) · [ZStack](../ZStack.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Tiers/LayoutContract.swift`.
 
@@ -17,3 +17,5 @@ How each of them realizes these members is on its own page.
 | `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |
 | `clipsContent` | property | `Bool` | native |
 | `letsInputThrough` | property | `Bool` | native |
+| `hitShape` | property | `ContainerShape` | native |
+| `scrollTargetLayout` | property | `Bool` | adaptive |

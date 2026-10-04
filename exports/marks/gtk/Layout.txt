@@ -1,13 +1,25 @@
 # revision 1.1
+CustomLayout.clipsContent: cannot read clipsContent of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.hitShape: cannot read hitShape of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.ignoresSafeArea: not realized
+CustomLayout.letsInputThrough: cannot read letsInputThrough of CustomLayout - GTK's driver has no path for it yet
 Grid.clipsContent: cannot read clipsContent of Grid - GTK's driver has no path for it yet
+Grid.hitShape: cannot read hitShape of Grid - GTK's driver has no path for it yet
 Grid.ignoresSafeArea: not realized
 Grid.letsInputThrough: cannot read letsInputThrough of Grid - GTK's driver has no path for it yet
 HStack.clipsContent: cannot read clipsContent of HStack - GTK's driver has no path for it yet
+HStack.hitShape: cannot read hitShape of HStack - GTK's driver has no path for it yet
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: cannot read letsInputThrough of HStack - GTK's driver has no path for it yet
+ScrollView.clipsContent: not realized
+ScrollView.hitShape: not realized
+ScrollView.ignoresSafeArea: not realized
+ScrollView.letsInputThrough: not realized
 VStack.clipsContent: cannot read clipsContent of VStack - GTK's driver has no path for it yet
+VStack.hitShape: cannot read hitShape of VStack - GTK's driver has no path for it yet
 VStack.ignoresSafeArea: not realized
 VStack.letsInputThrough: cannot read letsInputThrough of VStack - GTK's driver has no path for it yet
 ZStack.clipsContent: cannot read clipsContent of ZStack - GTK's driver has no path for it yet
+ZStack.hitShape: cannot read hitShape of ZStack - GTK's driver has no path for it yet
 ZStack.ignoresSafeArea: not realized
 ZStack.letsInputThrough: cannot read letsInputThrough of ZStack - GTK's driver has no path for it yet

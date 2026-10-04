@@ -1,0 +1,179 @@
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+
+# Masked
+
+Draws its first child as its second child's alpha allows - a `.mask` realized: the mask is laid out in the same room and never drawn; where it paints opaque the content shows, where it paints clear nothing does.
+
+Layer: `native`. Every base host presents it with its native toolkit.
+
+Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tiers/VisualElement.md) · [View](tiers/View.md) · [Layout](tiers/Layout.md) · [PaddingElement](tiers/PaddingElement.md) · [BorderElement](tiers/BorderElement.md)
+
+| Mark | Meaning |
+| :---: | --- |
+| ✅ | Proven by every test of it that ran on that host. |
+| ☑️ | Proven, the host recording what is missing. |
+| – | Never on that host's family, which meets the contract there. |
+| ❌ | A test of it failed. |
+| ◐ | Some of its tests proved it, another could not run or read. |
+| 🔌 | Proven only through the host's own entry or record, not the toolkit's. |
+| · | The driver cannot yet do or read what its test needs. |
+| ⏸ | Its test waits on a member the host does not realize. |
+| ⌛ | Said at another revision of its family than it stands at. |
+| empty | Not realized, or no run - the note says which. |
+
+See [the dictionary](README.md) for how a mark is given.
+
+| Host | Created | Members (98) | Realization | Notes |
+| --- | :---: | --- | --- | --- |
+| AppKit |  | 28 ✅ · 3 – | custom `NSView` drawn through the mask child's alpha | no run of it on these sources |
+| UIKit |  |  | custom `UIView` masked the same | no run of it on these sources |
+| Android Views |  |  | custom `ViewGroup` masked the same | no run of it on these sources |
+| WinUI 3 |  |  | `Opacity` over a masked `Panel` | no run of it on these sources |
+| GTK 4 |  |  | `GskMaskNode` over the content child | no run of it on these sources |
+| Web |  |  | CSS `mask-image` | no host yet |
+
+Declared in `lib/StateUI/Sources/Contracts/Elements/Layouts/MaskedContract.swift`.
+
+## Masked's own members
+
+Masked declares no members of its own.
+
+## From [PropertyContainer](tiers/PropertyContainer.md)
+
+What anything carrying values in the tree has - a control, a `Style`, a text run: the name automation finds it by.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `accessibilityIdentifier` | property | `String` | native | ✅ |  |  |  |  |  |  |
+
+## From [VisualElement](tiers/VisualElement.md)
+
+What every drawn element has: its size and its bounds, how it is shown and turned, whether it answers input and holds the keyboard focus, the visual states it enters, and what a screen reader says about it.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `blendMode` | property | `BlendMode` | native |  |  |  |  |  |  |  |
+| `accessibilityChildBehavior` | property | `AccessibilityChildBehavior` | native |  |  |  |  |  |  |  |
+| `accessibilityHeadingLevel` | property | `HeadingLevel` | native | · |  |  |  |  |  | cannot read a heading's level - AppKit marks a heading, not its level |
+| `accessibilityHint` | property | `String` | native | ✅ |  |  |  |  |  |  |
+| `accessibilityLabel` | property | `String` | native | ✅ |  |  |  |  |  |  |
+| `accessibilityTraits` | property | `AccessibilityTraits` | native |  |  |  |  |  |  |  |
+| `automationExcludedWithChildren` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `background` | property | `Background` | native | ✅ |  |  |  |  |  |  |
+| `blur` | property | `Double` | native |  |  |  |  |  |  |  |
+| `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `focus` | act | `() -> Bool` |  | – |  |  |  |  |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard |
+| `frame` | property | `Rect` | structure | ✅ |  |  |  |  |  |  |
+| `height` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `isEnabled` | property | `Bool` | native |  |  |  |  |  |  | not realized |
+| `isFocusedChanged` | event | `Bool` | native | – |  |  |  |  |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard |
+| `isVisible` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized |
+| `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
+| `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `maximumHeight` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `maximumWidth` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `minimumHeight` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `minimumWidth` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `opacity` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `pivotX` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read pivotX of Masked: the host's own transform, checked against the layer it composed itself |
+| `pivotY` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read pivotY of Masked: the host's own transform, checked against the layer it composed itself |
+| `rotation` | property | `Angle` | native | 🔌 |  |  |  |  |  | only through the host's own: read rotation of Masked: the host's own transform, checked against the layer it composed itself |
+| `rotationX` | property | `Angle` | native | 🔌 |  |  |  |  |  | only through the host's own: read rotationX of Masked: the host's own transform, checked against the layer it composed itself |
+| `rotationY` | property | `Angle` | native | 🔌 |  |  |  |  |  | only through the host's own: read rotationY of Masked: the host's own transform, checked against the layer it composed itself |
+| `scale` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read scale of Masked: the host's own transform, checked against the layer it composed itself |
+| `scaleX` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read scaleX of Masked: the host's own transform, checked against the layer it composed itself |
+| `scaleY` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read scaleY of Masked: the host's own transform, checked against the layer it composed itself |
+| `shadow` | property | `DropShadow` | native |  |  |  |  |  |  |  |
+| `style` | property | `Name` | structure | ✅ |  |  |  |  |  |  |
+| `symbolEffect` | property | `String` | native |  |  |  |  |  |  |  |
+| `symbolEffectActive` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `symbolEffectOptions` | property | `Int` | native |  |  |  |  |  |  |  |
+| `symbolEffectValue` | property | `String` | native |  |  |  |  |  |  |  |
+| `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
+| `translationX` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read translationX of Masked: the host's own transform, checked against the layer it composed itself |
+| `translationY` | property | `Double` | native | 🔌 |  |  |  |  |  | only through the host's own: read translationY of Masked: the host's own transform, checked against the layer it composed itself |
+| `unfocus` | act | `() -> Void` |  | – |  |  |  |  |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard |
+| `width` | property | `Double` | native | ✅ |  |  |  |  |  |  |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized |
+
+## From [View](tiers/View.md)
+
+What every view a layout positions has: where it sits in its layout, the space kept around it, and the gestures, drags and frame reports it answers.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `allowDrop` | property | `Bool` | native |  |  |  |  |  |  | not realized |
+| `area` | property | `Area` | structure | ✅ |  |  |  |  |  |  |
+| `canDrag` | property | `Bool` | native |  |  |  |  |  |  | not realized |
+| `coordinateSpaceName` | property | `String` | stateUI |  |  |  |  |  |  |  |
+| `dragLeave` | event |  | native |  |  |  |  |  |  | not realized |
+| `dragOver` | event |  | native |  |  |  |  |  |  | not realized |
+| `dragStarting` | event |  | native |  |  |  |  |  |  | not realized |
+| `dragText` | property | `String` | native |  |  |  |  |  |  | not realized |
+| `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized |
+| `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized |
+| `dropPaths` | event | `([String], Point)` | native |  |  |  |  |  |  |  |
+| `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
+| `frameChanged` | event | `[Double]` | native | ✅ |  |  |  |  |  |  |
+| `gridColumn` | property | `Int` | stateUI | ✅ |  |  |  |  |  |  |
+| `gridColumnSpan` | property | `Int` | stateUI | ✅ |  |  |  |  |  |  |
+| `gridRow` | property | `Int` | stateUI | ✅ |  |  |  |  |  |  |
+| `gridRowSpan` | property | `Int` | stateUI | ✅ |  |  |  |  |  |  |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  |  |  |  |
+| `horizontalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
+| `layoutPriority` | property | `Double` | stateUI |  |  |  |  |  |  |  |
+| `namedFramesChanged` | event | `[NamedSpaceFrame]` | native |  |  |  |  |  |  |  |
+| `padding` | property | `EdgeInsets` | native | ✅ |  |  |  |  |  |  |
+| `panTouchCount` | property | `Int` | structure | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `panXChannel` | property | `Int` | structure | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `panYChannel` | property | `Int` | structure | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native | 🔌 |  |  |  |  |  | only through the host's own: pinch on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerEntered` | event |  | native | 🔌 |  |  |  |  |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerExited` | event |  | native | 🔌 |  |  |  |  |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerMoved` | event | `Point?` | native | 🔌 |  |  |  |  |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerPressed` | event | `Point?` | native | 🔌 |  |  |  |  |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerReleased` | event | `Point?` | native | 🔌 |  |  |  |  |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `pointerStyle` | property | `PointerStyle` | native |  |  |  |  |  |  |  |
+| `swipeDirection` | property | `SwipeDirection` | structure | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `swipeThreshold` | property | `Double` | structure | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 |  |  |  |  |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
+| `tapCount` | property | `Int` | structure | 🔌 |  |  |  |  |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `onTapGesture` (`tapGesture`) | event |  | native | 🔌 |  |  |  |  |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  |  |  |  |
+| `verticalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
+
+## From [Layout](tiers/Layout.md)
+
+What every layout has: the screen's unsafe strips it keeps clear of, and whether its children are clipped or let input through.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  |  |  |  |  |  | not realized |
+| `clipsContent` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `letsInputThrough` | property | `Bool` | native | ◐ |  |  |  |  |  | cannot read letsInputThrough of Masked - AppKit's driver has no path for it yet |
+| `hitShape` | property | `ContainerShape` | native | ✅ |  |  |  |  |  |  |
+| `scrollTargetLayout` | property | `Bool` | adaptive |  |  |  |  |  |  |  |
+
+## From [PaddingElement](tiers/PaddingElement.md)
+
+The space kept inside an element, around what it holds.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `contentPadding` | property | `EdgeInsets` | native |  |  |  |  |  |  | not realized |
+
+## From [BorderElement](tiers/BorderElement.md)
+
+What an element draws of its own box: the shape its background, its outline and its cut follow, and the outline.
+
+| Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
+| --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `shape` | property | `ContainerShape` | stateUI | · |  |  |  |  |  | cannot read shape of Masked - AppKit's driver has no path for it yet |
+| `stroke` | property | `Brush` | stateUI |  |  |  |  |  |  | not realized |
+| `strokeWidth` | property | `Double` | stateUI | · |  |  |  |  |  | cannot read strokeWidth of Masked - AppKit's driver has no path for it yet |

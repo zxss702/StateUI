@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [TextElement](tiers
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (15) | Realization | Notes |
+| Host | Created | Members (16) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ |  | `NSTextField` label; `NSAttributedString` runs |  |
 | UIKit | ✅ |  | `UILabel`; `NSAttributedString` runs |  |
@@ -87,6 +87,7 @@ How far apart the lines of text are.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `lineHeight` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `lineSpacing` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [DecorableTextElement](tiers/DecorableTextElement.md)
 

@@ -297,6 +297,36 @@ A handler that moves the very value it watches is fired again by the walk of
 its own write; one that moves it every time is a loop, merged into the message
 a few times and then a render per step.
 
+## Preferences
+
+`.preference` offers a value to a view's ancestors, `.onPreferenceChange`
+hears the answer its subtree gives, and nothing about either crosses the
+wire. Where `.onChange` watches a value on the element itself, a preference
+watches what everything under it wrote, folded by each key's `reduce`:
+
+```text
+  seeds fold in written order        a node's own `.preference` writes first
+  children fold in child order       each child's folded answers next
+  transforms run last                `.transformPreference` rewrites once
+  fragments are transparent          a Group or ForEach folds as if inline
+  the first fold fires once          an observer hears the answer it found
+  an equal answer stays quiet        a rebuild that answers the same is no
+                                     change - by the key's own equality
+  a walk keeps the answer            `RenderedNode.preferenceValues`, so a
+                                     clean walk refolds and compares
+```
+
+The folded answers are kept on the rendered element, so both walks - the
+reconciling one and the clean one - fold bottom-up the same way and queue an
+observer only when the key's answer actually moved. `backgroundPreferenceValue`
+and `overlayPreferenceValue` are observers whose action writes a state the
+layer reads; the settling passes build the layer again with the fresh answer.
+
+`.anchorPreference` writes an `Anchor` - a box holding the element's last
+reported frame - into the offered value. The modifier hears `frameChanged`
+on the element itself, so the box answers with the host's own measurement;
+`GeometryProxy[anchor]` resolves it into the reader's space.
+
 ## Created and destroying
 
 `.onAppear` runs once for an element that was not there before - new, or

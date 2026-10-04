@@ -4,6 +4,7 @@ Button.accessibilityIdentifier: ✅
 Canvas.accessibilityIdentifier: ✅
 CheckBox.accessibilityIdentifier: ✅
 ColorPicker.accessibilityIdentifier: ✅
+CustomLayout.accessibilityIdentifier: ✅
 DatePicker.accessibilityIdentifier: ✅
 Ellipse.accessibilityIdentifier: ✅
 Grid.accessibilityIdentifier: ✅
@@ -12,6 +13,8 @@ Image.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅
 List.accessibilityIdentifier: ✅
 Map.accessibilityIdentifier: not realized
+Masked.accessibilityIdentifier: ✅
+MenuButton.accessibilityIdentifier: ✅
 MenuItem.accessibilityIdentifier: ☑️ Only an entry of a context menu carries it; an entry the page puts in the menu bar does not.
 NavigationSplitView.accessibilityIdentifier: ✅
 NavigationStack.accessibilityIdentifier: ✅

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (73) | Realization | Notes |
+| Host | Created | Members (93) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | · |  | slots in `NSToolbar`; title in a trailing `NSTitlebarAccessoryViewController` | cannot read isVisible of TitleBar - AppKit's driver has no path for it yet |
 | UIKit |  |  | no honest native counterpart | not realized |
@@ -57,11 +57,16 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
+| `blendMode` | property | `BlendMode` | native |  |  |  |  |  |  |  |
+| `accessibilityChildBehavior` | property | `AccessibilityChildBehavior` | native |  |  |  |  |  |  |  |
 | `accessibilityHeadingLevel` | property | `HeadingLevel` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `accessibilityHint` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `accessibilityLabel` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `accessibilityTraits` | property | `AccessibilityTraits` | native |  |  |  |  |  |  |  |
 | `automationExcludedWithChildren` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `background` | property | `Background` | native | · |  |  |  | · |  | cannot read background of TitleBar - AppKit's driver has no path for it yet; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read background of TitleBar - GTK's driver has no path for it yet |
+| `blur` | property | `Double` | native |  |  |  |  |  |  |  |
+| `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `frame` | property | `Rect` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `height` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -72,6 +77,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `isFocusedChanged` | event | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isVisible` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
+| `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `maximumWidth` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `minimumHeight` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -85,7 +92,13 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `scale` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `scaleX` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `scaleY` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `shadow` | property | `DropShadow` | native |  |  |  |  |  |  |  |
 | `style` | property | `Name` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `symbolEffect` | property | `String` | native |  |  |  |  |  |  |  |
+| `symbolEffectActive` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `symbolEffectOptions` | property | `Int` | native |  |  |  |  |  |  |  |
+| `symbolEffectValue` | property | `String` | native |  |  |  |  |  |  |  |
+| `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `translationY` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `unfocus` | act | `() -> Void` |  |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -101,12 +114,14 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `allowDrop` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `area` | property | `Area` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `canDrag` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `coordinateSpaceName` | property | `String` | stateUI |  |  |  |  |  |  |  |
 | `dragLeave` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dragOver` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dragStarting` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `dropPaths` | event | `([String], Point)` | native |  |  |  |  |  |  |  |
 | `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `frameChanged` | event | `[Double]` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridColumn` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -114,9 +129,12 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `gridRow` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `gridRowSpan` | property | `Int` | stateUI |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `horizontalAlignment` | property | `AxisAlignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `horizontalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
+| `layoutPriority` | property | `Double` | stateUI |  |  |  |  |  |  |  |
+| `namedFramesChanged` | event | `[NamedSpaceFrame]` | native |  |  |  |  |  |  |  |
 | `padding` | property | `EdgeInsets` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `panTouchCount` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double)` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `panXChannel` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `panYChannel` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -125,6 +143,7 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `pointerMoved` | event | `Point?` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `pointerPressed` | event | `Point?` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `pointerReleased` | event | `Point?` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `pointerStyle` | property | `PointerStyle` | native |  |  |  |  |  |  |  |
 | `swipeDirection` | property | `SwipeDirection` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `swipeThreshold` | property | `Double` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onSwiped` (`swiped`) | event | `SwipeDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -132,3 +151,4 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `tapCount` | property | `Int` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onTapGesture` (`tapGesture`) | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `verticalAlignment` | property | `AxisAlignment` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `verticalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |

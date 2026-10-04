@@ -2,6 +2,9 @@
 Button.shape: cannot read shape of Button - GTK's driver has no path for it yet
 Button.stroke: cannot read stroke of Button - GTK's driver has no path for it yet
 Button.strokeWidth: cannot read strokeWidth of Button - GTK's driver has no path for it yet
+CustomLayout.shape: cannot read shape of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.stroke: cannot read stroke of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.strokeWidth: cannot read strokeWidth of CustomLayout - GTK's driver has no path for it yet
 Grid.shape: cannot read shape of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
 Grid.stroke: cannot read stroke of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
 Grid.strokeWidth: cannot read strokeWidth of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it

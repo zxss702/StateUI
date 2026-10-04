@@ -148,3 +148,20 @@ A radio button's group is a name - every button in the set writes the same one
 views are nested. Picking one unchecks the others and reports both changes
 together, which is why a handler acts on `checked` alone. One state for the
 whole group, rather than one flag per button, holds what is chosen.
+
+## Menu button
+
+A `Menu` with a label is a button that opens its entries where it stands,
+rather than a menu in the bar: the same `Menu` spells it, the label making it
+a view instead of a bar entry. Its entries ride a context-menu slot, never
+laid out, and each host reads them through `MenuEntry` so the traversal a
+context menu and a menu bar already walk builds this menu too.
+`.menuStyle` and `.menuIndicator` shape the trigger only; the entries know
+nothing of them.
+
+## Progress view
+
+`ProgressView` spells one control for the two states a wait can be in: a
+value it can show or none, which is the spinning kind. `.progressViewStyle`
+names how it draws - linear or circular - and the style is inherited like a
+control size, so a container styles every progress view it holds at once.

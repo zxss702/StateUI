@@ -61,6 +61,7 @@ Grid
   columns
   ignoresInput
   letsInputThrough
+  hitShape
   contentPadding
   rowSpacing
   rows
@@ -72,6 +73,7 @@ HStack
   clipsContent
   ignoresInput
   letsInputThrough
+  hitShape
   contentPadding
   shape
   spacing
@@ -300,6 +302,7 @@ VStack
   clipsContent
   ignoresInput
   letsInputThrough
+  hitShape
   contentPadding
   shape
   spacing
@@ -318,6 +321,7 @@ ZStack
   clipsContent
   ignoresInput
   letsInputThrough
+  hitShape
   contentPadding
   shape
   stroke
@@ -358,6 +362,7 @@ ZStack
   swipeDirection
   swipeThreshold
   tapCount
+  transition
   translationX
   translationY
   verticalAlignment

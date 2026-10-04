@@ -93,3 +93,12 @@ views already. A layout with no shade writes -1 as the shade, a number no
 opacity can be, which tells the host to look for no shade view. An empty
 image is an empty run - what a state never written stands at - so a layout
 with nothing on it yet is a picture rather than a failure.
+
+## Alignment guides
+
+`alignmentGuide` rewrites where a view's own edges answer an alignment: the
+horizontal and vertical guide a stack's alignment asks for is computed by a
+closure the modifier stores on the node, over the view's measured
+dimensions. First and last text baselines are guides of the same kind -
+`Text` answers them natively - so a label aligns its baseline with a
+custom-guided sibling the same arithmetic resolves.

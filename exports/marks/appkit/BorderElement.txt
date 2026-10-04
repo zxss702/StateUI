@@ -2,12 +2,18 @@
 Button.shape: cannot read shape of a box shorter than its radius - AppKit's layer holds the radius it draws, at most half the box's shorter side
 Button.stroke: ✅
 Button.strokeWidth: ✅
+CustomLayout.shape: cannot read shape of CustomLayout - AppKit's driver has no path for it yet
+CustomLayout.stroke: not realized
+CustomLayout.strokeWidth: cannot read strokeWidth of CustomLayout - AppKit's driver has no path for it yet
 Grid.shape: cannot read shape of Grid - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it
 Grid.stroke: not realized
 Grid.strokeWidth: cannot read strokeWidth of Grid - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it
 HStack.shape: cannot read shape of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it
 HStack.stroke: not realized
 HStack.strokeWidth: cannot read strokeWidth of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it
+Masked.shape: cannot read shape of Masked - AppKit's driver has no path for it yet
+Masked.stroke: not realized
+Masked.strokeWidth: cannot read strokeWidth of Masked - AppKit's driver has no path for it yet
 RadioButton.shape: not realized
 RadioButton.stroke: not realized
 RadioButton.strokeWidth: not realized

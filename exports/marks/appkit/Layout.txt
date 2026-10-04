@@ -1,4 +1,8 @@
 # revision 1.1
+CustomLayout.clipsContent: ✅
+CustomLayout.hitShape: ✅
+CustomLayout.ignoresSafeArea: not realized
+CustomLayout.letsInputThrough: ◐ cannot read letsInputThrough of CustomLayout - AppKit's driver has no path for it yet
 Grid.clipsContent: ✅
 Grid.hitShape: ✅
 Grid.ignoresSafeArea: not realized
@@ -7,6 +11,14 @@ HStack.clipsContent: ✅
 HStack.hitShape: ✅
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: ◐ cannot read letsInputThrough of HStack - AppKit's driver has no path for it yet
+Masked.clipsContent: ✅
+Masked.hitShape: ✅
+Masked.ignoresSafeArea: not realized
+Masked.letsInputThrough: ◐ cannot read letsInputThrough of Masked - AppKit's driver has no path for it yet
+ScrollView.clipsContent: ✅
+ScrollView.hitShape: ◐ cannot read hitShape of ScrollView - AppKit's driver has no path for it yet
+ScrollView.ignoresSafeArea: not realized
+ScrollView.letsInputThrough: ◐ cannot read letsInputThrough of ScrollView - AppKit's driver has no path for it yet
 VStack.clipsContent: ✅
 VStack.hitShape: ✅
 VStack.ignoresSafeArea: not realized

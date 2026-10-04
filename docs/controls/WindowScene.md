@@ -23,7 +23,7 @@ Inherits nothing: every member below is its own.
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (23) | Realization | Notes |
+| Host | Created | Members (24) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 15 ✅ | `NSWindow` |  |
 | UIKit | ✅ | 4 ✅ | `UIWindow` |  |
@@ -53,6 +53,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/WindowSceneContrac
 | `minimumHeight` | property | `Double` | native | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `minimumWidth` | property | `Double` | native | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `modalPopped` | event | `Int` | adaptive | 🔌 | ✅ | · | ✅ |  |  | only through the host's own: goBack on WindowScene: the host's toolbar or sheet entry called, no toolbar item or sheet touched; Android Views: cannot goBack on WindowScene - Android's driver has no path for it yet; GTK 4: not realized |
+| `resizability` | property | `WindowResizability` | adaptive |  |  |  |  |  |  |  |
 | `resumed` | event |  | adaptive | 🔌 | 🔌 | 🔌 | ✅ |  |  | only through the host's own: minimize on WindowScene: the notification AppKit would post, posted by the driver; the window does not move; UIKit: only through the host's own: minimize on WindowScene: the host told the scene's phase, no scene moved; Android Views: only through the host's own: minimize on WindowScene: the host told the activity's phase, no activity moved; GTK 4: not realized |
 | `stopped` | event |  | adaptive | 🔌 | 🔌 | 🔌 | ✅ |  |  | only through the host's own: minimize on WindowScene: the notification AppKit would post, posted by the driver; the window does not move; UIKit: only through the host's own: minimize on WindowScene: the host told the scene's phase, no scene moved; Android Views: only through the host's own: minimize on WindowScene: the host told the activity's phase, no activity moved; GTK 4: not realized |
 | `title` | property | `String` | native | ✅ | ✅ | · | ✅ |  |  | Android Views: cannot read title of WindowScene - Android's driver has no path for it yet; GTK 4: not realized |

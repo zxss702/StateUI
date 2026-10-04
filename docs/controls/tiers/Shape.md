@@ -18,6 +18,7 @@ How each of them realizes these members is on its own page.
 | `fill` | property | `Brush` | stateUI |
 | `renderTransform` | property | `ViewTransform` | native |
 | `stroke` | property | `Brush` | stateUI |
+| `strokeBorder` | property | `Brush` | stateUI |
 | `strokeDashOffset` | property | `Double` | stateUI |
 | `strokeDashPattern` | property | `[Double]` | stateUI |
 | `strokeLineCap` | property | `LineCap` | stateUI |

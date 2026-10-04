@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit |  |  | `UIPopoverPresentationController` | no run of it on these sources |
 | Android Views |  |  | `PopupWindow` | no run of it on these sources |
 | WinUI 3 |  |  | `Flyout` | no run of it on these sources |
-| GTK 4 |  |  | `GtkPopover` | no run of it on these sources |
+| GTK 4 | ⏸ |  | `GtkPopover` | waits on Popover.isOpen, not realized yet |
 | Web |  |  | anchored popover (?) | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/PopoverContract.swift`.
@@ -38,6 +38,6 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/PopoverContract.swift`
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `isOpen` | property | `Bool` | native | ✅ |  |  |  |  |  |  |
+| `isOpen` | property | `Bool` | native | ✅ |  |  |  |  |  | GTK 4: not realized |
 | `arrowEdge` | property | `Edge` | adaptive |  |  |  |  |  |  |  |
-| `dismissed` | event |  | adaptive | ✅ |  |  |  |  |  |  |
+| `dismissed` | event |  | adaptive | ✅ |  |  |  |  |  | GTK 4: not realized |

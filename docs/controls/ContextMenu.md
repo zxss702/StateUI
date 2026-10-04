@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ |  | `UIMenu` / `UIAction` |  |
 | Android Views | · |  | `PopupMenu` / `MenuItem`; no menu bar | cannot read the menu of Text - Android's driver has no path for it yet |
 | WinUI 3 | ✅ |  | `MenuFlyout` / `MenuBar` |  |
-| GTK 4 |  |  | `GMenu` in `GtkPopoverMenu` / `GtkPopoverMenuBar` | not realized |
+| GTK 4 | · |  | `GMenu` in `GtkPopoverMenu` / `GtkPopoverMenuBar` | cannot read the menu of Text - GTK's driver has no path for it yet |
 | Web |  |  | ARIA `menu` / `menubar` (?) | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/ContextMenuContract.swift`.

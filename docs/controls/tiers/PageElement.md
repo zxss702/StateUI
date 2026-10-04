@@ -12,9 +12,15 @@ How each of them realizes these members is on its own page.
 
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
-| `icon` | property | `ImageSource` | adaptive |
-| `title` | property | `String` | native |
 | `badge` | property | `String` | native |
+| `document` | property | `String` | adaptive |
+| `icon` | property | `ImageSource` | adaptive |
+| `interactiveDismissDisabled` | property | `Bool` | native |
+| `preferredColumnWidth` | property | `[Double]` | adaptive |
 | `presentationDetents` | property | `[PresentationDetent]` | native |
 | `presentationDragIndicator` | property | `Visibility` | native |
-| `interactiveDismissDisabled` | property | `Bool` | native |
+| `subtitle` | property | `String` | adaptive |
+| `title` | property | `String` | native |
+| `toolbarBackground` | property | `Visibility` | adaptive |
+| `toolbarVisibility` | property | `Visibility` | adaptive |
+| `windowBackground` | property | `Color` | adaptive |

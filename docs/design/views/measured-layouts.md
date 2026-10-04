@@ -251,3 +251,17 @@ complaint rather than refused, so a gallery still being written keeps working.
 
 The wheel's turn is drawn flat, `ViewTransform.turn`, the same picture on every
 platform (modifiers.md, turning out of the screen plane).
+
+## Custom layouts
+
+A `Layout` an author writes is code, not data: `sizeThatFits` and
+`placeSubviews` run on the host's own layout pass, over `LayoutSubview`
+adapters of the container's children. Code does not cross the boundary, so
+the object rides the node the way an event handler rides a number - the
+differ keeps it in a registry by element identity and the host pulls it back
+through `HostBoundary.customLayout(for:)`, where a `CustomLayout` container's
+children are measured and placed. A child tagged with `.layoutValue` keeps
+its tags in the same registry, read back as the host builds each subview; a
+fragment spreads them onto the children it stands for, the way its other
+per-child values move. The registry entry dies with the element: a layout
+object left in the tree would be a view's code kept after the view is gone.

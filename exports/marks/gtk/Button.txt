@@ -5,7 +5,9 @@ Button.frameChanged: ✅
 Button.icon: not realized
 Button.iconPosition: not realized
 Button.iconSpacing: not realized
+Button.isOn: cannot read isOn of Button - GTK's driver has no path for it yet
 Button.lineBreak: not realized
 Button.pressed: not realized
 Button.released: not realized
+Button.toggled: cannot read isOn of Button - GTK's driver has no path for it yet
 Text.text: ✅

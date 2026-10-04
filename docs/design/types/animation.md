@@ -147,3 +147,53 @@ A layout that animates the way the application does says nothing at all:
 `.inherited` is what it is until told otherwise, on both sides, so the
 common case never reaches a host. What is said is an override, and its
 going away.
+
+## Transitions
+
+A transition is a pair of phases - how the element differs as it arrives, and
+as it leaves - each naming which of its drawn properties stand elsewhere:
+opacity, an offset, a scale about a pivot, a blur, or a `move` measured by the
+element's own room. `AnyTransition` composes them (`combined(with:)`,
+`asymmetric(insertion:removal:)`) and crosses as one `PropValue`.
+
+`.transition(_:)` writes it on the element; the contract carries it as a
+structural value rather than a state-animated scalar, so a removal phase is
+still there to be read as the element goes. An insertion plays in the layout's
+`fadeIn`: the element's properties are described from the phase's standing to
+the value the tree says, under the transition's own animation where
+`.animation(_:)` names one. A removal keeps the child mounted - `isDeparting`
+- its view deaf to input and outside the layout's room, and each component
+rides to the phase's value; the last one to land leaves the tree and the
+layout drops the view. A patch that describes the element again mid-flight
+reverses it: `revive` rides the running components back to where they stand.
+
+## Matched geometry
+
+A `matchedGeometry` property names an element across a change: the id and its
+`Namespace.ID` together make a key, and `matchedGeometrySource` says whether
+the element's own frame is what the key stands for. When a source leaves, the
+host sets its window frame aside under the key; when another element arrives
+under the same key it takes the frame up and the layout flies the child from
+there - the seat it is handed is the one its match left, so it lands where it
+stands rather than appearing in place.
+
+The frame is spent as it is taken: a match joins once, and the rest that
+share the key appear ordinarily. A key that nobody picks up is bounded - only
+the last few stand - and `isSource: false` names a follower: it inherits a
+frame but leaves none.
+
+## Symbol effects
+
+`symbolEffect` writes a kind - `bounce`, `pulse`, `replace` and the rest of
+the SwiftUI vocabulary - with `symbolEffectOptions`, `symbolEffectActive` and
+`symbolEffectValue` beside it: which passes repeat, whether the effect runs,
+and the value whose change replays a `value:` write.
+
+A host plays what it can honestly. AppKit carries `bounce` and `pulse` over
+the whole view - a scale keyframe for the one, an opacity swing that
+`isActive` gates for the other - where the per-layer effects have no layer to
+name; `symbolEffectValue` moving is what replays either, as a plain write
+plays on arrival. `contentTransition` is the same shape on the content
+itself: the host sees `text`, `source` or `icon` move under it and crosses the
+swap - a push for `numericText`, a fade for `interpolate`, nothing for
+`identity`.

@@ -23,7 +23,7 @@ Inherits nothing: every member below is its own.
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (12) | Realization | Notes |
+| Host | Created | Members (13) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 7 ✅ | `NSApplication` / structure |  |
 | UIKit | ✅ | 6 ✅ | `UIApplication` / `UIWindowScene` |  |
@@ -41,6 +41,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/AppContract.swift`
 | `alert` | act | `(String, String, String) -> Void` |  | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: read a question: the captions the host keeps, not the alert's buttons; UIKit: only through the host's own: read a question: the buttons' captions the host keeps; Android Views: only through the host's own: read a question: what the relay keeps of the dialog it showed; GTK 4: cannot read a question - GTK's driver has no path for it yet |
 | `announce` | act | `(String) -> Void` |  | 🔌 | 🔌 | · | ✅ | · |  | only through the host's own: read what the screen reader said: the host's own list of what it announced; UIKit: only through the host's own: read what the screen reader said: the host's own list of what it announced; Android Views: cannot read what the screen reader said - Android's driver has no path for it yet; GTK 4: cannot read what the screen reader said - GTK's driver has no path for it yet |
 | `chooseAction` | act | `(String, String?, String?, [String]) -> String?` |  | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: read a question: the captions the host keeps, not the alert's buttons; UIKit: only through the host's own: read a question: the buttons' captions the host keeps; Android Views: only through the host's own: read a question: what the relay keeps of the dialog it showed; GTK 4: cannot read a question - GTK's driver has no path for it yet |
+| `chooseFiles` | act | `(Bool, [String]) -> [String]` |  |  |  |  |  |  |  |  |
 | `confirm` | act | `(String, String, String, String) -> Bool` |  | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: read a question: the captions the host keeps, not the alert's buttons; UIKit: only through the host's own: read a question: the buttons' captions the host keeps; Android Views: only through the host's own: read a question: what the relay keeps of the dialog it showed; GTK 4: cannot read a question - GTK's driver has no path for it yet |
 | `currentTime` | act | `() -> [Double]` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `currentTimeZone` | act | `() -> String` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
