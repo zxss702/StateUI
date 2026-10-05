@@ -1,6 +1,15 @@
 {
-  "originHash" : "e1d64d46f3f8c7315792b393acc9d8acf4ead08979201237880585e1fadbf827",
+  "originHash" : "cef175a0d5e697aac235ef69df0b8cda322f2493b244ee34f1a2e4261f00bd45",
   "pins" : [
+    {
+      "identity" : "jsondata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zxss702/JsonData.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "277f718e0c8692bbae17eeccf23339353397da38"
+      }
+    },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
