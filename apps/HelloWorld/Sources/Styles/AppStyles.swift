@@ -1,4 +1,4 @@
-import StateUI
+@_spi(Host) import StateUI
 
 /// The application's styles: what every control of a type looks like.
 ///
@@ -15,15 +15,15 @@ enum AppStyles {
             // with nothing else to write.
             Style<Text>()
                 .foregroundStyle(Color(light: .black, dark: .white))
-                .fontSize(15)
+                .font(.system(size: 15))
 
             Style<Button>()
                 .foregroundStyle(.white)
                 .background(Color(light: Color("#512BD4"), dark: Color("#7B5CE0")))
-                .fontSize(14)
-                .fontAttributes(.bold)
+                .font(.system(size: 14))
+                .bold()
                 .shape(.roundedRectangle(10))
-                .contentPadding(16, 11)
+                .contentPadding(EdgeInsets(16, 11))
         }
     }
 }

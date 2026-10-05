@@ -45,27 +45,23 @@ struct AnimationSample: SampleContent, ExampleContent {
             HStack {
                 // withAnimation names the curve the writes in its body run
                 // under; each change travels to its new value by it.
+                // A write goes TO a value: each button toggles its value
+                // between where it rests and where it travels, so every
+                // press is a visible change in one direction.
                 Button("Fade", action: {
-                    withAnimation(animation) {
-                        fade = 0.1
-                    }
-                    withAnimation(animation) {
-                        fade = 1
-                    }
+                    withAnimation(animation) { fade = fade < 0.5 ? 1 : 0.1 }
                 })
 
                 Button("Move", action: {
-                    withAnimation(animation) { shift = 60 }
-                    withAnimation(animation) { shift = 0 }
+                    withAnimation(animation) { shift = shift == 0 ? 60 : 0 }
                 })
 
                 Button("Scale", action: {
-                    withAnimation(animation) { scale = 1.4 }
-                    withAnimation(animation) { scale = 1 }
+                    withAnimation(animation) { scale = scale == 1 ? 1.4 : 1 }
                 })
 
-                // A write goes TO a value, so a full turn is the author's
-                // arithmetic - add 360 to where the angle stands.
+                // A full turn is the author's arithmetic - add 360 to where
+                // the angle stands.
                 Button("Spin", action: {
                     withAnimation(.snappy) { angle += 360 }
                 })
@@ -119,18 +115,15 @@ struct AnimationSample: SampleContent, ExampleContent {
 
             HStack {
                 button("Fade") {
-                    withAnimation(animation) { fade = 0.1 }
-                    withAnimation(animation) { fade = 1 }
+                    withAnimation(animation) { fade = fade < 0.5 ? 1 : 0.1 }
                 }
 
                 button("Move") {
-                    withAnimation(animation) { shift = 60 }
-                    withAnimation(animation) { shift = 0 }
+                    withAnimation(animation) { shift = shift == 0 ? 60 : 0 }
                 }
 
                 button("Scale") {
-                    withAnimation(animation) { scale = 1.4 }
-                    withAnimation(animation) { scale = 1 }
+                    withAnimation(animation) { scale = scale == 1 ? 1.4 : 1 }
                 }
 
                 button("Spin") {

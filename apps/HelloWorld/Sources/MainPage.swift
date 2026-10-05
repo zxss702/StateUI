@@ -19,23 +19,22 @@ struct MainPage: View {
                 .horizontalAlignment(.center)
 
             Text(name.isEmpty ? "Hello, StateUI!" : "Hello, \(name)!")
-                .fontSize(28)
-                .fontAttributes(.bold)
+                .font(.system(size: 28))
+                .bold()
                 .horizontalAlignment(.center)
 
-            TextField($name)
-                .placeholder("Type your name")
-                .maximumLength(40)
+            TextField("Type your name", text: $name)
                 .frame(width: 240)
 
-            Button(count == 0 ? "Click me" : "Clicked \(count) time\(count == 1 ? "" : "s")")
-                .onClicked { count += 1 }
-                .horizontalAlignment(.center)
-                .padding(20)
+            Button(count == 0 ? "Click me" : "Clicked \(count) time\(count == 1 ? "" : "s")") {
+                count += 1
+            }
+            .horizontalAlignment(.center)
+            .padding(20)
         }
         .spacing(16)
         .verticalAlignment(.center)
-        .contentPadding(30)
+        .padding(30)
         .onAppear { page.title = "HelloWorld" }
     }
 }
