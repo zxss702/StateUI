@@ -618,9 +618,10 @@ final class CatalogTests: XCTestCase {
     func testASampleAboutDesktopChromeIsListedOnlyOnADesktop() throws {
         let catalog = catalog()
 
-        // The sample about desktop chrome: the window's own title bar. A
-        // context menu opens with a long press on a phone as well.
-        let desktopOnly: Set<String> = ["titleBar"]
+        // The samples about desktop chrome: the window's own title bar, and a
+        // scene's menu-bar commands. A context menu opens with a long press on
+        // a phone as well.
+        let desktopOnly: Set<String> = ["titleBar", "commands"]
 
         for id in desktopOnly {
             let sample = try XCTUnwrap(catalog.sample(id: id))
@@ -809,7 +810,7 @@ final class CatalogTests: XCTestCase {
             .enumeration(Axis.horizontal.rawValue))
         XCTAssertEqual(
             scrollers.first?.props["verticalScrollIndicators"],
-            .enumeration(ScrollIndicatorVisibility.never.rawValue))
+            .enumeration(ScrollIndicatorVisibility.hidden.rawValue))
         XCTAssertNil(scrollers.first?.props["horizontalScrollIndicators"])
     }
 
@@ -1408,8 +1409,8 @@ final class CatalogTests: XCTestCase {
 
         let detail = window(place.nav).detail().node
 
-        let stack = try XCTUnwrap(detail.children.first)
-        let root = try XCTUnwrap(stack.children.first).built
+        let stack = try XCTUnwrap(detail.children.first).built
+        let root = try XCTUnwrap(stack.children.first)
 
         Renderer.shared.start(try XCTUnwrap(clicked("Push a page onto this tab", in: root)))
 
@@ -1427,10 +1428,13 @@ final class CatalogTests: XCTestCase {
         let detail = window(place.nav).detail().node
 
         for (index, child) in detail.children.enumerated() {
-            // The first tab is a stack, so the page to read is its root.
+            // The first tab is a stack, so the page to read is its root. A
+            // stack files its pages lazily - `.built` runs the producer that
+            // makes them.
+            let built = child.built
             let page = child.type == "NavigationStack"
-                ? try XCTUnwrap(child.children.first).built
-                : child.built
+                ? try XCTUnwrap(built.children.first)
+                : built
 
             place.section.wrappedValue = .tabs
 

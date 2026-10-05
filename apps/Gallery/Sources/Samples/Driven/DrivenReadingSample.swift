@@ -45,16 +45,16 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
 
             HStack {
                 Button("Grow", action: {
-                    try await $width.journey.move(to: 300, .eased(1600, .cubicOut))
+                    try await $width.journey.move(to: 300, .easeOut(duration: 1.6))
                 })
 
                 Button("Shrink", action: {
-                    try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
+                    try await $width.journey.move(to: 60, .easeIn(duration: 1.6))
                 })
 
                 // Stopping leaves the value where it stands, and the
                 // destination is mirrored onto it - so both readings agree again.
-                Button("Stop", action: { $width.journey.stop() })
+                Button("Stop", action: { width = $width.journey.value })
             }
         }
 
@@ -101,7 +101,7 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
 
             HStack {
                 Button("Grow", action: {
-                        try await $width.journey.move(to: 300, .eased(1600, .cubicOut))
+                        try await $width.journey.move(to: 300, .easeOut(duration: 1.6))
                     })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
@@ -109,14 +109,14 @@ struct DrivenReadingSample: SampleContent, ExampleContent {
                     
 
                 Button("Shrink", action: {
-                        try await $width.journey.move(to: 60, .eased(1600, .cubicIn))
+                        try await $width.journey.move(to: 60, .easeIn(duration: 1.6))
                     })
                     .background(Palette.accent)
                     .shape(.roundedRectangle(8))
                     .contentPadding(EdgeInsets(16, 8))
                     
 
-                Button("Stop", action: { $width.journey.stop() })
+                Button("Stop", action: { width = $width.journey.value })
                     .stroke(Palette.outline)
                     .strokeWidth(1)
                     .background(.transparent)

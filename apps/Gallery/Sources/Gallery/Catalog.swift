@@ -83,6 +83,9 @@ final class Catalog {
                     Sample(PersistentStateSample()),
                     Sample(PacedStateSample()),
                     Sample(ConcurrentStateSample()),
+                    Sample(AppStorageSample()),
+                    Sample(BindableSample()),
+                    Sample(ModelLayerSample()),
                 ]),
 
             SampleGroup(
@@ -134,8 +137,10 @@ final class Catalog {
                 samples: [
                     Sample(LabelSample()),
                     Sample(TextSpanSample()),
+                    Sample(AttributedTextSample()),
                     Sample(TextFieldSample()),
                     Sample(TextEditorSample()),
+                    Sample(FocusSample()),
                     Sample(SearchFieldSample()),
                     Sample(KeyboardSample()),
                 ]),
@@ -185,7 +190,9 @@ final class Catalog {
                 card: ImageSource("cat_shapes.png"),
                 samples: [
                     Sample(ShapesSample()),
+                    Sample(UnevenRoundedSample()),
                     Sample(BrushSample()),
+                    Sample(MaterialSample()),
                     Sample(CanvasSample()),
                 ]),
 
@@ -202,6 +209,7 @@ final class Catalog {
                     Sample(LoadingItemsSample()),
                     Sample(GalleryViewSample()),
                     Sample(PositionIndicatorSample()),
+                    Sample(ContentUnavailableSample()),
                 ]),
 
             SampleGroup(
@@ -249,6 +257,7 @@ final class Catalog {
                     Sample(ModalSample(nav: nav)),
                     Sample(DialogsSample()),
                     Sample(ToolbarSample()),
+                    Sample(CommandsSample()),
                     Sample(ContextMenuSample()),
                     Sample(SearchSample(nav: nav)),
                 ]),
@@ -285,6 +294,7 @@ final class Catalog {
                     Sample(LocaleInfoSample()),
                     Sample(ConnectivitySample()),
                     Sample(BatterySample()),
+                    Sample(OpenURLSample()),
                 ]),
 
             SampleGroup(
@@ -300,6 +310,7 @@ final class Catalog {
                     Sample(TimePickerSample()),
                     Sample(HostTimeSample()),
                     Sample(TickerSample()),
+                    Sample(TimelineViewSample()),
                     Sample(PollSample()),
                     Sample(TaskSleepSample()),
                     Sample(FoundationProbeSample()),

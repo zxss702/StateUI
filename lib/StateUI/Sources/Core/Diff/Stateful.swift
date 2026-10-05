@@ -367,10 +367,12 @@ extension Node {
         var scope = scope
         var values = values.overlaid(with: node.environmentValues)
         scope.append(contentsOf: node.environments)
+        var kept: [Stateful] = []
 
         while true {
             if let stateful = node.stateful {
                 stateful.resolve(from: scope, under: values)
+                kept.append(stateful)
                 node = stateful.expand(over: node)
                 values = values.overlaid(with: node.environmentValues)
                 scope.append(contentsOf: node.environments)
@@ -380,6 +382,7 @@ extension Node {
             break
         }
 
+        node.keptState = kept
         node.materialize()
         node.children = node.children.map { $0.built(within: scope, under: values) }
         return node

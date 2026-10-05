@@ -1,12 +1,13 @@
-@_spi(Host) import StateUI
+import StateUI
 
-/// Three buttons in one group, with one state for what is chosen.
+/// One choice out of several, drawn as a group of radio buttons - a `Picker`
+/// wearing `.radioGroup`.
 struct RadioButtonSample: SampleContent, ExampleContent {
     @State private var size = "Medium"
 
     static let id = "radioButton"
     static let title = "RadioButton"
-    static let summary = "One choice out of several - the group is what makes it exclusive."
+    static let summary = "One choice out of several - a Picker drawn as a radio group."
 
     static let code = """
         @State private var size = "Medium"
@@ -15,19 +16,14 @@ struct RadioButtonSample: SampleContent, ExampleContent {
             // The chosen one is read here, so picking builds this closure.
             DebugInfoLabel()
 
-            ForEach(["Small", "Medium", "Large"]) { name in
-                RadioButton(name)
-                    .groupName("size")
-                    .isOn(size == name)
-                    // Fires on the button that WAS chosen too, with false - so
-                    // the state is written only by the one that won.
-                    .onToggled { chosen in
-                        if chosen {
-                            size = name
-                        }
-                    }
-                    .id(name)
+            // A Picker IS the exclusive choice - .radioGroup is how the
+            // platform draws it standing on the page.
+            Picker("Size", selection: $size) {
+                Text("Small").tag("Small")
+                Text("Medium").tag("Medium")
+                Text("Large").tag("Large")
             }
+            .pickerStyle(.radioGroup)
 
             Text("Chosen: \\(size)")
         }
@@ -37,19 +33,15 @@ struct RadioButtonSample: SampleContent, ExampleContent {
         VStack {
             DebugInfoLabel()
 
-            ForEach(sizes) { name in
-                RadioButton(name)
-                    .groupName("size")
-                    .isOn(size == name)
-                    // Fires on the button that WAS chosen too, with false - so
-                    // the state is written only by the one that won.
-                    .onToggled { chosen in
-                        if chosen {
-                            size = name
-                        }
-                    }
-                    .id(name)
+            Picker("Size", selection: $size) {
+                Text("Small").tag("Small")
+                Text("Medium").tag("Medium")
+                Text("Large").tag("Large")
             }
+            .pickerStyle(.radioGroup)
+            .accessibilityIdentifier("radio.size")
+            .accessibilityLabel("Size")
+            .font(.system(size: 15))
 
             Text("Chosen: \(size)")
                 .font(.system(size: 17))
@@ -59,20 +51,19 @@ struct RadioButtonSample: SampleContent, ExampleContent {
 
     var notes: (any View)? {
         VStack {
-            Text("Picking one unchecks the others in the same `groupName`, and BOTH changes "
-                + "are reported - false on the button that lost, true on the new one. So a "
-                + "handler that writes only when it hears true is the whole of it.")
+            Text("Exclusivity is the Picker's, not the buttons': one `size` "
+                + "state holds what is chosen and the group can only ever "
+                + "show one of its entries on. `.pickerStyle(.radioGroup)` is "
+                + "simply how that choice is drawn standing on the page.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
-            Text("One `@State` holds the whole group's choice rather than one Bool per "
-                + "button: what is chosen is a single value, and each button is checked "
-                + "when it matches it.")
+            Text("The same `Picker` wears `.menu`, `.segmented` or `.wheel` "
+                + "elsewhere - the Picker sample compares them; this one is "
+                + "about the radio look specifically.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
         .spacing(12)
     }
-
-    private var sizes: [String] { ["Small", "Medium", "Large"] }
 }

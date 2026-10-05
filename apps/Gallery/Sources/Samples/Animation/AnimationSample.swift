@@ -1,15 +1,13 @@
-@_spi(Host) import StateUI
+import StateUI
 
-/// A card's opacity, sideways translation, scale and rotation, each driven by a state.
+/// The public animation vocabulary: `withAnimation` around a state write, and
+/// `.animation(_:value:)` on the view the change lands on.
 struct AnimationSample: SampleContent, ExampleContent {
     @State private var curve = 0
 
     /// The four values the card is drawn from, one per thing a button moves.
-    ///
-    /// Each is DRIVEN on the card below - the property is read off the state
-    /// on the host's own frames rather than described - so a four-hundred
-    /// millisecond journey costs no renders at all. A card that names none
-    /// of them has nothing to move.
+    /// Each is DESCRIBED - a write asks for a build, and the build's patch
+    /// carries the animation the write ran under to the host.
     @State private var fade = 1.0
     @State private var shift = 0.0
     @State private var scale = 1.0
@@ -17,9 +15,9 @@ struct AnimationSample: SampleContent, ExampleContent {
 
     static let id = "animation"
     static let title = "Animations"
-    static let summary = "Fade, move, scale and spin a view by sending the driven state behind it."
+    static let summary = "Fade, move, scale and spin a view - a state write inside withAnimation."
 
-    static let curves = ["Linear", "Cubic in-out", "Bounce out", "Spring out"]
+    static let curves = ["Linear", "Ease in-out", "Bouncy", "Spring"]
 
     static let code = """
         @State private var curve = 0
@@ -29,153 +27,126 @@ struct AnimationSample: SampleContent, ExampleContent {
         @State private var scale = 1.0
         @State private var angle = 0.0
 
-        static let curves = ["Linear", "Cubic in-out", "Bounce out", "Spring out"]
+        static let curves = ["Linear", "Ease in-out", "Bouncy", "Spring"]
 
         VStack {
-            // The picker is handed `$curve`, which reads nothing at build,
-            // and the four journeys are the host's - so this stands at one.
-            DebugInfoLabel()
-
             ZStack {
                 Text("Animate me")
             }
-            .style("Card")
-            // Four DRIVEN properties. Read off a state the host moves, so none
-            // of them is on any message after the registration.
-            .opacity($fade)
-            .offset(x: $shift)
-            .scaleEffect($scale)
-            .rotationEffect($angle)
-            .background(Palette.brand)
+            .opacity(fade)
+            .offset(x: shift)
+            .scaleEffect(scale)
+            .rotationEffect(.degrees(angle))
 
-            Picker("Easing", selection: $curve) {
+            Picker("Animation", selection: $curve) {
                 ForEach(Self.curves.indices) { Text(Self.curves[$0]).tag($0) }
             }
 
             HStack {
-                // A movement answers whether it ran to the END. Stop says
-                // false, and so does a second press taking this one's place -
-                // and the way back is not taken over whatever happened instead.
+                // withAnimation names the curve the writes in its body run
+                // under; each change travels to its new value by it.
                 Button("Fade", action: {
-                    let landed = try await $fade.journey.move(to: 0.1, .eased(400, easing))
-                    if landed { try await $fade.journey.move(to: 1, .eased(400, easing)) }
+                    withAnimation(animation) {
+                        fade = 0.1
+                    }
+                    withAnimation(animation) {
+                        fade = 1
+                    }
                 })
 
-                // ONE movement, because the card only ever moves sideways. A
-                // diagonal would be a second state on translationY, started
-                // with `async let` so the two land together.
                 Button("Move", action: {
-                    let landed = try await $shift.journey.move(to: 60, .eased(400, easing))
-                    if landed { try await $shift.journey.move(to: 0, .eased(400, easing)) }
+                    withAnimation(animation) { shift = 60 }
+                    withAnimation(animation) { shift = 0 }
                 })
 
                 Button("Scale", action: {
-                    let landed = try await $scale.journey.move(to: 1.4, .eased(400, easing))
-                    if landed { try await $scale.journey.move(to: 1, .eased(400, easing)) }
+                    withAnimation(animation) { scale = 1.4 }
+                    withAnimation(animation) { scale = 1 }
                 })
 
-                // A movement goes TO a value, never BY one, so a full turn is
-                // the author's arithmetic. The state is where the last one
-                // was headed, which is what makes the next press carry on from
-                // there rather than start over.
+                // A write goes TO a value, so a full turn is the author's
+                // arithmetic - add 360 to where the angle stands.
                 Button("Spin", action: {
-                    try await $angle.journey.move(to: angle + 360, .eased(700, easing))
+                    withAnimation(.snappy) { angle += 360 }
                 })
             }
 
-            // Whichever of them is moving; a state standing still is
-            // unaffected. Each stop leaves the value where it had got to, so
-            // the card stays exactly where the user saw it stop.
-            Button("Stop", action: {
-                $fade.journey.stop()
-                $shift.journey.stop()
-                $scale.journey.stop()
-                $angle.journey.stop()
+            // Applied at once - `nil` says the write animates under nothing.
+            Button("Reset", action: {
+                withAnimation(nil) {
+                    fade = 1
+                    shift = 0
+                    scale = 1
+                    angle = 0
+                }
             })
         }
 
-        /// The curve the picker is on.
-        private var easing: Easing {
+        /// The animation the picker is on.
+        private var animation: Animation {
             switch curve {
-            case 1: return .cubicInOut
-            case 2: return .bounceOut
-            case 3: return .springOut
-            default: return .linear
+            case 1: return .easeInOut(duration: 0.4)
+            case 2: return .bouncy(duration: 0.4)
+            case 3: return .spring(response: 0.4, dampingFraction: 0.6)
+            default: return .linear(duration: 0.4)
             }
         }
         """
 
     var body: some View {
         VStack {
-            DebugInfoLabel()
-
             ZStack {
                 Text("Animate me")
                     .font(.system(size: 17))
                     .foregroundStyle(Palette.onBrand)
-                    .contentPadding(EdgeInsets(24, 16))
+                    .padding(EdgeInsets(24, 16))
             }
             .style("Card")
-            // Four DRIVEN properties. Read off a state the host moves, so none
-            // of them is on any message after the registration.
-            .opacity($fade)
-            .offset(x: $shift)
-            .scaleEffect($scale)
-            .rotationEffect($angle)
+            .opacity(fade)
+            .offset(x: shift)
+            .scaleEffect(scale)
+            .rotationEffect(.degrees(angle))
             .background(Palette.brand)
             .stroke(Palette.accent)
             .shape(.roundedRectangle(32))
             .horizontalAlignment(.center)
 
-            Picker("Easing", selection: $curve) {
+            Picker("Animation", selection: $curve) {
                 ForEach(Self.curves.indices) { Text(Self.curves[$0]).tag($0) }
             }
             .accessibilityIdentifier("animation.curve")
-            .accessibilityLabel("Easing curve")
+            .accessibilityLabel("Animation curve")
 
             HStack {
-                // A movement answers whether it ran to the END. Stop says
-                // false, and so does a second press taking this one's place -
-                // and the way back is not taken over whatever happened
-                // instead, which is what lets Stop leave the card where it
-                // stood.
                 button("Fade") {
-                    let landed = try await $fade.journey.move(to: 0.1, .eased(400, easing))
-                    if landed { try await $fade.journey.move(to: 1, .eased(400, easing)) }
+                    withAnimation(animation) { fade = 0.1 }
+                    withAnimation(animation) { fade = 1 }
                 }
 
-                // ONE movement, because the card only ever moves sideways. A
-                // diagonal would be a second state on translationY, started
-                // with `async let` so the two land together.
                 button("Move") {
-                    let landed = try await $shift.journey.move(to: 60, .eased(400, easing))
-                    if landed { try await $shift.journey.move(to: 0, .eased(400, easing)) }
+                    withAnimation(animation) { shift = 60 }
+                    withAnimation(animation) { shift = 0 }
                 }
 
                 button("Scale") {
-                    let landed = try await $scale.journey.move(to: 1.4, .eased(400, easing))
-                    if landed { try await $scale.journey.move(to: 1, .eased(400, easing)) }
+                    withAnimation(animation) { scale = 1.4 }
+                    withAnimation(animation) { scale = 1 }
                 }
 
-                // A movement goes TO a value, never BY one, so a full turn is
-                // the author's arithmetic. The state is where the last one was
-                // headed, which is what makes the next press carry on from
-                // there rather than start over.
                 button("Spin") {
-                    try await $angle.journey.move(to: angle + 360, .eased(700, easing))
+                    withAnimation(.snappy) { angle += 360 }
                 }
             }
             .spacing(8)
             .horizontalAlignment(.center)
 
-            // Whichever of them is moving; a state standing still is
-            // unaffected. Each stop leaves the value where it had got to, so
-            // the card stays exactly where the user saw it stop.
-            button("Stop") {
-                $fade.journey.stop()
-                $shift.journey.stop()
-                $scale.journey.stop()
-                $angle.journey.stop()
+            button("Reset") {
+                withAnimation(nil) {
+                    fade = 1
+                    shift = 0
+                    scale = 1
+                    angle = 0
+                }
             }
             .horizontalAlignment(.center)
         }
@@ -184,34 +155,25 @@ struct AnimationSample: SampleContent, ExampleContent {
 
     var notes: (any View)? {
         VStack {
-            Text("Each button moves STATE. `.opacity($fade)` DRIVES the property "
-                + "from the state behind it, and `$fade.journey.move(to: 0.1, …)` sends "
-                + "everything driven by `fade` to 0.1. `await` says the movement "
-                + "is over and the answer says whether it reached the end, which "
-                + "is what lets one follow another without a callback.")
+            Text("Each button writes STATE inside `withAnimation`: the write "
+                + "asks for a build, and the render that answers carries the "
+                + "animation to the host, which moves the property by it. "
+                + "Nothing names a journey - the change and its curve are one "
+                + "write.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
-            Text("The state holds BOTH readings: `fade` is 0.1 from the "
-                + "line after the call, while `$fade.journey.value` is wherever the "
-                + "host has got the card to. Nothing is described in between, so the "
-                + "whole 400ms costs no renders - and `$fade.journey.value = 0.5` "
-                + "instead of a movement simply snaps.")
+            Text("`withAnimation(nil)` writes without a curve, so Reset lands "
+                + "at once. `.animation(_:value:)` on a view is the other "
+                + "half: it names the curve a change to THAT value arrives "
+                + "under, with no `withAnimation` around the write.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
-            Text("There is no relative turn and no two-axis move. Spin adds 360 "
-                + "to where the angle was headed and goes to the sum, so each "
-                + "press carries on from the last; Move is a single movement on "
-                + "translationX, the only axis this card uses.")
-                .font(.system(size: 12))
-                .foregroundStyle(Palette.subtle)
-
-            Text("Move comes back because the sample says so, not because it "
-                + "must: a card left at 60 stays at 60, the state holding it and "
-                + "no render being needed to say so. Stop is the other half - it "
-                + "leaves the value exactly where it stood, so a movement broken "
-                + "off halfway leaves the card where the user saw it.")
+            Text("The journeys behind this - a state that can be moved, "
+                + "awaited and read mid-flight - are the Driven samples and "
+                + "Journey, which drive the property on the host's own frames "
+                + "without a build at all.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }
@@ -222,17 +184,16 @@ struct AnimationSample: SampleContent, ExampleContent {
     private func button(_ caption: String, _ act: @escaping EventHandler) -> Button {
         Button(caption, action: act)
             .font(.system(size: 13))
-            .contentPadding(EdgeInsets(14, 6))
-            
+            .padding(EdgeInsets(14, 6))
     }
 
-    /// The curve the picker is on.
-    private var easing: Easing {
+    /// The animation the picker is on.
+    private var animation: Animation {
         switch curve {
-        case 1: return .cubicInOut
-        case 2: return .bounceOut
-        case 3: return .springOut
-        default: return .linear
+        case 1: return .easeInOut(duration: 0.4)
+        case 2: return .bouncy(duration: 0.4)
+        case 3: return .spring(response: 0.4, dampingFraction: 0.6)
+        default: return .linear(duration: 0.4)
         }
     }
 }

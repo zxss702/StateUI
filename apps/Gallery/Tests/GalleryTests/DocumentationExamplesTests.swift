@@ -29,6 +29,13 @@ final class DocumentationExamplesTests: XCTestCase {
         let document: String
         let line: Int
         let source: String
+
+        /// ```swift internals``` - a listing written through the host SPI:
+        /// a contract declaration, a style's members, an engine. It compiles
+        /// the way a provider's code does, while ```swift``` keeps answering
+        /// for what an application can write.
+        let internals: Bool
+
         var fileScope: Bool {
             source.split(separator: "\n").contains { line in
                 let head = line.trimmingCharacters(in: .whitespaces)
@@ -132,6 +139,7 @@ final class DocumentationExamplesTests: XCTestCase {
     static func swiftBlocks(in text: String, document: String) -> [Example] {
         var examples: [Example] = []
         var open: Int? = nil
+        var internals = false
         var body: [String] = []
         // A fence may be indented - a listing inside a numbered list is -
         // so both fences are read trimmed, and the block's own indent goes.
@@ -144,13 +152,15 @@ final class DocumentationExamplesTests: XCTestCase {
                     examples.append(Example(
                         document: document,
                         line: start,
-                        source: dedented.joined(separator: "\n")))
-                    open = nil; body = []
+                        source: dedented.joined(separator: "\n"),
+                        internals: internals))
+                    open = nil; body = []; internals = false
                 } else {
                     body.append(String(line))
                 }
-            } else if head == "```swift" {
+            } else if head == "```swift" || head == "```swift internals" {
                 open = index + 1
+                internals = head == "```swift internals"
             }
         }
         return examples
@@ -172,7 +182,10 @@ final class DocumentationExamplesTests: XCTestCase {
                 FileManager.default.fileExists(atPath: url.appendingPathComponent(name).path, isDirectory: &isFolder)
                 if isFolder.boolValue {
                     if !["design", "controls", "assets"].contains(relative) { pending.append(relative) }
-                } else if name.hasSuffix(".md") {
+                } else if name.hasSuffix(".md"), !name.hasPrefix("._") {
+                    // A `._` companion is macOS tar's AppleDouble sidecar, not
+                    // a document - it lands in a Windows checkout as a real
+                    // file whose bytes are not UTF-8.
                     names.append(relative)
                 }
             }
@@ -204,7 +217,8 @@ final class DocumentationExamplesTests: XCTestCase {
         // code - its palette, its sample protocol. Testable, because the
         // gallery's types are internal, as an application's are; the guide's
         // own listings use the library's colours and never the gallery's.
-        let imports = (["import StateUI", "@testable import GalleryUI"] + lifted).joined(separator: "\n") + "\n"
+        let imports = ([example.internals ? "@_spi(Host) import StateUI" : "import StateUI",
+                        "@testable import GalleryUI"] + lifted).joined(separator: "\n") + "\n"
         if example.fileScope {
             return "\(imports)\n\(stripped)\n"
         }
@@ -240,6 +254,25 @@ final class DocumentationExamplesTests: XCTestCase {
         return nil
     }
 
+    /// Every C target's modulemap in the build `module` was made by, found
+    /// under its checkouts; empty where the build keeps none.
+    private static func cModuleMaps(beside module: URL) -> [URL] {
+        // .build/out/Products/<triple> -> .build/checkouts
+        let checkouts = module
+            .deletingLastPathComponent()    // Products
+            .deletingLastPathComponent()    // out
+            .deletingLastPathComponent()    // .build
+            .appendingPathComponent("checkouts")
+
+        var maps: [URL] = []
+        guard let walk = FileManager.default.enumerator(
+            at: checkouts, includingPropertiesForKeys: nil) else { return maps }
+        for case let url as URL in walk where url.lastPathComponent == "module.modulemap" {
+            maps.append(url)
+        }
+        return maps
+    }
+
     /// The checkout containing the README and the Gallery package.
     private static var repository: URL {
         URL(fileURLWithPath: #filePath)
@@ -263,6 +296,17 @@ final class DocumentationExamplesTests: XCTestCase {
     static func typecheck(_ file: URL, module: URL, sdk: String?) -> String? {
         var arguments = ["-typecheck", "-parse-as-library", "-I", module.path, file.path]
         if let sdk { arguments += ["-sdk", sdk] }
+        // A C target's modulemap - JsonData's GRDBSQLite is the one the check
+        // meets - sits in its checkout, not beside the swiftmodules; the
+        // compiler reaches it the way SwiftPM showed it, by file. Walked
+        // rather than named, so the next C dependency needs nothing added.
+        for modulemap in cModuleMaps(beside: module) {
+            arguments += ["-Xcc", "-fmodule-map-file=\(modulemap.path)"]
+            // A module map alone is not a search path: `shim.h` spelling
+            // `<sqlite3.h>` reaches a header sitting beside the map only
+            // through the -I SwiftPM would have given the C target.
+            arguments += ["-Xcc", "-I\(modulemap.deletingLastPathComponent().path)"]
+        }
         // XCRUN ON A MAC, THE TOOL ITSELF EVERYWHERE ELSE. There is no
         // `/usr/bin/env` on Windows and Foundation's `Process` resolves
         // nothing itself - it opens exactly the path it is given - so a
@@ -285,7 +329,20 @@ final class DocumentationExamplesTests: XCTestCase {
         process.standardOutput = pipe
         process.standardError = pipe
         do { try process.run() } catch { return "could not run swiftc: \(error)" }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        // readDataToEndOfFile() raises `try!` inside Linux's FileHandle on an
+        // interrupted read - dozens of lanes spawn compilers at once, and EINTR
+        // is ordinary there. Reading in chunks lets the retry be ours.
+        let reading = pipe.fileHandleForReading
+        var data = Data()
+        while true {
+            do {
+                guard let chunk = try reading.read(upToCount: 1 << 16), !chunk.isEmpty else { break }
+                data.append(chunk)
+            } catch {
+                let error = error as NSError
+                guard error.domain == NSPOSIXErrorDomain, error.code == EINTR else { break }
+            }
+        }
         process.waitUntilExit()
         guard process.terminationStatus != 0 else { return nil }
         let output = String(decoding: data, as: UTF8.self)

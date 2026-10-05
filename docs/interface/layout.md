@@ -16,7 +16,7 @@ platform matrix.
 
 Every eligible view can state requested, minimum, and maximum dimensions:
 
-```swift
+```swift internals
 Text("Summary")
     .frame(width: 240)
     .frame(minHeight: 44)
@@ -57,7 +57,7 @@ It is applied about the view's center after layout has assigned the view's
 rectangle, so it changes the drawing without changing measurement or
 arrangement:
 
-```swift
+```swift internals
 ColorPicker(.cornflowerBlue)
     .frame(width: 80)
     .frame(height: 80)
@@ -99,7 +99,7 @@ in the [platform matrix](../platform-contract.md#shared-view-members).
 
 `VStack` and `HStack` are the two non-wrapping stack layouts:
 
-```swift
+```swift internals
 VStack {
     Text("Account")
 
@@ -122,7 +122,7 @@ read in an outer composed view.
 
 A grid owns row and column definitions; each child states its cell and spans:
 
-```swift
+```swift internals
 @State var name = ""
 
 Grid {
@@ -164,7 +164,7 @@ frame - see [Animation and journeys](../concepts/animation-and-journeys.md).
 the whole room within the stack's padding, or the rectangle it names with
 `.area` - by its own alignments, as in any layout:
 
-```swift
+```swift internals
 ZStack {
     ColorPicker(.cornflowerBlue)
 
@@ -199,7 +199,7 @@ every page of a window is one of the window's overlays
 
 `ScrollView` owns one viewport and describes all descendants it contains:
 
-```swift
+```swift internals
 @State var offset = Point.zero
 
 ScrollView {
@@ -210,7 +210,7 @@ ScrollView {
     }
 }
 .scrollOffset($offset)
-.verticalScrollIndicators(.default)
+.verticalScrollIndicators(.automatic)
 ```
 
 The `Point` binding is two-way. A program write moves the viewport; native
@@ -387,9 +387,9 @@ reports the rectangles that the host actually settles.
 its content from that value. Its closure first receives a zero rectangle; the first
 native frame report supplies the measured rectangle:
 
-```swift
-GeometryReader { frame in
-    Text("\(Int(frame.width)) x \(Int(frame.height))")
+```swift internals
+GeometryReader { proxy in
+    Text("\(Int(proxy.size.width)) x \(Int(proxy.size.height))")
 }
 ```
 
@@ -406,7 +406,7 @@ A stack, a grid or a ZStack paints its own box: its background, filled to the
 shape it names, and an outline on that shape. There is no separate view to
 wrap content in for a card - the layout holding the content is the card.
 
-```swift
+```swift internals
 VStack {
     Text("Cheese")
     Text("Aged twelve months")
@@ -433,7 +433,7 @@ screen with bars and a notch. A page's content stands clear of them by
 default (`.container`); the page's own layout says `.none` - edge to edge -
 to run under them, so its background colours the status bar's strip:
 
-```swift
+```swift internals
 import StateUI
 
 struct Header: View {

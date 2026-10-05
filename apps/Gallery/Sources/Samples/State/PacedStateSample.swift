@@ -49,10 +49,10 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 .opacity($fade)
 
             HStack {
-                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) })
+                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .easeOut(duration: 2.0)) })
                     
 
-                Button("Back", action: { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) })
+                Button("Back", action: { try await $fade.journey.move(to: 1, .easeOut(duration: 2.0)) })
                     
             }
         }
@@ -106,7 +106,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                 .opacity($fade)
 
             HStack {
-                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .eased(2000, .cubicOut)) })
+                Button("Fade", action: { try await $fade.journey.move(to: 0.1, .easeOut(duration: 2.0)) })
                     .accessibilityIdentifier("paced.fade")
                     .accessibilityLabel("Fade the box out")
                     .font(.system(size: 13))
@@ -116,7 +116,7 @@ struct PacedStateSample: SampleContent, ExampleContent {
                     .contentPadding(EdgeInsets(20, 10))
                     
 
-                Button("Back", action: { try await $fade.journey.move(to: 1, .eased(2000, .cubicOut)) })
+                Button("Back", action: { try await $fade.journey.move(to: 1, .easeOut(duration: 2.0)) })
                     .accessibilityIdentifier("paced.back")
                     .accessibilityLabel("Bring the box back")
                     .font(.system(size: 13))

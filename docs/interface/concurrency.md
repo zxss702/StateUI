@@ -12,7 +12,7 @@ Every StateUI event, change, lifetime, ticker, and host-event handler runs on
 `MainActor`. It can read and write state directly and may call an asynchronous
 function:
 
-```swift
+```swift internals
 @State var status = "Idle"
 
 Button("Load").onClicked {
@@ -123,7 +123,7 @@ the small time spent resuming and doing work on every lap. For a repeating
 interface clock, use `Ticker`, which advances a deadline and spends that
 lateness instead of adding it to the next interval.
 
-```swift
+```swift internals
 struct Countdown: View {
     @State private var ticker = Ticker(every: .seconds(1), limit: 10)
 

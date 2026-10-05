@@ -80,6 +80,15 @@ var dependencies: [Package.Dependency] = [
     //
     //     .package(url: "https://github.com/idexus/StateUI.git", exact: "0.4.0")
     .package(path: "../.."),
+    // The sibling targets holding the Foundation-bound and JsonData-bound
+    // halves of the surface - the samples that spell URLs, dates, attributed
+    // strings and the model layer import them like any application would.
+    .package(name: "StateUIFoundation", path: "../../lib/StateUI.Foundation"),
+    .package(name: "StateUIJsonData", path: "../../lib/StateUI.JsonData"),
+    // Declared like StateUI.JsonData declares it, so the graph holds one
+    // package: an `@Model` the samples declare expands to JsonData's own
+    // symbols, which a linker only reaches through a product named by them.
+    .package(path: "../../../JsonData"),
 ]
 
 var targets: [Target] = [
@@ -91,7 +100,12 @@ var targets: [Target] = [
         // unpacks as "StateUI-main". A bare name is looked for among every
         // dependency's products, and reads the same against the published
         // package.
-        dependencies: ["StateUI"],
+        dependencies: [
+            "StateUI",
+            .product(name: "StateUIFoundation", package: "StateUIFoundation"),
+            .product(name: "StateUIJsonData", package: "StateUIJsonData"),
+            .product(name: "JsonDataDynamic", package: "JsonData"),
+        ],
         // path: "Sources" - that whole folder is the app's code: the
         // application and its pages sit directly in it, Styles/ holds the
         // styles, and a directory added beside them is compiled without

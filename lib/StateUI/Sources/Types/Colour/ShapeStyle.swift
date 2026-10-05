@@ -133,7 +133,7 @@ public struct LinearGradient: ShapeStyle, View {
 ///
 /// A host paints it with the platform's material where the platform draws
 /// one; elsewhere it stands for a soft translucency in the room's tone.
-public struct Material: ShapeStyle {
+public struct Material: ShapeStyle, Sendable {
     /// Which material this is, as the number that crosses ahead of its parts.
     enum Kind: Int32, Sendable {
         case ultraThin = 1

@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import JsonData
+// Re-exported: this module IS JsonData's bridge to StateUI, so the model
+// layer's types - `@Model`, `ModelContext`, `ModelContainer` - arrive with
+// it, as `import SwiftData` does under SwiftUI.
+@_exported import JsonData
 import StateUI
 
 // The model context in the environment, as SwiftData hands it down in SwiftUI:
@@ -10,11 +14,34 @@ import StateUI
 
 /// The `\.modelContext` slot: the nearest container's main context.
 private struct ModelContextKey: EnvironmentKey {
-    /// As SwiftUI does, a read with no container above is a programming error.
-    static var defaultValue: ModelContext {
-        preconditionFailure(
-            "No modelContext in the environment - write .modelContainer(...) on a view above.")
+    /// An empty-schema in-memory context. A key-path WRITE materializes the
+    /// property through its getter before the setter runs, so a fatal default
+    /// would crash `.environment(\.modelContext, _)` on write rather than
+    /// only reporting a bare read. A scratch context keeps the write working;
+    /// a read where no container was written answers a store holding nothing.
+    static var defaultValue: ModelContext { Scratch.context }
+}
+
+/// The store `\.modelContext` answers where nothing wrote one - an
+/// in-memory container over an empty schema, made once on first read.
+private enum Scratch {
+    /// The context in a box so the shared `let` is `Sendable`: the context
+    /// is only ever touched on the UI thread it was made on.
+    private final class Context: @unchecked Sendable {
+        let context: ModelContext
+        init(_ context: ModelContext) { self.context = context }
     }
+
+    private static let box = Context(
+        // Reads happen on the UI thread, which is the main actor for every
+        // host - the same hop `contextOnMain` performs.
+        MainActor.assumeIsolated {
+            OnMain(value: try! ModelContainer(
+                for: Schema([]),
+                configurations: [ModelConfiguration(isStoredInMemoryOnly: true)]).mainContext)
+        }.value)
+
+    static var context: ModelContext { box.context }
 }
 
 extension EnvironmentValues {

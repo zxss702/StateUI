@@ -19,7 +19,7 @@ ColorPicker(.cornflowerBlue)
 
 Optional capabilities are modifiers:
 
-```swift
+```swift internals
 Button("Save")
     .disabled(!(true))
     .contentPadding(18, 10)
@@ -69,7 +69,7 @@ Button(enabled ? "Enabled" : "Disabled")
 The two reads make this description depend on `enabled`. A binding overload
 hands the state channel to the host instead:
 
-```swift
+```swift internals
 @State var volume = 0.5
 
 Slider($volume)
@@ -92,7 +92,7 @@ Examples include `TextField`, `TextEditor`, `SearchField`, `Switch`,
 `CheckBox`, `RadioButton`, `Slider`, `Stepper`, `Picker`, `DatePicker`, and
 `TimePicker`.
 
-```swift
+```swift internals
 @State var enabled = false
 
 Switch($enabled)
@@ -113,7 +113,7 @@ caused by the user. Do not duplicate the assignment in the handler.
 
 `Text` displays either one text value or a formatted sequence of runs:
 
-```swift
+```swift internals
 Text()
     .spans {
         TextSpan("let ").foregroundStyle(.purple)
@@ -144,12 +144,12 @@ expresses search intent. All three share two-way text and `onTextChanged`. A
 `TextEditor` takes a Return as text, and `isFocused` says when its editing
 ends.
 
-```swift
+```swift internals
 @State var query = ""
 
 SearchField($query)
     .placeholder("Search notes")
-    .onSubmitted {
+    .onSubmit {
         if query.isEmpty { query = "All notes" }
     }
 ```
@@ -168,7 +168,7 @@ observe it, use the `isFocused` feed. When an action needs to move it, use an
 
 Choice controls follow the same binding rule:
 
-```swift
+```swift internals
 @State var accepted = false
 @State var level = 0.25
 @State var index = 0
@@ -218,7 +218,7 @@ A button carries a picture in one of two ways. When the picture is its whole
 purpose, it goes in the initializer: `Button(icon:)`. Beside a caption it is the
 `icon` modifier, placed by `iconPosition` and set apart by `iconSpacing`:
 
-```swift
+```swift internals
 Button(icon: "trash.png")
     .accessibilityLabel("Delete")
 
@@ -263,7 +263,7 @@ which items there are and builds an item only when the platform shows it;
 the platform scrolls, reuses its cells, shows the user's choice and tells
 assistive technology about the items:
 
-```swift
+```swift internals
 struct Contact: Hashable {
     let name: String
     let phone: String

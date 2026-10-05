@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // `Text(AttributedString)`: an attributed string shown as runs, each run's
@@ -47,6 +48,16 @@ extension TextSpan {
         var span = self
 
         #if canImport(AppKit) || canImport(UIKit)
+        // Presentation intents - a markdown string's **bold**, _italic_,
+        // ~~strike~~ and `code` - sit in Foundation's Apple scopes; the
+        // free-standing Foundation on the other platforms names none of them.
+        if let intent = run.inlinePresentationIntent {
+            if intent.contains(.stronglyEmphasized) { span = span.bold() }
+            if intent.contains(.emphasized) { span = span.italic() }
+            if intent.contains(.strikethrough) { span = span.strikethrough() }
+            if intent.contains(.code) { span = span.fontDesign(.monospaced) }
+        }
+
         if let color = run.platformForeground {
             span = span.foregroundStyle(Color(color))
         }

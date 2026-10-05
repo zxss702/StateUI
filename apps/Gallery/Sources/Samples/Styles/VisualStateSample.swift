@@ -49,7 +49,7 @@ struct VisualStateSample: SampleContent, ExampleContent {
                 // the state and the button follows it.
                 .onVisualStateChanged { state in
                     entered = state.name
-                    try await $press.journey.move(to: state == .pressed ? 0.94 : 1, .eased(90))
+                    try await $press.journey.move(to: state == .pressed ? 0.94 : 1, .easeOut(duration: 0.09))
                 }
                 .onClicked { presses += 1 }
 
@@ -97,7 +97,7 @@ struct VisualStateSample: SampleContent, ExampleContent {
                     }
                     .onVisualStateChanged { state in
                         entered = state.name
-                        try await $press.journey.move(to: state == .pressed ? 0.94 : 1, .eased(90))
+                        try await $press.journey.move(to: state == .pressed ? 0.94 : 1, .easeOut(duration: 0.09))
                     }
                     .onClicked { presses += 1 }
 

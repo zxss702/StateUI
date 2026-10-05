@@ -115,7 +115,7 @@ the same thing. Its text representation is the boundary, so a custom
 class instance by a stable property it owns rather than by the class value
 itself.
 
-```swift
+```swift internals
 struct FileRow: View {
     let path: String
 
@@ -190,7 +190,7 @@ between adjacent descriptions and are not a global object registry.
 `onAppear` and `onDisappear` describe membership in the StateUI tree, not
 allocation of a platform object:
 
-```swift
+```swift internals
 @State var visible = true
 @State var log: [String] = []
 
@@ -244,7 +244,7 @@ creates a feedback loop; every such write needs a stopping condition.
 
 Call `debugInfo()` inside the description whose work you want to understand:
 
-```swift
+```swift internals
 struct BuildProbe: View {
     @State private var count = 0
 

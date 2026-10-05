@@ -135,11 +135,11 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                     let toHour = atHour + (hour - atHour).forwardTurn
 
                     async let s: Bool = $sAngle.journey.move(to:
-                        toSecond, .eased(260, .springOut))
+                        toSecond, .bouncy(duration: 0.26))
                     async let m: Bool = $mAngle.journey.move(to:
-                        toMinute, .eased(300, .cubicOut))
+                        toMinute, .easeOut(duration: 0.3))
                     async let h: Bool = $hAngle.journey.move(to:
-                        toHour, .eased(300, .cubicOut))
+                        toHour, .easeOut(duration: 0.3))
                     _ = try await (s, m, h)
                 } else {
                     // The first reading SETS the hands: writing `value` is a
@@ -272,11 +272,11 @@ struct AnalogClockSample: SampleContent, ExampleContent {
                     let toHour = atHour + (hour - atHour).forwardTurn
 
                     async let s: Bool = $sAngle.journey.move(to:
-                        toSecond, .eased(260, .springOut))
+                        toSecond, .bouncy(duration: 0.26))
                     async let m: Bool = $mAngle.journey.move(to:
-                        toMinute, .eased(300, .cubicOut))
+                        toMinute, .easeOut(duration: 0.3))
                     async let h: Bool = $hAngle.journey.move(to:
-                        toHour, .eased(300, .cubicOut))
+                        toHour, .easeOut(duration: 0.3))
                     _ = try await (s, m, h)
                 } else {
                     // The first reading SETS the hands: writing `value` is a

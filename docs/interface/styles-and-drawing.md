@@ -9,7 +9,7 @@ properties it must apply; it does not run a second style cascade.
 A `StyleSheet` contains typed styles. An unkeyed style applies implicitly to
 every control of its target type. A keyed style is selected with `.style(...)`:
 
-```swift
+```swift internals
 enum HandbookStyles {
     static var sheet: StyleSheet {
         StyleSheet {
@@ -111,7 +111,7 @@ modifiers work with it, one for each half of a control: `.visualState` says
 what the control looks like in a state, in a style or on the control, and
 `.onVisualStateChanged` says what happens when it enters one.
 
-```swift
+```swift internals
 Style<Button>()
     .background(.cornflowerBlue)
     .visualState(.disabled) { state in
@@ -135,7 +135,7 @@ checked, off or unchecked - and normal when none does. What the control shows
 is every state that holds at once, the earlier in that order winning a value
 two of them set. A disabled switch that is on is dimmed, and green:
 
-```swift
+```swift internals
 @State var isOn = true
 
 Switch($isOn)
@@ -154,7 +154,7 @@ A control can override or add states locally. Its values merge with its
 style's by state and property, so a local change does not erase the
 style's other values:
 
-```swift
+```swift internals
 Button("Save")
     .visualState(.pressed) { state in
         state.background(.steelBlue)
@@ -227,7 +227,7 @@ Common shape modifiers include fill, stroke, stroke width and dash
 settings, aspect, and `renderTransform`. Geometry-specific modifiers such as a
 rectangle's corner radius or line endpoints remain on the matching shape.
 
-```swift
+```swift internals
 Rectangle()
     .cornerRadius(14)
     .fill(.linearGradient(

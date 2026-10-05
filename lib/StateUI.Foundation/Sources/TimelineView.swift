@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // `TimelineView`: content rebuilt on a schedule's tick, handed the current
@@ -28,17 +29,21 @@ public struct TimelineSchedule: Equatable, Sendable {
     }
 }
 
+/// A `TimelineView` rebuild's moment - hoisted out of the generic, whose
+/// `Context` as a nested type would block the content's inference.
+public struct TimelineViewContext: Sendable {
+    /// When this build stands.
+    public var date: Date
+}
+
 /// A view rebuilt on a schedule, each rebuild handed the current date:
 ///
 ///     TimelineView(.animation(minimumInterval: 1.0 / 30)) { context in
 ///         Circle().opacity(pulse(at: context.date))
 ///     }
 public struct TimelineView<Content: View>: View {
-    /// A rebuild's moment.
-    public struct Context {
-        /// When this build stands.
-        public var date: Date
-    }
+    /// A rebuild's moment - `context.date`, as SwiftUI spells it.
+    public typealias Context = TimelineViewContext
 
     /// The schedule the ticks follow.
     let schedule: TimelineSchedule

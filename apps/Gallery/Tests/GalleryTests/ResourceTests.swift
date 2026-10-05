@@ -120,6 +120,6 @@ final class ResourceTests: XCTestCase {
         let offText = off.children.first { $0.props["text"] == .string("Layout") }
 
         XCTAssertNotEqual(onText?.props["foregroundStyle"], offText?.props["foregroundStyle"])
-        XCTAssertNotEqual(onText?.props["fontAttributes"], offText?.props["fontAttributes"])
+        XCTAssertNotEqual(onText?.props["fontWeight"], offText?.props["fontWeight"])
     }
 }

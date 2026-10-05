@@ -4,6 +4,13 @@
 struct ModalSample: SampleContent, ExampleContent {
     let nav: Navigation
     @State private var sheeted = false
+    @State private var request: Request?
+
+    /// What `.sheet(item:)` presents - identified by its `id`, not Hashable.
+    private struct Request: Identifiable {
+        let id: Int
+        let title: String
+    }
 
     static let id = "modal"
     static let title = "Presenting over everything"
@@ -79,6 +86,23 @@ struct ModalSample: SampleContent, ExampleContent {
                         Text("A presented sheet")
                             .font(.system(size: 15))
                         Button("Dismiss", action: { sheeted = false })
+                    }
+                    .spacing(16)
+                    .contentPadding(EdgeInsets(40, 60))
+                    .background(Palette.raised)
+                }
+
+            // `.sheet(item:)` - one presentation per item, the item handed to
+            // the page; a user dismissal writes nil back.
+            Button("Present .sheet(item:)", action: { request = Request(id: 1, title: "A request") })
+                .font(.system(size: 13))
+                .contentPadding(EdgeInsets(14, 6))
+                .accessibilityIdentifier("modal.itemSheet")
+                .sheet(item: $request) { request in
+                    VStack {
+                        Text("Sheet for: \(request.title)")
+                            .font(.system(size: 15))
+                        Button("Done", action: { self.request = nil })
                     }
                     .spacing(16)
                     .contentPadding(EdgeInsets(40, 60))

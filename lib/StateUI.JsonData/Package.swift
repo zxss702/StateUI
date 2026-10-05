@@ -20,14 +20,16 @@ let package = Package(
         .package(name: "StateUIRoot", path: "../.."),
         // The checkout a machine holds: Packges/JsonData beside Packges/StateUI
         // locally, zxs20/JsonData beside zxs20/StateUI on Windows.
-        .package(url: "https://github.com/zxss702/JsonData.git", branch: "main"),
+        .package(path: "../../../JsonData"),
     ],
     targets: [
         .target(
             name: "StateUIJsonData",
             dependencies: [
                 .product(name: "StateUI", package: "StateUIRoot"),
-                .product(name: "JsonData", package: "JsonData"),
+                // Dynamic beside the bridge's own dynamic product, so one
+                // model layer is shared by every library that names it.
+                .product(name: "JsonDataDynamic", package: "JsonData"),
             ],
             path: "Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]

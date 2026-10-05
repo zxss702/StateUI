@@ -70,7 +70,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
                 Button("Send the bottom one", action: {
                     try await $level.journey.move(to: level < 0.5 ? 1 : 0,
-                                               .eased(900, .cubicInOut))
+                                               .easeInOut(duration: 0.9))
                 })
             }
 
@@ -83,7 +83,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                     .step(1)
 
                 Button("Send the stepper to 12", action: {
-                    try await $count.journey.move(to: 12, .eased(800, .cubicOut))
+                    try await $count.journey.move(to: 12, .easeOut(duration: 0.8))
                 })
             }
         }
@@ -144,7 +144,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
 
                 button("Send the bottom one") {
                     try await $level.journey.move(to: level < 0.5 ? 1 : 0,
-                                               .eased(900, .cubicInOut))
+                                               .easeInOut(duration: 0.9))
                 }
             }
             .spacing(10)
@@ -164,7 +164,7 @@ struct AnimatedInputSample: SampleContent, ExampleContent {
                     .horizontalAlignment(.start)
 
                 button("Send the stepper to 12") {
-                    try await $count.journey.move(to: 12, .eased(800, .cubicOut))
+                    try await $count.journey.move(to: 12, .easeOut(duration: 0.8))
                 }
             }
             .spacing(10)

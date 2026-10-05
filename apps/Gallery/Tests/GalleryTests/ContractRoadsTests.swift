@@ -224,14 +224,17 @@ final class ContractRoadsTests: XCTestCase {
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: scratch) }
 
-        // Every listing in a file of its own, a road's two side by side.
+        // Every listing in a file of its own, a road's two side by side. The
+        // removed road is checked the way an application writes it; the
+        // contract's road is the provider-facing spelling - it stands on the
+        // host SPI the contract itself is declared through.
         let listings = Self.roads.flatMap { road in
-            [(road: road.name, compiles: false, source: road.removed),
-             (road: road.name, compiles: true, source: road.contract)]
+            [(road: road.name, compiles: false, source: road.removed, spi: false),
+             (road: road.name, compiles: true, source: road.contract, spi: true)]
         }
         let files = try listings.enumerated().map { index, listing in
             let file = scratch.appendingPathComponent("road_\(index).swift")
-            try Data(Self.file(around: listing.source).utf8).write(to: file)
+            try Data(Self.file(around: listing.source, spi: listing.spi).utf8).write(to: file)
             return file
         }
 
@@ -253,13 +256,17 @@ final class ContractRoadsTests: XCTestCase {
     }
 
     /// A listing as a file an application could hold: the declarations, and
-    /// the listing as the body of a function.
-    private static func file(around listing: String) -> String {
+    /// the listing as the body of a function. A contract's road is written by
+    /// who DECLARES the element - the host side - so it compiles through the
+    /// SPI the contract members answer to; a removed road must stay refused
+    /// to a plain import.
+    private static func file(around listing: String, spi: Bool) -> String {
         let body = listing.split(separator: "\n", omittingEmptySubsequences: false)
             .map { $0.isEmpty ? "" : "    \($0)" }
             .joined(separator: "\n")
+        let header = spi ? "@_spi(Host) import StateUI" : "import StateUI"
 
-        return "import StateUI\n\n\(declarations)\n\nfunc road() async throws {\n\(body)\n}\n"
+        return "\(header)\n\n\(declarations)\n\nfunc road() async throws {\n\(body)\n}\n"
     }
 
     /// What the compiler said about each listing, written from the lanes.

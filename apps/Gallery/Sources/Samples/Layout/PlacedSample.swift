@@ -337,7 +337,7 @@ struct PlacedSample: SampleContent, ExampleContent {
         func move(_ by: Int) async throws {
             let slot = max(0, min(Double(cards.count - 1), (at + Double(by)).rounded()))
 
-            try await $scrolled.journey.move(to: Point(slot * 90, 0), .eased(300, .cubicOut))
+            try await $scrolled.journey.move(to: Point(slot * 90, 0), .easeOut(duration: 0.3))
         }
 
         // One card's face - a picture and its name, and nothing at all about
@@ -518,7 +518,7 @@ struct PlacedSample: SampleContent, ExampleContent {
     private func move(_ by: Int) async throws {
         let slot = max(0, min(Double(Self.cards.count - 1), (at + Double(by)).rounded()))
 
-        try await $scrolled.journey.move(to: Point(slot * Self.reach, 0), .eased(300, .cubicOut))
+        try await $scrolled.journey.move(to: Point(slot * Self.reach, 0), .easeOut(duration: 0.3))
     }
 
     /// One card's face - a picture and its name, and nothing at all about where

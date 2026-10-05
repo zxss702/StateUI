@@ -14,7 +14,7 @@ input and keeps native methods out of the description tree.
 
 Typed handlers are modifiers on the element that reports them:
 
-```swift
+```swift internals
 @State var count = 0
 @State var value = 0.0
 @State var lastChange = ""
@@ -126,7 +126,7 @@ Gesture availability and host tests are tracked in
 An `Aim<Target>` identifies one rendered control for a method call. It is not
 state and does not participate in tree identity:
 
-```swift
+```swift internals
 struct FocusForm: View {
     @Aim(TextField.self) private var field
     @State private var text = ""
@@ -185,7 +185,7 @@ An application reaches its own host code through acts it declares in a tier
 the application wears - an `ApplicationTier` - each with the types of its
 arguments and its answer:
 
-```swift
+```swift internals
 enum NotesContract: ApplicationTier {
     static let name = "Notes"
 
@@ -280,7 +280,7 @@ event no head declared is said once, as a misspelled name would be.
 
 Accessibility modifiers describe meaning, not test-only metadata:
 
-```swift
+```swift internals
 Text("Order total")
     .accessibilityLabel("Order total: 42 euros")
     .accessibilityHint("Updates after the cart changes")

@@ -17,7 +17,7 @@ for choosing and composing those paths.
 
 A state belongs where its lifetime belongs:
 
-```swift
+```swift internals
 struct Counter: View {
     @State private var count = 0
 
@@ -97,7 +97,7 @@ A shared model declares every property that participates in StateUI as
 `@State`. A plain stored property is ordinary Swift storage: changing it does
 not invalidate a body, wake an engine, or update a host channel.
 
-```swift
+```swift internals
 final class Profile {
     @State var name = "Guest"
     @State var visits = 0
@@ -285,7 +285,7 @@ Persistent state is ordinary state with a stable application key. It is
 hydrated before the first description is built and written to the selected
 host store after changes.
 
-```swift
+```swift internals
 enum Appearance: String, PersistentValue {
     case light
     case dark
@@ -353,7 +353,7 @@ hands the values to ordinary `@State`.
 A `SceneKey` keeps a separate value for each scene session. A restoring host
 returns that value with the scene before the scene's first build:
 
-```swift
+```swift internals
 extension SceneKey {
     static let selectedSection = SceneKey(
         "com.example.notes.selectedSection",
@@ -390,7 +390,7 @@ window group.
 A conversion derives another carried state without rebuilding a body. The
 forward closure runs on host cycles when its source changes:
 
-```swift
+```swift internals
 @State var volume = 0.2
 @State var width = 120.0
 @State var height = 80.0
@@ -434,7 +434,7 @@ For a walked state, an ordinary binding conversion reads the destination. A
 journey conversion receives the live `Journey` lanes and is evaluated as the
 value travels:
 
-```swift
+```swift internals
 @State var width = 80.0
 
 VStack {
@@ -475,7 +475,7 @@ caption needs the live value.
 When a continuous value must occasionally feed description logic, sample its
 journey into another state:
 
-```swift
+```swift internals
 struct SampledProgress: View {
     @State private var progress = 0.0
     @State private var shown = 0.0
@@ -505,7 +505,7 @@ Write a custom engine for frame arithmetic that needs memory or sequencing and
 cannot be expressed as a pure conversion. An engine is attached to an element
 and runs inside the host's display cycle.
 
-```swift
+```swift internals
 struct SpringDot: View {
     @State(animation: .custom) private var y = 0.0
 

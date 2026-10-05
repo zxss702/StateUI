@@ -60,6 +60,7 @@ struct GalleryScene: Scene {
             WindowGroup(.debugInspector) { DebugInspector() }
 
             WindowGroup(.swatch, for: Int.self) { number in SwatchWindow(number: number) }
+                .defaultPosition(.center)
         } main: {
             MainWindow(
                 catalog: kept.catalog {
@@ -72,5 +73,11 @@ struct GalleryScene: Scene {
         }
         .environment(nav)
         .environment(style)
+        .commands {
+            CommandMenu("Gallery") {
+                Button("Home", action: { nav.home() })
+                    .keyboardShortcut("h", modifiers: [.command, .shift])
+            }
+        }
     }
 }

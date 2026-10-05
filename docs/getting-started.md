@@ -144,7 +144,7 @@ Each type declares exactly one composition property. Runtime properties such
 as styles, window title, geometry, and page title belong to session objects in
 the environment.
 
-```swift
+```swift internals
 struct NotesApp: App {
     var body: some Scene { NotesWindow() }
 }
@@ -192,7 +192,7 @@ no toolkit imports          contains no application UI
 The UI module exports one stable registration function. Registration names the
 application type to the host; it does not build native controls itself.
 
-```swift
+```swift internals
 struct RegisteredApp: App {
     var body: some Scene { RegisteredWindow() }
 }
@@ -277,7 +277,7 @@ why that module-wide setting is part of the application contract.
 A control's purpose value belongs in its initializer. Optional capabilities
 are modifiers:
 
-```swift
+```swift internals
 @State var accepted = false
 @State var volume = 0.5
 

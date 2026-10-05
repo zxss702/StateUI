@@ -33,7 +33,7 @@ struct BindingReaderSample: SampleContent, ExampleContent {
             var body: some View {
                 VStack {
                     Slider($level)
-                        .animation(.eased(600, .cubicOut))
+                        .animation(.easeOut(duration: 0.6))
 
                     HStack {
                         Button("Full", action: { level = 1 })
@@ -125,7 +125,7 @@ private struct Knob: View {
             Slider($level)
                 .accessibilityIdentifier("bindingReader.level")
                 .accessibilityLabel("Level")
-                .animation(.eased(600, .cubicOut))
+                .animation(.easeOut(duration: 0.6))
 
             HStack {
                 Button("Full", action: { level = 1 })

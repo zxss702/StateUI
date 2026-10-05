@@ -40,6 +40,32 @@ extension View {
     }
 }
 
+extension View {
+    /// Whether this view holds the keyboard focus, of several that can -
+    /// the state's value where this view is the focused one:
+    ///
+    ///     @FocusState private var field: Field?
+    ///
+    ///     TextField("Name", text: $name)
+    ///         .focused($field, equals: .name)
+    ///
+    /// The platform's move writes `field`, and writing it moves the focus -
+    /// to this view for `.name`, off it for another value or `nil`.
+    public func focused<Value: Hashable>(
+        _ condition: Binding<Value?>, equals value: Value
+    ) -> ModifiedContent {
+        focused(Binding<Bool>(
+            get: { condition.wrappedValue == value },
+            set: { focused in
+                if focused {
+                    condition.wrappedValue = value
+                } else if condition.wrappedValue == value {
+                    condition.wrappedValue = nil
+                }
+            }))
+    }
+}
+
 /// How urgent a `defaultFocus` ask is - SwiftUI's `FocusPriority`.
 public enum FocusPriority: Sendable {
     /// The ordinary ask.

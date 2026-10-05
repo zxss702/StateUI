@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // `.onOpenURL`: a URL the platform handed the application, delivered to the

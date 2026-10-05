@@ -69,7 +69,7 @@ struct DrivenSample: SampleContent, ExampleContent {
         }
         /// One place to be sent to, under whichever law the switch asks for.
         private func go(to place: Double) {
-            let law: Animation = slowly ? .eased(1600, .cubicInOut) : .eased(350, .cubicOut)
+            let law: Animation = slowly ? .easeInOut(duration: 1.6) : .easeOut(duration: 0.35)
 
             $offset.journey.animation = law
             offset = 240 * place
@@ -186,7 +186,7 @@ struct DrivenSample: SampleContent, ExampleContent {
 
     /// One place to be sent to, under whichever law the switch asks for.
     private func go(to place: Double) {
-        let law: Animation = slowly ? .eased(1600, .cubicInOut) : .eased(350, .cubicOut)
+        let law: Animation = slowly ? .easeInOut(duration: 1.6) : .easeOut(duration: 0.35)
 
         $offset.journey.animation = law
         offset = Self.run * place

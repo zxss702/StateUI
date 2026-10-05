@@ -359,6 +359,10 @@ public struct Node {
     /// (Stateful.swift).
     var stateful: Stateful?
 
+    /// The stateful shells `.built` expanded to reach this node, kept so their
+    /// `@State` boxes outlive the tree; a render keeps them on its record.
+    var keptState: [Stateful] = []
+
     /// Adds a handler beside any the event already has, never instead of it.
     /// Design: docs/design/core/identity-and-diffing.md#handlers-and-their-ids
     mutating func addHandler(_ event: Event, _ handler: @escaping EventHandler) {

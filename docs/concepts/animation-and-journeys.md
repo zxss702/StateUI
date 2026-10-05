@@ -36,7 +36,7 @@ A property that depends on ordinary state rebuilds its reader once and places
 the final value in `HostPatch`. A matching `HostTransition` tells the host how
 to reach it:
 
-```swift
+```swift internals
 struct MovingPanel: View {
     @State private var expanded = false
 

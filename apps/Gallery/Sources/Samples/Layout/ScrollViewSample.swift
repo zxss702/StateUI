@@ -323,7 +323,7 @@ private struct OffsetStrips: ExampleContent {
             // so the three strips move in turn rather than together.
             private func move(to y: Double) async throws {
                 for strip in [$described, $paced, $driven] {
-                    try await strip.journey.move(to: Point(0, y), .eased(300, .cubicOut))
+                    try await strip.journey.move(to: Point(0, y), .easeOut(duration: 0.3))
                 }
             }
         }
@@ -379,7 +379,7 @@ private struct OffsetStrips: ExampleContent {
     /// - Parameter y: how far down each strip is sent.
     private func move(to y: Double) async throws {
         for strip in [$described, $paced, $driven] {
-            try await strip.journey.move(to: Point(0, y), .eased(300, .cubicOut))
+            try await strip.journey.move(to: Point(0, y), .easeOut(duration: 0.3))
         }
     }
 

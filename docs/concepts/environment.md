@@ -14,7 +14,7 @@ host channels described in [State and reactivity](state-and-reactivity.md).
 Provide a class with `.environment(_:)` on the common ancestor of every view
 that needs it:
 
-```swift
+```swift internals
 final class Account {
     @State var name = "Guest"
     @State var visits = 0

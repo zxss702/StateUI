@@ -150,7 +150,7 @@ presented over it - a notice that stays while the pages change under it. They
 are the window's too, `window.overlays`, each under a key the application
 declares:
 
-```swift
+```swift internals
 extension OverlayKey {
     static let offline = OverlayKey("offline")
 }

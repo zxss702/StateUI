@@ -69,7 +69,7 @@ as a reader. A later write invalidates only the current readers of that state.
 StateUI rebuilds those descriptions and diffs their result against the retained
 tree.
 
-```swift
+```swift internals
 struct Greeting: View {
     @State private var name = "StateUI"
 
@@ -103,7 +103,7 @@ does not read its wrapped value for dependency tracking. StateUI registers one
 typed state channel and the host can read or report it without rebuilding the
 body.
 
-```swift
+```swift internals
 struct Level: View {
     @State private var level = 0.25
 
@@ -175,7 +175,7 @@ between destinations.
 | `snap(to:)` | set current value, destination, and zero velocity together |
 | `convert` | derive a host-driven value from the live journey |
 
-```swift
+```swift internals
 struct Fader: View {
     @State private var fade = 1.0
 
@@ -214,7 +214,7 @@ native display clock and lands exactly on the described destination. Until a
 host has that checked matrix row, an application relies only on the final
 destination.
 
-```swift
+```swift internals
 struct ResizingPanel: View {
     @State private var expanded = false
 
@@ -258,7 +258,7 @@ same; only the animation is shortened or removed.
 display cycle, reads and writes state, and returns `.again` while it needs
 another frame or `.wait` until a followed state is written.
 
-```swift
+```swift internals
 struct FallingDot: View {
     @State(animation: .custom) private var y = 0.0
 

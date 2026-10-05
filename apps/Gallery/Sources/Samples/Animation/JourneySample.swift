@@ -7,12 +7,12 @@ struct JourneySample: SampleContent, ExampleContent {
     static let title = "Journeys"
     static let summary = "Assign the state and the control travels there - at a length, on a spring, or not at all."
 
-    static let laws = ["Eased 200ms", "Spring", "Long and slow", "None"]
+    static let laws = ["Default", "Spring", "Long and slow", "None"]
 
     static func law(_ index: Int) -> Animation {
         switch index {
         case 1: .spring(response: 0.32)
-        case 2: .eased(900, .sineInOut)
+        case 2: .easeInOut(duration: 0.9)
         case 3: .none
         default: .standard
         }
@@ -27,12 +27,12 @@ struct JourneySample: SampleContent, ExampleContent {
         @State private var wide = false
         @State private var warm = false
 
-        static let laws = ["Eased 200ms", "Spring", "Long and slow", "None"]
+        static let laws = ["Default", "Spring", "Long and slow", "None"]
 
         static func law(_ index: Int) -> Animation {
             switch index {
             case 1: .spring(response: 0.32)
-            case 2: .eased(900, .sineInOut)
+            case 2: .easeInOut(duration: 0.9)
             case 3: .none
             default: .standard
             }

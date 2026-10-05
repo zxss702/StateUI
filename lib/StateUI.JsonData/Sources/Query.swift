@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // `@Query`, the model layer's table in a view: the rows matching a fetch
