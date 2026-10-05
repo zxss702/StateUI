@@ -41,7 +41,13 @@ public enum TextContract: ElementContract {
     public static let textRenderer = ElementProperty<Self, String>(
         "textRenderer", layer: .native)
 
+    /// The host laid the words out: its lines, runs and glyph slices, as a
+    /// `TextLayoutReport` - what the `Text.LayoutKey` preference answers.
+    public static let textLayoutChanged = ElementEvent<Self, TextLayoutReport>(
+        "textLayoutChanged", layer: .native)
+
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        lineBreak, lineLimit, minimumScaleFactor, selectable, textRenderer]
+        lineBreak, lineLimit, minimumScaleFactor, selectable, textRenderer,
+        textLayoutChanged]
 }

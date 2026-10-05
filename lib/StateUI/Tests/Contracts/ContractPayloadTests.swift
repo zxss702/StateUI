@@ -90,9 +90,21 @@ final class ContractPayloadTests: XCTestCase {
         check(SliderContract.dragStarted)
         check(SliderContract.valueChanged, [.number(0.5)])
         check(NavigationSplitViewContract.isSidebarVisibleChanged, [.bool(false)])
+        check(NavigationSplitViewContract.columnVisibilityChanged, [.enumeration(2)])
         check(StepperContract.valueChanged, [.number(3)])
         check(SwitchContract.toggled, [.bool(true)])
         check(TabViewContract.currentPageChanged, [.number(1)])
+        check(TextContract.textLayoutChanged, [.values([
+            .values([
+                .numbers([0, 0, 100, 14]),
+                .values([.values([
+                    .numbers([0, 2, 60, 12]),
+                    .number(0),
+                    .number(0),
+                    .values([.numbers([0, 2, 30, 12]), .numbers([30, 2, 60, 12])]),
+                ])]),
+            ]),
+        ])])
         check(TextFieldContract.submitted)
         check(TimePickerContract.closed)
         check(TimePickerContract.opened)

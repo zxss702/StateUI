@@ -53,6 +53,26 @@ public struct Canvas: VisualElement, CanvasProperties{
         node.write(CanvasContract.drawable, drawing())
     }
 
+    /// A canvas drawn from the space it is given, the way SwiftUI's closure
+    /// form draws it:
+    ///
+    ///     Canvas { context, size in
+    ///         context.fill(
+    ///             Path(roundedRect: Rect(0, 0, size.width, 40), cornerRadius: 8),
+    ///             with: .color(.cornflowerBlue))
+    ///     }
+    ///
+    /// The calls on `context` gather into the canvas's drawing, and `size` is
+    /// the room its layout gave it: the closure runs again as the size
+    /// settles, so what depends on it is drawn at the size it lands.
+    public init(renderer: @escaping (inout GraphicsContext, Size) -> Void) {
+        node = GeometryReader { proxy in
+            var context = GraphicsContext()
+            renderer(&context, proxy.size)
+            return Canvas { context.commands }
+        }.node
+    }
+
     /// A finger went down, or a mouse button was pressed.
     ///
     /// The point is in the canvas's own coordinates - the same ones the drawing

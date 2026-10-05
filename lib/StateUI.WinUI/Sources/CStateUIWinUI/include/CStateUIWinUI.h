@@ -340,7 +340,9 @@ void stateui_winui_text_set_text(StateUIObjectRef text, char const *utf8);
 
 /// One run of a label's words, and how it differs from the label's: its colour and its background where it has
 /// them, as 0xAARRGGBB; its size in DIPs, 0 for the label's; bold, italic, and lines under or through it; its font
-/// family, empty for the label's; and the space between its letters in thousandths of an em of its size.
+/// family, empty for the label's; the space between its letters in thousandths of an em of its size; how far its
+/// baseline rises in DIPs; the '\n'-joined candidate files it draws as a glyph in the line, empty for none; and a
+/// Fluent glyph's codepoint where it is a symbol, 0 for none.
 typedef struct {
     char const *text;
     uint32_t color;
@@ -354,6 +356,9 @@ typedef struct {
     bool strikethrough;
     char const *family;
     int32_t spacing;
+    double baseline;
+    char const *image;
+    uint32_t glyph;
 } StateUIWordsRun;
 
 /// Shows `runs`, in order, as the text block's words, each as it says, in place of its words.
@@ -423,6 +428,29 @@ int32_t stateui_winui_window_sheets(StateUIObjectRef window);
 void stateui_winui_set_context_menu(StateUIObjectRef element, int64_t view, int32_t const *kinds,
                                     char const *const *titles, bool const *enabled, char const *const *identifiers,
                                     int32_t count);
+
+/// A menu living in the view: a `Button` whose `Flyout` a press opens, its face a row - the label child before a
+/// chevron the indicator setting shows or hides.
+StateUIObjectRef stateui_winui_menu_button_make(int64_t view);
+
+/// The label child's element the button's face shows before its chevron; none for the chevron alone.
+void stateui_winui_menu_button_set_face(StateUIObjectRef button, StateUIObjectRef content);
+
+/// Whether the button's face draws the chevron that says it opens a menu.
+void stateui_winui_menu_button_set_indicator(StateUIObjectRef button, int32_t shown);
+
+/// Whether the button draws the platform's frameless look - `.borderlessButton`'s.
+void stateui_winui_menu_button_set_borderless(StateUIObjectRef button, int32_t borderless);
+
+/// The entries the press opens, written as a context menu's are, the flyout the button's `Flyout`. None takes it
+/// away.
+void stateui_winui_menu_button_set_menu(StateUIObjectRef button, int64_t view, int32_t const *kinds,
+                                        char const *const *titles, bool const *enabled,
+                                        char const *const *identifiers, int32_t count);
+
+/// The scene's commands' button at the title bar's leading edge: a `Button` whose face is the platform's
+/// navigation glyph and whose `Flyout` - `menu_button_set_menu` writes it - the press opens.
+StateUIObjectRef stateui_winui_app_menu_make(int64_t view);
 
 /// A window's menu bar: WinUI's MenuBar, written as a context menu is, each menu at the top one of the bar's own.
 StateUIObjectRef stateui_winui_menu_bar_make(int64_t view);
@@ -709,10 +737,12 @@ void stateui_winui_title_bar_set(StateUIObjectRef bar, char const *title, bool b
                                  int32_t words);
 /// The page's actions on a window's chrome: each one's words, the identifier automation finds it by (empty for
 /// none), the files its picture may stand in - each ended by a line feed, empty for none - whether it stands in the
-/// overflow, and whether it can be chosen.
+/// overflow, and whether it can be chosen; `kinds` says what each entry is - 0 a button, 1 a fixed gap, 2 a
+/// flexible one - and `contents` the view an entry shows in the button's place, null for a button.
 void stateui_winui_title_bar_set_actions(StateUIObjectRef bar, char const *const *texts,
                                          char const *const *identifiers, char const *const *icons,
-                                         bool const *overflows, bool const *enabled, int32_t count);
+                                         bool const *overflows, bool const *enabled,
+                                         StateUIObjectRef const *contents, int32_t const *kinds, int32_t count);
 
 /// What a test reads: whether a title bar's words stand light (1), dark (2), or as the theme has them (0).
 int32_t stateui_winui_title_bar_words(StateUIObjectRef bar);
@@ -723,12 +753,18 @@ void stateui_winui_title_bar_caption_room(StateUIObjectRef bar, double *kept, do
 void stateui_winui_title_bar_set_slots(StateUIObjectRef bar, StateUIObjectRef leading, StateUIObjectRef center,
                                        StateUIObjectRef trailing);
 
+/// The scene's commands' button at the bar's leading edge, ahead of the authored leading content; null takes it
+/// away.
+void stateui_winui_title_bar_set_app_menu(StateUIObjectRef bar, StateUIObjectRef button);
+
 /// A split view: WinUI's NavigationView, the sidebar in its pane as wide as WinUI opens it - beside the detail from
 /// `expandsAt` DIPs, over it and closed by a click beside it below - with none of the view's own buttons, which the
 /// window's chrome carries; `row` stands across the top of the detail.
 StateUIObjectRef stateui_winui_split_make(int64_t view, double expandsAt);
+
+/// The pane's open length is `paneLength` where it is positive, or WinUI's own.
 void stateui_winui_split_set(StateUIObjectRef split, StateUIObjectRef pane, StateUIObjectRef content,
-                             StateUIObjectRef row, bool open);
+                             StateUIObjectRef row, bool open, double paneLength);
 
 /// A tabbed view's row of tabs: a SelectorBar, `selected` chosen.
 StateUIObjectRef stateui_winui_tabs_make(int64_t view);

@@ -62,13 +62,34 @@ final class UIKitWindowController {
         window?.windowScene?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
     }
 
-    /// The menus of the page the user sees - the top sheet's, else the arrangement's - as UIKit's main menu takes
-    /// them, each under an identifier of its own.
-    var pageMenus: [UIMenu] {
+    /// The menus the window shows - the scene's commands and the visible page's own: a group's entries spliced
+    /// into UIKit's standard menu it names, the menus standing of their own each under an identifier of its own.
+    var pageMenus: (groups: [(UIMenu.Identifier, UIMenu)], menus: [UIMenu]) {
         let page = (presentation.sheets.last ?? presentation.arrangement)?.visiblePage
-        let menus = page?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? []
-        return menus.enumerated().map { index, menu in
-            UIKitMenus.menu(menu.entries, title: menu.title, identifier: UIMenu.Identifier("stateui.menu.\(index)"))
+        let commands = element?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? []
+        let pages = page?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? []
+        let all = commands + pages
+        return (
+            all.filter { $0.placement != nil }.map { group in
+                (Self.standardMenu(of: group),
+                    UIMenu(title: "", options: .displayInline, children: UIKitMenus.menu(group.entries).children))
+            },
+            all.filter { $0.placement == nil }.enumerated().map { index, menu in
+                UIKitMenus.menu(
+                    menu.entries, title: menu.title, identifier: UIMenu.Identifier("stateui.menu.\(index)"))
+            })
+    }
+
+    /// The standard menu a placement's entries belong to: the application's own for its regions, the one
+    /// matching the region else.
+    private static func standardMenu(of group: MenuEntry) -> UIMenu.Identifier {
+        switch group.placement {
+        case .newItem, .saveItem, .importExport, .printItem: return .file
+        case .undoRedo, .cutCopyPaste, .selectAll, .find, .findAndReplace, .share,
+             .navigation, .textEditing, .textFormatting: return .edit
+        case .sidebar, .toolbar, .singleWindowList, .windowSize, .windowList: return .window
+        case .help: return .help
+        default: return .application
         }
     }
 

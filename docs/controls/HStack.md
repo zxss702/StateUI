@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (99) | Realization | Notes |
+| Host | Created | Members (100) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 29 ✅ · 3 – | custom `NSView` |  |
 | UIKit | ✅ | 31 ✅ · 3 – | custom `UIView` |  |
@@ -66,6 +66,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what reaches HStack - Android's driver has no path for it yet; GTK 4: cannot read what reaches HStack - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of HStack - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |

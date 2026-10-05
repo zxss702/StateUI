@@ -9,6 +9,7 @@
 
 #include "Relay.h"
 
+#include <winrt/Windows.UI.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Microsoft.UI.Xaml.Automation.Peers.h>
 #include <winrt/Microsoft.UI.Xaml.Automation.Provider.h>

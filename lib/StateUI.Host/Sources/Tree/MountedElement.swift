@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import Foundation
 @_spi(Host) import StateUI
 
 /// One element of the mounted tree: the runtime's live instance of a described node.
@@ -56,6 +57,9 @@
     /// The named spaces the element last reported enclosing it.
     var reportedNamedFrames: [NamedSpaceFrame] = []
 
+    /// The text layout this element last said, which a report the same says again to nobody.
+    var reportedTextLayout: TextLayoutReport?
+
     /// Where the states a press dragged carries stood as it began.
     var dragStart = Point(x: 0, y: 0)
 
@@ -67,6 +71,7 @@
     private var drivenValues: [Prop: HostStateValue] = [:]
     private var created = false
     private var described = false
+    private static let patchLog = ProcessInfo.processInfo.environment["STATEUI_PATCH"] == "1"
 
     init(_ patch: HostPatch, tree: MountedTree, parent: MountedElement?) {
         id = patch.id
@@ -82,6 +87,19 @@
 
     /// Applies a patch of this element.
     public func apply(_ patch: HostPatch) {
+        if Self.patchLog {
+            let kids: String = switch patch.children {
+            case .unchanged: "unchanged"
+            case .arranged(let list):
+                "arranged[" + list.map { "\($0.id):\($0.type.name)\($0.replace ? "!" : "")" }.joined(separator: ",") + "]"
+            case .changed(let list):
+                "changed[" + list.map { "\($0.id):\($0.type.name)\($0.replace ? "!" : "")" }.joined(separator: ",") + "]"
+            }
+            HostLog.writeStandardError(
+                "PATCH \(patch.type.name) id=\(patch.id) replace=\(patch.replace) fresh=\(patch.fresh) "
+                    + "children=\(kids) props=\(patch.properties.keys.map(\.name).sorted().joined(separator: ",")) "
+                    + "cleared=\(patch.clearedProperties.map(\.name).sorted().joined(separator: ","))\n")
+        }
         guard let tree else { return }
         // A patch re-described a departing element: its removal turns around.
         if isDeparting { revive() }
@@ -413,13 +431,35 @@
             windowChrome: WindowChrome.follows(type))
     }
 
-    /// The value `property` presents: a running animation's, else the described or bound one.
+    /// The value `property` presents: a running animation's, else the described or bound one -
+    /// and where the element carries the property's lookup key, what the host's tables answer it.
     public func value(_ property: Prop) -> HostValue? {
-        if driven[property].map({ $0.mode != .in }) == true {
-            return resolvedValue(property)
+        let presented = if driven[property].map({ $0.mode != .in }) == true {
+            resolvedValue(property)
+        } else {
+            tree?.presentedPropertyValue(mount: mount, property: property) ?? resolvedValue(property)
         }
+        if let key = lookupKey(for: property),
+           let resolved = tree?.localization(key) {
+            return .string(resolved)
+        }
+        return presented
+    }
 
-        return tree?.presentedPropertyValue(mount: mount, property: property) ?? resolvedValue(property)
+    /// The lookup key carried beside `property`, where `property` is one a
+    /// `*Key` member shadows - `text`, `title`, `subtitle`, `placeholder`,
+    /// `hint` - and none elsewhere.
+    private func lookupKey(for property: Prop) -> LocalizedStringKey? {
+        let keyProp: Prop
+        switch property {
+        case .text: keyProp = .textKey
+        case .title: keyProp = .titleKey
+        case .subtitle: keyProp = .subtitleKey
+        case .placeholder: keyProp = .placeholderKey
+        case .hint: keyProp = .hintKey
+        default: return nil
+        }
+        return resolvedValue(keyProp).flatMap(LocalizedStringKey.init(propValue:))
     }
 
     /// The text value of `property`.

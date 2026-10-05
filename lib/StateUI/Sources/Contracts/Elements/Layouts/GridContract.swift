@@ -27,6 +27,10 @@ public enum GridContract: ElementContract {
     /// How tall each row is, one length per row.
     public static let rows = ElementProperty<Self, [GridLength]>("rows", layer: .stateUI)
 
+    /// The columns a `LazyVGrid` describes: the children fill them row
+    /// first, an `.adaptive` one standing for as many as fit.
+    public static let flowColumns = ElementProperty<Self, [GridItem]>("flowColumns", layer: .stateUI)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [columnSpacing, columns, rowSpacing, rows]
+    public static let members: [any ContractMember] = [columnSpacing, columns, flowColumns, rowSpacing, rows]
 }

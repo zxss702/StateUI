@@ -20,9 +20,10 @@ final class WinUISidebarView: WinUIView {
         super.init { number in stateui_winui_split_make(number, Self.expandsAt) }
     }
 
-    /// The two pages, the row over the detail, and whether the pane is open.
-    func set(sidebar: WinUIView?, detail: WinUIView?, row: WinUIView?, open: Bool) {
-        stateui_winui_split_set(handle, sidebar?.handle, detail?.handle, row?.handle, open)
+    /// The two pages, the row over the detail, whether the pane is open, and
+    /// how wide it stands open - `paneLength` of zero or less leaves WinUI's own.
+    func set(sidebar: WinUIView?, detail: WinUIView?, row: WinUIView?, open: Bool, paneLength: Double = 0) {
+        stateui_winui_split_set(handle, sidebar?.handle, detail?.handle, row?.handle, open, paneLength)
     }
 
     override func presented(_ open: Bool) {

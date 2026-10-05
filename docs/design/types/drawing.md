@@ -1,9 +1,11 @@
 # Drawing on a canvas
 
-A `Canvas` draws what its closure writes with `Draw`. Drawing code is a
-closure, and a closure is the one thing the boundary to a host cannot carry,
-so a drawing crosses as what that code calls: one record per canvas
-operation, in order, which the host replays against its toolkit's own canvas.
+A `Canvas` draws what its closure writes with `Draw` - or, the way SwiftUI
+writes it, what it draws on the `GraphicsContext` it is handed, whose calls
+gather into the same records. Drawing code is a closure, and a closure is the
+one thing the boundary to a host cannot carry, so a drawing crosses as what
+that code calls: one record per canvas operation, in order, which the host
+replays against its toolkit's own canvas.
 
 ## A drawing is a list of records
 
@@ -77,6 +79,22 @@ shape from turning the rest of the drawing.
 `DrawingBuilder` collects the statements of a closure in order and, unlike
 `ViewBuilder`, has `buildArray`, so a plain `for` loop inside a drawing
 compiles: a chart draws a bar per value that way.
+
+A `strokeStyle` sets a stroke's width, cap and join together - the three a
+`StrokeStyle` carries - and a `fillStyle` the fill's rule, and both hold
+until the next of their kind like every other setting. They are how the
+closure form says `StrokeStyle` and `FillStyle`, which are spellings for the
+author; on the wire they are the same two records.
+
+## A canvas drawn from its size
+
+SwiftUI's `Canvas { context, size in … }` is a `GeometryReader` whose report
+builds the canvas: the context's calls gather into `Draw` records - a fill a
+`fillColor`, a `fillStyle` and a `fillPath`, a stroke a `strokeColor`, a
+`strokeStyle` and a `drawPath` - and the frame's report redraws it, so what
+depends on `size` is drawn at the size the layout lands. The records the
+context writes are the ones above: the closure form adds no kind to the
+contract.
 
 ## Text in a box
 

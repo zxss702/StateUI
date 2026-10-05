@@ -13,7 +13,10 @@ import AppKit
 /// Design: docs/design/platforms/appkit/conformance.md#what-the-driver-reads
 extension AppKitDriver {
     func menu(of element: MountedElement) throws -> String {
-        if element.type == .windowScene { return Self.said(try controller(of: element).pageMenuItemsForTesting) }
+        if element.type == .windowScene {
+            let items = try controller(of: element).pageMenuItemsForTesting
+            return Self.said(AppKitMenus.items(MenuEntry.flattened(items.groups) + items.menus))
+        }
         guard let view = (element.native as? AppKitElement)?.view else {
             throw DriverCannot("read the menu of \(element.type.name)")
         }

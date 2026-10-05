@@ -25,6 +25,15 @@ public enum MenuItemElementContract: Contract {
     /// The caption.
     public static let text = ElementProperty<Self, String>("text", layer: .native)
 
+    /// The key that chooses the item from the keyboard, shown beside its
+    /// caption the way the platform shows one.
+    public static let shortcut = ElementProperty<Self, KeyboardShortcut>("shortcut", layer: .native)
+
+    /// The caption as a lookup key, as `TextElementContract.textKey` is for
+    /// the elements that wear it.
+    public static let textKey = ElementProperty<Self, LocalizedStringKey>(
+        "textKey", layer: .native, travels: false)
+
     /// The tier's own members.
-    public static let members: [any ContractMember] = [clicked, icon, isDestructive, isEnabled, text]
+    public static let members: [any ContractMember] = [clicked, icon, isDestructive, isEnabled, shortcut, text, textKey]
 }

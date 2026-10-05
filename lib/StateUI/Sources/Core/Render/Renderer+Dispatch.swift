@@ -92,6 +92,11 @@ enum EventBuffer {
     nonisolated(unsafe) static var current: [PropValue] = []
 }
 
+/// The differ whose handler is running.
+enum DispatchContext {
+    nonisolated(unsafe) static var differ: Differ?
+}
+
 /// The outcome of the act being answered, read by the continuation it resumes.
 enum ReplyBuffer {
     // Written and read during one dispatch, on the UI thread.

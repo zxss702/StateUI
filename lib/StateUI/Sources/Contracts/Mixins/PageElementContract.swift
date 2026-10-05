@@ -15,6 +15,11 @@ public enum PageElementContract: Contract {
     /// The title.
     public static let title = ElementProperty<Self, String>("title", layer: .native)
 
+    /// The title as a lookup key, as `TextElementContract.textKey` is for
+    /// the elements that wear it.
+    public static let titleKey = ElementProperty<Self, LocalizedStringKey>(
+        "titleKey", layer: .native, travels: false)
+
     /// The mark the item wears on its icon - a count, a dot - as its container
     /// draws it.
     public static let badge = ElementProperty<Self, String>("badge", layer: .native)
@@ -34,6 +39,10 @@ public enum PageElementContract: Contract {
     /// A second line naming the current document or section, shown in the
     /// title area where the platform takes one.
     public static let subtitle = ElementProperty<Self, String>("subtitle", layer: .adaptive)
+
+    /// The subtitle as a lookup key, as `titleKey` is for the title.
+    public static let subtitleKey = ElementProperty<Self, LocalizedStringKey>(
+        "subtitleKey", layer: .native, travels: false)
 
     /// The path of the document the page stands for, where a platform shows
     /// one in its window's chrome.
@@ -59,7 +68,8 @@ public enum PageElementContract: Contract {
     /// The tier's own members.
     public static let members: [any ContractMember] = [
         badge, document, icon, interactiveDismissDisabled, preferredColumnWidth, presentationDetents,
-        presentationDragIndicator, subtitle, title, toolbarBackground, toolbarVisibility,
+        presentationDragIndicator, subtitle, subtitleKey, title, titleKey, toolbarBackground,
+        toolbarVisibility,
         windowBackground,
     ]
 }

@@ -5,6 +5,7 @@
 // The other half, which state was written, is `Renderer.stateChanged`.
 // Design: docs/design/core/invalidation.md#two-facts
 
+import Observation
 import Synchronization
 
 /// The read scopes open now, innermost last: one around each build the differ
@@ -60,4 +61,43 @@ enum ReadScope {
         reads.formUnion(found)
         return value
     }
+
+    /// `collect`, with an observation scope armed around the build: a build
+    /// that reads an `@Observable` model's property leaves the token its reads
+    /// keep, and the next write to a read property reports the token changed -
+    /// the ordinary walk then rebuilds exactly what read it.
+    /// Design: docs/design/core/state.md#an-observable-model
+    static func observed<T>(_ build: () -> T) -> (value: T, reads: Set<ObjectIdentifier>) {
+        var reads: Set<ObjectIdentifier> = []
+        let value = observed(into: &reads, build)
+        return (value, reads)
+    }
+
+    /// `collect(into:)`, under an observation scope.
+    static func observed<T>(
+        into reads: inout Set<ObjectIdentifier>,
+        _ build: () -> T
+    ) -> T {
+        let token = ObservationToken()
+
+        let value = withObservationTracking {
+            collect(into: &reads, build)
+        } onChange: {
+            Renderer.shared.stateChanged(token)
+        }
+
+        Renderer.shared.arm(token)
+        reads.insert(ObjectIdentifier(token))
+        return value
+    }
+}
+
+/// What an element's reads keep for the `@Observable` models its last build
+/// touched. `withObservationTracking` does not say which property moved, so a
+/// write is reported as a change of this token: it stands in the reads like a
+/// state's, and the changed set then rebuilds only the elements whose bodies
+/// read the model.
+final class ObservationToken: NamedState, @unchecked Sendable {
+    /// What an inspector calls a build a model write caused.
+    var origin: String? { "an @Observable model" }
 }

@@ -53,8 +53,18 @@ extension InputViewProperties {
     }
 
     /// What the field says while it is empty.
-    @_spi(Host) public func placeholder(_ value: String) -> Modified {
+    @_disfavoredOverload @_spi(Host) public func placeholder(_ value: String) -> Modified {
         setValue(InputViewContract.placeholder, value)
+    }
+
+    /// What the field says while it is empty, looked up - the caption's key
+    /// beside its `displayString` fallback, which the host's answer stands in
+    /// for.
+    @_spi(Host) public func placeholder(_ key: LocalizedStringKey) -> Modified {
+        modified {
+            $0.props[InputViewContract.placeholder.token] = key.displayString.propValue
+            $0.props[InputViewContract.placeholderKey.token] = key.propValue
+        }
     }
 
     /// The colour of that text.

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [BarElement](tiers/
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (16) | Realization | Notes |
+| Host | Created | Members (18) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 2 ✅ | `NSTabView`: tabless under a full-width select-one `NSSegmentedControl` beneath the toolbar - the split view detail's `NSSplitViewItemAccessoryViewController` on macOS 26 and later, else the title bar's bottom accessory - with top tabs where no window serves it |  |
 | UIKit | ✅ | 6 ✅ | `UITabBarController` |  |
@@ -71,7 +71,9 @@ What a page shows about itself where another container presents it as an item - 
 | `presentationDetents` | property | `[PresentationDetent]` | native |  |  |  |  |  |  |  |
 | `presentationDragIndicator` | property | `Visibility` | native |  |  |  |  |  |  |  |
 | `subtitle` | property | `String` | adaptive |  |  |  |  |  |  |  |
+| `subtitleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `title` | property | `String` | native | · | ✅ | · | ✅ | · |  | cannot read title of TabView - AppKit's driver has no path for it yet; Android Views: cannot read title of TabView - Android's driver has no path for it yet; GTK 4: cannot read title of TabView - GTK's driver has no path for it yet |
+| `titleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `toolbarBackground` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `toolbarVisibility` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `windowBackground` | property | `Color` | adaptive |  |  |  |  |  |  |  |

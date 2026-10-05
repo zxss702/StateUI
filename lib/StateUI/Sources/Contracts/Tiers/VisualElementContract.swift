@@ -55,6 +55,11 @@ public enum VisualElementContract: Contract {
     /// text.
     public static let hint = ElementProperty<Self, String>("hint", layer: .native)
 
+    /// The tip as a lookup key, as `TextElementContract.textKey` is for the
+    /// elements that wear it.
+    public static let hintKey = ElementProperty<Self, LocalizedStringKey>(
+        "hintKey", layer: .native, travels: false)
+
     /// Whether input passes through the element to what is under it.
     public static let ignoresInput = ElementProperty<Self, Bool>("ignoresInput", layer: .native)
 
@@ -202,7 +207,7 @@ public enum VisualElementContract: Contract {
         blendMode,
         accessibilityChildBehavior, accessibilityHeadingLevel, accessibilityHint, accessibilityLabel,
         accessibilityTraits, automationExcludedWithChildren, background, blur, contentTransition,
-        focus, frame, height, hint,
+        focus, frame, height, hint, hintKey,
         ignoresInput,
         isAccessibilityHidden, isEnabled, isFocusedChanged, isVisible, layoutDirection,
         matchedGeometry, matchedGeometrySource, maximumHeight, maximumWidth, minimumHeight,

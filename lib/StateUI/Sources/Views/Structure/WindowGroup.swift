@@ -45,6 +45,9 @@ public struct WindowGroup {
     /// own.
     var defaultSize: (width: Double, height: Double)? = nil
 
+    /// The commands the group's windows offer, `.commands` appending them.
+    var commands: [any Commands] = []
+
     /// A group that opens one window, in any scene that declares it.
     ///
     ///     WindowGroup(.debugInspector) { DebugInspector() }

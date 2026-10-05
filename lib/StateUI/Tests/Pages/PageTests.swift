@@ -446,6 +446,7 @@ final class PageTests: XCTestCase {
     func testPageChromeModifiersLandOnThePage() throws {
         let page = Self.arrived(
             Text("content")
+                .navigationTitle("Page")
                 .navigationSubtitle("Sub")
                 .navigationDocument("/tmp/doc.md")
                 .navigationBarBackButtonHidden(true)
@@ -454,7 +455,10 @@ final class PageTests: XCTestCase {
                 .toolbarBackground(.hidden, for: .windowToolbar)
                 .windowBackground(.black))
 
+        XCTAssertEqual(page.props[.title], .string("Page"))
+        XCTAssertNotNil(page.props[.titleKey])
         XCTAssertEqual(page.props[.subtitle], .string("Sub"))
+        XCTAssertNotNil(page.props[.subtitleKey])
         XCTAssertEqual(page.props[.document], .string("/tmp/doc.md"))
         XCTAssertEqual(page.props[.hasBackButton], .bool(false))
         XCTAssertEqual(page.props[.preferredColumnWidth], .numbers([180, 240]))
@@ -660,7 +664,7 @@ final class PageTests: XCTestCase {
             "accessibilityIdentifier": .string("bar.save"), "icon": .string("mark.png"),
             "isDestructive": .bool(true), "isEnabled": .bool(false),
             "placement": ToolbarItemPlacement.overflow.propValue, "priority": .number(2),
-            "text": .string("Save"),
+            "text": .string("Save"), "textKey": LocalizedStringKey("Save").propValue,
         ])
         XCTAssertEqual(item.eventNames, ["clicked"])
 
@@ -668,7 +672,9 @@ final class PageTests: XCTestCase {
         // own and a line.
         let file = try XCTUnwrap(page.at(.auto(7), .auto(8)))
         XCTAssertEqual(file.children.map(\.type), [.menuItem, .menu, .divider])
-        XCTAssertEqual(file.at(.auto(10), .auto(11))?.props, ["text": .string("Notes.txt")])
+        XCTAssertEqual(file.at(.auto(10), .auto(11))?.props, [
+            "text": .string("Notes.txt"), "textKey": LocalizedStringKey("Notes.txt").propValue,
+        ])
     }
 
     /// The window arrives whole too: every property its session can say, its

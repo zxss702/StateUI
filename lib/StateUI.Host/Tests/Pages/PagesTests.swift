@@ -186,6 +186,46 @@ final class PagesTests: XCTestCase {
         XCTAssertNil(chrome.sidebarToggle)
     }
 
+    /// `.toolbar { … }` writes its slot under whatever view it modified, not the page's own - the chrome gathers
+    /// every slot the page holds, splits the entries by where they were placed, and a nested arrangement keeps its
+    /// own.
+    func testTheChromeGathersToolbarSlotsFromTheWholePage() throws {
+        let entry = { (id: String, _ placement: ToolbarItemPlacement) in
+            self.node(id, .toolbarItem, [.placement: .enumeration(placement.rawValue)])
+        }
+        let runtime = runtime(node("window", .windowScene, children: [
+            node("stack", .navigationStack, children: [
+                node("page", .page, children: [
+                    node("content", .vStack, children: [
+                        node("nested", .hStack, children: [
+                            node("inner", .toolbarItems, children: [
+                                entry("save", .confirmationAction),
+                                entry("undo", .navigation),
+                                node("gap", .toolbarSpacer, [
+                                    .placement: .enumeration(ToolbarItemPlacement.primaryAction.rawValue),
+                                    .variant: .enumeration(ToolbarSpacerVariant.fixed.rawValue),
+                                ]),
+                            ]),
+                        ]),
+                        node("stack", .navigationStack, children: [
+                            node("innerpage", .page, children: [
+                                node("own", .toolbarItems, children: [entry("inner", .primaryAction)]),
+                            ]),
+                        ]),
+                    ]),
+                    node("top", .toolbarItems, children: [entry("top", .primaryAction)]),
+                ]),
+            ]),
+        ])) { _ in }
+        let page = try XCTUnwrap(try XCTUnwrap(runtime.tree.root)
+            .first(id: .manual("page")))
+
+        let actions = page.chromeActions
+        XCTAssertEqual(actions.leading.map(\.id), [.manual("undo")])
+        XCTAssertEqual(actions.primary.map(\.id), [.manual("save"), .manual("gap"), .manual("top")])
+        XCTAssertEqual(actions.overflow.map(\.id), [])
+    }
+
     /// Tabs pushed onto a stack keep the title of the page beneath them; tabs with nothing beneath name the window by
     /// the chosen tab, and a stack in a tab by its top page.
     func testTabsPushedOntoAStackKeepTheTitleBeneathThem() throws {
@@ -258,6 +298,84 @@ final class PagesTests: XCTestCase {
         XCTAssertEqual(file.map(\.icon), ["folder", nil, nil, nil], "an empty picture is none")
         XCTAssertEqual(file.map(\.isDestructive), [false, false, true, false])
         XCTAssertEqual(file.last?.entries.map(\.isEnabled), [false])
+    }
+
+    /// A button is a menu item too: its caption on its own `text` where the
+    /// button says one, else read off the first words its label's views carry,
+    /// its icon off the first picture - the way a command's button reads.
+    func testAButtonIsWalkedAsAnItemWithItsLabelsCaptionAndIcon() throws {
+        let runtime = runtime(node("menu", .menu, children: [
+            node("titled", .button, [.text: .string("Plain")]),
+            node("labelled", .button, children: [
+                node("words", .text, [.text: .string("Labelled")]),
+                node("glyph", .image, [.source: .string("star")]),
+            ]),
+            node("deep", .button, children: [
+                node("box", .hStack, children: [
+                    node("inner", .image, [.image: .string("flag")]),
+                    node("inner-words", .text, [.text: .string("Deep")]),
+                ]),
+            ]),
+            node("nothing", .button),
+        ])) { _ in }
+
+        let entries = MenuEntry.entries(of: try XCTUnwrap(runtime.tree.root))
+        XCTAssertEqual(entries.map(\.kind), [.item, .item, .item, .item])
+        XCTAssertEqual(entries.map(\.title), ["Plain", "Labelled", "Deep", ""])
+        XCTAssertEqual(entries.map(\.icon), [nil, "star", "flag", nil])
+    }
+
+    /// An entry's `shortcut` and a menu's `placement` ride the walk - the
+    /// commands' own words for a key equivalent and a region of the platform's
+    /// menus.
+    func testEntriesCarryTheirShortcutAndMenusTheirPlacement() throws {
+        let runtime = runtime(node("bar", .menuBar, children: [
+            node("group", .menu, [.placement: .enumeration(0)], children: [
+                node("about", .button, [.text: .string("About")]),
+            ]),
+            node("run", .menu, [.text: .string("Run")], children: [
+                node("build", .button,
+                    [.text: .string("Build"), .shortcut: .values([.name("b"), .enumeration(1)])]),
+            ]),
+        ])) { _ in }
+
+        let menus = MenuEntry.menus(of: try XCTUnwrap(runtime.tree.root))
+        XCTAssertEqual(menus.map(\.placement), [.init(rawValue: 0), nil])
+        XCTAssertEqual(menus[1].entries.first?.shortcut, KeyboardShortcut("b", modifiers: .command))
+
+        // A placement menu flattens to its entries; an ordinary one stays a submenu.
+        let flat = MenuEntry.flattened(menus)
+        XCTAssertEqual(flat.map(\.title), ["About", "Run"])
+        XCTAssertEqual(flat.map(\.kind), [.item, .submenu])
+    }
+
+    /// The scene's menus hang off the window, the page's off the page - the
+    /// chrome keeps them apart whichever page shows.
+    func testTheChromeKeepsTheScenesMenusApartFromThePages() throws {
+        let runtime = runtime(node("window", .windowScene, children: [
+            node("stack", .navigationStack, children: [
+                node("page", .page, children: [
+                    node("own", .menuBar, children: [
+                        node("file", .menu, [.text: .string("File")]),
+                    ]),
+                ]),
+            ]),
+            node("commands", .menuBar, children: [
+                node("run", .menu, [.text: .string("Run")]),
+                node("app", .menu, [.placement: .enumeration(0)], children: [
+                    node("about", .button, [.text: .string("About")]),
+                ]),
+            ]),
+        ])) { _ in }
+        let root = try XCTUnwrap(runtime.tree.root)
+
+        let chrome = WindowChrome(window: root, arrangement: root.first(id: .manual("stack")))
+        let scene = MenuEntry.menus(of: try XCTUnwrap(chrome.commands))
+        let page = MenuEntry.menus(of: try XCTUnwrap(chrome.menuBar))
+
+        XCTAssertEqual(scene.map(\.title), ["Run", ""], "a group has no caption of its own")
+        XCTAssertEqual(scene.map(\.placement), [nil, CommandGroupPlacement(rawValue: 0)])
+        XCTAssertEqual(page.map(\.title), ["File"])
     }
 
     /// A page's slots furnish its chrome and stand in none of its room; another element places every child.

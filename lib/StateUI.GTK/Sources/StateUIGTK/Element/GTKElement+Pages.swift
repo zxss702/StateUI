@@ -48,19 +48,36 @@ extension GTKElement {
         chrome.showsBar = value(.hasNavigationBar)?.bool != false
         chrome.offersBack = value(.hasBackButton)?.bool != false
         (chrome.barBackground, chrome.barForeground) = element.barColors
+        chrome.appMenu = Self.appMenuEntries(of: element)
 
         let actions = element.chromeActions
+        chrome.leadingActions = actions.leading.map(Self.action)
         chrome.actions = actions.primary.map(Self.action)
         chrome.overflow = actions.overflow.map(Self.action)
         return chrome
     }
 
-    /// A page's action as a button of its header bar.
+    /// The scene's menus as the app menu's entries - a command group's entries
+    /// spliced where they stand, a `CommandMenu` a submenu.
+    static func appMenuEntries(of element: MountedElement) -> [MenuEntry] {
+        guard let menus = element.enclosing(type: .windowScene)?.children.first(where: { $0.type == .menuBar })
+        else { return [] }
+        return MenuEntry.flattened(MenuEntry.menus(of: menus))
+    }
+
+    /// A page's toolbar entry as a widget of its header bar: a spacer's room, the view an item carries, or a
+    /// titled or pictured action.
     private static func action(_ item: MountedElement) -> GTKToolbarAction {
-        GTKToolbarAction(
+        var action = GTKToolbarAction(
             title: item.value(.text)?.string ?? "", icon: item.value(.icon)?.string,
             isEnabled: item.value(.isEnabled)?.bool ?? true,
             perform: { [weak item] in item?.gtk.send(.clicked, []) })
+        if item.type == .toolbarSpacer {
+            action.spacer = ToolbarSpacerVariant(rawValue: item.value(.variant)?.enumeration ?? 0)
+        } else {
+            action.view = item.children.lazy.compactMap(\.presentingElement).first?.gtk.view
+        }
+        return action
     }
 
     /// Writes each framed element's chrome on its header bar, through this arrangement and every one it holds;
@@ -87,7 +104,11 @@ extension GTKElement {
                 split.sidebarFrame?.show(sidebar.chrome)
                 sidebar.composeChrome()
             }
-            if let detail = children.dropFirst().first {
+            if children.count > 2, let content = children.dropFirst().first {
+                split.contentFrame?.show(content.chrome)
+                content.composeChrome()
+            }
+            if let detail = children.last, children.count > 1 {
                 if let frame = split.detailFrame {
                     var chrome = detail.chrome
                     chrome.sidebar = showing
@@ -117,7 +138,11 @@ extension GTKElement {
         case .navigationSplitView:
             guard let split = view as? GTKSplitView else { return }
             split.onPresentationChanged = { [weak self] presented in self?.sidebarChanged(to: presented) }
+            split.onVisibilityChanged = { [weak self] visibility in self?.columnsChanged(to: visibility) }
             if changed.contains(.isSidebarVisible) { split.present(value(.isSidebarVisible)?.bool == true) }
+            if changed.contains(.columnVisibility), let visibility = value(.columnVisibility) {
+                split.present(visibility: NavigationSplitViewVisibility(propValue: visibility) ?? .automatic)
+            }
         default:
             break
         }
@@ -148,17 +173,29 @@ extension GTKElement {
         host?.runtime.dispatch(handler, payload: [.number(Double(remaining - 1))])
     }
 
-    /// The user showed or hid a split view's sidebar through a header bar's button.
+    /// The user showed or hid a split view's sidebar through a header bar's button - a three-column split's answer
+    /// is a visibility, a two-column one's a Bool.
     func changeSidebarVisibility(to presented: Bool) {
         guard type == .navigationSplitView, let split = view as? GTKSplitView, split.isPresented != presented else { return }
 
-        split.present(presented)
-        sidebarChanged(to: presented)
+        if split.hasContentColumn {
+            split.present(visibility: presented ? .all : .doubleColumn)
+            columnsChanged(to: presented ? .all : .doubleColumn)
+        } else {
+            split.present(presented)
+            sidebarChanged(to: presented)
+        }
     }
 
     /// The sidebar showed or hid: the host layer tells its page and the state, and the chrome follows.
     func sidebarChanged(to presented: Bool) {
         host?.runtime.sidebarShown(element, presented)
+        host?.refreshChrome()
+    }
+
+    /// The split's columns showed or hid: the host layer tells the pages and the state, and the chrome follows.
+    func columnsChanged(to visibility: NavigationSplitViewVisibility) {
+        host?.runtime.columnsShown(element, visibility)
         host?.refreshChrome()
     }
 }

@@ -37,13 +37,23 @@ public struct Label: View {
 
     /// A label with its words and a platform symbol - SwiftUI's
     /// `Label("Star", systemImage: "star")`.
-    public init(_ title: String, systemImage: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, systemImage: String) {
         self.init(title: { Text(title) }, icon: { Image(systemName: systemImage) })
     }
 
+    /// A label with its words looked up and a platform symbol.
+    public init(_ titleKey: LocalizedStringKey, systemImage: String) {
+        self.init(title: { Text(titleKey) }, icon: { Image(systemName: systemImage) })
+    }
+
     /// A label with its words and a picture's file.
-    public init(_ title: String, image: ImageSource) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, image: ImageSource) {
         self.init(title: { Text(title) }, icon: { Image(image) })
+    }
+
+    /// A label with its words looked up and a picture's file.
+    public init(_ titleKey: LocalizedStringKey, image: ImageSource) {
+        self.init(title: { Text(titleKey) }, icon: { Image(image) })
     }
 
     /// The row itself.

@@ -11,7 +11,7 @@ enum AndroidRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
         "Content", "LeadingContent", "Map", "MenuBar", "Pin", "PositionIndicator", "TitleBar",
-        "TrailingContent",
+        "ToolbarSpacer", "TrailingContent",
     ]
 
     /// The entries this host presents with no view of their own - a span is a run of its label's text - so

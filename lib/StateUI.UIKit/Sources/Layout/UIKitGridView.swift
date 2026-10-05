@@ -26,6 +26,12 @@ final class UIKitGridView: UIKitLayoutView {
         didSet { if columnSpacing != oldValue { invalidate() } }
     }
 
+    /// A `LazyVGrid`'s columns: a flow fills them row first, an adaptive one
+    /// as many times as the room fits.
+    var flowColumns: [GridItem] = [] {
+        didSet { if flowColumns != oldValue { invalidate() } }
+    }
+
     /// The room inside the grid's own edge.
     var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidate() } }
@@ -46,13 +52,15 @@ final class UIKitGridView: UIKitLayoutView {
     override func contentSize(width: Double?) -> LayoutSize {
         GridArithmetic.size(
             of: items, rows: rows, columns: columns,
-            rowSpacing: rowSpacing, columnSpacing: columnSpacing, padding: padding, width: width)
+            rowSpacing: rowSpacing, columnSpacing: columnSpacing, padding: padding, width: width,
+            flow: flowColumns)
     }
 
     override func arrange(in bounds: Rect) {
         let places = GridArithmetic.places(
             of: items, rows: rows, columns: columns,
-            rowSpacing: rowSpacing, columnSpacing: columnSpacing, padding: padding, in: bounds, direction: direction)
+            rowSpacing: rowSpacing, columnSpacing: columnSpacing, padding: padding, in: bounds,
+            direction: direction, flow: flowColumns)
         for (item, place) in zip(items, places) {
             if let place { self.place(item, at: place) }
         }

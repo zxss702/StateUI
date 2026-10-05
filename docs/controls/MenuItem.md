@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [MenuItemElement](t
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (6) | Realization | Notes |
+| Host | Created | Members (8) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 3 ✅ · 1 ☑️ | `NSMenu` / `NSMenuItem` |  |
 | UIKit | ✅ | 6 ✅ | `UIMenu` / `UIAction` |  |
@@ -56,4 +56,6 @@ What every item a user chooses from has - a menu's entry, a toolbar's item: a ca
 | `icon` | property | `ImageSource` | adaptive | · | ✅ |  |  | · |  | cannot read icon of MenuItem - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read icon of MenuItem - GTK's driver has no path for it yet |
 | `isDestructive` | property | `Bool` | adaptive | · | ✅ | · |  |  |  | cannot read isDestructive of MenuItem - AppKit's driver has no path for it yet; Android Views: cannot read isDestructive of MenuItem - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot activate on MenuItem - Android's driver has no path for it yet; GTK 4: cannot activate on MenuItem - GTK's driver has no path for it yet |
+| `shortcut` | property | `KeyboardShortcut` | native |  |  |  |  |  |  |  |
 | `text` | property | `String` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read text of MenuItem - Android's driver has no path for it yet; GTK 4: cannot read text of MenuItem - GTK's driver has no path for it yet |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |

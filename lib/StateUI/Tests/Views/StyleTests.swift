@@ -724,11 +724,13 @@ final class StyleTests: XCTestCase {
         // the default label's, whose colour it does not take.
         XCTAssertEqual(stack.at(.auto(4))?.props, [
             "text": .string("Welcome"), "fontSize": .number(32),
+            "textKey": LocalizedStringKey("Welcome").propValue,
             "fontAttributes": FontAttributes.bold.propValue,
             "multilineTextAlignment": TextAlignment.center.propValue,
         ])
         XCTAssertEqual(stack.at(.auto(5))?.props, [
             "text": .string("Body text"), "fontSize": .number(14), "foregroundStyle": ink,
+            "textKey": LocalizedStringKey("Body text").propValue,
         ])
 
         // The button in the state its style declared for a disabled one, that

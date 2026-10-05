@@ -30,6 +30,10 @@
     /// The stack whose top page the way back takes, and the way back's words.
     public var back: (stack: MountedElement, title: String)?
 
+    /// The visible page's actions at the chrome's leading edge - navigation
+    /// and the cancelling action - by priority, then in the order written.
+    public var leadingActions: [MountedElement] = []
+
     /// The visible page's actions on the chrome, by priority, then in the order written.
     public var primaryActions: [MountedElement] = []
 
@@ -54,6 +58,12 @@
     /// The visible page's menu bar.
     public var menuBar: MountedElement?
 
+    /// The scene's own menus - `.commands` on the scene and on its window
+    /// groups, hanging off the window - standing whichever page shows. A menu
+    /// in it carrying a `placement` is a command group's: its entries splice
+    /// into the platform's own menus rather than standing as one.
+    public var commands: MountedElement?
+
     /// The split view whose sidebar the chrome's toggle shows and hides: the one the window shows.
     public var sidebarToggle: MountedElement?
 
@@ -75,12 +85,13 @@
         back = arrangement?.visibleBackStack.map { stack in
             (stack, stack.children[stack.children.count - 2].value(.backButtonTitle)?.string ?? "Back")
         }
-        if let page { (primaryActions, overflowActions) = page.chromeActions }
+        if let page { (leadingActions, primaryActions, overflowActions) = page.chromeActions }
         leading = titleBar?.slotContent(.leadingContent)
         center = titleBar?.slotContent(.content) ?? page?.slotContent(.titleView)
         trailing = titleBar?.slotContent(.trailingContent)
         (background, foreground) = (page ?? window).barColors
         menuBar = page?.children.first { $0.type == .menuBar }
+        commands = window.children.first { $0.type == .menuBar }
         sidebarToggle = arrangement?.type == .navigationSplitView ? arrangement : nil
     }
 

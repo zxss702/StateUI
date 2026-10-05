@@ -23,13 +23,13 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [MenuItemElement](t
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (8) | Realization | Notes |
+| Host | Created | Members (10) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
-| AppKit | 🔌 | 2 ✅ | `NSToolbarItem`; `NSMenuToolbarItem` overflow | only through the host's own: activate on ToolbarItem: the host's toolbar entry called, no toolbar item touched |
-| UIKit | ✅ | 6 ✅ | `UIBarButtonItem` |  |
+| AppKit | 🔌 | 2 ✅ | `NSToolbarItem`; `NSMenuToolbarItem` overflow; space for a spacer | only through the host's own: activate on ToolbarItem: the host's toolbar entry called, no toolbar item touched |
+| UIKit | ✅ | 6 ✅ | `UIBarButtonItem`; a spacer maps to the bar's own gap |  |
 | Android Views | · | 1 – | `Toolbar` `MenuItem` | cannot activate on ToolbarItem - Android's driver has no path for it yet |
-| WinUI 3 | ✅ | 7 ✅ | `CommandBar` `AppBarButton` |  |
-| GTK 4 | · |  | `GtkButton` in `GtkHeaderBar` | cannot activate on ToolbarItem - GTK's driver has no path for it yet |
+| WinUI 3 | ✅ | 7 ✅ | `CommandBar` `AppBarButton`; `AppBarSeparator` for a spacer |  |
+| GTK 4 | · |  | `GtkButton` in `GtkHeaderBar`; a spacer packs a separator | cannot activate on ToolbarItem - GTK's driver has no path for it yet |
 | Web |  |  | `<button>` in an ARIA `toolbar` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/ToolbarItemContract.swift`.
@@ -59,4 +59,6 @@ What every item a user chooses from has - a menu's entry, a toolbar's item: a ca
 | `icon` | property | `ImageSource` | adaptive | · | ✅ | · | ✅ | · |  | cannot read icon of ToolbarItem - AppKit's driver has no path for it yet; Android Views: cannot read icon of ToolbarItem - Android's driver has no path for it yet; GTK 4: cannot read icon of ToolbarItem - GTK's driver has no path for it yet |
 | `isDestructive` | property | `Bool` | adaptive |  | ✅ | · |  |  |  | not realized; Android Views: cannot read isDestructive of ToolbarItem - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot activate on ToolbarItem - Android's driver has no path for it yet; GTK 4: cannot activate on ToolbarItem - GTK's driver has no path for it yet |
+| `shortcut` | property | `KeyboardShortcut` | native |  |  |  |  |  |  |  |
 | `text` | property | `String` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read text of ToolbarItem - Android's driver has no path for it yet; GTK 4: cannot read text of ToolbarItem - GTK's driver has no path for it yet |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |

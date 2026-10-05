@@ -99,7 +99,9 @@ final class Differ {
             forget(rendered)
         }
 
-        return element(id: id, rendered: previous, node: tree)
+        let result = element(id: id, rendered: previous, node: tree)
+        lastRendered = result.node
+        return result
     }
 
     /// The clean walk: no fresh tree, and exactly the elements whose reads intersect
@@ -115,8 +117,13 @@ final class Differ {
         walkStamp += 1
         seedScope()
 
-        return revisit(rendered)
+        let result = revisit(rendered)
+        lastRendered = result.node
+        return result
     }
+
+    /// The root the last walk answered, so a dispatched handler can ask its tree.
+    private(set) var lastRendered: RenderedNode?
 
     /// One kept element: built again from its placeholder when its reads moved,
     /// walked for changed descendants when they did not.
@@ -191,9 +198,20 @@ final class Differ {
         return (rendered, patch)
     }
 
-    /// What an element's event runs, or nothing if the id is unknown.
+    /// What an element's event runs - the handler knows its own differ.
     func handler(_ id: Int) -> EventHandler? {
-        handlers[id]
+        guard let found = handlers[id] else { return nil }
+
+        return { [weak self] in
+            DispatchContext.differ = self
+            defer { DispatchContext.differ = nil }
+            try await found()
+        }
+    }
+
+    /// Whether the live tree hears `Text.LayoutKey`.
+    var watchesTextLayout: Bool {
+        lastRendered?.listens(to: ObjectIdentifier(Text.LayoutKey.self)) ?? false
     }
 
     /// The code objects the element of `id` lent its host, or nothing.

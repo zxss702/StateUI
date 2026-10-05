@@ -5,7 +5,7 @@
 // Design: docs/design/core/state.md#element-sessions
 
 /// A composed view's request for an object it keeps for its life.
-final class ElementSession {
+final class ElementSession: @unchecked Sendable {
     /// The type the object is offered as.
     let type: ObjectIdentifier
 

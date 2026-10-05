@@ -192,6 +192,7 @@ final class UIThreadTests: XCTestCase {
 
         let key = PersistentKey("mainThread.kept", of: Double.self)
         let kept = State(wrappedValue: 1.0, persistentKey: key)
+        _ = drainedActs()
 
         UIThreadExecutor.shared.poke()
         _ = UIThreadExecutor.shared.waitForWork()

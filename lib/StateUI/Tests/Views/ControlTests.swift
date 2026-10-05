@@ -95,6 +95,7 @@ final class ControlTests: XCTestCase {
                     .lineSpacing(8)
                     .lineLimit(2)
                     .minimumScaleFactor(0.5)
+                    .baselineOffset(2)
                     .textRenderer(ProbeTextRenderer())
                     .textSelection(.enabled)
                     .textDecorations([.underline, .strikethrough])
@@ -121,6 +122,9 @@ final class ControlTests: XCTestCase {
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityAddTraits(.isHeader))
+        let case0b =            ControlCase("TextImage", source: "Text.swift",
+                Text(Image("tab_list.png")) + Text(" marked")
+                    .baselineOffset(1))
         let case1 =             ControlCase("Button", source: "Button.swift",
                 Button("Increment", role: .destructive)
                     .stroke(.gray)
@@ -159,9 +163,11 @@ final class ControlTests: XCTestCase {
                     .aspect(.fill)
                     .isAnimating(true))
         let case6 =             ControlCase("Picker", source: "Picker.swift",
-                Picker(["Small", "Medium", "Large"])
-                    .selectedIndex(1)
-                    .title("Size")
+                Picker("Size", selection: State("Medium").projectedValue) {
+                    Text("Small")
+                    Text("Medium")
+                    Text("Large")
+                }
                     .tint(.gray)
                     .isOpen(false)
                     .onSelectedIndexChanged { _ in }
@@ -257,18 +263,30 @@ final class ControlTests: XCTestCase {
                     Text("*").id(name)
                 }
                 .position(1))
-        let case20 =             ControlCase("Grid", source: "Grid.swift",
-                Grid {
-                    Text("Top left")
+        let case20 =             ControlCase("Grid", sources: ["Grid.swift", "GridRow.swift"],
+                Grid(horizontalSpacing: 8, verticalSpacing: 12) {
+                    GridRow(alignment: .bottom) {
+                        Text("Top left")
+                        Text("Top right")
+                    }
 
                     Text("Spanning both")
-                        .gridRow(1)
-                        .gridColumnSpan(2)
                 }
                 .rows(.fixed(70), .auto)
                 .columns(.fill, .proportional(2))
                 .rowSpacing(12)
                 .columnSpacing(8))
+        let case20b =           ControlCase("LazyVGrid", source: "LazyVGrid.swift",
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(minimum: 128, maximum: 764), spacing: 12, alignment: .leading),
+                        GridItem(.adaptive(minimum: 128, maximum: 764)),
+                    ],
+                    spacing: 12
+                ) {
+                    Text("A cell")
+                    Text("Another")
+                })
         let case21 =             ControlCase("VStack", source: "StackLayouts.swift",
                 VStack(alignment: .leading, spacing: 12) {
                     Text("One")
@@ -701,7 +719,7 @@ final class ControlTests: XCTestCase {
                 .mask { RoundedRectangle(cornerRadius: 8).fill(.tomato) })
 
         return [
-            case0, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36, case37, case38, case39,
+            case0, case0b, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case20b, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36, case37, case38, case39,
         ]
     }
 
@@ -948,6 +966,9 @@ final class ControlTests: XCTestCase {
             // A style the host cannot be handed whole; the colour twin is
             // `foregroundStyle(Binding<Color>)`.
             "foregroundStyle",
+            // A lookup key beside its fallback, not a value to animate - the
+            // driven half is the string member's own twin.
+            "help", "placeholder",
         ]
         var values: Set<String> = []
         var twins: Set<String> = []

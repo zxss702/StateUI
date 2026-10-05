@@ -30,10 +30,12 @@ extension UIKitRegistrations {
             grid.applies([
                 GridContract.rows, GridContract.columns,
                 GridContract.rowSpacing, GridContract.columnSpacing,
+                GridContract.flowColumns,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.rows = values[GridContract.rows] ?? []
                 view.columns = values[GridContract.columns] ?? []
+                view.flowColumns = values[GridContract.flowColumns] ?? []
                 view.rowSpacing = values[GridContract.rowSpacing] ?? 0
                 view.columnSpacing = values[GridContract.columnSpacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)

@@ -77,10 +77,20 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
         node.write(ButtonContract.icon, icon)
     }
 
-    /// A button captioned `text`.
-    public init(_ text: String) {
+    /// A button captioned `content`, verbatim - a `String` is never looked
+    /// up; the literal that is a key is `Button(_ key:)`, which a literal
+    /// prefers.
+    @_disfavoredOverload public init<S: StringProtocol>(_ content: S) {
         node = Node(contract: ButtonContract.self)
-        node.write(TextElementContract.text, text)
+        node.write(TextElementContract.text, String(content))
+    }
+
+    /// A button captioned what `key` looks up - `Button("Save")` looks "Save"
+    /// up, as SwiftUI's does; `Button(someString)` shows it verbatim.
+    public init(_ key: LocalizedStringKey) {
+        node = Node(contract: ButtonContract.self)
+        node.write(TextElementContract.text, key.displayString)
+        node.write(TextElementContract.textKey, key)
     }
 
     /// A button whose caption is carried from a state, written by the host as
@@ -93,8 +103,15 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
 
     /// A button captioned `title`, marked as a destructive or a cancelling
     /// action where the platform marks one.
-    public init(_ title: String, role: ButtonRole) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, role: ButtonRole) {
         self.init(title)
+        node.write(ButtonContract.role, role)
+    }
+
+    /// A button captioned what `key` looks up, marked as a destructive or a
+    /// cancelling action where the platform marks one.
+    public init(_ key: LocalizedStringKey, role: ButtonRole) {
+        self.init(key)
         node.write(ButtonContract.role, role)
     }
 
@@ -102,8 +119,20 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
     /// spelling of `Button(title).onClicked(action)`.
     ///
     ///     Button("Save") { save() }
-    public init(_ title: String, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, action: @escaping EventHandler) {
         self = Button(title).onClicked(action)
+    }
+
+    /// A button captioned what `key` looks up, running `action` on a press.
+    public init(_ key: LocalizedStringKey, action: @escaping EventHandler) {
+        self = Button(key).onClicked(action)
+    }
+
+    /// The same, marked as a destructive or a cancelling action where the
+    /// platform marks one.
+    public init(_ key: LocalizedStringKey, role: ButtonRole, action: @escaping EventHandler) {
+        self = Button(key).onClicked(action)
+        node.write(ButtonContract.role, role)
     }
 
     /// An icon button running `action` on a press.
@@ -115,7 +144,7 @@ public struct Button: VisualElement, TextElement, FontElement, PaddingElement, B
     /// platform marks one.
     ///
     ///     Button("Delete", role: .destructive) { remove() }
-    public init(_ title: String, role: ButtonRole, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, role: ButtonRole, action: @escaping EventHandler) {
         self = Button(title).onClicked(action)
         node.write(ButtonContract.role, role)
     }

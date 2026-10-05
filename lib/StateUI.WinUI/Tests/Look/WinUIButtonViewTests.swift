@@ -31,6 +31,29 @@ final class WinUIButtonViewTests: XCTestCase {
         }
     }
 
+    /// A press on a button that keeps nothing takes its check back whole: the fill the look set is still drawn,
+    /// however often it is pressed - a button's third, indeterminate look holds none of it.
+    func testAPressOnAButtonThatKeepsNothingLeavesItsFill() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running {
+                VStack {
+                    Button("Go")
+                        .background(Color("#512BD4"))
+                        .frame(width: 120).frame(height: 40)
+                        .horizontalAlignment(.start)
+                }
+            }
+            let button = try XCTUnwrap(host.views(WinUIButtonView.self).first)
+
+            button.invoke()
+            host.settle { button.pixels(at: [(60, 20)]) == [0xFF51_2BD4] }
+            XCTAssertEqual(button.pixels(at: [(60, 20)]), [0xFF51_2BD4], "pressed once, the fill keeps")
+            button.invoke()
+            host.settle { true }
+            XCTAssertEqual(button.pixels(at: [(60, 20)]), [0xFF51_2BD4], "pressed twice, the fill keeps")
+        }
+    }
+
     /// A button nothing styles is WinUI's own: the platform's fill, not the application's.
     func testAButtonNothingStylesIsWinUIsOwn() throws {
         try onUIThread {

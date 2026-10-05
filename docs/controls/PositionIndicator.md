@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (97) | Realization | Notes |
+| Host | Created | Members (98) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  |  | composed by StateUI | not realized |
 | UIKit |  |  | composed by StateUI | not realized |
@@ -75,6 +75,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `height` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isEnabled` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |

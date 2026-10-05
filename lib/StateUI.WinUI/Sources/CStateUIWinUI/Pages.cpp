@@ -70,6 +70,11 @@ namespace {
         return bar.RightHeader().as<controls::StackPanel>();
     }
 
+    /// The title bar's left header: the app menu's button first, then the authored leading content.
+    controls::StackPanel leftHeader(controls::TitleBar const &bar) {
+        return bar.LeftHeader().as<controls::StackPanel>();
+    }
+
     void fill(controls::ContentControl const &slot, StateUIObjectRef element) {
         auto shown = element ? as<xaml::UIElement>(element) : xaml::UIElement{nullptr};
         if (slot.Content() != shown) slot.Content(shown);
@@ -89,7 +94,12 @@ extern "C" StateUIObjectRef stateui_winui_title_bar_make(int64_t view) {
         bar.Tag(winrt::box_value(view));
         bar.BackRequested([view](controls::TitleBar const &, IInspectable const &) { callbacks.chosen(view, -1); });
         bar.PaneToggleRequested([view](controls::TitleBar const &, IInspectable const &) { callbacks.chosen(view, -2); });
-        bar.LeftHeader(controls::ContentControl());
+        controls::StackPanel left;
+        left.Orientation(controls::Orientation::Horizontal);
+        left.Spacing(4);
+        left.Children().Append(controls::ContentControl());
+        left.Children().Append(controls::ContentControl());
+        bar.LeftHeader(left);
         bar.Content(controls::ContentControl());
         bar.Loaded([](IInspectable const &sender, xaml::RoutedEventArgs const &) {
             capCaptionRoom(sender.as<controls::TitleBar>());
@@ -160,7 +170,8 @@ extern "C" int32_t stateui_winui_title_bar_words(StateUIObjectRef handle) {
 
 extern "C" void stateui_winui_title_bar_set_actions(
     StateUIObjectRef handle, char const *const *texts, char const *const *identifiers, char const *const *icons,
-    bool const *overflows, bool const *enabled, int32_t count
+    bool const *overflows, bool const *enabled, StateUIObjectRef const *contents, int32_t const *kinds,
+    int32_t count
 ) {
     try {
         auto bar = borrow<controls::TitleBar>(handle);
@@ -169,6 +180,20 @@ extern "C" void stateui_winui_title_bar_set_actions(
         actions.PrimaryCommands().Clear();
         actions.SecondaryCommands().Clear();
         for (int32_t index = 0; index < count; ++index) {
+            auto commands = overflows[index] ? actions.SecondaryCommands() : actions.PrimaryCommands();
+            // A spacer: the platform's gap between entries, or all the room a flexible one takes - both a
+            // separator here, a CommandBar having no stretchable room of its own.
+            if (kinds[index] != 0) {
+                commands.Append(controls::AppBarSeparator());
+                continue;
+            }
+            // A view the item carries stands in the button's place.
+            if (contents[index]) {
+                controls::AppBarElementContainer container;
+                container.Content(borrow<xaml::UIElement>(contents[index]));
+                commands.Append(container);
+                continue;
+            }
             controls::AppBarButton button;
             button.Label(text(texts[index]));
             button.IsEnabled(enabled[index]);
@@ -187,7 +212,7 @@ extern "C" void stateui_winui_title_bar_set_actions(
             button.Click([view, index](IInspectable const &, xaml::RoutedEventArgs const &) {
                 callbacks.chosen(view, index);
             });
-            (overflows[index] ? actions.SecondaryCommands() : actions.PrimaryCommands()).Append(button);
+            commands.Append(button);
         }
     } catch (...) {
         report("setting a title bar's actions");
@@ -199,11 +224,20 @@ extern "C" void stateui_winui_title_bar_set_slots(
 ) {
     try {
         auto bar = borrow<controls::TitleBar>(handle);
-        fill(bar.LeftHeader().as<controls::ContentControl>(), leading);
+        fill(leftHeader(bar).Children().GetAt(1).as<controls::ContentControl>(), leading);
         fill(bar.Content().as<controls::ContentControl>(), center);
         fill(rightHeader(bar).Children().GetAt(1).as<controls::ContentControl>(), trailing);
     } catch (...) {
         report("filling a title bar");
+    }
+}
+
+extern "C" void stateui_winui_title_bar_set_app_menu(StateUIObjectRef handle, StateUIObjectRef button) {
+    try {
+        fill(leftHeader(borrow<controls::TitleBar>(handle)).Children().GetAt(0).as<controls::ContentControl>(),
+            button);
+    } catch (...) {
+        report("filling a title bar's app menu");
     }
 }
 
@@ -245,7 +279,8 @@ extern "C" StateUIObjectRef stateui_winui_split_make(int64_t view, double expand
 }
 
 extern "C" void stateui_winui_split_set(
-    StateUIObjectRef handle, StateUIObjectRef pane, StateUIObjectRef content, StateUIObjectRef row, bool open
+    StateUIObjectRef handle, StateUIObjectRef pane, StateUIObjectRef content, StateUIObjectRef row, bool open,
+    double paneLength
 ) {
     try {
         auto split = borrow<controls::NavigationView>(handle);
@@ -255,6 +290,7 @@ extern "C" void stateui_winui_split_set(
         standInRow(detail, 0, row);
         standInRow(detail, 1, content);
         if (split.IsPaneOpen() != open) split.IsPaneOpen(open);
+        if (paneLength > 0 && split.OpenPaneLength() != paneLength) split.OpenPaneLength(paneLength);
     } catch (...) {
         report("setting a split view");
     }

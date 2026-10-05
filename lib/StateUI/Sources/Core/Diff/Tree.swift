@@ -107,6 +107,17 @@ final class RenderedNode {
     /// them.
     var preferenceWatches: [PreferenceWatch] = []
 
+    /// A text's layout box as this element last held it, so a rebuilt text
+    /// under it takes the last report over (`TextLayoutBox.inherit`).
+    var textLayoutBox: TextLayoutBox?
+
+    /// Whether this element or one under it watches `key` - what a pushed
+    /// report checks before it asks for a render.
+    func listens(to key: ObjectIdentifier) -> Bool {
+        preferenceWatches.contains { $0.box.key == key }
+            || children.contains { $0.listens(to: key) }
+    }
+
     /// The numbers its engines are registered under, in written order; the closures
     /// live on the board.
     var engines: [Int] = []

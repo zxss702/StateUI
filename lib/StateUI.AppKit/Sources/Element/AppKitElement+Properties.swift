@@ -82,7 +82,9 @@ extension AppKitElement {
             return scroll
 
         case .text:
-            return AppKitLabelView()
+            let label = AppKitLabelView()
+            label.onLaidOut = { [weak self] in self?.reportTextLayout() }
+            return label
 
         case .toolbarItem:
             // The window's toolbar makes the native item; see visibleToolbarActions.
@@ -173,6 +175,7 @@ extension AppKitElement {
             // the user makes walks into the first child's page lifetime,
             // which no contract describes, so the closure stays here.
             split.onPresentationChanged = { [weak self] presented in self?.sidebarShown(presented) }
+            split.onVisibilityChanged = { [weak self] visibility in self?.columnsShown(visibility) }
         }
 
         if let layers = view as? AppKitZStackView {
@@ -303,7 +306,9 @@ extension AppKitElement {
     }
 
     /// A label's words: its spans as runs over the label's own look (`MountedElement.textRuns`), else its own words
-    /// in its case.
+    /// in its case. Each run is tagged `.stateUIRunIndex` so a layout report
+    /// can tell which span a laid-out run came from; a picture run is an
+    /// attachment at its source's size on the font's line.
     /// Design: docs/design/host/tree.md#runs-of-words
     func attributedLabelText() -> NSAttributedString {
         let look = element.textLook
@@ -311,16 +316,36 @@ extension AppKitElement {
         let labelCase = value(.textCase)?.enumeration.flatMap(TextCase.init(rawValue:)) ?? .none
         let runs = element.textRuns ?? [TextRun(text: labelCase.applied(to: string(.text) ?? ""), look: TextLook())]
         let result = NSMutableAttributedString()
-        for run in runs {
+        for (index, run) in runs.enumerated() {
             let runLook = run.look.over(look)
             let font = appKitFont(
                 family: runLook.family, size: runLook.size, attributes: runLook.attributes,
                 textStyle: runLook.textStyle, weight: runLook.weight, design: runLook.design,
                 fallback: fallbackFont)
-            result.append(NSAttributedString(
-                string: run.text, attributes: appKitAttributes(runLook, font: font, fallbackColor: .labelColor)))
+            var attributes = appKitAttributes(runLook, font: font, fallbackColor: .labelColor)
+            attributes[.stateUIRunIndex] = index
+
+            if let source = run.image, let picture = attachmentImage(source) {
+                let attachment = NSTextAttachment()
+                attachment.image = picture
+                let offset = runLook.baselineOffset ?? 0
+                attachment.bounds = NSRect(
+                    x: 0, y: offset,
+                    width: picture.size.width, height: picture.size.height)
+                result.append(NSAttributedString(attachment: attachment, attributes: attributes))
+            } else {
+                result.append(NSAttributedString(string: run.text, attributes: attributes))
+            }
         }
         return result
+    }
+
+    /// The picture a span's `image` names, as an Image element resolves one.
+    private func attachmentImage(_ source: ImageSource) -> NSImage? {
+        if let symbol = source.symbol {
+            return NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+        }
+        return source.isEmpty ? nil : image(named: source.file)
     }
 
     /// The most lines a label's words stand on, by the host layer's rule; none for no bound.

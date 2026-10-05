@@ -53,6 +53,10 @@
         case .announce:
             toolkit.announce(call.arguments.first?.string ?? "")
             reply(call, [])
+        case .localizedString:
+            let key = call.arguments.first.flatMap(LocalizedStringKey.init(propValue:))
+            let resolved = key.flatMap { tree()?.localization($0) } ?? key?.displayString ?? ""
+            reply(call, [.string(resolved)])
         case .hideOnScreenKeyboard:
             reply(call, [.bool(toolkit.hideOnScreenKeyboard())])
         case .focus, .unfocus:

@@ -16,6 +16,17 @@ public enum MenuContract: ElementContract {
     /// The caption.
     public static let text = ElementProperty<Self, String>("text", layer: .native)
 
+    /// The caption as a lookup key, as `TextElementContract.textKey` is for
+    /// the elements that wear it.
+    public static let textKey = ElementProperty<Self, LocalizedStringKey>(
+        "textKey", layer: .native, travels: false)
+
+    /// The menu's place among the platform's own menus, where the element
+    /// stands for a command group rather than a menu of its own: the region
+    /// its entries splice into, nil where the menu is an ordinary one.
+    public static let placement = ElementProperty<Self, CommandGroupPlacement>(
+        "placement", layer: .adaptive, travels: false, cleared: false)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [isEnabled, text]
+    public static let members: [any ContractMember] = [isEnabled, placement, text, textKey]
 }

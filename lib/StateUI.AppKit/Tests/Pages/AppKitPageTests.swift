@@ -957,7 +957,9 @@ final class AppKitPageTests: XCTestCase {
             details,
         ])))
 
-        let menu = try XCTUnwrap(renderer.windowsForTesting.first?.pageMenuItemsForTesting.first)
+        let menu = try XCTUnwrap(renderer.windowsForTesting.first.map {
+            AppKitMenus.items($0.pageMenuItemsForTesting.menus)
+        }?.first)
         XCTAssertEqual(menu.title, "File")
         XCTAssertEqual(menu.submenu?.items.map(\.title), ["Save", "", "Recent"])
         XCTAssertEqual(menu.submenu?.items.last?.submenu?.items.map(\.title), ["notes.txt"])

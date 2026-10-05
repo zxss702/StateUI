@@ -74,7 +74,27 @@ public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmen
     ///   - selection: the chosen value, borrowed two-way.
     ///   - content: the choices, tagged.
     public init<Selection: Hashable & HostRepresentable, Content: View>(
+        _ title: LocalizedStringKey,
+        selection: Binding<Selection>,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(title.displayString, key: title, selection: selection, content: content)
+    }
+
+    /// The same, its title verbatim - a `String` is never looked up.
+    @_disfavoredOverload public init<Selection: Hashable & HostRepresentable, S: StringProtocol, Content: View>(
+        _ title: S,
+        selection: Binding<Selection>,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(String(title), key: nil, selection: selection, content: content)
+    }
+
+    /// The shared building of the tagged forms: `title` shown verbatim, `key`
+    /// carried for the host's tables where one came in.
+    private init<Selection: Hashable & HostRepresentable, Content: View>(
         _ title: String,
+        key: LocalizedStringKey?,
         selection: Binding<Selection>,
         @ViewBuilder content: () -> Content
     ) {
@@ -90,6 +110,7 @@ public struct Picker: VisualElement, TextStyleElement, FontElement, TextAlignmen
 
         self.init(options)
         node.write(PickerContract.title, title)
+        if let key { node.write(PickerContract.titleKey, key) }
         node.write(
             PickerContract.selectedIndex,
             tags.firstIndex(of: selection.wrappedValue.propValue) ?? -1)

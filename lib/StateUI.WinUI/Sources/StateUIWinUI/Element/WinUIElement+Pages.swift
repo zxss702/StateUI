@@ -40,7 +40,13 @@ extension WinUIElement {
             split.onPresentationChanged = { [weak self] presented in
                 WinUIDoorbell.afterPass { [weak self] in self?.sidebarShown(presented) }
             }
+            split.onVisibilityChanged = { [weak self] visibility in
+                WinUIDoorbell.afterPass { [weak self] in self?.columnsShown(visibility) }
+            }
             if changed.contains(.isSidebarVisible) { split.present(value(.isSidebarVisible)?.bool == true) }
+            if changed.contains(.columnVisibility), let visibility = value(.columnVisibility) {
+                split.present(visibility: NavigationSplitViewVisibility(propValue: visibility) ?? .automatic)
+            }
         default:
             break
         }
@@ -64,6 +70,12 @@ extension WinUIElement {
     /// The sidebar showed or hid: the host layer tells its page and the state, and the chrome follows.
     private func sidebarShown(_ presented: Bool) {
         host?.runtime.sidebarShown(element, presented)
+        host?.refreshWindowChrome()
+    }
+
+    /// The split's columns showed or hid: the host layer tells the pages and the state, and the chrome follows.
+    private func columnsShown(_ visibility: NavigationSplitViewVisibility) {
+        host?.runtime.columnsShown(element, visibility)
         host?.refreshWindowChrome()
     }
 }

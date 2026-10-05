@@ -78,10 +78,12 @@ extension AppKitRegistrations {
             grid.applies([
                 GridContract.rows, GridContract.columns,
                 GridContract.rowSpacing, GridContract.columnSpacing,
+                GridContract.flowColumns,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.rows = Self.gridLengths(values[GridContract.rows])
                 view.columns = Self.gridLengths(values[GridContract.columns])
+                view.flowColumns = values[GridContract.flowColumns] ?? []
                 view.rowSpacing = CGFloat(values[GridContract.rowSpacing] ?? 0)
                 view.columnSpacing = CGFloat(values[GridContract.columnSpacing] ?? 0)
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])

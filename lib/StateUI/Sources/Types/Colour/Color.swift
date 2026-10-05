@@ -84,6 +84,22 @@ public struct Color: Equatable, Sendable, HostRepresentable {
             alpha: Color.channel(alpha)))
     }
 
+    /// A colour from its channels as fractions of full, SwiftUI's spelling:
+    /// red, green and blue each from 0 to 1, and an alpha from 0, invisible,
+    /// to 1, opaque - the default.
+    ///
+    ///     Color(red: 0.61, green: 0.74, blue: 0.65)
+    ///
+    /// A value outside 0-1 is held to the range, rounded to the channel it
+    /// lands nearest.
+    public init(red: Double, green: Double, blue: Double, alpha: Double = 1) {
+        self.init(Rgba(
+            red: Color.channel(red),
+            green: Color.channel(green),
+            blue: Color.channel(blue),
+            alpha: Color.channel(alpha)))
+    }
+
     /// Four bytes under the colour kind, or both halves as a themed pair.
     public var propValue: PropValue {
         guard let dark else { return Color.tagged(light) }
@@ -175,6 +191,12 @@ public struct Color: Equatable, Sendable, HostRepresentable {
     /// An Int as a channel, held to the range a channel has.
     private static func channel(_ value: Int) -> UInt8 {
         UInt8(value < 0 ? 0 : (value > 255 ? 255 : value))
+    }
+
+    /// A fraction of full as a channel, held to the range and rounded.
+    private static func channel(_ value: Double) -> UInt8 {
+        guard value.isFinite else { return 0 }
+        return UInt8((min(1, max(0, value)) * 255).rounded())
     }
 
 }

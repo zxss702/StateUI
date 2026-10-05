@@ -713,7 +713,9 @@ enum SourceTree {
     /// A ToolbarItem and the menu types are items - a caption, a picture and
     /// something to run - and they belong to a PAGE rather than sitting in
     /// one, so they have no case and no style. Their modifiers are exercised
-    /// by `PageBarTests`, which is where a page is described.
+    /// by `PageBarTests`, which is where a page is described. The slot a
+    /// `.toolbar` block writes and the room a spacer takes stand the same:
+    /// page furniture, covered by `ToolbarContentTests`.
     ///
     /// A Span is one run of text inside a Text - text and a font, and no
     /// opacity, no margin, no size - so it can neither be built alone nor
@@ -728,13 +730,16 @@ enum SourceTree {
     /// A Pin is a map's marker - a label, an address and a point - so it
     /// cannot be built alone or styled, and its modifiers are exercised by the
     /// Map case, which builds both.
+    /// A `GridRow` is structure a `Grid` reads - a row's cells laid one to a
+    /// column - never an element a host mounts; the Grid case exercises it.
     static let notViews: Set<String> = [
         "Spans", "Span",
-        "ToolbarItem", "Menu",
+        "ToolbarItem", "ToolbarItems", "ToolbarSpacer", "Menu",
         "MenuItem", "Divider",
         "ContextMenu",
         "Popover",
         "Pin",
+        "GridRow",
     ]
 
     /// The files of the shared view tier: the tiers every view wears, whose

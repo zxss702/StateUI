@@ -24,6 +24,9 @@ final class AppKitGridView: AppKitTravellingLayout, AppKitWidthConstrainedMeasur
     var columnSpacing: CGFloat = 0 {
         didSet { if columnSpacing != oldValue { invalidateMeasurements() } }
     }
+    var flowColumns: [GridItem] = [] {
+        didSet { if flowColumns != oldValue { invalidateMeasurements() } }
+    }
     var padding = NSEdgeInsets() {
         didSet { if !NSEdgeInsetsEqual(padding, oldValue) { invalidateMeasurements() } }
     }
@@ -58,7 +61,8 @@ final class AppKitGridView: AppKitTravellingLayout, AppKitWidthConstrainedMeasur
     private func measuredContentSize(width: CGFloat?) -> NSSize {
         NSSize(GridArithmetic.size(
             of: items.occupying, rows: rows, columns: columns, rowSpacing: Double(rowSpacing),
-            columnSpacing: Double(columnSpacing), padding: EdgeInsets(padding), width: width.map(Double.init)))
+            columnSpacing: Double(columnSpacing), padding: EdgeInsets(padding), width: width.map(Double.init),
+            flow: flowColumns))
     }
 
     override func layout() {
@@ -68,7 +72,7 @@ final class AppKitGridView: AppKitTravellingLayout, AppKitWidthConstrainedMeasur
         let places = GridArithmetic.places(
             of: items.occupying, rows: rows, columns: columns, rowSpacing: Double(rowSpacing),
             columnSpacing: Double(columnSpacing), padding: EdgeInsets(padding), in: bounds.placed,
-            direction: direction)
+            direction: direction, flow: flowColumns)
         for (item, place) in zip(items.occupying, places) {
             if let place { self.place(item, at: NSRect(placed: place)) }
         }

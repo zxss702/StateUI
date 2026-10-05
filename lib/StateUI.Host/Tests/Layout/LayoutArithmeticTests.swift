@@ -307,6 +307,70 @@ final class LayoutArithmeticTests: XCTestCase {
         }, [84], "a scroller's document")
     }
 
+    /// A flow fills its columns row first, each row as tall as its cells - the rows counted,
+    /// not stated.
+    @MainActor
+    func testAFlowFillsItsColumnsRowFirst() {
+        let items = [Child(width: 10, height: 10), Child(width: 10, height: 20), Child(width: 10, height: 10)]
+        let flow = [GridItem(.fixed(40)), GridItem(.fixed(40))]
+
+        let places = GridArithmetic.places(
+            of: items, rows: [], columns: [], rowSpacing: 4, columnSpacing: 0, padding: EdgeInsets(0),
+            in: Rect(0, 0, 100, 60), direction: .leftToRight, flow: flow)
+        let size = GridArithmetic.size(
+            of: items, rows: [], columns: [], rowSpacing: 4, columnSpacing: 0, padding: EdgeInsets(0),
+            width: 100, flow: flow)
+
+        XCTAssertEqual(places[0], Rect(0, 0, 40, 20), "the first cell's row is as tall as its tallest")
+        XCTAssertEqual(places[1], Rect(40, 0, 40, 20))
+        XCTAssertEqual(places[2], Rect(0, 24, 40, 10), "the third cell opens the second row")
+        XCTAssertEqual(size.height, 34)
+        XCTAssertEqual(size.width, 80)
+    }
+
+    /// An adaptive item stands for as many columns of its minimum as the room fits, each a
+    /// bounded share of what is left.
+    @MainActor
+    func testAnAdaptiveItemFitsAsManyColumnsAsTheRoomAllows() {
+        let items = [Child(width: 10, height: 10), Child(width: 10, height: 10), Child(width: 10, height: 10)]
+        let flow = [GridItem(.adaptive(minimum: 40))]
+
+        let wide = GridArithmetic.places(
+            of: items, rows: [], columns: [], rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0),
+            in: Rect(0, 0, 110, 40), direction: .leftToRight, flow: flow)
+
+        XCTAssertEqual(wide.map { $0?.x }, [0, 55, 0], "110 points fits two columns of 40")
+        XCTAssertEqual(wide.map { $0?.width }, [55, 55, 55])
+        XCTAssertEqual(wide.map { $0?.y }, [0, 0, 10])
+
+        let narrow = GridArithmetic.places(
+            of: items, rows: [], columns: [], rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0),
+            in: Rect(0, 0, 50, 60), direction: .leftToRight, flow: flow)
+
+        XCTAssertEqual(narrow.map { $0?.x }, [0, 0, 0], "50 points fits one column of 40")
+        XCTAssertEqual(narrow.map { $0?.width }, [50, 50, 50])
+    }
+
+    /// A flexible column keeps the bounds it named: the room's share, never under its minimum
+    /// nor over its maximum.
+    @MainActor
+    func testAFlexibleColumnKeepsItsBounds() {
+        let items = [Child(width: 10, height: 10), Child(width: 10, height: 10)]
+        let flow = [GridItem(.flexible(minimum: 20, maximum: 60)), GridItem(.fixed(20))]
+
+        let wide = GridArithmetic.places(
+            of: items, rows: [], columns: [], rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0),
+            in: Rect(0, 0, 100, 20), direction: .leftToRight, flow: flow)
+        let narrow = GridArithmetic.places(
+            of: items, rows: [], columns: [], rowSpacing: 0, columnSpacing: 0, padding: EdgeInsets(0),
+            in: Rect(0, 0, 30, 20), direction: .leftToRight, flow: flow)
+
+        XCTAssertEqual(wide[0]?.width, 60, "the share is capped at the maximum")
+        XCTAssertEqual(wide[1]?.x, 60)
+        XCTAssertEqual(narrow[0]?.width, 20, "and floored at the minimum")
+        XCTAssertEqual(narrow[1]?.x, 20)
+    }
+
     /// A kept size answers for its width until it is forgotten; a pass needs at most a few.
     @MainActor
     func testAMeasurementIsKeptPerOfferedWidth() {

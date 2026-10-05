@@ -109,13 +109,18 @@ namespace {
         return nullptr;
     }
 
-    /// The entries of each menu an element offers: its context menu's, or each of a bar's menus.
+    /// The entries of each menu an element offers: its context menu's, a button's flyout's, or each of a bar's
+    /// menus.
     std::vector<Entries> menus(xaml::UIElement const &element) {
         std::vector<Entries> found;
         if (auto bar = element.try_as<controls::MenuBar>()) {
             for (auto const &menu : bar.Items()) found.push_back(menu.Items());
         } else if (auto flyout = element.ContextFlyout().try_as<controls::MenuFlyout>()) {
             found.push_back(flyout.Items());
+        } else if (auto button = element.try_as<controls::Button>()) {
+            if (auto flyout = button.Flyout().try_as<controls::MenuFlyout>()) {
+                found.push_back(flyout.Items());
+            }
         }
         return found;
     }
@@ -140,6 +145,108 @@ extern "C" void stateui_winui_set_context_menu(
         holdHitArea(element, view);
     } catch (...) {
         report("giving a view its context menu");
+    }
+}
+
+extern "C" StateUIObjectRef stateui_winui_menu_button_make(int64_t view) {
+    try {
+        // A menu living in the view: a `Button` whose `Flyout` a press opens, its face a row - the label child
+        // before a chevron the indicator setting shows or hides.
+        controls::Button button;
+        controls::StackPanel face;
+        face.Orientation(controls::Orientation::Horizontal);
+        face.Spacing(2);
+        controls::TextBlock chevron;
+        chevron.FontFamily(xaml::Media::FontFamily(L"Segoe Fluent Icons, Segoe MDL2 Assets"));
+        chevron.FontSize(12);
+        chevron.Text(L"\uE70D");
+        chevron.VerticalAlignment(xaml::VerticalAlignment::Center);
+        face.Children().Append(chevron);
+        button.Content(face);
+        button.Click([view](IInspectable const &, xaml::RoutedEventArgs const &) { callbacks.clicked(view); });
+        button.RegisterPropertyChangedCallback(
+            controls::Primitives::ButtonBase::IsPressedProperty(),
+            [view](xaml::DependencyObject const &sender, xaml::DependencyProperty const &) {
+                callbacks.held(view, sender.as<controls::Primitives::ButtonBase>().IsPressed());
+            });
+        return detach(button);
+    } catch (...) {
+        report("making a menu button");
+        return nullptr;
+    }
+}
+
+extern "C" void stateui_winui_menu_button_set_face(StateUIObjectRef handle, StateUIObjectRef content) {
+    try {
+        auto face = borrow<controls::Button>(handle).Content().as<controls::StackPanel>();
+        auto children = face.Children();
+        if (children.Size() > 1) children.RemoveAt(0);
+        if (content) children.InsertAt(0, as<xaml::UIElement>(content));
+    } catch (...) {
+        report("giving a menu button its face");
+    }
+}
+
+extern "C" void stateui_winui_menu_button_set_indicator(StateUIObjectRef handle, int32_t shown) {
+    try {
+        auto face = borrow<controls::Button>(handle).Content().as<controls::StackPanel>();
+        face.Children().GetAt(face.Children().Size() - 1)
+            .Visibility(shown ? xaml::Visibility::Visible : xaml::Visibility::Collapsed);
+    } catch (...) {
+        report("showing a menu button's chevron or hiding it");
+    }
+}
+
+extern "C" void stateui_winui_menu_button_set_borderless(StateUIObjectRef handle, int32_t borderless) {
+    try {
+        auto button = borrow<controls::Button>(handle);
+        if (!borderless) {
+            button.ClearValue(xaml::FrameworkElement::StyleProperty());
+            return;
+        }
+        auto resources = xaml::Application::Current().Resources();
+        auto name = winrt::box_value(L"TextButtonStyle");
+        if (resources.HasKey(name)) button.Style(resources.Lookup(name).as<xaml::Style>());
+    } catch (...) {
+        report("styling a menu button");
+    }
+}
+
+extern "C" void stateui_winui_menu_button_set_menu(
+    StateUIObjectRef handle, int64_t view, int32_t const *kinds, char const *const *titles, bool const *enabled,
+    char const *const *identifiers, int32_t count
+) {
+    try {
+        auto button = borrow<controls::Button>(handle);
+        if (count == 0) {
+            button.Flyout(nullptr);
+        } else {
+            controls::MenuFlyout flyout;
+            Writer writer{view, nullptr, {flyout.Items()}};
+            for (int32_t index = 0; index < count; ++index) {
+                writer.write(kinds[index], titles[index], enabled[index], identifiers[index]);
+            }
+            button.Flyout(flyout);
+        }
+    } catch (...) {
+        report("writing a menu button's menu");
+    }
+}
+
+extern "C" StateUIObjectRef stateui_winui_app_menu_make(int64_t view) {
+    try {
+        // The scene's commands behind one button at the title bar's leading edge - the platform's own application
+        // menu's place on this family, its face the navigation glyph. `menu_button_set_menu` writes its flyout.
+        controls::Button button;
+        controls::SymbolIcon icon{controls::Symbol::GlobalNavigationButton};
+        button.Content(icon);
+        auto resources = xaml::Application::Current().Resources();
+        auto name = winrt::box_value(L"TextButtonStyle");
+        if (resources.HasKey(name)) button.Style(resources.Lookup(name).as<xaml::Style>());
+        return detach(button);
+    } catch (...) {
+        report("making an app menu button");
+        return nullptr;
     }
 }
 

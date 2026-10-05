@@ -2,7 +2,9 @@
 Button.contentPadding: cannot read contentPadding of Button - GTK's driver has no path for it yet
 CustomLayout.contentPadding: cannot read contentPadding of CustomLayout - GTK's driver has no path for it yet
 Grid.contentPadding: ◐ cannot read contentPadding of Grid - GTK's driver has no path for it yet
+GridRow.contentPadding: not realized
 HStack.contentPadding: ◐ cannot read contentPadding of HStack - GTK's driver has no path for it yet
+Masked.contentPadding: cannot read contentPadding of Masked - GTK's driver has no path for it yet
 RadioButton.contentPadding: cannot read contentPadding of RadioButton - GTK's driver has no path for it yet
 ScrollView.contentPadding: ◐ cannot read contentPadding of ScrollView - GTK's driver has no path for it yet
 Text.contentPadding: cannot read contentPadding of Text - GTK's driver has no path for it yet

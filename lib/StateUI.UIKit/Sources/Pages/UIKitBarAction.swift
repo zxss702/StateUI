@@ -20,6 +20,9 @@ struct UIKitBarAction {
     /// The element of the item, which keeps the action UIKit was last handed.
     let element: UIKitElement?
 
+    /// The view the item shows on the bar, where it stands for one; nil for a titled or pictured button.
+    var view: UIView?
+
     /// How tall a picture stands on a bar - UIKit's icon size - and on a bar made low by a phone on its side.
     static let glyphHeight = 24.0
     static let lowGlyphHeight = 18.0
@@ -29,8 +32,9 @@ struct UIKitBarAction {
         icon.flatMap { UIKitRenderer.glyph(named: $0, height: Self.glyphHeight) }
     }
 
-    /// A button of the bar.
+    /// A button of the bar - the item's own view where it stands for one.
     var barItem: UIBarButtonItem {
+        if let view { return UIBarButtonItem(customView: view) }
         let item = UIBarButtonItem(primaryAction: menuAction)
         item.landscapeImagePhone = icon.flatMap { UIKitRenderer.glyph(named: $0, height: Self.lowGlyphHeight) }
         item.isEnabled = isEnabled

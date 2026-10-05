@@ -7,7 +7,8 @@
 /// Design: docs/design/host/runtime.md#where-a-view-stands
 extension MountedElement {
     /// Whether the tree reads where this element itself stands: a state its frame drives, or a handler of its
-    /// changes.
+    /// changes. A text's layout report is not a frame read - it answers when
+    /// the label lays out, and holds no frame clock for it.
     public var readsOwnFrame: Bool {
         driven[.frame] != nil || events[.frameChanged] != nil || events[.namedFramesChanged] != nil
     }
@@ -31,6 +32,15 @@ extension MountedElement {
         if let handler = handler(.frameChanged) {
             runtime.dispatch(handler, payload: [.numbers(numbers)])
         }
+    }
+
+    /// Says how the typesetter laid the words out, where a handler hears it -
+    /// the same report again says nothing (`TextLayoutReport` crossing
+    /// `textLayoutChanged`).
+    public func reportTextLayout(_ report: TextLayoutReport, in runtime: HostRuntime) {
+        guard let handler = handler(.textLayoutChanged), report != reportedTextLayout else { return }
+        reportedTextLayout = report
+        runtime.dispatch(handler, payload: [report.propValue])
     }
 
     /// The named coordinate spaces enclosing this element, innermost first - each name an ancestor declared

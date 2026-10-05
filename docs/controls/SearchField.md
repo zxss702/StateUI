@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (116) | Realization | Notes |
+| Host | Created | Members (120) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 41 ✅ · 1 ☑️ | `NSSearchField` |  |
 | UIKit | ✅ | 45 ✅ | `UISearchBar` |  |
@@ -69,6 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of SearchField - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on SearchField.isReadOnly |
@@ -164,6 +165,7 @@ What every field a user types into has: the text's limits and caret, the keyboar
 | `isTextPredictionEnabled` | property | `Bool` | native | · | ✅ |  |  | · |  | cannot read isTextPredictionEnabled of SearchField - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read isTextPredictionEnabled of SearchField - GTK's driver has no path for it yet |
 | `maximumLength` | property | `Int` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot read maximumLength of SearchField - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it |
 | `placeholder` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read placeholder of SearchField - GTK's driver has no path for it yet |
+| `placeholderKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `placeholderColor` | property | `Color` | native | · | · | ✅ |  | · |  | cannot read placeholderColor of SearchField - AppKit's driver has no path for it yet; UIKit: cannot read placeholderColor of SearchField - UIKit's driver has no path for it yet; WinUI 3: not realized; GTK 4: cannot read placeholderColor of SearchField - GTK's driver has no path for it yet |
 | `selectionLength` | property | `Int` | native | · | ✅ | ✅ |  | · |  | cannot read selectionLength of SearchField - AppKit's driver has no path for it yet; WinUI 3: not realized; GTK 4: cannot read selectionLength of SearchField - GTK's driver has no path for it yet |
 | `onTextChanged` (`textChanged`) | event | `String` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -175,7 +177,9 @@ What every element showing words has: the words, and the case they are drawn in.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: waits on SearchField.isReadOnly; GTK 4: waits on SearchField.textCase |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 

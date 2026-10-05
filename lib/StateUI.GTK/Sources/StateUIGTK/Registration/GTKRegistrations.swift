@@ -22,6 +22,7 @@ enum GTKRegistrations {
         layouts(registry)
         pictures(registry)
         shapes(registry)
+        drawing(registry)
         items(registry)
         shared(registry)
 

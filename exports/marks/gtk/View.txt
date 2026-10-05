@@ -64,7 +64,7 @@ Button.tapCount: cannot tap on Button - GTK's driver has no path for it yet
 Button.tapGesture: cannot tap on Button - GTK's driver has no path for it yet
 Button.verticalAlignment: ✅
 Canvas.allowDrop: not realized
-Canvas.area: not realized
+Canvas.area: ✅
 Canvas.canDrag: not realized
 Canvas.dragLeave: not realized
 Canvas.dragOver: not realized
@@ -72,29 +72,29 @@ Canvas.dragStarting: not realized
 Canvas.dragText: not realized
 Canvas.drop: not realized
 Canvas.dropCompleted: not realized
-Canvas.frameChanged: not realized
-Canvas.gridColumn: not realized
-Canvas.gridColumnSpan: not realized
-Canvas.gridRow: not realized
-Canvas.gridRowSpan: not realized
-Canvas.horizontalAlignment: not realized
-Canvas.padding: not realized
-Canvas.panTouchCount: not realized
-Canvas.panUpdated: not realized
-Canvas.panXChannel: not realized
-Canvas.panYChannel: not realized
-Canvas.pinchUpdated: not realized
-Canvas.pointerEntered: not realized
-Canvas.pointerExited: not realized
-Canvas.pointerMoved: not realized
-Canvas.pointerPressed: not realized
-Canvas.pointerReleased: not realized
-Canvas.swipeDirection: not realized
-Canvas.swipeThreshold: not realized
-Canvas.swiped: not realized
-Canvas.tapCount: not realized
-Canvas.tapGesture: not realized
-Canvas.verticalAlignment: not realized
+Canvas.frameChanged: ✅
+Canvas.gridColumn: ✅
+Canvas.gridColumnSpan: ✅
+Canvas.gridRow: ✅
+Canvas.gridRowSpan: ✅
+Canvas.horizontalAlignment: ✅
+Canvas.padding: ✅
+Canvas.panTouchCount: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.panUpdated: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.panXChannel: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.panYChannel: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.pinchUpdated: cannot pinch on Canvas - GTK's driver has no path for it yet
+Canvas.pointerEntered: cannot hover on Canvas - GTK's driver has no path for it yet
+Canvas.pointerExited: cannot hover on Canvas - GTK's driver has no path for it yet
+Canvas.pointerMoved: cannot hover on Canvas - GTK's driver has no path for it yet
+Canvas.pointerPressed: cannot hover on Canvas - GTK's driver has no path for it yet
+Canvas.pointerReleased: cannot hover on Canvas - GTK's driver has no path for it yet
+Canvas.swipeDirection: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.swipeThreshold: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.swiped: cannot pan on Canvas - GTK's driver has no path for it yet
+Canvas.tapCount: cannot tap on Canvas - GTK's driver has no path for it yet
+Canvas.tapGesture: cannot tap on Canvas - GTK's driver has no path for it yet
+Canvas.verticalAlignment: ✅
 CheckBox.allowDrop: not realized
 CheckBox.area: ✅
 CheckBox.canDrag: not realized
@@ -287,6 +287,38 @@ Grid.swiped: cannot pan on Grid - GTK's driver has no path for it yet
 Grid.tapCount: cannot tap on Grid - GTK's driver has no path for it yet
 Grid.tapGesture: cannot tap on Grid - GTK's driver has no path for it yet
 Grid.verticalAlignment: ✅
+GridRow.allowDrop: not realized
+GridRow.area: not realized
+GridRow.canDrag: not realized
+GridRow.dragLeave: not realized
+GridRow.dragOver: not realized
+GridRow.dragStarting: not realized
+GridRow.dragText: not realized
+GridRow.drop: not realized
+GridRow.dropCompleted: not realized
+GridRow.frameChanged: not realized
+GridRow.gridColumn: not realized
+GridRow.gridColumnSpan: not realized
+GridRow.gridRow: not realized
+GridRow.gridRowSpan: not realized
+GridRow.horizontalAlignment: not realized
+GridRow.padding: not realized
+GridRow.panTouchCount: not realized
+GridRow.panUpdated: not realized
+GridRow.panXChannel: not realized
+GridRow.panYChannel: not realized
+GridRow.pinchUpdated: not realized
+GridRow.pointerEntered: not realized
+GridRow.pointerExited: not realized
+GridRow.pointerMoved: not realized
+GridRow.pointerPressed: not realized
+GridRow.pointerReleased: not realized
+GridRow.swipeDirection: not realized
+GridRow.swipeThreshold: not realized
+GridRow.swiped: not realized
+GridRow.tapCount: not realized
+GridRow.tapGesture: not realized
+GridRow.verticalAlignment: not realized
 HStack.allowDrop: not realized
 HStack.area: ✅
 HStack.canDrag: not realized
@@ -447,6 +479,38 @@ Map.swiped: not realized
 Map.tapCount: not realized
 Map.tapGesture: not realized
 Map.verticalAlignment: not realized
+Masked.allowDrop: not realized
+Masked.area: ✅
+Masked.canDrag: not realized
+Masked.dragLeave: not realized
+Masked.dragOver: not realized
+Masked.dragStarting: not realized
+Masked.dragText: not realized
+Masked.drop: not realized
+Masked.dropCompleted: not realized
+Masked.frameChanged: ✅
+Masked.gridColumn: ✅
+Masked.gridColumnSpan: ✅
+Masked.gridRow: ✅
+Masked.gridRowSpan: ✅
+Masked.horizontalAlignment: ✅
+Masked.padding: ✅
+Masked.panTouchCount: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.panUpdated: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.panXChannel: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.panYChannel: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.pinchUpdated: cannot pinch on Masked - GTK's driver has no path for it yet
+Masked.pointerEntered: cannot hover on Masked - GTK's driver has no path for it yet
+Masked.pointerExited: cannot hover on Masked - GTK's driver has no path for it yet
+Masked.pointerMoved: cannot hover on Masked - GTK's driver has no path for it yet
+Masked.pointerPressed: cannot hover on Masked - GTK's driver has no path for it yet
+Masked.pointerReleased: cannot hover on Masked - GTK's driver has no path for it yet
+Masked.swipeDirection: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.swipeThreshold: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.swiped: cannot pan on Masked - GTK's driver has no path for it yet
+Masked.tapCount: cannot tap on Masked - GTK's driver has no path for it yet
+Masked.tapGesture: cannot tap on Masked - GTK's driver has no path for it yet
+Masked.verticalAlignment: ✅
 MenuButton.allowDrop: not realized
 MenuButton.area: ✅
 MenuButton.canDrag: not realized

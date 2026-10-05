@@ -27,12 +27,14 @@ final class UIKitApplicationDelegate: UIResponder, UIApplicationDelegate {
         return configuration
     }
 
-    /// The main menu - on an iPad the menu bar - holds the menus of the page the user sees, before UIKit's WindowScene
-    /// menu.
+    /// The main menu - on an iPad the menu bar - splices the commands' groups into its standard menus and holds
+    /// the scene's and page's own before UIKit's WindowScene menu.
     override func buildMenu(with builder: any UIMenuBuilder) {
         super.buildMenu(with: builder)
         guard builder.system == .main else { return }
-        for menu in UIKitRenderer.shared.menuBar { builder.insertSibling(menu, beforeMenu: .window) }
+        let menuBar = UIKitRenderer.shared.menuBar
+        for (region, group) in menuBar.groups { builder.insertChild(group, atStartOfMenu: region) }
+        for menu in menuBar.menus { builder.insertSibling(menu, beforeMenu: .window) }
     }
 
     /// The user closed windows - swiped their scenes away: each window hears it.

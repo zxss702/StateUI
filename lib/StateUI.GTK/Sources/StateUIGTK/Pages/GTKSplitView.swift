@@ -22,14 +22,25 @@ final class GTKSplitView: GTKLayoutView {
     /// a swipe.
     var onPresentationChanged: ((Bool) -> Void)?
 
+    /// What the split does when the user moves which of three columns show.
+    var onVisibilityChanged: ((NavigationSplitViewVisibility) -> Void)?
+
     /// Which of the panes' views are framed: a page, a tabbed view.
     var framedPanes: [Bool] = []
 
-    /// The frames of the panes that are framed: the sidebar's, the detail's.
+    /// The frames of the panes that are framed: the sidebar's, the content
+    /// column's, the detail's.
     private(set) var sidebarFrame: GTKPageFrame?
+    private(set) var contentFrame: GTKPageFrame?
     private(set) var detailFrame: GTKPageFrame?
 
     private let split = GTKWidgetView { adw_overlay_split_view_new() }
+
+    /// The middle column's own split inside the outer one's content: its
+    /// sidebar is the content column, its content the detail - a three-column
+    /// split as two two-column ones.
+    private let middle = GTKWidgetView { adw_overlay_split_view_new() }
+
     private var panes: [GTKView] = []
     private var adapted = false
     private var adaptation = SidebarAdaptation()
@@ -45,11 +56,21 @@ final class GTKSplitView: GTKLayoutView {
         connectNotify(UnsafeMutableRawPointer(split.widget), "show-sidebar", number: number) { _, _, data in
             MainActor.assumeIsolated { (GTKView.find(viewNumber(data)) as? GTKSplitView)?.sidebarMoved() }
         }
+        connectNotify(UnsafeMutableRawPointer(middle.widget), "show-sidebar", number: number) { _, _, data in
+            MainActor.assumeIsolated { (GTKView.find(viewNumber(data)) as? GTKSplitView)?.contentMoved() }
+        }
+        adw_overlay_split_view_set_show_sidebar(middle.widget.opaque, 1)
+        adw_overlay_split_view_set_enable_show_gesture(middle.widget.opaque, 0)
+        adw_overlay_split_view_set_enable_hide_gesture(middle.widget.opaque, 0)
     }
 
     private var native: OpaquePointer { split.widget.opaque }
 
-    /// The sidebar and the detail, each framed where it is a page.
+    /// Whether a content column stands between the sidebar and the detail.
+    var hasContentColumn: Bool { panes.count > 2 }
+
+    /// The sidebar and the pages beside it, each framed where it is a page -
+    /// a third pane stands in the middle split as its sidebar.
     @discardableResult
     override func setItems(_ items: [GTKLayoutItem]) -> Bool {
         let views = items.map(\.view)
@@ -58,9 +79,20 @@ final class GTKSplitView: GTKLayoutView {
         panes = views
         for view in views { view.placingLayout = nil }
         sidebarFrame = frame(views.first, framed: framedPanes.first == true, keeping: sidebarFrame)
-        detailFrame = frame(views.dropFirst().first, framed: framedPanes.dropFirst().first == true, keeping: detailFrame)
         adw_overlay_split_view_set_sidebar(native, sidebarFrame?.widget ?? views.first?.widget)
-        adw_overlay_split_view_set_content(native, detailFrame?.widget ?? views.dropFirst().first?.widget)
+
+        if views.count > 2 {
+            middle.placingLayout = nil
+            contentFrame = frame(views[1], framed: framedPanes.count > 1 && framedPanes[1], keeping: contentFrame)
+            detailFrame = frame(views[2], framed: framedPanes.count > 2 && framedPanes[2], keeping: detailFrame)
+            adw_overlay_split_view_set_sidebar(middle.widget.opaque, contentFrame?.widget ?? views[1].widget)
+            adw_overlay_split_view_set_content(middle.widget.opaque, detailFrame?.widget ?? views[2].widget)
+            adw_overlay_split_view_set_content(native, middle.widget)
+        } else {
+            contentFrame = nil
+            detailFrame = frame(views.dropFirst().first, framed: framedPanes.dropFirst().first == true, keeping: detailFrame)
+            adw_overlay_split_view_set_content(native, detailFrame?.widget ?? views.dropFirst().first?.widget)
+        }
         invalidateMeasurements()
         return true
     }
@@ -77,6 +109,37 @@ final class GTKSplitView: GTKLayoutView {
         ProgramWrite.perform { adw_overlay_split_view_set_show_sidebar(native, shows ? 1 : 0) }
     }
 
+    /// The columns the tree says show, as the program's move - the middle
+    /// split's sidebar is the content column: `.all` shows all three,
+    /// `.doubleColumn` drops the sidebar, `.detailOnly` drops both, and
+    /// `.automatic` asks nothing.
+    func present(visibility: NavigationSplitViewVisibility) {
+        let threeColumns = hasContentColumn
+        switch visibility {
+        case .automatic:
+            break
+        case .all:
+            present(true)
+            presentContent(true)
+        case .doubleColumn:
+            present(!threeColumns)
+            presentContent(true)
+        case .detailOnly:
+            present(false)
+            presentContent(false)
+        }
+    }
+
+    /// Shows or hides the content column, as the program's move.
+    private func presentContent(_ shows: Bool) {
+        guard hasContentColumn else { return }
+        isContentPresented = shows
+        ProgramWrite.perform { adw_overlay_split_view_set_show_sidebar(middle.widget.opaque, shows ? 1 : 0) }
+    }
+
+    /// Whether the content column shows, where three columns can.
+    private(set) var isContentPresented = true
+
     /// The sidebar's least and most width the tree asks, `nil` leaving the
     /// split's own. A fixed width binds both; an ideal has no home in
     /// `AdwOverlaySplitView` and is left with it.
@@ -92,12 +155,52 @@ final class GTKSplitView: GTKLayoutView {
         }
     }
 
+    /// The content column's least and most width, as `sidebarWidthBounds` is
+    /// the sidebar's.
+    var contentWidthBounds: [Double]? {
+        didSet {
+            guard let bounds = contentWidthBounds, !bounds.isEmpty else { return }
+            adw_overlay_split_view_set_min_sidebar_width(middle.widget.opaque, bounds[0])
+            if bounds.count > 2 {
+                adw_overlay_split_view_set_max_sidebar_width(middle.widget.opaque, bounds[2])
+            } else if bounds.count == 1 {
+                adw_overlay_split_view_set_max_sidebar_width(middle.widget.opaque, bounds[0])
+            }
+        }
+    }
+
+    /// Which columns stand shown on screen, where three can.
+    private var effectiveVisibility: NavigationSplitViewVisibility? {
+        guard hasContentColumn else { return nil }
+        switch (isPresented, isContentPresented) {
+        case (true, true): return .all
+        case (false, true): return .doubleColumn
+        case (false, false): return .detailOnly
+        case (true, false): return .all
+        }
+    }
+
     /// The sidebar showed or hid of its own accord: said, where it was not the program's.
     private func sidebarMoved() {
         let shows = adw_overlay_split_view_get_show_sidebar(native) != 0
         guard !ProgramWrite.isWriting, shows != isPresented else { return }
         isPresented = shows
-        onPresentationChanged?(shows)
+        if let visibility = effectiveVisibility {
+            onVisibilityChanged?(visibility)
+        } else {
+            onPresentationChanged?(shows)
+        }
+    }
+
+    /// The content column showed or hid of its own accord: said, where it was
+    /// not the program's.
+    private func contentMoved() {
+        let shows = adw_overlay_split_view_get_show_sidebar(middle.widget.opaque) != 0
+        guard !ProgramWrite.isWriting, shows != isContentPresented else { return }
+        isContentPresented = shows
+        if let visibility = effectiveVisibility {
+            onVisibilityChanged?(visibility)
+        }
     }
 
     /// Collapses the split in a window narrower than 400sp, as GNOME's applications do - a breakpoint of the

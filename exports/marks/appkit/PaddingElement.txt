@@ -2,6 +2,7 @@
 Button.contentPadding: not realized
 CustomLayout.contentPadding: not realized
 Grid.contentPadding: ◐ cannot read contentPadding of Grid - AppKit's driver has no path for it yet
+GridRow.contentPadding: not realized
 HStack.contentPadding: ◐ cannot read contentPadding of HStack - AppKit's driver has no path for it yet
 Masked.contentPadding: not realized
 RadioButton.contentPadding: not realized

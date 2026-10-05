@@ -32,6 +32,9 @@ extension GTKElement {
         }
         (view as? GTKSplitView)?.framedPanes = arranged.map { Self.framedTypes.contains($0.type) }
         (view as? GTKSplitView)?.sidebarWidthBounds = arranged.first?.element.value(.preferredColumnWidth)?.numbers
+        (view as? GTKSplitView)?.contentWidthBounds = arranged.count > 2
+            ? arranged[1].element.value(.preferredColumnWidth)?.numbers
+            : nil
         if let custom = view as? GTKCustomLayoutView {
             custom.direction = element.layoutDirection
             custom.setItems(

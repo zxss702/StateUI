@@ -10,7 +10,7 @@
 enum GTKRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
-        "Canvas", "Content", "DatePicker", "LeadingContent", "Map", "Menu", "MenuBar",
+        "Content", "DatePicker", "GridRow", "LeadingContent", "Map", "Menu", "MenuBar",
         "ModalStack", "Pin", "PositionIndicator", "TimePicker", "TrailingContent", "WebView",
     ]
 
@@ -105,11 +105,15 @@ enum GTKRealization {
         .complete("Span", "foregroundStyle"),
         .complete("Span", "textDecorations"),
         .complete("NavigationSplitView", "isSidebarVisible"),
+        .complete("NavigationSplitView", "columnVisibility"),
+        .complete("NavigationSplitView", "columnVisibilityChanged"),
         .complete("TabView", "currentPage"),
         .complete("TitleBar", "background"),
         .complete("TitleBar", "barForegroundColor"),
         .complete("ToolbarItem", "placement"),
         .complete("ToolbarItem", "priority"),
+        .complete("ToolbarSpacer", "placement"),
+        .complete("ToolbarSpacer", "variant"),
         .partial("WindowScene", "resizability",
             missing: "A content minimum names the window element's own minimum instead of measuring content."),
     ]

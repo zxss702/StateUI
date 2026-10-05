@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (102) | Realization | Notes |
+| Host | Created | Members (104) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 32 ✅ · 3 – | custom `NSView` |  |
 | UIKit | ✅ | 34 ✅ · 3 – | composed by StateUI |  |
@@ -40,6 +40,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Layouts/GridContract.swift`.
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `columnSpacing` | property | `Double` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `columns` | property | `[GridLength]` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `flowColumns` | property | `[GridItem]` | stateUI |  |  |  |  |  |  |  |
 | `rowSpacing` | property | `Double` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `rows` | property | `[GridLength]` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 
@@ -71,6 +72,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what reaches Grid - Android's driver has no path for it yet; GTK 4: cannot read what reaches Grid - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Grid - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |

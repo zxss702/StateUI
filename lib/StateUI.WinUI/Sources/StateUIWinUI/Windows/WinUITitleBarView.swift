@@ -17,6 +17,8 @@ final class WinUITitleBarView: WinUIView {
     /// The actions as they were last drawn, the primary ones first.
     private var drawn: [WinUIToolbarAction] = []
     private var drawnOverflow: [Bool] = []
+    /// The scene's commands' button, while a placement group gives it entries.
+    private var appMenuButton: WinUIAppMenuButton?
 
     init() {
         super.init { number in stateui_winui_title_bar_make(number) }
@@ -44,6 +46,7 @@ final class WinUITitleBarView: WinUIView {
                     WinUIStrings.withCStrings(actions.map { $0.icon.map { $0 + "\n" }.joined() }) { icons in
                         stateui_winui_title_bar_set_actions(
                             handle, titles, identifiers, icons, overflows, actions.map(\.isEnabled),
+                            actions.map(\.view?.handle), actions.map { $0.spacer.map { Int32($0.rawValue) + 1 } ?? 0 },
                             Int32(actions.count))
                     }
                 }
@@ -52,10 +55,31 @@ final class WinUITitleBarView: WinUIView {
         }
         drawn = actions
 
+        showAppMenu(chrome.appMenu)
+
         if previous.leading !== chrome.leading || previous.center !== chrome.center
             || previous.trailing !== chrome.trailing {
             stateui_winui_title_bar_set_slots(handle, chrome.leading?.handle, chrome.center?.handle, chrome.trailing?.handle)
         }
+    }
+
+    /// Stands the commands' button at the bar's leading edge while a placement group gives it entries; an empty
+    /// menu takes it away.
+    private func showAppMenu(_ menu: WinUIMenu) {
+        if menu.isEmpty {
+            if appMenuButton != nil {
+                stateui_winui_title_bar_set_app_menu(handle, nil)
+                appMenuButton?.detach()
+                appMenuButton = nil
+            }
+            return
+        }
+        if appMenuButton == nil {
+            let button = WinUIAppMenuButton()
+            appMenuButton = button
+            stateui_winui_title_bar_set_app_menu(handle, button.handle)
+        }
+        appMenuButton?.show(menu)
     }
 
     /// The user pressed the way back (-1), the sidebar's toggle (-2), or an action by its place.
@@ -72,5 +96,7 @@ final class WinUITitleBarView: WinUIView {
         super.detach()
         chrome = WinUIWindowChrome()
         drawn = []
+        appMenuButton?.detach()
+        appMenuButton = nil
     }
 }

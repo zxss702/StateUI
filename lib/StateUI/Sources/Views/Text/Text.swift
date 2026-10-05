@@ -71,15 +71,72 @@ public struct Text: VisualElement, TextElement, FontElement, TextAlignmentElemen
     /// The node this control describes.
     public var node: Node
 
-    /// An empty one - what a `Style<Text>` is written against.
-    public init() {
-        node = Node(contract: TextContract.self)
+    /// A text's node, wired to answer `Text.LayoutKey`: the seed offers a
+    /// `Layout` reading a shared box, the handler fills it when the host says
+    /// how the words were laid out.
+    private static func wiredNode() -> Node {
+        var node = Node(contract: TextContract.self)
+        let box = TextLayoutBox()
+        node.textLayoutBox = box
+        // The offer is asked at fold: a text the walk carries answers for the
+        // report the host last handed in, not the one its render saw.
+        node.preferenceSeeds.append(PreferenceSeed(
+            box: PreferenceKeyBox(LayoutKey.self), lazy: { [box] in [Layout(box: box)] }))
+        node.addHandler(TextContract.textLayoutChanged.token) {
+            guard let report = MemberValues.carried(
+                EventBuffer.current, by: TextContract.textLayoutChanged.name,
+                as: TextLayoutReport.self)
+            else { return }
+            box.fill(report)
+            // A host-pushed report is no state's doing: the render it asks
+            // for is an untracked one - and only where an ear stands, which
+            // is how the folded answers move.
+            if DispatchContext.differ?.watchesTextLayout == true {
+                Renderer.shared.setNeedsRender()
+            }
+        }
+        return node
     }
 
-    /// A label showing `text`.
-    public init(_ text: String) {
-        node = Node(contract: TextContract.self)
-        node.write(TextElementContract.text, text)
+    /// An empty one - what a `Style<Text>` is written against.
+    public init() {
+        node = Self.wiredNode()
+    }
+
+    /// A label showing `content`, verbatim - a `String` is never looked up;
+    /// the literal that is a key is `Text(_ key:)`, which a literal prefers.
+    @_disfavoredOverload public init<S: StringProtocol>(_ content: S) {
+        node = Self.wiredNode()
+        node.write(TextElementContract.text, String(content))
+    }
+
+    /// A label showing what `key` looks up - the SwiftUI spelling, where a
+    /// literal is a key and a `String` is verbatim:
+    ///
+    ///     Text("Save")                    // looked up in the host's tables
+    ///     Text("Elapsed: \(s, specifier: "%.2f") s")
+    ///
+    /// The host answers the key, and `key.displayString` stands written as
+    /// `text` for everywhere the tables do not reach.
+    public init(_ key: LocalizedStringKey) {
+        node = Self.wiredNode()
+        node.write(TextElementContract.text, key.displayString)
+        node.write(TextElementContract.textKey, key)
+    }
+
+    /// A picture inline in text, the only way one stands among words:
+    ///
+    ///     Text(Image(systemName: "star")) + Text(" marked")
+    ///
+    /// The run it writes is one glyph at the picture's size, lifted by
+    /// `.baselineOffset` the way any run's is.
+    public init(_ image: Image) {
+        self.init()
+        var span = Node(contract: SpanContract.self)
+        if let source = image.imageSource {
+            span.write(SpanContract.image, source)
+        }
+        node.children = [Node(contract: SpansContract.self, children: [span])]
     }
 
     /// A label whose text is carried from a state, written by the host as it
@@ -113,6 +170,88 @@ public struct Text: VisualElement, TextElement, FontElement, TextAlignmentElemen
     @_spi(Host) public func spans(@ViewBuilder _ spans: () -> any View) -> Self {
         modified {
             $0.children = [Node(contract: SpansContract.self, children: spans().node.asChildren)]
+        }
+    }
+}
+
+extension Text {
+    /// One text after another - each keeping its own look, as SwiftUI's
+    /// `+` keeps it:
+    ///
+    ///     Text("let ") + Text("counter").foregroundStyle(.purple)
+    ///
+    /// Each side becomes a run of the answer's `spans`, carrying the props
+    /// written on it - its words, its look, its baseline's lift. A side made
+    /// of runs already offers them; a plain side is one run.
+    public static func + (lhs: Text, rhs: Text) -> Text {
+        var answer = Text()
+        answer.node.children = [Node(
+            contract: SpansContract.self,
+            children: lhs.concatenatedSpans + rhs.concatenatedSpans)]
+        for (type, attribute) in lhs.node.textLayoutBox?.attributes ?? [:] {
+            answer.node.textLayoutBox?.attributes[type] = attribute
+        }
+        for (type, attribute) in rhs.node.textLayoutBox?.attributes ?? [:] {
+            answer.node.textLayoutBox?.attributes[type] = attribute
+        }
+        return answer
+    }
+
+    /// The spans a `+` takes this text for: the ones written with `.spans`,
+    /// else this text itself as one run carrying its own props.
+    private var concatenatedSpans: [Node] {
+        if let held = node.children.first(where: { $0.type == .spans }) {
+            return held.children
+        }
+        var span = Node(contract: SpanContract.self)
+        span.props = node.props
+        return [span]
+    }
+
+    /// How far the words' baseline stands from the line's own, in points -
+    /// a `Text(Image)` glyph sits on the baseline until this lifts it:
+    ///
+    ///     Text(Image(systemName: "star")).baselineOffset(-2)
+    ///
+    /// A `+` carries each side's offset down to its own runs.
+    public func baselineOffset(_ offset: Double) -> Text {
+        var copy = self
+        copy.node.write(TextElementContract.baselineOffset, offset)
+        return copy
+    }
+
+    /// An attribute `Text.Layout`'s runs answer back - the channel a payload
+    /// that must survive typesetting travels by:
+    ///
+    ///     text.customAttribute(MappingsAttribute(mappings: map))
+    ///     // in a laid-out run: run[MappingsAttribute.self]
+    ///
+    /// - Parameter attribute: what each run of this text answers.
+    public func customAttribute<A: TextAttribute>(_ attribute: A) -> Text {
+        let copy = self
+        copy.node.textLayoutBox?.attributes[ObjectIdentifier(A.self)] = attribute
+        return copy
+    }
+}
+
+extension TextLayoutBox {
+    /// The report the host sent as this box's lines, its attributes put back
+    /// on every run, the generation bumped so a `Layout` folded after answers
+    /// anew.
+    func fill(_ report: TextLayoutReport) {
+        version += 1
+        lines = report.lines.map { line in
+            Text.Layout.Line(
+                typographicBounds: TypographicBounds(rect: line.rect),
+                runs: line.runs.map { run in
+                    Text.Layout.Run(
+                        typographicBounds: TypographicBounds(rect: run.rect),
+                        layoutDirection: run.direction,
+                        slices: run.slices.map {
+                            Text.Layout.RunSlice(typographicBounds: TypographicBounds(rect: $0))
+                        },
+                        attributes: attributes)
+                })
         }
     }
 }
@@ -177,5 +316,11 @@ extension Text {
     /// written for it.
     var words: String {
         node.props[TextElementContract.text.token]?.string ?? ""
+    }
+
+    /// The lookup key a `Text` node carries, where one was written -
+    /// `navigationTitle`'s `titleKey` and its siblings read it of one.
+    var wordsKey: LocalizedStringKey? {
+        node.props[TextElementContract.textKey.token].flatMap(LocalizedStringKey.init(propValue:))
     }
 }

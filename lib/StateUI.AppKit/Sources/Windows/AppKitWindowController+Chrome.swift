@@ -58,6 +58,7 @@ extension AppKitWindowController {
                         if let host, let element, let stack { host.runtime.goBack(.pop(stack), in: element) }
                     })
             },
+            leadingActions: chrome.leadingActions.map(Self.action),
             title: paintedTitle,
             leading: chrome.leading?.appKit.view,
             center: chrome.center?.appKit.view,
@@ -77,14 +78,21 @@ extension AppKitWindowController {
         host?.pageMenusChanged(in: self)
     }
 
-    /// A page's action as a toolbar item.
+    /// A page's toolbar entry as a toolbar item: a spacer's room, the view an
+    /// item carries, or a titled or pictured action.
     private static func action(_ item: MountedElement) -> AppKitToolbarAction {
-        AppKitToolbarAction(
+        var action = AppKitToolbarAction(
             identifier: NSToolbarItem.Identifier("StateUI.action.\(item.mount)"),
             title: item.value(.text)?.string ?? "",
             image: item.appKit.image(.icon),
             isEnabled: item.value(.isEnabled)?.bool ?? true,
             perform: { [weak item] in item?.appKit.clicked(nil) })
+        if item.type == .toolbarSpacer {
+            action.spacer = ToolbarSpacerVariant(rawValue: item.value(.variant)?.enumeration ?? 0)
+        } else if let view = item.children.lazy.compactMap(\.presentingElement).first?.appKit.view {
+            action.view = view
+        }
+        return action
     }
 
     /// The tabs the window shows - the visible tabbed view's, where its tabs stand in the window - and the split view
@@ -104,10 +112,14 @@ extension AppKitWindowController {
             split: tabbed.parent?.enclosing(type: .navigationSplitView)?.appKit.view as? AppKitSplitView)
     }
 
-    /// The menus of the page the user sees - the top sheet's, else the arrangement's - as the host layer walks them.
-    var pageMenuItems: [NSMenuItem] {
+    /// The menus the window shows - the scene's commands and the visible page's own - as the host layer walks them:
+    /// the groups spliced into the platform's menus apart from the menus standing of their own.
+    var pageMenuItems: (groups: [MenuEntry], menus: [MenuEntry]) {
         let page = (presentation.sheets.last ?? presentation.arrangement)?.visiblePage
-        return AppKitMenus.items(page?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? [])
+        let commands = element?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? []
+        let pages = page?.children.first { $0.type == .menuBar }.map(MenuEntry.menus(of:)) ?? []
+        let all = commands + pages
+        return (all.filter { $0.placement != nil }, all.filter { $0.placement == nil })
     }
 
     /// A window's tabs stand beneath its toolbar: on macOS 26 and later across

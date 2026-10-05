@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [TextElement](tiers
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (16) | Realization | Notes |
+| Host | Created | Members (19) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ |  | `NSTextField` label; `NSAttributedString` runs |  |
 | UIKit | ✅ |  | `UILabel`; `NSAttributedString` runs |  |
@@ -39,6 +39,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Text/SpanContract.swift`.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `background` | property | `Color` | native |  | · | · | ✅ | · |  | not realized; UIKit: cannot read background of Span - UIKit's driver has no path for it yet; Android Views: cannot read background of Span - Android's driver has no path for it yet; GTK 4: cannot read background of Span - GTK's driver has no path for it yet |
+| `image` | property | `ImageSource` | native |  |  |  |  |  |  |  |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -55,7 +56,9 @@ What every element showing words has: the words, and the case they are drawn in.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `text` | property | `String` | native | ◐ | ◐ | ◐ | ✅ | ◐ |  | cannot read text of Span - AppKit's driver has no path for it yet; UIKit: cannot read text of Span - UIKit's driver has no path for it yet; Android Views: cannot read text of Span - Android's driver has no path for it yet; GTK 4: cannot read text of Span - GTK's driver has no path for it yet |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `textCase` | property | `TextCase` | native | · | · | · | ✅ |  |  | cannot read text of Span - AppKit's driver has no path for it yet; UIKit: cannot read text of Span - UIKit's driver has no path for it yet; Android Views: cannot read text of Span - Android's driver has no path for it yet; GTK 4: not realized |
+| `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 

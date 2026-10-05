@@ -4,7 +4,7 @@
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// One action a page's header bar performs for the page.
+/// One entry a page's header bar holds for the page - an action, a spacer, or the view a `ToolbarItem` carries.
 @MainActor
 struct GTKToolbarAction {
     let title: String
@@ -14,9 +14,19 @@ struct GTKToolbarAction {
     let isEnabled: Bool
     let perform: () -> Void
 
+    /// The view the item shows on the bar, where it stands for one; nil for a titled or pictured button.
+    var view: GTKView? = nil
+
+    /// The room the entry takes, where it is a `ToolbarSpacer`; nil for an action.
+    var spacer: ToolbarSpacerVariant? = nil
+
+    /// Whether the entry is an action - it draws as a button, rather than a view or room.
+    var isAction: Bool { view == nil && spacer == nil }
+
     /// Whether two actions draw the same button. What an action performs is taken again on every composition.
     func draws(like other: GTKToolbarAction) -> Bool {
         title == other.title && icon == other.icon && isEnabled == other.isEnabled
+            && view === other.view && spacer == other.spacer
     }
 }
 
@@ -30,6 +40,7 @@ struct GTKPageChrome {
 
     /// A tabbed view's switcher, which stands in a bar of its own beneath the header bar; nil for none.
     var tabs: GTKView?
+    var leadingActions: [GTKToolbarAction] = []
     var actions: [GTKToolbarAction] = []
     var overflow: [GTKToolbarAction] = []
     var showsBar = true
@@ -42,4 +53,8 @@ struct GTKPageChrome {
     /// The split view's sidebar, where this page's header bar offers its toggle - the detail's: whether it shows,
     /// and what turns it.
     var sidebar: (shows: Bool, toggle: () -> Void)?
+
+    /// The scene's commands, standing in the window's app menu - a menu
+    /// button at the header bar's start; empty for none.
+    var appMenu: [MenuEntry] = []
 }

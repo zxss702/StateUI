@@ -80,6 +80,12 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
 }
 
 extension Image {
+    /// The source an `Image` carries, read off its node - what `Text(Image)`
+    /// moves onto the picture's run.
+    var imageSource: ImageSource? {
+        node.props[ImageContract.source.token].flatMap { ImageSource($0) }
+    }
+
     /// Whether the picture draws in its own colours or as a stencil of the
     /// foreground one - `.template` for a symbol that takes its tint.
     ///

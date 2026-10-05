@@ -49,6 +49,21 @@ final class HostDrawingTests: XCTestCase {
         XCTAssertEqual(drawing.strings, ["one", "two"])
     }
 
+    /// A stroke's style lays its cap and join out in the whole numbers and its
+    /// width in the numbers; a fill's rule is one whole number.
+    func testAStrokeStyleAndFillRuleLayTheirValuesOut() {
+        let drawing = HostDrawing([
+            Draw.strokeStyle(width: 2.5, cap: .round, join: .round),
+            Draw.fillStyle(eoFill: true),
+        ])
+
+        XCTAssertEqual(drawing.ints, [
+            23, LineCap.round.rawValue, LineJoin.round.rawValue,
+            24, 1,
+        ])
+        XCTAssertEqual(drawing.numbers, [2.5])
+    }
+
     /// An instruction whose values do not read whole - too few, not finite, not the kind asked - is left out, and
     /// the rest keep their places.
     func testAnInstructionThatDoesNotReadWholeIsLeftOut() throws {

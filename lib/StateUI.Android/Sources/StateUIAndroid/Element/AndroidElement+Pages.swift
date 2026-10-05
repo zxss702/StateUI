@@ -110,8 +110,10 @@ extension AndroidElement {
     func refreshBar() {
         guard type == .navigationStack, let navigation = view as? AndroidNavigationView else { return }
         let page = element.visiblePage
-        let actions: (primary: [MountedElement], overflow: [MountedElement]) = page?.chromeActions ?? ([], [])
-        let shown = actions.primary + actions.overflow
+        let actions: (leading: [MountedElement], primary: [MountedElement], overflow: [MountedElement]) =
+            page?.chromeActions ?? ([], [], [])
+        // A spacer is room on a bar the platform composes itself; the bar's menu takes the actions alone.
+        let shown = (actions.leading + actions.primary + actions.overflow).filter { $0.type != .toolbarSpacer }
         let colors = page?.barColors ?? element.barColors
 
         var content = AndroidBarView.Content()

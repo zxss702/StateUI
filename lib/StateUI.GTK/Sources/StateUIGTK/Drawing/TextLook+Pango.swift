@@ -32,6 +32,9 @@ extension TextLook {
         if letterSpacing != 0 {
             made.append(pango_attr_letter_spacing_new(Int32((letterSpacing * Double(PANGO_SCALE)).rounded())))
         }
+        if let baselineOffset, baselineOffset != 0 {
+            made.append(pango_attr_rise_new(Int32((baselineOffset * Double(PANGO_SCALE)).rounded())))
+        }
         if let lineHeight, lineHeight > 0 { made.append(pango_attr_line_height_new(lineHeight)) }
         if decorations.contains(.underline) { made.append(pango_attr_underline_new(PANGO_UNDERLINE_SINGLE)) }
         if decorations.contains(.strikethrough) { made.append(pango_attr_strikethrough_new(1)) }

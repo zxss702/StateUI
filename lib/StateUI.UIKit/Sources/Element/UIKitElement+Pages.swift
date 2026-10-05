@@ -50,18 +50,21 @@ extension UIKitElement {
         chrome.offersBack = value(.hasBackButton)?.bool != false
         (chrome.barBackground, chrome.barForeground) = element.barColors
         let actions = element.chromeActions
-        chrome.actions = actions.primary.map(Self.action)
-        chrome.overflow = actions.overflow.map(Self.action)
+        // A spacer is room a navigation bar composes itself; the bar takes the actions alone.
+        chrome.leadingActions = actions.leading.filter { $0.type != .toolbarSpacer }.map(Self.action)
+        chrome.actions = actions.primary.filter { $0.type != .toolbarSpacer }.map(Self.action)
+        chrome.overflow = actions.overflow.filter { $0.type != .toolbarSpacer }.map(Self.action)
         return chrome
     }
 
-    /// A page's action as the bar takes it.
+    /// A page's toolbar entry as the bar takes it - the view an item carries, else a titled or pictured action.
     private static func action(_ item: MountedElement) -> UIKitBarAction {
         UIKitBarAction(
             title: item.value(.text)?.string ?? "", icon: item.value(.icon)?.string,
             isEnabled: item.value(.isEnabled)?.bool ?? true, isDestructive: item.value(.isDestructive)?.bool == true,
             identifier: item.value(.accessibilityIdentifier)?.string,
-            perform: { [weak item] in item?.uiKit.send(.clicked, []) }, element: item.uiKit)
+            perform: { [weak item] in item?.uiKit.send(.clicked, []) }, element: item.uiKit,
+            view: item.children.lazy.compactMap(\.presentingElement).first?.uiKit.view)
     }
 
     /// Writes the bar of every page in this arrangement and every one it holds.

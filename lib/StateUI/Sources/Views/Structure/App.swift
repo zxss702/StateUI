@@ -226,8 +226,10 @@ extension Node {
         var node = Node(contract: PageContract.self, children: [content] + session.slots)
         node.props = session.props
         for member in [
-            PageElementContract.title.token, PageElementContract.badge.token,
-            PageElementContract.subtitle.token, PageElementContract.document.token,
+            PageElementContract.title.token, PageElementContract.titleKey.token,
+            PageElementContract.badge.token,
+            PageElementContract.subtitle.token, PageElementContract.subtitleKey.token,
+            PageElementContract.document.token,
             PageElementContract.preferredColumnWidth.token,
             PageElementContract.presentationDetents.token,
             PageElementContract.presentationDragIndicator.token,

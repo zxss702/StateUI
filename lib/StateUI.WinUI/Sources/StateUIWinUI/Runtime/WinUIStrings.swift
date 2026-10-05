@@ -2,9 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import ucrt
+@_spi(Host) import StateUI
+@_spi(Host) import StateUIHost
 
 /// Words handed to the relay as C strings.
-enum WinUIStrings {
+public enum WinUIStrings {
+    /// Answers a lookup key's pattern with its translation; nil leaves the key's own fallback drawn. Written once
+    /// at the application's start - the relay keeps no string tables of the application's own.
+    nonisolated(unsafe) public static var lookup: (String) -> String? = { _ in nil }
+
+    /// What `key` looks up through `lookup`, formatted with its arguments.
+    static func resolve(_ key: LocalizedStringKey) -> String {
+        HostLocalizedStrings.resolve(key, lookup: lookup)
+    }
+
     /// Runs `body` with `strings` as C strings, held for the call and freed in Swift.
     static func withCStrings<Result>(_ strings: [String], _ body: ([UnsafePointer<CChar>?]) -> Result) -> Result {
         let copies = strings.map { _strdup($0) }

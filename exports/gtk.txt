@@ -21,6 +21,11 @@ Button
   textCase
   clicked()
   toggled()
+Canvas
+  drawable
+  dragged()
+  pressed()
+  released()
 CheckBox
   isOn
   toggled()
@@ -54,6 +59,7 @@ Grid
   columnSpacing
   columns
   contentPadding
+  flowColumns
   hitShape
   ignoresInput
   letsInputThrough
@@ -102,6 +108,16 @@ List
   itemActivated()
   realizedChanged()
   selectionChanged()
+Masked
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  letsInputThrough
+  shape
+  stroke
+  strokeWidth
 MenuButton
   menuIndicator
   menuStyle

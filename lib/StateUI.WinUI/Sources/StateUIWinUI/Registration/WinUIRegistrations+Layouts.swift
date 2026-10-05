@@ -24,16 +24,24 @@ extension WinUIRegistrations {
             grid.applies([
                 GridContract.rows, GridContract.columns,
                 GridContract.rowSpacing, GridContract.columnSpacing,
+                GridContract.flowColumns,
                 PaddingElementContract.contentPadding,
             ]) { view, values in
                 view.rows = values[GridContract.rows] ?? []
                 view.columns = values[GridContract.columns] ?? []
+                view.flowColumns = values[GridContract.flowColumns] ?? []
                 view.rowSpacing = values[GridContract.rowSpacing] ?? 0
                 view.columnSpacing = values[GridContract.columnSpacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+        }
+
+        registry.add(CustomLayoutContract.self, create: { _ in WinUICustomLayoutView() }) { layout in
+            layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
+            layout.applies(boxMembers) { view, values in applyBox(view, values) }
+            layout.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
         }
 
         registry.add(ZStackContract.self, create: { _ in WinUIZStackView() }) { layout in

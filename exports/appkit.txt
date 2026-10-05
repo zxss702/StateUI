@@ -69,6 +69,7 @@ Grid
   columnSpacing
   columns
   contentPadding
+  flowColumns
   rowSpacing
   rows
 HStack
@@ -107,6 +108,7 @@ List
   realizedChanged()
   selectionChanged()
 NavigationSplitView
+  columnVisibility
   isSidebarVisible
 Page
   contentPadding
@@ -385,6 +387,7 @@ VStack
   focus()
   handlerFailed()
   hideOnScreenKeyboard()
+  localizedString()
   persistSceneValue()
   persistValue()
   prompt()

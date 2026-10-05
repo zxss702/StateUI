@@ -15,4 +15,6 @@ How each of them realizes these members is on its own page.
 | Member | Kind | Value | Layer |
 | --- | --- | --- | --- |
 | `text` | property | `String` | native |
+| `textKey` | property | `LocalizedStringKey` | native |
 | `textCase` | property | `TextCase` | native |
+| `baselineOffset` | property | `Double` | native |

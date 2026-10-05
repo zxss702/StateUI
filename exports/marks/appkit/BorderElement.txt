@@ -8,6 +8,9 @@ CustomLayout.strokeWidth: cannot read strokeWidth of CustomLayout - AppKit's dri
 Grid.shape: cannot read shape of Grid - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it
 Grid.stroke: not realized
 Grid.strokeWidth: cannot read strokeWidth of Grid - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it
+GridRow.shape: not realized
+GridRow.stroke: not realized
+GridRow.strokeWidth: not realized
 HStack.shape: cannot read shape of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it
 HStack.stroke: not realized
 HStack.strokeWidth: cannot read strokeWidth of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it

@@ -77,6 +77,98 @@ public struct Grid: LayoutView, GridProperties {
         node.producer = { content().node.asChildren }
     }
 
+    /// A grid of `GridRow`s, each a row of cells one to a column - SwiftUI's
+    /// `Grid(alignment:horizontalSpacing:verticalSpacing:content:)`:
+    ///
+    ///     Grid(horizontalSpacing: 0, verticalSpacing: 0) {
+    ///         GridRow { Text("Name"); Text("Value") }
+    ///         GridRow { Text("Font"); Text("Serif") }
+    ///     }
+    ///
+    /// A child that is no `GridRow` stands as a row of its own spanning the
+    /// columns the rows make. The columns and rows fit what they hold.
+    ///
+    /// - Parameters:
+    ///   - horizontalSpacing: the gap between two columns.
+    ///   - verticalSpacing: the gap between two rows.
+    ///   - content: the rows.
+    public init(
+        horizontalSpacing: Double?,
+        verticalSpacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        self.init(
+            alignment: .center,
+            horizontalSpacing: horizontalSpacing,
+            verticalSpacing: verticalSpacing,
+            content: content)
+    }
+
+    /// A grid of `GridRow`s, aligned as `alignment` says where a cell or its
+    /// row does not.
+    ///
+    /// - Parameters:
+    ///   - alignment: where a cell's content sits in its cell, where the cell
+    ///     and its row do not say.
+    ///   - content: the rows.
+    public init(alignment: Alignment, @ViewBuilder content: @escaping () -> any View) {
+        self.init(alignment: alignment, horizontalSpacing: nil, verticalSpacing: nil, content: content)
+    }
+
+    /// A grid of `GridRow`s, aligned and spaced as stated.
+    ///
+    /// - Parameters:
+    ///   - alignment: where a cell's content sits in its cell, where the cell
+    ///     and its row do not say.
+    ///   - horizontalSpacing: the gap between two columns.
+    ///   - verticalSpacing: the gap between two rows.
+    ///   - content: the rows.
+    public init(
+        alignment: Alignment,
+        horizontalSpacing: Double?,
+        verticalSpacing: Double?,
+        @ViewBuilder content: @escaping () -> any View
+    ) {
+        node = Node(contract: GridContract.self)
+        if let horizontalSpacing { node.write(GridContract.columnSpacing, horizontalSpacing) }
+        if let verticalSpacing { node.write(GridContract.rowSpacing, verticalSpacing) }
+        node.producer = { Self.cells(of: content().node.asChildren, alignment: alignment) }
+    }
+
+    /// The cells the rows describe, each stamped with its row and column - a
+    /// `GridRow`'s children one to a column, a bare child a row of its own
+    /// spanning every column the rows make.
+    private static func cells(of children: [Node], alignment: Alignment) -> [Node] {
+        let rows = children.map { child -> (bare: Bool, alignment: AxisAlignment, cells: [Node]) in
+            guard child.type == GridRowContract.nodeType else { return (true, .fill, [child]) }
+            let axis = AxisAlignment(rawValue: child.props[.verticalAlignment]?.enumeration ?? -1)
+                ?? alignment.vertical.axis
+            return (false, axis, child.producer?() ?? [])
+        }
+        let columns = max(rows.map(\.cells.count).max() ?? 1, 1)
+        var cells: [Node] = []
+
+        for (row, laid) in rows.enumerated() {
+            for (column, cell) in laid.cells.enumerated() {
+                var cell = cell
+                cell.write(ViewContract.gridRow, row)
+                cell.write(ViewContract.gridColumn, column)
+                if laid.bare {
+                    cell.write(ViewContract.gridColumnSpan, columns)
+                } else {
+                    if alignment.horizontal.axis != .fill {
+                        cell.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
+                    }
+                    if laid.alignment != .fill {
+                        cell.write(ViewContract.verticalAlignment, laid.alignment)
+                    }
+                }
+                cells.append(cell)
+            }
+        }
+
+        return cells
+    }
 }
 
 extension Grid {

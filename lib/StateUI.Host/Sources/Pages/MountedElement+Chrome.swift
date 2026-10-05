@@ -7,22 +7,55 @@
 /// its own: its actions, and the colours of its bar.
 /// Design: docs/design/host/pages.md#the-windows-chrome
 extension MountedElement {
-    /// This page's actions for its chrome, by priority, then in the order written, those placed in the overflow apart;
+    /// This page's actions for its chrome: the leading group - navigation and
+    /// the cancelling action - the bar's own items, and those placed behind
+    /// the overflow. Each group is by priority, then in the order written;
     /// none where the page hides its bar.
-    public var chromeActions: (primary: [MountedElement], overflow: [MountedElement]) {
-        guard value(.hasNavigationBar)?.bool != false,
-              let items = children.first(where: { $0.type == .toolbarItems })?.children.filter({ $0.type == .toolbarItem })
-        else { return ([], []) }
+    ///
+    /// The entries are the page's `toolbarItems` slot's, and those every
+    /// `.toolbar { … }` under it wrote - a slot under a nested arrangement is
+    /// that arrangement's own.
+    public var chromeActions: (leading: [MountedElement], primary: [MountedElement], overflow: [MountedElement]) {
+        guard value(.hasNavigationBar)?.bool != false else { return ([], [], []) }
+
+        var items: [MountedElement] = []
+        gatherToolbarItems(under: self, into: &items)
+        guard !items.isEmpty else { return ([], [], []) }
 
         let ordered = items.enumerated().sorted {
             let left = $0.element.value(.priority)?.number ?? 0
             let right = $1.element.value(.priority)?.number ?? 0
             return left == right ? $0.offset < $1.offset : left < right
         }.map(\.element)
-        let overflows = { (item: MountedElement) in
-            item.value(.placement)?.enumeration == ToolbarItemPlacement.overflow.rawValue
+
+        var leading: [MountedElement] = []
+        var primary: [MountedElement] = []
+        var overflow: [MountedElement] = []
+        for item in ordered {
+            switch ToolbarItemPlacement(rawValue: item.value(.placement)?.enumeration ?? 0) ?? .automatic {
+            case .navigation, .cancellationAction:
+                leading.append(item)
+            case .overflow:
+                overflow.append(item)
+            default:
+                primary.append(item)
+            }
         }
-        return (ordered.filter { !overflows($0) }, ordered.filter(overflows))
+        return (leading, primary, overflow)
+    }
+
+    /// The toolbar entries under `element` - its `toolbarItems` slots'
+    /// children, in tree order, not reaching into a nested arrangement's own.
+    private func gatherToolbarItems(under element: MountedElement, into items: inout [MountedElement]) {
+        for child in element.children {
+            if child.type == .toolbarItems {
+                items.append(contentsOf: child.children.filter {
+                    $0.type == .toolbarItem || $0.type == .toolbarSpacer
+                })
+            } else if !NodeType.pageTypes.contains(child.type) {
+                gatherToolbarItems(under: child, into: &items)
+            }
+        }
     }
 
     /// The colours this element's bar is painted in: the nearest stack's or tabbed view's around it, itself included,

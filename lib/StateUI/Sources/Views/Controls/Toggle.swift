@@ -82,18 +82,33 @@ public struct Toggle: View {
     }
 
     /// A toggle with its words - `Toggle("Sound", isOn: $soundOn)`.
-    public init(_ title: String, isOn: Binding<Bool>) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, isOn: Binding<Bool>) {
         self.init(isOn: isOn) { Text(title) }
     }
 
+    /// A toggle with its words looked up.
+    public init(_ titleKey: LocalizedStringKey, isOn: Binding<Bool>) {
+        self.init(isOn: isOn) { Text(titleKey) }
+    }
+
     /// A one-way toggle with its words.
-    public init(_ title: String, isOn: Bool) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, isOn: Bool) {
         self.init(isOn) { Text(title) }
     }
 
+    /// A one-way toggle with its words looked up.
+    public init(_ titleKey: LocalizedStringKey, isOn: Bool) {
+        self.init(isOn) { Text(titleKey) }
+    }
+
     /// A one-way toggle with its words, showing as unset.
-    public init(_ title: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S) {
         self.init(false) { Text(title) }
+    }
+
+    /// A one-way toggle with its words looked up, showing as unset.
+    public init(_ titleKey: LocalizedStringKey) {
+        self.init(false) { Text(titleKey) }
     }
 
     /// The control alone, two-way.
@@ -152,8 +167,11 @@ private struct ToggleButton: View {
     var body: some View {
         var button: Button.Modified = isOn.map(Button().isOn) ?? Button().isOn(initial)
         var label = label
-        if let (text, icon) = label.buttonCaption {
+        if let (text, key, icon) = label.buttonCaption {
             if let text { button = button.text(text) }
+            if let key {
+                button = button.modified { $0.props[TextElementContract.textKey.token] = key.propValue }
+            }
             if let icon { button = button.icon(icon) }
             label = EmptyView()
         }
@@ -166,21 +184,22 @@ private struct ToggleButton: View {
 }
 
 extension View {
-    /// What of this view a captioned button can carry - a `Text`'s words, an
-    /// `Image`'s picture, a `Label`'s both - or `nil` where nothing carries,
-    /// the view drawing beside the button then.
-    fileprivate var buttonCaption: (text: String?, icon: ImageSource?)? {
+    /// What of this view a captioned button can carry - a `Text`'s words and
+    /// their lookup key, an `Image`'s picture, a `Label`'s all three - or
+    /// `nil` where nothing carries, the view drawing beside the button then.
+    fileprivate var buttonCaption: (text: String?, key: LocalizedStringKey?, icon: ImageSource?)? {
         if let text = self as? Text {
-            return (text.node.props[.text]?.string, nil)
+            return (text.node.props[.text]?.string, text.wordsKey, nil)
         }
         if let image = self as? Image {
-            return (nil, image.node.props[.source].flatMap(ImageSource.init(propValue:)))
+            return (nil, nil, image.node.props[.source].flatMap(ImageSource.init(propValue:)))
         }
         if let label = self as? Label {
-            let text = (label.title as? Text)?.node.props[.text]?.string
+            let title = label.title as? Text
             let icon = (label.icon as? Image)?.node.props[.source]
                 .flatMap(ImageSource.init(propValue:))
-            return text != nil || icon != nil ? (text, icon) : nil
+            let text = title?.node.props[.text]?.string
+            return text != nil || icon != nil ? (text, title?.wordsKey, icon) : nil
         }
         return nil
     }

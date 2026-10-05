@@ -35,7 +35,8 @@ extension AppKitElement {
         if let split = view as? AppKitSplitView {
             split.apply(
                 sidebarWidth: children.first?.value(.preferredColumnWidth)?.numbers,
-                detailWidth: children.count > 1 ? children[1].value(.preferredColumnWidth)?.numbers : nil)
+                contentWidth: children.count > 2 ? children[1].value(.preferredColumnWidth)?.numbers : nil,
+                detailWidth: children.count > 1 ? children[children.count - 1].value(.preferredColumnWidth)?.numbers : nil)
             split.setItems(items)
             return
         }

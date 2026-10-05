@@ -55,6 +55,13 @@ func appKitTextStyle(_ style: FontTextStyle) -> NSFont.TextStyle? {
     }
 }
 
+extension NSAttributedString.Key {
+    /// Which of a label's span runs these words came from - written by
+    /// `attributedLabelText`, read by a `TextLayoutReport` grouping the
+    /// typesetter's glyphs back into the element's own runs.
+    static let stateUIRunIndex = NSAttributedString.Key("stateui.runIndex")
+}
+
 /// A StateUI font design as AppKit's own.
 func appKitFontDesign(_ design: FontDesign) -> NSFontDescriptor.SystemDesign {
     switch design {
@@ -76,6 +83,7 @@ func appKitAttributes(_ look: TextLook, font: NSFont, fallbackColor: NSColor) ->
         .kern: look.letterSpacing,
     ]
     if let background = look.background.flatMap(nsColor) { attributes[.backgroundColor] = background }
+    if let offset = look.baselineOffset, offset.isFinite { attributes[.baselineOffset] = offset }
     if look.decorations.contains(.underline) { attributes[.underlineStyle] = NSUnderlineStyle.single.rawValue }
     if look.decorations.contains(.strikethrough) {
         attributes[.strikethroughStyle] = NSUnderlineStyle.single.rawValue

@@ -54,6 +54,10 @@
     case saveState
     /// Puts back the settings and the movement remembered last.
     case restoreState
+    /// An outline's width, ends and corners from here, together.
+    case strokeStyle(width: Double, cap: LineCap, join: LineJoin)
+    /// Which points a fill counts as inside from here: even-odd, or winding.
+    case fillStyle(evenOdd: Bool)
 
     /// The instructions of `drawing`, in order.
     public static func instructions(_ drawing: [DrawCommand]?) -> [CanvasInstruction] {
@@ -109,6 +113,15 @@
         case 20: guard let n = numbers(2) else { return nil }; self = .scale(x: n[0], y: n[1])
         case 21: self = .saveState
         case 22: self = .restoreState
+        case 23:
+            guard let n = numbers(1), let cap = values.value(1)?.enumeration,
+                  let join = values.value(2)?.enumeration
+            else { return nil }
+            self = .strokeStyle(
+                width: n[0], cap: LineCap(rawValue: cap) ?? .flat, join: LineJoin(rawValue: join) ?? .miter)
+        case 24:
+            guard let evenOdd = flag(0) else { return nil }
+            self = .fillStyle(evenOdd: evenOdd)
         default: return nil
         }
     }

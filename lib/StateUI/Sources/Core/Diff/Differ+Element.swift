@@ -222,7 +222,7 @@ extension Differ {
                 bodies.append(stateful.viewType)
                 entered += 1
 
-                node = ReadScope.collect(into: &reads) {
+                node = ReadScope.observed(into: &reads) {
                     BuildScope.within(built) { stateful.expand(over: node) }
                 }
                 pushed += node.environments.count
@@ -255,7 +255,7 @@ extension Differ {
                 element: id)
         }
 
-        node = ReadScope.collect(into: &reads) {
+        node = ReadScope.observed(into: &reads) {
             let shallow = { () -> Node in
                 var made = node
                 made.materialize()
@@ -571,6 +571,14 @@ extension Differ {
         let children = reconcileChildren(
             of: previous, node: node, into: &patch, sizesArrive: node.childSizesArrive)
 
+        // A text rebuilt under one element takes the last layout report over:
+        // its folded answer keeps saying where the words stand until the host
+        // says again.
+        if let box = node.textLayoutBox,
+            let before = previous?.textLayoutBox, box !== before {
+            box.inherit(from: before)
+        }
+
         // What the subtree answers each preference key, folded over the
         // children's settled answers; each observer fires once its answer
         // moves - and once on first mount, as `.onPreferenceChange` always
@@ -626,6 +634,7 @@ extension Differ {
         result.preferenceTransforms = node.preferenceTransforms
         result.preferenceValues = folded
         result.preferenceWatches = preferenceWatches
+        result.textLayoutBox = node.textLayoutBox
 
         // What a host pulls mid-layout: the element's code objects by its id.
         if node.customLayout != nil || !node.layoutValues.isEmpty {

@@ -288,4 +288,24 @@ public enum Draw {
     public static func restoreState() -> DrawCommand {
         DrawCommand(.restoreState)
     }
+
+    // MARK: - How an outline and a fill are finished
+
+    /// The width, the ends and the corners the `draw…` instructions outline
+    /// with, together - what `GraphicsContext`'s `stroke` writes of its
+    /// `StrokeStyle`.
+    ///
+    /// - Parameters:
+    ///   - width: how wide the outline is.
+    ///   - cap: how the ends of open lines are drawn.
+    ///   - join: how the corners where segments meet are drawn.
+    public static func strokeStyle(width: Double, cap: LineCap, join: LineJoin) -> DrawCommand {
+        DrawCommand(.strokeStyle, [.number(width), .enumeration(cap.rawValue), .enumeration(join.rawValue)])
+    }
+
+    /// Which points a `fill…` counts as inside from here on: `true` the
+    /// even-odd rule, `false` - the default - the winding one.
+    public static func fillStyle(eoFill: Bool) -> DrawCommand {
+        DrawCommand(.fillStyle, [.bool(eoFill)])
+    }
 }

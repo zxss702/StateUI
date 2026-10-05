@@ -11,11 +11,17 @@ import CStateUIWinUI
 /// Design: docs/design/platforms/winui/runtime.md#kept-values
 @MainActor
 enum WinUIPersistence {
-    /// Hands the core every kept value there is, before the first render reads one.
+    /// Hands the core every kept value there is, before the first render reads one. The
+    /// manifest a claimed key is listed under names keys the first pass did not - read after it.
     static func restore(into core: CoreLink) {
-        let keys = core.persistentKeys
-        guard !keys.isEmpty else { return }
-        core.restorePersistent(read().restored(for: keys))
+        let kept = read()
+        var read: Set<String> = []
+
+        while true {
+            let keys = core.persistentKeys.filter { read.insert($0.name).inserted }
+            guard !keys.isEmpty else { return }
+            core.restorePersistent(kept.restored(for: keys))
+        }
     }
 
     /// Keeps a key's new value, as the act `persistValue` carries it.

@@ -14,6 +14,25 @@ extension WinUIElement {
             return arrangeRuns(of: label)
         }
         let arranged = element.arrangedChildren.map(\.winUI)
+
+        if let menu = view as? WinUIMenuButtonView {
+            menu.setFace(arranged.first { $0.type != .contextMenu }?.view)
+            menu.show(WinUIMenu(arranged.first { $0.type == .contextMenu }))
+            return
+        }
+        if let split = view as? WinUISplitView {
+            split.sidebarPaneLength = arranged.first?.element.value(.preferredColumnWidth)?.numbers
+            split.contentPaneLength = arranged.count > 2
+                ? arranged[1].element.value(.preferredColumnWidth)?.numbers
+                : nil
+        }
+        if let custom = view as? WinUICustomLayoutView {
+            custom.direction = element.layoutDirection
+            custom.setItems(
+                arranged.compactMap(\.layoutItem),
+                layout: CoreLink().customLayout(for: element.id))
+            return
+        }
         let layout = view as? WinUILayoutView
         layout?.direction = element.layoutDirection
         layout?.setItems(arranged.compactMap(\.layoutItem))
@@ -39,6 +58,7 @@ extension WinUIElement {
 
         var item = WinUILayoutItem(view: view, values: element.layoutValues, isShown: isShown)
         item.mount = element.mount
+        item.codeId = element.id
         item.departing = element.isDeparting
         if fadesIn {
             item.fadeIn = { [weak self] animation, room in self?.fadeIn(under: animation, room: room) }

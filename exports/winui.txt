@@ -6,8 +6,11 @@ Button
   buttonStyle
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isOn
@@ -35,6 +38,14 @@ CheckBox
 ColorPicker
   color
   cornerRadius
+CustomLayout
+  background
+  clipsContent
+  contentPadding
+  ignoresInput
+  shape
+  stroke
+  strokeWidth
 DatePicker
   date
   fontAttributes
@@ -66,6 +77,7 @@ Grid
   columnSpacing
   columns
   contentPadding
+  flowColumns
   ignoresInput
   rowSpacing
   rows
@@ -110,6 +122,10 @@ List
   itemActivated()
   realizedChanged()
   selectionChanged()
+MenuButton
+  isEnabled
+  menuIndicator
+  menuStyle
 Path
   aspect
   data
@@ -171,8 +187,11 @@ RadioButton
   background
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   isEnabled
   isOn
@@ -194,6 +213,7 @@ Rectangle
 ScrollView
   background
   contentPadding
+  defaultScrollAnchor
   horizontalScrollIndicators
   orientation
   scrollOffset
@@ -242,8 +262,11 @@ Text
   characterSpacing
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   lineBreak
   lineHeight
@@ -380,9 +403,11 @@ ZStack
   focus()
   handlerFailed()
   hideOnScreenKeyboard()
+  localizedString()
   persistSceneValue()
   persistValue()
   prompt()
   scrollTo()
+  scrollToDescendant()
   unfocus()
   utcOffset()

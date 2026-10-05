@@ -203,7 +203,7 @@ extension AppKitRenderer {
     func windowWillClose(_ controller: AppKitWindowController) {
         if activeWindow === controller {
             activeWindow = nil
-            installPageMenus([])
+            installPageMenus(([], []))
         }
 
         if let closing = controller.window {
@@ -226,17 +226,35 @@ extension AppKitRenderer {
         installPageMenus(controller.pageMenuItems)
     }
 
-    /// Replaces only commands contributed by the visible StateUI page. The
+    /// Replaces only commands contributed by the visible StateUI page and the scene's `.commands`. The
     /// standard application, File and WindowScene commands remain host-owned.
-    func installPageMenus(_ roots: [NSMenuItem]) {
+    func installPageMenus(_ roots: (groups: [MenuEntry], menus: [MenuEntry])) {
         for insertion in pageMenuInsertions.reversed() {
             insertion.menu.removeItem(insertion.item)
         }
         pageMenuInsertions.removeAll(keepingCapacity: true)
 
+        // The items are built whether a main menu stands or not: building one
+        // is what ties it to its element, and a chooser - the driver's - may
+        // hear it with no bar to stand in.
+        let groups = roots.groups.map { ($0.placement, AppKitMenus.items($0.entries)) }
+        let menus = AppKitMenus.items(roots.menus)
+
         guard let main = NSApplication.shared.mainMenu else { return }
 
-        for root in roots {
+        // A group's entries lead the region's menu - above what the platform
+        // put there, a separator between.
+        for (placement, items) in groups {
+            guard let target = menu(for: placement, in: main) else { continue }
+            var items = items
+            if !target.items.isEmpty { items.append(.separator()) }
+            for item in items.reversed() {
+                target.insertItem(item, at: 0)
+                pageMenuInsertions.append((target, item))
+            }
+        }
+
+        for root in menus {
             if let standing = main.items.first(where: { $0.title == root.title }),
                let target = standing.submenu,
                let source = root.submenu {
@@ -261,6 +279,32 @@ extension AppKitRenderer {
         }
     }
 
+    /// The submenu a placement's entries belong to: the app's own menu for
+    /// its regions, the standard menu matching the region else - a missing
+    /// one made, as a Help menu is.
+    private func menu(for placement: CommandGroupPlacement?, in main: NSMenu) -> NSMenu? {
+        guard let placement else { return nil }
+        switch placement {
+        case .appInfo, .appSettings, .appVisibility, .appTermination, .systemServices:
+            return main.items.first?.submenu
+        case .newItem, .saveItem, .importExport, .printItem:
+            return main.item(withTitle: "File")?.submenu
+        case .undoRedo, .cutCopyPaste, .selectAll, .find, .findAndReplace, .share,
+            .navigation, .textEditing, .textFormatting:
+            return main.item(withTitle: "Edit")?.submenu
+        case .sidebar, .toolbar, .singleWindowList, .windowSize, .windowList:
+            return main.item(withTitle: "WindowScene")?.submenu
+        default:
+            if let standing = main.item(withTitle: "Help")?.submenu { return standing }
+            let help = NSMenu(title: "Help")
+            let item = NSMenuItem(title: "Help", action: nil, keyEquivalent: "")
+            item.submenu = help
+            main.insertItem(item, at: main.items.count)
+            pageMenuInsertions.append((main, item))
+            return help
+        }
+    }
+
     func cloneMenuItem(_ source: NSMenuItem) -> NSMenuItem {
         guard !source.isSeparatorItem else { return .separator() }
 
@@ -272,6 +316,7 @@ extension AppKitRenderer {
         item.attributedTitle = source.attributedTitle
         item.image = source.image
         item.isEnabled = source.isEnabled
+        item.keyEquivalentModifierMask = source.keyEquivalentModifierMask
         item.state = source.state
 
         if let sourceMenu = source.submenu {

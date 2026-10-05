@@ -37,7 +37,7 @@
         ActivityIndicatorContract.self, AppContract.self,
         ButtonContract.self, CanvasContract.self, CheckBoxContract.self,
         ColorPickerContract.self, ContentContract.self, ContextMenuContract.self, PopoverContract.self, CustomLayoutContract.self, MaskedContract.self, DatePickerContract.self,
-        EllipseContract.self, GridContract.self, HStackContract.self, ImageContract.self, ListContract.self,
+        EllipseContract.self, GridContract.self, GridRowContract.self, HStackContract.self, ImageContract.self, ListContract.self,
         TextContract.self,
         LeadingContentContract.self, LineContract.self, MapContract.self, MenuBarContract.self,
         MenuContract.self, MenuButtonContract.self, MenuItemContract.self, DividerContract.self, ModalStackContract.self,
@@ -49,6 +49,7 @@
         SpansContract.self, NavigationSplitViewContract.self, StepperContract.self, SwitchContract.self,
         TabViewContract.self, TextEditorContract.self, TextFieldContract.self, TimePickerContract.self,
         TitleBarContract.self, TitleViewContract.self, ToolbarItemContract.self, ToolbarItemsContract.self,
+        ToolbarSpacerContract.self,
         TrailingContentContract.self, VStackContract.self, WebViewContract.self,
         WindowSceneContract.self, ZStackContract.self,
     ]

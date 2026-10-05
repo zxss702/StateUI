@@ -33,9 +33,17 @@ public struct Menu: View, ModifiableElement {
     /// - Parameter text: the caption - "File", "Edit", "View" on the bar, or the
     ///   row that opens it inside another menu.
     /// - Parameter items: the entries, in the order they are written.
-    public init(_ text: String, @ViewBuilder items: () -> any View) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, @ViewBuilder items: () -> any View) {
         node = Node(contract: MenuContract.self, children: items().node.asChildren)
-        node.write(MenuContract.text, text)
+        node.write(MenuContract.text, String(text))
+    }
+
+    /// A menu captioned what `key` looks up - `Menu("File")` looks "File" up,
+    /// as SwiftUI's does.
+    public init(_ key: LocalizedStringKey, @ViewBuilder items: () -> any View) {
+        node = Node(contract: MenuContract.self, children: items().node.asChildren)
+        node.write(MenuContract.text, key.displayString)
+        node.write(MenuContract.textKey, key)
     }
 
     /// The node, as every element answers it.
@@ -84,8 +92,13 @@ public struct Menu: View, ModifiableElement {
     /// The label is spelled out rather than inferred: `Menu("x") { ... }`
     /// alone names the menu-bar menu, so the button form keeps its own
     /// signature.
-    public init(title text: String, @ViewBuilder content: () -> any View) {
+    @_disfavoredOverload public init<S: StringProtocol>(title text: S, @ViewBuilder content: () -> any View) {
         self.init(content: content) { Text(text) }
+    }
+
+    /// The same, the trigger's words looked up.
+    public init(title key: LocalizedStringKey, @ViewBuilder content: () -> any View) {
+        self.init(content: content) { Text(key) }
     }
 }
 
@@ -120,9 +133,17 @@ public struct MenuItem: View, MenuItemElement {
 
     /// An entry captioned `text`. Give it an `.onClicked`: an entry that does
     /// nothing is one that looks broken.
-    public init(_ text: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S) {
         node = Node(contract: MenuItemContract.self)
-        node.write(MenuItemElementContract.text, text)
+        node.write(MenuItemElementContract.text, String(text))
+    }
+
+    /// An entry captioned what `key` looks up - `MenuItem("Save")` looks
+    /// "Save" up, as SwiftUI's does.
+    public init(_ key: LocalizedStringKey) {
+        node = Node(contract: MenuItemContract.self)
+        node.write(MenuItemElementContract.text, key.displayString)
+        node.write(MenuItemElementContract.textKey, key)
     }
 
     /// The node, as every element answers it.

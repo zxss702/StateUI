@@ -85,8 +85,68 @@ public struct NavigationSplitView: VisualElement, PageElement, PageArrangement {
         }
     }
 
+    /// A sidebar beside a content column beside a detail, the columns showing
+    /// as `columnVisibility` says - SwiftUI's
+    /// `NavigationSplitView(columnVisibility:sidebar:content:detail:)`:
+    ///
+    ///     NavigationSplitView(columnVisibility: $observer.columnState) {
+    ///         SiderBarView()
+    ///             .navigationSplitViewColumnWidth(min: 256, ideal: 256, max: 640)
+    ///     } content: {
+    ///         NavigationStack(path: $observer.path) { … }
+    ///             .navigationSplitViewColumnWidth(min: 256, ideal: 320, max: 640)
+    ///     } detail: {
+    ///         DetailView()
+    ///     }
+    ///
+    /// The platform's own ways of collapsing a column write the visibility
+    /// they settled on back into the binding.
+    ///
+    /// - Parameter columnVisibility: which columns show, borrowed two-way.
+    /// - Parameter sidebar: the page at the side. It must have a title.
+    /// - Parameter content: the column between the sidebar and the detail.
+    /// - Parameter detail: the page beside them all.
+    public init(
+        columnVisibility: Binding<NavigationSplitViewVisibility>,
+        sidebar: () -> any Page,
+        content: () -> any Page,
+        detail: () -> any Page
+    ) {
+        node = Node(
+            contract: NavigationSplitViewContract.self,
+            children: [
+                Self.identified(Node.page(sidebar()), as: Self.sidebarIdentity),
+                Self.identified(Node.page(content()), as: Self.contentIdentity),
+                Self.identified(Node.page(detail()), as: Self.detailIdentity),
+            ])
+        node.write(NavigationSplitViewContract.columnVisibility, columnVisibility.wrappedValue)
+
+        // The user's ways in and out, once finished, written only when moved.
+        node.addHandler(NavigationSplitViewContract.columnVisibilityChanged.token) {
+            guard let visibility = NavigationSplitViewVisibility(EventBuffer.current.value()),
+                  visibility != columnVisibility.wrappedValue else { return }
+
+            columnVisibility.wrappedValue = visibility
+        }
+    }
+
+    /// A three-column split with no binding, every column showing - SwiftUI's
+    /// `NavigationSplitView(sidebar:content:detail:)`.
+    public init(
+        sidebar: () -> any Page,
+        content: () -> any Page,
+        detail: () -> any Page
+    ) {
+        self.init(
+            columnVisibility: Binding(get: { .automatic }, set: { _ in }),
+            sidebar: sidebar, content: content, detail: detail)
+    }
+
     /// The sidebar's key among its siblings.
     private static let sidebarIdentity = "sidebar"
+
+    /// The middle column's, in a three-column split.
+    private static let contentIdentity = "content"
 
     /// And the key of the page beside it.
     private static let detailIdentity = "detail"

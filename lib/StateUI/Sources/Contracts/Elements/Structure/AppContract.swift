@@ -66,6 +66,15 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// See `OnScreenKeyboard.hide()`.
     public static let hideOnScreenKeyboard = ElementAct<Self, Void, Bool>("hideOnScreenKeyboard")
 
+    /// What a lookup key resolves to in the host's tables - the pattern and
+    /// its arguments in, the words out; the act `*Key` members' mounted
+    /// resolution shares, called directly where a string crosses outside a
+    /// member - a dialog's title.
+    ///
+    /// See `Strings.localize(_:)`.
+    public static let localizedString = ElementAct<Self, LocalizedStringKey, String>(
+        "localizedString")
+
     /// A scene key's new value, on its way to the platform's record of that
     /// scene: the scene, the key, the value.
     public static let persistSceneValue = ElementAct<Self, (Name, Name, PropValue), Void>("persistSceneValue")
@@ -92,6 +101,6 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// The element's own members.
     public static let members: [any ContractMember] = [
         alert, announce, chooseAction, chooseFiles, confirm, currentTime, currentTimeZone, handlerFailed,
-        hideOnScreenKeyboard, persistSceneValue, persistValue, prompt, utcOffset,
+        hideOnScreenKeyboard, localizedString, persistSceneValue, persistValue, prompt, utcOffset,
     ]
 }

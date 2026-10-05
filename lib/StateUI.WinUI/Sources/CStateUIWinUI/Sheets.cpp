@@ -126,7 +126,7 @@ extern "C" void stateui_winui_window_set_sheets(StateUIObjectRef handle, StateUI
         auto room = window.Bounds().Height;
         for (auto const &child : children) {
             auto card = child.as<controls::Grid>().Children().GetAt(1).as<controls::Border>();
-            auto asked = winrt::unbox_value_or<double>(child.Tag(), 0.0);
+            auto asked = winrt::unbox_value_or<double>(child.as<xaml::FrameworkElement>().Tag(), 0.0);
             card.Height(asked == 0 ? std::numeric_limits<double>::quiet_NaN()
                                    : asked > 0 ? asked : -asked * room);
         }

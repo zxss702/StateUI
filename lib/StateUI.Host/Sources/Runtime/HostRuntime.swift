@@ -52,10 +52,11 @@
     private var settling = false
 
     /// A runtime on `clock`, its elements' native halves made by `makeNative`, a drift the intake refused told to
-    /// `log`.
+    /// `log`; `localization` answers lookup keys from the toolkit's string tables where it keeps any.
     public init(
         clock: any FrameClock, reducesMotion: @escaping () -> Bool,
-        makeNative: @escaping (MountedElement) -> any NativeElement, log: @escaping (String) -> Void
+        makeNative: @escaping (MountedElement) -> any NativeElement, log: @escaping (String) -> Void,
+        localization: @escaping (LocalizedStringKey) -> String? = { _ in nil }
     ) {
         self.clock = clock
         self.reducesMotion = reducesMotion
@@ -68,6 +69,7 @@
         tree = MountedTree(
             core: core, intake: intake, stateChannels: stateChannels, describedMotion: describedMotion,
             layoutMotion: layoutMotion, now: clock.now, reducesMotion: reducesMotion, makeNative: makeNative)
+        tree.localization = localization
         pump = Pump(core: core, intake: intake, tree: tree, displayCycle: displayCycle, now: clock.now, log: log)
 
         tree.tellPhase = { [weak pump] handler in pump?.handlers.enqueuePhase(handler) }
@@ -173,6 +175,17 @@
     public func sidebarShown(_ split: MountedElement, _ shown: Bool) {
         if split.isPagePresented { split.children.first?.setPagePresented(shown, reason: .appearance) }
         split.reportUserChange(.isSidebarVisible, .isSidebarVisibleChanged, .bool(shown), in: self) { _ in }
+    }
+
+    /// The user collapsed or expanded `split`'s columns on screen: the pages' presentation hears it, then the
+    /// visibility the binding carries. The sidebar's page is the one a hidden sidebar takes off screen.
+    public func columnsShown(_ split: MountedElement, _ visibility: NavigationSplitViewVisibility) {
+        if split.isPagePresented {
+            split.children.first?.setPagePresented(
+                visibility == .all || visibility == .automatic, reason: .appearance)
+        }
+        split.reportUserChange(
+            .columnVisibility, .columnVisibilityChanged, .enumeration(visibility.rawValue), in: self) { _ in }
     }
 
     /// Goes `way` back in `window`: a stack's top page goes, the path told it is one shorter, or the top sheet goes,

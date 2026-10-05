@@ -11,11 +11,19 @@ import AppKit
 /// Design: docs/design/host/runtime.md#kept-values
 extension AppKitRenderer {
     func hydratePersistentState() {
-        let keys = runtime.core.persistentKeys
-        let words = Dictionary(uniqueKeysWithValues: keys.compactMap { key in
-            preferences.string(forKey: key.name).map { (key.name, $0) }
-        })
-        runtime.core.restorePersistent(KeptWord.restored(words, for: keys))
+        // One pass reads what the application lists and the manifest; the
+        // manifest names the keys a claimed state kept, read in the next.
+        var read: Set<String> = []
+
+        while true {
+            let keys = runtime.core.persistentKeys.filter { read.insert($0.name).inserted }
+            guard !keys.isEmpty else { return }
+
+            let words = Dictionary(uniqueKeysWithValues: keys.compactMap { key in
+                preferences.string(forKey: key.name).map { (key.name, $0) }
+            })
+            runtime.core.restorePersistent(KeptWord.restored(words, for: keys))
+        }
     }
 
     func savePersistent(_ call: HostActCall) {

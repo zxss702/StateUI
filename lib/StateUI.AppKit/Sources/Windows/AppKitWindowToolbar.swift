@@ -6,7 +6,8 @@ import AppKit
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
 
-/// One action a window's toolbar performs for the arrangement it shows.
+/// One entry a window's toolbar holds for the arrangement it shows - an
+/// action, a spacer, or the view a `ToolbarItem` carries.
 @MainActor
 struct AppKitToolbarAction {
     let identifier: NSToolbarItem.Identifier
@@ -15,6 +16,14 @@ struct AppKitToolbarAction {
     let isEnabled: Bool
     let perform: () -> Void
 
+    /// The view the item shows on the bar, where it stands for one; nil for a
+    /// titled or pictured button.
+    var view: NSView? = nil
+
+    /// The room the entry takes, where it is a `ToolbarSpacer`; nil for an
+    /// action.
+    var spacer: ToolbarSpacerVariant? = nil
+
     /// Whether two actions draw the same toolbar item. What an action
     /// performs is taken again on every composition.
     func draws(like other: AppKitToolbarAction) -> Bool {
@@ -22,6 +31,8 @@ struct AppKitToolbarAction {
             && title == other.title
             && image === other.image
             && isEnabled == other.isEnabled
+            && view === other.view
+            && spacer == other.spacer
     }
 }
 
@@ -30,13 +41,14 @@ struct AppKitToolbarAction {
 /// The window controller composes it from the visible arrangement and an
 /// authored `TitleBar`, and the toolbar lays it out in one order: the
 /// sidebar toggle and the separator that tracks the sidebar, the way back,
-/// the page's title where a painted band hides the system's, the title bar's
-/// leading content, the centre, the page's actions, native overflow, and the
-/// title bar's trailing content.
+/// the page's navigation actions, the page's title where a painted band
+/// hides the system's, the title bar's leading content, the centre, the
+/// page's actions, native overflow, and the title bar's trailing content.
 @MainActor
 struct AppKitWindowChrome {
     var sidebar: NSSplitViewController?
     var back: AppKitToolbarAction?
+    var leadingActions: [AppKitToolbarAction] = []
     var title: NSView?
     var leading: NSView?
     var center: NSView?
@@ -113,6 +125,22 @@ final class AppKitWindowToolbar: NSObject, NSToolbarDelegate {
         var nextViews: [NSToolbarItem.Identifier: NSView] = [:]
         var nextActions: [NSToolbarItem.Identifier: AppKitToolbarAction] = [:]
 
+        /// The identifiers `actions` stand for - a spacer's system space, an
+        /// action's own - recording views and actions by identifier.
+        func place(_ actions: [AppKitToolbarAction]) {
+            for action in actions {
+                if let spacer = action.spacer {
+                    nextIdentifiers.append(spacer == .flexible ? .flexibleSpace : .space)
+                    continue
+                }
+                nextIdentifiers.append(action.identifier)
+                if let view = action.view {
+                    nextViews[action.identifier] = view
+                } else {
+                    nextActions[action.identifier] = action
+                }
+            }
+        }
         if chrome.sidebar != nil {
             nextIdentifiers += [.toggleSidebar, .sidebarTrackingSeparator]
         }
@@ -120,6 +148,7 @@ final class AppKitWindowToolbar: NSObject, NSToolbarDelegate {
             nextIdentifiers.append(Self.back)
             nextActions[Self.back] = back
         }
+        place(chrome.leadingActions)
         if let title = chrome.title {
             nextIdentifiers.append(Self.title)
             nextViews[Self.title] = title
@@ -133,10 +162,7 @@ final class AppKitWindowToolbar: NSObject, NSToolbarDelegate {
             nextIdentifiers += [Self.center, .flexibleSpace]
             nextViews[Self.center] = center
         }
-        for action in chrome.actions {
-            nextIdentifiers.append(action.identifier)
-            nextActions[action.identifier] = action
-        }
+        place(chrome.actions)
         if !chrome.overflow.isEmpty { nextIdentifiers.append(Self.overflow) }
         if let trailing {
             nextIdentifiers.append(Self.trailing)
@@ -202,6 +228,11 @@ final class AppKitWindowToolbar: NSObject, NSToolbarDelegate {
                 identifier: itemIdentifier,
                 splitView: sidebar.splitView,
                 dividerIndex: 0)
+        }
+
+        // The system's space items stand for themselves; nil asks for the default.
+        if itemIdentifier == .flexibleSpace || itemIdentifier == .space {
+            return nil
         }
 
         let item = itemIdentifier == Self.overflow

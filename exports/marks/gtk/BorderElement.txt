@@ -8,9 +8,15 @@ CustomLayout.strokeWidth: cannot read strokeWidth of CustomLayout - GTK's driver
 Grid.shape: cannot read shape of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
 Grid.stroke: cannot read stroke of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
 Grid.strokeWidth: cannot read strokeWidth of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+GridRow.shape: not realized
+GridRow.stroke: not realized
+GridRow.strokeWidth: not realized
 HStack.shape: cannot read shape of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
 HStack.stroke: cannot read stroke of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
 HStack.strokeWidth: cannot read strokeWidth of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+Masked.shape: cannot read shape of Masked - GTK's driver has no path for it yet
+Masked.stroke: cannot read stroke of Masked - GTK's driver has no path for it yet
+Masked.strokeWidth: cannot read strokeWidth of Masked - GTK's driver has no path for it yet
 RadioButton.shape: not realized
 RadioButton.stroke: not realized
 RadioButton.strokeWidth: not realized

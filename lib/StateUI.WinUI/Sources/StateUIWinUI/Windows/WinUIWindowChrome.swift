@@ -22,6 +22,10 @@ struct WinUIWindowChrome {
     var foreground: HostValue?
     var menuBar = WinUIMenu()
 
+    /// The scene's commands behind the app menu's button at the bar's leading edge - a placement group's entries,
+    /// which stand for the platform's own menus on this family.
+    var appMenu = WinUIMenu()
+
     /// While a sheet shows: its way back - its own stack's, else it going - and it going, which Escape asks.
     var sheet: (back: () -> Void, dismiss: () -> Void)?
 }

@@ -45,6 +45,13 @@ private struct KeepingPage: View {
     var body: some View { Text("kept") }
 }
 
+/// State kept under names nobody declared - `@AppStorage`'s whole point: the
+/// key is registered when the state claims it, and the manifest brings it back.
+private struct Storing {
+    @AppStorage("test.dyn") var dyn = false
+    @AppStorage("test.word") var word = "unset"
+}
+
 /// A MODEL that keeps two of its settings - the shape an application's own
 /// settings object has, where the value belongs to the app rather than to any
 /// one view.
@@ -172,6 +179,8 @@ final class PersistenceTests: XCTestCase {
     /// A write inside a model reaches the store as any other kept write does.
     func testWritingAKeptStateInAModelSendsItToTheStore() {
         let settings = Settings()
+        _ = drainedActs()
+
         settings.count = 3
 
         let acts = drainedActs()
@@ -228,6 +237,8 @@ final class PersistenceTests: XCTestCase {
     /// NAME and the value as the kind it was declared with.
     func testWritingAKeptStateSendsItToTheStore() {
         let preferences = Preferences()
+        _ = drainedActs()
+
         preferences.name = "Grace"
 
         let acts = drainedActs()
@@ -287,6 +298,8 @@ final class PersistenceTests: XCTestCase {
     /// A kept state is saved whoever writes it: a control through the state's binding...
     func testAKeptStateWrittenThroughItsBindingSendsItToTheStore() {
         let preferences = Preferences()
+        _ = drainedActs()
+
         preferences.$name.wrappedValue = "Ada"
 
         XCTAssertEqual(drainedActs().first?.arguments, [.name("test.name"), .string("Ada")])
@@ -306,6 +319,7 @@ final class PersistenceTests: XCTestCase {
 
     func testAKeyWrittenManyTimesIsSavedOnceHoldingTheLastValue() {
         let preferences = Preferences()
+        _ = drainedActs()
 
         for text in ["G", "Gr", "Gra", "Grac", "Grace"] {
             preferences.name = text
@@ -322,6 +336,8 @@ final class PersistenceTests: XCTestCase {
     /// the queue would not.
     func testSavesReachTheHostSortedByName() {
         let preferences = Preferences()
+        _ = drainedActs()
+
         preferences.level = 0.25
         preferences.name = "Ada"
         preferences.loud = true
@@ -337,8 +353,11 @@ final class PersistenceTests: XCTestCase {
     /// The saves come AFTER whatever the handlers queued, so an act a handler
     /// awaited is not held up behind a store.
     func testSavesComeAfterTheActsTheHandlersQueued() {
+        let sidebar = Sidebar()
+        _ = drainedActs()
+
         Renderer.shared.send(.hideOnScreenKeyboard, [], completion: nil)
-        Sidebar().count = 3
+        sidebar.count = 3
 
         XCTAssertEqual(drainedActs().map(\.name), ["hideOnScreenKeyboard", "persistValue"])
     }
@@ -347,7 +366,10 @@ final class PersistenceTests: XCTestCase {
     /// interface does not move, but the store may not hold it yet - a first
     /// run where the user put the value back where it started.
     func testWritingTheValueItAlreadyHoldsStillReachesTheStore() {
-        Sidebar().count = 0
+        let sidebar = Sidebar()
+        _ = drainedActs()
+
+        sidebar.count = 0
 
         XCTAssertEqual(drainedActs().count, 1)
     }
@@ -355,18 +377,90 @@ final class PersistenceTests: XCTestCase {
     // MARK: - What the host is told
 
     /// The host is told every key with its kind, names in full, before the
-    /// first render - what it reads the platform's settings store with.
+    /// first render - what it reads the platform's settings store with - and
+    /// the manifest's own key beside them, so a key claimed last launch by a
+    /// state nothing declared is read back too.
     func testTheHostIsToldEveryKey() {
         Renderer.shared.setApplication(KeepingApp())
 
-        XCTAssertEqual(HostBoundary.persistentKeys, [.count, .name])
+        XCTAssertEqual(HostBoundary.persistentKeys, [.count, .name, PersistentStore.manifestKey])
     }
 
-    /// An application that keeps nothing names no key, and the host then reads
-    /// no store at all.
+    /// An application that keeps nothing names no key of its own - the
+    /// manifest's key is still listed, since it is how a key claimed at build
+    /// is found again next launch.
     func testAnApplicationThatKeepsNothingNamesNoKey() {
         Renderer.shared.setApplication(PlainApp())
 
-        XCTAssertEqual(HostBoundary.persistentKeys, [])
+        XCTAssertEqual(HostBoundary.persistentKeys, [PersistentStore.manifestKey])
+    }
+
+    // MARK: - @AppStorage
+
+    /// A claimed key needs nothing else declared: the claim registers it, and
+    /// the manifest's own key is always listed so the next launch's read finds
+    /// it - the host reads the list, then the keys the list names.
+    func testAnAppStorageKeyIsListedOnceClaimed() {
+        let storing = Storing()
+
+        let keys = HostBoundary.persistentKeys
+
+        XCTAssertTrue(keys.contains(PersistentKey("test.dyn", of: Bool.self)))
+        XCTAssertTrue(keys.contains(PersistentKey("test.word", of: String.self)))
+        XCTAssertTrue(keys.contains(PersistentStore.manifestKey))
+        _ = storing
+    }
+
+    /// A value the host read out of the store before the claim lands in the
+    /// state, as it does for a declared key: `@AppStorage` is a spelling over
+    /// the same kept state.
+    func testAnAppStorageTakesWhatTheHostHydrated() {
+        PersistentStore.shared.hydrate([(name: "test.word", value: .string("stored"))])
+
+        XCTAssertEqual(Storing().word, "stored")
+    }
+
+    /// And the default stands where the store had nothing.
+    func testAnAppStorageKeepsTheDeclaredValueWhereTheStoreHadNothing() {
+        XCTAssertEqual(Storing().dyn, false)
+        XCTAssertEqual(Storing().word, "unset")
+    }
+
+    /// A write reaches the store under the key's own name, as any kept write
+    /// does.
+    func testAnAppStorageWriteReachesTheStore() {
+        let storing = Storing()
+        _ = drainedActs()
+
+        storing.dyn = true
+
+        XCTAssertEqual(drainedActs().first?.arguments, [.name("test.dyn"), .bool(true)])
+    }
+
+    /// The key a state claimed is written into the manifest as it is claimed,
+    /// so a launch that never declared it still reads it back: the manifest
+    /// arrives, the key is registered, and the value the host reads under it
+    /// lands.
+    func testAClaimedKeyComesBackThroughTheManifest() {
+        _ = Storing()
+
+        let records = PersistentStore.shared.takeWaiting()
+
+        guard let recorded = records.first(where: { $0.name == "__stateui.keys" }),
+            case .string(let text) = recorded.value
+        else { return XCTFail("the claim wrote the manifest") }
+
+        XCTAssertTrue(text.contains("0:test.dyn"), "kind:name a line - a boolean")
+        XCTAssertTrue(text.contains("3:test.word"), "and a text")
+
+        // A new launch: the store holds the manifest and what it kept under
+        // the keys it names.
+        PersistentStore.shared.forgetAll()
+        PersistentStore.shared.hydrate([
+            (name: "__stateui.keys", value: recorded.value),
+            (name: "test.word", value: .string("from last launch")),
+        ])
+
+        XCTAssertEqual(Storing().word, "from last launch")
     }
 }

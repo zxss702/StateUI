@@ -76,9 +76,7 @@ final class AppKitCanvasView: AppKitHitTestView {
             fill(Self.path(CanvasArithmetic.arc(
                 in: room, start: start, end: end, clockwise: clockwise, closed: true, wedge: true)), pen)
         case .fillPath(let curves):
-            let path = Self.path(curves)
-            path.windingRule = .nonZero
-            fill(path, pen)
+            fill(Self.path(curves), pen)
         case .drawText(let text, let room, let across, let down):
             draw(text: text, in: Self.rect(room), horizontal: across, vertical: down, pen: pen)
         case .translate(let x, let y): context.translateBy(x: x, y: y)
@@ -143,12 +141,23 @@ final class AppKitCanvasView: AppKitHitTestView {
         guard pen.strokeWidth > 0, let color = Self.color(pen.stroke, pen) else { return }
         color.setStroke()
         path.lineWidth = pen.strokeWidth
+        path.lineCapStyle = switch pen.strokeCap {
+        case .round: .round
+        case .square: .square
+        default: .butt
+        }
+        path.lineJoinStyle = switch pen.strokeJoin {
+        case .round: .round
+        case .bevel: .bevel
+        default: .miter
+        }
         path.stroke()
     }
 
     private func fill(_ path: NSBezierPath, _ pen: CanvasPen) {
         guard let color = Self.color(pen.fill, pen) else { return }
         color.setFill()
+        path.windingRule = pen.fillEvenOdd ? .evenOdd : .nonZero
         path.fill()
     }
 

@@ -34,7 +34,7 @@ namespace {
     enum Kind : int32_t {
         FillColor, StrokeColor, TextColor, StrokeWidth, FontSize, Alpha, DrawLine, DrawRectangle, DrawRoundedRectangle,
         DrawEllipse, DrawArc, DrawPath, FillRectangle, FillRoundedRectangle, FillEllipse, FillArc, FillPath, DrawText,
-        Translate, Rotate, Scale, SaveState, RestoreState,
+        Translate, Rotate, Scale, SaveState, RestoreState, StrokeStyle, FillStyle,
     };
 
     /// What every canvas draws with: Direct2D's device, made at the first drawing and again after Windows takes it
@@ -121,7 +121,24 @@ namespace {
         D2D1_COLOR_F stroke = D2D1::ColorF(D2D1::ColorF::Black);
         D2D1_COLOR_F text = D2D1::ColorF(D2D1::ColorF::Black);
         float width = 1, size = 14, alpha = 1;
+        D2D1_CAP_STYLE cap = D2D1_CAP_STYLE_FLAT;
+        D2D1_LINE_JOIN join = D2D1_LINE_JOIN_MITER;
+        bool evenOdd = false;
+        winrt::com_ptr<ID2D1StrokeStyle> style;
+        D2D1_CAP_STYLE madeCap = D2D1_CAP_STYLE_FLAT;
+        D2D1_LINE_JOIN madeJoin = D2D1_LINE_JOIN_MITER;
         D2D1::Matrix3x2F transform = D2D1::Matrix3x2F::Identity();
+
+        /// The stroke style `cap` and `join` say, remade where they moved on.
+        ID2D1StrokeStyle *strokeStyle() {
+            if (!style || madeCap != cap || madeJoin != join) {
+                madeCap = cap;
+                madeJoin = join;
+                winrt::check_hresult(devices.factory->CreateStrokeStyle(
+                    D2D1::StrokeStyleProperties(cap, cap, cap, join), nullptr, 0, style.put()));
+            }
+            return style.get();
+        }
     };
 
     D2D1_COLOR_F colour(int32_t argb) {
@@ -141,13 +158,13 @@ namespace {
     }
 
     /// The next `count` curves - each its kind, 0 move, 1 line, 2 cubic, 3 quadratic, 4 close, then its points -
-    /// filled by the nonzero rule; null where the numbers run out first.
-    winrt::com_ptr<ID2D1PathGeometry> curves(Reader &reader, int32_t count) {
+    /// filled by the rule `evenOdd` says; null where the numbers run out first.
+    winrt::com_ptr<ID2D1PathGeometry> curves(Reader &reader, int32_t count, bool evenOdd) {
         winrt::com_ptr<ID2D1PathGeometry> geometry;
         winrt::com_ptr<ID2D1GeometrySink> sink;
         winrt::check_hresult(devices.factory->CreatePathGeometry(geometry.put()));
         winrt::check_hresult(geometry->Open(sink.put()));
-        sink->SetFillMode(D2D1_FILL_MODE_WINDING);
+        sink->SetFillMode(evenOdd ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING);
         bool open = false;
         auto start = point(0, 0);
         // A curve drawn with no figure open begins one where the last began: at the origin before any.
@@ -236,7 +253,7 @@ namespace {
         auto shape = [&](ID2D1Geometry *geometry, bool filled) {
             if (!geometry) return;
             if (filled) context->FillGeometry(geometry, paint(pen.fill));
-            else if (pen.width > 0) context->DrawGeometry(geometry, paint(pen.stroke), pen.width);
+            else if (pen.width > 0) context->DrawGeometry(geometry, paint(pen.stroke), pen.width, pen.strokeStyle());
         };
 
         Reader reader{drawing};
@@ -258,10 +275,12 @@ namespace {
                 break;
             case DrawLine:
                 if ((at = reader.numbers(4)) && pen.width > 0)
-                    context->DrawLine(point(at[0], at[1]), point(at[2], at[3]), paint(pen.stroke), pen.width);
+                    context->DrawLine(point(at[0], at[1]), point(at[2], at[3]), paint(pen.stroke), pen.width,
+                                      pen.strokeStyle());
                 break;
             case DrawRectangle:
-                if ((at = reader.numbers(4)) && pen.width > 0) context->DrawRectangle(box(at), paint(pen.stroke), pen.width);
+                if ((at = reader.numbers(4)) && pen.width > 0)
+                    context->DrawRectangle(box(at), paint(pen.stroke), pen.width, pen.strokeStyle());
                 break;
             case FillRectangle:
                 if ((at = reader.numbers(4))) context->FillRectangle(box(at), paint(pen.fill));
@@ -272,7 +291,7 @@ namespace {
                 auto radius = static_cast<float>(std::max(0.0, at[4]));
                 auto rounded = D2D1::RoundedRect(box(at), radius, radius);
                 if (kind == FillRoundedRectangle) context->FillRoundedRectangle(rounded, paint(pen.fill));
-                else if (pen.width > 0) context->DrawRoundedRectangle(rounded, paint(pen.stroke), pen.width);
+                else if (pen.width > 0) context->DrawRoundedRectangle(rounded, paint(pen.stroke), pen.width, pen.strokeStyle());
                 break;
             }
             case DrawEllipse:
@@ -281,12 +300,12 @@ namespace {
                 auto oval = D2D1::Ellipse(point(at[0] + at[2] / 2, at[1] + at[3] / 2), static_cast<float>(at[2] / 2),
                                           static_cast<float>(at[3] / 2));
                 if (kind == FillEllipse) context->FillEllipse(oval, paint(pen.fill));
-                else if (pen.width > 0) context->DrawEllipse(oval, paint(pen.stroke), pen.width);
+                else if (pen.width > 0) context->DrawEllipse(oval, paint(pen.stroke), pen.width, pen.strokeStyle());
                 break;
             }
             case DrawPath:
             case FillPath:
-                shape(curves(reader, reader.integer()).get(), kind == FillPath);
+                shape(curves(reader, reader.integer(), kind == FillPath && pen.evenOdd).get(), kind == FillPath);
                 break;
             case DrawText: {
                 auto across = reader.integer(), down = reader.integer(), word = reader.integer();
@@ -317,6 +336,22 @@ namespace {
                 pen = kept.back();
                 kept.pop_back();
                 place();
+                break;
+            case StrokeStyle: {
+                auto cap = reader.integer(), join = reader.integer();
+                if (!(at = reader.numbers(1))) break;
+                pen.width = static_cast<float>(std::max(0.0, *at));
+                // The vocabulary: flat, round, square; miter, bevel, round.
+                pen.cap = cap == 1   ? D2D1_CAP_STYLE_ROUND
+                          : cap == 2 ? D2D1_CAP_STYLE_SQUARE
+                                     : D2D1_CAP_STYLE_FLAT;
+                pen.join = join == 1   ? D2D1_LINE_JOIN_BEVEL
+                           : join == 2 ? D2D1_LINE_JOIN_ROUND
+                                       : D2D1_LINE_JOIN_MITER;
+                break;
+            }
+            case FillStyle:
+                pen.evenOdd = reader.integer() == 1;
                 break;
             default:
                 return;

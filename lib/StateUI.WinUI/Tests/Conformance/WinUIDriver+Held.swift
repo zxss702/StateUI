@@ -453,9 +453,9 @@ extension WinUIDriver {
     /// A scroll bar's showing, as WinUI's ScrollIndicatorVisibility says it: 1 as WinUI decides, 3 always, else never.
     static func bar(_ words: String) -> ScrollIndicatorVisibility {
         switch Int(words) {
-        case 1: .default
-        case 3: .always
-        default: .never
+        case 1: .automatic
+        case 3: .visible
+        default: .hidden
         }
     }
 }

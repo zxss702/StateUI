@@ -77,24 +77,33 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
     /// - Parameter destination: the page for one route, asked in path order.
     public init<Route: Hashable>(
         _ path: Binding<[Route]>,
-        root: () -> any Page,
-        destination: (Route) -> any Page
+        root: @escaping () -> any Page,
+        destination: @escaping (Route) -> any Page
     ) {
-        var children: [Node] = [Self.identified(Node.page(root()), as: Self.rootIdentity)]
+        let links = ElementSession(NavigationLinks.self) { NavigationLinks() }
 
-        for (depth, route) in path.wrappedValue.enumerated() {
-            var pushed = Self.identified(
-                Node.page(destination(route)), as: Self.identity(depth: depth, route: route))
+        node = Node(contract: NavigationStackContract.self)
+        node.session = links
+        node.producer = {
+            let store = Self.links(in: links)
+            var children: [Node] = [Self.identified(Node.page(root()), as: Self.rootIdentity)]
 
-            // `\.dismiss` inside a pushed page backs the stack out of it.
-            pushed.environmentValues[keyPath: \.dismiss] = DismissAction { [path] in
-                path.wrappedValue = Array(path.wrappedValue.prefix(depth))
+            for (depth, route) in path.wrappedValue.enumerated() {
+                var pushed = Self.identified(
+                    Node.page(destination(route)), as: Self.identity(depth: depth, route: route))
+
+                // `\.dismiss` inside a pushed page backs the stack out of it.
+                pushed.environmentValues[keyPath: \.dismiss] = DismissAction { [path] in
+                    path.wrappedValue = Array(path.wrappedValue.prefix(depth))
+                }
+
+                children.append(pushed)
             }
 
-            children.append(pushed)
+            children.append(contentsOf: store.pushed)
+            return children
         }
-
-        node = Node(contract: NavigationStackContract.self, children: children)
+        Self.offersPushes(on: &node, through: links)
 
         // The platform's way back, once committed, reports how deep the stack
         // now is above the root; the path only ever shortens to match.
@@ -103,9 +112,13 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
             guard let depth = EventBuffer.current.value()?.int else { return }
 
             let routes = path.wrappedValue
-            guard depth >= 0, depth < routes.count else { return }
-
-            path.wrappedValue = Array(routes.prefix(depth))
+            let store = links.held(as: NavigationLinks.self)
+            if depth >= 0, depth < routes.count {
+                path.wrappedValue = Array(routes.prefix(depth))
+                store.pop(to: 0)
+            } else if depth >= routes.count {
+                store.pop(to: depth - routes.count)
+            }
         }
     }
 
@@ -125,43 +138,62 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
     /// depth still says where it stands.
     public init<Route: Hashable>(
         path: Binding<[Route]>,
-        root: () -> any Page
+        root: @escaping () -> any Page
     ) {
-        let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
-        var children: [Node] = [rootNode]
+        let links = ElementSession(NavigationLinks.self) { NavigationLinks() }
+        var itemOnStack = false
+        var itemDismiss: (@Sendable () -> Void)?
 
-        let destinations = Self.destinations(on: rootNode)
-        for (depth, route) in path.wrappedValue.enumerated() {
-            let made = destinations[ObjectIdentifier(Swift.type(of: route))]?(route)
-                ?? EmptyView().node
-            var pushed = Self.identified(
-                Node.page(DestinationPage(node: made)), as: Self.identity(depth: depth, route: route))
+        node = Node(contract: NavigationStackContract.self)
+        node.session = links
+        node.producer = {
+            let store = Self.links(in: links)
+            let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
+            var children: [Node] = [rootNode]
 
-            pushed.environmentValues[keyPath: \.dismiss] = DismissAction { [path] in
-                path.wrappedValue = Array(path.wrappedValue.prefix(depth))
+            let destinations = Self.destinations(on: rootNode)
+            for (depth, route) in path.wrappedValue.enumerated() {
+                let made = destinations[ObjectIdentifier(Swift.type(of: route))]?(route)
+                    ?? EmptyView().node
+                var pushed = Self.identified(
+                    Node.page(DestinationPage(node: made)), as: Self.identity(depth: depth, route: route))
+
+                pushed.environmentValues[keyPath: \.dismiss] = DismissAction { [path] in
+                    path.wrappedValue = Array(path.wrappedValue.prefix(depth))
+                }
+                children.append(pushed)
             }
-            children.append(pushed)
+
+            itemOnStack = false
+            if let pushed = Self.itemDestinationPage(from: rootNode) {
+                children.append(pushed)
+                itemOnStack = true
+            }
+            itemDismiss = rootNode.itemDestination?.dismiss
+                ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
+
+            children.append(contentsOf: store.pushed)
+            return children
         }
+        Self.offersPushes(on: &node, through: links)
 
-        if let pushed = Self.itemDestinationPage(from: rootNode) {
-            children.append(pushed)
-        }
-
-        node = Node(contract: NavigationStackContract.self, children: children)
-
-        // A back gesture past the path's depth drops the item-driven page:
-        // the path holds the pushed routes, and the page above them all is
-        // the one an item presents.
-        let dismissItem = rootNode.itemDestination?.dismiss
-            ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
+        // A back gesture past the path's depth drops the item-driven page and
+        // the pages links pushed: the path holds the pushed routes, the pages
+        // above them all are the one an item presents, then the links'.
         node.addHandler(NavigationStackContract.popped.token) {
             guard let depth = EventBuffer.current.value()?.int else { return }
 
             let routes = path.wrappedValue
+            let store = links.held(as: NavigationLinks.self)
             if depth >= 0, depth < routes.count {
                 path.wrappedValue = Array(routes.prefix(depth))
+                itemDismiss?()
+                store.pop(to: 0)
             } else if depth == routes.count {
-                dismissItem?()
+                itemDismiss?()
+                store.pop(to: 0)
+            } else {
+                store.pop(to: depth - routes.count - (itemOnStack ? 1 : 0))
             }
         }
     }
@@ -169,21 +201,57 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
     /// A stack of one page - what SwiftUI's `NavigationStack { … }` says
     /// where no path is bound. A `.navigationDestination(item:)` on `root`
     /// still pushes and pops its page.
-    public init(root: () -> any Page) {
-        let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
-        var children: [Node] = [rootNode]
+    public init(root: @escaping () -> any Page) {
+        let links = ElementSession(NavigationLinks.self) { NavigationLinks() }
+        var itemOnStack = false
+        var itemDismiss: (@Sendable () -> Void)?
 
-        if let pushed = Self.itemDestinationPage(from: rootNode) {
-            children.append(pushed)
+        node = Node(contract: NavigationStackContract.self)
+        node.session = links
+        node.producer = {
+            let store = Self.links(in: links)
+            let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
+            var children: [Node] = [rootNode]
+
+            itemOnStack = false
+            if let pushed = Self.itemDestinationPage(from: rootNode) {
+                children.append(pushed)
+                itemOnStack = true
+            }
+            itemDismiss = rootNode.itemDestination?.dismiss
+                ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
+
+            children.append(contentsOf: store.pushed)
+            return children
         }
+        Self.offersPushes(on: &node, through: links)
 
-        node = Node(contract: NavigationStackContract.self, children: children)
-
-        // With no path the only thing to pop is the item-driven page.
-        let dismissItem = rootNode.itemDestination?.dismiss
-            ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
+        // With no path the only things to pop are the item-driven page and
+        // the pages links pushed, in that order from the bottom.
         node.addHandler(NavigationStackContract.popped.token) {
-            dismissItem?()
+            guard let depth = EventBuffer.current.value()?.int else { return }
+
+            let store = links.held(as: NavigationLinks.self)
+            if depth <= (itemOnStack ? 1 : 0) {
+                itemDismiss?()
+            }
+            store.pop(to: max(0, depth - (itemOnStack ? 1 : 0)))
+        }
+    }
+
+    /// The `NavigationLink` pages' store this stack's session holds, read so
+    /// the element is built again when it changes.
+    private static func links(in session: ElementSession) -> NavigationLinks {
+        let store = session.held(as: NavigationLinks.self)
+        Renderer.shared.stateRead(store)
+        return store
+    }
+
+    /// Offers `\.pushPage` to the stack's subtree - the `NavigationLink`s in
+    /// it push their destinations onto the store `links` answers.
+    private static func offersPushes(on node: inout Node, through links: ElementSession) {
+        node.environmentValues[keyPath: \.pushPage] = PushPageAction { [links] page in
+            links.held(as: NavigationLinks.self).push(page)
         }
     }
 
@@ -240,8 +308,9 @@ extension NavigationStack {
 }
 
 /// A `Page` over an already-built node - what a `.navigationDestination`
-/// factory makes once it has the value or item it was registered for.
-private struct DestinationPage: Page {
+/// factory makes once it has the value or item it was registered for, and
+/// what a `NavigationLink`'s pushed page wears.
+struct DestinationPage: Page {
     var node: Node
 }
 

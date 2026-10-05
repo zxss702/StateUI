@@ -34,6 +34,11 @@ public enum InputViewContract: Contract {
     /// What the field shows while it is empty.
     public static let placeholder = ElementProperty<Self, String>("placeholder", layer: .native)
 
+    /// The placeholder as a lookup key, as `TextElementContract.textKey` is
+    /// for the elements that wear it.
+    public static let placeholderKey = ElementProperty<Self, LocalizedStringKey>(
+        "placeholderKey", layer: .native, travels: false)
+
     /// The placeholder's colour.
     public static let placeholderColor = ElementProperty<Self, Color>("placeholderColor", layer: .native)
 
@@ -47,6 +52,6 @@ public enum InputViewContract: Contract {
     /// The tier's own members.
     public static let members: [any ContractMember] = [
         cursorPosition, textContentType, isReadOnly, isSpellCheckEnabled, isTextPredictionEnabled,
-        maximumLength, placeholder, placeholderColor, selectionLength, textChanged,
+        maximumLength, placeholder, placeholderKey, placeholderColor, selectionLength, textChanged,
     ]
 }

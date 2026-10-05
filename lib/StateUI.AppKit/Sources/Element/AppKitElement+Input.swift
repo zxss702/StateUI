@@ -190,13 +190,24 @@ extension AppKitElement {
 extension AppKitElement: FrameReporter {
     /// Says where the element stands, where that changed (`MountedElement.reportFrame`).
     func reportFrame() {
-        guard let host, let numbers = frameNumbers() else { return }
-        let named = element.namedSpaceFrames { ancestor in
-            guard let ancestorView = (ancestor.native as? AppKitElement)?.view,
-                  let content = ancestorView.window?.contentView else { return nil }
-            return topLeftFrame(ancestorView.convert(ancestorView.bounds, to: content), in: content).placed
+        guard let host else { return }
+        if let numbers = frameNumbers() {
+            let named = element.namedSpaceFrames { ancestor in
+                guard let ancestorView = (ancestor.native as? AppKitElement)?.view,
+                      let content = ancestorView.window?.contentView else { return nil }
+                return topLeftFrame(ancestorView.convert(ancestorView.bounds, to: content), in: content).placed
+            }
+            element.reportFrame(numbers, named: named, in: host.runtime)
         }
-        element.reportFrame(numbers, named: named, in: host.runtime)
+    }
+
+    /// Says how the typesetter laid the words out, where a `Text` hears it
+    /// (`MountedElement.reportTextLayout`) - the label's own layout pass asks,
+    /// so the answer needs no frame clock.
+    func reportTextLayout() {
+        guard let host, let label = view as? AppKitLabelView,
+              let report = label.textLayoutReport() else { return }
+        element.reportTextLayout(report, in: host.runtime)
     }
 }
 #endif

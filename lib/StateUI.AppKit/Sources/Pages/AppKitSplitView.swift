@@ -20,6 +20,9 @@ import AppKit
 final class AppKitSplitView: AppKitHitTestView {
     var onPresentationChanged: ((Bool) -> Void)?
 
+    /// What the split does when the user moves which of three columns show.
+    var onVisibilityChanged: ((NavigationSplitViewVisibility) -> Void)?
+
     /// The native split view controller the window's toolbar toggles.
     let splitController = NSSplitViewController()
 
@@ -27,27 +30,36 @@ final class AppKitSplitView: AppKitHitTestView {
     private static let sidebarRoom: Double = 720
 
     private let sidebarController = NSViewController()
+    private let contentController = NSViewController()
     private let detailController = NSViewController()
     private let sidebarSurface = AppKitPaneView()
+    private let contentSurface = AppKitPaneView()
     private let detailSurface = AppKitPaneView()
     private lazy var sidebarItem = NSSplitViewItem(
         sidebarWithViewController: sidebarController)
+    private lazy var contentItem = NSSplitViewItem(
+        viewController: contentController)
     private lazy var detailItem = NSSplitViewItem(
         viewController: detailController)
     private var lastEffectivePresentation = false
+    private var lastEffectiveVisibility: NavigationSplitViewVisibility?
     private var adaptation = SidebarAdaptation()
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
 
         sidebarSurface.insetsBySafeArea = true
+        contentSurface.insetsBySafeArea = true
         detailSurface.insetsBySafeArea = true
         sidebarController.view = sidebarSurface
+        contentController.view = contentSurface
         detailController.view = detailSurface
         sidebarItem.canCollapse = true
         sidebarItem.allowsFullHeightLayout = true
         sidebarItem.minimumThickness = 260
         sidebarItem.maximumThickness = 340
+        contentItem.canCollapse = true
+        contentItem.minimumThickness = 200
         splitController.addSplitViewItem(sidebarItem)
         splitController.addSplitViewItem(detailItem)
         splitController.splitView.isVertical = true
@@ -117,15 +129,28 @@ final class AppKitSplitView: AppKitHitTestView {
 
     func setItems(_ items: [AppKitLayoutItem]) {
         let sidebar = items.first
-        let detail = items.count > 1 ? items[1] : nil
+        let content = items.count > 2 ? items[1] : nil
+        let detail = items.count > 1 ? items[items.count - 1] : nil
 
         // THE PANES IT HAS: a patch on its way to a page applies this view
         // again, and that asks nothing of it.
         guard !AppKitLayoutItem.sameArrangement(sidebarSurface.item, sidebar)
+            || !AppKitLayoutItem.sameArrangement(contentSurface.item, content)
             || !AppKitLayoutItem.sameArrangement(detailSurface.item, detail)
         else { return }
 
+        // A content column is a third split item the sidebar and the detail
+        // make room for; a two-column split never mounts one.
+        if content != nil, !splitController.splitViewItems.contains(contentItem) {
+            splitController.insertSplitViewItem(contentItem, at: 1)
+            lastEffectiveVisibility = nil
+        } else if content == nil, splitController.splitViewItems.contains(contentItem) {
+            splitController.removeSplitViewItem(contentItem)
+            lastEffectiveVisibility = nil
+        }
+
         sidebarSurface.setItem(sidebar)
+        contentSurface.setItem(content)
         detailSurface.setItem(detail)
         invalidateIntrinsicContentSize()
         needsLayout = true
@@ -136,11 +161,33 @@ final class AppKitSplitView: AppKitHitTestView {
         setSidebarPresented(presented, reporting: false)
     }
 
+    /// Applies the columns the binding says show, without echoing a user's
+    /// change back. `.automatic` asks nothing: the room decides, as it does
+    /// for a sidebar with no binding.
+    func apply(visibility: NavigationSplitViewVisibility) {
+        let threeColumns = contentSurface.item != nil
+        switch visibility {
+        case .automatic:
+            break
+        case .all:
+            setSidebarPresented(true, reporting: false)
+            setContentPresented(true, reporting: false)
+        case .doubleColumn:
+            // Two columns: of three, the content and the detail; of two,
+            // the sidebar and the detail.
+            setSidebarPresented(!threeColumns, reporting: false)
+            setContentPresented(true, reporting: false)
+        case .detailOnly:
+            setSidebarPresented(false, reporting: false)
+            setContentPresented(false, reporting: false)
+        }
+    }
+
     /// Bounds the panes the tree asks: each column's least, ideal and most
     /// width as `preferredColumnWidth` carries them, `nil` keeping the
     /// split's own. An ideal stands the divider there the first time it is
     /// asked - the user's own dragging after stands.
-    func apply(sidebarWidth: [Double]?, detailWidth: [Double]?) {
+    func apply(sidebarWidth: [Double]?, contentWidth: [Double]?, detailWidth: [Double]?) {
         if let widths = sidebarWidth, !widths.isEmpty {
             sidebarItem.minimumThickness = CGFloat(widths[0])
             if widths.count > 2 {
@@ -152,6 +199,12 @@ final class AppKitSplitView: AppKitHitTestView {
                 if !sidebarItem.isCollapsed {
                     splitController.splitView.setPosition(CGFloat(widths[1]), ofDividerAt: 0)
                 }
+            }
+        }
+        if let widths = contentWidth, !widths.isEmpty {
+            contentItem.minimumThickness = CGFloat(widths[0])
+            if widths.count > 2 {
+                contentItem.maximumThickness = max(CGFloat(widths[0]), CGFloat(widths[2]))
             }
         }
         if let widths = detailWidth, !widths.isEmpty {
@@ -168,11 +221,13 @@ final class AppKitSplitView: AppKitHitTestView {
 
     override var intrinsicContentSize: NSSize {
         let sidebar = sidebarSurface.intrinsicContentSize
+        let content = contentSurface.intrinsicContentSize
         let detail = detailSurface.intrinsicContentSize
         let divider = splitController.splitView.dividerThickness
+        let panes = sidebar.width + divider + content.width + divider + detail.width
         return NSSize(
-            width: max(detail.width, sidebar.width + divider + detail.width),
-            height: max(sidebar.height, detail.height))
+            width: max(detail.width, panes),
+            height: max(sidebar.height, content.height, detail.height))
     }
 
     override func layout() {
@@ -212,12 +267,59 @@ final class AppKitSplitView: AppKitHitTestView {
         lastEffectivePresentation = presented
 
         if reporting {
-            onPresentationChanged?(presented)
+            if let visibility = effectiveVisibility {
+                lastEffectiveVisibility = visibility
+                onVisibilityChanged?(visibility)
+            } else {
+                onPresentationChanged?(presented)
+            }
+        }
+    }
+
+    /// The content column's collapse, where a third column stands.
+    private func setContentPresented(_ presented: Bool, reporting: Bool) {
+        guard splitController.splitViewItems.contains(contentItem) else { return }
+        let previous = !contentItem.isCollapsed
+        guard previous != presented else { return }
+
+        ProgramWrite.perform {
+            contentItem.isCollapsed = !presented
+        }
+
+        if reporting, let moved = effectiveVisibility {
+            onVisibilityChanged?(moved)
+        }
+    }
+
+    /// Which columns stand shown on screen, where three can.
+    private var effectiveVisibility: NavigationSplitViewVisibility? {
+        guard splitController.splitViewItems.contains(contentItem) else { return nil }
+        switch (!sidebarItem.isCollapsed, !contentItem.isCollapsed) {
+        case (true, true): return .all
+        case (false, true): return .doubleColumn
+        case (false, false): return .detailOnly
+        // The detail alone never stands under the sidebar on screen.
+        case (true, false): return .all
         }
     }
 
     @objc private func splitViewResized(_ notification: Notification) {
         guard !ProgramWrite.isWriting else { return }
+
+        if let visibility = effectiveVisibility {
+            // The first pass through lays the panes out at their written
+            // state; what it reports then is no move of the user's.
+            guard let last = lastEffectiveVisibility else {
+                lastEffectiveVisibility = visibility
+                return
+            }
+            guard visibility != last else { return }
+            lastEffectiveVisibility = visibility
+            lastEffectivePresentation = !sidebarItem.isCollapsed
+            onVisibilityChanged?(visibility)
+            return
+        }
+
         let presented = !sidebarItem.isCollapsed
         guard presented != lastEffectivePresentation else { return }
 

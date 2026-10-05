@@ -148,6 +148,42 @@ extern "C" void stateui_winui_text_set_runs(StateUIObjectRef handle, StateUIWord
         int32_t at = 0;
         for (int32_t index = 0; index < count; ++index) {
             auto const &run = runs[index];
+            // A picture or a glyph in the line stands as an inline element; a run raised on its baseline is a
+            // block of its words shifted up in one too.
+            if (run.glyph || (run.image && *run.image) || run.baseline != 0) {
+                documents::InlineUIContainer holder;
+                if (run.glyph) {
+                    controls::TextBlock mark;
+                    mark.FontFamily(media::FontFamily(L"Segoe Fluent Icons, Segoe MDL2 Assets"));
+                    wchar_t glyph[2] = {static_cast<wchar_t>(run.glyph), 0};
+                    mark.Text(winrt::hstring(glyph));
+                    if (run.size > 0) mark.FontSize(run.size);
+                    if (run.hasColor) mark.Foreground(media::SolidColorBrush(color(run.color)));
+                    holder.Child(mark);
+                } else if (run.image && *run.image) {
+                    controls::Image picture;
+                    auto file = pictureFile(run.image);
+                    if (!file.empty()) picture.Source(pictureSource(file));
+                    holder.Child(picture);
+                } else {
+                    controls::TextBlock part;
+                    part.Text(text(run.text));
+                    if (run.hasColor) part.Foreground(media::SolidColorBrush(color(run.color)));
+                    if (run.size > 0) part.FontSize(run.size);
+                    if (run.bold) part.FontWeight(winrt::Microsoft::UI::Text::FontWeights::Bold());
+                    if (run.italic) part.FontStyle(winrt::Windows::UI::Text::FontStyle::Italic);
+                    if (run.family && *run.family) part.FontFamily(media::FontFamily(text(run.family)));
+                    part.CharacterSpacing(run.spacing);
+                    media::TranslateTransform shift;
+                    shift.Y(-run.baseline);
+                    part.RenderTransform(shift);
+                    holder.Child(part);
+                }
+                inlines.Append(holder);
+                at += run.glyph || (run.image && *run.image) ? 1
+                    : static_cast<int32_t>(text(run.text).size());
+                continue;
+            }
             documents::Run piece;
             auto words = text(run.text);
             piece.Text(words);

@@ -187,7 +187,7 @@ final class HostRenderTests: XCTestCase {
         let state = State(wrappedValue: "light", persistentKey: key)
         StandardEnvironment.app.persistentKeys = [key]
 
-        XCTAssertEqual(HostBoundary.persistentKeys.map(\.name), ["host.colorScheme"])
+        XCTAssertEqual(HostBoundary.persistentKeys.map(\.name), ["host.colorScheme", "__stateui.keys"])
 
         HostBoundary.restorePersistent(["host.colorScheme": .string("dark")])
         XCTAssertEqual(state.get(), "dark")

@@ -22,8 +22,13 @@ final class GTKPageFrame {
     let header: GTKWidget
     private let heading: GTKWidget
     private let actionsBox: GTKWidget
+    private var leadingBox: GTKWidget?
     private(set) var buttons: [GTKButtonView] = []
+    private(set) var leadingButtons: [GTKButtonView] = []
     private var sidebarButton: GTKButtonView?
+    private var appMenuButton: GTKMenuButtonView?
+    /// What the app menu last showed, for writing it again only where it changed.
+    private var appMenuDrawn: [MenuEntry] = []
     private var overflowButton: GTKWidget?
     fileprivate var overflowPopover: GTKWidget?
 
@@ -79,9 +84,34 @@ final class GTKPageFrame {
         if chrome.barBackground != self.chrome.barBackground || chrome.barForeground != self.chrome.barForeground {
             paintBar(background: chrome.barBackground, foreground: chrome.barForeground)
         }
-        showActions(chrome.actions, overflow: chrome.overflow)
+        showActions(leading: chrome.leadingActions, chrome.actions, overflow: chrome.overflow)
+        showAppMenu(chrome.appMenu)
         showSidebarButton(chrome.sidebar)
         self.chrome = chrome
+    }
+
+    /// The scene's commands in the window's app menu - a menu button at the
+    /// header bar's start, ahead of the sidebar's toggle; gone for none.
+    private func showAppMenu(_ entries: [MenuEntry]) {
+        if entries.isEmpty {
+            if let appMenuButton { adw_header_bar_remove(header.opaque, appMenuButton.widget) }
+            appMenuButton = nil
+            appMenuDrawn = []
+            return
+        }
+        if appMenuButton == nil {
+            let button = GTKMenuButtonView()
+            gtk_menu_button_set_icon_name(button.widget.opaque, "open-menu-symbolic")
+            button.showsArrow = false
+            adw_header_bar_pack_start(header.opaque, button.widget)
+            appMenuButton = button
+        }
+        let same = entries.count == appMenuDrawn.count && zip(entries, appMenuDrawn).allSatisfy {
+            $0.title == $1.title && $0.isEnabled == $1.isEnabled && $0.entries.count == $1.entries.count
+        }
+        guard !same else { return }
+        appMenuButton?.setEntries(entries) { entry in entry.gtk.send(.clicked, []) }
+        appMenuDrawn = entries
     }
 
     /// Paints the header bar and what stands on it, as a class of the host's style sheet; nil keeps the platform's.
@@ -140,26 +170,34 @@ final class GTKPageFrame {
     /// The sidebar's toggle, where the bar shows one.
     var sidebarToggle: GTKButtonView? { sidebarButton }
 
-    /// The page's actions as buttons at the bar's end, in order, and the overflow behind a menu after them.
-    private func showActions(_ actions: [GTKToolbarAction], overflow: [GTKToolbarAction]) {
-        let same = actions.count == chrome.actions.count && zip(actions, chrome.actions).allSatisfy { $0.draws(like: $1) }
+    /// The page's actions as buttons at the bar's end, in order, its leading
+    /// actions at the bar's start, and the overflow behind a menu after them.
+    /// A spacer stands as room between them, an item's view as the view itself.
+    private func showActions(leading: [GTKToolbarAction], _ actions: [GTKToolbarAction], overflow: [GTKToolbarAction]) {
+        let same = leading.count == chrome.leadingActions.count && zip(leading, chrome.leadingActions).allSatisfy { $0.draws(like: $1) }
+            && actions.count == chrome.actions.count && zip(actions, chrome.actions).allSatisfy { $0.draws(like: $1) }
             && overflow.count == chrome.overflow.count && zip(overflow, chrome.overflow).allSatisfy { $0.draws(like: $1) }
         guard !same else {
-            for (button, action) in zip(buttons, actions) { button.onClicked = action.perform }
+            for (button, action) in zip(leadingButtons, leading.filter(\.isAction)) { button.onClicked = action.perform }
+            for (button, action) in zip(buttons, actions.filter(\.isAction)) { button.onClicked = action.perform }
             for (button, action) in zip(overflowButtons, overflow) { button.onClicked = closingOverflow(action) }
             return
         }
 
-        for button in buttons { gtk_box_remove(actionsBox.of(GtkBox.self), button.widget) }
-        buttons = actions.map { action in
-            let button = GTKButtonView.action(action)
-            gtk_box_append(actionsBox.of(GtkBox.self), button.widget)
-            return button
-        }
-        if let overflowButton { gtk_box_remove(actionsBox.of(GtkBox.self), overflowButton) }
         overflowButton = nil
         overflowPopover = nil
         overflowButtons = []
+        if !leading.isEmpty, leadingBox == nil {
+            let box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6)!
+            adw_header_bar_pack_start(header.opaque, box)
+            leadingBox = box
+        } else if leading.isEmpty, let leadingBox {
+            adw_header_bar_remove(header.opaque, leadingBox)
+            self.leadingBox = nil
+        }
+        if let leadingBox { refill(leadingBox, entries: leading, buttons: &leadingButtons) }
+        else { leadingButtons = [] }
+        refill(actionsBox, entries: actions, buttons: &buttons)
         guard !overflow.isEmpty else { return }
 
         let list = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0)!
@@ -182,6 +220,36 @@ final class GTKPageFrame {
 }
 
 extension GTKPageFrame {
+    /// Refills `box` with `entries`' widgets - a button for an action, the
+    /// item's own view, or room for a spacer - recording the buttons.
+    private func refill(_ box: GTKWidget, entries: [GTKToolbarAction], buttons: inout [GTKButtonView]) {
+        while let child = gtk_widget_get_first_child(box) {
+            gtk_box_remove(box.of(GtkBox.self), child)
+        }
+        buttons = []
+        for entry in entries {
+            let widget: GTKWidget
+            if entry.spacer == .fixed {
+                widget = gtk_separator_new(GTK_ORIENTATION_VERTICAL)!
+            } else if entry.spacer != nil {
+                let room = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0)!
+                gtk_widget_set_hexpand(room, 1)
+                widget = room
+            } else if let view = entry.view {
+                if let parent = gtk_widget_get_parent(view.widget),
+                   g_type_check_instance_is_a(parent.of(GTypeInstance.self), gtk_box_get_type()) != 0 {
+                    gtk_box_remove(parent.of(GtkBox.self), view.widget)
+                }
+                widget = view.widget
+            } else {
+                let button = GTKButtonView.action(entry)
+                buttons.append(button)
+                widget = button.widget
+            }
+            gtk_box_append(box.of(GtkBox.self), widget)
+        }
+    }
+
     /// `action`, closing the overflow's menu first.
     private func closingOverflow(_ action: GTKToolbarAction) -> () -> Void {
         { [weak self] in

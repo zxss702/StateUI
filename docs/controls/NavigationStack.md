@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [BarElement](tiers/
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (16) | Realization | Notes |
+| Host | Created | Members (18) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 1 ✅ | custom `NSView` stack; title, back and actions in the window's `NSToolbar` |  |
 | UIKit | ✅ | 6 ✅ | `UINavigationController` |  |
@@ -71,7 +71,9 @@ What a page shows about itself where another container presents it as an item - 
 | `presentationDetents` | property | `[PresentationDetent]` | native |  |  |  |  |  |  |  |
 | `presentationDragIndicator` | property | `Visibility` | native |  |  |  |  |  |  |  |
 | `subtitle` | property | `String` | adaptive |  |  |  |  |  |  |  |
+| `subtitleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `title` | property | `String` | native | · | ✅ | · | ✅ | · |  | cannot read title of NavigationStack - AppKit's driver has no path for it yet; Android Views: cannot read title of NavigationStack - Android's driver has no path for it yet; GTK 4: cannot read title of NavigationStack - GTK's driver has no path for it yet |
+| `titleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `toolbarBackground` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `toolbarVisibility` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `windowBackground` | property | `Color` | adaptive |  |  |  |  |  |  |  |

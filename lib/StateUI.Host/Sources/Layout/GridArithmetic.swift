@@ -8,27 +8,43 @@
 @_spi(Host) public enum GridArithmetic {
     /// The room the grid takes at its tracks' natural sizes. Where that is wider than the width offered, the
     /// columns share the offer as a placement would, and each row is as tall as its children at those widths.
+    /// `flow` fills its columns with the items row first, an `.adaptive` one standing for as many as fit -
+    /// the rows and columns it makes count themselves.
     @MainActor
     public static func size<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
-        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, width offered: Double? = nil
+        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, width offered: Double? = nil,
+        flow: [GridItem] = []
     ) -> LayoutSize {
-        let (rowCount, columnCount) = counts(items, rows: rows, columns: columns)
-        let columnDefinitions = completed(columns, count: columnCount)
+        let flowing = !flow.isEmpty
+        let flowColumns = flowing ? resolvedFlow(flow, width: offered, spacing: columnSpacing) : []
+        let columnCount = flowing ? max(flowColumns.count, 1)
+            : counts(items, rows: rows, columns: columns).columns
+        let rowCount = flowing ? max((items.count + columnCount - 1) / columnCount, rows.count)
+            : counts(items, rows: rows, columns: columns).rows
+        let cells = flowing ? flowCells(items.count, columns: columnCount) : nil
+        let columnDefinitions = flowing ? flowColumns.map(\.track) : completed(columns, count: columnCount)
+        let rowDefinitions = flowing
+            ? completed(rows, count: rowCount, padding: .auto)
+            : completed(rows, count: rowCount)
         var columnSizes = trackSizes(
             items, definitions: columnDefinitions, count: columnCount,
-            available: nil, spacing: columnSpacing, vertical: false)
+            available: nil, spacing: columnSpacing, vertical: false, cells: cells,
+            limits: cells == nil ? nil : flowColumns.map(\.limits))
         let width = padding.left + padding.right + columnSizes.reduce(0, +)
             + columnSpacing * Double(max(columnCount - 1, 0))
 
         if let offered, width > offered {
             columnSizes = trackSizes(
                 items, definitions: columnDefinitions, count: columnCount,
-                available: max(0, offered - padding.left - padding.right), spacing: columnSpacing, vertical: false)
+                available: max(0, offered - padding.left - padding.right), spacing: columnSpacing,
+                vertical: false, cells: cells,
+                limits: cells == nil ? nil : flowColumns.map(\.limits))
         }
         let rowSizes = trackSizes(
-            items, definitions: completed(rows, count: rowCount), count: rowCount,
-            available: nil, spacing: rowSpacing, vertical: true, columns: (columnSizes, columnSpacing))
+            items, definitions: rowDefinitions, count: rowCount,
+            available: nil, spacing: rowSpacing, vertical: true, columns: (columnSizes, columnSpacing),
+            cells: cells)
 
         return LayoutSize(
             width: width,
@@ -37,16 +53,17 @@
     }
 
     /// Where each child stands in `bounds`, in order; nil for a hidden one. Right to left, column 0 is
-    /// the rightmost.
+    /// the rightmost. `flow` fills its columns with the items row first, an `.adaptive` one standing
+    /// for as many as fit - the rows and columns it makes count themselves.
     @MainActor
     public static func places<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
         rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, in bounds: Rect,
-        direction: LayoutDirection
+        direction: LayoutDirection, flow: [GridItem] = []
     ) -> [Rect?] {
         leftToRight(
             of: items, rows: rows, columns: columns, rowSpacing: rowSpacing,
-            columnSpacing: columnSpacing, padding: padding, in: bounds)
+            columnSpacing: columnSpacing, padding: padding, in: bounds, flow: flow)
             .map { $0.map { direction.places($0, in: bounds) } }
     }
 
@@ -54,27 +71,40 @@
     @MainActor
     private static func leftToRight<Child: LayoutChild>(
         of items: [Child], rows: [GridLength], columns: [GridLength],
-        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, in bounds: Rect
+        rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, in bounds: Rect,
+        flow: [GridItem] = []
     ) -> [Rect?] {
         let content = bounds.inset(padding)
-        let (rowCount, columnCount) = counts(items, rows: rows, columns: columns)
+        let flowing = !flow.isEmpty
+        let flowColumns = flowing ? resolvedFlow(flow, width: content.width, spacing: columnSpacing) : []
+        let columnCount = flowing ? max(flowColumns.count, 1)
+            : counts(items, rows: rows, columns: columns).columns
+        let rowCount = flowing ? max((items.count + columnCount - 1) / columnCount, rows.count)
+            : counts(items, rows: rows, columns: columns).rows
+        let cells = flowing ? flowCells(items.count, columns: columnCount) : nil
         let columnSizes = trackSizes(
-            items, definitions: completed(columns, count: columnCount), count: columnCount,
-            available: content.width, spacing: columnSpacing, vertical: false)
+            items,
+            definitions: flowing ? flowColumns.map(\.track) : completed(columns, count: columnCount),
+            count: columnCount, available: content.width, spacing: columnSpacing, vertical: false,
+            cells: cells, limits: cells == nil ? nil : flowColumns.map(\.limits))
         let rowSizes = trackSizes(
-            items, definitions: completed(rows, count: rowCount), count: rowCount,
-            available: content.height, spacing: rowSpacing, vertical: true, columns: (columnSizes, columnSpacing))
+            items,
+            definitions: flowing
+                ? completed(rows, count: rowCount, padding: .auto)
+                : completed(rows, count: rowCount),
+            count: rowCount, available: content.height, spacing: rowSpacing, vertical: true,
+            columns: (columnSizes, columnSpacing), cells: cells)
         let rowOrigins = origins(of: rowSizes, start: content.y, spacing: rowSpacing)
         let columnOrigins = origins(of: columnSizes, start: content.x, spacing: columnSpacing)
 
-        return items.map { item in
+        return items.enumerated().map { index, item in
             guard item.isShown else { return nil }
             let values = item.values
             let margin = values.margin
-            let row = min(max(values.row, 0), rowCount - 1)
-            let column = min(max(values.column, 0), columnCount - 1)
-            let rowEnd = min(row + max(values.rowSpan, 1), rowCount)
-            let columnEnd = min(column + max(values.columnSpan, 1), columnCount)
+            let row = min(max(cells?[index].row ?? values.row, 0), rowCount - 1)
+            let column = min(max(cells?[index].column ?? values.column, 0), columnCount - 1)
+            let rowEnd = min(row + (cells != nil ? 1 : max(values.rowSpan, 1)), rowCount)
+            let columnEnd = min(column + (cells != nil ? 1 : max(values.columnSpan, 1)), columnCount)
             let cellWidth = columnSizes[column..<columnEnd].reduce(0, +)
                 + columnSpacing * Double(max(columnEnd - column - 1, 0))
             let cellHeight = rowSizes[row..<rowEnd].reduce(0, +)
@@ -110,19 +140,58 @@
          max(columns.count, items.map { $0.values.column + $0.values.columnSpan }.max() ?? 1))
     }
 
-    /// `definitions`, with a proportional track of one share for every track they do not define.
-    private static func completed(_ definitions: [GridLength], count: Int) -> [GridLength] {
-        definitions + Array(repeating: .proportional(1), count: max(0, count - definitions.count))
+    /// `definitions`, with a track of `padding` for every track they do not define - a
+    /// proportional track of one share where nothing says otherwise.
+    private static func completed(
+        _ definitions: [GridLength], count: Int, padding: GridLength = .proportional(1)
+    ) -> [GridLength] {
+        definitions + Array(repeating: padding, count: max(0, count - definitions.count))
+    }
+
+    /// The cell each item takes in a flow: row first, `columns` to a row.
+    private static func flowCells(_ count: Int, columns: Int) -> [(row: Int, column: Int)] {
+        (0 ..< count).map { (row: $0 / columns, column: $0 % columns) }
+    }
+
+    /// The column sizes a `flow` resolves to at `width`: stated items as they stand, an
+    /// `.adaptive` one as many `.flexible` copies of it as the room fits. A nil `width`
+    /// stands each adaptive for one column.
+    private static func resolvedFlow(_ flow: [GridItem], width: Double?, spacing: Double) -> [GridItem.Size] {
+        var columns: [GridItem.Size] = []
+        var rest = width
+
+        for item in flow {
+            guard case .adaptive(let minimum, let maximum) = item.size else {
+                columns.append(item.size)
+                if case .fixed(let width) = item.size { rest? -= width }
+                rest? -= item.spacing ?? spacing
+                continue
+            }
+            let gap = item.spacing ?? spacing
+            let count = rest.map {
+                max(1, Int(($0 + gap) / (max(minimum, 1) + gap)))
+            } ?? 1
+            for _ in 0 ..< count {
+                columns.append(.flexible(minimum: minimum, maximum: maximum))
+            }
+            rest = nil
+        }
+
+        return columns
     }
 
     /// Each track's size: fixed as stated, automatic as its largest one-track child, proportional by share.
     /// A row measures each child at the width of the `columns` it stands in, where they are known.
+    /// `cells`, where a flow placed the items, stand in for each item's stated row and column, and
+    /// `limits` bound the track they name, a share's size inside its minimum and maximum.
     /// Design: docs/design/host/layout.md#tracks
     @MainActor
     private static func trackSizes<Child: LayoutChild>(
         _ items: [Child], definitions: [GridLength], count: Int,
         available: Double?, spacing: Double, vertical: Bool,
-        columns: (sizes: [Double], spacing: Double)? = nil
+        columns: (sizes: [Double], spacing: Double)? = nil,
+        cells: [(row: Int, column: Int)]? = nil,
+        limits: [(minimum: Double, maximum: Double)?]? = nil
     ) -> [Double] {
         var sizes = Array(repeating: 0.0, count: count)
 
@@ -130,11 +199,13 @@
             if case .fixed(let length) = definitions[index] { sizes[index] = max(0, length) }
         }
 
-        func extent(_ item: Child) -> Double {
+        func extent(at index: Int) -> Double {
+            let item = items[index]
             let margin = item.values.margin
             let measured = item.size(offered: columns.map { columns in
-                let first = min(max(item.values.column, 0), columns.sizes.count - 1)
-                let last = min(first + max(item.values.columnSpan, 1), columns.sizes.count)
+                let first = min(max(cells?[index].column ?? item.values.column, 0), columns.sizes.count - 1)
+                let span = cells != nil ? 1 : max(item.values.columnSpan, 1)
+                let last = min(first + span, columns.sizes.count)
                 let cell = columns.sizes[first..<last].reduce(0, +)
                     + columns.spacing * Double(max(last - first - 1, 0))
                 return max(0, cell - margin.left - margin.right)
@@ -144,14 +215,16 @@
                 : measured.width + margin.left + margin.right
         }
 
-        func track(_ item: Child) -> (index: Int, span: Int) {
-            vertical ? (item.values.row, item.values.rowSpan) : (item.values.column, item.values.columnSpan)
+        func track(at index: Int) -> (index: Int, span: Int) {
+            if let cells { return vertical ? (cells[index].row, 1) : (cells[index].column, 1) }
+            let values = items[index].values
+            return vertical ? (values.row, values.rowSpan) : (values.column, values.columnSpan)
         }
 
-        for item in items where item.isShown {
-            let (index, span) = track(item)
-            guard span == 1, index >= 0, index < count, definitions[index] == .auto else { continue }
-            sizes[index] = max(sizes[index], extent(item))
+        for index in items.indices where items[index].isShown {
+            let (trackIndex, span) = track(at: index)
+            guard span == 1, trackIndex >= 0, trackIndex < count, definitions[trackIndex] == .auto else { continue }
+            sizes[trackIndex] = max(sizes[trackIndex], extent(at: index))
         }
 
         let fixed = sizes.reduce(0, +) + spacing * Double(max(count - 1, 0))
@@ -164,12 +237,19 @@
         for index in 0..<count {
             guard case .proportional(let share) = definitions[index] else { continue }
             if available == nil {
-                sizes[index] = items
-                    .filter { track($0) == (index, 1) && $0.isShown }
+                sizes[index] = items.indices
+                    .filter { track(at: $0) == (index, 1) && items[$0].isShown }
                     .map(extent)
                     .max() ?? 0
             } else {
                 sizes[index] = remainder * max(share, 0.000_001) / starWeight
+            }
+        }
+
+        if let limits {
+            for index in 0..<min(count, limits.count) {
+                guard let limit = limits[index] else { continue }
+                sizes[index] = min(max(sizes[index], limit.minimum), limit.maximum)
             }
         }
 

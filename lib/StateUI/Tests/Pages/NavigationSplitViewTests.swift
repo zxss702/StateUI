@@ -210,4 +210,76 @@ final class NavigationSplitViewTests: XCTestCase {
                                    with: [.string("true")]))
         XCTAssertFalse(menu.wrappedValue)
     }
+
+    // MARK: - Three columns
+
+    /// Three pages, each wearing the identity of its column - the sidebar,
+    /// the content, the detail - so a patch about one names it.
+    func testTheThreeColumnsAreTheChildren() {
+        let visibility = State<NavigationSplitViewVisibility>(.all)
+
+        let patch = Renders().settled(columns(visibility).node)
+
+        XCTAssertEqual(patch.children.map { $0.id },
+                       [.manual("sidebar"), .manual("content"), .manual("detail")])
+        XCTAssertEqual(patch.props["columnVisibility"], .enumeration(3))
+    }
+
+    /// Which columns show is the binding's value - writing it is the one way
+    /// the program moves them.
+    func testWhichColumnsShowIsTheBindingsValue() {
+        let visibility = State<NavigationSplitViewVisibility>(.detailOnly)
+        let renders = Renders()
+
+        renders.settled(columns(visibility).node)
+
+        visibility.wrappedValue = .all
+        let patch = renders.settled(columns(visibility).node)
+
+        XCTAssertEqual(patch.props["columnVisibility"], .enumeration(3))
+    }
+
+    /// The platform's own ways of collapsing a column write what they
+    /// settled on back into the binding - the same report
+    /// `isSidebarVisibleChanged` makes, said wider.
+    func testACollapseWritesTheVisibility() {
+        let visibility = State<NavigationSplitViewVisibility>(.all)
+        let renders = Renders()
+
+        let patch = renders.settled(columns(visibility).node)
+
+        XCTAssertTrue(renders.fire(patch.events?["columnVisibilityChanged"] ?? -1,
+                                   with: [.enumeration(2)]))
+        XCTAssertEqual(visibility.wrappedValue, .doubleColumn)
+    }
+
+    /// A three-column split with no binding opens showing everything - the
+    /// same answer `.automatic` gives on a platform with room.
+    func testAnUnboundSplitShowsEveryColumn() {
+        let patch = Renders().settled(
+            NavigationSplitView {
+                DetailPage(section: "sidebar")
+            } content: {
+                DetailPage(section: "content")
+            } detail: {
+                DetailPage(section: "detail")
+            }
+            .node)
+
+        XCTAssertEqual(patch.children.count, 3)
+        XCTAssertEqual(patch.props["columnVisibility"], .enumeration(0))
+    }
+
+    /// The split under test, over whatever visibility is lent to it.
+    private func columns(
+        _ visibility: State<NavigationSplitViewVisibility>
+    ) -> NavigationSplitView {
+        NavigationSplitView(columnVisibility: visibility.projectedValue) {
+            DetailPage(section: "sidebar")
+        } content: {
+            DetailPage(section: "content")
+        } detail: {
+            DetailPage(section: "detail")
+        }
+    }
 }

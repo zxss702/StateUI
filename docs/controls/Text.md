@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (111) | Realization | Notes |
+| Host | Created | Members (115) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 37 ✅ · 1 ☑️ · 3 – | `NSTextField` label; `NSAttributedString` runs |  |
 | UIKit | ✅ | 39 ✅ · 3 – | `UILabel`; `NSAttributedString` runs |  |
@@ -43,6 +43,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Text/TextContract.swift`.
 | `minimumScaleFactor` | property | `Double` | native |  |  |  |  |  |  |  |
 | `selectable` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `textRenderer` | property | `String` | native |  |  |  |  |  |  |  |
+| `textLayoutChanged` | event | `TextLayoutReport` | native |  |  |  |  |  |  |  |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -72,6 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Text - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  | ✅ |  |  | ✅ |  | not realized; Android Views: not realized; WinUI 3: not realized |
@@ -161,7 +163,9 @@ What every element showing words has: the words, and the case they are drawn in.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot slide on Slider - Android's driver has no path for it yet |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 

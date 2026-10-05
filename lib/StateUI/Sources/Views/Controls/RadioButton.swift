@@ -51,9 +51,16 @@ public struct RadioButton: VisualElement, TextElement, FontElement, PaddingEleme
 
     /// A button captioned `text`. One-way: what is picked goes nowhere
     /// without `.onToggled`.
-    public init(_ text: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S) {
         node = Node(contract: RadioButtonContract.self)
-        node.write(TextElementContract.text, text)
+        node.write(TextElementContract.text, String(text))
+    }
+
+    /// A button captioned what `key` looks up.
+    public init(_ key: LocalizedStringKey) {
+        node = Node(contract: RadioButtonContract.self)
+        node.write(TextElementContract.text, key.displayString)
+        node.write(TextElementContract.textKey, key)
     }
 
     // MARK: Properties

@@ -25,33 +25,47 @@
 ///
 /// A toolbar item is page furniture rather than a layout view. It carries a
 /// caption, an optional image, presentation policy and a handler, and is
-/// written into the page's session whenever that collection changes.
-public struct ToolbarItem: View, MenuItemElement {
+/// written into the page's session whenever that collection changes - or
+/// stands in `.toolbar { … }`, which writes the same nodes.
+public struct ToolbarItem: Element, MenuItemElement {
     /// The node this item describes.
     public var node: Node
 
     /// An item captioned `text`. Give it an `.onClicked`: an item that does
     /// nothing is one that looks broken.
-    public init(_ text: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S) {
         node = Node(contract: ToolbarItemContract.self)
-        node.write(MenuItemElementContract.text, text)
+        node.write(MenuItemElementContract.text, String(text))
+    }
+
+    /// An item captioned what `key` looks up.
+    public init(_ key: LocalizedStringKey) {
+        node = Node(contract: ToolbarItemContract.self)
+        node.write(MenuItemElementContract.text, key.displayString)
+        node.write(MenuItemElementContract.textKey, key)
     }
 
     /// An item captioned `text`, running `action` when it is picked.
-    public init(_ text: String, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, action: @escaping EventHandler) {
         self.init(text)
         node.addHandler(MenuItemElementContract.clicked.token, action)
     }
 
+    /// The same, captioned what `key` looks up.
+    public init(_ key: LocalizedStringKey, action: @escaping EventHandler) {
+        self.init(key)
+        node.addHandler(MenuItemElementContract.clicked.token, action)
+    }
+
     /// An item captioned `text`, in `placement`, running `action`.
-    public init(_ text: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
         self.init(text, action: action)
         node.write(ToolbarItemContract.placement, placement)
     }
 
     /// An icon item running `action`, its caption as the platform's tooltip -
     /// `ToolbarItem("Back", icon: .symbol("chevron.left")) { back() }`.
-    public init(_ text: String, icon: ImageSource, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, icon: ImageSource, action: @escaping EventHandler) {
         self.init(text, action: action)
         node.write(MenuItemElementContract.icon, icon)
     }
@@ -59,14 +73,47 @@ public struct ToolbarItem: View, MenuItemElement {
     /// The same, a system symbol by name - the SwiftUI `systemImage` spelling.
     ///
     ///     ToolbarItem("Home", systemImage: "house") { nav.home() }
-    public init(_ text: String, systemImage: String, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, systemImage: String, action: @escaping EventHandler) {
         self.init(text, icon: .symbol(systemImage), action: action)
     }
 
+    /// The same, its caption looked up.
+    public init(_ key: LocalizedStringKey, systemImage: String, action: @escaping EventHandler) {
+        self.init(key, action: action)
+        node.write(MenuItemElementContract.icon, .symbol(systemImage))
+    }
+
     /// An icon item in `placement`, running `action`.
-    public init(_ text: String, systemImage: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ text: S, systemImage: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
         self.init(text, systemImage: systemImage, action: action)
         node.write(ToolbarItemContract.placement, placement)
+    }
+
+    /// The same, its caption looked up.
+    public init(_ key: LocalizedStringKey, systemImage: String, placement: ToolbarItemPlacement, action: @escaping EventHandler) {
+        self.init(key, systemImage: systemImage, action: action)
+        node.write(ToolbarItemContract.placement, placement)
+    }
+
+    /// An item showing `content` itself on the bar - a `Button`, a `Toggle`,
+    /// any view - the SwiftUI spelling:
+    ///
+    ///     .toolbar {
+    ///         ToolbarItem(placement: .confirmationAction) {
+    ///             Button("Done") { done() }
+    ///         }
+    ///     }
+    ///
+    /// More than one view stands side by side in the item's room, as
+    /// SwiftUI's does.
+    public init<Content: View>(
+        placement: ToolbarItemPlacement = .automatic,
+        @ViewBuilder content: () -> Content
+    ) {
+        node = Node(contract: ToolbarItemContract.self)
+        node.write(ToolbarItemContract.placement, placement)
+        let views = content().node.asChildren
+        node.children = views.count > 1 ? [Node(contract: HStackContract.self, children: views)] : views
     }
 
     /// The node this item describes.
@@ -89,4 +136,9 @@ public struct ToolbarItem: View, MenuItemElement {
     ///
     /// Lower values appear first; items of equal priority keep their order.
     @_spi(Host) public func priority(_ value: Int) -> Self { setValue(ToolbarItemContract.priority, value) }
+}
+
+extension ToolbarItem: ToolbarContent, ToolbarEntry {
+    /// The item's node - what `.toolbar { … }` collects.
+    var toolbarNodes: [Node] { [node] }
 }

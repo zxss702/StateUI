@@ -77,7 +77,7 @@ extern "C" void stateui_winui_scroller_place_for(
 {
     try {
         auto scroller = borrow<controls::ScrollViewer>(handle);
-        auto element = as<xaml::UIElement>(descendant);
+        auto element = as<xaml::FrameworkElement>(descendant);
         auto content = scroller.Content().try_as<xaml::UIElement>();
         if (!element || !content) { *found = 0; return; }
 

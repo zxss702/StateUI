@@ -18,11 +18,17 @@ enum GTKKeptValues {
         (folder ?? String(cString: g_get_user_state_dir()) + "/" + applicationID) + "/kept values.txt"
     }
 
-    /// Hands the core every kept value there is, before the first render reads one.
+    /// Hands the core every kept value there is, before the first render reads one. The
+    /// manifest a claimed key is listed under names keys the first pass did not - read after it.
     static func restore(into core: CoreLink, applicationID: String) {
-        let keys = core.persistentKeys
-        guard !keys.isEmpty else { return }
-        core.restorePersistent(read(file(for: applicationID)).restored(for: keys))
+        let kept = read(file(for: applicationID))
+        var read: Set<String> = []
+
+        while true {
+            let keys = core.persistentKeys.filter { read.insert($0.name).inserted }
+            guard !keys.isEmpty else { return }
+            core.restorePersistent(kept.restored(for: keys))
+        }
     }
 
     /// Keeps a key's new value, as the act `persistValue` carries it: the whole file written aside, then moved into

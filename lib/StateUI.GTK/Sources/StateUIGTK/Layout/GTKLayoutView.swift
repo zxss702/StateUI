@@ -92,8 +92,14 @@ class GTKLayoutView: GTKPanelView {
         }
 
         if box.clips { gtk_snapshot_push_rounded_clip(snapshot, &outline) }
-        drawChildren(snapshot)
+        drawContent(snapshot)
         if box.clips { gtk_snapshot_pop(snapshot) }
+    }
+
+    /// What the layout draws inside its box - its children, unless a layout
+    /// draws them its own way.
+    func drawContent(_ snapshot: OpaquePointer) {
+        drawChildren(snapshot)
     }
 
     /// Holds `views` in the panel in this order, the one it draws them in.

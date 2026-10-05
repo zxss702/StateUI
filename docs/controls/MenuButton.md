@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (91) | Realization | Notes |
+| Host | Created | Members (92) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  | 24 ✅ · 1 ☑️ · 3 – | `AppKitMenuButtonView` (label + `NSMenu`) | no run of it on these sources |
 | UIKit |  |  | `UIMenu` on a `UIButton` | no run of it on these sources |
@@ -69,6 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read isAccessibilityHidden of MenuButton - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | · |  |  |  | ✅ |  | cannot read isEnabled of MenuButton - AppKit's driver has no path for it yet |

@@ -26,6 +26,16 @@ struct WinUIMenu {
         if let bar { add(MenuEntry.menus(of: bar.element)) }
     }
 
+    /// `menus` written as a bar's - each one a top-level menu of it.
+    init(menus: [MenuEntry]) {
+        add(menus)
+    }
+
+    /// `entries` written as one flyout's - a command menu a submenu in it.
+    init(entries: [MenuEntry]) {
+        add(entries)
+    }
+
     /// Whether the menu has no entries.
     var isEmpty: Bool { kinds.isEmpty }
 

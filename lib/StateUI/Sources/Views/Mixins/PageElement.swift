@@ -65,8 +65,18 @@ extension View {
     ///
     /// Written on a page's root view it names the page itself, as `page.title`
     /// does from inside.
-    public func navigationTitle(_ value: String) -> ModifiedContent {
-        setting(PageElementContract.title, value)
+    @_disfavoredOverload public func navigationTitle<S: StringProtocol>(_ value: S) -> ModifiedContent {
+        setting(PageElementContract.title, String(value))
+    }
+
+    /// The title the page holding this view shows, looked up - the key beside
+    /// its `displayString` fallback, which the host's answer stands in for:
+    ///
+    ///     Form { … }
+    ///         .navigationTitle("Settings")
+    public func navigationTitle(_ key: LocalizedStringKey) -> ModifiedContent {
+        setting(PageElementContract.title, key.displayString)
+            .setting(PageElementContract.titleKey, key)
     }
 
     /// `navigationTitle` from a state, `$x`: the host writes each new title,
@@ -142,7 +152,11 @@ extension View {
     /// Written on a page's root view it names the page itself, as `page.title`
     /// does from inside.
     public func navigationTitle(_ title: Text) -> ModifiedContent {
-        setting(PageElementContract.title, title.words)
+        var written = setting(PageElementContract.title, title.words)
+        if let key = title.wordsKey {
+            written = written.setting(PageElementContract.titleKey, key)
+        }
+        return written
     }
 
     /// The second line the page's title area shows, where the platform takes
@@ -152,14 +166,24 @@ extension View {
     ///         .navigationSubtitle("New conversation")
     ///
     /// Written on a page's root view it names the page itself.
-    public func navigationSubtitle(_ subtitle: String) -> ModifiedContent {
-        setting(PageElementContract.subtitle, subtitle)
+    @_disfavoredOverload public func navigationSubtitle<S: StringProtocol>(_ subtitle: S) -> ModifiedContent {
+        setting(PageElementContract.subtitle, String(subtitle))
+    }
+
+    /// The same, looked up - the key beside its `displayString` fallback.
+    public func navigationSubtitle(_ key: LocalizedStringKey) -> ModifiedContent {
+        setting(PageElementContract.subtitle, key.displayString)
+            .setting(PageElementContract.subtitleKey, key)
     }
 
     /// `navigationSubtitle` from a `Text` - its words, its styling left with
     /// the page's own conventions.
     public func navigationSubtitle(_ subtitle: Text) -> ModifiedContent {
-        navigationSubtitle(subtitle.words)
+        var written = setting(PageElementContract.subtitle, subtitle.words)
+        if let key = subtitle.wordsKey {
+            written = written.setting(PageElementContract.subtitleKey, key)
+        }
+        return written
     }
 
     /// The document the page stands for, as its path - where a platform shows

@@ -22,7 +22,12 @@ extension AppKitRegistrations {
 
         registry.add(NavigationSplitViewContract.self, madeByHost: AppKitSplitView.self) { split in
             split.property(NavigationSplitViewContract.isSidebarVisible) { view, visible in
-                view.apply(presented: visible ?? false)
+                guard let visible else { return }
+                view.apply(presented: visible)
+            }
+            split.property(NavigationSplitViewContract.columnVisibility) { view, visibility in
+                guard let visibility else { return }
+                view.apply(visibility: visibility)
             }
         }
     }

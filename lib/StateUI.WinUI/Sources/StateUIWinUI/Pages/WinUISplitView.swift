@@ -19,8 +19,37 @@ final class WinUISplitView: WinUILayoutView {
     /// the window's room changing.
     var onPresentationChanged: ((Bool) -> Void)?
 
+    /// What the split does when the user moves which of three columns show.
+    var onVisibilityChanged: ((NavigationSplitViewVisibility) -> Void)?
+
     /// WinUI's navigation view, whose pane is the sidebar.
     let sidebar = WinUISidebarView()
+
+    /// The middle column's own navigation view inside the outer one's
+    /// detail: its pane is the content column, its content the detail - a
+    /// three-column split as two two-column ones.
+    let middle = WinUISidebarView()
+
+    /// Whether the content column shows, where three columns can.
+    private(set) var isContentPresented = true
+
+    /// The sidebar's [minimum, ideal, maximum] width the tree asks: the
+    /// pane's open length is the ideal, or the minimum it has alone.
+    var sidebarPaneLength: [Double]? {
+        didSet { configure() }
+    }
+
+    /// The content column's [minimum, ideal, maximum] width, as
+    /// `sidebarPaneLength` is the sidebar's.
+    var contentPaneLength: [Double]? {
+        didSet { configure() }
+    }
+
+    /// The pane's open length from a width triple: the ideal, or the minimum.
+    private static func paneLength(_ bounds: [Double]?) -> Double {
+        guard let bounds else { return 0 }
+        return bounds.count > 1 ? bounds[1] : (bounds.first ?? 0)
+    }
 
     /// The sidebar page and the detail page, as the tree gives them, and the row across the detail.
     private var pages: [WinUILayoutItem] = []
@@ -37,9 +66,34 @@ final class WinUISplitView: WinUILayoutView {
         sidebar.onPresented = { [weak self] open in
             guard let self, open != isPresented else { return }
             isPresented = open
-            onPresentationChanged?(open)
+            if let visibility = effectiveVisibility {
+                onVisibilityChanged?(visibility)
+            } else {
+                onPresentationChanged?(open)
+            }
+        }
+        middle.onPresented = { [weak self] open in
+            guard let self, open != isContentPresented else { return }
+            isContentPresented = open
+            if let visibility = effectiveVisibility {
+                onVisibilityChanged?(visibility)
+            }
         }
         setChildren([sidebar])
+    }
+
+    /// Whether a content column stands between the sidebar and the detail.
+    private var hasContentColumn: Bool { pages.count > 2 }
+
+    /// Which columns stand shown on screen, where three can.
+    private var effectiveVisibility: NavigationSplitViewVisibility? {
+        guard hasContentColumn else { return nil }
+        switch (isPresented, isContentPresented) {
+        case (true, true): return .all
+        case (false, true): return .doubleColumn
+        case (false, false): return .detailOnly
+        case (true, false): return .all
+        }
     }
 
     /// The pages go in WinUI's navigation view, which places them; the panel holds it alone.
@@ -70,6 +124,28 @@ final class WinUISplitView: WinUILayoutView {
         guard presented != isPresented else { return }
 
         isPresented = presented
+        configure()
+    }
+
+    /// The columns the tree says show, without echoing them back as the
+    /// user's change: `.all` shows all three, `.doubleColumn` drops the
+    /// sidebar of three or keeps two of two, `.detailOnly` drops all but the
+    /// detail, and `.automatic` asks nothing.
+    func present(visibility: NavigationSplitViewVisibility) {
+        let threeColumns = hasContentColumn
+        switch visibility {
+        case .automatic:
+            break
+        case .all:
+            isPresented = true
+            isContentPresented = true
+        case .doubleColumn:
+            isPresented = !threeColumns
+            isContentPresented = true
+        case .detailOnly:
+            isPresented = false
+            isContentPresented = false
+        }
         configure()
     }
 
@@ -106,15 +182,26 @@ final class WinUISplitView: WinUILayoutView {
 
     private func configure() {
         ProgramWrite.perform {
-            sidebar.set(
-                sidebar: pages.first?.view, detail: pages.dropFirst().first?.view, row: detailRow,
-                open: isPresented)
+            if pages.count > 2 {
+                middle.set(
+                    sidebar: pages[1].view, detail: pages[2].view, row: detailRow,
+                    open: isContentPresented, paneLength: Self.paneLength(contentPaneLength))
+                sidebar.set(
+                    sidebar: pages.first?.view, detail: middle, row: nil,
+                    open: isPresented, paneLength: Self.paneLength(sidebarPaneLength))
+            } else {
+                sidebar.set(
+                    sidebar: pages.first?.view, detail: pages.dropFirst().first?.view, row: detailRow,
+                    open: isPresented, paneLength: Self.paneLength(sidebarPaneLength))
+            }
         }
     }
 
     override func detach() {
         super.detach()
         onPresentationChanged = nil
+        onVisibilityChanged = nil
+        middle.detach()
         sidebar.detach()
     }
 }

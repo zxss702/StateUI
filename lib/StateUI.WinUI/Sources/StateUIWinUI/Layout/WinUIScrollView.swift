@@ -3,6 +3,7 @@
 
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
+import CStateUIWinUI
 
 /// A ScrollView: a StateUI layout holding WinUI's own scroller around the document it moves.
 /// Design: docs/design/platforms/winui/layout.md#scrolling

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (116) | Realization | Notes |
+| Host | Created | Members (120) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 46 ✅ · 1 ☑️ | `NSTextView` in an `NSScrollView` |  |
 | UIKit | ✅ | 46 ✅ | `UITextView` |  |
@@ -68,6 +68,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of TextEditor - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on TextEditor.isReadOnly |
@@ -163,6 +164,7 @@ What every field a user types into has: the text's limits and caret, the keyboar
 | `isTextPredictionEnabled` | property | `Bool` | native | ✅ | ✅ |  | ✅ | · |  | Android Views: not realized; GTK 4: cannot read isTextPredictionEnabled of TextEditor - GTK's driver has no path for it yet |
 | `maximumLength` | property | `Int` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot read maximumLength of TextEditor - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it |
 | `placeholder` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read placeholder of TextEditor - GTK's driver has no path for it yet |
+| `placeholderKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `placeholderColor` | property | `Color` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read placeholderColor of TextEditor - GTK's driver has no path for it yet |
 | `selectionLength` | property | `Int` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read selectionLength of TextEditor - GTK's driver has no path for it yet |
 | `onTextChanged` (`textChanged`) | event | `String` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -174,7 +176,9 @@ What every element showing words has: the words, and the case they are drawn in.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: waits on TextEditor.isReadOnly; GTK 4: waits on TextEditor.textCase |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
 

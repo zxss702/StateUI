@@ -105,6 +105,13 @@ final class ActCallShapeTests: XCTestCase {
         }
     }
 
+    /// A lookup key crosses whole, and the caller waits for the words.
+    func testALocalizedStringCrossesWithItsArgumentsInPlace() async throws {
+        try await check("localizedString", [LocalizedStringKey("Save").propValue]) {
+            _ = await Strings.localize(LocalizedStringKey("Save"))
+        }
+    }
+
     /// The file-open panel: multiple-selection first, then the extensions it
     /// narrows to; the picked paths ride the reply.
     func testChoosingFilesCrossesWithItsArgumentsInPlace() async throws {

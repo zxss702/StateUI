@@ -99,6 +99,16 @@ final class UIKitCanvasView: UIView {
         context.addPath(path)
         context.setStrokeColor(color.cgColor)
         context.setLineWidth(pen.strokeWidth)
+        context.setLineCap(switch pen.strokeCap {
+        case .round: .round
+        case .square: .square
+        default: .butt
+        })
+        context.setLineJoin(switch pen.strokeJoin {
+        case .round: .round
+        case .bevel: .bevel
+        default: .miter
+        })
         context.strokePath()
     }
 
@@ -106,7 +116,7 @@ final class UIKitCanvasView: UIView {
         guard let color = Self.color(pen.fill, pen) else { return }
         context.addPath(path)
         context.setFillColor(color.cgColor)
-        context.fillPath()
+        if pen.fillEvenOdd { context.fillPath(using: .evenOdd) } else { context.fillPath() }
     }
 
     /// Text in its box: placed by the box's two alignments - its top the box's - and cut to it.

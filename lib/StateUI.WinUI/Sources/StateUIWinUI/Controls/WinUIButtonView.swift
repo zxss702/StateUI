@@ -35,7 +35,7 @@ final class WinUIButtonView: WinUIView {
     func setLook(background: HostValue?, stroke: HostValue?, strokeWidth: Double?, shape: HostValue?) {
         let radius: Double = switch shape.map(BoxArithmetic.outline) {
         case .roundedRectangle(let radius)?: radius
-        case .ellipse?: .greatestFiniteMagnitude
+        case .ellipse?, .capsule?, .circle?: .greatestFiniteMagnitude
         case .rectangle?: 0
         case nil: -1
         }

@@ -10,7 +10,7 @@
 enum WinUIRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
-        "Content", "LeadingContent", "Map", "Pin", "PositionIndicator", "TitleBar", "TrailingContent",
+        "Content", "GridRow", "LeadingContent", "Map", "Masked", "Pin", "PositionIndicator", "TitleBar", "TrailingContent",
         "WebView",
     ]
 
@@ -66,12 +66,9 @@ enum WinUIRealization {
             + "and no `Menu()` means anything; its closed style vocabulary crosses as `.menuStyle`."),
         .complete("Menu", "isEnabled"),
         .complete("Menu", "text"),
-        .notPlanned("MenuButton", "isEnabled",
-            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
-        .notPlanned("MenuButton", "menuIndicator",
-            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
-        .notPlanned("MenuButton", "menuStyle",
-            reason: "WinUI's flyout menu generation stands ready for the button; the button itself is not built yet."),
+        .complete("MenuButton", "isEnabled"),
+        .complete("MenuButton", "menuIndicator"),
+        .complete("MenuButton", "menuStyle"),
         .notPlanned("Text", "minimumScaleFactor",
             reason: "A TextBlock scale-factor pass is not wired to the property yet."),
         .partial("Text", "textRenderer",
@@ -107,12 +104,16 @@ enum WinUIRealization {
         .complete("Span", "textDecorations"),
         .complete("NavigationSplitView", "isSidebarVisible"),
         .complete("NavigationSplitView", "isSidebarVisibleChanged"),
+        .complete("NavigationSplitView", "columnVisibility"),
+        .complete("NavigationSplitView", "columnVisibilityChanged"),
         .complete("TabView", "currentPage"),
         .complete("TabView", "currentPageChanged"),
         .partial("TimePicker", "format", missing: "WinUI's time picker writes hours and minutes as the user's clock does, whatever the format asks: no seconds, no pattern."),
         .complete("ToolbarItem", "icon"),
         .complete("ToolbarItem", "placement"),
         .complete("ToolbarItem", "priority"),
+        .complete("ToolbarSpacer", "placement"),
+        .complete("ToolbarSpacer", "variant"),
         .complete("WindowScene", "activated"),
         .complete("WindowScene", "created"),
         .complete("WindowScene", "deactivated"),

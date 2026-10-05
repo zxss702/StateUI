@@ -7,6 +7,10 @@ Grid.clipsContent: ✅
 Grid.hitShape: ✅
 Grid.ignoresSafeArea: not realized
 Grid.letsInputThrough: ◐ cannot read letsInputThrough of Grid - AppKit's driver has no path for it yet
+GridRow.clipsContent: not realized
+GridRow.hitShape: not realized
+GridRow.ignoresSafeArea: not realized
+GridRow.letsInputThrough: not realized
 HStack.clipsContent: ✅
 HStack.hitShape: ✅
 HStack.ignoresSafeArea: not realized

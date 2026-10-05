@@ -117,11 +117,18 @@ final class WinUIWindowController {
         chrome.leading = composed.leading?.winUI.view
         chrome.center = composed.center?.winUI.view
         chrome.trailing = composed.trailing?.winUI.view
-        chrome.actions = composed.primaryActions.map(Self.action)
+        // The leading group opens the CommandBar's primary commands: its own leading edge has no
+        // second bar for them.
+        chrome.actions = composed.leadingActions.map(Self.action) + composed.primaryActions.map(Self.action)
         chrome.overflow = composed.overflowActions.map(Self.action)
         chrome.background = composed.background
         chrome.foreground = composed.foreground
-        chrome.menuBar = WinUIMenu(bar: composed.menuBar?.winUI)
+        // A placement group's entries stand for the platform's own menus: the app menu's button carries them.
+        // A scene's own command menus stand beside the page's in the bar.
+        let commands = composed.commands.map { MenuEntry.menus(of: $0) } ?? []
+        chrome.appMenu = WinUIMenu(entries: commands.filter { $0.placement != nil }.flatMap(\.entries))
+        chrome.menuBar = WinUIMenu(menus: commands.filter { $0.placement == nil }
+            + (composed.menuBar.map { MenuEntry.menus(of: $0) } ?? []))
         if !presentation.sheets.isEmpty {
             chrome.sheet = (
                 back: { [weak self] in self?.goBack(in: runtime) },
@@ -130,13 +137,20 @@ final class WinUIWindowController {
         window.apply(chrome, tabs: windowTabs)
     }
 
-    /// A page's action as a button of the chrome.
+    /// A page's toolbar entry as a command of the chrome: a spacer's room, the view an item carries, or a
+    /// titled or pictured action.
     private static func action(_ item: MountedElement) -> WinUIToolbarAction {
-        WinUIToolbarAction(
+        var action = WinUIToolbarAction(
             title: item.value(.text)?.string ?? "", isEnabled: item.value(.isEnabled)?.bool ?? true,
             identifier: item.value(.accessibilityIdentifier)?.string,
             icon: item.value(.icon)?.string.flatMap { $0.isEmpty ? nil : PictureArithmetic.files(for: $0) } ?? [],
             perform: { [weak item] in item?.winUI.send(.clicked, []) })
+        if item.type == .toolbarSpacer {
+            action.spacer = ToolbarSpacerVariant(rawValue: item.value(.variant)?.enumeration ?? 0)
+        } else {
+            action.view = item.children.lazy.compactMap(\.presentingElement).first?.winUI.view
+        }
+        return action
     }
 
     /// The tabs the window shows - the visible tabbed view's, where its tabs stand in the window - and the split view

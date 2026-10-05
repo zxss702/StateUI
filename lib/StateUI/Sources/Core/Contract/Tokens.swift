@@ -40,6 +40,7 @@ extension NodeType {
     static let spans = SpansContract.nodeType
     static let canvas = CanvasContract.nodeType
     static let grid = GridContract.nodeType
+    static let gridRow = GridRowContract.nodeType
     static let hStack = HStackContract.nodeType
     static let image = ImageContract.nodeType
     static let list = ListContract.nodeType
@@ -77,6 +78,7 @@ extension NodeType {
     static let titleBar = TitleBarContract.nodeType
     static let toolbarItem = ToolbarItemContract.nodeType
     static let toolbarItems = ToolbarItemsContract.nodeType
+    static let toolbarSpacer = ToolbarSpacerContract.nodeType
     static let trailingContent = TrailingContentContract.nodeType
     static let vStack = VStackContract.nodeType
     static let webView = WebViewContract.nodeType
@@ -93,6 +95,7 @@ extension NodeType {
     static let accessibilityTraits = VisualElementContract.accessibilityTraits.token
     static let address = PinContract.address.token
     static let allowDrop = ViewContract.allowDrop.token
+    static let baselineOffset = TextElementContract.baselineOffset.token
     static let area = ViewContract.area.token
     static let ignoresSafeArea = LayoutContract.ignoresSafeArea.token
     static let barForegroundColor = NavigationStackContract.barForegroundColor.token
@@ -129,6 +132,8 @@ extension NodeType {
     static let columns = GridContract.columns.token
     static let columnSpacing = GridContract.columnSpacing.token
     static let hint = VisualElementContract.hint.token
+    static let hintKey = VisualElementContract.hintKey.token
+    static let image = SpanContract.image.token
     static let iconPosition = ButtonContract.iconPosition.token
     static let iconSpacing = ButtonContract.iconSpacing.token
     static let cornerRadius = ColorPickerContract.cornerRadius.token
@@ -156,6 +161,7 @@ extension NodeType {
     static let fontDesign = FontElementContract.fontDesign.token
     static let format = DatePickerContract.format.token
     static let frame = VisualElementContract.frame.token
+    static let flowColumns = GridContract.flowColumns.token
     static let gridColumn = ViewContract.gridColumn.token
     static let gridColumnSpan = ViewContract.gridColumnSpan.token
     static let gridRow = ViewContract.gridRow.token
@@ -192,6 +198,7 @@ extension NodeType {
     static let isOpen = DatePickerContract.isOpen.token
     static let isPassword = TextFieldContract.isPassword.token
     static let isSidebarVisible = NavigationSplitViewContract.isSidebarVisible.token
+    static let columnVisibility = NavigationSplitViewContract.columnVisibility.token
     static let isReadOnly = InputViewContract.isReadOnly.token
     static let isRunning = ActivityIndicatorContract.isRunning.token
     static let isScrollEnabled = MapContract.isScrollEnabled.token
@@ -226,12 +233,14 @@ extension NodeType {
     static let hasNavigationBar = PageContract.hasNavigationBar.token
     static let opacity = VisualElementContract.opacity.token
     static let placement = ToolbarItemContract.placement.token
+    static let variant = ToolbarSpacerContract.variant.token
     static let orientation = ScrollViewContract.orientation.token
     static let contentPadding = PaddingElementContract.contentPadding.token
     static let panTouchCount = ViewContract.panTouchCount.token
     static let panXChannel = ViewContract.panXChannel.token
     static let panYChannel = ViewContract.panYChannel.token
     static let placeholder = InputViewContract.placeholder.token
+    static let placeholderKey = InputViewContract.placeholderKey.token
     static let placeholderColor = InputViewContract.placeholderColor.token
     static let points = PolygonContract.points.token
     static let position = PositionIndicatorContract.position.token
@@ -286,11 +295,13 @@ extension NodeType {
     static let strokeWidth = ShapeContract.strokeWidth.token
     static let style = VisualElementContract.style.token
     static let subtitle = TitleBarContract.subtitle.token
+    static let subtitleKey = PageElementContract.subtitleKey.token
     static let swipeDirection = ViewContract.swipeDirection.token
     static let swipeThreshold = ViewContract.swipeThreshold.token
     static let tag = ViewContract.tag.token
     static let tapCount = ViewContract.tapCount.token
     static let text = TextElementContract.text.token
+    static let textKey = TextElementContract.textKey.token
     static let foregroundStyle = TextStyleElementContract.foregroundStyle.token
     static let textDecorations = DecorableTextElementContract.textDecorations.token
     static let textRenderer = TextContract.textRenderer.token
@@ -298,6 +309,7 @@ extension NodeType {
     static let time = TimePickerContract.time.token
     static let tint = TintElementContract.tint.token
     static let title = PageElementContract.title.token
+    static let titleKey = PageElementContract.titleKey.token
     static let toolbarBackground = PageElementContract.toolbarBackground.token
     static let toolbarVisibility = PageElementContract.toolbarVisibility.token
     static let transition = VisualElementContract.transition.token
@@ -357,6 +369,7 @@ extension NodeType {
     static let namedFramesChanged = ViewContract.namedFramesChanged.token
     static let isFocusedChanged = VisualElementContract.isFocusedChanged.token
     static let isSidebarVisibleChanged = NavigationSplitViewContract.isSidebarVisibleChanged.token
+    static let columnVisibilityChanged = NavigationSplitViewContract.columnVisibilityChanged.token
     static let mapClicked = MapContract.mapClicked.token
     static let modalPopped = WindowSceneContract.modalPopped.token
     static let navigated = WebViewContract.navigated.token
@@ -385,6 +398,7 @@ extension NodeType {
     static let swiped = ViewContract.swiped.token
     static let tapGesture = ViewContract.tapGesture.token
     static let textChanged = InputViewContract.textChanged.token
+    static let textLayoutChanged = TextContract.textLayoutChanged.token
     static let timeChanged = TimePickerContract.timeChanged.token
     static let toggled = CheckBoxContract.toggled.token
     static let valueChanged = SliderContract.valueChanged.token
@@ -411,6 +425,7 @@ extension NodeType {
     static let announce = AppContract.announce.token
     static let currentTime = AppContract.currentTime.token
     static let currentTimeZone = AppContract.currentTimeZone.token
+    static let localizedString = AppContract.localizedString.token
     static let utcOffset = AppContract.utcOffset.token
     static let persistValue = AppContract.persistValue.token
     static let persistSceneValue = AppContract.persistSceneValue.token

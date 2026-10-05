@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (110) | Realization | Notes |
+| Host | Created | Members (112) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 38 ✅ · 1 ☑️ | `NSPopUpButton` |  |
 | UIKit | ✅ | 25 ✅ · 3 – | pop-up `UIButton` menu |  |
@@ -46,6 +46,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/PickerContract.swif
 | `selectedIndex` | property | `Int` | native | ✅ | 🔌 | ✅ | ✅ | ✅ |  | UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action |
 | `onSelectedIndexChanged` (`selectedIndexChanged`) | event | `Int` | native | 🔌 | 🔌 | ✅ | ✅ | ✅ |  | only through the host's own: choose on Picker: the host's action called, not the pop-up's; UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action |
 | `title` | property | `String` | native | ✅ | 🔌 | 🔌 | ✅ |  |  | UIKit: only through the host's own: choose on Picker: the host's choice called, not the menu's action; Android Views: only through the host's own: read title of Picker: the rows the relay keeps, not the spinner's; GTK 4: not realized |
+| `titleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -75,6 +76,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
+| `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Picker - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

@@ -103,6 +103,11 @@
     /// The animations of the layouts' places.
     public let layoutMotion: LayoutMotion
 
+    /// What a lookup key resolves to in the toolkit's tables - the host sets
+    /// it where the platform keeps strings; nil's answer leaves the key's own
+    /// fallback drawn.
+    public var localization: (LocalizedStringKey) -> String? = { _ in nil }
+
     /// Called when a property animation starts, so the frame clock is held while it runs.
     public var onAnimation: () -> Void = {}
 

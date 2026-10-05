@@ -13,8 +13,8 @@
         VisualElementContract.focus, VisualElementContract.unfocus,
         AppContract.alert, AppContract.announce, AppContract.chooseAction,
         AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
-        AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
-        AppContract.prompt, AppContract.utcOffset,
+        AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.localizedString,
+        AppContract.persistValue, AppContract.prompt, AppContract.utcOffset,
     ]
 
     /// The answer to `currentTime`: the hour, the minute, the second and the millisecond of the local time.

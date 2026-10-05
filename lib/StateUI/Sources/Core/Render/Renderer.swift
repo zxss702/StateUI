@@ -42,6 +42,13 @@ public final class Renderer: @unchecked Sendable {
     /// Design: docs/design/core/invalidation.md#live-readers
     private var readers: [ObjectIdentifier: Int] = [:]
 
+    /// The observation tokens builds armed, by identity. One is held so its id
+    /// names it alone while a live element's reads keep it - a freed token's id
+    /// could come back as another's and a model write would rebuild a view that
+    /// never read it.
+    /// Design: docs/design/core/state.md#an-observable-model
+    private var observations: [ObjectIdentifier: ObservationToken] = [:]
+
     /// Whether a render is running: every write then goes on the books unasked.
     /// Design: docs/design/core/invalidation.md#writes-during-a-render
     private var rendering = false
@@ -202,6 +209,7 @@ public final class Renderer: @unchecked Sendable {
         let asked: Bool = guarded.withLock {
             guard rendering || readers[id] != nil else {
                 refusedWrites += 1
+                observations[id] = nil
                 return false
             }
 
@@ -243,8 +251,17 @@ public final class Renderer: @unchecked Sendable {
                 guard let count = readers[id] else { continue }
 
                 readers[id] = count > 1 ? count - 1 : nil
+
+                // Nobody reads it now: an observation token's hold ends with it.
+                if count == 1 { observations[id] = nil }
             }
         }
+    }
+
+    /// Holds an observation token a build armed, so its identity names it alone
+    /// while a live element's reads keep it. `unreading` lets it go.
+    func arm(_ token: ObservationToken) {
+        guarded.withLock { observations[ObjectIdentifier(token)] = token }
     }
 
     /// Whether any live element reads this state - what a test asks.
@@ -326,7 +343,7 @@ public final class Renderer: @unchecked Sendable {
             // Design: docs/design/core/render.md#three-roads
             result = differ.revisit(current, changed: changedNow)
         } else {
-            let (built, reads) = ReadScope.collect { root }
+            let (built, reads) = ReadScope.observed { root }
 
             // The root build is a reader too.
             unreading(rootReads)
@@ -415,7 +432,7 @@ public final class Renderer: @unchecked Sendable {
             if let current = rendered, !wroteUntracked, rootReads.isDisjoint(with: wrote) {
                 settled = differ.revisit(current, changed: wrote)
             } else {
-                let (built, reads) = ReadScope.collect { root }
+                let (built, reads) = ReadScope.observed { root }
 
                 unreading(rootReads)
                 reading(reads)

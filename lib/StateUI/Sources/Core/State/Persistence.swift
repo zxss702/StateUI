@@ -161,8 +161,13 @@ public struct PersistentKey: Hashable, Sendable, CustomStringConvertible {
     ///   - name: the name in the platform's store, the application's own.
     ///   - type: the type of the state kept under it.
     public init<Value: PersistentValue>(_ name: String, of type: Value.Type) {
+        self.init(name: name, kind: Value.persistentKind)
+    }
+
+    /// A key from its name and kind - the manifest's decoding.
+    init(name: String, kind: PersistentKind) {
         self.name = name
-        self.kind = Value.persistentKind
+        self.kind = kind
     }
 
     /// The name, so an interpolated diagnostic prints it plainly.
@@ -187,14 +192,40 @@ final class PersistentStore: @unchecked Sendable {
     /// The keys written since the last take, each with its last value.
     private var waiting: [String: PropValue] = [:]
 
+    /// Every key a state has claimed, manifest aside - what `listed` answers and
+    /// the manifest is written from.
+    private var registered: Set<PersistentKey> = []
+
+    /// The key the kept keys are themselves listed under, always read: it is how
+    /// a key claimed at build - `@AppStorage`'s, which nothing else declares -
+    /// is still read back on the next launch.
+    /// Design: docs/design/core/state.md#kept-state
+    static let manifestKey = PersistentKey(name: "__stateui.keys", kind: .text)
+
+    /// The keys the host should read: every claimed key plus the manifest's own
+    /// key, so the list is itself read and the keys it names get read after it.
+    var listed: [PersistentKey] {
+        let registered = guarded.withLock { registered }
+        var keys = registered.sorted { $0.name < $1.name }
+        keys.append(Self.manifestKey)
+        return keys
+    }
+
     /// Takes what the host read out of the store, before the first render; a storage
-    /// claimed earlier takes its value now.
+    /// claimed earlier takes its value now. The manifest's arrival names the keys a
+    /// claimed state kept under last launch, which the host then reads too.
     func hydrate(_ values: [(name: String, value: PropValue)]) {
         let landings: [((PropValue) -> Void, PropValue)] = guarded.withLock {
             var landings: [((PropValue) -> Void, PropValue)] = []
 
             for pair in values {
                 hydrated[pair.name] = pair.value
+
+                if pair.name == Self.manifestKey.name, case .string(let text) = pair.value {
+                    for line in text.split(separator: "\n") {
+                        if let key = PersistentKey(manifested: line) { registered.insert(key) }
+                    }
+                }
 
                 if let standing = storages[pair.name] {
                     landings.append((standing.land, pair.value))
@@ -219,13 +250,19 @@ final class PersistentStore: @unchecked Sendable {
         orAdopt storage: AnyObject,
         landing land: @escaping (PropValue) -> Void
     ) -> AnyObject {
-        let (owner, held): (AnyObject, PropValue?) = guarded.withLock {
+        let (owner, held, fresh): (AnyObject, PropValue?, Bool) = guarded.withLock {
             if let standing = storages[key.name] {
-                return (standing.storage, nil)
+                return (standing.storage, nil, false)
             }
 
             storages[key.name] = (storage, land)
-            return (storage, hydrated[key.name])
+            return (storage, hydrated[key.name], registered.insert(key).inserted)
+        }
+
+        // A key nobody listed is written into the manifest as it is claimed, so
+        // the next launch reads it back.
+        if fresh, key != Self.manifestKey {
+            record(Self.manifestKey, .string(manifest()))
         }
 
         if let held {
@@ -233,6 +270,17 @@ final class PersistentStore: @unchecked Sendable {
         }
 
         return owner
+    }
+
+    /// The manifest as the store keeps it: every claimed key, `kind:name` a line.
+    private func manifest() -> String {
+        guarded.withLock {
+            registered
+                .filter { !$0.name.contains("\n") && !$0.name.contains(":") }
+                .map { "\($0.kind.rawValue):\($0.name)" }
+                .sorted()
+                .joined(separator: "\n")
+        }
     }
 
     /// Marks a key for saving with its value. Runs under the state's lock, so it only
@@ -260,6 +308,19 @@ final class PersistentStore: @unchecked Sendable {
             hydrated.removeAll()
             storages.removeAll()
             waiting.removeAll()
+            registered.removeAll()
         }
+    }
+}
+
+extension PersistentKey {
+    /// A key back from its line in the manifest - `kind:name`; nil where the
+    /// line names none.
+    init?(manifested line: Substring) {
+        guard let cut = line.firstIndex(of: ":"),
+            let kind = Int32(line[..<cut]).flatMap(PersistentKind.init(rawValue:))
+        else { return nil }
+
+        self.init(name: String(line[line.index(after: cut)...]), kind: kind)
     }
 }

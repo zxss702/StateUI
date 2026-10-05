@@ -55,6 +55,7 @@ private final class Cart {
 @Observable
 private final class ForeignCart {
     var note = ""
+    var items: [String] = []
 }
 
 /// A view that keeps a model rather than a value.
@@ -506,6 +507,10 @@ final class ModelStateTests: XCTestCase {
         XCTAssertTrue(Renderer.shared.needsRender)
     }
 
+    /// A write to a model no build read names nothing: `@Observable` notifies
+    /// the scope armed around the read, and a model nobody read armed none -
+    /// the renderer refuses the write exactly as it refuses a `@State` nobody
+    /// reads.
     func testAnObservableWriteAsksForNothing() {
         let cart = ForeignCart()
         settled()
@@ -513,30 +518,63 @@ final class ModelStateTests: XCTestCase {
         cart.note = "for later"
 
         XCTAssertFalse(Renderer.shared.needsRender, """
-            The write reaches the object and nobody else. `@Observable` \
-            notifies whoever armed an observation scope around the read, and \
-            nothing here arms one - so the interface would go on showing the \
-            old value with nothing failing anywhere. That silence is what the \
-            deprecation in Observable.swift names at the declaration, \
-            and this is the measurement it stands on.
+            The write reaches the object and nobody else: no build read this \
+            model, so no armed scope reports it.
             """)
     }
 
-    func testHoldingAnObservableModelIsSaidAtTheDeclaration() throws {
-        let refusals = try SourceTree.allSources()
-            .first { $0.path.hasSuffix("/Observable.swift") }
+    /// A write to a property a body DID read is heard: the observation scope
+    /// the build armed reports the element's token, and the walk rebuilds the
+    /// element that read it - and only it.
+    func testAWriteToAnObservedPropertyRebuildsItsReaders() {
+        let cart = ForeignCart()
+        let items = Tally()
+        let note = Tally()
+        let renders = Renders()
 
-        let text = try XCTUnwrap(refusals?.text, "Observable.swift is where this is said")
+        renders.render(stack([
+            Reader { items.builds += 1; _ = cart.items; items.said = $0 }.node,
+            Reader { note.builds += 1; _ = cart.note; note.said = $0 }.node,
+        ], id: "root"))
+        settled()
+        XCTAssertEqual(items.builds, 1)
+        XCTAssertEqual(note.builds, 1)
 
-        let declared = text.components(separatedBy: "public convenience init").count - 1
-        let deprecated = text.components(separatedBy: "@available(*, deprecated").count - 1
+        cart.note = "for later"
 
-        XCTAssertEqual(declared, 2, "both ways of writing one - @State and file scope")
-        XCTAssertEqual(deprecated, declared, """
-            Every initializer there exists to carry the sentence. One left \
-            without it takes an @Observable model silently, which is the whole \
-            thing this file is for.
-            """)
+        XCTAssertTrue(Renderer.shared.needsRender,
+                      "the write reached the scope the reading build armed")
+
+        _ = renders.revisit(changed: Renderer.shared.pendingChanges)
+
+        XCTAssertEqual(items.builds, 1, "the closure reading `items` was not built again")
+        XCTAssertEqual(note.builds, 2, "the one reading `note` was")
+    }
+
+    /// A scope reports ONCE - which is what `withObservationTracking` promises -
+    /// so the rebuild arms another, and the next write is heard just the same.
+    /// The reader keeps reading for as long as it stands.
+    func testAnObservedWriteAfterTheRebuildIsHeardAgain() {
+        let cart = ForeignCart()
+        let note = Tally()
+        let renders = Renders()
+
+        renders.render(stack([
+            Reader { note.builds += 1; _ = cart.note; note.said = $0 }.node,
+        ], id: "root"))
+        settled()
+
+        cart.note = "first"
+        _ = renders.revisit(changed: Renderer.shared.pendingChanges)
+        XCTAssertEqual(note.builds, 2)
+
+        Renderer.shared.clearInvalidation()
+        cart.note = "second"
+
+        XCTAssertTrue(Renderer.shared.needsRender,
+                      "the scope the rebuild armed is live")
+        _ = renders.revisit(changed: Renderer.shared.pendingChanges)
+        XCTAssertEqual(note.builds, 3)
     }
 
     /// Renders once, so that `needsRender` says something about what the test

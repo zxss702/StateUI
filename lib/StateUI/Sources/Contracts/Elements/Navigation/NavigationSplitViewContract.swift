@@ -21,6 +21,17 @@ public enum NavigationSplitViewContract: ElementContract {
     public static let isSidebarVisibleChanged = ElementEvent<Self, Bool>(
         "isSidebarVisibleChanged", layer: .adaptive)
 
+    /// Which of a three-column split's columns show, where the author binds
+    /// them - `isSidebarVisible`'s wider answer.
+    public static let columnVisibility = ElementProperty<Self, NavigationSplitViewVisibility>(
+        "columnVisibility", layer: .native)
+
+    /// The user changed which columns show, to the value it carries.
+    public static let columnVisibilityChanged = ElementEvent<Self, NavigationSplitViewVisibility>(
+        "columnVisibilityChanged", layer: .adaptive)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [isSidebarVisible, isSidebarVisibleChanged]
+    public static let members: [any ContractMember] = [
+        isSidebarVisible, isSidebarVisibleChanged, columnVisibility, columnVisibilityChanged,
+    ]
 }

@@ -78,18 +78,33 @@ public struct ProgressView: View {
     }
 
     /// Indeterminate, with its words - `ProgressView("Loading")`.
-    public init(_ title: String) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S) {
         self.init { Text(title) }
     }
 
+    /// Indeterminate, with its words looked up.
+    public init(_ titleKey: LocalizedStringKey) {
+        self.init { Text(titleKey) }
+    }
+
     /// Determinate, with its words.
-    public init(_ title: String, value: Double, total: Double) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, value: Double, total: Double) {
         self.init(value, total: total) { Text(title) }
     }
 
+    /// Determinate, with its words looked up.
+    public init(_ titleKey: LocalizedStringKey, value: Double, total: Double) {
+        self.init(value, total: total) { Text(titleKey) }
+    }
+
     /// Determinate, with its words - the value is the fraction itself, 0…1.
-    public init(_ title: String, value: Double) {
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, value: Double) {
         self.init(value, total: 1.0) { Text(title) }
+    }
+
+    /// Determinate, with its words looked up.
+    public init(_ titleKey: LocalizedStringKey, value: Double) {
+        self.init(value, total: 1.0) { Text(titleKey) }
     }
 
     /// Determinate and driven, with its words.

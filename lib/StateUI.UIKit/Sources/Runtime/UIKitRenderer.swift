@@ -218,15 +218,16 @@ final class UIKitRenderer {
             })
     }
 
-    /// The menus the user's window's page puts on the application's menu bar.
-    var menuBar: [UIMenu] {
-        roster.windows.first { $0.1.window === userWindow }?.1.pageMenus ?? []
+    /// The menus the user's window puts on the application's menu bar: the command groups' spliced into UIKit's
+    /// standard menus, the scene's and page's own standing beside them.
+    var menuBar: (groups: [(UIMenu.Identifier, UIMenu)], menus: [UIMenu]) {
+        roster.windows.first { $0.1.window === userWindow }?.1.pageMenus ?? ([], [])
     }
 
     /// Asks UIKit to build its main menu again where the page's menus say something else now.
     /// Design: docs/design/platforms/uikit/pages.md#menus
     private func rebuildMenuBarWhereItChanged() {
-        let said = UIKitMenus.said(menuBar)
+        let said = UIKitMenus.said(menuBar.groups.map(\.1) + menuBar.menus)
         guard said != menuBarSaid else { return }
         menuBarSaid = said
         UIMenuSystem.main.setNeedsRebuild()

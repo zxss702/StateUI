@@ -43,6 +43,10 @@ public struct DrawCommand: Equatable, Sendable {
         case scale = 20
         case saveState = 21
         case restoreState = 22
+
+        // How an outline and a fill are finished.
+        case strokeStyle = 23
+        case fillStyle = 24
     }
 
     /// Which canvas call this instruction is.

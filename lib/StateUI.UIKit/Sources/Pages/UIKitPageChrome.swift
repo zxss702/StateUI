@@ -17,6 +17,7 @@ struct UIKitPageChrome {
     var offersBack = true
     var barBackground: HostValue?
     var barForeground: HostValue?
+    var leadingActions: [UIKitBarAction] = []
     var actions: [UIKitBarAction] = []
     var overflow: [UIKitBarAction] = []
 
@@ -29,6 +30,7 @@ struct UIKitPageChrome {
             titleView.bounds.size = size
         }
         item.hidesBackButton = !offersBack
+        item.leftBarButtonItems = leadingActions.map(\.barItem)
         item.rightBarButtonItems = actions.reversed().map(\.barItem)
             + (overflow.isEmpty ? [] : [UIBarButtonItem(
                 image: UIImage(systemName: "ellipsis.circle"), menu: UIMenu(children: overflow.map(\.menuAction)))])

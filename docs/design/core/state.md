@@ -214,6 +214,17 @@ label `persistentKey:` is the argument's own type, lowercased, as `animation:` a
 `sceneKey:` are: there is one kind of state, and the brackets say only what else
 is true of one. The unlabelled position already means the initial value.
 
+`@AppStorage("key")` is the same kept state spelled the SwiftUI way - a state
+whose key is its name - and it asks for nothing to be declared. The application
+listing `persistentKeys` is how the host knows what to read, and a key nobody
+listed would survive one launch and be lost: the store keeps a manifest of its
+own under `__stateui.keys`, every claimed key written into it as it is claimed,
+`kind:name` a line. The manifest's key is always listed, so the host reads it
+with the rest; the keys it names are registered on arrival and read in a second
+pass, and a state claimed under one takes its stored value exactly as a declared
+key's would. The manifest is a superset on purpose - a key the application
+already lists costs it one line.
+
 ## Scene-kept state
 
 `@State(sceneKey: .key)` keeps a value per scene, handed back with the scene
@@ -265,16 +276,19 @@ view outlives a build - the page's element does.
 ## An observable model
 
 `@Observable` and a class of `@State` properties read as two spellings of one
-thing and are not. Both report writes, to different listeners. A `@State` calls
-the renderer; `@Observable` notifies whoever armed an observation scope around
-the read, and nothing here arms one. A write to such a model would leave the
-interface showing the old value with nothing failing anywhere. Holding one in a
-`@State` is therefore deprecated with a message naming the line - a warning, not
-a refusal, because the model still works as an object and an application that
-arms the tracking itself may hold one. A model declared elsewhere is bridged
-in the application: read it inside `withObservationTracking` and call
-`Renderer.shared.setNeedsRender()` from its change handler, arming again after
-every change.
+thing and are not - both report writes, to different listeners. A `@State`
+calls the renderer; `@Observable` notifies whoever armed an observation scope
+around the read. The differ arms one around every body and container content
+it builds: a body that reads a model's property leaves an `ObservationToken`
+in its element's reads, and the first write to a property that build read
+reports the token through `Renderer.stateChanged`. The ordinary walk then
+rebuilds exactly the elements that read it - a model held in a `@State`, lent
+through `.environment`, or wrapped in `@Bindable` for `$model.prop` bindings
+all work the same way.
+
+An armed scope reports once: the token in `changed` rebuilds the element,
+whose build arms afresh. A write to a model nobody's build read names nothing
+and is refused, as a state no element reads is.
 
 ## Sendable promises
 

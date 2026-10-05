@@ -33,6 +33,10 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
     private(set) var nativeMeasurementCountForTesting = 0
     var textForTesting: NSAttributedString { textField.attributedStringValue }
 
+    /// What runs once the words' place is set - the element reporting its
+    /// layout, so the report follows the label's own pass and no frame clock.
+    var onLaidOut: (() -> Void)?
+
     override var isFlipped: Bool { true }
 
     override init(frame frameRect: NSRect) {
@@ -165,6 +169,71 @@ final class AppKitLabelView: AppKitHitTestView, AppKitWidthConstrainedMeasuring,
         case .end: content.maxY - height
         }
         textField.frame = NSRect(x: content.minX, y: y, width: content.width, height: height)
+        onLaidOut?()
+    }
+
+    /// How TextKit laid the words out: each line's rectangle, each run's
+    /// (grouped by the span index the words were tagged with), each glyph
+    /// cluster's slice - all in this label's own coordinates, for
+    /// `textLayoutChanged`.
+    /// Design: docs/design/host/tree.md#runs-of-words
+    func textLayoutReport() -> TextLayoutReport? {
+        let text = attributedStringValue
+        let area = textField.frame
+        guard !text.string.isEmpty, area.width > 0, area.height > 0 else { return nil }
+
+        let storage = NSTextStorage(attributedString: text)
+        let manager = NSLayoutManager()
+        let container = NSTextContainer(size: area.size)
+        container.lineFragmentPadding = 0
+        container.maximumNumberOfLines = maximumNumberOfLines
+        container.lineBreakMode = lineBreakMode
+        manager.addTextContainer(container)
+        storage.addLayoutManager(manager)
+        manager.ensureLayout(for: container)
+
+        var lines: [TextLayoutReport.Line] = []
+        let whole = NSRange(location: 0, length: manager.numberOfGlyphs)
+        manager.enumerateLineFragments(forGlyphRange: whole) {
+            lineRect, _, _, glyphRange, _ in
+            var runs: [TextLayoutReport.Run] = []
+            let characterRange = manager.characterRange(
+                forGlyphRange: glyphRange, actualGlyphRange: nil)
+            text.enumerateAttribute(.stateUIRunIndex, in: characterRange) { value, range, _ in
+                let span = value as? Int ?? -1
+                let runGlyphs = manager.glyphRange(
+                    forCharacterRange: range, actualCharacterRange: nil)
+                var slices: [Rect] = []
+                (text.string as NSString).enumerateSubstrings(
+                    in: range, options: .byComposedCharacterSequences
+                ) { _, clusterRange, _, _ in
+                    let clusterGlyphs = manager.glyphRange(
+                        forCharacterRange: clusterRange, actualCharacterRange: nil)
+                    slices.append(self.reportRect(manager.boundingRect(
+                        forGlyphRange: clusterGlyphs, in: container)))
+                }
+                let directions = text.attribute(.writingDirection, at: range.location, effectiveRange: nil)
+                    as? [NSNumber] ?? []
+                let runRect = manager.boundingRect(forGlyphRange: runGlyphs, in: container)
+                runs.append(TextLayoutReport.Run(
+                    rect: self.reportRect(runRect),
+                    direction: directions.contains(NSNumber(value: NSWritingDirection.rightToLeft.rawValue))
+                        ? .rightToLeft : .leftToRight,
+                    span: span,
+                    slices: slices))
+            }
+            lines.append(TextLayoutReport.Line(rect: self.reportRect(lineRect), runs: runs))
+        }
+        return TextLayoutReport(lines: lines)
+    }
+
+    /// A container rectangle as the report's, moved into this label's
+    /// coordinates.
+    private func reportRect(_ container: NSRect) -> Rect {
+        Rect(
+            container.minX + textField.frame.minX,
+            container.minY + textField.frame.minY,
+            container.width, container.height)
     }
 
 }

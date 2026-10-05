@@ -18,6 +18,10 @@ public enum SpanContract: ElementContract {
     /// What is drawn behind the run - a highlight over part of a line.
     public static let background = ElementProperty<Self, Color>("background", layer: .native)
 
+    /// The picture a run draws in place of words - what `Text(Image)` writes;
+    /// its glyph stands at the picture's size.
+    public static let image = ElementProperty<Self, ImageSource>("image", layer: .native)
+
     /// The element's own members.
-    public static let members: [any ContractMember] = [background]
+    public static let members: [any ContractMember] = [background, image]
 }

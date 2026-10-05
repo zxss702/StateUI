@@ -40,6 +40,10 @@
     /// The lines under or through the words.
     public var decorations = TextDecorations.none
 
+    /// How far the words' baseline sits from the line's own, in points; nil
+    /// leaves it on the line's.
+    public var baselineOffset: Double?
+
     /// A look saying nothing: the host's own throughout.
     public init() {}
 
@@ -63,22 +67,29 @@
         look.letterSpacing = letterSpacing != 0 ? letterSpacing : other.letterSpacing
         look.lineHeight = lineHeight ?? other.lineHeight
         look.decorations = decorations.isEmpty ? other.decorations : decorations
+        look.baselineOffset = baselineOffset ?? other.baselineOffset
         return look
     }
 }
 
-/// One run of a label's words: the words in their case, and their own look.
+/// One run of a label's words: the words in their case, and their own look -
+/// or a picture drawn as one glyph where `image` says one is.
 @_spi(Host) public struct TextRun: Equatable, Sendable {
-    /// The words.
+    /// The words; the object-replacement mark `"\u{FFFC}"` where `image`
+    /// stands, so a typesetter counts the picture's glyph.
     public let text: String
 
     /// Their look, which the label's look stands behind.
     public let look: TextLook
 
+    /// The picture this run draws in place of words, where it is one.
+    public let image: ImageSource?
+
     /// `text` looking as `look` says.
-    public init(text: String, look: TextLook) {
+    public init(text: String, look: TextLook, image: ImageSource? = nil) {
         self.text = text
         self.look = look
+        self.image = image
     }
 }
 
@@ -97,19 +108,24 @@ extension MountedElement {
         look.letterSpacing = number(.characterSpacing) ?? 0
         look.lineHeight = number(.lineHeight)
         look.decorations = value(.textDecorations)?.enumeration.map { TextDecorations(rawValue: $0) } ?? .none
+        look.baselineOffset = number(.baselineOffset)
         return look
     }
 
     /// A label's spans as runs of its words, each in its case - its own, else the label's - and its look; nil
-    /// where the label holds no spans.
+    /// where the label holds no spans. A span saying `image` is the picture's
+    /// run, its words the object-replacement mark a typesetter counts.
     public var textRuns: [TextRun]? {
         guard let spans = children.first(where: { $0.type == .spans }) else { return nil }
         let labelCase = value(.textCase)
         return spans.children.filter { $0.type == .span }.map { span in
             var look = span.textLook
             look.background = span.value(.background)
+            let image = span.value(.image).flatMap { ImageSource(propValue: $0) }
             let textCase = (span.value(.textCase) ?? labelCase)?.enumeration.flatMap(TextCase.init(rawValue:))
-            return TextRun(text: (textCase ?? .none).applied(to: span.string(.text) ?? ""), look: look)
+            let text = image != nil ? "\u{FFFC}"
+                : (textCase ?? .none).applied(to: span.string(.text) ?? "")
+            return TextRun(text: text, look: look, image: image)
         }
     }
 }

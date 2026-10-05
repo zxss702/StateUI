@@ -10,7 +10,7 @@
 enum AppKitRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
-        "Map", "Pin", "PositionIndicator", "WebView",
+        "GridRow", "Map", "Pin", "PositionIndicator", "WebView",
     ]
 
     /// The entries this host presents with no view of their own - a title bar is the window's, a span a run of its
@@ -134,6 +134,7 @@ enum AppKitRealization {
         .complete("Span", "text"),
         .complete("Span", "textCase"),
         .complete("NavigationSplitView", "isSidebarVisibleChanged"),
+        .complete("NavigationSplitView", "columnVisibilityChanged"),
         .complete("TabView", "accessibilityIdentifier"),
         .complete("TabView", "currentPage"),
         .complete("TabView", "currentPageChanged"),
@@ -145,6 +146,8 @@ enum AppKitRealization {
         .complete("ToolbarItem", "placement"),
         .unrealized("ToolbarItem", "accessibilityIdentifier", why: "An NSToolbarItem holds no accessibility identifier."),
         .complete("ToolbarItem", "priority"),
+        .complete("ToolbarSpacer", "placement"),
+        .complete("ToolbarSpacer", "variant"),
         .complete("WindowScene", "activated"),
         .complete("WindowScene", "created"),
         .complete("WindowScene", "deactivated"),

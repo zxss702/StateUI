@@ -96,11 +96,13 @@ extern "C" StateUIObjectRef stateui_winui_button_make(int64_t view) {
     try {
         // A staying-pressed button at heart: it draws the platform's ordinary
         // button until `isOn` gives it a state to keep - a press on one that
-        // keeps nothing has its check taken back at once.
+        // keeps nothing has its check taken back at once, to false rather than
+        // nothing: nothing is the button's THIRD, indeterminate look, which
+        // keeps none of the resources the look set.
         primitives::ToggleButton button;
         button.Checked([view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
             auto b = sender.as<primitives::ToggleButton>();
-            if (!keeps(b)) { b.IsChecked(nullptr); return; }
+            if (!keeps(b)) { b.IsChecked(false); return; }
             callbacks.toggled(view, true);
         });
         button.Unchecked([view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
@@ -128,7 +130,7 @@ extern "C" void stateui_winui_button_set_on(StateUIObjectRef handle, int32_t tog
         auto want = toggleable != 0 && on != 0;
         auto current = button.IsChecked();
         if ((current && current.Value()) != want)
-            button.IsChecked(toggleable != 0 ? winrt::box_value(want) : nullptr);
+            button.IsChecked(winrt::Windows::Foundation::IReference<bool>(want));
     } catch (...) {
         report("turning a button on or off");
     }
@@ -196,7 +198,7 @@ extern "C" void stateui_winui_button_set_style(StateUIObjectRef handle, int kind
         if (kind == 2) key = L"AccentButtonStyle";
         else if (kind == 3 || kind == 4) key = L"TextButtonStyle";
         if (!key) {
-            button.ClearValue(controls::Control::StyleProperty());
+            button.ClearValue(xaml::FrameworkElement::StyleProperty());
             return;
         }
         auto resources = xaml::Application::Current().Resources();

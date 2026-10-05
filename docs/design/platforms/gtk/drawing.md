@@ -63,6 +63,23 @@ dashes, gaps and their offset are outline widths in StateUI and lengths in
 GSK, so they are multiplied by the width. A shape has no size of its own: it
 takes the room its layout gives it.
 
+## A canvas
+
+A canvas is a panel that replays its drawing's records in its snapshot,
+each against the pen the host layer keeps for it
+([settings hold until changed](../../types/drawing.md#settings-hold-until-changed)):
+a path the records name is built with GSK's builder - its arcs arriving as
+cubic curves already - and pushed as a fill or a stroke, the stroke's cap and
+join GSK's own; a fill's rule is GSK's fill rule. A transform multiplies the
+snapshot's, and `saveState` and `restoreState` are the snapshot's own, so a
+turned shape turns nothing after it. Text is a Pango layout, its pixel size
+measured so the two alignments can place it in its box, which clips it.
+
+A press on the canvas is followed by a drag gesture of the view's own, so a
+down, a move and a lift arrive as the canvas's `pressed`, `dragged` and
+`released` - the point in the canvas's own coordinates, which is where the
+drawing's numbers mean.
+
 ## A placed child
 
 A ZStack whose places a state drives stands each child where the run says, and

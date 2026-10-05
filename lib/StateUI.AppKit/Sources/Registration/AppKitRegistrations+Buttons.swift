@@ -92,7 +92,7 @@ extension AppKitRegistrations {
 
     /// The key equivalent a named key stands for: its character, or the
     /// unicode the key is known by where a character cannot write it.
-    private static func keyEquivalent(_ shortcut: KeyboardShortcut) -> String {
+    static func keyEquivalent(_ shortcut: KeyboardShortcut) -> String {
         switch shortcut.key.name {
         case "return", "defaultaction": return "\r"
         case "escape", "cancelaction": return "\u{1b}"
@@ -116,7 +116,7 @@ extension AppKitRegistrations {
     }
 
     /// The modifier mask the shortcut's bits stand for.
-    private static func modifierFlags(_ shortcut: KeyboardShortcut) -> NSEvent.ModifierFlags {
+    static func modifierFlags(_ shortcut: KeyboardShortcut) -> NSEvent.ModifierFlags {
         var flags: NSEvent.ModifierFlags = []
         if shortcut.modifiers.contains(.command) { flags.insert(.command) }
         if shortcut.modifiers.contains(.shift) { flags.insert(.shift) }

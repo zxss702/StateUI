@@ -7,10 +7,18 @@ Grid.clipsContent: cannot read clipsContent of Grid - GTK's driver has no path f
 Grid.hitShape: cannot read hitShape of Grid - GTK's driver has no path for it yet
 Grid.ignoresSafeArea: not realized
 Grid.letsInputThrough: cannot read letsInputThrough of Grid - GTK's driver has no path for it yet
+GridRow.clipsContent: not realized
+GridRow.hitShape: not realized
+GridRow.ignoresSafeArea: not realized
+GridRow.letsInputThrough: not realized
 HStack.clipsContent: cannot read clipsContent of HStack - GTK's driver has no path for it yet
 HStack.hitShape: cannot read hitShape of HStack - GTK's driver has no path for it yet
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: cannot read letsInputThrough of HStack - GTK's driver has no path for it yet
+Masked.clipsContent: cannot read clipsContent of Masked - GTK's driver has no path for it yet
+Masked.hitShape: cannot read hitShape of Masked - GTK's driver has no path for it yet
+Masked.ignoresSafeArea: not realized
+Masked.letsInputThrough: cannot read letsInputThrough of Masked - GTK's driver has no path for it yet
 ScrollView.clipsContent: not realized
 ScrollView.hitShape: not realized
 ScrollView.ignoresSafeArea: not realized

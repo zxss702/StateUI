@@ -19,6 +19,9 @@ struct WinUILayoutItem: LayoutChild {
     /// The mounted element the view presents, whose place its layout animates; 0 for none.
     var mount: UInt64 = 0
 
+    /// The element id a child's `.layoutValue` tags ride under; nil for a view no element presents.
+    var codeId: ElementId?
+
     /// Fades the view in as it joins a standing layout; nil for a view that simply appears.
     var fadeIn: ((Animation, Rect) -> Void)?
 

@@ -25,6 +25,16 @@
     /// How opaque everything is drawn, from nothing to whole: whole until set.
     public var alpha = 1.0
 
+    /// How the ends of open lines are drawn: flat until set.
+    public var strokeCap: LineCap = .flat
+
+    /// How the corners where segments meet are drawn: mitered until set.
+    public var strokeJoin: LineJoin = .miter
+
+    /// Which points a fill counts as inside: the winding rule until set -
+    /// `true` asks for the even-odd one.
+    public var fillEvenOdd = false
+
     private var saved: [CanvasPen] = []
 
     /// A pen drawing black, one wide, whole.
@@ -39,6 +49,11 @@
         case .strokeWidth(let width): strokeWidth = max(0, width)
         case .fontSize(let size): fontSize = max(0, size)
         case .alpha(let value): alpha = min(max(value, 0), 1)
+        case .strokeStyle(let width, let cap, let join):
+            strokeWidth = max(0, width)
+            strokeCap = cap
+            strokeJoin = join
+        case .fillStyle(let evenOdd): fillEvenOdd = evenOdd
         case .saveState: saved.append(self)
         case .restoreState:
             guard let last = saved.popLast() else { return true }

@@ -19,3 +19,8 @@ public enum LineCap: Int32, Sendable {
 
 extension LineCap: HostRepresentable {}
 extension LineCap: StateChoice {}
+
+extension LineCap {
+    /// `.flat`, as SwiftUI names it - the same member.
+    public static var butt: LineCap { .flat }
+}

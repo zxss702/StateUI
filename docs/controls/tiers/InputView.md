@@ -21,6 +21,7 @@ How each of them realizes these members is on its own page.
 | `isTextPredictionEnabled` | property | `Bool` | native |
 | `maximumLength` | property | `Int` | native |
 | `placeholder` | property | `String` | native |
+| `placeholderKey` | property | `LocalizedStringKey` | native |
 | `placeholderColor` | property | `Color` | native |
 | `selectionLength` | property | `Int` | native |
 | `onTextChanged` (`textChanged`) | event | `String` | native |

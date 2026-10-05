@@ -50,6 +50,7 @@ struct SceneElement: Element {
 
         var main = windows.main.node(session: record.windowSession(SceneElement.mainKey))
         main.id = SceneElement.mainKey
+        main.append(commands: sceneMenus(of: windows))
 
         var children = [main]
 
@@ -61,6 +62,7 @@ struct SceneElement: Element {
 
             var window = group.make(opened, record).node(session: record.windowSession(opened.key))
             window.id = opened.key
+            window.append(commands: sceneMenus(of: windows) + group.commands.flatMap { $0.commandNodes })
 
             // Written either way, so none of them is ever cleared off a window.
             // Design: docs/design/core/scenes.md#opening-windows
@@ -113,6 +115,11 @@ struct SceneElement: Element {
         return node
     }
 
+    /// The scene-wide commands' menu nodes, each `Commands` flattened.
+    private static func sceneMenus(of windows: Windows) -> [Node] {
+        windows.commands.flatMap { $0.commandNodes }
+    }
+
     /// What the tree knows a scene's main window by.
     static let mainKey = "main"
 
@@ -127,5 +134,17 @@ struct SceneElement: Element {
         guard let offering = scene as? OfferingScene else { return [] }
 
         return offered(by: offering.base) + [(key: offering.key, object: offering.object)]
+    }
+}
+
+extension Node {
+    /// Hangs the menus a scene's or a window group's `.commands` wrote off the
+    /// window - a menu bar slot the window's own, which the host reads as the
+    /// scene's menus beside the visible page's; nothing for none.
+    mutating func append(commands menus: [Node]) {
+        guard !menus.isEmpty else { return }
+        var slot = Node(contract: MenuBarContract.self, children: menus)
+        slot.key = "commands"
+        children.append(slot)
     }
 }

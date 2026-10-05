@@ -64,6 +64,19 @@ final class ColorTests: XCTestCase {
         XCTAssertEqual(Color(red: -20, green: 300, blue: 0), Color("#00FF00"))
     }
 
+    /// A fractional channel is the one SwiftUI writes: 0-1, held to it, and a
+    /// value that is no number reads as no channel.
+    func testAFractionalChannelScalesToAByte() {
+        XCTAssertEqual(Color(red: 1, green: 0.5, blue: 0),
+                       Color(red: 255, green: 128, blue: 0))
+        XCTAssertEqual(Color(red: 0.61, green: 0.74, blue: 0.65),
+                       Color(red: 156, green: 189, blue: 166))
+        XCTAssertEqual(Color(red: 2.0, green: -1, blue: 0), Color(red: 255, green: 0, blue: 0))
+        XCTAssertEqual(Color(red: .nan, green: 0, blue: 0), Color(red: 0, green: 0, blue: 0))
+        XCTAssertEqual(Color(red: 1, green: 1, blue: 1, alpha: 0.5),
+                       Color(red: 255, green: 255, blue: 255, alpha: 128))
+    }
+
     // MARK: - What crosses
 
     /// A themed colour crosses as ONE colour: written, it is the pair, and

@@ -13,7 +13,7 @@
     public static let viewlessTypes: Set<NodeType> = [
         .app, .scene, .windowScene, .modalStack, .titleBar, .content, .leadingContent, .trailingContent,
         .titleView, .toolbarItems, .toolbarItem, .menuBar, .contextMenu, .menu, .menuItem, .divider, .spans,
-        .span, .popover,
+        .span, .popover, .toolbarSpacer,
     ]
 
     /// A page's children that furnish its chrome rather than stand in its room.

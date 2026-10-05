@@ -68,6 +68,11 @@ extension AppKitElement {
         host?.runtime.sidebarShown(element, presented)
     }
 
+    /// The split's columns showed or hid on screen: the host layer tells the pages and the state.
+    func columnsShown(_ visibility: NavigationSplitViewVisibility) {
+        host?.runtime.columnsShown(element, visibility)
+    }
+
     /// Attaches the view's context menu slot to AppKit. The slot stays a child for identity and sparse updates, but
     /// never becomes a visual child in the native layout.
     func configureContextMenu() {
@@ -104,6 +109,8 @@ enum AppKitMenus {
         item.isEnabled = entry.isEnabled
         item.setAccessibilityIdentifier(entry.identifier)
         item.image = entry.icon.flatMap { element.image(named: $0) }
+        item.keyEquivalent = entry.shortcut.map(AppKitRegistrations.keyEquivalent) ?? ""
+        item.keyEquivalentModifierMask = entry.shortcut.map(AppKitRegistrations.modifierFlags) ?? []
         item.attributedTitle = NSAttributedString(
             string: entry.title, attributes: entry.isDestructive ? [.foregroundColor: NSColor.systemRed] : [:])
 

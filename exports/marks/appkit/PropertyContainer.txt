@@ -8,6 +8,7 @@ CustomLayout.accessibilityIdentifier: ✅
 DatePicker.accessibilityIdentifier: ✅
 Ellipse.accessibilityIdentifier: ✅
 Grid.accessibilityIdentifier: ✅
+GridRow.accessibilityIdentifier: not realized
 HStack.accessibilityIdentifier: ✅
 Image.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅

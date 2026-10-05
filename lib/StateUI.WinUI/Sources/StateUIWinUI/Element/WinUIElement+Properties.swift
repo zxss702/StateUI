@@ -3,6 +3,7 @@
 
 @_spi(Host) import StateUI
 @_spi(Host) import StateUIHost
+import CStateUIWinUI
 
 /// The native element: made, and given the element's properties.
 extension WinUIElement {

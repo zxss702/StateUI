@@ -11,7 +11,8 @@
 enum UIKitRealization {
     /// The entries this host realizes none of yet: it shows each one's name in red where it belongs.
     static let unrealized: Set<String> = [
-        "Content", "LeadingContent", "Map", "Pin", "PositionIndicator", "TitleBar", "TrailingContent",
+        "Content", "GridRow", "LeadingContent", "Map", "Pin", "PositionIndicator", "TitleBar", "ToolbarSpacer",
+        "TrailingContent",
     ]
 
     /// The entries this host presents with no view of their own - a span is a run of its label's words - so no
@@ -73,6 +74,8 @@ enum UIKitRealization {
         .complete("Span", "textDecorations"),
         .complete("NavigationSplitView", "isSidebarVisible"),
         .complete("NavigationSplitView", "isSidebarVisibleChanged"),
+        .unrealized("NavigationSplitView", "columnVisibility"),
+        .unrealized("NavigationSplitView", "columnVisibilityChanged"),
         .complete("TabView", "currentPage"),
         .complete("TabView", "currentPageChanged"),
         .complete("ToolbarItem", "isDestructive"),

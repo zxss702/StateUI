@@ -7,6 +7,19 @@
 extension WinUIRegistrations {
     /// A Button: its caption and its look, whether it takes a press, and the click.
     static func buttons(_ registry: Registry<WinUIView>) {
+        // A Menu living in the view: the `Menu` view makes the element and a press on the button opens its entries.
+        registry.add(MenuButtonContract.self, create: { _ in WinUIMenuButtonView() }) { menu in
+            menu.property(VisualElementContract.isEnabled) { view, enabled in
+                view.setEnabled(enabled ?? true)
+            }
+            menu.property(MenuButtonContract.menuStyle) { view, style in
+                view.setBorderless(style == "borderlessButton")
+            }
+            menu.property(MenuButtonContract.menuIndicator) { view, indicator in
+                view.setIndicator((indicator ?? .automatic) != .hidden)
+            }
+        }
+
         registry.add(ButtonContract.self, create: { reports in
             let button = WinUIButtonView()
             button.onClicked = { reports.raise(ButtonContract.clicked) }

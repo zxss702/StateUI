@@ -8,11 +8,13 @@ CustomLayout.accessibilityIdentifier: not realized
 DatePicker.accessibilityIdentifier: not realized
 Ellipse.accessibilityIdentifier: not realized
 Grid.accessibilityIdentifier: not realized
+GridRow.accessibilityIdentifier: not realized
 HStack.accessibilityIdentifier: not realized
 Image.accessibilityIdentifier: not realized
 Line.accessibilityIdentifier: not realized
 List.accessibilityIdentifier: not realized
 Map.accessibilityIdentifier: not realized
+Masked.accessibilityIdentifier: not realized
 MenuButton.accessibilityIdentifier: not realized
 MenuItem.accessibilityIdentifier: not realized
 NavigationSplitView.accessibilityIdentifier: not realized

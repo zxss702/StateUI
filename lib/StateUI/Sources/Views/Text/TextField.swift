@@ -61,8 +61,14 @@ public struct TextField: InputView, TextElement, FontElement, TextAlignmentEleme
     /// SwiftUI spelling of `TextField(text).placeholder(title)`.
     ///
     ///     TextField("Username", text: $name)
-    public init(_ title: String, text: Binding<String>) {
-        self = TextField(text).placeholder(title)
+    @_disfavoredOverload public init<S: StringProtocol>(_ title: S, text: Binding<String>) {
+        self = TextField(text).placeholder(String(title))
+    }
+
+    /// The same, its caption looked up - `TextField("Name", text: $name)`
+    /// looks "Name" up, as SwiftUI's does.
+    public init(_ titleKey: LocalizedStringKey, text: Binding<String>) {
+        self = TextField(text).placeholder(titleKey)
     }
 
     // Design: docs/design/views/bindings.md#two-way-controls

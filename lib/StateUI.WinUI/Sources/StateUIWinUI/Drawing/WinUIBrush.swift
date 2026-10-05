@@ -33,7 +33,23 @@ struct WinUIBrush: Equatable {
             self.init(kind: 2, geometry: [from.x, from.y, to.x, to.y], stops.compactMap(Self.stop))
         case .radial(let center, let radius, let stops):
             self.init(kind: 3, geometry: [center.x, center.y, radius, 0], stops.compactMap(Self.stop))
+        case .material(let kind):
+            self.init(kind: 1, geometry: [0, 0, 0, 0], [(0, Self.materialArgb(kind))])
         }
+    }
+
+    /// What a material paints as where no frosted backing is drawn: a grey as
+    /// translucent as `Material.Kind` is thin, in ARGB.
+    private static func materialArgb(_ kind: Int32) -> UInt32 {
+        let alpha: UInt32 = switch kind {
+        case 1: 51    // ultraThin, 0.2
+        case 2: 89    // thin, 0.35
+        case 3: 128   // regular, 0.5
+        case 4: 166   // thick, 0.65
+        case 5: 204   // ultraThick, 0.8
+        default: 128  // bar, and anything else
+        }
+        return (alpha << 24) | (128 << 16) | (128 << 8) | 140
     }
 
     private init(kind: Int32, geometry: [Double], _ stops: [(offset: Double, argb: UInt32)]) {

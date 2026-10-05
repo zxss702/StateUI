@@ -29,6 +29,36 @@ final class CanvasRulesTests: XCTestCase {
         ])
     }
 
+    /// A stroke's style and a fill's rule read as `Draw` wrote them.
+    func testAStrokeStyleAndFillRuleReadAsDrawWroteThem() {
+        let drawing = [
+            Draw.strokeStyle(width: 2.5, cap: .round, join: .bevel),
+            Draw.fillStyle(eoFill: true),
+            Draw.fillStyle(eoFill: false),
+        ]
+
+        XCTAssertEqual(CanvasInstruction.instructions(drawing), [
+            .strokeStyle(width: 2.5, cap: .round, join: .bevel),
+            .fillStyle(evenOdd: true), .fillStyle(evenOdd: false),
+        ])
+    }
+
+    /// The pen takes a stroke's ends and corners and a fill's rule as its own,
+    /// and gives them back with a saved state.
+    func testAPenTakesTheStylesDrawnWith() {
+        var pen = CanvasPen()
+        XCTAssertTrue(pen.take(.strokeStyle(width: 4, cap: .square, join: .round)))
+        XCTAssertEqual(pen.strokeWidth, 4)
+        XCTAssertEqual(pen.strokeCap, .square)
+        XCTAssertEqual(pen.strokeJoin, .round)
+        XCTAssertTrue(pen.take(.fillStyle(evenOdd: true)))
+        XCTAssertTrue(pen.fillEvenOdd)
+        XCTAssertTrue(pen.take(.saveState))
+        XCTAssertTrue(pen.take(.fillStyle(evenOdd: false)))
+        XCTAssertTrue(pen.take(.restoreState))
+        XCTAssertTrue(pen.fillEvenOdd, "a saved state comes back whole")
+    }
+
     /// A setting holds until the next of its kind; a saved state is put back whole.
     func testASettingHoldsTillChangedAndASavedStateComesBack() {
         var pen = CanvasPen()

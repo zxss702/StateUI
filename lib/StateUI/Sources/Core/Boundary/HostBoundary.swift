@@ -104,9 +104,16 @@
         if provider[keyPath: field] != value { provider[keyPath: field] = value }
     }
 
-    /// The typed keys the host reads before the first application render.
+    /// The typed keys the host reads before the first application render: what
+    /// the application lists, every key a kept state has claimed, and the
+    /// manifest's own key - whose value names the keys a claimed state kept
+    /// under last launch, which are then read too.
     public static var persistentKeys: [PersistentKey] {
-        StandardEnvironment.app.persistentKeys
+        var keys = StandardEnvironment.app.persistentKeys
+        for key in PersistentStore.shared.listed where !keys.contains(key) {
+            keys.append(key)
+        }
+        return keys
     }
 
     /// Hydrates values found in the native store before the first render.

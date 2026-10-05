@@ -20,7 +20,9 @@ How each of them realizes these members is on its own page.
 | `presentationDetents` | property | `[PresentationDetent]` | native |
 | `presentationDragIndicator` | property | `Visibility` | native |
 | `subtitle` | property | `String` | adaptive |
+| `subtitleKey` | property | `LocalizedStringKey` | native |
 | `title` | property | `String` | native |
+| `titleKey` | property | `LocalizedStringKey` | native |
 | `toolbarBackground` | property | `Visibility` | adaptive |
 | `toolbarVisibility` | property | `Visibility` | adaptive |
 | `windowBackground` | property | `Color` | adaptive |

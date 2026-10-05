@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [PageElement](tiers
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (15) | Realization | Notes |
+| Host | Created | Members (19) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 3 ✅ | `NSSplitViewController` |  |
 | UIKit | ✅ | 5 ✅ | `UISplitViewController` |  |
@@ -40,6 +40,8 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Navigation/NavigationSplitVi
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `isSidebarVisible` | property | `Bool` | native | ✅ | ✅ | 🔌 | ✅ | · |  | Android Views: only through the host's own: read isSidebarVisible of NavigationSplitView: the split's own flag; the drawer slides on it; GTK 4: cannot read isSidebarVisible of NavigationSplitView - GTK's driver has no path for it yet |
 | `isSidebarVisibleChanged` | event | `Bool` | adaptive | ✅ | ✅ | 🔌 | ✅ |  |  | Android Views: only through the host's own: toggle on NavigationSplitView: the host's own entry the scrim's tap and the bar's button call; GTK 4: not realized |
+| `columnVisibility` | property | `NavigationSplitViewVisibility` | native |  |  |  |  |  |  |  |
+| `columnVisibilityChanged` | event | `NavigationSplitViewVisibility` | adaptive |  |  |  |  |  |  |  |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -63,7 +65,9 @@ What a page shows about itself where another container presents it as an item - 
 | `presentationDetents` | property | `[PresentationDetent]` | native |  |  |  |  |  |  |  |
 | `presentationDragIndicator` | property | `Visibility` | native |  |  |  |  |  |  |  |
 | `subtitle` | property | `String` | adaptive |  |  |  |  |  |  |  |
+| `subtitleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `title` | property | `String` | native | · | ✅ | · | ✅ | · |  | cannot read title of NavigationSplitView - AppKit's driver has no path for it yet; Android Views: cannot read title of NavigationSplitView - Android's driver has no path for it yet; GTK 4: cannot read title of NavigationSplitView - GTK's driver has no path for it yet |
+| `titleKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `toolbarBackground` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `toolbarVisibility` | property | `Visibility` | adaptive |  |  |  |  |  |  |  |
 | `windowBackground` | property | `Color` | adaptive |  |  |  |  |  |  |  |

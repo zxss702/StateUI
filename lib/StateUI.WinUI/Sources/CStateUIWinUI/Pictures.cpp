@@ -20,6 +20,7 @@
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 using namespace stateui;
@@ -263,8 +264,29 @@ extern "C" bool stateui_winui_image_set(
             bitmap.ImageOpened([held = winrt::make_weak(image)](auto const &, xaml::RoutedEventArgs const &) {
                 auto image = held.get();
                 if (!image) return;
-                if (auto layout = xaml::Media::VisualTreeHelper::GetParent(image).try_as<xaml::UIElement>())
-                    layout.InvalidateMeasure();
+                auto queue = image.DispatcherQueue();
+                (queue ? queue : winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread())
+                    .TryEnqueue([held] {
+                        auto image = held.get();
+                        if (!image) return;
+                        // The layout holding the picture measures it again: the path above it is marked and a pass
+                        // asked for outright from the tree's head - a marked measure alone waits on a render a
+                        // window may never take, and an element's own UpdateLayout lays out its subtree alone.
+                        auto top = image.as<xaml::UIElement>();
+                        for (xaml::DependencyObject at = image;;) {
+                            at = xaml::Media::VisualTreeHelper::GetParent(at);
+                            auto element = at.try_as<xaml::UIElement>();
+                            if (!element) break;
+                            top = element;
+                        }
+                        for (xaml::DependencyObject at = xaml::Media::VisualTreeHelper::GetParent(image); at;
+                             at = xaml::Media::VisualTreeHelper::GetParent(at))
+                            if (auto layout = at.try_as<xaml::UIElement>()) layout.InvalidateMeasure();
+                        if (top) top.UpdateLayout();
+                    });
+            });
+            bitmap.ImageFailed([](auto const &, xaml::ExceptionRoutedEventArgs const &) {
+                report("reading a picture");
             });
             image.Source(bitmap);
             return true;

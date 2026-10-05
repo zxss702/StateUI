@@ -24,6 +24,10 @@ public struct Windows {
     /// What `.environment(_:)` offered every window of the scene.
     var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
 
+    /// The commands every window of the scene offers - `.commands` on the
+    /// scene and on its `Windows` collect them here.
+    var commands: [any Commands] = []
+
     /// A main window, and the groups of windows the scene may open beside it.
     ///
     /// - Parameters:

@@ -41,22 +41,30 @@ final class WinUILabelView: WinUITextView {
 
         WinUIStrings.withCStrings(runs.map(\.text)) { texts in
             WinUIStrings.withCStrings(runs.map { $0.look.family ?? "" }) { families in
-                let words = runs.indices.map { index in
-                    let look = runs[index].look
-                    let color = look.color?.argb
-                    let background = look.background?.argb
-                    // The space between the letters in ems of the run's own size, its label's where it says none.
-                    let shown = look.over(self.look)
-                    let spacing = shown.letterSpacing(inEmsOf: shown.size ?? Self.platformFontSize)
-                    return StateUIWordsRun(
-                        text: texts[index], color: color ?? 0, background: background ?? 0, size: look.size ?? 0,
-                        hasColor: color != nil, hasBackground: background != nil,
-                        bold: look.attributes.contains(.bold), italic: look.attributes.contains(.italic),
-                        underline: look.decorations.contains(.underline),
-                        strikethrough: look.decorations.contains(.strikethrough), family: families[index],
-                        spacing: Int32((spacing * 1000).rounded()))
+                WinUIStrings.withCStrings(runs.map { run in
+                    guard let source = run.image, source.symbol == nil else { return "" }
+                    return PictureArithmetic.files(for: source.file).joined(separator: "\n")
+                }) { images in
+                    let words = runs.indices.map { index in
+                        let run = runs[index]
+                        let look = run.look
+                        let color = look.color?.argb
+                        let background = look.background?.argb
+                        // The space between the letters in ems of the run's own size, its label's where it says none.
+                        let shown = look.over(self.look)
+                        let spacing = shown.letterSpacing(inEmsOf: shown.size ?? Self.platformFontSize)
+                        return StateUIWordsRun(
+                            text: texts[index], color: color ?? 0, background: background ?? 0, size: look.size ?? 0,
+                            hasColor: color != nil, hasBackground: background != nil,
+                            bold: look.attributes.contains(.bold), italic: look.attributes.contains(.italic),
+                            underline: look.decorations.contains(.underline),
+                            strikethrough: look.decorations.contains(.strikethrough), family: families[index],
+                            spacing: Int32((spacing * 1000).rounded()),
+                            baseline: look.baselineOffset ?? 0, image: images[index],
+                            glyph: run.image?.symbol.map { WinUISymbols.glyph(named: $0) } ?? 0)
+                    }
+                    stateui_winui_text_set_runs(handle, words, Int32(words.count))
                 }
-                stateui_winui_text_set_runs(handle, words, Int32(words.count))
             }
         }
     }

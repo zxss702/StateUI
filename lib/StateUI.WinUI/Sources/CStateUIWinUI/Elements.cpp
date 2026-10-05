@@ -135,8 +135,8 @@ extern "C" void stateui_winui_set_clip(
         auto w = static_cast<float>(width), h = static_cast<float>(height);
         if (outline == StateUIOutlineEllipse || outline == StateUIOutlineCircle) {
             auto ellipse = compositor.CreateEllipseGeometry();
-            auto radius = outline == StateUIOutlineEllipse ? winrt::float2{w / 2, h / 2}
-                : winrt::float2{std::min(w, h) / 2, std::min(w, h) / 2};
+            auto radius = outline == StateUIOutlineEllipse ? winrt::Windows::Foundation::Numerics::float2{w / 2, h / 2}
+                : winrt::Windows::Foundation::Numerics::float2{std::min(w, h) / 2, std::min(w, h) / 2};
             ellipse.Center({w / 2, h / 2});
             ellipse.Radius(radius);
             visual.Clip(compositor.CreateGeometricClip(ellipse));

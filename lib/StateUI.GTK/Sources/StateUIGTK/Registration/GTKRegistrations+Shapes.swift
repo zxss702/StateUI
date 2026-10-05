@@ -54,6 +54,26 @@ extension GTKRegistrations {
         }
     }
 
+    /// The surface an application draws on, and the press it answers. The drawing is ONE value that replaces the
+    /// one before it, so the canvas takes it whole rather than instruction by instruction; the three reports carry
+    /// where the press was, in the canvas's own coordinates - the ones the instructions use.
+    static func drawing(_ registry: Registry<GTKView>) {
+        registry.add(CanvasContract.self, create: { reports in
+            let canvas = GTKCanvasView()
+            canvas.onPressed = { reports.raise(CanvasContract.pressed, $0) }
+            canvas.onDragged = { reports.raise(CanvasContract.dragged, $0) }
+            canvas.onReleased = { reports.raise(CanvasContract.released, $0) }
+            return canvas
+        }, members: { canvas in
+            canvas.property(CanvasContract.drawable) { view, drawing in
+                view.apply(drawing)
+            }
+            canvas.raises(CanvasContract.pressed)
+            canvas.raises(CanvasContract.dragged)
+            canvas.raises(CanvasContract.released)
+        })
+    }
+
     /// What every shape takes whole.
     private static let shapeMembers: [any ContractMember] = [
         ShapeContract.fill, ShapeContract.stroke, ShapeContract.strokeWidth,

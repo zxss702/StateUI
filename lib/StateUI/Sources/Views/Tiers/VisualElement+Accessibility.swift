@@ -54,7 +54,16 @@ extension VisualElementProperties {
     /// The tip the platform shows under a pointer resting on the view:
     ///
     ///     Button("Crop").help("Cuts the picture to what is selected")
-    public func help(_ value: String) -> Modified { setValue(VisualElementContract.hint, value) }
+    ///
+    /// A literal is a key the host answers; a `String` variable stays the
+    /// words it is - the `View` form says them, this one says the key beside
+    /// its `displayString` fallback.
+    public func help(_ key: LocalizedStringKey) -> Modified {
+        modified {
+            $0.props[VisualElementContract.hint.token] = key.displayString.propValue
+            $0.props[VisualElementContract.hintKey.token] = key.propValue
+        }
+    }
 }
 
 extension VisualElementProperties {
@@ -167,7 +176,16 @@ extension View {
 
     /// The tip the platform shows under a pointer resting on the view.
     @_disfavoredOverload
-    public func help(_ value: String) -> ModifiedContent { setting(VisualElementContract.hint, value) }
+    public func help(_ value: some StringProtocol) -> ModifiedContent {
+        setting(VisualElementContract.hint, String(value))
+    }
+
+    /// The same, looked up - the key beside its `displayString` fallback.
+    @_disfavoredOverload
+    public func help(_ key: LocalizedStringKey) -> ModifiedContent {
+        setting(VisualElementContract.hint, key.displayString)
+            .setting(VisualElementContract.hintKey, key)
+    }
 }
 
 extension View {

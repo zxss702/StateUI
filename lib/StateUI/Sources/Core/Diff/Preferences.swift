@@ -51,8 +51,23 @@ struct PreferenceSeed {
     /// Which key it feeds, and how.
     let box: PreferenceKeyBox
 
-    /// The value this write offers.
-    let value: Any
+    /// The value this write offers - asked at fold, so a carried element's
+    /// offer re-reads what its write stands for: a text's layout answers for
+    /// the report the host last handed in, not the one its render saw.
+    let value: () -> Any
+
+    /// A seed offering `value` - the same answer every fold, which is every
+    /// `.preference` write's.
+    init(box: PreferenceKeyBox, value: Any) {
+        self.box = box
+        self.value = { value }
+    }
+
+    /// A seed whose offer is worked out as the fold asks it.
+    init(box: PreferenceKeyBox, lazy value: @escaping () -> Any) {
+        self.box = box
+        self.value = value
+    }
 }
 
 /// An `.onPreferenceChange` listener a node carries.
@@ -111,7 +126,7 @@ extension Differ {
         }
 
         for seed in seeds {
-            offer(seed.box, seed.value)
+            offer(seed.box, seed.value())
         }
 
         for child in children {

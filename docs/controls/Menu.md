@@ -23,7 +23,7 @@ Inherits nothing: every member below is its own.
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (2) | Realization | Notes |
+| Host | Created | Members (4) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 2 ✅ | `NSMenu` / `NSMenuItem` |  |
 | UIKit | ✅ | 1 ✅ · 1 ☑️ | `UIMenu` / `UIAction` |  |
@@ -39,4 +39,6 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/MenuContract.swift`.
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `isEnabled` | property | `Bool` | native | ✅ | ☑️ | · | ✅ |  |  | UIKit: UIKit holds no menu out of reach itself: each of its entries is.; Android Views: cannot read the menu of Text - Android's driver has no path for it yet; GTK 4: not realized |
+| `placement` | property | `CommandGroupPlacement` | adaptive |  |  |  |  |  |  |  |
 | `text` | property | `String` | native | ✅ | ✅ | · | ✅ |  |  | Android Views: cannot read the menu of Text - Android's driver has no path for it yet; GTK 4: not realized |
+| `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
