@@ -151,6 +151,10 @@ enum WinUICallbacks {
             },
             itemsShowing: { view, first, last in
                 MainActor.assumeIsolated { WinUIItemsList.owner(of: view)?.showing(Int(first)...Int(last)) }
+            },
+            urlOpened: { utf8 in
+                guard let url = utf8.map({ String(cString: $0) }) else { return }
+                MainActor.assumeIsolated { WinUIRenderer.shared?.urlOpened(url) }
             })
     }
 }

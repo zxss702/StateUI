@@ -80,22 +80,19 @@ struct AlertAnchor<Actions: View, Message: View>: View {
     @State private var asking = false
 
     var body: some View {
-        Group {
-            base
-            EmptyView()
-                .onChange(of: presented.wrappedValue) { _, shown in
-                    guard shown, !asking else { return }
-                    asking = true
-                    defer { asking = false }
-                    do {
-                        try await ask()
-                    } catch {
-                        // No page to ask of, or the host could not: the answer
-                        // is the alert is not up.
-                    }
-                    presented.wrappedValue = false
+        base
+            .onChange(of: presented.wrappedValue) { _, shown in
+                guard shown, !asking else { return }
+                asking = true
+                defer { asking = false }
+                do {
+                    try await ask()
+                } catch {
+                    // No page to ask of, or the host could not: the answer
+                    // is the alert is not up.
                 }
-        }
+                presented.wrappedValue = false
+            }
     }
 
     /// The buttons the actions describe, in the order they were written.

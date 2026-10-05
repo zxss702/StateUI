@@ -45,6 +45,10 @@ public struct WindowGroup {
     /// own.
     var defaultSize: (width: Double, height: Double)? = nil
 
+    /// Where its windows open on the screen, the anchor landing the same way
+    /// on window and work area; nil for the platform's own choice.
+    var defaultPosition: UnitPoint? = nil
+
     /// The commands the group's windows offer, `.commands` appending them.
     var commands: [any Commands] = []
 
@@ -120,6 +124,24 @@ public struct WindowGroup {
         var copy = self
         copy.floats = floats
         return copy
+    }
+
+    /// Where the group's windows open: `position`'s fractions across and down
+    /// the screen's work area land the same fractions across and down the
+    /// window - `.center` centers it, `.topLeading` its top left corner at the
+    /// work area's.
+    ///
+    ///     WindowGroup(.main) { MainPage() }
+    ///         .defaultPosition(.center)
+    public func defaultPosition(_ position: UnitPoint) -> WindowGroup {
+        var copy = self
+        copy.defaultPosition = position
+        return copy
+    }
+
+    /// Where the group's windows open, the fractions outright.
+    public func defaultPosition(x: Double, y: Double) -> WindowGroup {
+        defaultPosition(UnitPoint(x: x, y: y))
     }
 
     /// How the group's windows settle their size against their content -

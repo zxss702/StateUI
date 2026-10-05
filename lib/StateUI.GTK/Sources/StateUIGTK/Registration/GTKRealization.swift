@@ -116,6 +116,8 @@ enum GTKRealization {
         .complete("ToolbarSpacer", "variant"),
         .partial("WindowScene", "resizability",
             missing: "A content minimum names the window element's own minimum instead of measuring content."),
+        .unrealized("WindowScene", "defaultPosition",
+            why: "GTK keeps no window-positioning request: where a window opens is the compositor's."),
     ]
 
     /// What GTK's registry says it realizes: the export's content.

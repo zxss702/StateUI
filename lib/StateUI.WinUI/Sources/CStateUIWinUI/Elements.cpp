@@ -41,6 +41,16 @@ extern "C" void stateui_winui_measure(StateUIObjectRef handle, double width, dou
     }
 }
 
+extern "C" void stateui_winui_desired_size(StateUIObjectRef handle, double *size) {
+    try {
+        auto desired = as<xaml::UIElement>(handle).DesiredSize();
+        size[0] = desired.Width;
+        size[1] = desired.Height;
+    } catch (...) {
+        report("reading the measured size");
+    }
+}
+
 extern "C" void stateui_winui_arrange(StateUIObjectRef handle, double x, double y, double width, double height) {
     try {
         as<xaml::UIElement>(handle).Arrange(Rect(

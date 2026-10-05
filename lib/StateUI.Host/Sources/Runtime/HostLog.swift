@@ -47,7 +47,8 @@ import CRT
         "StateUI \(host): \(message)\n"
     }
 
-    /// Writes `text` to file descriptor 2, which nothing buffers.
+    /// Writes `text` to file descriptor 2, which nothing buffers. `STATEUI_LOG` names a file the line also lands
+    /// in, for hosts whose standard error reaches no reader.
     static func writeStandardError(_ text: String) {
         var text = text
         text.withUTF8 { bytes in
@@ -57,5 +58,16 @@ import CRT
             _ = write(2, bytes.baseAddress, bytes.count)
             #endif
         }
+        // `STATEUI_LOG` names a file the line also lands in, for hosts whose
+        // standard error reaches no reader; C streams carry it, Foundation
+        // never entering the library.
+        if let path = logFile, let stream = fopen(path, "a") {
+            var text = text
+            text.withUTF8 { bytes in _ = fwrite(bytes.baseAddress, 1, bytes.count, stream) }
+            fclose(stream)
+        }
     }
+
+    /// The path `STATEUI_LOG` names, read once.
+    private static let logFile: String? = getenv("STATEUI_LOG").map { String(cString: $0) }
 }

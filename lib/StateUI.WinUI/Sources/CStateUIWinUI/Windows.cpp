@@ -286,6 +286,20 @@ extern "C" void stateui_winui_window_set_frame(StateUIObjectRef handle, bool con
     }
 }
 
+extern "C" void stateui_winui_window_set_anchor(StateUIObjectRef handle, double const *anchor) {
+    try {
+        auto window = borrow<xaml::Window>(handle);
+        auto app = window.AppWindow();
+        auto area = workArea(window);
+        auto size = app.Size();
+        app.Move(winrt::Windows::Graphics::PointInt32{
+            area.X + static_cast<int32_t>(std::lround((area.Width - size.Width) * anchor[0])),
+            area.Y + static_cast<int32_t>(std::lround((area.Height - size.Height) * anchor[1]))});
+    } catch (...) {
+        report("placing a window by an anchor");
+    }
+}
+
 extern "C" void stateui_winui_window_set_limits(StateUIObjectRef handle, double const *limits) {
     try {
         auto window = borrow<xaml::Window>(handle);

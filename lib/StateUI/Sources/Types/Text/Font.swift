@@ -59,6 +59,10 @@ public struct Font: Sendable, Equatable {
     /// Ordinary reading text.
     public static let body = Font(basis: .textStyle(.body))
 
+    /// What text is drawn in where none is named - ordinary reading text, as
+    /// SwiftUI's `Font.default` is.
+    public static let `default` = Font(basis: .textStyle(.body))
+
     /// Text a step under a heading.
     public static let callout = Font(basis: .textStyle(.callout))
 

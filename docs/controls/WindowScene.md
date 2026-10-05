@@ -23,7 +23,7 @@ Inherits nothing: every member below is its own.
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (24) | Realization | Notes |
+| Host | Created | Members (25) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 15 ✅ | `NSWindow` |  |
 | UIKit | ✅ | 4 ✅ | `UIWindow` |  |
@@ -62,3 +62,4 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/WindowSceneContrac
 | `windowValue` | property | `String` | structure | 🔌 |  |  | ✅ |  |  | only through the host's own: read windowValue of WindowScene: the host's restoration record; UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `x` | property | `Double` | structure | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `y` | property | `Double` | structure | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
+| `defaultPosition` | property | `UnitPoint` | adaptive |  |  |  |  |  |  |  |

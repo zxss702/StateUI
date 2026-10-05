@@ -75,6 +75,7 @@ final class ContractPayloadTests: XCTestCase {
         check(PinContract.pinClicked)
         check(PinContract.pinDetailsClicked)
         check(RadioButtonContract.toggled, [.bool(false)])
+        check(AppContract.urlOpened, [.string("file:///tmp/place")])
         check(SceneContract.activated)
         check(SceneContract.deactivated)
         check(SceneContract.destroying)

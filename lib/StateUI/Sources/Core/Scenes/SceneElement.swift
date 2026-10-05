@@ -77,6 +77,9 @@ struct SceneElement: Element {
                 window.write(WindowSceneContract.width, size.width)
                 window.write(WindowSceneContract.height, size.height)
             }
+            if let position = group.defaultPosition {
+                window.write(WindowSceneContract.defaultPosition, position)
+            }
 
             children.append(window)
         }

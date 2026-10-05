@@ -508,7 +508,7 @@ Every control, and every part an application, its windows and its pages are made
 
 | Part | Members | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | --- | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [App](controls/App.md) | 14 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
+| [App](controls/App.md) | 15 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
 | [Content](controls/Content.md) | 0 |  |  |  |  |  |  |
 | [ContextMenu](controls/ContextMenu.md) | 0 |  |  |  |  |  |  |
 | [Divider](controls/Divider.md) | 0 |  |  |  |  |  |  |
@@ -532,8 +532,8 @@ Every control, and every part an application, its windows and its pages are made
 | [ToolbarItems](controls/ToolbarItems.md) | 0 |  |  |  |  |  |  |
 | [ToolbarSpacer](controls/ToolbarSpacer.md) | 2 |  |  |  |  |  |  |
 | [TrailingContent](controls/TrailingContent.md) | 0 |  |  |  |  |  |  |
-| [WindowScene](controls/WindowScene.md) | 24 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
-| **Met** - ✅ and – | 175 | 50 of 175 met | 55 of 175 met | 21 of 175 met | 83 of 175 met | 6 of 175 met |  |
+| [WindowScene](controls/WindowScene.md) | 25 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
+| **Met** - ✅ and – | 177 | 50 of 177 met | 55 of 177 met | 21 of 177 met | 83 of 177 met | 6 of 177 met |  |
 <!-- dictionary:end -->
 
 ## Contract members
@@ -579,6 +579,7 @@ its layer are on the element's page in [the control dictionary](controls/README.
 | Element | Members | Count | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: |
 | [ActivityIndicator](controls/ActivityIndicator.md) | `isRunning`, `progressStyle` | 2 |  | 1 ✅ | 1 ✅ | 1 ✅ | 1 ✅ |  |
+| [App](controls/App.md) | `urlOpened` | 1 |  |  |  |  |  |  |
 | [Button](controls/Button.md) | `buttonStyle`, `onClicked` (`clicked`), `icon`, `iconPosition`, `iconSpacing`, `isOn`, `lineBreak`, `onPressed` (`pressed`), `onReleased` (`released`), `role`, `shortcut`, `onToggled` (`toggled`) | 12 | 5 ✅ | 4 ✅ | 4 ✅ | 3 ✅ | 1 ✅ |  |
 | [Canvas](controls/Canvas.md) | `onDragged` (`dragged`), `drawable`, `onPressed` (`pressed`), `onReleased` (`released`) | 4 | 1 ✅ | 1 ✅ | 4 ✅ | 4 ✅ |  |  |
 | [CheckBox](controls/CheckBox.md) | `isOn`, `onToggled` (`toggled`) | 2 | 2 ✅ | 1 ✅ | 2 ✅ | 2 ✅ | 2 ✅ |  |
@@ -620,7 +621,7 @@ its layer are on the element's page in [the control dictionary](controls/README.
 | [ToolbarItem](controls/ToolbarItem.md) | `placement`, `priority` | 2 |  |  |  | 2 ✅ |  |  |
 | [ToolbarSpacer](controls/ToolbarSpacer.md) | `placement`, `variant` | 2 |  |  |  |  |  |  |
 | [WebView](controls/WebView.md) | `canGoBackChanged`, `canGoForwardChanged`, `onNavigated` (`navigated`), `onNavigating` (`navigating`), `onProcessTerminated` (`processTerminated`), `source`, `userAgent` | 7 |  | 3 ✅ | 2 ✅ |  |  |  |
-| [WindowScene](controls/WindowScene.md) | `activated`, `created`, `deactivated`, `destroying`, `floatsOnTop`, `height`, `hidesWhenInactive`, `isMaximizable`, `isMinimizable`, `isTranslucent`, `maximumHeight`, `maximumWidth`, `minimumHeight`, `minimumWidth`, `modalPopped`, `resizability`, `resumed`, `stopped`, `title`, `width`, `windowType`, `windowValue`, `x`, `y` | 24 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
+| [WindowScene](controls/WindowScene.md) | `activated`, `created`, `deactivated`, `destroying`, `floatsOnTop`, `height`, `hidesWhenInactive`, `isMaximizable`, `isMinimizable`, `isTranslucent`, `maximumHeight`, `maximumWidth`, `minimumHeight`, `minimumWidth`, `modalPopped`, `resizability`, `resumed`, `stopped`, `title`, `width`, `windowType`, `windowValue`, `x`, `y`, `defaultPosition` | 25 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
 <!-- members:end -->
 
 A one-axis `ScrollView` owns input along its enabled axis. When it is nested,
@@ -660,9 +661,9 @@ realizes the element and each of its members.
 `blur`, `buttonStyle`, `canDrag`, `characterSpacing`, `clipsContent`, `color`,
 `columns`, `columnSpacing`, `columnVisibility`, `contentPadding`,
 `contentTransition`, `controlSize`, `coordinateSpaceName`, `cornerRadius`,
-`count`, `currentPage`, `cursorPosition`, `data`, `date`, `defaultScrollAnchor`,
-`document`, `dragText`, `drawable`, `endReachedWithin`, `fill`, `fillRule`,
-`flex`, `floatsOnTop`, `flowColumns`, `fontAttributes`,
+`count`, `currentPage`, `cursorPosition`, `data`, `date`, `defaultPosition`,
+`defaultScrollAnchor`, `document`, `dragText`, `drawable`, `endReachedWithin`,
+`fill`, `fillRule`, `flex`, `floatsOnTop`, `flowColumns`, `fontAttributes`,
 `fontAutoScalingEnabled`, `fontDesign`, `fontFamily`, `fontSize`,
 `fontTextStyle`, `fontWeight`, `foregroundStyle`, `format`, `frame`,
 `gridColumn`, `gridColumnSpan`, `gridRow`, `gridRowSpan`, `groupName`,
@@ -721,8 +722,8 @@ realizes the element and each of its members.
 `pressed`, `processTerminated`, `realizedChanged`, `released`, `resumed`,
 `scrollStopped`, `scrollXChanged`, `scrollYChanged`, `selectedIndexChanged`,
 `selectionChanged`, `stopped`, `submitted`, `swiped`, `tapGesture`,
-`textChanged`, `textLayoutChanged`, `timeChanged`, `toggled`, `valueChanged`,
-`windowClosed`, `windowRestored`.
+`textChanged`, `textLayoutChanged`, `timeChanged`, `toggled`, `urlOpened`,
+`valueChanged`, `windowClosed`, `windowRestored`.
 
 ### Acts
 

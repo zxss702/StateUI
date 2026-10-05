@@ -91,6 +91,12 @@ public enum AppContract: ElementContract, ApplicationTier {
     public static let prompt = ElementAct<Self, (String, String, String, String, String?, Int?, InputPurpose, String), String?>(
         "prompt")
 
+    /// A URL the platform handed the application to open - a file opened from
+    /// the file manager, a link tapped elsewhere, the URL as text.
+    ///
+    /// See `View.onOpenURL`.
+    public static let urlOpened = ElementEvent<Self, String>("urlOpened")
+
     /// How far a zone is from UTC on a day, in minutes: the zone's identifier,
     /// the local one where there is none, and the day, today where there is
     /// none.
@@ -101,6 +107,7 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// The element's own members.
     public static let members: [any ContractMember] = [
         alert, announce, chooseAction, chooseFiles, confirm, currentTime, currentTimeZone, handlerFailed,
-        hideOnScreenKeyboard, localizedString, persistSceneValue, persistValue, prompt, utcOffset,
+        hideOnScreenKeyboard, localizedString, persistSceneValue, persistValue, prompt, urlOpened,
+        utcOffset,
     ]
 }

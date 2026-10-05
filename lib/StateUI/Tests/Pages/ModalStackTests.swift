@@ -88,6 +88,53 @@ private func window(_ sheets: Binding<[Sheet]>) -> WindowScene {
     TestWindow(sheets: sheets)
 }
 
+/// What `sheet(item:)` shows - Identifiable alone, as SwiftUI asks, and
+/// deliberately NOT Hashable.
+private struct Request: Identifiable {
+    let id: Int
+    let remote: String
+}
+
+/// The page underneath, offering a sheet for whichever request is in force.
+private struct RequestHome: View {
+    @Binding var request: Request?
+
+    var body: some View {
+        Text("Home")
+            .sheet(item: $request) { shown in
+                Text("Cloning \(shown.remote)")
+            }
+    }
+}
+
+/// The window under test for `sheet(item:)`.
+private struct RequestWindow: WindowScene {
+    let request: Binding<Request?>
+
+    var page: any Page { RequestHome(request: request) }
+}
+
+private func requestWindow(_ request: Binding<Request?>) -> WindowScene {
+    RequestWindow(request: request)
+}
+
+/// The page underneath for `sheet(isPresented:)` - the same anchor, keyed by
+/// a bool.
+private struct FlagHome: View {
+    @Binding var shown: Bool
+
+    var body: some View {
+        Text("Home")
+            .sheet(isPresented: $shown) { Text("Sheet") }
+    }
+}
+
+private struct FlagWindow: WindowScene {
+    let shown: Binding<Bool>
+
+    var page: any Page { FlagHome(shown: shown) }
+}
+
 final class ModalStackTests: XCTestCase {
     // MARK: - What goes out
 
@@ -205,6 +252,71 @@ final class ModalStackTests: XCTestCase {
 
         XCTAssertTrue(renders.fire(patch.events?["modalPopped"] ?? -1, with: [.string("0")]))
         XCTAssertEqual(sheets.wrappedValue, [.settings])
+    }
+
+    // MARK: - What `sheet(item:)` asks of an item
+
+    /// An item is its `id`: `sheet(item:)` asks Identifiable and no more, so a
+    /// request that is not Hashable presents as well as one that is.
+    func testAnIdentifiableOnlyItemPresentsItsPage() {
+        let request = State<Request?>(nil)
+        let renders = Renders()
+
+        _ = renders.settled(requestWindow(request.projectedValue).node)
+        request.wrappedValue = Request(id: 7, remote: "git@example.test")
+
+        let patch = renders.settled(
+            requestWindow(request.projectedValue).node,
+            changed: Renderer.shared.pendingChanges)
+        let modal = patch.children.first { $0.type == "ModalStack" }
+
+        XCTAssertEqual(modal?.children.map(\.id), [.manual("0/7")])
+    }
+
+    /// Swapping to another item under the one presentation replaces the page,
+    /// which still stands at depth 0.
+    func testAnotherItemSwapsThePageThePresentationShows() {
+        let request = State<Request?>(Request(id: 7, remote: "a"))
+        let renders = Renders()
+
+        _ = renders.settled(requestWindow(request.projectedValue).node)
+        request.wrappedValue = Request(id: 9, remote: "b")
+
+        let patch = renders.settled(
+            requestWindow(request.projectedValue).node,
+            changed: Renderer.shared.pendingChanges)
+        let modal = patch.children.first { $0.type == "ModalStack" }
+
+        XCTAssertEqual(modal?.children.map(\.id), [.manual("0/9")])
+    }
+
+    /// The bool twin of the item sheet presents the same way - the one modal
+    /// stack the window can hold.
+    func testAPresentedFlagShowsItsSheet() {
+        let shown = State<Bool>(true)
+
+        let patch = Renders().settled(FlagWindow(shown: shown.projectedValue).node)
+        let modal = patch.children.first { $0.type == "ModalStack" }
+
+        XCTAssertEqual(modal?.children.count, 1)
+    }
+
+    /// A native dismissal writes `nil` back to the binding, and the modal
+    /// leaves with it.
+    func testADismissalWritesTheItemAway() {
+        let request = State<Request?>(Request(id: 7, remote: "a"))
+        let renders = Renders()
+
+        let patch = renders.settled(requestWindow(request.projectedValue).node)
+
+        XCTAssertTrue(renders.fire(patch.events?["modalPopped"] ?? -1, with: [.number(0)]))
+
+        // The report truncated the anchor's tickets; the walk that follows
+        // runs the watch which writes the item away.
+        _ = renders.settled(
+            requestWindow(request.projectedValue).node,
+            changed: Renderer.shared.pendingChanges)
+        XCTAssertNil(request.wrappedValue)
     }
 
     // MARK: - The contract a host reads

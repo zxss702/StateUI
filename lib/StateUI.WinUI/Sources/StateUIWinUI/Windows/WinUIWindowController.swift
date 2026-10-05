@@ -33,6 +33,10 @@ final class WinUIWindowController {
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         stand(changes)
+        let asked = WindowFrame(of: element)
+        if asked.x == nil, asked.y == nil, let anchor = element.value(.defaultPosition)?.numbers {
+            window.place(anchor)
+        }
         if let (_, arrangement) = changes.arrangement { window.show(arrangement?.winUI.view) }
         showSheets(presentation.sheets)
         if let overlay = changes.overlay { window.showOverlay(overlay?.winUI.view) }

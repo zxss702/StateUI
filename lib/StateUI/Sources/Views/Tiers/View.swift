@@ -144,7 +144,7 @@ extension View {
 extension View {
     /// Hears one of this view's events that carries nothing, written with its
     /// contract.
-    func hearing<Owner: Contract>(
+    @_spi(Host) public func hearing<Owner: Contract>(
         _ event: ElementEvent<Owner, Void>,
         _ handler: @escaping EventHandler
     ) -> ModifiedContent {
@@ -158,7 +158,7 @@ extension View {
 
     /// Hears one of this view's events, its value handed over as the type its
     /// contract declares.
-    func hearing<Owner: Contract, Value: HostRepresentable>(
+    @_spi(Host) public func hearing<Owner: Contract, Value: HostRepresentable>(
         _ event: ElementEvent<Owner, Value>,
         _ handler: @escaping ValueEventHandler<Value>
     ) -> ModifiedContent {
@@ -173,7 +173,7 @@ extension View {
     }
 
     /// Hears one of this view's events that carries two values.
-    func hearing<Owner: Contract, First: HostRepresentable, Second: HostRepresentable>(
+    @_spi(Host) public func hearing<Owner: Contract, First: HostRepresentable, Second: HostRepresentable>(
         _ event: ElementEvent<Owner, (First, Second)>,
         _ handler: @escaping ValueEventHandler<First, Second>
     ) -> ModifiedContent {
@@ -188,7 +188,7 @@ extension View {
     }
 
     /// Hears one of this view's events that carries three values.
-    func hearing<
+    @_spi(Host) public func hearing<
         Owner: Contract, First: HostRepresentable, Second: HostRepresentable, Third: HostRepresentable
     >(
         _ event: ElementEvent<Owner, (First, Second, Third)>,
@@ -754,5 +754,18 @@ extension View {
                 target.wrappedValue = now
             }))
         }
+    }
+}
+
+extension View {
+    /// One space for the geometry the views inside and outside it measure,
+    /// SwiftUI's `geometryGroup`.
+    ///
+    /// SwiftUI needs the marker where a parent that moves animates a child's
+    /// geometry off its own coordinates; StateUI measures and places every
+    /// element in the same pass as its parent's, so the space is already one
+    /// and the modifier stands for the source's sake, adding no node.
+    public func geometryGroup() -> ModifiedContent {
+        revised { _ in }
     }
 }

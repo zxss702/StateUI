@@ -127,6 +127,12 @@ final class WinUIRenderer {
         if let element = controller.element { runtime.userClosed(element) }
     }
 
+    /// The platform activated the application with a URL: every `onOpenURL` listener hears it.
+    func urlOpened(_ url: String) {
+        runtime.core.raise(AppContract.urlOpened, url)
+        runtime.pump.turn()
+    }
+
     /// Renders the application whole: the scenes kept for this start come back, else one new scene.
     /// Design: docs/design/host/runtime.md#kept-scenes
     func show() {

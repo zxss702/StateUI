@@ -28,6 +28,7 @@ enum AppKitRegistrations {
         drawing(registry)
         layouts(registry)
         presentation(registry)
+        representable(registry)
         shared(registry)
 
         return registry

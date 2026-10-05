@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Foundation
 @_spi(Host) import StateUI
+
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(CRT)
+import CRT
+#endif
 
 /// One element of the mounted tree: the runtime's live instance of a described node.
 /// Design: docs/design/host/tree.md#the-mounted-tree
@@ -71,7 +78,9 @@ import Foundation
     private var drivenValues: [Prop: HostStateValue] = [:]
     private var created = false
     private var described = false
-    private static let patchLog = ProcessInfo.processInfo.environment["STATEUI_PATCH"] == "1"
+
+    /// `STATEUI_PATCH=1` writes every patch applied to standard error - what the host heard, per element.
+    private static let patchLog = getenv("STATEUI_PATCH").map { String(cString: $0) == "1" } ?? false
 
     init(_ patch: HostPatch, tree: MountedTree, parent: MountedElement?) {
         id = patch.id
@@ -96,7 +105,7 @@ import Foundation
                 "changed[" + list.map { "\($0.id):\($0.type.name)\($0.replace ? "!" : "")" }.joined(separator: ",") + "]"
             }
             HostLog.writeStandardError(
-                "PATCH \(patch.type.name) id=\(patch.id) replace=\(patch.replace) fresh=\(patch.fresh) "
+                "PATCH \(patch.type.name) id=\(patch.id) replace=\(patch.replace) "
                     + "children=\(kids) props=\(patch.properties.keys.map(\.name).sorted().joined(separator: ",")) "
                     + "cleared=\(patch.clearedProperties.map(\.name).sorted().joined(separator: ","))\n")
         }

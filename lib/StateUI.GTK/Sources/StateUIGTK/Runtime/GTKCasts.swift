@@ -50,6 +50,11 @@ typealias GTKPositionHandler = @convention(c) (UnsafeMutableRawPointer?, UInt32,
 /// A signal naming a run of places in a list: a selection model's changed choice.
 typealias GTKRangeHandler = @convention(c) (UnsafeMutableRawPointer?, UInt32, UInt32, gpointer?) -> Void
 
+/// A `GApplication`'s `open`: the files handed it as `GFile`s, their count, and the platform's hint.
+typealias GTKOpenHandler = @convention(c) (
+    UnsafeMutableRawPointer?, UnsafeMutablePointer<UnsafeMutableRawPointer?>?, Int32, UnsafeMutablePointer<CChar>?,
+    gpointer?) -> Void
+
 /// Connects `handler` to `signal` of `instance`, handing it `number`.
 /// Design: docs/design/platforms/gtk/c-api.md#signals
 @discardableResult
@@ -107,6 +112,11 @@ func connectSignal(_ instance: UnsafeMutableRawPointer, _ signal: String, number
 
 @discardableResult
 func connectSignal(_ instance: UnsafeMutableRawPointer, _ signal: String, number: Int64, _ handler: GTKRangeHandler) -> gulong {
+    connect(instance, signal, number, unsafeBitCast(handler, to: GCallback.self))
+}
+
+@discardableResult
+func connectSignal(_ instance: UnsafeMutableRawPointer, _ signal: String, number: Int64, _ handler: GTKOpenHandler) -> gulong {
     connect(instance, signal, number, unsafeBitCast(handler, to: GCallback.self))
 }
 

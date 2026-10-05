@@ -173,6 +173,10 @@ typedef struct {
 
     /// An ItemsView's view changed: the places of the first and the last entry in it.
     void (*itemsShowing)(int64_t view, int32_t first, int32_t last);
+
+    /// The platform activated the application with a URL to open - a file's association, a protocol's link - the
+    /// URL in UTF-8.
+    void (*urlOpened)(char const *utf8);
 } StateUIWinUICallbacks;
 
 /// What the environment is, in groups, each read at once.
@@ -235,6 +239,10 @@ bool stateui_winui_window_belongs_to(StateUIObjectRef window, StateUIObjectRef o
 /// area and the width and height of its content, in DIPs.
 void stateui_winui_window_set_frame(StateUIObjectRef window, bool const *has, double const *values);
 
+/// Places the window by an anchor: the point `anchor` fractions across and down it lands at the point the same
+/// fractions across and down the screen's work area - `.center` of both, the window centered.
+void stateui_winui_window_set_anchor(StateUIObjectRef window, double const *anchor);
+
 /// The least and the greatest size of the window's content in DIPs: least width, least height, greatest width,
 /// greatest height, 0 for none.
 void stateui_winui_window_set_limits(StateUIObjectRef window, double const *limits);
@@ -258,6 +266,8 @@ void stateui_winui_fill_place(StateUIObjectRef element);
 
 /// Every element: measured and placed by its parent's panel, shown or collapsed, drawn how opaque.
 void stateui_winui_measure(StateUIObjectRef element, double width, double height, double *size);
+/// What the element last measured at - reading it marks nothing, unlike measuring again.
+void stateui_winui_desired_size(StateUIObjectRef element, double *size);
 void stateui_winui_arrange(StateUIObjectRef element, double x, double y, double width, double height);
 void stateui_winui_invalidate_measure(StateUIObjectRef element);
 void stateui_winui_set_shown(StateUIObjectRef element, bool shown);

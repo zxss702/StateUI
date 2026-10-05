@@ -326,6 +326,7 @@ extension NodeType {
     static let windowBackground = PageElementContract.windowBackground.token
     static let windowType = WindowSceneContract.windowType.token
     static let windowValue = WindowSceneContract.windowValue.token
+    static let defaultPosition = WindowSceneContract.defaultPosition.token
     static let x = WindowSceneContract.x.token
     static let x1 = LineContract.x1.token
     static let x2 = LineContract.x2.token
@@ -401,6 +402,7 @@ extension NodeType {
     static let textLayoutChanged = TextContract.textLayoutChanged.token
     static let timeChanged = TimePickerContract.timeChanged.token
     static let toggled = CheckBoxContract.toggled.token
+    static let urlOpened = AppContract.urlOpened.token
     static let valueChanged = SliderContract.valueChanged.token
     static let windowClosed = SceneContract.windowClosed.token
     static let windowRestored = SceneContract.windowRestored.token

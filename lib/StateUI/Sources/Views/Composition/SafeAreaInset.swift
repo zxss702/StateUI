@@ -51,16 +51,13 @@ struct SafeAreaInsetAnchor<Content: View>: View {
     private var key: OverlayKey { OverlayKey("stateui.safeAreaInset.\(edge.rawValue)") }
 
     var body: some View {
-        Group {
-            base
-            EmptyView()
-                .onAppear {
-                    window.overlays[key] = InsetView(edge: edge, alignment: alignment, inset: inset)
-                }
-                .onDisappear {
-                    window.overlays[key] = nil
-                }
-        }
+        base
+            .onAppear {
+                window.overlays[key] = InsetView(edge: edge, alignment: alignment, inset: inset)
+            }
+            .onDisappear {
+                window.overlays[key] = nil
+            }
     }
 }
 

@@ -23,7 +23,7 @@ Inherits nothing: every member below is its own.
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (14) | Realization | Notes |
+| Host | Created | Members (15) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 7 ✅ | `NSApplication` / structure |  |
 | UIKit | ✅ | 6 ✅ | `UIApplication` / `UIWindowScene` |  |
@@ -51,4 +51,5 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/AppContract.swift`
 | `persistSceneValue` | act | `(Name, Name, PropValue) -> Void` |  | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `persistValue` | act | `(Name, PropValue) -> Void` |  | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what is kept - Android's driver has no path for it yet; GTK 4: cannot read what is kept - GTK's driver has no path for it yet |
 | `prompt` | act | `(String, String, String, String, String?, Int?, InputPurpose, String) -> String?` |  | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: read a question: the captions the host keeps, not the alert's buttons; UIKit: only through the host's own: read a question: the buttons' captions the host keeps; Android Views: only through the host's own: read a question: what the relay keeps of the dialog it showed; GTK 4: cannot read a question - GTK's driver has no path for it yet |
+| `urlOpened` | event | `String` | provider |  |  |  |  |  |  |  |
 | `utcOffset` | act | `(String?, CalendarDate?) -> Int` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

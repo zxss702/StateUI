@@ -8,6 +8,8 @@
 
 #include "Relay.h"
 
+#include <string>
+
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.UI.Text.h>
 #include <winrt/Microsoft.UI.Text.h>
@@ -78,13 +80,24 @@ extern "C" void stateui_winui_set_foreground(StateUIObjectRef handle, bool has, 
                 if (has) control.Foreground(brush);
                 else control.ClearValue(controls::Control::ForegroundProperty());
                 // A button's template draws its words in its own colour under the pointer and pressed.
-                if (!control.try_as<controls::Button>()
-                    && !control.try_as<controls::Primitives::ToggleButton>()) return;
                 auto resources = control.Resources();
-                for (auto key : {L"ButtonForeground", L"ButtonForegroundPointerOver", L"ButtonForegroundPressed"}) {
+                auto keep = [&](wchar_t const *key) {
                     auto name = winrt::box_value(key);
                     if (resources.HasKey(name)) resources.Remove(name);
                     if (has) resources.Insert(name, brush);
+                };
+                if (control.try_as<controls::Primitives::ToggleButton>()) {
+                    // A toggle names every state it can sit in.
+                    for (auto state : {L"", L"PointerOver", L"Pressed", L"Checked", L"CheckedPointerOver",
+                                       L"CheckedPressed", L"Indeterminate", L"IndeterminatePointerOver",
+                                       L"IndeterminatePressed"}) {
+                        keep((std::wstring(L"ToggleButtonForeground") + state).c_str());
+                    }
+                    return;
+                }
+                if (!control.try_as<controls::Button>()) return;
+                for (auto key : {L"ButtonForeground", L"ButtonForegroundPointerOver", L"ButtonForegroundPressed"}) {
+                    keep(key);
                 }
             });
     } catch (...) {

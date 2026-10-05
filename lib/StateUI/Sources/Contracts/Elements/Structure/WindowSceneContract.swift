@@ -61,6 +61,11 @@ public enum WindowSceneContract: ElementContract {
     /// A modal went without being told to, leaving this many presented.
     public static let modalPopped = ElementEvent<Self, Int>("modalPopped", layer: .adaptive)
 
+    /// Where a new window's anchor lands on the screen's work area, the same
+    /// anchor on the window - what a scene's `.defaultPosition` asks for.
+    public static let defaultPosition = ElementProperty<Self, UnitPoint>(
+        "defaultPosition", layer: .adaptive)
+
     /// How the window settles its size against its content - what a scene's
     /// `.windowResizability` asks for.
     public static let resizability = ElementProperty<Self, WindowResizability>(
@@ -96,6 +101,6 @@ public enum WindowSceneContract: ElementContract {
     public static let members: [any ContractMember] = [
         activated, created, deactivated, destroying, floatsOnTop, height, hidesWhenInactive, isMaximizable,
         isMinimizable, isTranslucent, maximumHeight, maximumWidth, minimumHeight, minimumWidth, modalPopped,
-        resizability, resumed, stopped, title, width, windowType, windowValue, x, y,
+        resizability, resumed, stopped, title, width, windowType, windowValue, x, y, defaultPosition,
     ]
 }

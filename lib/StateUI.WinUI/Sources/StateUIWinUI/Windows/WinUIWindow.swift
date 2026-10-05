@@ -69,6 +69,13 @@ final class WinUIWindow {
         stateui_winui_window_set_frame(handle, requests.map { $0 != nil }, requests.map { $0 ?? 0 })
     }
 
+    /// Places the window by the anchor `position` names, as `.defaultPosition` asks - only where it has not been
+    /// shown: where the user moved it, it stays.
+    func place(_ position: [Double]) {
+        guard !activated, position.count == 2 else { return }
+        stateui_winui_window_set_anchor(handle, position)
+    }
+
     /// Bounds the content's size as `bounds` says; one it leaves unsaid is WinUI's own.
     func bound(_ bounds: WindowBounds) {
         let limits = [bounds.minimumWidth, bounds.minimumHeight, bounds.maximumWidth, bounds.maximumHeight]

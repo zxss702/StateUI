@@ -126,34 +126,27 @@ class WinUIView {
 
     /// Asks WinUI to measure this element again, and every panel above it.
     func invalidateMeasure() {
-        passMeasurements.removeAll(keepingCapacity: true)
-        lastMeasurement = nil
         stateui_winui_invalidate_measure(handle)
     }
 
     /// The element's size for the room offered, in DIPs; nil offers any.
     /// Design: docs/design/platforms/winui/layout.md#measured-every-pass
     func measure(width: Double?, height: Double?) -> LayoutSize {
-        // An arrangement asking a child's size is answered from what the pass already measured: measuring an
-        // element while WinUI arranges marks it, and the marked element is measured and arranged again for
-        // ever - XAML aborts the eighth such pass with a layout cycle.
-        if Self.arranging > 0 {
-            return passMeasurements[width] ?? lastMeasurement ?? .zero
-        }
+        // An arrangement asking a child's size reads what the pass already measured: measuring an element
+        // while WinUI arranges marks it, and the marked element is measured and arranged again for ever -
+        // XAML aborts the eighth such pass with a layout cycle.
+        guard Self.arranging == 0 else { return desiredSize }
         var size = [0.0, 0.0]
         stateui_winui_measure(handle, width ?? .infinity, height ?? .infinity, &size)
-        let measured = LayoutSize(width: size[0], height: size[1])
-        passMeasurements[width] = measured
-        lastMeasurement = measured
-        return measured
+        return LayoutSize(width: size[0], height: size[1])
     }
 
-    /// The sizes the element measured this pass, by the width offered; an arrangement asks among them.
-    private var passMeasurements: [Double?: LayoutSize] = [:]
-
-    /// The size the element measured last, whatever the offer - an arrangement's last answer when none kept
-    /// the width it asks.
-    private var lastMeasurement: LayoutSize?
+    /// What the element last measured at, read from WinUI without marking it.
+    var desiredSize: LayoutSize {
+        var size = [0.0, 0.0]
+        stateui_winui_desired_size(handle, &size)
+        return LayoutSize(width: size[0], height: size[1])
+    }
 
     /// Places the element at `place`, in DIPs of its parent: at once inside a pass, and between passes by asking
     /// the layout for one. Its size is its words' room while its place travels.

@@ -80,6 +80,20 @@ final class GTKRenderer {
         }
     }
 
+    /// The platform handed the application files to open - a launch under `HANDLES_OPEN` emits `open` instead of
+    /// `activate`, so the host starts here where it never did; then every `onOpenURL` listener hears each URL.
+    nonisolated static func opened(_ application: UnsafeMutablePointer<GtkApplication>, urls: [String]) {
+        nonisolated(unsafe) let application = application
+        MainActor.assumeIsolated {
+            if shared == nil { start(application: application) }
+            guard let runtime = shared?.runtime else { return }
+            for url in urls {
+                runtime.core.raise(AppContract.urlOpened, url)
+            }
+            runtime.pump.turn()
+        }
+    }
+
     /// Starts the host: the application rendered whole, then the doorbell for everything after.
     @discardableResult
     static func start(application: UnsafeMutablePointer<GtkApplication>) -> GTKRenderer {

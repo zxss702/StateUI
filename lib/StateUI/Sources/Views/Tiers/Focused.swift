@@ -39,3 +39,45 @@ extension View {
             }
     }
 }
+
+/// How urgent a `defaultFocus` ask is - SwiftUI's `FocusPriority`.
+public enum FocusPriority: Sendable {
+    /// The ordinary ask.
+    case automatic
+
+    /// The user's own ask.
+    case userInitiated
+
+    /// The scene's fallback, behind any other ask.
+    case sceneDefault
+}
+
+extension View {
+    /// The view the scene's keyboard focus opens on: the binding's value where
+    /// the focus stands unclaimed when this element first stands.
+    ///
+    ///     @FocusState private var editing = false
+    ///
+    ///     Editor()
+    ///         .focused($editing)
+    ///         .defaultFocus($editing, true)
+    ///
+    /// A claim standing already - the user having focused something first -
+    /// keeps it. Where several views ask, the last to stand wins.
+    ///
+    /// - Parameters:
+    ///   - condition: the focus as `FocusState`'s binding.
+    ///   - value: the value this view holds it by.
+    ///   - priority: how urgent the ask is; every priority asks alike where
+    ///     the focus stands unclaimed.
+    public func defaultFocus<Value: Hashable>(
+        _ condition: Binding<Value>, _ value: Value,
+        priority: FocusPriority = .automatic
+    ) -> ModifiedContent {
+        onAppear {
+            if condition.wrappedValue != value {
+                condition.wrappedValue = value
+            }
+        }
+    }
+}

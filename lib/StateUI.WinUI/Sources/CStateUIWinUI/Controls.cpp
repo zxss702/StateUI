@@ -8,9 +8,11 @@
 #include "Automation.h"
 
 #include <algorithm>
+#include <string>
 
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.UI.h>
+#include <winrt/Windows.UI.ViewManagement.h>
 #include <winrt/Microsoft.UI.Xaml.Input.h>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
 
@@ -22,6 +24,26 @@ namespace {
     /// into its tag, `isOn` worn on the element at all.
     bool keeps(primitives::ToggleButton const &button) {
         return winrt::unbox_value_or<bool>(button.Tag(), false);
+    }
+
+    /// Writes `value` under every look state a toggle's template names:
+    /// `ToggleButton{property}{state}` - ordinary, pointed, pressed, and the
+    /// checked and indeterminate ones a keeping button can sit in.
+    void keepToggleKeys(xaml::ResourceDictionary const &resources, wchar_t const *property,
+                        xaml::Media::Brush const &ordinary, xaml::Media::Brush const &pointed,
+                        xaml::Media::Brush const &pressed) {
+        struct Entry { wchar_t const *state; xaml::Media::Brush const *value; };
+        Entry entries[] = {
+            {L"", &ordinary}, {L"PointerOver", &pointed}, {L"Pressed", &pressed},
+            {L"Checked", &pressed}, {L"CheckedPointerOver", &pointed}, {L"CheckedPressed", &pressed},
+            {L"Indeterminate", &ordinary}, {L"IndeterminatePointerOver", &pointed},
+            {L"IndeterminatePressed", &pressed},
+        };
+        for (auto const &entry : entries) {
+            auto name = winrt::box_value((std::wstring(L"ToggleButton") + property + entry.state).c_str());
+            if (resources.HasKey(name)) resources.Remove(name);
+            if (*entry.value) resources.Insert(name, *entry.value);
+        }
     }
 
     /// What a label with no background is drawn over: nothing, which is still hit across its bounds.
@@ -143,11 +165,6 @@ extern "C" void stateui_winui_button_set_look(
     try {
         auto button = borrow<primitives::ToggleButton>(handle);
         auto resources = button.Resources();
-        auto keep = [&](wchar_t const *key, xaml::Media::Brush const &value) {
-            auto name = winrt::box_value(key);
-            if (resources.HasKey(name)) resources.Remove(name);
-            if (value) resources.Insert(name, value);
-        };
         // Under the pointer and pressed, the fill is drawn a little fainter each time, as WinUI's own buttons draw it.
         auto fill = brush(background);
         auto faded = [&](double opacity) {
@@ -157,9 +174,7 @@ extern "C" void stateui_winui_button_set_look(
         };
         if (fill) button.Background(fill);
         else button.ClearValue(controls::Control::BackgroundProperty());
-        keep(L"ButtonBackground", fill);
-        keep(L"ButtonBackgroundPointerOver", faded(underPointer));
-        keep(L"ButtonBackgroundPressed", faded(pressed));
+        keepToggleKeys(resources, L"Background", fill, faded(underPointer), faded(pressed));
 
         auto outline = strokeWidth > 0 ? brush(stroke) : xaml::Media::Brush{nullptr};
         if (outline) {
@@ -169,9 +184,7 @@ extern "C" void stateui_winui_button_set_look(
             button.ClearValue(controls::Control::BorderBrushProperty());
             button.ClearValue(controls::Control::BorderThicknessProperty());
         }
-        keep(L"ButtonBorderBrush", outline);
-        keep(L"ButtonBorderBrushPointerOver", outline);
-        keep(L"ButtonBorderBrushPressed", outline);
+        keepToggleKeys(resources, L"BorderBrush", outline, outline, outline);
 
         if (cornerRadius >= 0) button.CornerRadius({cornerRadius, cornerRadius, cornerRadius, cornerRadius});
         else button.ClearValue(controls::Control::CornerRadiusProperty());
@@ -191,19 +204,34 @@ extern "C" void stateui_winui_set_caption(StateUIObjectRef handle, char const *u
 extern "C" void stateui_winui_button_set_style(StateUIObjectRef handle, int kind) {
     try {
         auto button = borrow<primitives::ToggleButton>(handle);
-        // The kind is logical: prominent maps to the accent style, plain and
-        // borderless to the text style, and everything else clears back to the
-        // platform's own look.
-        wchar_t const *key = nullptr;
-        if (kind == 2) key = L"AccentButtonStyle";
-        else if (kind == 3 || kind == 4) key = L"TextButtonStyle";
-        if (!key) {
+        auto resources = button.Resources();
+        // The kind is logical: the button is a toggle at heart, whose template reads
+        // the `ToggleButton*` look keys, so each kind writes the look directly -
+        // the accent style's fill is the system's accent under every state.
+        if (kind == 2) {
+            winrt::Windows::UI::ViewManagement::UISettings settings;
+            auto accent = settings.GetColorValue(winrt::Windows::UI::ViewManagement::UIColorType::Accent);
+            xaml::Media::SolidColorBrush fill(accent);
+            xaml::Media::SolidColorBrush lighter(accent), dimmer(accent);
+            lighter.Opacity(0.9);
+            dimmer.Opacity(0.8);
+            xaml::Media::SolidColorBrush words(winrt::Windows::UI::Color{255, 255, 255, 255});
+            button.Background(fill);
+            button.Foreground(words);
+            keepToggleKeys(resources, L"Background", fill, lighter, dimmer);
+            keepToggleKeys(resources, L"Foreground", words, words, words);
+        } else if (kind == 3 || kind == 4) {
+            // Borderless and plain show the caption on what stands beneath it.
+            button.ClearValue(controls::Control::BackgroundProperty());
+            button.ClearValue(controls::Control::BorderBrushProperty());
+            button.BorderThickness({0, 0, 0, 0});
+            xaml::Media::Brush nothing{nullptr};
+            keepToggleKeys(resources, L"Background", nothing, nothing, nothing);
+            keepToggleKeys(resources, L"BorderBrush", nothing, nothing, nothing);
+        } else {
+            // Anything else clears back to the platform's own look.
             button.ClearValue(xaml::FrameworkElement::StyleProperty());
-            return;
         }
-        auto resources = xaml::Application::Current().Resources();
-        auto name = winrt::box_value(key);
-        if (resources.HasKey(name)) button.Style(resources.Lookup(name).as<xaml::Style>());
     } catch (...) {
         report("styling a button");
     }

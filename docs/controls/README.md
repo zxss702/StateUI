@@ -76,7 +76,7 @@ The scene, the window and the page an application is made of, the arrangements a
 <!-- structure:begin -->
 | Part | Members | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | --- | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [App](App.md) | 14 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
+| [App](App.md) | 15 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
 | [Content](Content.md) | 0 |  |  |  |  |  |  |
 | [ContextMenu](ContextMenu.md) | 0 |  |  |  |  |  |  |
 | [Divider](Divider.md) | 0 |  |  |  |  |  |  |
@@ -100,8 +100,8 @@ The scene, the window and the page an application is made of, the arrangements a
 | [ToolbarItems](ToolbarItems.md) | 0 |  |  |  |  |  |  |
 | [ToolbarSpacer](ToolbarSpacer.md) | 2 |  |  |  |  |  |  |
 | [TrailingContent](TrailingContent.md) | 0 |  |  |  |  |  |  |
-| [WindowScene](WindowScene.md) | 24 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
-| **Met** - ✅ and – | 175 | 50 of 175 met | 55 of 175 met | 21 of 175 met | 83 of 175 met | 6 of 175 met |  |
+| [WindowScene](WindowScene.md) | 25 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
+| **Met** - ✅ and – | 177 | 50 of 177 met | 55 of 177 met | 21 of 177 met | 83 of 177 met | 6 of 177 met |  |
 <!-- structure:end -->
 
 ## Tiers

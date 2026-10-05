@@ -86,27 +86,24 @@ struct FileImporterAnchor: View {
     @State private var asking = false
 
     var body: some View {
-        Group {
-            base
-            EmptyView()
-                .onChange(of: presented.wrappedValue) { _, shown in
-                    guard shown, !asking else { return }
-                    asking = true
-                    do {
-                        let paths = try await stateUICall(AppContract.chooseFiles, multiple, types)
-                        asking = false
-                        presented.wrappedValue = false
-                        if paths.isEmpty {
-                            onCompletion(.failure(StateUIError(message: "the user cancelled")))
-                        } else {
-                            onCompletion(.success(paths))
-                        }
-                    } catch let error as StateUIError {
-                        asking = false
-                        presented.wrappedValue = false
-                        onCompletion(.failure(error))
+        base
+            .onChange(of: presented.wrappedValue) { _, shown in
+                guard shown, !asking else { return }
+                asking = true
+                do {
+                    let paths = try await stateUICall(AppContract.chooseFiles, multiple, types)
+                    asking = false
+                    presented.wrappedValue = false
+                    if paths.isEmpty {
+                        onCompletion(.failure(StateUIError(message: "the user cancelled")))
+                    } else {
+                        onCompletion(.success(paths))
                     }
+                } catch let error as StateUIError {
+                    asking = false
+                    presented.wrappedValue = false
+                    onCompletion(.failure(error))
                 }
-        }
+            }
     }
 }

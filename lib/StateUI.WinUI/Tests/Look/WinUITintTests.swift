@@ -39,7 +39,11 @@ final class WinUITintTests: XCTestCase {
             let box = try XCTUnwrap(host.views(WinUICheckBoxView.self).first)
             let toggle = try XCTUnwrap(host.views(WinUISwitchView.self).first)
             let slider = try XCTUnwrap(host.views(WinUISliderView.self).first)
-            host.settle { box.pixels(at: [(4, 10)]) == [Self.red] }
+            host.settle {
+                box.pixels(at: [(4, 10)]) == [Self.red]
+                    && toggle.pixels(at: [(8, 19)]) == [Self.red]
+                    && slider.pixels(at: [(20, 16)]) == [Self.red]
+            }
 
             XCTAssertEqual(box.pixels(at: [(4, 10)]), [Self.red], "the ticked box")
             XCTAssertEqual(toggle.pixels(at: [(8, 19)]), [Self.red], "the track while on")

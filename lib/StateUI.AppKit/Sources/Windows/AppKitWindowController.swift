@@ -186,11 +186,20 @@ final class AppKitWindowController: NSWindowController {
         if let frame = changes.frame { request(frame, of: window) }
         let asked = WindowFrame(of: element)
         if !presented, asked.x == nil, asked.y == nil {
-            window.center()
-            if cascade > 0 {
+            if let anchor = element.value(.defaultPosition)?.numbers, anchor.count == 2,
+               let area = window.screen?.visibleFrame {
+                // The anchor on the window lands the anchor on the work area;
+                // Cocoa counts y up, the point down.
                 window.setFrameOrigin(NSPoint(
-                    x: window.frame.origin.x + CGFloat(cascade * 24),
-                    y: window.frame.origin.y - CGFloat(cascade * 24)))
+                    x: area.minX + (area.width - window.frame.width) * anchor[0],
+                    y: area.minY + (area.height - window.frame.height) * (1 - anchor[1])))
+            } else {
+                window.center()
+                if cascade > 0 {
+                    window.setFrameOrigin(NSPoint(
+                        x: window.frame.origin.x + CGFloat(cascade * 24),
+                        y: window.frame.origin.y - CGFloat(cascade * 24)))
+                }
             }
         }
 

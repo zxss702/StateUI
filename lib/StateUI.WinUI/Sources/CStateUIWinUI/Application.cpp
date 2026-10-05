@@ -16,6 +16,9 @@
 #include <winrt/Microsoft.UI.Xaml.Markup.h>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <winrt/Microsoft.UI.Xaml.XamlTypeInfo.h>
+#include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Windows.Storage.h>
 
 namespace stateui {
     StateUIWinUICallbacks callbacks{};
@@ -24,6 +27,39 @@ namespace stateui {
         winrt::Microsoft::UI::Dispatching::DispatcherQueue queue{nullptr};
         winrt::event_token rendering{};
         bool holding = false;
+
+        namespace lifecycle = winrt::Microsoft::Windows::AppLifecycle;
+        namespace activation = winrt::Windows::ApplicationModel::Activation;
+
+        /// A storage item's path as the `file:` URL `onOpenURL` hands on - forward slashes past `file:///`.
+        std::string fileURL(winrt::hstring const &path) {
+            std::wstring text{path.begin(), path.end()};
+            for (auto &each : text) if (each == L'\\') each = L'/';
+            return "file:///" + winrt::to_string(text);
+        }
+
+        /// Reports each URL an activation carries - the files it names, the link it followed.
+        void reportActivation(lifecycle::AppActivationArguments const &args) {
+            if (!callbacks.urlOpened) return;
+            try {
+                if (args.Kind() == lifecycle::ExtendedActivationKind::File) {
+                    if (auto files = args.Data().try_as<activation::IFileActivatedEventArgs>()) {
+                        for (auto const &item : files.Files()) {
+                            if (auto storage = item.try_as<winrt::Windows::Storage::IStorageItem>()) {
+                                auto text = fileURL(storage.Path());
+                                callbacks.urlOpened(text.c_str());
+                            }
+                        }
+                    }
+                } else if (args.Kind() == lifecycle::ExtendedActivationKind::Protocol) {
+                    if (auto link = args.Data().try_as<activation::IProtocolActivatedEventArgs>()) {
+                        callbacks.urlOpened(winrt::to_string(link.Uri().RawUri().c_str()).c_str());
+                    }
+                }
+            } catch (...) {
+                report("reporting an activation");
+            }
+        }
 
         /// The application: WinUI's control resources and their type information, with no XAML file.
         /// Design: docs/design/platforms/winui/runtime.md#an-application-with-no-xaml
@@ -35,6 +71,14 @@ namespace stateui {
                 Resources().MergedDictionaries().Append(controls::XamlControlsResources());
                 queue = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
                 callbacks.launched();
+                auto instance = lifecycle::AppInstance::GetCurrent();
+                if (instance) {
+                    if (auto args = instance.GetActivatedEventArgs()) reportActivation(args);
+                    activationListener = instance.Activated(
+                        [](IInspectable const &, lifecycle::AppActivationArguments const &args) {
+                            reportActivation(args);
+                        });
+                }
             }
 
             xaml::Markup::IXamlType GetXamlType(winrt::Windows::UI::Xaml::Interop::TypeName const &type) {
@@ -56,6 +100,8 @@ namespace stateui {
             }
 
             bool embedded;
+            /// Kept so a second activation - a file opened while the application runs - keeps reaching it.
+            winrt::event_token activationListener{};
             xaml::XamlTypeInfo::XamlControlsXamlMetaDataProvider types{nullptr};
         };
 

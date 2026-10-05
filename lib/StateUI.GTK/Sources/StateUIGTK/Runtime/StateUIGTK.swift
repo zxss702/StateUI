@@ -27,10 +27,22 @@ public enum StateUIGTK {
     /// - Returns: the process's exit code.
     @discardableResult
     public static func run(applicationID: String) -> Int32 {
-        let application = adw_application_new(applicationID, G_APPLICATION_DEFAULT_FLAGS)!
+        let application = adw_application_new(
+            applicationID, GApplicationFlags(G_APPLICATION_HANDLES_OPEN.rawValue))!
         gtk_window_set_default_icon_name(applicationID)
         connectSignal(UnsafeMutableRawPointer(application), "activate", number: 0) { application, _ in
             GTKRenderer.activated(application!.assumingMemoryBound(to: GtkApplication.self))
+        }
+        connectSignal(UnsafeMutableRawPointer(application), "open", number: 0) { application, files, count, _, _ in
+            guard let files else { return }
+            var urls: [String] = []
+            for place in 0 ..< Int(count) {
+                if let file = files[place], let uri = g_file_get_uri(OpaquePointer(file)) {
+                    urls.append(String(cString: uri))
+                    g_free(uri)
+                }
+            }
+            GTKRenderer.opened(application!.assumingMemoryBound(to: GtkApplication.self), urls: urls)
         }
         let status = g_application_run(application.of(GApplication.self), CommandLine.argc, CommandLine.unsafeArgv)
         g_object_unref(UnsafeMutableRawPointer(application))
