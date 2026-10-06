@@ -11,9 +11,13 @@ Grid.accessibilityIdentifier: ✅
 GridRow.accessibilityIdentifier: not realized
 HStack.accessibilityIdentifier: ✅
 Image.accessibilityIdentifier: ✅
+LazyHGrid.accessibilityIdentifier: ✅
+LazyHStack.accessibilityIdentifier: ✅
+LazyVGrid.accessibilityIdentifier: ✅
+LazyVStack.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅
 List.accessibilityIdentifier: ✅
-Map.accessibilityIdentifier: not realized
+Map.accessibilityIdentifier: ✅
 Masked.accessibilityIdentifier: ✅
 MenuButton.accessibilityIdentifier: ✅
 MenuItem.accessibilityIdentifier: ☑️ Only an entry of a context menu carries it; an entry the page puts in the menu bar does not.
@@ -41,5 +45,5 @@ TimePicker.accessibilityIdentifier: ✅
 TitleBar.accessibilityIdentifier: not realized
 ToolbarItem.accessibilityIdentifier: not realized
 VStack.accessibilityIdentifier: ✅
-WebView.accessibilityIdentifier: not realized
+WebView.accessibilityIdentifier: ✅
 ZStack.accessibilityIdentifier: ✅

@@ -23,13 +23,13 @@ final class ToolchainTests: XCTestCase {
         // What a build writes, and the pages rendered from the contracts -
         // none of them names a toolchain.
         let skipped: Set<String> = [
-            ".build", ".build-appkit", ".build-android", ".git", ".gradle", "bin", "obj", "node_modules", "out",
+            ".git", ".gradle", "bin", "obj", "node_modules", "out",
             "docs/controls",
         ]
 
         let entered = { (relative: String) -> Bool in
             let name = String(relative.split(separator: "/").last ?? "")
-            return !skipped.contains(name) && !skipped.contains(relative)
+            return !skipped.contains(name) && !skipped.contains(relative) && !name.hasPrefix(".build")
         }
 
         let paths = (try? SourceTree.files(under: repository, entering: entered)) ?? []

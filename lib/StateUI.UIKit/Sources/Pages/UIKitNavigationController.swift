@@ -36,6 +36,12 @@ final class UIKitNavigationController: UINavigationController, UINavigationContr
             let hidden = !(viewControllers.last.map(showsBar) ?? true)
             if hidden != isNavigationBarHidden { setNavigationBarHidden(hidden, animated: false) }
         }
+        // The user is taking pages away and the tree hears it once the move ends: a render meanwhile still
+        // describes them, and showing them again would undo the user's way back.
+        if transitionCoordinator != nil, pages.elementsEqual(self.pages, by: ===), viewControllers.count < pages.count,
+           viewControllers.elementsEqual(pages.prefix(viewControllers.count), by: ===) {
+            return
+        }
         guard !pages.elementsEqual(self.pages, by: ===) || !viewControllers.elementsEqual(pages, by: ===) else {
             return
         }

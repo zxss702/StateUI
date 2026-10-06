@@ -4,16 +4,24 @@ Button.accessibilityIdentifier: ✅
 Canvas.accessibilityIdentifier: ✅
 CheckBox.accessibilityIdentifier: ✅
 ColorPicker.accessibilityIdentifier: ✅
+CustomLayout.accessibilityIdentifier: not realized
 DatePicker.accessibilityIdentifier: ✅
 Ellipse.accessibilityIdentifier: ✅
 Grid.accessibilityIdentifier: ✅
+GridRow.accessibilityIdentifier: not realized
 HStack.accessibilityIdentifier: ✅
 Image.accessibilityIdentifier: ✅
-List.accessibilityIdentifier: ✅
-Text.accessibilityIdentifier: ✅
+LazyHGrid.accessibilityIdentifier: ✅
+LazyHStack.accessibilityIdentifier: ✅
+LazyVGrid.accessibilityIdentifier: ✅
+LazyVStack.accessibilityIdentifier: ✅
 Line.accessibilityIdentifier: ✅
-Map.accessibilityIdentifier: not realized
+List.accessibilityIdentifier: ✅
+Map.accessibilityIdentifier: ✅
+Masked.accessibilityIdentifier: not realized
+MenuButton.accessibilityIdentifier: not realized
 MenuItem.accessibilityIdentifier: ✅
+NavigationSplitView.accessibilityIdentifier: ✅
 NavigationStack.accessibilityIdentifier: ✅
 Path.accessibilityIdentifier: ✅
 Picker.accessibilityIdentifier: ✅
@@ -27,10 +35,10 @@ ScrollView.accessibilityIdentifier: ✅
 SearchField.accessibilityIdentifier: ✅
 Slider.accessibilityIdentifier: ✅
 Span.accessibilityIdentifier: not realized
-NavigationSplitView.accessibilityIdentifier: ✅
 Stepper.accessibilityIdentifier: ✅
 Switch.accessibilityIdentifier: ✅
 TabView.accessibilityIdentifier: ✅
+Text.accessibilityIdentifier: ✅
 TextEditor.accessibilityIdentifier: ✅
 TextField.accessibilityIdentifier: ✅
 TimePicker.accessibilityIdentifier: ✅

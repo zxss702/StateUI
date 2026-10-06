@@ -10,7 +10,7 @@
 enum AppKitRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
-        "GridRow", "Map", "Pin", "PositionIndicator", "WebView",
+        "GridRow", "PositionIndicator",
     ]
 
     /// The entries this host presents with no view of their own - a title bar is the window's, a span a run of its
@@ -118,6 +118,12 @@ enum AppKitRealization {
         .complete("Page", "title"),
         .complete("RadioButton", "groupName"),
         .complete("RadioButton", "padding"),
+        .notPlanned("SearchField", "submitLabel",
+                    reason: "A Mac has no keyboard on the screen whose return key says anything."),
+        .notPlanned("TextField", "submitLabel",
+                    reason: "A Mac has no keyboard on the screen whose return key says anything."),
+        .notPlanned("TextField", "showsClearButton",
+                    reason: "AppKit's text field has no button of its own that empties it."),
         .complete("Scene", "activated"),
         .complete("Scene", "deactivated"),
         .complete("Scene", "destroying"),

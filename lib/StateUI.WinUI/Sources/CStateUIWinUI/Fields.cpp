@@ -25,11 +25,12 @@ namespace {
     /// Tells the view `view` of each change of the box's words. TextChanging, not TextChanged: it is raised in the
     /// write that makes it, so a program's write is known as one, where TextChanged comes later.
     void hearWords(controls::TextBox const &box, int64_t view) {
-        box.TextChanging([view](controls::TextBox const &sender, controls::TextBoxTextChangingEventArgs const &args) {
+        box.TextChanging(guarded("handling TextChanging",
+            [view](controls::TextBox const &sender, controls::TextBoxTextChangingEventArgs const &args) {
             if (!args.IsContentChanging()) return;
             auto bytes = winrt::to_string(sender.Text());
             callbacks.textChanged(view, bytes.c_str());
-        });
+        }));
     }
 
     /// The case a text box puts typed letters in for StateUI's `TextCase`: upper, lower, or as typed.
@@ -37,6 +38,14 @@ namespace {
         return textCase == 3   ? controls::CharacterCasing::Upper
                : textCase == 2 ? controls::CharacterCasing::Lower
                                : controls::CharacterCasing::Normal;
+    }
+
+    /// Tells the view `view` that Enter was pressed in `field`.
+    void hearEnter(controls::Control const &field, int64_t view) {
+        field.KeyDown(guarded("handling KeyDown",
+            [view](IInspectable const &, xaml::Input::KeyRoutedEventArgs const &args) {
+            if (args.Key() == winrt::Windows::System::VirtualKey::Enter) callbacks.submitted(view);
+        }));
     }
 
     /// The text box a field or an editor is, or the one a search box's template holds; null before it stands.
@@ -51,9 +60,7 @@ extern "C" StateUIObjectRef stateui_winui_field_make(int64_t view) {
     try {
         controls::TextBox field;
         hearWords(field, view);
-        field.KeyDown([view](IInspectable const &, xaml::Input::KeyRoutedEventArgs const &args) {
-            if (args.Key() == winrt::Windows::System::VirtualKey::Enter) callbacks.submitted(view);
-        });
+        hearEnter(field, view);
         return detach(field);
     } catch (...) {
         report("making a field");
@@ -98,14 +105,16 @@ extern "C" StateUIObjectRef stateui_winui_search_make(int64_t view) {
     try {
         controls::AutoSuggestBox search;
         search.QueryIcon(controls::SymbolIcon(controls::Symbol::Find));
-        search.TextChanged([view](controls::AutoSuggestBox const &sender, controls::AutoSuggestBoxTextChangedEventArgs const &args) {
+        search.TextChanged(guarded("handling TextChanged",
+            [view](controls::AutoSuggestBox const &sender, controls::AutoSuggestBoxTextChangedEventArgs const &args) {
             if (args.Reason() != controls::AutoSuggestionBoxTextChangeReason::UserInput) return;
             auto bytes = winrt::to_string(sender.Text());
             callbacks.textChanged(view, bytes.c_str());
-        });
-        search.QuerySubmitted([view](controls::AutoSuggestBox const &, controls::AutoSuggestBoxQuerySubmittedEventArgs const &) {
+        }));
+        search.QuerySubmitted(guarded("handling QuerySubmitted",
+            [view](controls::AutoSuggestBox const &, controls::AutoSuggestBoxQuerySubmittedEventArgs const &) {
             callbacks.submitted(view);
-        });
+        }));
         return detach(search);
     } catch (...) {
         report("making a search box");
@@ -141,14 +150,14 @@ extern "C" void stateui_winui_field_set_placeholder(StateUIObjectRef handle, cha
 }
 
 extern "C" void stateui_winui_field_set_behaviour(
-    StateUIObjectRef handle, bool readOnly, bool spellChecked, bool predicted, int32_t purpose
+    StateUIObjectRef handle, bool readOnly, bool spellChecked, bool predicted, int32_t scope
 ) {
     try {
         auto field = borrow<controls::TextBox>(handle);
         field.IsReadOnly(readOnly);
         field.IsSpellCheckEnabled(spellChecked);
         field.IsTextPredictionEnabled(predicted);
-        field.InputScope(inputScope(purpose));
+        field.InputScope(inputScope(scope));
     } catch (...) {
         report("setting how a field takes words");
     }

@@ -24,6 +24,57 @@ private struct RewrittenPage: View {
 }
 
 final class GTKInputViewTests: XCTestCase {
+    /// The field's first focus does not take over the program's caret: GNOME selects a field's words whole the first
+    /// time the user comes to it, and the host's selection, written before then, stands until the user has been.
+    func testTheProgramsCaretOutlastsTheFieldsFirstFocus() throws {
+        try onUIThread {
+            let host = GTKRenderer.running {
+                VStack {
+                    Button("First")
+                    TextField(State(wrappedValue: "abcdefg").projectedValue).cursorPosition(2).selectionLength(3)
+                }
+            }
+            let field = try XCTUnwrap(host.views(GTKTextFieldView.self).first)
+            let editable = field.widget.opaque
+
+            gtk_widget_grab_focus(field.widget)
+            host.settle { false }
+
+            var (start, end): (Int32, Int32) = (0, 0)
+            _ = gtk_editable_get_selection_bounds(editable, &start, &end)
+            XCTAssertEqual([start, end], [2, 5], "the program's selection, not GNOME's whole")
+            gtk_editable_select_region(editable, 0, -1)
+            gtk_widget_grab_focus(host.views(GTKButtonView.self)[0].widget)
+            gtk_widget_grab_focus(field.widget)
+            host.settle { false }
+            _ = gtk_editable_get_selection_bounds(editable, &start, &end)
+            XCTAssertEqual([start, end], [0, 7], "once the user has been there, GNOME's own")
+        }
+    }
+
+    /// Typed words stand in the field's case: the user types mixed and the host turns them, in a field and an
+    /// editor alike - the binding hears the turned words, not what the user typed.
+    func testTypedWordsStandInTheFieldsCase() throws {
+        try onUIThread {
+            let (upper, lower) = (State(wrappedValue: ""), State(wrappedValue: ""))
+            let host = GTKRenderer.running {
+                VStack {
+                    TextField(upper.projectedValue).textCase(.uppercase)
+                    TextEditor(lower.projectedValue).textCase(.lowercase)
+                }
+            }
+            let field = try XCTUnwrap(host.views(GTKTextFieldView.self).first)
+            let editor = try XCTUnwrap(host.views(GTKTextEditorView.self).first)
+
+            GTKTestHost.emit(gtk_editable_get_delegate(field.widget.opaque), "insert-at-cursor", words: "Ada")
+            GTKTestHost.emit(OpaquePointer(gtk_scrolled_window_get_child(editor.widget.opaque)), "insert-at-cursor", words: "Ada")
+            host.settle { upper.wrappedValue == "ADA" && lower.wrappedValue == "ada" }
+
+            XCTAssertEqual([field.text, editor.text], ["ADA", "ada"])
+            XCTAssertEqual([upper.wrappedValue, lower.wrappedValue], ["ADA", "ada"])
+        }
+    }
+
     /// Typing stops at the most characters allowed - an emoji one character, whole or not at all - in a field and an
     /// editor alike.
     func testTypingStopsAtTheMostCharactersAllowed() throws {

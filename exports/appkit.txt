@@ -80,6 +80,30 @@ Image
   isAnimating
   renderingMode
   source
+LazyHGrid
+  columnSpacing
+  contentPadding
+  flowRows
+  items
+  rowSpacing
+  realizedChanged()
+LazyHStack
+  contentPadding
+  items
+  spacing
+  realizedChanged()
+LazyVGrid
+  columnSpacing
+  contentPadding
+  flowColumns
+  items
+  rowSpacing
+  realizedChanged()
+LazyVStack
+  contentPadding
+  items
+  spacing
+  realizedChanged()
 Line
   aspect
   fill
@@ -107,6 +131,14 @@ List
   itemActivated()
   realizedChanged()
   selectionChanged()
+Map
+  isScrollEnabled
+  isTrafficEnabled
+  isZoomEnabled
+  mapType
+  region
+  showsUserLocation
+  mapClicked()
 NavigationSplitView
   columnVisibility
   isSidebarVisible
@@ -143,6 +175,13 @@ Picker
   closed()
   opened()
   selectedIndexChanged()
+Pin
+  address
+  label
+  location
+  type
+  pinClicked()
+  pinDetailsClicked()
 Polygon
   aspect
   fill
@@ -318,6 +357,14 @@ TimePicker
 VStack
   contentPadding
   spacing
+WebView
+  source
+  userAgent
+  canGoBackChanged()
+  canGoForwardChanged()
+  navigated()
+  navigating()
+  processTerminated()
 (every element)
   accessibilityHeadingLevel
   accessibilityHint
@@ -384,13 +431,18 @@ VStack
   confirm()
   currentTime()
   currentTimeZone()
+  evaluateJavaScript()
   focus()
+  goBack()
+  goForward()
   handlerFailed()
   hideOnScreenKeyboard()
   localizedString()
+  moveToRegion()
   persistSceneValue()
   persistValue()
   prompt()
+  reload()
   scrollTo()
   scrollToDescendant()
   unfocus()

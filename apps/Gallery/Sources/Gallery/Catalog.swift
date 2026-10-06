@@ -157,6 +157,7 @@ final class Catalog {
                     Sample(ZStackSample()),
                     Sample(PlacedSample()),
                     Sample(ScrollViewSample()),
+                    Sample(LazyStacksSample()),
                     Sample(SizingSample()),
                     Sample(OutlineSample()),
                     Sample(ColorBoxSample()),
@@ -257,6 +258,7 @@ final class Catalog {
                     Sample(ModalSample(nav: nav)),
                     Sample(DialogsSample()),
                     Sample(ToolbarSample()),
+                    Sample(ToolbarLayersSample(nav: nav)),
                     Sample(CommandsSample()),
                     Sample(ContextMenuSample()),
                     Sample(SearchSample(nav: nav)),
@@ -289,6 +291,7 @@ final class Catalog {
                 card: ImageSource("cat_environment.png"),
                 samples: [
                     Sample(EnvironmentSample()),
+                    Sample(ApplicationSessionSample()),
                     Sample(DeviceInfoSample()),
                     Sample(DeviceDisplaySample()),
                     Sample(LocaleInfoSample()),

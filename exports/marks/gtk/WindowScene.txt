@@ -1,5 +1,5 @@
 # revision 1.1
-ModalStack: not realized
+ModalStack: waits on WindowScene.modalPopped
 WindowScene: waits on WindowScene.created
 WindowScene.activated: not realized
 WindowScene.created: not realized

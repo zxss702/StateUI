@@ -66,3 +66,16 @@ the radio buttons of one superview sharing one action turn each other off as
 one is clicked, whatever sets StateUI put them in. So the host's radio button
 takes a turn only from StateUI's own writes and from a click on itself, which
 its cell makes; AppKit's turning off of the others is refused.
+## A web view
+
+A WebView is WebKit's own web view, as on UIKit
+([the host layer's web rules](../../host/web.md)): a page at an address is
+loaded; a document written in place with an address of its own is shown
+there, and one with none is gone to as a `data:` address. What the page does
+comes back as the element's events - a navigation as it starts, with why, and
+as it ends, with how; the way back and forward said as a navigation commits
+and ends, only a flag that changed; its web process dying. A step back,
+forward or a load again the program asks for carries that as its cause; a
+page still coming is asked for again. macOS's WebKit also declares a legacy
+`WebHistory` class, so the host names the host layer's `StateUIHost.WebHistory`
+in full.

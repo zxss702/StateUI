@@ -43,13 +43,13 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/ButtonContract.swif
 | `icon` | property | `ImageSource` | adaptive | · | · | · |  |  |  | cannot read icon of Button - AppKit's driver has no path for it yet; UIKit: cannot read icon of Button - UIKit's driver has no path for it yet; Android Views: cannot read icon of Button - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
 | `iconPosition` | property | `IconPosition` | adaptive | ✅ | ✅ | · |  |  |  | Android Views: cannot read iconPosition of Button - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
 | `iconSpacing` | property | `Double` | adaptive |  | ✅ | · |  |  |  | not realized; Android Views: cannot read iconSpacing of Button - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `isOn` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read isOn of Button - GTK's driver has no path for it yet |
+| `isOn` | property | `Bool` | native | ✅ | · |  |  | · |  | UIKit: cannot read isOn of Button - UIKit's driver has no path for it yet; GTK 4: cannot read isOn of Button - GTK's driver has no path for it yet |
 | `lineBreak` | property | `LineBreak` | native | ✅ | ✅ | ✅ |  |  |  | WinUI 3: not realized; GTK 4: not realized |
 | `onPressed` (`pressed`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pressDown on Button: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pressDown on Button: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
 | `onReleased` (`released`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pressDown on Button: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pressDown on Button: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
 | `role` | property | `ButtonRole` | adaptive |  |  |  |  |  |  |  |
 | `shortcut` | property | `KeyboardShortcut` | native |  |  |  |  |  |  |  |
-| `onToggled` (`toggled`) | event | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read isOn of Button - GTK's driver has no path for it yet |
+| `onToggled` (`toggled`) | event | `Bool` | native | ✅ | · |  |  | · |  | UIKit: cannot read isOn of Button - UIKit's driver has no path for it yet; GTK 4: cannot read isOn of Button - GTK's driver has no path for it yet |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -75,7 +75,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ | · | ✅ | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; Android Views: cannot read a background of no one colour - Android's driver has no path for it yet; GTK 4: cannot read background of Button - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | ⏸ |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Button.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | · |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Button - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -83,9 +83,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Button - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | – | – | ✅ |  |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | – | – | ✅ | · |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Button - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of Button - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -110,7 +110,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of Button: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of Button: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of Button - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of Button: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of Button: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of Button - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ | ⏸ |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Button.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ | · |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Button - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

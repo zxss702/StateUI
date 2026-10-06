@@ -122,15 +122,16 @@ extern "C" StateUIObjectRef stateui_winui_button_make(int64_t view) {
         // nothing: nothing is the button's THIRD, indeterminate look, which
         // keeps none of the resources the look set.
         primitives::ToggleButton button;
-        button.Checked([view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
+        button.Checked(guarded("handling Checked", [view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
             auto b = sender.as<primitives::ToggleButton>();
             if (!keeps(b)) { b.IsChecked(false); return; }
             callbacks.toggled(view, true);
-        });
-        button.Unchecked([view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
+        }));
+        button.Unchecked(guarded("handling Unchecked", [view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
             if (keeps(sender.as<primitives::ToggleButton>())) callbacks.toggled(view, false);
-        });
-        button.Click([view](IInspectable const &, xaml::RoutedEventArgs const &) { callbacks.clicked(view); });
+        }));
+        button.Click(guarded("handling Click",
+            [view](IInspectable const &, xaml::RoutedEventArgs const &) { callbacks.clicked(view); }));
         // Held down by a pointer or a key, and let go: what WinUI's own pressed look follows.
         button.RegisterPropertyChangedCallback(
             controls::Primitives::ButtonBase::IsPressedProperty(),

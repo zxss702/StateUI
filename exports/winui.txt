@@ -96,6 +96,54 @@ HStack
 Image
   aspect
   source
+LazyHGrid
+  background
+  clipsContent
+  columnSpacing
+  contentPadding
+  flowRows
+  ignoresInput
+  items
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyHStack
+  background
+  clipsContent
+  contentPadding
+  ignoresInput
+  items
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVGrid
+  background
+  clipsContent
+  columnSpacing
+  contentPadding
+  flowColumns
+  ignoresInput
+  items
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVStack
+  background
+  clipsContent
+  contentPadding
+  ignoresInput
+  items
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
 Line
   aspect
   fill

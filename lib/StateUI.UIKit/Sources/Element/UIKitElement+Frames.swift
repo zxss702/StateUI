@@ -32,13 +32,24 @@ extension UIKitElement: FrameReporter {
     func frameNumbers() -> [Double]? {
         guard let view, let window = view.window, isPlaced || view.bounds.size != .zero else { return nil }
         let corner = view.convert(view.bounds, to: window).origin
-        let insets = window.safeAreaInsets
+        let safe = Self.safeCorner(of: view, in: window)
         return MountedElement.frameNumbers(
             place: placedFrame, corner: Point(x: corner.x, y: corner.y),
             safeArea: Rect(
-                x: insets.left, y: insets.top,
-                width: window.bounds.width - insets.left - insets.right,
-                height: window.bounds.height - insets.top - insets.bottom))
+                x: safe.x, y: safe.y,
+                width: window.bounds.width - window.safeAreaInsets.left - window.safeAreaInsets.right,
+                height: window.bounds.height - window.safeAreaInsets.top - window.safeAreaInsets.bottom))
+    }
+
+    /// The window's safe area's corner in its own coordinates, down to the page's: a page stands clear of the
+    /// window's own controls too.
+    private static func safeCorner(of view: UIView, in window: UIWindow) -> CGPoint {
+        var responder: UIResponder? = view
+        while let each = responder, !(each is UIKitPageController) { responder = each.next }
+        guard let page = responder as? UIKitPageController, let view = page.view else {
+            return CGPoint(x: window.safeAreaInsets.left, y: window.safeAreaInsets.top)
+        }
+        return view.convert(view.bounds.inset(by: page.safeInsets).origin, to: window)
     }
 }
 

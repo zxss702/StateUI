@@ -39,7 +39,7 @@ struct AttributedTextSample: SampleContent, ExampleContent {
     /// attribute alone, so there the runs are composed instead - what the
     /// sample shows either way is runs keeping the look the string wrote.
     private static var rich: AttributedString? {
-        #if canImport(AppKit) || canImport(UIKit)
+        #if APPKIT || UIKIT
         return try? AttributedString(
             markdown: "**StateUI** shows _attributed_ runs - "
                 + "~~crossed out~~ words and `code` too.")

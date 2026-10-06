@@ -24,6 +24,7 @@ enum UIKitRegistrations {
         canvas(registry)
         layouts(registry)
         scrolling(registry)
+        maps(registry)
         web(registry)
         shared(registry)
         return registry

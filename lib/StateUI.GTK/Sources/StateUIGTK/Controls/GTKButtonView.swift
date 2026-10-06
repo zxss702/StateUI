@@ -177,6 +177,12 @@ final class GTKButtonView: GTKView {
         gtk_toggle_button_set_active(widget.of(GtkToggleButton.self), (on ?? false) ? 1 : 0)
     }
 
+    /// The picture and the caption stand in the button's direction too.
+    override func setDirection(_ direction: GtkTextDirection) {
+        super.setDirection(direction)
+        if let content = gtk_button_get_child(widget.of(GtkButton.self)) { gtk_widget_set_direction(content, direction) }
+    }
+
     override func clicked() {
         onClicked?()
         // Only a widget made with `toggles` answers the toggle calls.

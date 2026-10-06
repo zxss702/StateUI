@@ -35,6 +35,8 @@ enum AndroidRealization {
         .complete("PageElement", "title"),
         .partial("VisualElement", "accessibilityHeadingLevel", missing: "Android marks a heading, not its level: every level is a heading."),
         .partial("View", "panTouchCount", missing: "The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off."),
+        .notPlanned("InputView", "isSpellCheckEnabled",
+                    reason: "Android has no switch for spell checking alone: its marks go with the suggestions, which `isTextPredictionEnabled` turns off."),
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own
@@ -49,6 +51,7 @@ enum AndroidRealization {
         .complete("NavigationStack", "barForegroundColor"),
         .complete("NavigationStack", "popped"),
         .complete("Page", "appearing"),
+        .notPlanned("Page", "backButtonTitle", reason: "Android's way back in the bar is an arrow, with no words."),
         .complete("Page", "background"),
         .complete("Page", "disappearing"),
         .complete("Page", "hasBackButton"),
@@ -75,6 +78,8 @@ enum AndroidRealization {
         .complete("TabView", "barBackgroundColor"),
         .complete("TabView", "currentPage"),
         .complete("TabView", "currentPageChanged"),
+        .notPlanned("TextField", "showsClearButton",
+                    reason: "Android's text field has no button of its own that empties it."),
         .notPlanned("ToolbarItem", "accessibilityIdentifier",
                     reason: "An Android bar action is a menu entry, which holds no identifier: automation finds it by its title."),
         .complete("ToolbarItem", "icon"),

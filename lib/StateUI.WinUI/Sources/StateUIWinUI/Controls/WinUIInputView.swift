@@ -10,6 +10,8 @@ import CStateUIWinUI
 /// Design: docs/design/platforms/winui/controls.md#a-field-and-its-words
 @MainActor
 class WinUIInputView: WinUIView {
+    override var takesDirection: Bool { true }
+
     /// What the view does when the user changes its words, handed all of them.
     var onTextChanged: ((String) -> Void)?
 
@@ -44,9 +46,10 @@ class WinUIInputView: WinUIView {
         stateui_winui_set_enabled(handle, enabled)
     }
 
-    /// How the words are taken: read only, spell checked, predicting the next word, and what they are for.
-    func setBehaviour(readOnly: Bool, spellChecked: Bool, predicted: Bool, purpose: InputPurpose?) {
-        stateui_winui_field_set_behaviour(handle, readOnly, spellChecked, predicted, purpose?.rawValue ?? 0)
+    /// How the words are taken: read only, and with `traits` - spell checked, predicted, and the keyboard's scope.
+    func setBehaviour(readOnly: Bool, traits: InputTraits) {
+        stateui_winui_field_set_behaviour(
+            handle, readOnly, traits.checksSpelling, traits.predicts, WinUIInputScope(traits).rawValue)
     }
 
     /// The case typing takes: WinUI puts each letter typed in it.

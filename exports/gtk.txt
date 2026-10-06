@@ -42,6 +42,19 @@ CustomLayout
   shape
   stroke
   strokeWidth
+DatePicker
+  date
+  fontAttributes
+  fontFamily
+  fontSize
+  foregroundStyle
+  format
+  isOpen
+  maximumDate
+  minimumDate
+  closed()
+  dateChanged()
+  opened()
 Ellipse
   aspect
   fill
@@ -82,6 +95,62 @@ HStack
 Image
   aspect
   source
+LazyHGrid
+  background
+  clipsContent
+  columnSpacing
+  contentPadding
+  flowRows
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyHStack
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVGrid
+  background
+  clipsContent
+  columnSpacing
+  contentPadding
+  flowColumns
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVStack
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
 Line
   aspect
   fill
@@ -221,6 +290,7 @@ SearchField
   placeholderColor
   selectionLength
   text
+  textCase
   textContentType
   submitted()
   textChanged()
@@ -274,6 +344,7 @@ TextEditor
   placeholderColor
   selectionLength
   text
+  textCase
   textContentType
   textChanged()
 TextField
@@ -292,10 +363,22 @@ TextField
   placeholderColor
   selectionLength
   text
+  textCase
   textContentType
   textFieldStyle
   submitted()
   textChanged()
+TimePicker
+  fontAttributes
+  fontFamily
+  fontSize
+  foregroundStyle
+  format
+  isOpen
+  time
+  closed()
+  opened()
+  timeChanged()
 VStack
   background
   clipsContent
@@ -359,6 +442,7 @@ ZStack
   verticalAlignment
   width
   frameChanged()
+  isFocusedChanged()
   panUpdated()
   pinchUpdated()
   pointerEntered()

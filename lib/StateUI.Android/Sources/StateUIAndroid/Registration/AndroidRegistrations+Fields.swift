@@ -56,8 +56,9 @@ extension AndroidRegistrations {
         FontElementContract.fontAttributes,
         FontElementContract.fontFamily, TextStyleElementContract.foregroundStyle, InputViewContract.placeholder,
         InputViewContract.placeholderColor,
+        InputViewContract.textContentType, InputViewContract.isTextPredictionEnabled,
         InputViewContract.maximumLength, InputViewContract.cursorPosition, InputViewContract.selectionLength,
-        VisualElementContract.isEnabled,
+        InputViewContract.isReadOnly, VisualElementContract.isEnabled,
     ]
 
     private static func applyField<Realized: ElementContract>(
@@ -78,8 +79,17 @@ extension AndroidRegistrations {
         if values.changed(InputViewContract.placeholderColor) {
             view.setPlaceholderColor(values[InputViewContract.placeholderColor]?.propValue)
         }
+        if values.changed(InputViewContract.textContentType)
+            || values.changed(InputViewContract.isTextPredictionEnabled) {
+            view.setTraits(InputTraits(
+                spellChecked: true, predicted: values[InputViewContract.isTextPredictionEnabled] ?? true,
+                purpose: values[InputViewContract.textContentType]))
+        }
         if values.changed(VisualElementContract.isEnabled) {
             view.setEnabled(values[VisualElementContract.isEnabled] ?? true)
+        }
+        if values.changed(InputViewContract.isReadOnly) {
+            view.setReadOnly(values[InputViewContract.isReadOnly] ?? false)
         }
         view.maximumLength = values[InputViewContract.maximumLength].map { max(0, $0) }
 

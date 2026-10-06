@@ -1,9 +1,9 @@
 # revision 1.1
-MenuItem.clicked: cannot activate on MenuItem - GTK's driver has no path for it yet
-MenuItem.icon: cannot read icon of MenuItem - GTK's driver has no path for it yet
-MenuItem.isDestructive: not realized
-MenuItem.isEnabled: cannot activate on MenuItem - GTK's driver has no path for it yet
-MenuItem.text: cannot read text of MenuItem - GTK's driver has no path for it yet
+MenuItem.clicked: ✅
+MenuItem.icon: – GNOME's menus show words alone, no picture beside them.
+MenuItem.isDestructive: – GNOME's menus mark no entry as destroying something.
+MenuItem.isEnabled: ✅
+MenuItem.text: ✅
 ToolbarItem.clicked: cannot activate on ToolbarItem - GTK's driver has no path for it yet
 ToolbarItem.icon: cannot read icon of ToolbarItem - GTK's driver has no path for it yet
 ToolbarItem.isDestructive: not realized

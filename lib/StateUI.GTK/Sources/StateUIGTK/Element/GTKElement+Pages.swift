@@ -54,6 +54,8 @@ extension GTKElement {
         chrome.leadingActions = actions.leading.map(Self.action)
         chrome.actions = actions.primary.map(Self.action)
         chrome.overflow = actions.overflow.map(Self.action)
+        let menus = element.children.first { $0.type == .menuBar }.map { MenuEntry.menus(of: $0) } ?? []
+        chrome.mainMenu = menus.isEmpty ? nil : GTKMenu(menus)
         return chrome
     }
 
@@ -72,6 +74,7 @@ extension GTKElement {
             title: item.value(.text)?.string ?? "", icon: item.value(.icon)?.string,
             isEnabled: item.value(.isEnabled)?.bool ?? true,
             perform: { [weak item] in item?.gtk.send(.clicked, []) })
+        action.isDestructive = item.value(.isDestructive)?.bool == true
         if item.type == .toolbarSpacer {
             action.spacer = ToolbarSpacerVariant(rawValue: item.value(.variant)?.enumeration ?? 0)
         } else {

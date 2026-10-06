@@ -122,6 +122,8 @@ extension MountedElement {
         else { return false }
 
         isDeparting = true
+        departureSerial += 1
+        let serial = departureSerial
         var pending = components.count
         for (property, target) in components {
             _ = tree.receiveProperty(
@@ -129,7 +131,12 @@ extension MountedElement {
                 standing: value(property) ?? resting(of: property),
                 target: target, animation: law) { [weak self] in
                     pending -= 1
-                    guard pending == 0, let self else { return }
+                    // A departure a patch turned around - or another since -
+                    // lands its components anyway; only this one's last lets
+                    // the element go.
+                    guard pending == 0, let self,
+                          self.isDeparting, self.departureSerial == serial
+                    else { return }
                     self.isDeparting = false
                     self.leave()
                     closed()

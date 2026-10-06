@@ -44,6 +44,10 @@ extension NodeType {
     static let hStack = HStackContract.nodeType
     static let image = ImageContract.nodeType
     static let list = ListContract.nodeType
+    static let lazyHGrid = LazyHGridContract.nodeType
+    static let lazyHStack = LazyHStackContract.nodeType
+    static let lazyVGrid = LazyVGridContract.nodeType
+    static let lazyVStack = LazyVStackContract.nodeType
     static let positionIndicator = PositionIndicatorContract.nodeType
     static let text = TextContract.nodeType
     static let leadingContent = LeadingContentContract.nodeType
@@ -162,6 +166,7 @@ extension NodeType {
     static let format = DatePickerContract.format.token
     static let frame = VisualElementContract.frame.token
     static let flowColumns = GridContract.flowColumns.token
+    static let flowRows = LazyHGridContract.flowRows.token
     static let gridColumn = ViewContract.gridColumn.token
     static let gridColumnSpan = ViewContract.gridColumnSpan.token
     static let gridRow = ViewContract.gridRow.token

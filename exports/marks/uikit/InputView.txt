@@ -1,6 +1,5 @@
 # revision 1.1
 SearchField.cursorPosition: ✅
-SearchField.textContentType: ✅
 SearchField.isEnabled: ✅
 SearchField.isReadOnly: ✅
 SearchField.isSpellCheckEnabled: ✅
@@ -11,8 +10,8 @@ SearchField.placeholderColor: cannot read placeholderColor of SearchField - UIKi
 SearchField.selectionLength: ✅
 SearchField.text: ✅
 SearchField.textChanged: ✅
+SearchField.textContentType: ✅
 TextEditor.cursorPosition: ✅
-TextEditor.textContentType: ✅
 TextEditor.isEnabled: ✅
 TextEditor.isReadOnly: ✅
 TextEditor.isSpellCheckEnabled: ✅
@@ -23,8 +22,8 @@ TextEditor.placeholderColor: ✅
 TextEditor.selectionLength: ✅
 TextEditor.text: ✅
 TextEditor.textChanged: ✅
+TextEditor.textContentType: ✅
 TextField.cursorPosition: ✅
-TextField.textContentType: ✅
 TextField.isEnabled: ✅
 TextField.isReadOnly: ✅
 TextField.isSpellCheckEnabled: ✅
@@ -35,3 +34,4 @@ TextField.placeholderColor: cannot read placeholderColor of TextField - UIKit's 
 TextField.selectionLength: ✅
 TextField.text: ✅
 TextField.textChanged: ✅
+TextField.textContentType: ✅

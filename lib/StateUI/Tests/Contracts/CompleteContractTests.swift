@@ -67,6 +67,7 @@ final class CompleteContractTests: XCTestCase {
             ("ForEach.swift", "Node(type: .fragment,"),
             ("TupleView.swift", "Node(type: .fragment,"),
             ("TupleView.swift", "Node(type: .fragment)"),
+            ("LazyRows.swift", "Node(type: .fragment,"),
         ]
         var byType: [String] = []
 

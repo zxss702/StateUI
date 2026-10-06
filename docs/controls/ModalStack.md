@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ |  | `present(_:animated:)` |  |
 | Android Views | ◐ |  | full-screen `Dialog` (?) | cannot goBack on WindowScene - Android's driver has no path for it yet |
 | WinUI 3 | ✅ |  | `ContentDialog` (?) |  |
-| GTK 4 |  |  | modal `GtkWindow`; libadwaita `AdwDialog` | not realized |
+| GTK 4 | ◐ |  | modal `GtkWindow`; libadwaita `AdwDialog` | waits on WindowScene.modalPopped |
 | Web |  |  | `<dialog>` with `showModal()` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Navigation/ModalStackContract.swift`.

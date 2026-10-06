@@ -46,6 +46,68 @@ extension UIKitRegistrations {
             grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
         }
 
+        registry.add(LazyVStackContract.self, madeByHost: UIKitLazyStackView.self) { lazy in
+            lazy.applies(stackMembers + [LazyVStackContract.items]) { view, values in
+                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.applies(boxMembers) { view, values in applyBox(view, values) }
+            lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
+            lazy.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            lazy.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+            lazy.raises(LazyVStackContract.realizedChanged)
+        }
+
+        registry.add(LazyHStackContract.self, madeByHost: UIKitLazyStackView.self) { lazy in
+            lazy.applies(stackMembers + [LazyHStackContract.items]) { view, values in
+                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.applies(boxMembers) { view, values in applyBox(view, values) }
+            lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
+            lazy.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            lazy.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+            lazy.raises(LazyHStackContract.realizedChanged)
+        }
+
+        registry.add(LazyVGridContract.self, madeByHost: UIKitLazyGridView.self) { grid in
+            grid.applies([
+                LazyVGridContract.items, LazyVGridContract.flowColumns, LazyVGridContract.rowSpacing,
+                LazyVGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyVGridContract.flowColumns] ?? []
+                view.runSpacing = values[LazyVGridContract.rowSpacing] ?? 0
+                view.trackSpacing = values[LazyVGridContract.columnSpacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.applies(boxMembers) { view, values in applyBox(view, values) }
+            grid.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
+            grid.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+            grid.raises(LazyVGridContract.realizedChanged)
+        }
+
+        registry.add(LazyHGridContract.self, madeByHost: UIKitLazyGridView.self) { grid in
+            grid.applies([
+                LazyHGridContract.items, LazyHGridContract.flowRows, LazyHGridContract.rowSpacing,
+                LazyHGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyHGridContract.flowRows] ?? []
+                view.runSpacing = values[LazyHGridContract.columnSpacing] ?? 0
+                view.trackSpacing = values[LazyHGridContract.rowSpacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.applies(boxMembers) { view, values in applyBox(view, values) }
+            grid.property(VisualElementContract.ignoresInput) { view, ignores in view.isUserInteractionEnabled = ignores != true }
+            grid.property(LayoutContract.letsInputThrough) { view, lets in view.passesBeside = lets ?? false }
+            grid.property(LayoutContract.hitShape) { view, shape in view.hitShape = shape }
+            grid.raises(LazyHGridContract.realizedChanged)
+        }
+
         registry.add(ZStackContract.self, create: { _ in UIKitZStackView() }) { layout in
             layout.property(PaddingElementContract.contentPadding) { view, padding in view.padding = padding ?? EdgeInsets(0) }
             layout.applies(boxMembers) { view, values in applyBox(view, values) }

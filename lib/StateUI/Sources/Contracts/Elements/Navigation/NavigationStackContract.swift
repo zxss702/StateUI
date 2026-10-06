@@ -11,7 +11,9 @@ public enum NavigationStackContract: ElementContract {
     public static let layer: ElementLayer = .adaptive
 
     /// A stack has a bar, and is shown as a page with a title and an icon.
-    public static let tiers: [any Contract.Type] = [BarElementContract.self, PageElementContract.self]
+    public static let tiers: [any Contract.Type] = [
+        BarElementContract.self, PageElementContract.self, PropertyContainerContract.self,
+    ]
 
     /// The colour the bar draws on its background: the title and the native
     /// affordances.

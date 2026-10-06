@@ -7,7 +7,7 @@ public enum BarElementContract: Contract {
     public static let name = "BarElement"
 
     /// The bar's colour is carried as a value in the tree.
-    public static let tiers: [any Contract.Type] = [PropertyContainerContract.self]
+    public static let tiers: [any Contract.Type] = []
 
     /// The bar's colour; unwritten, the platform's own material.
     public static let barBackgroundColor = ElementProperty<Self, Color>("barBackgroundColor", layer: .adaptive)

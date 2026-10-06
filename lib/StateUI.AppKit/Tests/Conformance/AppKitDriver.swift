@@ -154,13 +154,16 @@ final class AppKitDriver: HostDriver {
         let frame: NSRect
     }
 
+    /// One pass of the main loop, what AppKit autoreleases in it let go as it ends.
     func step() {
         guard let renderer else { return }
-        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.01))
-        _ = renderer.runtime.core.runJobs()
-        renderer.runtime.pump.turn()
-        if renderer.frameClock.held { renderer.displayFrameForTesting() }
-        layOutWindows()
+        autoreleasepool {
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.01))
+            _ = renderer.runtime.core.runJobs()
+            renderer.runtime.pump.turn()
+            if renderer.frameClock.held { renderer.displayFrameForTesting() }
+            layOutWindows()
+        }
     }
 
     /// Lays each window out as the display cycle does: the windows stand off the screen, where none runs. A user
@@ -192,6 +195,13 @@ final class AppKitDriver: HostDriver {
         layOutWindows()
         if element.type == .windowScene { return try windowHolds(property, element) }
         if element.type == .menuItem || element.type == .toolbarItem { return try itemHolds(property, element) }
+        if element.type == .pin { return try pinHolds(property, element) }
+        if let map = (element.native as? AppKitElement)?.view as? AppKitMapView, let held = mapHolds(property, map) {
+            return held
+        }
+        if let web = (element.native as? AppKitElement)?.view as? AppKitWebView, let held = webHolds(property, web) {
+            return held
+        }
         let view = (element.native as? AppKitElement)?.view
         switch (property, view) {
         case (.selectedItems, let items as AppKitItemsView): return .strings(items.selectedForTesting)

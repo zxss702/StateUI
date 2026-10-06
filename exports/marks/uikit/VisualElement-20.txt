@@ -6,28 +6,41 @@ CheckBox.accessibilityHint: ✅
 ColorPicker.focus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 ColorPicker.isFocusedChanged: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 ColorPicker.unfocus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
-DatePicker.frameChanged: ✅
-DatePicker.maximumHeight: ✅
-DatePicker.maximumWidth: ✅
-DatePicker.minimumHeight: ✅
-DatePicker.minimumWidth: ✅
-Ellipse.opacity: ✅
-Ellipse.translationY: 🔌 read translationY of Ellipse: the host's own transform, checked against the layer it composed itself
-Grid.scaleX: 🔌 read scaleX of Grid: the host's own transform, checked against the layer it composed itself
-HStack.rotationX: 🔌 read rotationX of HStack: the host's own transform, checked against the layer it composed itself
-Image.pivotX: 🔌 read pivotX of Image: the host's own transform, checked against the layer it composed itself
-List.automationExcludedWithChildren: ✅
-Text.accessibilityHint: ✅
-Line.focus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
-Line.isFocusedChanged: – Line takes no keyboard focus here: it refuses it, and nothing is heard
-Line.unfocus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
-Map.frameChanged: not realized
-Map.maximumHeight: not realized
-Map.maximumWidth: not realized
-Map.minimumHeight: not realized
-Map.minimumWidth: not realized
-Path.opacity: ✅
-Path.translationY: 🔌 read translationY of Path: the host's own transform, checked against the layer it composed itself
+CustomLayout.frameChanged: not realized
+CustomLayout.maximumHeight: not realized
+CustomLayout.maximumWidth: not realized
+CustomLayout.minimumHeight: not realized
+CustomLayout.minimumWidth: not realized
+DatePicker.scaleX: 🔌 read scaleX of DatePicker: the host's own transform, checked against the layer it composed itself
+Ellipse.rotationX: 🔌 read rotationX of Ellipse: the host's own transform, checked against the layer it composed itself
+Grid.pivotX: 🔌 read pivotX of Grid: the host's own transform, checked against the layer it composed itself
+GridRow.automationExcludedWithChildren: not realized
+HStack.accessibilityHint: ✅
+Image.focus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
+Image.isFocusedChanged: – Image takes no keyboard focus here: it refuses it, and nothing is heard
+Image.unfocus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
+LazyHGrid.accessibilityHint: ✅
+LazyHStack.focus: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
+LazyHStack.isFocusedChanged: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
+LazyHStack.unfocus: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
+LazyVGrid.frameChanged: ✅
+LazyVGrid.maximumHeight: ✅
+LazyVGrid.maximumWidth: ✅
+LazyVGrid.minimumHeight: ✅
+LazyVGrid.minimumWidth: ✅
+LazyVStack.opacity: ✅
+LazyVStack.translationY: 🔌 read translationY of LazyVStack: the host's own transform, checked against the layer it composed itself
+Line.scaleX: 🔌 read scaleX of Line: the host's own transform, checked against the layer it composed itself
+List.frameChanged: ✅
+List.maximumHeight: ✅
+List.maximumWidth: ✅
+List.minimumHeight: ✅
+List.minimumWidth: ✅
+Map.rotationX: 🔌 read rotationX of Map: the host's own transform, checked against the layer it composed itself
+Masked.opacity: not realized
+Masked.translationY: not realized
+MenuButton.pivotX: not realized
+Path.automationExcludedWithChildren: ✅
 Picker.scaleX: 🔌 read scaleX of Picker: the host's own transform, checked against the layer it composed itself
 Polygon.rotationX: 🔌 read rotationX of Polygon: the host's own transform, checked against the layer it composed itself
 Polyline.pivotX: 🔌 read pivotX of Polyline: the host's own transform, checked against the layer it composed itself
@@ -47,6 +60,8 @@ SearchField.scaleX: 🔌 read scaleX of SearchField: the host's own transform, c
 Slider.rotationX: 🔌 read rotationX of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.pivotX: 🔌 read pivotX of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.automationExcludedWithChildren: ✅
+Text.opacity: ✅
+Text.translationY: 🔌 read translationY of Text: the host's own transform, checked against the layer it composed itself
 TextEditor.accessibilityHint: ✅
 TextField.focus: ✅
 TextField.isFocusedChanged: ✅

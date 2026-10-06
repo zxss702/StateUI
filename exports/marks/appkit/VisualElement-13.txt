@@ -17,38 +17,42 @@ HStack.height: ✅
 HStack.width: ✅
 Image.isVisible: ✅
 Image.translationX: 🔌 read translationX of Image: the host's own transform, checked against the layer it composed itself
+LazyHGrid.frameChanged: ✅
+LazyHGrid.height: ✅
+LazyHGrid.width: ✅
+LazyHStack.isVisible: ✅
+LazyHStack.translationX: 🔌 read translationX of LazyHStack: the host's own transform, checked against the layer it composed itself
+LazyVGrid.scale: 🔌 read scale of LazyVGrid: the host's own transform, checked against the layer it composed itself
+LazyVStack.rotation: 🔌 read rotation of LazyVStack: the host's own transform, checked against the layer it composed itself
 Line.layoutDirection: not realized
 List.scale: 🔌 read scale of List: the host's own transform, checked against the layer it composed itself
-Map.isAccessibilityHidden: not realized
+Map.isAccessibilityHidden: ✅
 Masked.rotation: 🔌 read rotation of Masked: the host's own transform, checked against the layer it composed itself
 MenuButton.accessibilityLabel: ✅
 Path.frame: ✅
-Picker.frameChanged: ✅
-Picker.height: ✅
-Picker.width: ✅
-Polygon.isVisible: ✅
-Polygon.translationX: 🔌 read translationX of Polygon: the host's own transform, checked against the layer it composed itself
-Polyline.scale: 🔌 read scale of Polyline: the host's own transform, checked against the layer it composed itself
-PositionIndicator.rotation: not realized
-ProgressBar.layoutDirection: not realized
-RadioButton.isAccessibilityHidden: ✅
-Rectangle.accessibilityLabel: ✅
-ScrollView.frame: ✅
-SearchField.frameChanged: ✅
-SearchField.height: ✅
-SearchField.width: ✅
-Slider.isVisible: ✅
-Slider.translationX: 🔌 read translationX of Slider: the host's own transform, checked against the layer it composed itself
-Stepper.scale: 🔌 read scale of Stepper: the host's own transform, checked against the layer it composed itself
-Switch.rotation: 🔌 read rotation of Switch: the host's own transform, checked against the layer it composed itself
+Picker.layoutDirection: not realized
+Polygon.isAccessibilityHidden: ✅
+Polyline.accessibilityLabel: ✅
+PositionIndicator.frame: not realized
+ProgressBar.frameChanged: ✅
+ProgressBar.height: ✅
+ProgressBar.width: ✅
+RadioButton.isVisible: ✅
+RadioButton.translationX: 🔌 read translationX of RadioButton: the host's own transform, checked against the layer it composed itself
+Rectangle.scale: 🔌 read scale of Rectangle: the host's own transform, checked against the layer it composed itself
+ScrollView.rotation: 🔌 read rotation of ScrollView: the host's own transform, checked against the layer it composed itself
+SearchField.layoutDirection: not realized
+Slider.isAccessibilityHidden: ✅
+Stepper.accessibilityLabel: ✅
+Switch.frame: ✅
 Text.rotation: 🔌 read rotation of Text: the host's own transform, checked against the layer it composed itself
-TextEditor.layoutDirection: not realized
-TextField.isAccessibilityHidden: ✅
-TimePicker.accessibilityLabel: ✅
-TitleBar.frame: not realized
-VStack.frameChanged: ✅
-VStack.height: ✅
-VStack.width: ✅
-WebView.isVisible: not realized
-WebView.translationX: not realized
-ZStack.scale: 🔌 read scale of ZStack: the host's own transform, checked against the layer it composed itself
+TextEditor.frameChanged: ✅
+TextEditor.height: ✅
+TextEditor.width: ✅
+TextField.isVisible: ✅
+TextField.translationX: 🔌 read translationX of TextField: the host's own transform, checked against the layer it composed itself
+TimePicker.scale: 🔌 read scale of TimePicker: the host's own transform, checked against the layer it composed itself
+TitleBar.rotation: not realized
+VStack.layoutDirection: not realized
+WebView.isAccessibilityHidden: ✅
+ZStack.accessibilityLabel: ✅

@@ -57,6 +57,7 @@ final class AndroidScrollView: AndroidLayoutView {
         super.init()
         Java.call(reference, JavaAPI.setClipChildren, .bool(true))
         movement.onFramesWanted = { [weak self] in self?.onFramesWanted?() }
+        document.onArranged = { [weak self] in self?.pushLazyWindows() }
         build()
     }
 
@@ -95,11 +96,11 @@ final class AndroidScrollView: AndroidLayoutView {
         document.orientation = orientation
 
         for scroller in scrollers {
-            Java.call(scroller.reference, JavaAPI.setVerticalScrollBarEnabled, .bool(verticalBar != .never))
-            Java.call(scroller.reference, JavaAPI.setHorizontalScrollBarEnabled, .bool(horizontalBar != .never))
+            Java.call(scroller.reference, JavaAPI.setVerticalScrollBarEnabled, .bool(verticalBar != .hidden))
+            Java.call(scroller.reference, JavaAPI.setHorizontalScrollBarEnabled, .bool(horizontalBar != .hidden))
             Java.call(
                 scroller.reference, JavaAPI.setScrollbarFadingEnabled,
-                .bool(verticalBar != .always && horizontalBar != .always))
+                .bool(verticalBar != .visible && horizontalBar != .visible))
         }
 
         // Design: docs/design/host/layout.md#an-offset-the-tree-writes
@@ -137,6 +138,38 @@ final class AndroidScrollView: AndroidLayoutView {
         let previous = offset
         offset = standing
         movement.userMoved(from: previous, to: standing)
+        pushLazyWindows()
+    }
+
+    /// Every lazy run in the document hears where the window stands: the part
+    /// of its run the viewport shows, counted in the run's own room. A scroller
+    /// within the document answers its own; this one pushes past none.
+    private func pushLazyWindows() {
+        guard let size = placedSize else { return }
+        let window = Rect(
+            x: offset.x, y: offset.y,
+            width: Double(size.width) / density, height: Double(size.height) / density)
+        tellLazy(in: document, window: window, at: Point(x: 0, y: 0))
+    }
+
+    /// The lazy runs under `layout` told their windows; `origin` is where
+    /// `layout` stands in the document, each child's place counted from there.
+    private func tellLazy(in layout: AndroidLayoutView, window: Rect, at origin: Point) {
+        for item in layout.items {
+            let frame = item.view.placedFrame
+            let corner = Point(x: origin.x + frame.x, y: origin.y + frame.y)
+            if let lazy = item.view as? AndroidLazyView, orientation.takes(lazy.axis) {
+                let extent = lazy.axis == .vertical ? frame.height : frame.width
+                let (low, high) = lazy.axis == .vertical
+                    ? (window.y - corner.y, window.y + window.height - corner.y)
+                    : (window.x - corner.x, window.x + window.width - corner.x)
+                let lo = max(0, low), hi = min(extent, high)
+                lazy.windowMoved(to: hi > lo ? lo..<hi : nil)
+            }
+            if let nested = item.view as? AndroidLayoutView, !(nested is AndroidScrollView) {
+                tellLazy(in: nested, window: window, at: corner)
+            }
+        }
     }
 
     /// A finger took hold of the scroller, or let go of it and left it to throw on.
@@ -162,6 +195,7 @@ final class AndroidScrollView: AndroidLayoutView {
         onOffsetChanged = nil
         onScrollStopped = nil
         onFramesWanted = nil
+        document.onArranged = nil
     }
 
     // MARK: - Android's scrollers

@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 6 ✅ | `UIMenu` / `UIAction` |  |
 | Android Views | · | 1 – | `PopupMenu` / `MenuItem`; no menu bar | cannot activate on MenuItem - Android's driver has no path for it yet |
 | WinUI 3 | ✅ | 4 ✅ | `MenuFlyout` / `MenuBar` |  |
-| GTK 4 | · |  | `GMenu` in `GtkPopoverMenu` / `GtkPopoverMenuBar` | cannot activate on MenuItem - GTK's driver has no path for it yet |
+| GTK 4 | ✅ | 3 ✅ · 2 – | `GMenu` in `GtkPopoverMenu` / `GtkPopoverMenuBar` |  |
 | Web |  |  | ARIA `menu` / `menubar` (?) | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/MenuItemContract.swift`.
@@ -52,10 +52,10 @@ What every item a user chooses from has - a menu's entry, a toolbar's item: a ca
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `onClicked` (`clicked`) | event |  | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot activate on MenuItem - Android's driver has no path for it yet; GTK 4: cannot activate on MenuItem - GTK's driver has no path for it yet |
-| `icon` | property | `ImageSource` | adaptive | · | ✅ |  |  | · |  | cannot read icon of MenuItem - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read icon of MenuItem - GTK's driver has no path for it yet |
-| `isDestructive` | property | `Bool` | adaptive | · | ✅ | · |  |  |  | cannot read isDestructive of MenuItem - AppKit's driver has no path for it yet; Android Views: cannot read isDestructive of MenuItem - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `isEnabled` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot activate on MenuItem - Android's driver has no path for it yet; GTK 4: cannot activate on MenuItem - GTK's driver has no path for it yet |
+| `onClicked` (`clicked`) | event |  | native | ✅ | ✅ | · | ✅ | ✅ |  | Android Views: cannot activate on MenuItem - Android's driver has no path for it yet |
+| `icon` | property | `ImageSource` | adaptive | · | ✅ |  |  | – |  | cannot read icon of MenuItem - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: GNOME's menus show words alone, no picture beside them. |
+| `isDestructive` | property | `Bool` | adaptive | · | ✅ | · |  | – |  | cannot read isDestructive of MenuItem - AppKit's driver has no path for it yet; Android Views: cannot read isDestructive of MenuItem - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: GNOME's menus mark no entry as destroying something. |
+| `isEnabled` | property | `Bool` | native | ✅ | ✅ | · | ✅ | ✅ |  | Android Views: cannot activate on MenuItem - Android's driver has no path for it yet |
 | `shortcut` | property | `KeyboardShortcut` | native |  |  |  |  |  |  |  |
-| `text` | property | `String` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read text of MenuItem - Android's driver has no path for it yet; GTK 4: cannot read text of MenuItem - GTK's driver has no path for it yet |
+| `text` | property | `String` | native | ✅ | ✅ | · | ✅ | ✅ |  | Android Views: cannot read text of MenuItem - Android's driver has no path for it yet |
 | `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |

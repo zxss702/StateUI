@@ -23,6 +23,9 @@
 
         /// The contracts the element wears, itself first.
         let worn: [ObjectIdentifier]
+
+        /// The children the view draws itself, by their node type, in registration order.
+        let children: [(type: NodeType, apply: (View, [HostChild]) -> Void)]
     }
 
     /// The registrations, by node type.
@@ -110,6 +113,13 @@
 
         let appliers = registration.appliers
         let wholes = registration.wholes
+        let children = registration.childAppliers.map { child in
+            (type: child.type, apply: { (view: View, kept: [HostChild]) in
+                guard let made = view as? Made else { return }
+
+                child.apply(made, kept)
+            })
+        }
 
         entries[Realized.nodeType] = Entry(
             make: make,
@@ -135,7 +145,8 @@
                 return applied
             },
             members: registration.members,
-            worn: Realized.worn.map { ObjectIdentifier($0) })
+            worn: Realized.worn.map { ObjectIdentifier($0) },
+            children: children)
     }
 
     /// A property the host's shared element machinery realizes on every
@@ -217,6 +228,28 @@
         entries[type]?.apply(view, changed, read, carried) ?? []
     }
 
+    /// The node types of the children the view of a `type` draws itself, in registration order - a child of one
+    /// has no view of its own.
+    ///
+    /// - Parameter type: the parent's node type.
+    /// - Returns: the children's node types.
+    public func childTypes(of type: NodeType) -> [NodeType] {
+        entries[type]?.children.map(\.type) ?? []
+    }
+
+    /// Hands the view of an element of `type` every child of each contract its registration draws itself, as
+    /// `children` answers them for that contract's node type, in the tree's order.
+    ///
+    /// - Parameters:
+    ///   - view: the element's view.
+    ///   - type: the element's node type.
+    ///   - children: the element's children of a node type, each the one the host keeps for it.
+    public func applyChildren(to view: View, of type: NodeType, children: (NodeType) -> [HostChild]) {
+        for child in entries[type]?.children ?? [] {
+            child.apply(view, children(child.type))
+        }
+    }
+
     /// What these registrations realize: every element they make a view for,
     /// every member they take or raise, and what the shared machinery realizes
     /// on each element that wears the member's contract.
@@ -231,7 +264,8 @@
             }
         }
 
-        return HostRealization(elements: Set(entries.keys.map(\.name)), members: members)
+        let drawn = entries.values.flatMap { $0.children.map(\.type.name) }
+        return HostRealization(elements: Set(entries.keys.map(\.name) + drawn), members: members)
     }
 }
 
@@ -245,6 +279,9 @@
 
     /// The appliers taking the element whole, each with the keys it reads.
     fileprivate var wholes: [(keys: Set<Prop>, apply: (Made, ElementValues<Realized>) -> Void)] = []
+
+    /// The appliers handing the view its children it draws itself, by their contract's node type.
+    fileprivate var childAppliers: [(type: NodeType, apply: (Made, [HostChild]) -> Void)] = []
 
     /// Every member registered.
     fileprivate var members: Set<HostRealizedMember> = []
@@ -321,6 +358,45 @@
         wholes.append((keys: keys, apply: apply))
     }
 
+    /// Hands the view the children of `contract` it draws itself - a map's
+    /// markers - where the last patch changed its children: each the one kept
+    /// for as long as the child lives, read and reported through it. `members`
+    /// are what the view realizes of each child - a property or an event of
+    /// the child's contract or of a tier it wears; anything else is left out,
+    /// and said once.
+    ///
+    ///     registration.children(MarkerContract.self, members: [MarkerContract.label, MarkerContract.selected]) { map, markers in
+    ///         map.show(markers.map { ($0, $0.value(MarkerContract.label) ?? "") })
+    ///     }
+    ///
+    /// - Parameters:
+    ///   - contract: the children's contract.
+    ///   - members: what the view realizes of each child, written with their contracts.
+    ///   - apply: hands the view every child of the contract.
+    @_spi(Host) public func children<Child: ElementContract>(
+        _ contract: Child.Type,
+        members: [any ContractMember],
+        _ apply: @escaping (Made, [ChildElement<Child>]) -> Void
+    ) {
+        for member in members {
+            guard let owner = (member as? any OwnedMember)?.ownerType else {
+                complain("\(Realized.name)'s children were registered with `\(member.name)`, which is no property "
+                    + "and no event: it was left out.")
+                continue
+            }
+
+            guard Child.wears(owner) else {
+                complain("\(Realized.name)'s children were registered with `\(owner.name).\(member.name)`, and "
+                    + "\(Child.name) wears no \(owner.name): it was left out.")
+                continue
+            }
+
+            self.members.insert(HostRealizedMember(element: Child.name, owner: owner.name, member: member.name))
+        }
+
+        childAppliers.append((type: Child.nodeType, apply: { made, children in apply(made, children.map(ChildElement.init)) }))
+    }
+
     /// An event the view raises through its `Reports` - its own, or one a tier
     /// it wears declares, as a field's text change is. Recorded, so the core
     /// knows the host reports it; an event of a contract the element does not
@@ -355,12 +431,15 @@ extension ElementContract {
     }
 }
 
-/// A property as a registration reads it out of a list: the contract declaring
-/// it, and the key it crosses under.
-protocol RegisteredProperty: ContractMember {
+/// A property or an event as a registration reads it out of a list: the contract declaring it.
+protocol OwnedMember: ContractMember {
     /// The contract declaring it.
     var ownerType: any Contract.Type { get }
+}
 
+/// A property as a registration reads it out of a list: the contract declaring
+/// it, and the key it crosses under.
+protocol RegisteredProperty: OwnedMember {
     /// The key it crosses under.
     var key: Prop { get }
 }
@@ -371,4 +450,9 @@ extension ElementProperty: RegisteredProperty {
 
     /// The key it crosses under.
     var key: Prop { token }
+}
+
+extension ElementEvent: OwnedMember {
+    /// The contract declaring it.
+    var ownerType: any Contract.Type { Owner.self }
 }

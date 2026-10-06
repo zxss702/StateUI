@@ -44,7 +44,10 @@ extension UIKitDriver {
 
     /// A view's context menu, or a window's menus on the menu bar, as UIKit is handed them.
     func menu(of element: MountedElement) throws -> String {
-        if element.type == .windowScene { return UIKitMenus.said(renderer?.menuBar ?? []) }
+        if element.type == .windowScene {
+            guard let menuBar = renderer?.menuBar else { return "" }
+            return UIKitMenus.said(menuBar.groups.map(\.1) + menuBar.menus)
+        }
         guard let native = element.native as? UIKitElement, native.view != nil else {
             throw DriverCannot("read the menu of \(element.type.name)")
         }
@@ -63,6 +66,10 @@ extension UIKitDriver {
     /// What the host told VoiceOver, in order.
     func announced() throws -> [String] {
         renderer?.actToolkit.announcedForTesting ?? []
+    }
+
+    var liveViews: Int? {
+        UIKitElement.liveViewCount
     }
 
     /// What the host keeps under `key` for the next launch, as it reads it back.

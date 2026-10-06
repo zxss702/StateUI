@@ -18,6 +18,11 @@ class GTKTextFieldView: GTKView, GTKInputView {
 
     private var wordsClass: String?
     private var maximumLength: Int?
+    private var textCase: TextCase?
+
+    /// The caret and the selection the program put, which stand over the field's first focus; nil once that has
+    /// passed or the user has changed the words.
+    private var programCaret: (start: Int, length: Int)?
 
     /// The class unrounding the entry's box, as a square style asks.
     private var squareClass: String?
@@ -44,9 +49,16 @@ class GTKTextFieldView: GTKView, GTKInputView {
         connect("changed") { _, data in
             MainActor.assumeIsolated {
                 guard let view = GTKView.find(viewNumber(data)) as? GTKTextFieldView else { return }
+                if !ProgramWrite.isWriting { view.programCaret = nil }
                 view.onTextChanged?(view.text)
             }
         }
+        let focus = gtk_event_controller_focus_new()!
+        connectSignal(UnsafeMutableRawPointer(focus), "enter", number: number) {
+            (_: UnsafeMutableRawPointer?, data: gpointer?) in
+            MainActor.assumeIsolated { (GTKView.find(viewNumber(data)) as? GTKTextFieldView)?.focused() }
+        }
+        gtk_widget_add_controller(widget, focus)
         connect("activate") { _, data in
             MainActor.assumeIsolated { (GTKView.find(viewNumber(data)) as? GTKTextFieldView)?.onSubmitted?() }
         }
@@ -83,13 +95,20 @@ class GTKTextFieldView: GTKView, GTKInputView {
         maximumLength = length
     }
 
-    /// Words going in at `place`: where they would take the field past its bound, only the first characters that
-    /// fit go in (`InputWords.fitting`) - from a key, a paste and a program's write alike.
+    /// The case the words stand in. GTK holds none, so the host turns what goes in into it.
+    func setTextCase(_ textCase: TextCase?) {
+        self.textCase = textCase
+    }
+
+    /// Words going in at `place`: in the field's case, and where they would take the field past its bound only the
+    /// first characters that fit (`InputWords.fitting`) - from a key, a paste and a program's write alike.
     private func inserting(_ typed: UnsafePointer<CChar>?, _ bytes: Int32, at place: UnsafeMutablePointer<Int32>?) {
-        guard let typed, maximumLength != nil else { return }
+        guard let typed else { return }
         let inserted = bytes < 0
             ? String(cString: typed) : String(decoding: UnsafeRawBufferPointer(start: typed, count: Int(bytes)), as: UTF8.self)
-        guard let fitting = InputWords.fitting(inserted, beside: text, toBound: maximumLength) else { return }
+        guard let fitting = InputWords.fitting(inserted, beside: text, in: textCase, toBound: maximumLength) else {
+            return
+        }
         g_signal_stop_emission_by_name(UnsafeMutableRawPointer(words), "insert-text")
         guard !fitting.isEmpty else { return }
         gtk_editable_insert_text(OpaquePointer(words), fitting, -1, place)
@@ -115,8 +134,22 @@ class GTKTextFieldView: GTKView, GTKInputView {
     }
 
     func select(start: Int, length: Int) {
-        let start = Int32(clamping: max(0, start))
-        gtk_editable_select_region(editable, start, start + Int32(clamping: max(0, length)))
+        if ProgramWrite.isWriting { programCaret = (start, length) }
+        let first = Int32(clamping: max(0, start))
+        gtk_editable_select_region(editable, first, first + Int32(clamping: max(0, length)))
+    }
+
+    /// The field took the focus: GNOME has selected its words whole, and the program's caret, where it put one,
+    /// stands again - once.
+    /// Design: docs/design/platforms/gtk/controls.md#a-field-and-its-words
+    private func focused() {
+        guard programCaret != nil else { return }
+        GTKDoorbell.afterLayout { [weak self] in
+            guard let self, let caret = self.programCaret else { return }
+            self.programCaret = nil
+            ProgramWrite.perform { self.select(start: caret.start, length: caret.length) }
+            self.programCaret = nil
+        }
     }
 
     override func detach() {

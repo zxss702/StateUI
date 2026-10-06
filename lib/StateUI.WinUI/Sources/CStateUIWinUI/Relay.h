@@ -74,8 +74,8 @@ namespace stateui {
     /// stays.
     void holdHitArea(xaml::UIElement const &element, int64_t view);
 
-    /// WinUI's input scope for StateUI's `InputPurpose`: the on-screen keyboard a field brings up.
-    xaml::Input::InputScope inputScope(int32_t purpose);
+    /// WinUI's input scope the relay numbers `scope` (`WinUIInputScope`): the on-screen keyboard a field brings up.
+    xaml::Input::InputScope inputScope(int32_t scope);
 
     /// Whether the window whose root is `root` presents sheets over its pages.
     bool showsSheets(controls::Grid const &root);
@@ -103,6 +103,19 @@ namespace stateui {
         std::fprintf(stderr, "StateUI WinUI: %s failed: 0x%08x %s\n", where, static_cast<unsigned>(code), words.c_str());
         std::fflush(stderr);
         return code;
+    }
+
+    /// A handler WinUI calls from its own loop, what it throws said and swallowed: one leaving it is stowed and ends
+    /// the process.
+    template <typename Handler>
+    auto guarded(char const *where, Handler handler) {
+        return [where, handler = std::move(handler)](auto &&...arguments) mutable {
+            try {
+                handler(std::forward<decltype(arguments)>(arguments)...);
+            } catch (...) {
+                report(where);
+            }
+        };
     }
 
     /// Hands a projected object's default interface to the host, AddRef'd.

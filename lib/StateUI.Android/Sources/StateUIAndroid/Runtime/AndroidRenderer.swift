@@ -32,7 +32,7 @@ final class AndroidRenderer {
     private(set) lazy var runtime = HostRuntime(
         clock: frameClock, reducesMotion: reducesMotion,
         makeNative: { [unowned self] element in AndroidElement(element, host: self) },
-        log: { AndroidRenderer.log.error($0) })
+        log: { AndroidRenderer.log.error($0) }, views: { AndroidView.liveCount })
 
     private let context: JavaObject
 
@@ -292,8 +292,18 @@ extension AndroidRenderer: FramePresenter {
         runtime.frames.commit(now: now)
     }
 
+    /// Shows the first window's chrome again where a frame moved what it shows (`WindowChrome.follows`): its title,
+    /// the bar and tab row of every arrangement it and its sheets show, and whether there is a way back.
+    private func showChrome() {
+        guard let window = runtime.tree.root?.first(type: .windowScene) else { return }
+        showTitle(of: window)
+        presentation.arrangement?.android.refreshBars()
+        presentation.sheets.forEach { $0.android.refreshBars() }
+        refreshBack()
+    }
+
     func present(states: [Int32: HostStateValue], properties: [UInt64: Set<Prop>]) {
-        runtime.tree.present(states: states, properties: properties)
+        if runtime.tree.present(states: states, properties: properties).windowChrome { showChrome() }
     }
 
     func renderIfNeeded() {

@@ -18,6 +18,46 @@
                 tapped(element), panned(element), pannedDown(element), swiped(element), pinched(element), pointed(element),
                 dragged(element), droppedOn(element),
             ]
+        } + [scrolledInAList]
+    }
+
+    /// A list's scroll moves where an item's view stands in its window, the item's place in its cell kept.
+    static var scrolledInAList: ConformanceCase {
+        ConformanceCase("aScrollMovesWhereAnItemStandsInItsWindow", proves: [
+            Covered(ViewContract.frameChanged, on: "Rectangle"),
+        ], needs: [Covered(ListContract.self)]) { s in
+            let clock = TestClock()
+            let frames = Received<[Double]>()
+            s.start(clock: clock) {
+                VStack {
+                    List(0..<100) { item in
+                        Rectangle().fill(item == 2 ? .red : .blue).frame(width: 120).frame(height: 60)
+                            .onEvent(ViewContract.frameChanged) { if item == 2 { frames.values.append($0) } }
+                    }
+                    .frame(width: 200).frame(height: 300).id("list")
+                }
+                .horizontalAlignment(.start)
+                .verticalAlignment(.start)
+            }
+            s.settle { !frames.values.isEmpty }
+            for time in stride(from: 16.0, through: 400, by: 16) {
+                clock.now = time
+                s.frame()
+            }
+            let before = frames.values.last ?? []
+
+            try s.perform(.scroll(to: Point(0, 100)), on: s.element("list"))
+            s.turn()
+            for time in stride(from: 416.0, through: 800, by: 16) {
+                clock.now = time
+                s.frame()
+            }
+            let corner = FrameReport.inWindow(before)
+            let moved = corner.count == 2 ? [corner[0], corner[1] - 100] : []
+            s.settle { frames.values.last.map(FrameReport.inWindow) == moved }
+
+            s.expect(frames.values.last.map(FrameReport.inWindow), moved, "100 higher in its window")
+            s.expect(frames.values.last.map(FrameReport.place), FrameReport.place(before), "where it was in its cell")
         }
     }
 

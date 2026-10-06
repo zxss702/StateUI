@@ -160,19 +160,39 @@ final class Differ {
         scope.append(contentsOf: rendered.provided)
         defer { scope.removeLast(rendered.provided.count) }
 
-        var changedChildren: [HostPatch] = []
+        // What the host holds is the sequence the patches address - a
+        // fragment mounts nothing of its own, so its children stand in this
+        // list directly, exactly as reconcileChildren splices them. The
+        // arrangement is sent again when that sequence moved.
+        let held = mountedIds(of: rendered.children)
+        var addressed: [HostPatch] = []
 
         for (index, child) in rendered.children.enumerated() {
             let (node, childPatch) = revisit(child)
             rendered.children[index] = node
 
-            if !childPatch.isEmpty {
-                changedChildren.append(childPatch)
+            if node.type == .fragment {
+                let nested: [HostPatch] = switch childPatch.children {
+                case .arranged(let list), .changed(let list): list
+                case .unchanged: []
+                }
+                let byID = Dictionary(
+                    nested.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+                addressed.append(contentsOf: flattened(of: node.children).map {
+                    byID[$0.id] ?? HostPatch(id: $0.id, type: $0.type)
+                })
+            } else {
+                addressed.append(childPatch)
             }
         }
 
-        if !changedChildren.isEmpty {
-            patch.children = .changed(changedChildren)
+        if addressed.map(\.id) != held {
+            patch.children = .arranged(addressed)
+        } else {
+            let changedChildren = addressed.filter { !$0.isEmpty }
+            if !changedChildren.isEmpty {
+                patch.children = .changed(changedChildren)
+            }
         }
 
         // A kept element folds its subtree's preference answers again - a

@@ -23,6 +23,18 @@ extension WinUIElement {
                 host?.runtime.reducesMotion() ?? false
             })
         }
+        if type == .lazyVStack || type == .lazyHStack, let host {
+            return WinUILazyStackView(
+                axis: type == .lazyVStack ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        if type == .lazyVGrid || type == .lazyHGrid, let host {
+            return WinUILazyGridView(
+                axis: type == .lazyVGrid ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        // A child its parent's view draws - a map's marker - has no view of its own.
+        if element.isDrawnByParent(in: WinUIRegistrations.registry) { return nil }
         if let registered = WinUIRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },
@@ -68,6 +80,8 @@ extension WinUIElement {
             switch property {
             case .opacity: view.setOpacity(value(.opacity)?.number ?? 1)
             case .isVisible: view.setShown(isShown)
+            // Ignored, the view and all in it are passed over: a click goes to what is under it.
+            case .ignoresInput: view.setIgnoresInput(element.bool(.ignoresInput) == true)
             case .hint:
                 if let hint = value(.hint)?.string {
                     hint.withCString { stateui_winui_set_tooltip(view.handle, $0) }

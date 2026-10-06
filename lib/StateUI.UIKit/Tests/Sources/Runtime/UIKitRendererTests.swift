@@ -41,7 +41,7 @@ final class UIKitRendererTests: XCTestCase {
         host.settle { TestScene.scene?.title == "Greeting" }
 
         let window = try XCTUnwrap(host.roster.windows.first?.1.window)
-        XCTAssertTrue(window.window === TestScene.scene)
+        XCTAssertTrue(window.windowScene === TestScene.scene)
         XCTAssertFalse(window.isHidden)
         XCTAssertEqual(TestScene.scene?.title, "Greeting")
     }
@@ -53,7 +53,7 @@ final class UIKitRendererTests: XCTestCase {
         let window = try XCTUnwrap(host.roster.windows.first?.1.window)
         host.finish()
 
-        XCTAssertNil(window.window)
+        XCTAssertNil(window.windowScene)
         XCTAssertTrue(window.isHidden)
         XCTAssertNotEqual(TestScene.scene?.activationState, .unattached, "the scene stays connected")
     }
@@ -70,7 +70,7 @@ final class UIKitRendererTests: XCTestCase {
         host.runtime.userClosed(element)
         host.settle { false }
 
-        XCTAssertNil(controller.window?.window, "the window left the scene")
+        XCTAssertNil(controller.window?.windowScene, "the window left the scene")
         XCTAssertTrue(UIApplication.shared.openSessions.contains(session), "the scene's session stays open")
         XCTAssertNotEqual(TestScene.scene?.activationState, .unattached, "the scene stays connected")
     }
@@ -91,7 +91,7 @@ final class UIKitRendererTests: XCTestCase {
         XCTAssertEqual(host.roster.windows.count, 1, "the window the application launches with")
         host.connect(try XCTUnwrap(TestScene.scene))
 
-        XCTAssertTrue(host.roster.windows.first?.1.window?.window === TestScene.scene)
+        XCTAssertTrue(host.roster.windows.first?.1.window?.windowScene === TestScene.scene)
         XCTAssertEqual(logged.lines, [], "nothing asked of iOS")
     }
 
@@ -156,5 +156,15 @@ final class UIKitRendererTests: XCTestCase {
 
         XCTAssertEqual(field.text, "Pawel")
         XCTAssertEqual(host.views(UIKitLabelView.self).first?.text, "Hello, Pawel")
+    }
+
+    /// A window closing in front brings back the one the user was in only where that one stands off the screen, under
+    /// it: one standing on the screen beside it stays where and as big as it is - an iPad's windows.
+    @MainActor
+    func testAWindowClosingBringsBackOnlyOneOffTheScreen() {
+        XCTAssertTrue(UIKitRenderer.bringsBack(closing: .foregroundActive, staying: .background), "under it")
+        XCTAssertFalse(UIKitRenderer.bringsBack(closing: .foregroundActive, staying: .foregroundInactive), "beside it")
+        XCTAssertFalse(UIKitRenderer.bringsBack(closing: .foregroundActive, staying: .foregroundActive), "beside it")
+        XCTAssertFalse(UIKitRenderer.bringsBack(closing: .background, staying: .background), "nothing in front closes")
     }
 }

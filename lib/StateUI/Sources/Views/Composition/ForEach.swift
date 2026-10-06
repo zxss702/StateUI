@@ -18,10 +18,28 @@
 ///
 /// A plain `for` does not compile inside a view builder, so this is where
 /// repetition is written.
+///
+/// The items and the row closure are kept, not run: read eagerly a `ForEach`
+/// builds every row's node, but a lazy container asks it as a `LazyRows` -
+/// the identities come first, and a row's own view is built only when the
+/// row is asked into view.
 public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View>: View {
-    /// The views, one per item, each wearing its item's identity - a fragment
-    /// whose children the differ splices into the parent element's list.
-    public var node: Node
+    /// The collection the rows stand for.
+    private let items: Items
+
+    /// Which part of an item is its identity.
+    private let identity: KeyPath<Items.Element, Id>
+
+    /// The row each item builds, kept and run on asking.
+    private let content: (Items.Element) -> Content
+
+    /// One view per item, each wearing its item's identity - a fragment whose
+    /// children the differ splices into the parent element's list.
+    public var node: Node {
+        Node(type: .fragment, children: items.map { item in
+            Identified(identity: String(describing: item[keyPath: identity]), element: content(item)).node
+        })
+    }
 
     /// One view per item, the item its identity.
     ///
@@ -32,7 +50,7 @@ public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View
     /// A range works: its numbers are the items.
     public init(
         _ items: Items,
-        @ViewBuilder content: (Items.Element) -> Content
+        @ViewBuilder content: @escaping (Items.Element) -> Content
     ) where Items.Element == Id {
         self.init(items, id: \.self, content: content)
     }
@@ -55,11 +73,64 @@ public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View
     public init(
         _ items: Items,
         id: KeyPath<Items.Element, Id>,
-        @ViewBuilder content: (Items.Element) -> Content
+        @ViewBuilder content: @escaping (Items.Element) -> Content
     ) {
-        node = Node(type: .fragment, children: items.map { item in
-            Identified(identity: String(describing: item[keyPath: id]), element: content(item)).node
-        })
+        self.items = items
+        self.identity = id
+        self.content = content
+    }
+}
+
+extension ForEach: LazyRows {
+    var lazyChildren: [Node] { node.asChildren }
+
+    var lazyRowCount: Int { items.count }
+
+    func lazyRowIdentity(at index: Int) -> String? {
+        String(describing: items[self.items.index(items.startIndex, offsetBy: index)][keyPath: identity])
+    }
+
+    func lazyRow(at index: Int) -> any Element {
+        let item = items[items.index(items.startIndex, offsetBy: index)]
+        return KeyedRow(identity: String(describing: item[keyPath: identity]), element: content(item))
+    }
+}
+
+/// One turn's view, its item's identity on the key rather than the id - the
+/// reading `lazyRow` gives. The identity rides the path so a statement's
+/// segment can join it, while an author's `.id()` on the row still names it.
+private struct KeyedRow: Element {
+    /// The item's identity, for the row's path.
+    let identity: String
+
+    /// The view as the author wrote it, modifiers and all.
+    let element: Element
+
+    /// The element's own node, the identity on its path - a fragment's on
+    /// its children's, since the fragment splices away.
+    var node: Node {
+        var node = element.node
+
+        guard node.type == .fragment else {
+            if node.id == nil {
+                node.key = node.key.map { "\(identity).\($0)" } ?? identity
+            }
+            return node
+        }
+
+        if node.children.count == 1, node.children[0].id == nil {
+            node.children[0].key = node.children[0].key.map { "\(identity).\($0)" } ?? identity
+            return node
+        }
+
+        node.children = node.children.map { child in
+            var child = child
+            if child.id == nil {
+                child.key = child.key.map { "\(identity).\($0)" } ?? identity
+            }
+            return child
+        }
+        return node
     }
 }
 

@@ -276,6 +276,16 @@ final class ControlTests: XCTestCase {
                 .columns(.fill, .proportional(2))
                 .rowSpacing(12)
                 .columnSpacing(8))
+        // A `Grid` also runs as a flow grid - `flowColumns` standing in for
+        // `columns` - the shape `LazyVGrid` took before it became an element
+        // of its own. The case carries the member by hand.
+        var flowGrid =              Grid { Text("a"); Text("b") }
+        flowGrid.node.write(GridContract.flowColumns, [GridItem(.adaptive(minimum: 80))])
+        let case20a =            ControlCase("Grid", sources: ["Grid.swift", "GridRow.swift"],
+                flowGrid)
+        // The lazy family as its view writes it: a composed view, so the case
+        // is its body built - the element, the items and the spacing it
+        // declares, and `realizedChanged` carried for the host to answer.
         let case20b =           ControlCase("LazyVGrid", source: "LazyVGrid.swift",
                 LazyVGrid(
                     columns: [
@@ -286,7 +296,36 @@ final class ControlTests: XCTestCase {
                 ) {
                     Text("A cell")
                     Text("Another")
-                })
+                }
+                .horizontalAlignment(.center)
+                .node.built)
+        let case20c =           ControlCase("LazyHGrid", source: "LazyVGrid.swift",
+                LazyHGrid(
+                    rows: [
+                        GridItem(.fixed(80), spacing: 8),
+                        GridItem(.flexible(minimum: 60, maximum: 120)),
+                    ],
+                    spacing: 8
+                ) {
+                    Text("A cell")
+                    Text("Another")
+                }
+                .verticalAlignment(.fill)
+                .node.built)
+        let case20d =           ControlCase("LazyVStack", source: "LazyStacks.swift",
+                LazyVStack(alignment: .leading, spacing: 12) {
+                    Text("A row")
+                    Text("Another")
+                }
+                .horizontalAlignment(.center)
+                .node.built)
+        let case20e =           ControlCase("LazyHStack", source: "LazyStacks.swift",
+                LazyHStack(alignment: .top, spacing: 6) {
+                    Text("A row")
+                    Text("Another")
+                }
+                .verticalAlignment(.fill)
+                .node.built)
         let case21 =             ControlCase("VStack", source: "StackLayouts.swift",
                 VStack(alignment: .leading, spacing: 12) {
                     Text("One")
@@ -719,7 +758,7 @@ final class ControlTests: XCTestCase {
                 .mask { RoundedRectangle(cornerRadius: 8).fill(.tomato) })
 
         return [
-            case0, case0b, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case20b, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36, case37, case38, case39,
+            case0, case0b, case1, case2, case3, case4, case5, case6, case7, case8, case9, case10, case11, case12, case13, case14, case15, case16, case17, case18, case19, case20, case20a, case20b, case20c, case20d, case20e, case21, case22, case23, case24, case25, case26, case27, case28, case29, case30, case31, case32, case33, case34, case35, case36, case37, case38, case39,
         ]
     }
 

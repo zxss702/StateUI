@@ -94,6 +94,11 @@
     /// What the host's store keeps under `key` - one every scene shares, or one of the scene the case's page is
     /// in - as the next launch reads it; nil where it keeps nothing.
     func kept(_ key: String, inScene: Bool) throws -> HostValue?
+
+    /// How many native views the host holds alive, the count its tally writes; nil where it does not count them -
+    /// a case needing it does not run.
+    /// Design: docs/design/host/conformance.md#nothing-left-behind
+    var liveViews: Int? { get }
 }
 
 extension HostDriver {
@@ -149,6 +154,10 @@ extension HostDriver {
 
     public func kept(_ key: String, inScene: Bool) throws -> HostValue? {
         throw DriverCannot("read what is kept")
+    }
+
+    public var liveViews: Int? {
+        nil
     }
 }
 

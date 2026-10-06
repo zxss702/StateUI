@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 46 ✅ | `UITextView` |  |
 | Android Views | ✅ | 62 ✅ · 1 ☑️ | multi-line `EditText` |  |
 | WinUI 3 | ✅ | 70 ✅ | multi-line `TextBox` |  |
-| GTK 4 | ✅ | 23 ✅ | `GtkTextView` |  |
+| GTK 4 | ✅ | 25 ✅ | `GtkTextView` |  |
 | Web |  |  | `<textarea>` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Text/TextEditorContract.swift`.
@@ -64,7 +64,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on TextEditor.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextEditor - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -72,9 +72,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of TextEditor - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on TextEditor.isReadOnly |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextEditor - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of TextEditor - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -99,7 +99,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of TextEditor: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of TextEditor: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of TextEditor - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of TextEditor: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of TextEditor: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of TextEditor - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on TextEditor.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextEditor - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
@@ -175,9 +175,9 @@ What every element showing words has: the words, and the case they are drawn in.
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: waits on TextEditor.isReadOnly; GTK 4: waits on TextEditor.textCase |
+| `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on TextEditor.isReadOnly |
 | `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
-| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
@@ -218,7 +218,7 @@ The space kept inside an element, around what it holds.
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `contentPadding` | property | `EdgeInsets` | native | · |  |  |  |  |  | cannot read contentPadding of TextEditor - AppKit's driver has no path for it yet; GTK 4: not realized |
+| `contentPadding` | property | `EdgeInsets` | native | · |  |  |  |  |  | cannot read contentPadding of TextEditor - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: not realized |
 
 ## From [ControlSizeElement](tiers/ControlSizeElement.md)
 

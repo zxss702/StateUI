@@ -36,7 +36,8 @@ extension AndroidElement {
 
 extension AndroidElement: FrameReporter {
     /// Says where the element stands, where that changed (`MountedElement.reportFrame`): its place in its parent as
-    /// Android holds it, its corner in the window, and that corner from the page's; nothing before a layout placed it.
+    /// Android holds it, its corner in the window, and that corner from the page's - under its stack's bar - or the
+    /// window's content where no page holds it; nothing before a layout placed it.
     /// Design: docs/design/platforms/android/layout.md#where-a-view-stands
     func reportFrame() {
         guard let host, let view, readsFrame, view.isLaidOut else { return }
@@ -47,8 +48,14 @@ extension AndroidElement: FrameReporter {
             let size = ancestorView.standingFrame
             return Rect(x: corner.x, y: corner.y, width: size.width, height: size.height)
         }
+        let page = element.enclosing(type: .page).flatMap { ($0.native as? AndroidElement)?.view }
+        let content = page.map {
+            let corner = $0.cornerInWindow
+            let size = $0.standingFrame
+            return Rect(x: corner.x, y: corner.y, width: size.width, height: size.height)
+        } ?? host.safeArea
         element.reportFrame(
-            MountedElement.frameNumbers(place: view.standingFrame, corner: view.cornerInWindow, safeArea: host.safeArea),
+            MountedElement.frameNumbers(place: view.standingFrame, corner: view.cornerInWindow, safeArea: content),
             named: named, in: host.runtime)
     }
 }

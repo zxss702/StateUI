@@ -25,11 +25,11 @@ See [the dictionary](README.md) for how a mark is given.
 
 | Host | Created | Members (120) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
-| AppKit | ✅ | 41 ✅ · 1 ☑️ | `NSSearchField` |  |
-| UIKit | ✅ | 45 ✅ | `UISearchBar` |  |
+| AppKit | ✅ | 41 ✅ · 1 ☑️ · 1 – | `NSSearchField` |  |
+| UIKit | ✅ | 46 ✅ | `UISearchBar` |  |
 | Android Views | ✅ | 62 ✅ · 1 ☑️ | `SearchView` |  |
 | WinUI 3 | ✅ | 63 ✅ | `AutoSuggestBox` |  |
-| GTK 4 | ✅ | 23 ✅ | `GtkSearchEntry` |  |
+| GTK 4 | ✅ | 25 ✅ | `GtkSearchEntry` |  |
 | Web |  |  | `<input type=search>` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Text/SearchFieldContract.swift`.
@@ -38,7 +38,7 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Text/SearchFieldContract.swi
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `submitLabel` | property | `ReturnKey` | adaptive |  |  | · |  |  |  | not realized; UIKit: not realized; Android Views: cannot read submitLabel of SearchField - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
+| `submitLabel` | property | `ReturnKey` | adaptive | – | ✅ | · |  |  |  | A Mac has no keyboard on the screen whose return key says anything.; Android Views: cannot read submitLabel of SearchField - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
 | `onSubmit` (`submitted`) | event |  | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on SearchField.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,9 +73,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of SearchField - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on SearchField.isReadOnly |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of SearchField - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of SearchField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of SearchField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of SearchField - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of SearchField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of SearchField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of SearchField - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on SearchField.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
@@ -176,9 +176,9 @@ What every element showing words has: the words, and the case they are drawn in.
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ◐ |  | Android Views: waits on SearchField.isReadOnly; GTK 4: waits on SearchField.textCase |
+| `text` | property | `String` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on SearchField.isReadOnly |
 | `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
-| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)

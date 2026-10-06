@@ -9,6 +9,10 @@
 /// Design: docs/design/platforms/winui/layout.md#scrolling
 @MainActor
 final class WinUIScrollDocument: WinUILayoutView {
+    /// The ScrollView this document is the content of; a lazy run under it
+    /// climbs to it for the window.
+    weak var scrollView: WinUIScrollView?
+
     /// The room inside the scroller's own edge, in DIPs.
     var padding = EdgeInsets(0) {
         didSet { if padding != oldValue { invalidateMeasurements() } }

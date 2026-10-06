@@ -49,6 +49,8 @@ enum WinUIRealization {
         .notPlanned("VisualElement", "blendMode",
             reason: "WinUI composites every element normally; a blend pass over its own content draws nothing yet."),
         .complete("VisualElement", "hint"),
+        .complete("VisualElement", "ignoresInput"),
+        .complete("VisualElement", "layoutDirection"),
         .complete("VisualElement", "style"),
         .complete("View", "layoutPriority"),
         .partial("View", "horizontalGuide",
@@ -59,7 +61,9 @@ enum WinUIRealization {
             reason: "WinUI's ProtectedCursor is not wired to elements yet."),
 
         // MARK: Entries - a control's or a part's own
+        .unrealized("ActivityIndicator", "ignoresInput", why: hitOnlyWherePainted),
         .partial("DatePicker", "format", missing: "WinUI writes \"D\" and \"d\" in the user's own way, and any other pattern as \"d\"."),
+        .unrealized("Ellipse", "ignoresInput", why: hitOnlyWherePainted),
         .unrealized("List", "style", why: "No style can name an List: a style names its control by an "
             + "initializer that sets nothing, which a list of some items has not."),
         .unrealized("MenuButton", "style", why: "No style can name a MenuButton: the `Menu` view makes one, "
@@ -77,6 +81,8 @@ enum WinUIRealization {
             missing: "The bar WinUI draws is linear; `circular` falls back to it rather than the ring."),
         .partial("Image", "renderingMode",
             missing: "WinUI shows the picture as loaded; `template` does not retint it against the theme."),
+        .unrealized("Image", "ignoresInput", why: hitOnlyWherePainted),
+        .unrealized("Line", "ignoresInput", why: hitOnlyWherePainted),
         .complete("NavigationStack", "popped"),
         .complete("Page", "appearing"),
         .complete("Page", "background"),
@@ -86,7 +92,11 @@ enum WinUIRealization {
         .complete("Page", "navigatedTo"),
         .complete("Page", "navigatingFrom"),
         .complete("Page", "contentPadding"),
+        .unrealized("Path", "ignoresInput", why: hitOnlyWherePainted),
+        .unrealized("Polygon", "ignoresInput", why: hitOnlyWherePainted),
+        .unrealized("Polyline", "ignoresInput", why: hitOnlyWherePainted),
         .complete("RadioButton", "groupName"),
+        .unrealized("Rectangle", "ignoresInput", why: hitOnlyWherePainted),
         .complete("Scene", "activated"),
         .complete("Scene", "deactivated"),
         .complete("Scene", "destroying"),
@@ -138,6 +148,10 @@ enum WinUIRealization {
         .complete("WindowScene", "x"),
         .complete("WindowScene", "y"),
     ]
+
+    /// Why a drawing's press is not let through as the tree says.
+    static let hitOnlyWherePainted = "WinUI hands a figure, a picture, a colour box and the activity ring only the "
+        + "presses on what they paint: an empty one is never pressed, so there is nothing to let through."
 
     /// What WinUI's registry says it realizes: the export's content.
     @MainActor static var declaration: HostDeclaration {

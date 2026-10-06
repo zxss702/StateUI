@@ -23,18 +23,18 @@ final class UIKitPagesTests: XCTestCase {
         }
         defer { host.finish() }
         let window: UIWindow = try XCTUnwrap(host.roster.windows.first?.1.window)
-        host.settle { window.window?.title == "Items and Cards" }
-        XCTAssertEqual(window.window?.title, "Items and Cards")
+        host.settle { window.windowScene?.title == "Items and Cards" }
+        XCTAssertEqual(window.windowScene?.title, "Items and Cards")
 
         path.wrappedValue = [1]
-        let pushed: () -> UIViewController? = {
-            (host.runtime.tree.root.flatMap { Self.tabView(in: $0) }?.native as? UIKitElement)?.controller
+        let pushed: @MainActor () -> UIViewController? = {
+            (host.runtime.tree.root.flatMap { Self.tabbedView(in: $0) }?.native as? UIKitElement)?.controller
         }
         host.settle { pushed() != nil }
         host.runtime.pump.turn()
         let tabs: UIViewController = try XCTUnwrap(pushed())
         XCTAssertEqual(tabs.navigationItem.title, "List", "the bar's title")
-        XCTAssertEqual(window.window?.title, "List", "the scene's")
+        XCTAssertEqual(window.windowScene?.title, "List", "the scene's")
     }
 
     /// Words on a bar the tree paints stand light on a dark bar and dark on a light one, where the tree writes no

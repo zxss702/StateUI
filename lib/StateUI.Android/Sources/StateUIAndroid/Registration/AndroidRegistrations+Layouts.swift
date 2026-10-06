@@ -20,6 +20,60 @@ extension AndroidRegistrations {
             stack.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
         }
 
+        registry.add(LazyVStackContract.self, madeByHost: AndroidLazyStackView.self) { lazy in
+            lazy.applies(stackMembers + [LazyVStackContract.items]) { view, values in
+                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.applies(boxMembers) { view, values in applyBox(view, values) }
+            lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            lazy.raises(LazyVStackContract.realizedChanged)
+        }
+
+        registry.add(LazyHStackContract.self, madeByHost: AndroidLazyStackView.self) { lazy in
+            lazy.applies(stackMembers + [LazyHStackContract.items]) { view, values in
+                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.applies(boxMembers) { view, values in applyBox(view, values) }
+            lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            lazy.raises(LazyHStackContract.realizedChanged)
+        }
+
+        registry.add(LazyVGridContract.self, madeByHost: AndroidLazyGridView.self) { grid in
+            grid.applies([
+                LazyVGridContract.items, LazyVGridContract.flowColumns, LazyVGridContract.rowSpacing,
+                LazyVGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyVGridContract.flowColumns] ?? []
+                view.runSpacing = values[LazyVGridContract.rowSpacing] ?? 0
+                view.trackSpacing = values[LazyVGridContract.columnSpacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.applies(boxMembers) { view, values in applyBox(view, values) }
+            grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            grid.raises(LazyVGridContract.realizedChanged)
+        }
+
+        registry.add(LazyHGridContract.self, madeByHost: AndroidLazyGridView.self) { grid in
+            grid.applies([
+                LazyHGridContract.items, LazyHGridContract.flowRows, LazyHGridContract.rowSpacing,
+                LazyHGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyHGridContract.flowRows] ?? []
+                view.runSpacing = values[LazyHGridContract.columnSpacing] ?? 0
+                view.trackSpacing = values[LazyHGridContract.rowSpacing] ?? 0
+                view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.applies(boxMembers) { view, values in applyBox(view, values) }
+            grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
+            grid.raises(LazyHGridContract.realizedChanged)
+        }
+
         registry.add(GridContract.self, create: { _ in AndroidGridView() }) { grid in
             grid.applies([
                 GridContract.rows, GridContract.columns,

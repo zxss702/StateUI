@@ -104,3 +104,13 @@ the start of the room, its centre or its end. Nearest leaves an item wholly
 in view where it is; otherwise it moves it the shorter way - to the start
 when it stands before the room, to the end when after it. The scroller keeps
 the place within its reach.
+## The view moving
+
+A toolkit moves a list's rows as it scrolls, often laying nothing out: a
+view in a row stands elsewhere in its window though no layout placed it, and
+a scroll of less than a row brings no row in whose layout would say so. Each
+host tells the entries in view (`showing`) once the list's view has moved,
+and the host layer then says that whoever reads a frame says it on the
+display's next frame (runtime.md, `Where a view stands`). A host keeps no
+road of its own for it.
+

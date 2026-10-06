@@ -4,18 +4,25 @@ Button.pivotY: 🔌 read pivotY of Button: the host's own transform, checked aga
 Canvas.background: not realized
 CheckBox.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
 ColorPicker.style: ✅
-DatePicker.ignoresInput: not realized
-Ellipse.isEnabled: not realized
-Ellipse.zIndex: not realized
-Grid.scaleY: 🔌 read scaleY of Grid: the host's own transform, checked against the layer it composed itself
-HStack.rotationY: 🔌 read rotationY of HStack: the host's own transform, checked against the layer it composed itself
-Image.pivotY: 🔌 read pivotY of Image: the host's own transform, checked against the layer it composed itself
-List.background: not realized
-Text.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
-Line.style: ✅
-Map.ignoresInput: not realized
-Path.isEnabled: not realized
-Path.zIndex: not realized
+CustomLayout.ignoresInput: not realized
+DatePicker.scaleY: 🔌 read scaleY of DatePicker: the host's own transform, checked against the layer it composed itself
+Ellipse.rotationY: 🔌 read rotationY of Ellipse: the host's own transform, checked against the layer it composed itself
+Grid.pivotY: 🔌 read pivotY of Grid: the host's own transform, checked against the layer it composed itself
+GridRow.background: not realized
+HStack.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
+Image.style: ✅
+LazyHGrid.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
+LazyHStack.style: ✅
+LazyVGrid.ignoresInput: ✅
+LazyVStack.isEnabled: not realized
+LazyVStack.zIndex: not realized
+Line.scaleY: 🔌 read scaleY of Line: the host's own transform, checked against the layer it composed itself
+List.ignoresInput: not realized
+Map.rotationY: 🔌 read rotationY of Map: the host's own transform, checked against the layer it composed itself
+Masked.isEnabled: not realized
+Masked.zIndex: not realized
+MenuButton.pivotY: not realized
+Path.background: not realized
 Picker.scaleY: 🔌 read scaleY of Picker: the host's own transform, checked against the layer it composed itself
 Polygon.rotationY: 🔌 read rotationY of Polygon: the host's own transform, checked against the layer it composed itself
 Polyline.pivotY: 🔌 read pivotY of Polyline: the host's own transform, checked against the layer it composed itself
@@ -29,6 +36,8 @@ SearchField.scaleY: 🔌 read scaleY of SearchField: the host's own transform, c
 Slider.rotationY: 🔌 read rotationY of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.pivotY: 🔌 read pivotY of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.background: not realized
+Text.isEnabled: ✅
+Text.zIndex: not realized
 TextEditor.accessibilityHeadingLevel: cannot read a heading's level - UIKit marks a heading, not its level
 TextField.style: ✅
 TimePicker.ignoresInput: not realized

@@ -4,6 +4,10 @@ CustomLayout.contentPadding: cannot read contentPadding of CustomLayout - GTK's 
 Grid.contentPadding: ◐ cannot read contentPadding of Grid - GTK's driver has no path for it yet
 GridRow.contentPadding: not realized
 HStack.contentPadding: ◐ cannot read contentPadding of HStack - GTK's driver has no path for it yet
+LazyHGrid.contentPadding: cannot read contentPadding of LazyHGrid - GTK's driver has no path for it yet
+LazyHStack.contentPadding: cannot read contentPadding of LazyHStack - GTK's driver has no path for it yet
+LazyVGrid.contentPadding: cannot read contentPadding of LazyVGrid - GTK's driver has no path for it yet
+LazyVStack.contentPadding: cannot read contentPadding of LazyVStack - GTK's driver has no path for it yet
 Masked.contentPadding: cannot read contentPadding of Masked - GTK's driver has no path for it yet
 RadioButton.contentPadding: cannot read contentPadding of RadioButton - GTK's driver has no path for it yet
 ScrollView.contentPadding: ◐ cannot read contentPadding of ScrollView - GTK's driver has no path for it yet

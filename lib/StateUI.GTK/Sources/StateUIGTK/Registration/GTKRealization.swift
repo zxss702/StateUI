@@ -10,8 +10,8 @@
 enum GTKRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
-        "Content", "DatePicker", "GridRow", "LeadingContent", "Map", "Menu", "MenuBar",
-        "ModalStack", "Pin", "PositionIndicator", "TimePicker", "TrailingContent", "WebView",
+        "Content", "GridRow", "LeadingContent", "Map",
+        "Pin", "PositionIndicator", "TrailingContent", "WebView",
     ]
 
     /// The entries this host presents with no view of their own - a title bar is the window's, a span a run of its
@@ -24,16 +24,23 @@ enum GTKRealization {
     /// Every record, the tiers' first.
     static let records: [HostRecord] = [
         // MARK: Tiers - a member every wearer realizes alike
+        .complete("Menu", "isEnabled"),
+        .complete("Menu", "text"),
         .complete("MenuItemElement", "clicked"),
         .complete("MenuItemElement", "icon"),
         .complete("MenuItemElement", "isEnabled"),
         .complete("MenuItemElement", "text"),
+        .notPlanned("MenuItem", "icon", reason: "GNOME's menus show words alone, no picture beside them."),
+        .notPlanned("MenuItem", "isDestructive", reason: "GNOME's menus mark no entry as destroying something."),
         .complete("PageElement", "badge"),
         .notPlanned("PageElement", "document",
             reason: "GTK 4 names a window for a document in its title alone."),
-        .notPlanned("PageElement", "interactiveDismissDisabled", reason: "GTK presents no modal stack yet."),
-        .notPlanned("PageElement", "presentationDetents", reason: "GTK presents no modal stack yet."),
-        .notPlanned("PageElement", "presentationDragIndicator", reason: "GTK presents no modal stack yet."),
+        .notPlanned("PageElement", "interactiveDismissDisabled",
+            reason: "A GTK sheet is libadwaita's dialog: Escape and its close always take it."),
+        .notPlanned("PageElement", "presentationDetents",
+            reason: "A GTK sheet is libadwaita's dialog, sized by what it shows - detents are not its to take."),
+        .notPlanned("PageElement", "presentationDragIndicator",
+            reason: "A GTK sheet is libadwaita's dialog, which draws no grabber of its own."),
         .partial("PageElement", "preferredColumnWidth",
             missing: "An ideal width has no home in AdwOverlaySplitView; only the bounds bind it."),
         .complete("PageElement", "subtitle"),
@@ -72,9 +79,17 @@ enum GTKRealization {
         .notPlanned("View", "pointerStyle",
             reason: "GTK sets a widget's cursor only through the frame's display, which the element layer does not own yet."),
         .complete("VisualElement", "hint"),
+        .complete("VisualElement", "layoutDirection"),
         .complete("VisualElement", "style"),
 
         // MARK: Entries - a control's or a part's own
+        .partial("DatePicker", "format", missing: "GTK writes \"D\" and \"d\" in the user's own way, and any other pattern as \"d\"."),
+        .partial("DatePicker", "maximumDate",
+                 missing: "GtkCalendar offers every day: one the user picks past the range stands at its end."),
+        .partial("DatePicker", "minimumDate",
+                 missing: "GtkCalendar offers every day: one the user picks past the range stands at its end."),
+        .partial("TimePicker", "format",
+                 missing: "GTK writes hours and minutes in the user's own clock, whatever the format asks: no seconds, no pattern."),
         .unrealized("List", "style", why: "No style can name an List: a style names its control by an "
             + "initializer that sets nothing, which a list of some items has not."),
         .unrealized("MenuButton", "style", why: "No style can name a MenuButton: the `Menu` view makes one, "
@@ -98,6 +113,10 @@ enum GTKRealization {
         .complete("Page", "navigatedTo"),
         .complete("Page", "navigatingFrom"),
         .complete("RadioButton", "groupName"),
+        .notPlanned("Slider", "dragCompleted", reason: "GTK's scale tells no one it is held: its range claims the "
+            + "press, and GTK denies every other gesture on it."),
+        .notPlanned("Slider", "dragStarted", reason: "GTK's scale tells no one it is held: its range claims the "
+            + "press, and GTK denies every other gesture on it."),
         .complete("Span", "background"),
         .complete("Span", "fontAttributes"),
         .complete("Span", "fontSize"),

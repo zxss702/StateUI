@@ -536,7 +536,7 @@ private struct FurnishedPage: View {
         return Text(title).onAppear {
             page.title = title
             page.background = .blue
-            page.padding = EdgeInsets(8)
+            page.contentPadding = EdgeInsets(8)
             page.hasBackButton = back
             page.hasNavigationBar = bar
         }

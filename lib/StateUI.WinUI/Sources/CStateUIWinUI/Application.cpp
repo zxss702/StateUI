@@ -75,9 +75,10 @@ namespace stateui {
                 if (instance) {
                     if (auto args = instance.GetActivatedEventArgs()) reportActivation(args);
                     activationListener = instance.Activated(
-                        [](IInspectable const &, lifecycle::AppActivationArguments const &args) {
+                        guarded("handling Activated",
+                            [](IInspectable const &, lifecycle::AppActivationArguments const &args) {
                             reportActivation(args);
-                        });
+                        }));
                 }
             }
 
@@ -138,7 +139,7 @@ namespace stateui {
 namespace stateui {
     void post(void (*work)()) {
         try {
-            if (queue) queue.TryEnqueue([work] { work(); });
+            if (queue) queue.TryEnqueue(guarded("handling TryEnqueue", [work] { work(); }));
         } catch (...) {
             report("posting work to the UI thread");
         }
@@ -167,6 +168,8 @@ extern "C" int32_t stateui_winui_embed(StateUIWinUICallbacks const *given) {
         if (embedded) return 0;
         loadRuntime();
         winrt::init_apartment(winrt::apartment_type::single_threaded);
+        // The thread's WinUI itself: destroyed as the process exits, in the reverse of the order it stood up in,
+        // which is WinUI's own shutdown - kept past it, the process ends in an access violation.
         static auto controller = winrt::Microsoft::UI::Dispatching::DispatcherQueueController::CreateOnCurrentThread();
         // The application first: InitializeForCurrentThread takes its type information, and calls its OnLaunched.
         static auto application = winrt::make<StateUIApplication>(true);
@@ -198,7 +201,7 @@ extern "C" void stateui_winui_pump(double seconds) {
 
 extern "C" void stateui_winui_post_turn(void) {
     try {
-        if (queue) queue.TryEnqueue([] { callbacks.turn(); });
+        if (queue) queue.TryEnqueue(guarded("handling TryEnqueue", [] { callbacks.turn(); }));
     } catch (...) {
         report("posting a turn");
     }

@@ -110,6 +110,32 @@ final class GTKPagesTests: XCTestCase {
         }
     }
 
+    /// A destructive action is libadwaita's destructive button on the header bar; in the overflow's flat menu its
+    /// words take the theme's destructive colour, not the white that button writes on its red fill.
+    func testADestructiveActionWearsTheThemesDestructiveColour() throws {
+        try onUIThread {
+            let host = GTKRenderer.running {
+                TitledPage(title: "Notes", actions: [
+                    ToolbarItem("Remove").isDestructive(true),
+                    ToolbarItem("Clear").isDestructive(true).placement(.overflow),
+                    ToolbarItem("Later").placement(.overflow),
+                ])
+            }
+            let frame = try XCTUnwrap(host.window?.pageFrame)
+            let remove = try XCTUnwrap(frame.buttons.first)
+            XCTAssertNotEqual(gtk_widget_has_css_class(remove.widget, "destructive-action"), 0)
+
+            let colors = frame.overflowButtons.map { button in
+                var color = GdkRGBA()
+                gtk_widget_get_color(button.widget, &color)
+                return color
+            }
+            XCTAssertEqual(colors.count, 2)
+            XCTAssertGreaterThan(colors[0].red - max(colors[0].green, colors[0].blue), 0.3, "Clear's words are red")
+            XCTAssertLessThan(abs(colors[1].red - colors[1].green), 0.1, "Later's words are the menu's own")
+        }
+    }
+
     /// An action with a picture stands on the header bar as an icon named by its title; one whose picture the
     /// application does not hold shows its title, and the overflow's menu shows titles.
     func testAnActionWithAPictureStandsAsAnIcon() throws {
@@ -205,6 +231,26 @@ final class GTKPagesTests: XCTestCase {
             XCTAssertEqual(adw_toolbar_view_get_reveal_top_bars(frame.widget.opaque), 0)
         }
     }
+
+    /// A sheet is libadwaita's dialog over the window, its page in a frame of its own; the user closing it - Escape,
+    /// its close button - takes it off the modal stack, and the program's close tells nothing.
+    func testASheetTheUserClosesLeavesTheModalStack() throws {
+        try onUIThread {
+            let sheets = State(wrappedValue: [1, 2])
+            let host = GTKRenderer.running { StackHost(sheets: sheets.projectedValue) }
+            host.settle { host.sheets.count == 2 }
+            XCTAssertEqual(host.sheets.map { $0.sheet.frame?.chrome.title }, ["Sheet 1", "Sheet 2"])
+            XCTAssertNotEqual(gtk_widget_get_mapped(host.sheets[1].sheet.page.widget), 0, "the top sheet shows")
+
+            adw_dialog_close(host.sheets[1].sheet.dialog)
+            host.settle { sheets.wrappedValue == [1] }
+            XCTAssertEqual(sheets.wrappedValue, [1], "the user's close")
+
+            sheets.wrappedValue = []
+            host.settle { host.sheets.isEmpty }
+            XCTAssertEqual(sheets.wrappedValue, [], "the program's close heard by nobody")
+        }
+    }
 }
 
 /// A page with a title, maybe a log of its phases, the actions it puts on its header bar, and whether it hides its
@@ -229,6 +275,22 @@ struct TitledPage: View {
                 if hidesBar { page.hasNavigationBar = false }
             }
             .onChange(of: page.phase) { log?.values.append("\(title) \(page.phase)") }
+    }
+}
+
+/// A page under a modal stack the test drives.
+private struct StackHost: View {
+    @Environment private var window: WindowSession
+    let sheets: Binding<[Int]>
+
+    var body: some View {
+        let window = self.window
+        let sheets = self.sheets
+        return Text("Beneath").onAppear {
+            window.modalStack = ModalStack(sheets) { number in
+                TitledPage(title: "Sheet \(number)")
+            }
+        }
     }
 }
 

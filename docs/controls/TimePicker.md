@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 30 ✅ | `UIDatePicker` in time mode |  |
 | Android Views | ✅ | 53 ✅ · 1 ☑️ · 3 – | `TimePickerDialog` |  |
 | WinUI 3 | ✅ | 58 ✅ | `TimePicker` |  |
-| GTK 4 |  |  | no honest native counterpart | not realized |
+| GTK 4 | ✅ | 25 ✅ | no honest native counterpart |  |
 | Web |  |  | `<input type=time>` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/TimePickerContract.swift`.
@@ -38,12 +38,12 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/TimePickerContract.
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `onClosed` (`closed`) | event |  | native |  |  | · |  |  |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `format` | property | `String` | native |  |  | · | · |  |  | not realized; UIKit: not realized; Android Views: cannot read format of TimePicker - Android's driver has no path for it yet; WinUI 3: cannot read format of TimePicker - WinUI's time picker holds no format: it writes hours and minutes in the user's own clock; GTK 4: not realized |
-| `isOpen` | property | `Bool` | native |  |  | · |  |  |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `onOpened` (`opened`) | event |  | native |  |  | · |  |  |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `time` | property | `ClockTime` | native | 🔌 | ✅ | · | ✅ |  |  | only through the host's own: pickTime on TimePicker: the host's change handler called, not the picker's action; Android Views: cannot read time of TimePicker - Android's driver has no path for it yet; GTK 4: not realized |
-| `onTimeChanged` (`timeChanged`) | event | `ClockTime` | native | 🔌 | ✅ | · | ✅ |  |  | only through the host's own: pickTime on TimePicker: the host's change handler called, not the picker's action; Android Views: cannot read time of TimePicker - Android's driver has no path for it yet; GTK 4: not realized |
+| `onClosed` (`closed`) | event |  | native |  |  | · |  | ✅ |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized |
+| `format` | property | `String` | native |  |  | · | · | · |  | not realized; UIKit: not realized; Android Views: cannot read format of TimePicker - Android's driver has no path for it yet; WinUI 3: cannot read format of TimePicker - WinUI's time picker holds no format: it writes hours and minutes in the user's own clock; GTK 4: cannot read format of TimePicker - GTK's driver has no path for it yet |
+| `isOpen` | property | `Bool` | native |  |  | · |  | ✅ |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized |
+| `onOpened` (`opened`) | event |  | native |  |  | · |  | ✅ |  | not realized; UIKit: not realized; Android Views: cannot open on TimePicker - Android's driver has no path for it yet; WinUI 3: not realized |
+| `time` | property | `ClockTime` | native | 🔌 | ✅ | · | ✅ | ✅ |  | only through the host's own: pickTime on TimePicker: the host's change handler called, not the picker's action; Android Views: cannot read time of TimePicker - Android's driver has no path for it yet |
+| `onTimeChanged` (`timeChanged`) | event | `ClockTime` | native | 🔌 | ✅ | · | ✅ | ✅ |  | only through the host's own: pickTime on TimePicker: the host's change handler called, not the picker's action; Android Views: cannot read time of TimePicker - Android's driver has no path for it yet |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -61,51 +61,51 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `blendMode` | property | `BlendMode` | native |  |  |  |  |  |  |  |
 | `accessibilityChildBehavior` | property | `AccessibilityChildBehavior` | native |  |  |  |  |  |  |  |
-| `accessibilityHeadingLevel` | property | `HeadingLevel` | native | · | · | · | ✅ |  |  | cannot read a heading's level - AppKit marks a heading, not its level; UIKit: cannot read a heading's level - UIKit marks a heading, not its level; Android Views: cannot read a heading's level - Android marks a heading, not its level; GTK 4: not realized |
-| `accessibilityHint` | property | `String` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `accessibilityLabel` | property | `String` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `accessibilityHeadingLevel` | property | `HeadingLevel` | native | · | · | · | ✅ | · |  | cannot read a heading's level - AppKit marks a heading, not its level; UIKit: cannot read a heading's level - UIKit marks a heading, not its level; Android Views: cannot read a heading's level - Android marks a heading, not its level; GTK 4: cannot read accessibilityHeadingLevel of TimePicker - GTK's driver has no path for it yet |
+| `accessibilityHint` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read accessibilityHint of TimePicker - GTK's driver has no path for it yet |
+| `accessibilityLabel` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read accessibilityLabel of TimePicker - GTK's driver has no path for it yet |
 | `accessibilityTraits` | property | `AccessibilityTraits` | native |  |  |  |  |  |  |  |
-| `automationExcludedWithChildren` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `automationExcludedWithChildren` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read automationExcludedWithChildren of TimePicker - GTK's driver has no path for it yet |
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | ✅ | – | ✅ |  |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
-| `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `focus` | act | `() -> Bool` |  | ✅ | ✅ | – | ✅ | · |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of TimePicker - GTK's driver has no path for it yet |
+| `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | – | ✅ |  |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
-| `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of TimePicker - GTK's driver has no path for it yet |
+| `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | – | ✅ | · |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of TimePicker - GTK's driver has no path for it yet |
+| `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of TimePicker - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
-| `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `maximumWidth` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `minimumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `minimumWidth` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `opacity` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `pivotX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read pivotX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read pivotX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `pivotY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read pivotY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read pivotY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `rotation` | property | `Angle` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read rotation of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotation of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `rotationX` | property | `Angle` | native | 🔌 | 🔌 | ✅ |  |  |  | only through the host's own: read rotationX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotationX of TimePicker: the host's own transform, checked against the layer it composed itself; WinUI 3: not realized; GTK 4: not realized |
-| `rotationY` | property | `Angle` | native | 🔌 | 🔌 | ✅ |  |  |  | only through the host's own: read rotationY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotationY of TimePicker: the host's own transform, checked against the layer it composed itself; WinUI 3: not realized; GTK 4: not realized |
-| `scale` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read scale of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scale of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `scaleX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read scaleX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scaleX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `scaleY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read scaleY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scaleY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
+| `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `maximumWidth` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `minimumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `minimumWidth` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `opacity` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `pivotX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read pivotX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read pivotX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read pivotX of TimePicker - GTK's driver has no path for it yet |
+| `pivotY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read pivotY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read pivotY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read pivotY of TimePicker - GTK's driver has no path for it yet |
+| `rotation` | property | `Angle` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read rotation of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotation of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read rotation of TimePicker - GTK's driver has no path for it yet |
+| `rotationX` | property | `Angle` | native | 🔌 | 🔌 | ✅ |  | · |  | only through the host's own: read rotationX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotationX of TimePicker: the host's own transform, checked against the layer it composed itself; WinUI 3: not realized; GTK 4: cannot read rotationX of TimePicker - GTK's driver has no path for it yet |
+| `rotationY` | property | `Angle` | native | 🔌 | 🔌 | ✅ |  | · |  | only through the host's own: read rotationY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read rotationY of TimePicker: the host's own transform, checked against the layer it composed itself; WinUI 3: not realized; GTK 4: cannot read rotationY of TimePicker - GTK's driver has no path for it yet |
+| `scale` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read scale of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scale of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scale of TimePicker - GTK's driver has no path for it yet |
+| `scaleX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read scaleX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scaleX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scaleX of TimePicker - GTK's driver has no path for it yet |
+| `scaleY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read scaleY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read scaleY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scaleY of TimePicker - GTK's driver has no path for it yet |
 | `shadow` | property | `DropShadow` | native |  |  |  |  |  |  |  |
-| `style` | property | `Name` | structure | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `style` | property | `Name` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `symbolEffect` | property | `String` | native |  |  |  |  |  |  |  |
 | `symbolEffectActive` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `symbolEffectOptions` | property | `Int` | native |  |  |  |  |  |  |  |
 | `symbolEffectValue` | property | `String` | native |  |  |  |  |  |  |  |
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
-| `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read translationX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: read translationY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: not realized |
-| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | – | ✅ |  |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
-| `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of TimePicker - GTK's driver has no path for it yet |
+| `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of TimePicker: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of TimePicker: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of TimePicker - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | – | ✅ | · |  | Android Views: TimePicker takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of TimePicker - GTK's driver has no path for it yet |
+| `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
@@ -115,7 +115,7 @@ What every view a layout positions has: where it sits in its layout, the space k
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `allowDrop` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `area` | property | `Area` | structure | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `area` | property | `Area` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `canDrag` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `coordinateSpaceName` | property | `String` | stateUI |  |  |  |  |  |  |  |
 | `dragLeave` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
@@ -126,34 +126,34 @@ What every view a layout positions has: where it sits in its layout, the space k
 | `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `dropPaths` | event | `([String], Point)` | native |  |  |  |  |  |  |  |
 | `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
-| `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `frameChanged` | event | `[Double]` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `gridColumn` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `gridColumnSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `gridRow` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `gridRowSpan` | property | `Int` | stateUI | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `horizontalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
 | `layoutPriority` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `namedFramesChanged` | event | `[NamedSpaceFrame]` | native |  |  |  |  |  |  |  |
-| `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
-| `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: not realized |
-| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `panXChannel` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `panYChannel` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pinch on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pinch on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pointerEntered` | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pointerExited` | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pointerMoved` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pointerPressed` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `pointerReleased` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
+| `padding` | property | `EdgeInsets` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
+| `panTouchCount` | property | `Int` | structure | 🔌 | 🔌 | ☑️ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; Android Views: The host layer hears a one-finger pan only; any other `panTouchCount` turns the pan off.; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `panXChannel` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `panYChannel` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pinch on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pinch on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pinch on TimePicker - GTK's driver has no path for it yet |
+| `pointerEntered` | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot hover on TimePicker - GTK's driver has no path for it yet |
+| `pointerExited` | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot hover on TimePicker - GTK's driver has no path for it yet |
+| `pointerMoved` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot hover on TimePicker - GTK's driver has no path for it yet |
+| `pointerPressed` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot hover on TimePicker - GTK's driver has no path for it yet |
+| `pointerReleased` | event | `Point?` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: hover on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: hover on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot hover on TimePicker - GTK's driver has no path for it yet |
 | `pointerStyle` | property | `PointerStyle` | native |  |  |  |  |  |  |  |
-| `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
+| `swipeDirection` | property | `SwipeDirection` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `swipeThreshold` | property | `Double` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
+| `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pan on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pan on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pan on TimePicker - GTK's driver has no path for it yet |
 | `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
-| `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: tap on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ |  |  | only through the host's own: tap on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: not realized |
-| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `tapCount` | property | `Int` | structure | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on TimePicker - GTK's driver has no path for it yet |
+| `onTapGesture` (`tapGesture`) | event |  | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: tap on TimePicker: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: tap on TimePicker: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot tap on TimePicker - GTK's driver has no path for it yet |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `verticalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)
@@ -163,7 +163,7 @@ How text looks wherever it is drawn: its colour and the space between its letter
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `characterSpacing` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `foregroundStyle` | property | `Color` | native | ✅ |  | ✅ | ✅ |  |  | UIKit: not realized; GTK 4: not realized |
+| `foregroundStyle` | property | `Color` | native | ✅ |  | ✅ | ✅ | · |  | UIKit: not realized; GTK 4: cannot read foregroundStyle of TimePicker - GTK's driver has no path for it yet |
 
 ## From [FontElement](tiers/FontElement.md)
 
@@ -171,10 +171,10 @@ The font text is drawn in: its family, its size, its weight and slant, and wheth
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `fontAttributes` | property | `FontAttributes` | native | ✅ |  | ✅ | ✅ |  |  | UIKit: not realized; GTK 4: not realized |
+| `fontAttributes` | property | `FontAttributes` | native | ✅ |  | ✅ | ✅ | · |  | UIKit: not realized; GTK 4: cannot read fontAttributes of TimePicker - GTK's driver has no path for it yet |
 | `fontAutoScalingEnabled` | property | `Bool` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
-| `fontFamily` | property | `Name` | native | ✅ |  | · | ✅ |  |  | UIKit: not realized; Android Views: cannot read a family - Android's typeface keeps no family's name; GTK 4: not realized |
-| `fontSize` | property | `Double` | native | ✅ |  | ✅ | ✅ |  |  | UIKit: not realized; GTK 4: not realized |
+| `fontFamily` | property | `Name` | native | ✅ |  | · | ✅ | · |  | UIKit: not realized; Android Views: cannot read a family - Android's typeface keeps no family's name; GTK 4: cannot read fontFamily of TimePicker - GTK's driver has no path for it yet |
+| `fontSize` | property | `Double` | native | ✅ |  | ✅ | ✅ | · |  | UIKit: not realized; GTK 4: cannot read fontSize of TimePicker - GTK's driver has no path for it yet |
 | `fontTextStyle` | property | `FontTextStyle` | native |  |  |  |  |  |  |  |
 | `fontWeight` | property | `Weight` | native |  |  |  |  |  |  |  |
 | `fontDesign` | property | `FontDesign` | native |  |  |  |  |  |  |  |

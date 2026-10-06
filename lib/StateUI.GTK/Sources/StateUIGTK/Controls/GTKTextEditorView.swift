@@ -18,6 +18,7 @@ final class GTKTextEditorView: GTKView, GTKInputView {
     private let editor: GTKWidget
     private let placeholder: GTKWidget
     private var maximumLength: Int?
+    private var textCase: TextCase?
     private var wordsClass: String?
 
     init() {
@@ -66,6 +67,12 @@ final class GTKTextEditorView: GTKView, GTKInputView {
         return String(cString: words)
     }
 
+    /// The words stand in the editor's direction, the window that scrolls them in it too.
+    override func setDirection(_ direction: GtkTextDirection) {
+        super.setDirection(direction)
+        gtk_widget_set_direction(editor, direction)
+    }
+
     func setText(_ text: String) {
         guard text != self.text else { return }
         gtk_text_buffer_set_text(buffer, text, -1)
@@ -81,6 +88,11 @@ final class GTKTextEditorView: GTKView, GTKInputView {
 
     func setMaximumLength(_ length: Int?) {
         maximumLength = length
+    }
+
+    /// The case the words stand in. GTK holds none, so the host turns what goes in into it.
+    func setTextCase(_ textCase: TextCase?) {
+        self.textCase = textCase
     }
 
     func setBehaviour(readOnly: Bool, hints: GtkInputHints, purpose: GtkInputPurpose) {
@@ -142,12 +154,14 @@ final class GTKTextEditorView: GTKView, GTKInputView {
         onTextChanged?(text)
     }
 
-    /// Words going in at `place`: where they would take the editor past its bound, only the first characters that
-    /// fit go in (`InputWords.fitting`) - from a key, a paste and a program's write alike.
+    /// Words going in at `place`: in the editor's case, and where they would take the editor past its bound only the
+    /// first characters that fit (`InputWords.fitting`) - from a key, a paste and a program's write alike.
     private func inserting(_ words: UnsafePointer<CChar>?, _ bytes: Int32, at place: UnsafeMutablePointer<GtkTextIter>?) {
         guard let words, bytes > 0 else { return }
         let inserted = String(decoding: UnsafeRawBufferPointer(start: words, count: Int(bytes)), as: UTF8.self)
-        guard let fitting = InputWords.fitting(inserted, beside: text, toBound: maximumLength) else { return }
+        guard let fitting = InputWords.fitting(inserted, beside: text, in: textCase, toBound: maximumLength) else {
+            return
+        }
         g_signal_stop_emission_by_name(UnsafeMutableRawPointer(buffer), "insert-text")
         guard !fitting.isEmpty else { return }
         gtk_text_buffer_insert(buffer, place, fitting, -1)

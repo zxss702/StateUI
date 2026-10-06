@@ -1,9 +1,9 @@
 # revision 1.1
+NavigationSplitView.icon: ✅
+NavigationSplitView.title: ✅
 NavigationStack.icon: ✅
 NavigationStack.title: ✅
 Page.icon: ✅
 Page.title: ✅
-NavigationSplitView.icon: ✅
-NavigationSplitView.title: ✅
 TabView.icon: ✅
 TabView.title: ✅

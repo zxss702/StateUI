@@ -64,8 +64,8 @@ typedef enum {
 
 /// A question for the user: `kind` 0 an alert, 1 a confirmation, 2 a choice of actions, 3 a prompt; its title
 /// and message; the captions that accept and cancel; for a choice, the dangerous one and the choices; for a
-/// prompt, the field's placeholder, its most characters (0 for any), what it is for (StateUI's `InputPurpose`)
-/// and what it starts holding. Null for a caption there is none of.
+/// prompt, the field's placeholder, its most characters (0 for any), whether its words are spell checked and
+/// predicted, its input scope (`WinUIInputScope`) and what it starts holding. Null for a caption there is none of.
 typedef struct {
     int32_t kind;
     char const *title;
@@ -77,7 +77,9 @@ typedef struct {
     int32_t choiceCount;
     char const *placeholder;
     int32_t maximumLength;
-    int32_t purpose;
+    bool spellChecked;
+    bool predicted;
+    int32_t scope;
     char const *initial;
 } StateUIQuestion;
 
@@ -295,6 +297,17 @@ void stateui_winui_set_hit_testable(StateUIObjectRef element, bool testable);
 
 /// Where the element is drawn among its panel's children: a higher one over a lower, equal ones in order.
 void stateui_winui_set_z_index(StateUIObjectRef element, int32_t z);
+
+/// The direction the element lays itself out and writes in, which what stands in it inherits: right to left, or
+/// left to right.
+void stateui_winui_set_flow_direction(StateUIObjectRef element, bool rightToLeft);
+
+/// Tips the element as it is drawn after its transform: `matrix` the sixteen numbers of a 4 x 4 matrix, row by
+/// row, applied to a point (x, y, 0, 1) of the element and divided by the fourth; null for no tip.
+void stateui_winui_set_projection(StateUIObjectRef element, const double *matrix);
+
+/// The tip the element is drawn with, its matrix's sixteen numbers into `matrix`; false where it has none.
+bool stateui_winui_projection(StateUIObjectRef element, double *matrix);
 
 /// Asks WinUI to arrange the element again - a place in the air lands only in a pass.
 void stateui_winui_invalidate_arrange(StateUIObjectRef element);
@@ -589,10 +602,10 @@ StateUIObjectRef stateui_winui_search_make(int64_t view);
 void stateui_winui_field_set_text(StateUIObjectRef field, char const *utf8);
 void stateui_winui_field_set_placeholder(StateUIObjectRef field, char const *utf8);
 
-/// How a field or an editor takes words: read only, spell checked, predicting the next word, and what they are for
-/// (StateUI's `InputPurpose`), which picks the on-screen keyboard.
+/// How a field or an editor takes words: read only, spell checked, predicting the next word, and its input scope
+/// (`WinUIInputScope`, the relay's numbering of WinUI's scopes), which picks the keyboard a screen offers.
 void stateui_winui_field_set_behaviour(StateUIObjectRef field, bool readOnly, bool spellChecked, bool predicted,
-                                       int32_t purpose);
+                                       int32_t scope);
 
 /// The case a field's or an editor's typing takes (StateUI's `TextCase`).
 void stateui_winui_field_set_casing(StateUIObjectRef field, int32_t textCase);
@@ -727,8 +740,12 @@ void stateui_winui_items_choose_as_user(StateUIObjectRef items, int32_t index);
 /// is none.
 bool stateui_winui_items_invoke_as_user(StateUIObjectRef cell);
 
-/// What a test does as the user scrolls the list to `x`, `y` DIPs, at once.
+/// What a test does as the user scrolls the list to `x`, `y` DIPs, unanimated: the list's view stands there once
+/// WinUI's compositor has moved it, a moment later.
 void stateui_winui_items_scroll_as_user(StateUIObjectRef items, double x, double y);
+
+/// Where the list's view stands, then the farthest it reaches across and down, in DIPs: four values.
+void stateui_winui_items_offset(StateUIObjectRef items, double *offset);
 
 /// Names the row holding the cell numbered `cell` `words`: what Narrator reads of it, which reads no further.
 void stateui_winui_items_name(StateUIObjectRef items, int64_t cell, char const *words);

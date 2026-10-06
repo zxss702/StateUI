@@ -38,12 +38,18 @@ final class AndroidTextFieldView: AndroidTextView {
     var textCase: TextCase?
 
     private(set) var isPassword = false
+
+    /// Whether the user can only read and select the words.
+    private(set) var isReadOnly = false
+
+    /// What the field's keyboard and its checking of the words do.
+    private var traits = InputTraits(spellChecked: true, predicted: true, purpose: nil)
     private var madeHintColors: JavaObject?
 
     init(_ kind: Kind = .field) {
         self.kind = kind
         super.init { _ in Java.new(JavaAPI.editText, JavaAPI.newEditText, .object(AndroidRenderer.context)) }
-        Java.call(reference, JavaAPI.setInputType, .int(inputType))
+        applyInputType()
         switch kind {
         case .field:
             break
@@ -57,16 +63,39 @@ final class AndroidTextFieldView: AndroidTextView {
         listen(JavaAPI.addTextChangedListener, JavaAPI.setOnEditorActionListener)
     }
 
-    /// The field's kind of input: one line or several, and hiding what is typed.
+    /// The field's kind of input: the keys its traits pick, one line or several, hiding what is typed, capitals,
+    /// correction and suggestions.
+    /// Design: docs/design/host/runtime.md#what-typing-is-given
     private var inputType: Int32 {
-        ViewConstants.textInput | (kind == .editor ? ViewConstants.multiLineInput : 0)
-            | (isPassword ? ViewConstants.passwordInput : 0)
+        switch traits.keys {
+        case .number:
+            return ViewConstants.numberInput | ViewConstants.decimalNumber
+                | (isPassword ? ViewConstants.hiddenNumber : 0)
+        case .telephone:
+            return ViewConstants.phoneInput
+        case .words, .email, .url:
+            let variation = isPassword ? ViewConstants.passwordInput
+                : traits.keys == .email ? ViewConstants.emailInput : traits.keys == .url ? ViewConstants.linkInput : 0
+            return ViewConstants.textInput | variation | (kind == .editor ? ViewConstants.multiLineInput : 0)
+                | (traits.capitals == .sentences ? ViewConstants.sentenceCapitals : 0)
+                | (traits.corrects && !isPassword ? ViewConstants.autoCorrect : 0)
+                | (traits.predicts ? 0 : ViewConstants.noSuggestions)
+        }
+    }
+
+    /// What the field's keyboard and its checking of the words do; the words and their weight stay.
+    func setTraits(_ traits: InputTraits) {
+        guard traits != self.traits else { return }
+
+        self.traits = traits
+        applyInputType()
+        setFontAttributes(fontAttributes)
     }
 
     /// What the keyboard's return key does; nil for the kind's own - the platform's, or a search.
     func setReturnKey(_ key: ReturnKey?) {
         // EditorInfo.IME_ACTION_UNSPECIFIED, _GO, _SEARCH, _SEND, _NEXT and _DONE.
-        let action: Int32 = switch key ?? (kind == .search ? .search : .default) {
+        let action: Int32 = switch InputTraits.submitLabel(key, searching: kind == .search) {
         case .default: 0
         case .go: 2
         case .search: 3
@@ -155,8 +184,25 @@ final class AndroidTextFieldView: AndroidTextView {
         guard password != isPassword else { return }
 
         isPassword = password
-        Java.call(reference, JavaAPI.setInputType, .int(inputType))
+        applyInputType()
         setFontAttributes(fontAttributes)
+    }
+
+    /// Lets the user only read and select the words, or edit them again: a field read only takes no key and raises
+    /// no keyboard.
+    func setReadOnly(_ readOnly: Bool) {
+        guard readOnly != isReadOnly else { return }
+
+        isReadOnly = readOnly
+        applyInputType()
+    }
+
+    /// Gives the field its kind of input - which also gives it the key listener that kind edits with - and takes
+    /// the listener away again where the field is read only.
+    private func applyInputType() {
+        Java.call(reference, JavaAPI.setInputType, .int(inputType))
+        if isReadOnly { Java.call(reference, JavaAPI.setKeyListener, .object(nil)) }
+        Java.call(reference, JavaAPI.setShowSoftInputOnFocus, .bool(!isReadOnly))
     }
 
     /// Selects `length` characters from `position`: a caret where `length` is zero.

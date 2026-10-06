@@ -15,6 +15,8 @@ struct UIKitPageChrome {
     var titleView: UIView?
     var showsBar = true
     var offersBack = true
+    /// The title the way back's button takes once this page is beneath another; nil for the page's own.
+    var backButtonTitle: String?
     var barBackground: HostValue?
     var barForeground: HostValue?
     var leadingActions: [UIKitBarAction] = []
@@ -30,6 +32,7 @@ struct UIKitPageChrome {
             titleView.bounds.size = size
         }
         item.hidesBackButton = !offersBack
+        item.backButtonTitle = backButtonTitle
         item.leftBarButtonItems = leadingActions.map(\.barItem)
         item.rightBarButtonItems = actions.reversed().map(\.barItem)
             + (overflow.isEmpty ? [] : [UIBarButtonItem(

@@ -15,6 +15,22 @@ HStack.clipsContent: ✅
 HStack.hitShape: ✅
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: ◐ cannot read letsInputThrough of HStack - AppKit's driver has no path for it yet
+LazyHGrid.clipsContent: ✅
+LazyHGrid.hitShape: ✅
+LazyHGrid.ignoresSafeArea: not realized
+LazyHGrid.letsInputThrough: ◐ cannot read letsInputThrough of LazyHGrid - AppKit's driver has no path for it yet
+LazyHStack.clipsContent: ✅
+LazyHStack.hitShape: ✅
+LazyHStack.ignoresSafeArea: not realized
+LazyHStack.letsInputThrough: ◐ cannot read letsInputThrough of LazyHStack - AppKit's driver has no path for it yet
+LazyVGrid.clipsContent: ✅
+LazyVGrid.hitShape: ✅
+LazyVGrid.ignoresSafeArea: not realized
+LazyVGrid.letsInputThrough: ◐ cannot read letsInputThrough of LazyVGrid - AppKit's driver has no path for it yet
+LazyVStack.clipsContent: ✅
+LazyVStack.hitShape: ✅
+LazyVStack.ignoresSafeArea: not realized
+LazyVStack.letsInputThrough: ◐ cannot read letsInputThrough of LazyVStack - AppKit's driver has no path for it yet
 Masked.clipsContent: ✅
 Masked.hitShape: ✅
 Masked.ignoresSafeArea: not realized

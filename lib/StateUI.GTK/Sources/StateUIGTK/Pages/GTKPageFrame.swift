@@ -22,6 +22,10 @@ final class GTKPageFrame {
     let header: GTKWidget
     private let heading: GTKWidget
     private let actionsBox: GTKWidget
+    private let menuBox: GTKWidget
+
+    /// The bar's main menu - GNOME's in place of a menu bar - and the menus it holds; nil while the page declares none.
+    private(set) var mainMenu: (button: GTKWidget, menu: GTKMenu)?
     private var leadingBox: GTKWidget?
     private(set) var buttons: [GTKButtonView] = []
     private(set) var leadingButtons: [GTKButtonView] = []
@@ -50,6 +54,8 @@ final class GTKPageFrame {
         adw_header_bar_set_title_widget(header.opaque, heading)
         actionsBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6)!
         adw_header_bar_pack_end(header.opaque, actionsBox)
+        menuBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6)!
+        adw_header_bar_pack_end(header.opaque, menuBox)
         adw_toolbar_view_add_top_bar(widget.opaque, header)
         if let previous = gtk_widget_get_parent(page.widget),
            g_type_check_instance_is_a(previous.of(GTypeInstance.self), adw_toolbar_view_get_type()) != 0 {
@@ -86,6 +92,7 @@ final class GTKPageFrame {
         }
         showActions(leading: chrome.leadingActions, chrome.actions, overflow: chrome.overflow)
         showAppMenu(chrome.appMenu)
+        showMainMenu(chrome.mainMenu)
         showSidebarButton(chrome.sidebar)
         self.chrome = chrome
     }
@@ -205,7 +212,6 @@ final class GTKPageFrame {
         overflowPopover = popover
         overflowButtons = overflow.map { action in
             let button = GTKButtonView.action(action, inMenu: true)
-            gtk_widget_add_css_class(button.widget, "flat")
             button.onClicked = closingOverflow(action)
             gtk_box_append(list.of(GtkBox.self), button.widget)
             return button
@@ -250,6 +256,23 @@ extension GTKPageFrame {
         }
     }
 
+    /// The menus at the bar's very end, as GNOME's applications hold theirs: a main menu holding each as a submenu.
+    /// Design: docs/design/platforms/gtk/pages.md#menus
+    private func showMainMenu(_ menu: GTKMenu?) {
+        if let mainMenu, let menu, menu.stands(like: mainMenu.menu) { return }
+        if let mainMenu { gtk_box_remove(menuBox.of(GtkBox.self), mainMenu.button) }
+        mainMenu = nil
+        guard let menu, !menu.isEmpty else { return }
+
+        let button = gtk_menu_button_new()!
+        gtk_menu_button_set_icon_name(button.opaque, "open-menu-symbolic")
+        gtk_widget_set_tooltip_text(button, "Main Menu")
+        gtk_menu_button_set_menu_model(button.opaque, g_menu_model(menu.model))
+        gtk_widget_insert_action_group(button, GTKMenu.actionGroup, OpaquePointer(menu.actions))
+        gtk_box_append(menuBox.of(GtkBox.self), button)
+        mainMenu = (button, menu)
+    }
+
     /// `action`, closing the overflow's menu first.
     private func closingOverflow(_ action: GTKToolbarAction) -> () -> Void {
         { [weak self] in
@@ -261,7 +284,7 @@ extension GTKPageFrame {
 
 extension GTKButtonView {
     /// A button performing `action`: on the header bar its picture as an icon, else its title; in the overflow's
-    /// menu its title.
+    /// menu its title, flat; coloured where it destroys something.
     /// Design: docs/design/platforms/gtk/pages.md#the-chrome
     static func action(_ action: GTKToolbarAction, inMenu: Bool = false) -> GTKButtonView {
         let button = GTKButtonView()
@@ -269,6 +292,11 @@ extension GTKButtonView {
             button.setText(action.title)
         }
         button.setEnabled(action.isEnabled)
+        if inMenu { gtk_widget_add_css_class(button.widget, "flat") }
+        if action.isDestructive {
+            gtk_widget_add_css_class(button.widget, "destructive-action")
+            if inMenu { gtk_widget_add_css_class(button.widget, GTKStyleSheet.destructiveWords) }
+        }
         button.onClicked = action.perform
         return button
     }

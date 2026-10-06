@@ -156,7 +156,7 @@
     /// The column sizes a `flow` resolves to at `width`: stated items as they stand, an
     /// `.adaptive` one as many `.flexible` copies of it as the room fits. A nil `width`
     /// stands each adaptive for one column.
-    private static func resolvedFlow(_ flow: [GridItem], width: Double?, spacing: Double) -> [GridItem.Size] {
+    public static func resolvedFlow(_ flow: [GridItem], width: Double?, spacing: Double) -> [GridItem.Size] {
         var columns: [GridItem.Size] = []
         var rest = width
 

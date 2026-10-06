@@ -26,6 +26,12 @@
         case "HStack": return dressing.dress(HStack())
         case "Image": return dressing.dress(Image())
         case "List": return dressing.dress(List(0..<20) { Text("Item \($0)") }.frame(width: 240).frame(height: 160))
+        case "LazyHStack": return dressing.dress(LazyHStack { Text("One"); Text("Two") }.frame(width: 240).frame(height: 160))
+        case "LazyVStack": return dressing.dress(LazyVStack { Text("One"); Text("Two") }.frame(width: 240).frame(height: 160))
+        case "LazyHGrid":
+            return dressing.dress(LazyHGrid(rows: [GridItem()]) { Text("One"); Text("Two") }.frame(width: 240).frame(height: 160))
+        case "LazyVGrid":
+            return dressing.dress(LazyVGrid(columns: [GridItem()]) { Text("One"); Text("Two") }.frame(width: 240).frame(height: 160))
         case "Text": return dressing.dress(Text())
         case "Line": return dressing.dress(Line())
         case "Map": return dressing.dress(Map())

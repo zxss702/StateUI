@@ -40,7 +40,7 @@ final class UIKitDriver: HostDriver {
         for layout in ["Grid", "HStack", "VStack", "ZStack", "ScrollView"] {
             none["read shape of \(layout)"] =
                 "UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it"
-            for member in ["padding", "ignoresSafeArea"] {
+            for member in ["contentPadding", "ignoresSafeArea"] {
                 none["read \(member) of \(layout)"] =
                     "UIKit's view places its children where StateUI's layout says; their frames prove it"
             }
@@ -127,14 +127,16 @@ final class UIKitDriver: HostDriver {
     }
 
     /// One pass of the main loop, 20 ms long: a case's 150 steps wait three seconds, which a page WebKit loads in a
-    /// process of its own takes on a busy Mac.
+    /// process of its own takes on a busy Mac. What UIKit autoreleases in it is let go as it ends.
     func step() {
         guard let renderer else { return }
-        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.02))
-        _ = renderer.runtime.core.runJobs()
-        renderer.runtime.pump.turn()
-        renderer.layOut()
-        if renderer.frameClock.held { renderer.frame() }
+        autoreleasepool {
+            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.02))
+            _ = renderer.runtime.core.runJobs()
+            renderer.runtime.pump.turn()
+            renderer.layOut()
+            if renderer.frameClock.held { renderer.frame() }
+        }
     }
 
     func turn() {
@@ -146,9 +148,19 @@ final class UIKitDriver: HostDriver {
         renderer?.frame()
     }
 
+    /// Does `act`, what UIKit autoreleases on the way let go as it ends.
     func perform(_ act: UserAct, on element: MountedElement) throws {
+        try autoreleasepool { try performing(act, on: element) }
+    }
+
+    private func performing(_ act: UserAct, on element: MountedElement) throws {
+        if element.type == .pin { return try performOnPin(act, element) }
         let view = (element.native as? UIKitElement)?.view
         switch (act, view) {
+        case (.tap(let count), let map as UIKitMapView):
+            // A tap on a map is the map's, and the view's where it hears taps too.
+            try touch(element) { listening, view in Self.tap(listening, on: view, count: count) }
+            map.tap(at: CGPoint(x: map.bounds.midX, y: map.bounds.midY))
         case (.activate, _) where element.parent?.type == .list:
             guard let items = (element.parent?.native as? UIKitElement)?.view as? UIKitItemsView,
                   case .manual(let identity) = element.id
@@ -274,6 +286,10 @@ final class UIKitDriver: HostDriver {
 
     func held(_ property: Prop, on element: MountedElement) throws -> HostValue? {
         if element.type == .windowScene { return try windowHolds(property, element) }
+        if element.type == .pin { return try pinHolds(property, element) }
+        if let map = (element.native as? UIKitElement)?.view as? UIKitMapView, let held = mapHolds(property, map) {
+            return held
+        }
         if let held = try pageHolds(property, element) { return held }
         let view = (element.native as? UIKitElement)?.view
         switch (property, view) {
@@ -328,6 +344,18 @@ final class UIKitDriver: HostDriver {
             return (view.window != nil && sequence(first: view, next: \.superview).allSatisfy { !$0.isHidden }).propValue
         case (.opacity, let view?): return Double(view.alpha).propValue
         case (.isEnabled, let control as UIControl): return control.isEnabled.propValue
+        case (.submitLabel, let field as UITextField):
+            let key: ReturnKey? = switch field.returnKeyType {
+            case .go: .go
+            case .search: .search
+            case .send: .send
+            case .next: .next
+            case .done: .done
+            case .default: .default
+            default: nil
+            }
+            return key?.propValue
+        case (.showsClearButton, let field as UITextField): return (field.clearButtonMode != .never).propValue
         case (.isEnabled, let label as UILabel): return label.isEnabled.propValue
         case (.isEnabled, let editor as UITextView): return (editor.isEditable || editor.isSelectable).propValue
         case (.contentPadding, let button as UIButton):

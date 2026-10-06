@@ -184,6 +184,58 @@ final class NativeProjectTests: XCTestCase {
         XCTAssertEqual(open, [], "a C function of the relay lets an exception out")
     }
 
+    /// No C++ exception leaves a handler the WinUI relay registers - an event's, a command's, a dispatched
+    /// closure's - each wrapped in `guarded`, since one escaping a callback WinUI invokes is stowed and ends the
+    /// process (a window's activation read as UI Automation closed it, 0xc000027b).
+    func testNoCppExceptionLeavesARelaysHandler() throws {
+        let bare = try NSRegularExpression(pattern: #"(\.[A-Z]\w*|::\w*Handler)\(\s*(winrt::auto_revoke,\s*)?\["#)
+        var open: [String] = []
+        for folder in ["lib/StateUI.WinUI/Sources/CStateUIWinUI", "lib/Backends/WebView.WinUI/Relay"] {
+            let root = SourceTree.repository.appendingPathComponent(folder)
+            guard let names = try? FileManager.default.contentsOfDirectory(atPath: root.path) else { continue }
+            for name in names where name.hasSuffix(".cpp") {
+                let text = try String(contentsOf: root.appendingPathComponent(name), encoding: .utf8)
+                for match in bare.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
+                    let before = text[..<Range(match.range, in: text)!.lowerBound]
+                    open.append("\(name):\(before.filter { $0 == "\n" }.count + 1)")
+                }
+            }
+        }
+        XCTAssertEqual(open, [], "a handler WinUI calls is not guarded")
+    }
+
+    /// A WinRT object a WinUI relay keeps for the process beside WinUI is made with `new` and never destroyed: a
+    /// static one is destroyed as the process exits, after WinUI is gone, and Windows ends the process there (a
+    /// display watcher did, `RaiseFailFastException` in Microsoft.UI.Windowing.dll on every window's close). The
+    /// test thread's WinUI itself - its dispatcher, application and XAML manager - is destroyed then, which is its
+    /// shutdown; kept past it, the process ends in an access violation.
+    func testTheWinUIRelaysDestroyNoWinRTObjectAtExit() throws {
+        let kept = try NSRegularExpression(
+            pattern: #"^\s+static\s+(const\s+)?(auto|winrt::|xaml::|controls::|media::|power::)(?!.*\bnew\b)"#,
+            options: [.anchorsMatchLines])
+        var found: [String] = []
+        for folder in ["lib/StateUI.WinUI/Sources/CStateUIWinUI", "lib/Backends/WebView.WinUI/Relay"] {
+            let root = SourceTree.repository.appendingPathComponent(folder)
+            guard let names = try? FileManager.default.contentsOfDirectory(atPath: root.path) else { continue }
+            for name in names where name.hasSuffix(".cpp") {
+                let text = try String(contentsOf: root.appendingPathComponent(name), encoding: .utf8)
+                for match in kept.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
+                    let at = Range(match.range, in: text)!.lowerBound
+                    let line = text[at...].prefix { $0 != "\n" }
+                    guard !Self.winUIItself.contains(where: { line.contains($0) }) else { continue }
+                    found.append("\(name):\(text[..<at].filter { $0 == "\n" }.count + 1)")
+                }
+            }
+        }
+        XCTAssertEqual(found.sorted(), [], "a WinRT object destroyed at exit")
+    }
+
+    /// What makes the test thread's WinUI, which shuts down as its statics are destroyed.
+    private static let winUIItself = [
+        "DispatcherQueueController::CreateOnCurrentThread", "make<StateUIApplication>",
+        "WindowsXamlManager::InitializeForCurrentThread",
+    ]
+
     /// Each `extern "C"` function `text` defines: its name, and its body - braces counted outside words, letters and
     /// comments.
     private static func cFunctions(in text: String) -> [(name: String, body: String)] {
@@ -355,7 +407,12 @@ final class NativeProjectTests: XCTestCase {
 
         let header = try String(contentsOf: repository.appendingPathComponent("\(module)/CStateUIGTK.h"), encoding: .utf8)
         let code = header.split(separator: "\n").filter { !$0.hasPrefix("//") && !$0.isEmpty }
-        XCTAssertEqual(code, ["#include <adwaita.h>"], "the header declares something of its own")
+        XCTAssertEqual(code.first, "#include <adwaita.h>", "the header includes more than the system's")
+        XCTAssertTrue(
+            code.dropFirst().allSatisfy {
+                $0.hasPrefix("static const ") && $0.contains(" STATEUI_")
+            },
+            "the header declares something of its own - only STATEUI_ aliases for GLib's flags stand beside the include")
     }
 
     /// Every GTK HEAD is an executable its application declares exactly when a

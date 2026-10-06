@@ -5,6 +5,8 @@
 
 #if canImport(Darwin)
 import Darwin
+#elseif canImport(Android)
+import Android
 #elseif canImport(Glibc)
 import Glibc
 #elseif canImport(CRT)
@@ -29,6 +31,13 @@ import CRT
     /// The elements this one holds, in order - a grid's and a ZStack's in the order they are drawn, by
     /// `zIndex`, ties in the order written.
     public private(set) var children: [MountedElement] = []
+
+    /// Whether the last patch changed this element's children - the first counts.
+    public private(set) var childrenChanged = false
+
+    /// The child the host keeps for this element as one its parent's view draws - a map's marker - the same object
+    /// for as long as the element lives (`asChild`).
+    var keptChild: HostChild?
 
     /// Each child's place in the order the last arrangement wrote them - known before the children are made.
     private(set) var writingOrder: [ElementId: Int] = [:]
@@ -57,6 +66,10 @@ import CRT
     /// Whether the element rides a removal transition - kept in its parent's
     /// children and shown while it goes.
     public internal(set) var isDeparting = false
+
+    /// Which departure is in flight: a landing of an old one - reversed, or
+    /// left behind by a newer - touches nothing.
+    var departureSerial = 0
 
     /// The frame report this element last said, which a report the same says again to nobody.
     var reportedFrame: [Double] = []
@@ -139,6 +152,13 @@ import CRT
             properties[property] = value
         }
 
+        // A value written on its own leaves the key it was found by behind: the lookup key shadowing it lifts,
+        // its own standing alone.
+        for (property, keyProp) in Self.keyProperties
+        where patch.properties[property] != nil && patch.properties[keyProp] == nil {
+            properties[keyProp] = nil
+        }
+
         if case .replace(let events) = patch.events {
             self.events = events
         }
@@ -159,6 +179,8 @@ import CRT
             if type == .app { tree.layoutMotion.applicationMotion = animation.animation }
         }
 
+        if case .unchanged = patch.children { childrenChanged = false } else { childrenChanged = true }
+
         switch patch.children {
         case .unchanged:
             break
@@ -171,7 +193,8 @@ import CRT
             for childPatch in childPatches {
                 // A new child arrives only in an arranged list; a sparse list naming a stranger drifted.
                 guard let index = children.firstIndex(where: { $0.id == childPatch.id }) else {
-                    tree.intake.drifted("a patch names child '\(childPatch.id)' that '\(id)' does not have")
+                    tree.intake.drifted(
+                        "a patch names child '\(childPatch.id)' that '\(id)' does not have")
                     continue
                 }
                 let child = children[index]
@@ -201,7 +224,11 @@ import CRT
         }
 
         restack()
-        if changed.contains(.layoutDirection) { directionTurned(arrangingItself: false) }
+        if changed.contains(.layoutDirection) {
+            directionTurned(arrangingItself: false)
+        } else if !described {
+            native.directionChanged()
+        }
         framesRead = driven[.frame] != nil || events[.frameChanged] != nil
             || children.contains { $0.framesRead }
         native.applied(changed: changed, wasDescribed: described)
@@ -263,6 +290,7 @@ import CRT
     /// arrange their children again, the element itself when its patch will not.
     /// Design: docs/design/host/layout.md#right-to-left
     func directionTurned(arrangingItself: Bool) {
+        native.directionChanged()
         if arrangingItself, !children.isEmpty { native.arrangeChildren() }
         for child in children where child.inheritsDirection {
             child.directionTurned(arrangingItself: true)
@@ -455,20 +483,21 @@ import CRT
         return presented
     }
 
+    /// The `*Key` property shadowing each one it looks its value up by.
+    private static let keyProperties: [Prop: Prop] = [
+        .text: .textKey,
+        .title: .titleKey,
+        .subtitle: .subtitleKey,
+        .placeholder: .placeholderKey,
+        .hint: .hintKey,
+    ]
+
     /// The lookup key carried beside `property`, where `property` is one a
     /// `*Key` member shadows - `text`, `title`, `subtitle`, `placeholder`,
     /// `hint` - and none elsewhere.
     private func lookupKey(for property: Prop) -> LocalizedStringKey? {
-        let keyProp: Prop
-        switch property {
-        case .text: keyProp = .textKey
-        case .title: keyProp = .titleKey
-        case .subtitle: keyProp = .subtitleKey
-        case .placeholder: keyProp = .placeholderKey
-        case .hint: keyProp = .hintKey
-        default: return nil
-        }
-        return resolvedValue(keyProp).flatMap(LocalizedStringKey.init(propValue:))
+        Self.keyProperties[property].flatMap { resolvedValue($0) }
+            .flatMap(LocalizedStringKey.init(propValue:))
     }
 
     /// The text value of `property`.

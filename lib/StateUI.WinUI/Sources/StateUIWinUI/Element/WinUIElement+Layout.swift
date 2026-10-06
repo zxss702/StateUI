@@ -6,10 +6,25 @@
 
 /// Children placed: the layout item each child gives its parent.
 extension WinUIElement {
+    /// The view lays out, and its control writes, in the element's direction.
+    func directionChanged() {
+        view?.setDirection(element.layoutDirection)
+    }
+
     /// Hands a layout its children's items, in order - a page's slots furnish it and stand in none of its room - and
     /// a label the runs of its spans.
     func arrangeChildren() {
         if let items = view as? WinUIItemsView { return items.childrenChanged() }
+        if let lazy = view as? WinUILazyView {
+            lazy.cells.takeItems()
+            lazy.direction = element.layoutDirection
+            lazy.setItems(element.arrangedChildren.compactMap { child in
+                guard case .manual(let identity) = child.id, let item = child.winUI.layoutItem
+                else { return nil }
+                return (identity, item)
+            })
+            return
+        }
         if let label = view as? WinUILabelView {
             return arrangeRuns(of: label)
         }

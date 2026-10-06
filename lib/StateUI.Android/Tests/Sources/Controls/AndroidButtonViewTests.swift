@@ -33,7 +33,7 @@ final class AndroidButtonViewTests: XCTestCase {
             host.layOut()
             let buttons = host.views(AndroidButtonView.self)
             let words = try XCTUnwrap(Self.words(of: buttons[0]))
-            let room = Self.contentPadding(of: buttons[0])
+            let room = Self.padding(of: buttons[0])
 
             XCTAssertEqual(buttons[0].frame.width, words.width + room.width, accuracy: 1)
             XCTAssertEqual(buttons[0].frame.height, words.height + room.height, accuracy: 1)

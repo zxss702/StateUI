@@ -60,7 +60,7 @@ final class GTKDriver: HostDriver {
         cannot[ability] ?? "GTK's driver has no path for it yet"
     }
 
-    private var renderer: GTKRenderer?
+    var renderer: GTKRenderer?
 
     var register: HostRegister { GTKRealization.register }
 
@@ -82,7 +82,15 @@ final class GTKDriver: HostDriver {
         renderer?.frame()
     }
 
+    var liveViews: Int? {
+        GTKView.liveCount
+    }
+
     func perform(_ act: UserAct, on element: MountedElement) throws {
+        if act == .goBack {
+            guard renderer?.goBack() == true else { throw DriverCannot(act, on: element) }
+            return
+        }
         let view = (element.native as? GTKElement)?.view
         switch (act, view) {
         case (.activate, let button as GTKButtonView): button.click()
@@ -101,11 +109,25 @@ final class GTKDriver: HostDriver {
         case (.submit, let field as GTKTextFieldView): GTKTestHost.emit(field.widget.opaque, "activate")
         case (.choose(let place), let picker as GTKPickerView): gtk_drop_down_set_selected(picker.widget.opaque, guint(place))
         case (.scroll(let offset), let items as GTKItemsView): try scroll(items, to: offset, on: element, act)
+        case (.open, let picker as GTKPopoverPickerView): gtk_menu_button_popup(picker.widget.opaque)
+        case (.close, let picker as GTKPopoverPickerView): gtk_popover_popdown(picker.popover.of(GtkPopover.self))
+        case (.pickDate(let day), let dates as GTKDatePickerView):
+            guard let native = g_date_time_new_local(Int32(day.year), Int32(day.month), Int32(day.day), 12, 0, 0) else {
+                throw DriverCannot(act, on: element)
+            }
+            gtk_calendar_select_day(dates.calendar.opaque, native)
+            g_date_time_unref(native)
+        // The user moves the hour and the minute each; the clock is set at once, and its minute's wheel tells it.
+        case (.pickTime(let time), let times as GTKTimePickerView):
+            ProgramWrite.perform { times.setTime(time) }
+            GTKTestHost.emit(times.minutes.opaque, "value-changed")
+        case (.activate, _) where element.type == .menuItem: try chooseMenuItem(element)
         default: throw DriverCannot(act, on: element)
         }
     }
 
     func held(_ property: Prop, on element: MountedElement) throws -> HostValue? {
+        if element.type == .menuItem { return try menuItemHolds(property, element) }
         let view = (element.native as? GTKElement)?.view
         switch (property, view) {
         case (.isOn, let toggle as GTKToggleView): return toggle.isOn.propValue
@@ -127,11 +149,32 @@ final class GTKDriver: HostDriver {
             guard let model = gtk_drop_down_get_model(picker.widget.opaque) else { return [String]().propValue }
             return (0..<g_list_model_get_n_items(model)).map { String(cString: gtk_string_list_get_string(model, $0)) }
                 .propValue
+        case (.isOpen, let picker as GTKPopoverPickerView): return picker.isOpen.propValue
+        case (.date, let dates as GTKDatePickerView): return dates.date.propValue
+        case (.minimumDate, let dates as GTKDatePickerView): return dates.range.earliest?.propValue
+        case (.maximumDate, let dates as GTKDatePickerView): return dates.range.latest?.propValue
+        case (.format, let dates as GTKDatePickerView):
+            return (Self.words(of: dates) == Self.shortForm(of: dates) ? "d" : "D").propValue
+        case (.time, let times as GTKTimePickerView): return times.time.propValue
         case (.isVisible, let view?): return (gtk_widget_get_visible(view.widget) != 0).propValue
         case (.opacity, let view?): return gtk_widget_get_opacity(view.widget).propValue
         case (.isEnabled, let view?): return (gtk_widget_get_sensitive(view.widget) != 0).propValue
         default: throw DriverCannot(reading: property, of: element)
         }
+    }
+
+    /// The words a picker's button shows.
+    private static func words(of picker: GTKPopoverPickerView) -> String {
+        String(cString: gtk_label_get_text(picker.label.opaque))
+    }
+
+    /// The day a DatePicker holds, in its short form.
+    private static func shortForm(of picker: GTKDatePickerView) -> String {
+        let day = gtk_calendar_get_date(picker.calendar.opaque)!
+        defer { g_date_time_unref(day) }
+        let words = g_date_time_format(day, "%x")!
+        defer { g_free(words) }
+        return String(cString: words)
     }
 
     /// Moves the scrolled window in `view` to `offset`, as a wheel does: through its adjustments, which hold it

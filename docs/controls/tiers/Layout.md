@@ -6,7 +6,7 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 
 Wears: [View](View.md) · [PaddingElement](PaddingElement.md) · [BorderElement](BorderElement.md)
 
-Worn by: [CustomLayout](../CustomLayout.md) · [Grid](../Grid.md) · [GridRow](../GridRow.md) · [HStack](../HStack.md) · [Masked](../Masked.md) · [ScrollView](../ScrollView.md) · [VStack](../VStack.md) · [ZStack](../ZStack.md)
+Worn by: [CustomLayout](../CustomLayout.md) · [Grid](../Grid.md) · [GridRow](../GridRow.md) · [HStack](../HStack.md) · [LazyHGrid](../LazyHGrid.md) · [LazyHStack](../LazyHStack.md) · [LazyVGrid](../LazyVGrid.md) · [LazyVStack](../LazyVStack.md) · [Masked](../Masked.md) · [ScrollView](../ScrollView.md) · [VStack](../VStack.md) · [ZStack](../ZStack.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Tiers/LayoutContract.swift`.
 

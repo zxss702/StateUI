@@ -75,7 +75,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ | ✅ | ✅ | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; GTK 4: cannot read background of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – | – | – | ⏸ |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on ScrollView.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ScrollView - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -83,9 +83,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of ScrollView - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – | – | – |  |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | · |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ScrollView - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of ScrollView - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -110,7 +110,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of ScrollView: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of ScrollView: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of ScrollView - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of ScrollView: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of ScrollView: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of ScrollView - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – | – | – | ⏸ |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on ScrollView.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | – | – | – | – | · |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ScrollView - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
@@ -168,10 +168,10 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `clipsContent` | property | `Bool` | native | ✅ |  |  |  |  |  | GTK 4: not realized |
-| `letsInputThrough` | property | `Bool` | native | ◐ |  |  |  |  |  | cannot read letsInputThrough of ScrollView - AppKit's driver has no path for it yet; GTK 4: not realized |
-| `hitShape` | property | `ContainerShape` | native | ◐ |  |  |  |  |  | cannot read hitShape of ScrollView - AppKit's driver has no path for it yet; GTK 4: not realized |
+| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  | · |  |  |  |  | not realized; UIKit: cannot read ignoresSafeArea of ScrollView - UIKit's view places its children where StateUI's layout says; their frames prove it; GTK 4: not realized |
+| `clipsContent` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; GTK 4: not realized |
+| `letsInputThrough` | property | `Bool` | native | ◐ |  |  |  |  |  | cannot read letsInputThrough of ScrollView - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: not realized |
+| `hitShape` | property | `ContainerShape` | native | ◐ |  |  |  |  |  | cannot read hitShape of ScrollView - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: not realized |
 | `scrollTargetLayout` | property | `Bool` | adaptive |  |  |  |  |  |  |  |
 
 ## From [PaddingElement](tiers/PaddingElement.md)

@@ -55,7 +55,10 @@ final class UIKitSplitViewController: UISplitViewController, UISplitViewControll
         guard narrow != nil else { return }
         movingItself = true
         defer { movingItself = false }
-        UIView.animate(withDuration: 0.3) { self.preferredDisplayMode = self.askedDisplayMode }
+        // UIKit's own slide, which moves the columns with a page pushed in the same turn: a page laid out in a slide
+        // of our own grew from nothing.
+        presented ? show(.primary) : hide(.primary)
+        preferredDisplayMode = askedDisplayMode
     }
 
     /// How the columns stand for the sidebar the tree asks for: over the detail in a narrow room, beside it in a
@@ -72,7 +75,7 @@ final class UIKitSplitViewController: UISplitViewController, UISplitViewControll
 
     /// The room's width class: the split view's own always says wide.
     private var roomIsNarrow: Bool? {
-        guard let room = parent?.traitCollection ?? view.window?.window?.traitCollection,
+        guard let room = parent?.traitCollection ?? view.window?.windowScene?.traitCollection,
               room.horizontalSizeClass != .unspecified
         else { return nil }
         return room.horizontalSizeClass == .compact

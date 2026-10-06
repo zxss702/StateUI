@@ -31,7 +31,8 @@ final class UIKitRenderer {
     private(set) lazy var runtime = HostRuntime(
         clock: frameClock, reducesMotion: reducesMotion,
         makeNative: { [unowned self] element in UIKitElement(element, host: self) },
-        log: { UIKitRenderer.log.error($0) })
+        log: { UIKitRenderer.log.error($0) },
+        views: { UIKitElement.liveViewCount })
 
     /// Every StateUI window with the controller showing it.
     let roster = WindowRoster<UIKitWindowController>()
@@ -109,8 +110,22 @@ final class UIKitRenderer {
     /// A scene's lifecycle moved: the window standing in it is in front of the user and activated, off the screen
     /// once in the background, and neither between.
     func scene(_ scene: UIWindowScene, movedTo phase: ApplicationPhase) {
-        guard let shown = roster.windows.first(where: { $0.1.window?.window === scene })?.0 else { return }
-        window(shown, movedTo: phase)
+        guard let shown = roster.windows.first(where: { $0.1.window?.windowScene === scene })?.0 else { return }
+        window(shown, movedTo: Self.standing(in: scene, moved: phase))
+    }
+
+    /// Where a window stands for the user in `scene`, moved to `phase`: iPadOS keeps every window on screen active
+    /// and dims those behind the one the user works in, which stand inactive.
+    /// Design: docs/design/platforms/uikit/runtime.md#scenes
+    private static func standing(in scene: UIWindowScene, moved phase: ApplicationPhase) -> ApplicationPhase {
+        phase == .active && scene.traitCollection.activeAppearance == .inactive ? .inactive : phase
+    }
+
+    /// The user came to the window in `scene` or went to another: it stands in front, or behind, where its scene is
+    /// active.
+    private func frontMoved(in scene: UIWindowScene) {
+        guard scene.activationState == .foregroundActive else { return }
+        self.scene(scene, movedTo: .active)
     }
 
     /// `window`'s lifecycle moved: the host layer settles what that means for it, its scene and the application.
@@ -124,7 +139,9 @@ final class UIKitRenderer {
     private func tellStandingPhases() {
         for (element, controller) in roster.windows where controller.toldPhase == nil {
             switch controller.window?.windowScene?.activationState {
-            case .foregroundActive?: window(element, movedTo: .active)
+            case .foregroundActive?:
+                guard let scene = controller.window?.windowScene else { break }
+                window(element, movedTo: Self.standing(in: scene, moved: .active))
             case .background?: window(element, movedTo: .background)
             default: break
             }
@@ -189,7 +206,9 @@ final class UIKitRenderer {
         roster.update(root: root, make: { [unowned self] element in
             let scene = waitingScenes.isEmpty ? nil : waitingScenes.removeFirst()
             if scene == nil, ownsScenes, launched { requestScene() }
-            return UIKitWindowController(element, scene: scene)
+            let controller = UIKitWindowController(element, scene: scene)
+            controller.onFrontMoved = { [weak self] scene in self?.frontMoved(in: scene) }
+            return controller
         }, close: { [unowned self] closing in
             guard ownsScenes else { return closing.hide() }
             bringBack(insteadOf: closing, staying: root.windows)
@@ -207,15 +226,24 @@ final class UIKitRenderer {
     /// home screen once the scene in front goes.
     /// Design: docs/design/platforms/uikit/runtime.md#scenes
     private func bringBack(insteadOf closing: UIKitWindowController, staying: [MountedElement]) {
-        guard let state = closing.window?.windowScene?.activationState,
-              state == .foregroundActive || state == .foregroundInactive,
-              let back = runtime.lifecycle.activatedLast(among: staying) ?? staying.first,
-              let session = roster.windows.first(where: { $0.0 === back })?.1.session
+        guard let back = runtime.lifecycle.activatedLast(among: staying) ?? staying.first,
+              let controller = roster.windows.first(where: { $0.0 === back })?.1,
+              let session = controller.session,
+              Self.bringsBack(closing: closing.window?.windowScene?.activationState,
+                              staying: controller.window?.windowScene?.activationState)
         else { return }
         UIApplication.shared.activateSceneSession(
             for: UISceneSessionActivationRequest(session: session), errorHandler: { error in
                 MainActor.assumeIsolated { Self.log.error("no window to come back to: \(error.localizedDescription)") }
             })
+    }
+
+    /// Whether the window staying is brought back as one in scene `closing` closes: only from under it - the closing
+    /// one in front, the staying one off the screen. One on the screen beside it stays where and as big as it is:
+    /// brought back, iPadOS would stand it in the closing window's place, at its size.
+    static func bringsBack(closing: UIScene.ActivationState?, staying: UIScene.ActivationState?) -> Bool {
+        let shown: (UIScene.ActivationState?) -> Bool = { $0 == .foregroundActive || $0 == .foregroundInactive }
+        return shown(closing) && !shown(staying)
     }
 
     /// The menus the user's window puts on the application's menu bar: the command groups' spliced into UIKit's

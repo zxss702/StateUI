@@ -207,14 +207,22 @@ final class GTKActPerformer {
         guard let view = aimed(call, in: tree) else { return }
 
         if call.act == .focus {
-            reply(call, [.bool(gtk_widget_grab_focus(view.widget) != 0)])
+            // GTK hands a container's keyboard to a part of it - a list to its row - and may answer that it took
+            // none: where the focus stands answers.
+            gtk_widget_grab_focus(view.widget)
+            reply(call, [.bool(Self.holdsTheKeyboard(view.widget))])
             return
         }
-        if let root = gtk_widget_get_root(view.widget), let focus = gtk_root_get_focus(root),
-           focus == view.widget || gtk_widget_is_ancestor(focus, view.widget) != 0 {
+        if Self.holdsTheKeyboard(view.widget), let root = gtk_widget_get_root(view.widget) {
             gtk_root_set_focus(root, nil)
         }
         reply(call, [])
+    }
+
+    /// Whether the keyboard's focus stands on `widget` or a part of it.
+    private static func holdsTheKeyboard(_ widget: GTKWidget) -> Bool {
+        guard let root = gtk_widget_get_root(widget), let focus = gtk_root_get_focus(root) else { return false }
+        return focus == widget || gtk_widget_is_ancestor(focus, widget) != 0
     }
 
     /// Scrolls until the aimed ScrollView's descendant `.id()` names stands

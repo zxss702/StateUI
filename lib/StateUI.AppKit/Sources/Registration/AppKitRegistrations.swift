@@ -29,6 +29,8 @@ enum AppKitRegistrations {
         layouts(registry)
         presentation(registry)
         representable(registry)
+        maps(registry)
+        web(registry)
         shared(registry)
 
         return registry
@@ -39,7 +41,8 @@ enum AppKitRegistrations {
     /// (`HostActPerformer`) answers exactly these and the application's own; every other act it refuses by name.
     static let acts: [any ContractMember] =
         HostActs.performed + [
-            AppContract.chooseFiles, AppContract.persistSceneValue, ListContract.scrollTo, ScrollViewContract.scrollToDescendant]
+            AppContract.chooseFiles, AppContract.persistSceneValue, ListContract.scrollTo,
+            ScrollViewContract.scrollToDescendant, MapContract.moveToRegion] + webActs
 
     static func edgeInsets(_ value: EdgeInsets?) -> NSEdgeInsets {
         guard let numbers = value?.propValue.numbers, numbers.count >= 4 else { return NSEdgeInsets() }

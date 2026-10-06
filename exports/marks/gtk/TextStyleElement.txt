@@ -2,7 +2,7 @@
 Button.characterSpacing: not realized
 Button.foregroundStyle: cannot read foregroundStyle of Button - GTK's driver has no path for it yet
 DatePicker.characterSpacing: not realized
-DatePicker.foregroundStyle: not realized
+DatePicker.foregroundStyle: cannot read foregroundStyle of DatePicker - GTK's driver has no path for it yet
 Picker.characterSpacing: not realized
 Picker.foregroundStyle: not realized
 RadioButton.characterSpacing: not realized
@@ -18,4 +18,4 @@ TextEditor.foregroundStyle: cannot read foregroundStyle of TextEditor - GTK's dr
 TextField.characterSpacing: not realized
 TextField.foregroundStyle: cannot read foregroundStyle of TextField - GTK's driver has no path for it yet
 TimePicker.characterSpacing: not realized
-TimePicker.foregroundStyle: not realized
+TimePicker.foregroundStyle: cannot read foregroundStyle of TimePicker - GTK's driver has no path for it yet

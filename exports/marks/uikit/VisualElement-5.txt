@@ -9,23 +9,37 @@ Button.translationY: 🔌 read translationY of Button: the host's own transform,
 Canvas.scaleX: 🔌 read scaleX of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.rotationX: 🔌 read rotationX of CheckBox: the host's own transform, checked against the layer it composed itself
 ColorPicker.pivotX: 🔌 read pivotX of ColorPicker: the host's own transform, checked against the layer it composed itself
-DatePicker.automationExcludedWithChildren: ✅
-Ellipse.accessibilityHint: ✅
-Grid.focus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
-Grid.isFocusedChanged: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
-Grid.unfocus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
-HStack.frameChanged: ✅
-HStack.maximumHeight: ✅
-HStack.maximumWidth: ✅
-HStack.minimumHeight: ✅
-HStack.minimumWidth: ✅
-Image.opacity: ✅
-Image.translationY: 🔌 read translationY of Image: the host's own transform, checked against the layer it composed itself
-List.scaleX: 🔌 read scaleX of List: the host's own transform, checked against the layer it composed itself
-Text.rotationX: 🔌 read rotationX of Text: the host's own transform, checked against the layer it composed itself
-Line.pivotX: 🔌 read pivotX of Line: the host's own transform, checked against the layer it composed itself
-Map.automationExcludedWithChildren: not realized
-Path.accessibilityHint: ✅
+CustomLayout.automationExcludedWithChildren: not realized
+DatePicker.focus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
+DatePicker.isFocusedChanged: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
+DatePicker.unfocus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
+Ellipse.frameChanged: ✅
+Ellipse.maximumHeight: ✅
+Ellipse.maximumWidth: ✅
+Ellipse.minimumHeight: ✅
+Ellipse.minimumWidth: ✅
+Grid.opacity: ✅
+Grid.translationY: 🔌 read translationY of Grid: the host's own transform, checked against the layer it composed itself
+GridRow.scaleX: not realized
+HStack.rotationX: 🔌 read rotationX of HStack: the host's own transform, checked against the layer it composed itself
+Image.pivotX: 🔌 read pivotX of Image: the host's own transform, checked against the layer it composed itself
+LazyHGrid.rotationX: 🔌 read rotationX of LazyHGrid: the host's own transform, checked against the layer it composed itself
+LazyHStack.pivotX: 🔌 read pivotX of LazyHStack: the host's own transform, checked against the layer it composed itself
+LazyVGrid.automationExcludedWithChildren: ✅
+LazyVStack.accessibilityHint: ✅
+Line.focus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
+Line.isFocusedChanged: – Line takes no keyboard focus here: it refuses it, and nothing is heard
+Line.unfocus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
+List.automationExcludedWithChildren: ✅
+Map.frameChanged: ✅
+Map.maximumHeight: ✅
+Map.maximumWidth: ✅
+Map.minimumHeight: ✅
+Map.minimumWidth: ✅
+Masked.accessibilityHint: not realized
+MenuButton.opacity: not realized
+MenuButton.translationY: not realized
+Path.scaleX: 🔌 read scaleX of Path: the host's own transform, checked against the layer it composed itself
 Picker.focus: – Picker takes no keyboard focus here: it refuses it, and nothing is heard
 Picker.isFocusedChanged: – Picker takes no keyboard focus here: it refuses it, and nothing is heard
 Picker.unfocus: – Picker takes no keyboard focus here: it refuses it, and nothing is heard
@@ -52,6 +66,7 @@ Slider.minimumWidth: ✅
 Stepper.opacity: ✅
 Stepper.translationY: 🔌 read translationY of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.scaleX: 🔌 read scaleX of Switch: the host's own transform, checked against the layer it composed itself
+Text.accessibilityHint: ✅
 TextEditor.rotationX: 🔌 read rotationX of TextEditor: the host's own transform, checked against the layer it composed itself
 TextField.pivotX: 🔌 read pivotX of TextField: the host's own transform, checked against the layer it composed itself
 TimePicker.automationExcludedWithChildren: ✅

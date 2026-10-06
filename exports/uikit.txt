@@ -7,8 +7,11 @@ Button
   characterSpacing
   contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
   foregroundStyle
   icon
   iconPosition
@@ -59,10 +62,11 @@ Grid
   clipsContent
   columnSpacing
   columns
+  contentPadding
+  flowColumns
+  hitShape
   ignoresInput
   letsInputThrough
-  hitShape
-  contentPadding
   rowSpacing
   rows
   shape
@@ -71,10 +75,10 @@ Grid
 HStack
   background
   clipsContent
+  contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
-  hitShape
-  contentPadding
   shape
   spacing
   stroke
@@ -82,34 +86,62 @@ HStack
 Image
   aspect
   source
-List
-  endReachedWithin
-  items
-  itemsLayout
-  listStyle
-  selectedItems
-  selectionMode
-  endReached()
-  itemActivated()
-  realizedChanged()
-  selectionChanged()
-Text
+LazyHGrid
   background
-  characterSpacing
-  fontAttributes
-  fontFamily
-  fontSize
-  multilineTextAlignment
-  isEnabled
-  lineBreak
-  lineHeight
-  lineLimit
+  clipsContent
+  columnSpacing
   contentPadding
-  text
-  textCase
-  foregroundStyle
-  textDecorations
-  verticalTextAlignment
+  flowRows
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyHStack
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVGrid
+  background
+  clipsContent
+  columnSpacing
+  contentPadding
+  flowColumns
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  rowSpacing
+  shape
+  stroke
+  strokeWidth
+  realizedChanged()
+LazyVStack
+  background
+  clipsContent
+  contentPadding
+  hitShape
+  ignoresInput
+  items
+  letsInputThrough
+  shape
+  spacing
+  stroke
+  strokeWidth
+  realizedChanged()
 Line
   aspect
   fill
@@ -125,6 +157,25 @@ Line
   x2
   y1
   y2
+List
+  endReachedWithin
+  items
+  itemsLayout
+  listStyle
+  selectedItems
+  selectionMode
+  endReached()
+  itemActivated()
+  realizedChanged()
+  selectionChanged()
+Map
+  isScrollEnabled
+  isTrafficEnabled
+  isZoomEnabled
+  mapType
+  region
+  showsUserLocation
+  mapClicked()
 Path
   aspect
   data
@@ -146,6 +197,13 @@ Picker
   closed()
   opened()
   selectedIndexChanged()
+Pin
+  address
+  label
+  location
+  type
+  pinClicked()
+  pinDetailsClicked()
 Polygon
   aspect
   fill
@@ -176,15 +234,18 @@ ProgressBar
   progress
   tint
 RadioButton
+  contentPadding
   fontAttributes
+  fontDesign
   fontFamily
   fontSize
+  fontTextStyle
+  fontWeight
+  foregroundStyle
   isEnabled
   isOn
-  contentPadding
   text
   textCase
-  foregroundStyle
   toggled()
 Rectangle
   aspect
@@ -200,9 +261,9 @@ Rectangle
   strokeWidth
 ScrollView
   background
+  contentPadding
   horizontalScrollIndicators
   orientation
-  contentPadding
   scrollOffset
   shape
   stroke
@@ -216,19 +277,20 @@ SearchField
   fontAttributes
   fontFamily
   fontSize
-  multilineTextAlignment
-  textContentType
+  foregroundStyle
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
+  submitLabel
   text
   textCase
-  foregroundStyle
+  textContentType
   submitted()
   textChanged()
 Slider
@@ -251,25 +313,45 @@ Switch
   isEnabled
   isOn
   toggled()
+Text
+  background
+  characterSpacing
+  contentPadding
+  fontAttributes
+  fontDesign
+  fontFamily
+  fontSize
+  fontTextStyle
+  fontWeight
+  foregroundStyle
+  isEnabled
+  lineBreak
+  lineHeight
+  lineLimit
+  multilineTextAlignment
+  text
+  textCase
+  textDecorations
+  verticalTextAlignment
 TextEditor
   cursorPosition
   fontAttributes
   fontFamily
   fontSize
+  foregroundStyle
   growsWithText
-  multilineTextAlignment
-  textContentType
   isEnabled
   isReadOnly
   isSpellCheckEnabled
   isTextPredictionEnabled
   maximumLength
+  multilineTextAlignment
   placeholder
   placeholderColor
   selectionLength
   text
   textCase
-  foregroundStyle
+  textContentType
   textChanged()
 TextField
   cursorPosition
@@ -287,6 +369,8 @@ TextField
   placeholder
   placeholderColor
   selectionLength
+  showsClearButton
+  submitLabel
   text
   textCase
   textContentType
@@ -300,10 +384,10 @@ TimePicker
 VStack
   background
   clipsContent
+  contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
-  hitShape
-  contentPadding
   shape
   spacing
   stroke
@@ -319,10 +403,10 @@ WebView
 ZStack
   background
   clipsContent
+  contentPadding
+  hitShape
   ignoresInput
   letsInputThrough
-  hitShape
-  contentPadding
   shape
   stroke
   strokeWidth
@@ -342,12 +426,12 @@ ZStack
   horizontalAlignment
   isAccessibilityHidden
   isVisible
-  padding
   maximumHeight
   maximumWidth
   minimumHeight
   minimumWidth
   opacity
+  padding
   panTouchCount
   panXChannel
   panYChannel
@@ -391,9 +475,12 @@ ZStack
   goForward()
   handlerFailed()
   hideOnScreenKeyboard()
+  localizedString()
+  moveToRegion()
   persistValue()
   prompt()
   reload()
   scrollTo()
+  scrollToDescendant()
   unfocus()
   utcOffset()

@@ -8,6 +8,8 @@ import CStateUIWinUI
 /// A WinUI `Button`: its caption, its look, whether it takes a press, and the click it raises.
 @MainActor
 final class WinUIButtonView: WinUIView {
+    override var takesDirection: Bool { true }
+
     /// What the button does when the user clicks it, holds it down and lets it go.
     var onClicked: (() -> Void)?
     var onPressed: (() -> Void)?

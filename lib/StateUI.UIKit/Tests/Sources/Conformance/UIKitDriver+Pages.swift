@@ -17,7 +17,7 @@ extension UIKitDriver {
             throw DriverCannot(reading: property, of: element)
         }
         switch property {
-        case .title: return (window.window?.title ?? "").propValue
+        case .title: return (window.windowScene?.title ?? "").propValue
         default: throw DriverCannot(reading: property, of: element)
         }
     }
@@ -43,6 +43,7 @@ extension UIKitDriver {
         case .icon where onTab: return controller.tabBarItem.image?.accessibilityIdentifier.map { .string($0) }
         case .title: return (controller.navigationItem.title ?? "").propValue
         case .hasBackButton: return (!controller.navigationItem.hidesBackButton).propValue
+        case .backButtonTitle: return controller.navigationItem.backButtonTitle?.propValue
         case .hasNavigationBar:
             guard let navigation = controller.navigationController else { return nil }
             return (!navigation.isNavigationBarHidden).propValue

@@ -10,6 +10,9 @@ import CStateUIWinUI
 /// Design: docs/design/platforms/winui/pages.md#menus
 @MainActor
 final class WinUIMenuButtonView: WinUIView {
+    /// A control: it lays its face and chevron out in the element's direction.
+    override var takesDirection: Bool { true }
+
     /// The entries as they were last written.
     private(set) var shown = WinUIMenu()
 

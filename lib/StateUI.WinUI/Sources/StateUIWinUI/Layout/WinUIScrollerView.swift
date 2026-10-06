@@ -15,6 +15,11 @@ final class WinUIScrollerView: WinUIView {
     /// Says the user took hold of the scroller, or let go of it.
     var onHeld: ((Bool) -> Void)?
 
+    /// Besides `onScrolled`, what each move of the view also tells - a lazy
+    /// run whose window it is. Weakly held: a dead ear hears nothing and is
+    /// dropped.
+    var ears: [WinUIScrollEar] = []
+
     init() {
         super.init { number in stateui_winui_scroller_make(number) }
     }
@@ -61,5 +66,21 @@ final class WinUIScrollerView: WinUIView {
         super.detach()
         onScrolled = nil
         onHeld = nil
+        ears = []
+    }
+}
+
+/// One that hears a scroller's moves - a lazy run listening for its window.
+@MainActor
+final class WinUIScrollEar {
+    /// Whose ear it is; nil once that view has left.
+    weak var owner: AnyObject?
+
+    /// What the move says.
+    let moved: () -> Void
+
+    init(owner: AnyObject, moved: @escaping () -> Void) {
+        self.owner = owner
+        self.moved = moved
     }
 }

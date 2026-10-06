@@ -14,7 +14,7 @@ func greeting(name: State<String>, submitted: Received<Int> = Received(), maximu
         TextField(name.projectedValue)
             .placeholder("Type your name")
             .maximumLength(maximumLength)
-            .onSubmitted { submitted.values.append(1) }
+            .onSubmit { submitted.values.append(1) }
     }
 }
 
@@ -161,7 +161,7 @@ final class AndroidTextFieldViewTests: XCTestCase {
             let query = State(wrappedValue: "")
             let searched = Received<String>()
             let host = AndroidRenderer.running {
-                SearchField(query.projectedValue).onSubmitted { searched.values.append(query.wrappedValue) }
+                SearchField(query.projectedValue).onSubmit { searched.values.append(query.wrappedValue) }
             }
             let field = try XCTUnwrap(host.views(AndroidTextFieldView.self).first)
 

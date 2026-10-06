@@ -27,9 +27,14 @@ enum Styled {
             dimmed(HStack.self)
             dimmed(Image.self)
             dimmed(Text.self)
+            dimmed(LazyHGridStyleTarget.self)
+            dimmed(LazyHStackStyleTarget.self)
+            dimmed(LazyVGridStyleTarget.self)
+            dimmed(LazyVStackStyleTarget.self)
             dimmed(Line.self)
             dimmed(Map.self)
             dimmed(MaskedStyleTarget.self)
+            dimmed(MenuButtonStyleTarget.self)
             dimmed(Path.self)
             dimmed(Picker.self)
             dimmed(Polygon.self)
@@ -74,6 +79,49 @@ private struct CustomLayoutStyleTarget: StyleTarget {
 private struct MaskedStyleTarget: StyleTarget {
     /// A `Masked` node.
     var node = Node(contract: MaskedContract.self)
+
+    init() {}
+}
+
+/// The target a style for `MenuButton` is written against: `Menu`'s labelled
+/// form writes the node, so a bare stand-in gives the style the node type it
+/// reads.
+private struct MenuButtonStyleTarget: StyleTarget {
+    /// A `MenuButton` node.
+    var node = Node(contract: MenuButtonContract.self)
+
+    init() {}
+}
+
+/// The target a style for `LazyVStack` is written against: the container is a
+/// composed view, so a bare stand-in gives the style the node type it reads.
+private struct LazyVStackStyleTarget: StyleTarget {
+    /// A `LazyVStack` node.
+    var node = Node(contract: LazyVStackContract.self)
+
+    init() {}
+}
+
+/// The target a style for `LazyHStack` is written against.
+private struct LazyHStackStyleTarget: StyleTarget {
+    /// A `LazyHStack` node.
+    var node = Node(contract: LazyHStackContract.self)
+
+    init() {}
+}
+
+/// The target a style for `LazyVGrid` is written against.
+private struct LazyVGridStyleTarget: StyleTarget {
+    /// A `LazyVGrid` node.
+    var node = Node(contract: LazyVGridContract.self)
+
+    init() {}
+}
+
+/// The target a style for `LazyHGrid` is written against.
+private struct LazyHGridStyleTarget: StyleTarget {
+    /// A `LazyHGrid` node.
+    var node = Node(contract: LazyHGridContract.self)
 
     init() {}
 }

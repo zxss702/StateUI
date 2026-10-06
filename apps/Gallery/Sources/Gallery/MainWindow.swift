@@ -1,3 +1,4 @@
+import Foundation
 @_spi(Host) import StateUI
 
 /// A gallery's main window: what it is called, how big it opens, what is
@@ -105,6 +106,13 @@ struct MainWindow: WindowScene {
             }
 
             log.note("created")
+
+            // `GALLERY_SAMPLE` opens a sample's page directly - a run to a
+            // chosen one without the menu's part of it.
+            if let name = ProcessInfo.processInfo.environment["GALLERY_SAMPLE"] {
+                nav.openGroup("layout")
+                nav.push(.sample(name))
+            }
         }
         // The chrome is painted in the gallery's accent, which the Colours
         // window chooses - so the bar is written again when it moves.
@@ -200,6 +208,9 @@ struct MainWindow: WindowScene {
 
         case .level(let level):
             return LevelPage(level: level, nav: nav, path: path)
+
+        case .layer(let depth):
+            return ToolbarLayerPage(depth: depth, nav: nav, path: path)
 
         case .item(let item):
             return ItemPage(item: item, nav: nav, path: path)

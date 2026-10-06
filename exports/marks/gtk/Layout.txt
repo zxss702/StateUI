@@ -15,6 +15,22 @@ HStack.clipsContent: cannot read clipsContent of HStack - GTK's driver has no pa
 HStack.hitShape: cannot read hitShape of HStack - GTK's driver has no path for it yet
 HStack.ignoresSafeArea: not realized
 HStack.letsInputThrough: cannot read letsInputThrough of HStack - GTK's driver has no path for it yet
+LazyHGrid.clipsContent: cannot read clipsContent of LazyHGrid - GTK's driver has no path for it yet
+LazyHGrid.hitShape: cannot read hitShape of LazyHGrid - GTK's driver has no path for it yet
+LazyHGrid.ignoresSafeArea: not realized
+LazyHGrid.letsInputThrough: cannot read letsInputThrough of LazyHGrid - GTK's driver has no path for it yet
+LazyHStack.clipsContent: cannot read clipsContent of LazyHStack - GTK's driver has no path for it yet
+LazyHStack.hitShape: cannot read hitShape of LazyHStack - GTK's driver has no path for it yet
+LazyHStack.ignoresSafeArea: not realized
+LazyHStack.letsInputThrough: cannot read letsInputThrough of LazyHStack - GTK's driver has no path for it yet
+LazyVGrid.clipsContent: cannot read clipsContent of LazyVGrid - GTK's driver has no path for it yet
+LazyVGrid.hitShape: cannot read hitShape of LazyVGrid - GTK's driver has no path for it yet
+LazyVGrid.ignoresSafeArea: not realized
+LazyVGrid.letsInputThrough: cannot read letsInputThrough of LazyVGrid - GTK's driver has no path for it yet
+LazyVStack.clipsContent: cannot read clipsContent of LazyVStack - GTK's driver has no path for it yet
+LazyVStack.hitShape: cannot read hitShape of LazyVStack - GTK's driver has no path for it yet
+LazyVStack.ignoresSafeArea: not realized
+LazyVStack.letsInputThrough: cannot read letsInputThrough of LazyVStack - GTK's driver has no path for it yet
 Masked.clipsContent: cannot read clipsContent of Masked - GTK's driver has no path for it yet
 Masked.hitShape: cannot read hitShape of Masked - GTK's driver has no path for it yet
 Masked.ignoresSafeArea: not realized

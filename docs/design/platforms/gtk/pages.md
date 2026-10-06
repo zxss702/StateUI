@@ -88,6 +88,25 @@ switcher's choice is the user's: the pages hear it, then the selection's
 state, and the header bar follows the chosen tab whether or not the
 application renders again.
 
+## Menus
+
+A menu is GTK's model of one: the host layer's walk of its entries
+([menus](../../host/pages.md#menus)) as a `GMenu` - the entries between two
+separators a section, a submenu a link - each item an action of a group the
+menu hands the widget it stands on, which GTK runs only while it is enabled;
+a submenu out of reach is one whose tracking action is not. GNOME's menus
+show words alone: no picture beside them, no entry marked as destroying
+something.
+
+A view's context menu is a `GtkPopoverMenu` on the view's widget, opened
+where the user clicks with the secondary button or holds a finger, at that
+point; a panel presents it as it lays out. A menu of no entries is none.
+
+A desktop of header bars has no menu bar: the menus a page declares stand in
+the main menu at the very end of its header bar - GNOME's
+`open-menu-symbolic` button - each a submenu holding its entries, joined by
+the host layer's rule. A page that declares none shows no main menu.
+
 ## The window's overlay
 
 What a window lays over everything it shows - the inspector docked in it, an
@@ -104,3 +123,17 @@ A page hears its phases as the host layer tells them ([a page's
 phases](../../host/pages.md#a-pages-phases)); GTK supplies the tab the user
 chose and whether the sidebar shows, which the layer reads to know what an
 arrangement shows.
+## Sheets
+
+A page a window's modal stack presents is a sheet: libadwaita's `AdwDialog`
+over the window, each over those before it, the last on top - a page in a
+frame of its own, whose header bar holds the dialog's close button, or an
+arrangement whose pages carry theirs. A sheet asks for 560 by 480, which
+libadwaita fits to the window, rising from its bottom where the window is
+narrow. The user's close - Escape, the close button - takes the top sheet
+away through the host layer's way back, the modal stack told how many remain;
+a sheet the program takes away closes and tells nothing. A sheet starts a path
+of its own ([the visible path](../../host/pages.md#the-visible-path)): it
+wears no bar of what stands around it, and names the dialog by its page's
+title.
+

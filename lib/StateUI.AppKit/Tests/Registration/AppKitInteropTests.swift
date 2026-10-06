@@ -159,7 +159,8 @@ final class AppKitInteropTests: XCTestCase {
 
         XCTAssertTrue(HostBoundary.realizes(TextContract.self))
         XCTAssertTrue(HostBoundary.realizes(ButtonContract.self))
-        XCTAssertFalse(HostBoundary.realizes(MapContract.self))
+        XCTAssertTrue(HostBoundary.realizes(MapContract.self))
+        XCTAssertFalse(HostBoundary.realizes(PositionIndicatorContract.self))
         XCTAssertNil(HostRealizations.unraised(owner: InteropTestContract.name, event: InteropTestContract.spoke.name))
         XCTAssertNotNil(HostRealizations.unraised(owner: InteropTestContract.name, event: InteropTestContract.unheard.name))
     }

@@ -101,9 +101,13 @@ final class AppKitActToolkit: ActToolkit {
         return true
     }
 
-    /// An List's scroll to an item, or a ScrollView's to a child `.id()` names.
+    /// An List's scroll to an item, a ScrollView's to a child `.id()` names, a map's slide to a region, and a web
+    /// view's steps and scripts.
     func performOwn(_ call: HostActCall) -> Bool {
         if call.act == .chooseFiles { chooseFiles(call); return true }
+        if [.moveToRegion, .goBack, .goForward, .reload, .evaluateJavaScript].contains(call.act) {
+            return performOnMapOrWeb(call)
+        }
         guard call.act == .scrollTo || call.act == .scrollToDescendant else { return false }
         let core = CoreLink()
         do {
@@ -129,6 +133,41 @@ final class AppKitActToolkit: ActToolkit {
             } else {
                 core.fail(call, "scrollTo is an act of an List or a ScrollView",
                           log: { AppKitRenderer.log.error($0) })
+                return true
+            }
+            core.reply(call, [])
+        } catch {
+            core.fail(call, error.reason, log: { AppKitRenderer.log.error($0) })
+        }
+        return true
+    }
+
+    /// A map's slide to a region and a web view's steps and scripts.
+    private func performOnMapOrWeb(_ call: HostActCall) -> Bool {
+        let owners: [Act: String] = [
+            .moveToRegion: "a Map",
+            .goBack: "a web view", .goForward: "a web view", .reload: "a web view",
+            .evaluateJavaScript: "a web view",
+        ]
+        guard let owner = owners[call.act] else { return false }
+        let core = CoreLink()
+        do {
+            let element = try renderer.runtime.tree.aimed(call)
+            switch (call.act, (element.native as? AppKitElement)?.view) {
+            case (.moveToRegion, let map as AppKitMapView):
+                let number = { call.arguments.value($0)?.number ?? 0 }
+                map.show(MapRegion(latitude: number(1), longitude: number(2), radiusMeters: number(3)), sliding: true)
+            case (.goBack, let web as AppKitWebView): web.step(.back)
+            case (.goForward, let web as AppKitWebView): web.step(.forward)
+            case (.reload, let web as AppKitWebView): web.step(.refresh)
+            case (.evaluateJavaScript, let web as AppKitWebView):
+                web.evaluate(call.arguments.value(1)?.string ?? "") { [weak renderer] answer in
+                    core.reply(call, [answer.propValue])
+                    renderer?.runtime.pump.turn()
+                }
+                return true
+            default:
+                core.fail(call, "\(call.act.name) is an act of \(owner)", log: { AppKitRenderer.log.error($0) })
                 return true
             }
             core.reply(call, [])

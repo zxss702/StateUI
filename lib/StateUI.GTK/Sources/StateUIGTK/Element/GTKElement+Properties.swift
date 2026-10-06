@@ -9,6 +9,18 @@ import CStateUIGTK
 extension GTKElement {
     func makeView() -> GTKView? {
         if type == .list, let host { return GTKItemsView(cells: ItemsCells(element, in: host.runtime)) }
+        if type == .lazyVStack || type == .lazyHStack, let host {
+            return GTKLazyStackView(
+                axis: type == .lazyVStack ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        if type == .lazyVGrid || type == .lazyHGrid, let host {
+            return GTKLazyGridView(
+                axis: type == .lazyVGrid ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        // A child its parent's view draws - a map's marker - has no view of its own.
+        if element.isDrawnByParent(in: GTKRegistrations.registry) { return nil }
         if let registered = GTKRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },

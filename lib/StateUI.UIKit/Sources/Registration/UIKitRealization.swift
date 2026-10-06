@@ -11,8 +11,8 @@
 enum UIKitRealization {
     /// The entries this host realizes none of yet: it shows each one's name in red where it belongs.
     static let unrealized: Set<String> = [
-        "Content", "GridRow", "LeadingContent", "Map", "Pin", "PositionIndicator", "TitleBar", "ToolbarSpacer",
-        "TrailingContent",
+        "Content", "CustomLayout", "GridRow", "LeadingContent", "Masked", "MenuButton", "PositionIndicator",
+        "TitleBar", "ToolbarSpacer", "TrailingContent",
     ]
 
     /// The entries this host presents with no view of their own - a span is a run of its label's words - so no
@@ -48,6 +48,7 @@ enum UIKitRealization {
         .complete("NavigationStack", "barForegroundColor"),
         .complete("NavigationStack", "popped"),
         .complete("Page", "appearing"),
+        .complete("Page", "backButtonTitle"),
         .complete("Page", "background"),
         .complete("Page", "disappearing"),
         .complete("Page", "hasBackButton"),
@@ -56,7 +57,7 @@ enum UIKitRealization {
         .complete("Page", "navigatedFrom"),
         .complete("Page", "navigatedTo"),
         .complete("Page", "navigatingFrom"),
-        .complete("Page", "padding"),
+        .complete("Page", "contentPadding"),
         .complete("Page", "title"),
         .complete("RadioButton", "groupName"),
         .complete("Scene", "activated"),
@@ -64,6 +65,7 @@ enum UIKitRealization {
         .complete("Scene", "destroying"),
         .complete("Scene", "stopped"),
         .complete("Scene", "windowClosed"),
+        .complete("SearchField", "submitLabel"),
         .complete("Span", "background"),
         .complete("Span", "fontAttributes"),
         .complete("Span", "fontFamily"),
@@ -74,10 +76,14 @@ enum UIKitRealization {
         .complete("Span", "textDecorations"),
         .complete("NavigationSplitView", "isSidebarVisible"),
         .complete("NavigationSplitView", "isSidebarVisibleChanged"),
-        .unrealized("NavigationSplitView", "columnVisibility"),
-        .unrealized("NavigationSplitView", "columnVisibilityChanged"),
+        .unrealized("NavigationSplitView", "columnVisibility",
+                    why: "UIKit's split view hides its sidebar by the size class, not a column the tree names."),
+        .unrealized("NavigationSplitView", "columnVisibilityChanged",
+                    why: "UIKit's split view hides its sidebar by the size class, not a column the tree names."),
         .complete("TabView", "currentPage"),
         .complete("TabView", "currentPageChanged"),
+        .complete("TextField", "showsClearButton"),
+        .complete("TextField", "submitLabel"),
         .complete("ToolbarItem", "isDestructive"),
         .complete("ToolbarItem", "placement"),
         .complete("ToolbarItem", "priority"),
@@ -85,18 +91,39 @@ enum UIKitRealization {
         .complete("WindowScene", "created"),
         .complete("WindowScene", "deactivated"),
         .complete("WindowScene", "destroying"),
+        .notPlanned("WindowScene", "floatsOnTop",
+                    reason: "iPadOS stacks its windows itself: UIKit keeps none above the others."),
+        .notPlanned("WindowScene", "height", reason: Self.sizedBySystem),
+        .notPlanned("WindowScene", "hidesWhenInactive",
+                    reason: "iPadOS shows an application's windows itself: UIKit hides none while another is in front."),
+        .notPlanned("WindowScene", "isMaximizable",
+                    reason: "Any iPadOS window may fill the screen: UIKit keeps none from it."),
+        .notPlanned("WindowScene", "isMinimizable", reason: "Any iPadOS window may be put away: UIKit keeps none from it."),
+        .notPlanned("WindowScene", "isTranslucent",
+                    reason: "iPadOS draws an application's window opaque: no material shows through one."),
         .complete("WindowScene", "modalPopped"),
         .complete("WindowScene", "resumed"),
         .complete("WindowScene", "stopped"),
         .complete("WindowScene", "title"),
+        .notPlanned("WindowScene", "width", reason: Self.sizedBySystem),
+        .notPlanned("WindowScene", "x", reason: Self.placedBySystem),
+        .notPlanned("WindowScene", "y", reason: Self.placedBySystem),
     ]
+
+    /// Why a window takes no size: the user's hand gives it, and a scene asks only for orientations.
+    private static let sizedBySystem =
+        "iPadOS sizes its windows itself - the user drags a corner: a UIKit scene asks for no size."
+
+    /// Why a window takes no place.
+    private static let placedBySystem = "iPadOS places its windows itself: a UIKit scene asks for no place."
 
     /// What UIKit's registry says it realizes: the export's content.
     @MainActor static var declaration: HostDeclaration {
         let registry = UIKitRegistrations.registry
         return HostDeclaration(
             realization: registry.realization, shared: registry.sharedNames,
-            acts: (HostActs.performed + UIKitRegistrations.webActs + UIKitRegistrations.itemsActs).map(\.name))
+            acts: (HostActs.performed + UIKitRegistrations.webActs + UIKitRegistrations.itemsActs
+                + [MapContract.moveToRegion]).map(\.name))
     }
 
     /// What UIKit realizes, member by member: these records before what its registry says.

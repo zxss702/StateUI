@@ -76,9 +76,9 @@ public enum ViewBuilder {
     /// A `for` statement's turns, each keyed by its turn number.
     public static func buildArray(_ components: [TupleView]) -> TupleView {
         TupleView(components.enumerated().flatMap { turn in
-            turn.element.node.asChildren.map { child in
-                Keyed(segment: String(turn.offset), raw: child)
-            }
+            let segment = String(turn.offset)
+            return turn.element.lazyElements?.map { TupleView.keyed(segment, $0) }
+                ?? turn.element.node.asChildren.map { Keyed(segment: segment, raw: $0) }
         })
     }
 
@@ -99,8 +99,20 @@ public enum ViewBuilder {
     }
 
     /// The views written under one statement, keyed by the statement's number.
+    /// A `LazyRows` stays whole - its rows' keys ride the statement's segment,
+    /// and a lazy container still asks for them one at a time. A `TupleView`
+    /// keeping its statements - a branch's or a turn's - is keyed the same
+    /// way, so the row sources inside stay whole under theirs.
     /// Design: docs/design/views/builders.md#several-views-from-one-statement
     private static func at(_ index: Int, _ view: any View) -> [Element] {
+        let segment = String(index)
+        if let rows = view as? any LazyRows {
+            return [LazyKeyed(segment: segment, rows: rows)]
+        }
+        if let elements = (view as? TupleView)?.lazyElements {
+            return elements.map { TupleView.keyed(segment, $0) }
+        }
+
         let nodes = view.node.asChildren
 
         guard nodes.count > 1 else {
@@ -114,15 +126,15 @@ public enum ViewBuilder {
 /// One more segment on a node's path, added without touching anything else.
 /// Design: docs/design/views/builders.md#the-path-rides-a-wrapper
 struct Keyed: Element {
-    /// What to put in front of whatever path the node already has.
+    /// What to put in front of whatever path the element already has.
     let segment: String
 
-    /// The node the statement produced.
-    let raw: Node
+    /// The element the statement produced.
+    let raw: Element
 
     /// The same node, with the segment on the front of its path.
     var node: Node {
-        var node = raw
+        var node = raw.node
         node.key = node.key.map { "\(segment).\($0)" } ?? segment
         return node
     }

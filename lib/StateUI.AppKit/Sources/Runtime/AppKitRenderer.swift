@@ -28,7 +28,8 @@ final class AppKitRenderer: @unchecked Sendable {
         clock: frameClock, reducesMotion: reducesMotion,
         makeNative: { [unowned self] element in AppKitElement(element, host: self) },
         log: { AppKitRenderer.log.error($0) },
-        localization: { key in AppKitStrings.resolve(key) })
+        localization: { key in AppKitStrings.resolve(key) },
+        views: { AppKitElement.liveViewCount })
 
     private(set) lazy var environment = AppKitEnvironment(core: runtime.core)
     /// AppKit's part of the acts every host performs, and the host layer's performer of them.

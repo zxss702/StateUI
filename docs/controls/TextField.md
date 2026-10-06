@@ -25,11 +25,11 @@ See [the dictionary](README.md) for how a mark is given.
 
 | Host | Created | Members (122) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
-| AppKit | ✅ | 42 ✅ · 1 ☑️ | `NSTextField` / `NSSecureTextField` |  |
-| UIKit | ✅ | 46 ✅ | `UITextField` |  |
+| AppKit | ✅ | 42 ✅ · 1 ☑️ · 2 – | `NSTextField` / `NSSecureTextField` |  |
+| UIKit | ✅ | 48 ✅ | `UITextField` |  |
 | Android Views | ✅ | 63 ✅ · 1 ☑️ | `EditText` |  |
 | WinUI 3 | ✅ | 68 ✅ | `TextBox` / `PasswordBox` |  |
-| GTK 4 | ✅ | 23 ✅ | `GtkEntry` / `GtkPasswordEntry` |  |
+| GTK 4 | ✅ | 24 ✅ | `GtkEntry` / `GtkPasswordEntry` |  |
 | Web |  |  | `<input>` | no host yet |
 
 Declared in `lib/StateUI/Sources/Contracts/Elements/Text/TextFieldContract.swift`.
@@ -39,8 +39,8 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Text/TextFieldContract.swift
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `isPassword` | property | `Bool` | native | ✅ | ✅ | ✅ |  | · |  | WinUI 3: not realized; GTK 4: cannot read isPassword of TextField - GTK's driver has no path for it yet |
-| `submitLabel` | property | `ReturnKey` | adaptive |  |  | · |  |  |  | not realized; UIKit: not realized; Android Views: cannot read submitLabel of TextField - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
-| `showsClearButton` | property | `Bool` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `submitLabel` | property | `ReturnKey` | adaptive | – | ✅ | · |  |  |  | A Mac has no keyboard on the screen whose return key says anything.; Android Views: cannot read submitLabel of TextField - Android's driver has no path for it yet; WinUI 3: not realized; GTK 4: not realized |
+| `showsClearButton` | property | `Bool` | adaptive | – | ✅ |  |  |  |  | AppKit's text field has no button of its own that empties it.; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `onSubmit` (`submitted`) | event |  | native | ✅ | ✅ | ✅ | · | ✅ |  | WinUI 3: cannot submit on TextField - WinUI raises a text box's KeyDown only from the keyboard; Enter is walked on HelloWorld's field |
 | `textFieldStyle` | property | `TextFieldStyleKind` | native |  |  |  |  |  |  |  |
 
@@ -68,7 +68,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on TextField.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextField - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -76,9 +76,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of TextField - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on TextField.isReadOnly |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextField - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of TextField - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -103,7 +103,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of TextField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of TextField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of TextField - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of TextField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of TextField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of TextField - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | ⏸ |  | GTK 4: waits on TextField.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of TextField - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
@@ -181,7 +181,7 @@ What every element showing words has: the words, and the case they are drawn in.
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `text` | property | `String` | native | ✅ | ✅ | ◐ | ◐ | ◐ |  | Android Views: waits on TextField.isReadOnly; WinUI 3: waits on TextField.isPassword; GTK 4: cannot read isPassword of TextField - GTK's driver has no path for it yet |
 | `textKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
-| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ |  |  | GTK 4: not realized |
+| `textCase` | property | `TextCase` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `baselineOffset` | property | `Double` | native |  |  |  |  |  |  |  |
 
 ## From [TextStyleElement](tiers/TextStyleElement.md)

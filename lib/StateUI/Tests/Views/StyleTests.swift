@@ -576,8 +576,13 @@ final class StyleTests: XCTestCase {
         // crosses as `.menuStyle`. A CustomLayout is generic over the author's
         // layout the same way - `Layout()` is no more writable than `Menu()`.
         // A Masked stands the same: it is `.mask` written out, with no
-        // `Masked()` of its own.
-        let unnamed: Set<String> = ["CustomLayout", "List", "Masked", "MenuButton"]
+        // `Masked()` of its own. And a lazy container stands the way the
+        // List does: a view OF a builder's content, no `LazyVStack()` to
+        // write.
+        let unnamed: Set<String> = [
+            "CustomLayout", "LazyHGrid", "LazyHStack", "LazyVGrid", "LazyVStack",
+            "List", "Masked", "MenuButton",
+        ]
 
         for source in try SourceTree.controlSources() {
             for type in try SourceTree.nodeTypes(in: source).sorted()

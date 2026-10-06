@@ -14,6 +14,18 @@ GridRow.strokeWidth: not realized
 HStack.shape: cannot read shape of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it
 HStack.stroke: not realized
 HStack.strokeWidth: cannot read strokeWidth of HStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it
+LazyHGrid.shape: not realized
+LazyHGrid.stroke: not realized
+LazyHGrid.strokeWidth: not realized
+LazyHStack.shape: not realized
+LazyHStack.stroke: not realized
+LazyHStack.strokeWidth: not realized
+LazyVGrid.shape: not realized
+LazyVGrid.stroke: not realized
+LazyVGrid.strokeWidth: not realized
+LazyVStack.shape: not realized
+LazyVStack.stroke: not realized
+LazyVStack.strokeWidth: not realized
 Masked.shape: cannot read shape of Masked - AppKit's driver has no path for it yet
 Masked.stroke: not realized
 Masked.strokeWidth: cannot read strokeWidth of Masked - AppKit's driver has no path for it yet

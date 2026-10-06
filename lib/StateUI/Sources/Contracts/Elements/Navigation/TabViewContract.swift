@@ -12,7 +12,9 @@ public enum TabViewContract: ElementContract {
     public static let layer: ElementLayer = .adaptive
 
     /// Tabs have a bar, and are shown as a page with a title and an icon.
-    public static let tiers: [any Contract.Type] = [BarElementContract.self, PageElementContract.self]
+    public static let tiers: [any Contract.Type] = [
+        BarElementContract.self, PageElementContract.self, PropertyContainerContract.self,
+    ]
 
     /// Which tab is showing, counted from zero.
     public static let currentPage = ElementProperty<Self, Int>(

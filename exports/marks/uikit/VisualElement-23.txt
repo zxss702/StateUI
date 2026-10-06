@@ -4,29 +4,39 @@ Button.rotationX: 🔌 read rotationX of Button: the host's own transform, check
 Canvas.pivotX: 🔌 read pivotX of Canvas: the host's own transform, checked against the layer it composed itself
 CheckBox.automationExcludedWithChildren: ✅
 ColorPicker.accessibilityHint: ✅
-DatePicker.focus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
-DatePicker.isFocusedChanged: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
-DatePicker.unfocus: – DatePicker takes no keyboard focus here: it refuses it, and nothing is heard
-Ellipse.frameChanged: ✅
-Ellipse.maximumHeight: ✅
-Ellipse.maximumWidth: ✅
-Ellipse.minimumHeight: ✅
-Ellipse.minimumWidth: ✅
-Grid.opacity: ✅
-Grid.translationY: 🔌 read translationY of Grid: the host's own transform, checked against the layer it composed itself
-HStack.scaleX: 🔌 read scaleX of HStack: the host's own transform, checked against the layer it composed itself
-Image.rotationX: 🔌 read rotationX of Image: the host's own transform, checked against the layer it composed itself
-List.pivotX: 🔌 read pivotX of List: the host's own transform, checked against the layer it composed itself
-Text.automationExcludedWithChildren: ✅
-Line.accessibilityHint: ✅
-Map.focus: not realized
-Map.isFocusedChanged: not realized
-Map.unfocus: not realized
-Path.frameChanged: ✅
-Path.maximumHeight: ✅
-Path.maximumWidth: ✅
-Path.minimumHeight: ✅
-Path.minimumWidth: ✅
+CustomLayout.focus: not realized
+CustomLayout.isFocusedChanged: not realized
+CustomLayout.unfocus: not realized
+DatePicker.opacity: ✅
+DatePicker.translationY: 🔌 read translationY of DatePicker: the host's own transform, checked against the layer it composed itself
+Ellipse.scaleX: 🔌 read scaleX of Ellipse: the host's own transform, checked against the layer it composed itself
+Grid.rotationX: 🔌 read rotationX of Grid: the host's own transform, checked against the layer it composed itself
+GridRow.pivotX: not realized
+HStack.automationExcludedWithChildren: ✅
+Image.accessibilityHint: ✅
+LazyHGrid.automationExcludedWithChildren: ✅
+LazyHStack.accessibilityHint: ✅
+LazyVGrid.focus: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
+LazyVGrid.isFocusedChanged: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
+LazyVGrid.unfocus: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
+LazyVStack.frameChanged: ✅
+LazyVStack.maximumHeight: ✅
+LazyVStack.maximumWidth: ✅
+LazyVStack.minimumHeight: ✅
+LazyVStack.minimumWidth: ✅
+Line.opacity: ✅
+Line.translationY: 🔌 read translationY of Line: the host's own transform, checked against the layer it composed itself
+List.focus: – List takes no keyboard focus here: it refuses it, and nothing is heard
+List.isFocusedChanged: – List takes no keyboard focus here: it refuses it, and nothing is heard
+List.unfocus: – List takes no keyboard focus here: it refuses it, and nothing is heard
+Map.scaleX: 🔌 read scaleX of Map: the host's own transform, checked against the layer it composed itself
+Masked.frameChanged: not realized
+Masked.maximumHeight: not realized
+Masked.maximumWidth: not realized
+Masked.minimumHeight: not realized
+Masked.minimumWidth: not realized
+MenuButton.rotationX: not realized
+Path.pivotX: 🔌 read pivotX of Path: the host's own transform, checked against the layer it composed itself
 Picker.opacity: ✅
 Picker.translationY: 🔌 read translationY of Picker: the host's own transform, checked against the layer it composed itself
 Polygon.scaleX: 🔌 read scaleX of Polygon: the host's own transform, checked against the layer it composed itself
@@ -47,6 +57,11 @@ SearchField.translationY: 🔌 read translationY of SearchField: the host's own 
 Slider.scaleX: 🔌 read scaleX of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.rotationX: 🔌 read rotationX of Stepper: the host's own transform, checked against the layer it composed itself
 Switch.pivotX: 🔌 read pivotX of Switch: the host's own transform, checked against the layer it composed itself
+Text.frameChanged: ✅
+Text.maximumHeight: ✅
+Text.maximumWidth: ✅
+Text.minimumHeight: ✅
+Text.minimumWidth: ✅
 TextEditor.automationExcludedWithChildren: ✅
 TextField.accessibilityHint: ✅
 TimePicker.focus: ✅

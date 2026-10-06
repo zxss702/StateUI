@@ -65,12 +65,14 @@ public struct OpenURLAction: Sendable {
         }
         #elseif canImport(Glibc) || canImport(Musl)
         return { url in spawn("xdg-open", url) }
+        // Android's own opener is an Intent - the host hands openURL one, so
+        // the system handler stands nowhere.
         #else
         return nil
         #endif
     }()
 
-    #if !os(Windows)
+    #if canImport(Darwin) || canImport(Glibc) || canImport(Musl)
     /// Runs `tool url` beside the process - the shell backgrounds it and is
     /// reaped at once, so the opener outlives no call. The arguments live only
     /// inside their `withCString` scopes, which the spawn copies before it

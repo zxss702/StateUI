@@ -108,6 +108,8 @@ final class AppKitWindowController: NSWindowController {
         window.delegate = self
         window.isExcludedFromWindowsMenu = !isMain
         configureChrome(window)
+        // Tab and Shift-Tab go through the views as they stand on screen: AppKit works the loop out.
+        window.autorecalculatesKeyViewLoop = true
         focusWatch = window.observe(\.firstResponder) { [weak self] _, _ in
             MainActor.assumeIsolated { self?.focusMoved() }
         }

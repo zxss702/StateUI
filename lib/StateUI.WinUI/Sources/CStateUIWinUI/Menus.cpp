@@ -58,9 +58,10 @@ namespace {
                 item.Text(text(title));
                 item.IsEnabled(enabled);
                 identify(item, identifier);
-                item.Click([view = view, place = chosen++](IInspectable const &, xaml::RoutedEventArgs const &) {
+                item.Click(guarded("handling Click",
+                    [view = view, place = chosen++](IInspectable const &, xaml::RoutedEventArgs const &) {
                     callbacks.menuChosen(view, place);
-                });
+                }));
                 levels.back().Append(item);
                 break;
             }
@@ -163,7 +164,8 @@ extern "C" StateUIObjectRef stateui_winui_menu_button_make(int64_t view) {
         chevron.VerticalAlignment(xaml::VerticalAlignment::Center);
         face.Children().Append(chevron);
         button.Content(face);
-        button.Click([view](IInspectable const &, xaml::RoutedEventArgs const &) { callbacks.clicked(view); });
+        button.Click(guarded("handling Click",
+            [view](IInspectable const &, xaml::RoutedEventArgs const &) { callbacks.clicked(view); }));
         button.RegisterPropertyChangedCallback(
             controls::Primitives::ButtonBase::IsPressedProperty(),
             [view](xaml::DependencyObject const &sender, xaml::DependencyProperty const &) {

@@ -19,6 +19,12 @@ extension UIKitRegistrations {
         }, members: { field in
             field.applies(inputMembers) { view, values in applyInput(view, values) }
             field.property(TextFieldContract.isPassword) { view, hidden in view.isSecureTextEntry = hidden ?? false }
+            field.property(TextFieldContract.submitLabel) { view, key in
+                view.setReturnKey(InputTraits.submitLabel(key, searching: false))
+            }
+            field.property(TextFieldContract.showsClearButton) { view, shows in
+                view.clearButtonMode = shows == true ? .whileEditing : .never
+            }
             field.property(TextFieldContract.textFieldStyle) { view, style in view.setStyle(style) }
             field.raises(InputViewContract.textChanged)
             field.raises(TextFieldContract.submitted)
@@ -39,6 +45,9 @@ extension UIKitRegistrations {
             return search
         }, members: { search in
             search.applies(inputMembers) { view, values in applyInput(view, values) }
+            search.property(SearchFieldContract.submitLabel) { view, key in
+                view.setReturnKey(InputTraits.submitLabel(key, searching: true))
+            }
             search.raises(InputViewContract.textChanged)
             search.raises(SearchFieldContract.submitted)
         })
@@ -76,16 +85,11 @@ extension UIKitRegistrations {
                 color: values[InputViewContract.placeholderColor].flatMap { UIColor(stateUI: $0.propValue) })
         }
         if values.changed(VisualElementContract.isEnabled) || values.changed(InputViewContract.isReadOnly)
-            || values.changed(InputViewContract.isSpellCheckEnabled)
-            || values.changed(InputViewContract.isTextPredictionEnabled)
-            || values.changed(InputViewContract.textContentType) {
+            || InputTraits.changed(values) != nil {
             view.setBehaviour(
                 enabled: values[VisualElementContract.isEnabled] ?? true,
                 readOnly: values[InputViewContract.isReadOnly] ?? false,
-                keyboard: UIKitKeyboard(
-                    spellChecked: values[InputViewContract.isSpellCheckEnabled] ?? true,
-                    predicted: values[InputViewContract.isTextPredictionEnabled] ?? true,
-                    purpose: values[InputViewContract.textContentType]))
+                keyboard: UIKitKeyboard(InputTraits(values)))
         }
         if let look = TextMembers.look(values) { view.setLook(look) }
         if values.changed(TextAlignmentElementContract.multilineTextAlignment) {

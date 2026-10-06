@@ -16,6 +16,11 @@ final class GTKScrollerView: GTKView {
     /// Says the user took hold of the scroller - a touchpad's fingers down - or let go of it.
     var onHeld: ((Bool) -> Void)?
 
+    /// Besides `onScrolled`, what each move of the view also tells - a lazy
+    /// run whose window it is. Weakly held: a dead ear hears nothing and is
+    /// dropped.
+    var ears: [GTKScrollEar] = []
+
     private var content: GTKView?
 
     init() {
@@ -25,7 +30,11 @@ final class GTKScrollerView: GTKView {
                 MainActor.assumeIsolated {
                     guard let view = GTKView.find(viewNumber(data)) as? GTKScrollerView else { return }
                     view.onScrolled?(view.standing.offset)
-                    GTKRenderer.shared?.runtime.frames.laidOut()
+                    view.ears = view.ears.filter { $0.owner != nil }
+                    for ear in view.ears { ear.moved() }
+                    // The viewport moves the document in the layout after this; allocated, it says it moved.
+                    // Design: docs/design/platforms/gtk/layout.md#where-a-view-stands
+                    if let content = view.content { gtk_widget_queue_allocate(content.widget) }
                 }
             }
         }
@@ -100,5 +109,21 @@ final class GTKScrollerView: GTKView {
         super.detach()
         onScrolled = nil
         onHeld = nil
+        ears = []
+    }
+}
+
+/// One that hears a scroller's moves - a lazy run listening for its window.
+@MainActor
+final class GTKScrollEar {
+    /// Whose ear it is; nil once that view has left.
+    weak var owner: AnyObject?
+
+    /// What the move says.
+    let moved: () -> Void
+
+    init(owner: AnyObject, moved: @escaping () -> Void) {
+        self.owner = owner
+        self.moved = moved
     }
 }

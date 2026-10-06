@@ -21,7 +21,7 @@ final class UIKitNavigationSplitViewTests: XCTestCase {
         defer { host.finish() }
         let split = try XCTUnwrap(Self.controller(of: .navigationSplitView, in: host) as? UISplitViewController)
         host.settle { split.view.window != nil }
-        let room = try XCTUnwrap(split.view.window?.window?.traitCollection.horizontalSizeClass)
+        let room = try XCTUnwrap(split.view.window?.windowScene?.traitCollection.horizontalSizeClass)
 
         XCTAssertFalse(split.isCollapsed, "two columns, never one")
         if room == .compact {
@@ -102,6 +102,46 @@ final class UIKitNavigationSplitViewTests: XCTestCase {
         host.runtime.pump.turn()
         host.settle { sidebar.view.window != nil && sidebar.navigationController?.isNavigationBarHidden == false }
         XCTAssertEqual(sidebar.navigationController?.isNavigationBarHidden, false, "the sidebar's bar shows")
+    }
+
+    /// A page pushed as the sidebar goes is not grown from nothing: the pushed page stands at its laid-out size from
+    /// its first frame - no bounds animation travels it there from zero.
+    @MainActor
+    func testAPagePushedAsTheSidebarGoesIsNotGrownFromNothing() throws {
+        let path = State(wrappedValue: [Int]())
+        let menuOpen = State(wrappedValue: true)
+        let host = UIKitRenderer.running {
+            NavigationSplitView(menuOpen.projectedValue) { Text("Sidebar") } detail: {
+                NavigationStack(path.projectedValue) { Text("Home") } destination: { number in Text("Group \(number)") }
+            }
+        }
+        defer { host.finish() }
+        let split = try XCTUnwrap(Self.controller(of: .navigationSplitView, in: host) as? UISplitViewController)
+        host.settle { split.view.window != nil && split.displayMode != .secondaryOnly }
+
+        path.wrappedValue = [1]
+        menuOpen.wrappedValue = false
+        host.runtime.pump.turn()
+
+        let words = try XCTUnwrap(host.views(UIKitLabelView.self).first { $0.attributedText?.string == "Group 1" })
+        var grown: [String] = []
+        var each: UIView? = words
+        while let view = each {
+            // Grown from nothing: its size travels from a size as much smaller as it is - from zero.
+            if let size = view.layer.animation(forKey: "bounds.size") as? CABasicAnimation, size.isAdditive,
+               let from = (size.fromValue as? NSValue)?.cgSizeValue, view.bounds.width > 0,
+               from.width == -view.bounds.width, from.height == -view.bounds.height {
+                grown.append("\(type(of: view))")
+            }
+            each = view.superview
+        }
+        XCTAssertEqual(grown, [], "the page stands where it is laid out, from its first frame")
+
+        let stack = try XCTUnwrap(Self.controller(of: .navigationStack, in: host) as? UINavigationController)
+        host.settle { split.transitionCoordinator == nil && stack.transitionCoordinator == nil }
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.5))
+        let page = try XCTUnwrap(stack.topViewController?.view)
+        XCTAssertEqual(page.convert(page.bounds, to: stack.view), stack.view.bounds, "the page fills its column")
     }
 
     /// The controller of the first element of `type` in the host's tree.

@@ -18,6 +18,7 @@ enum GTKRegistrations {
         values(registry)
         indicators(registry)
         pickers(registry)
+        dates(registry)
         fields(registry)
         layouts(registry)
         pictures(registry)
@@ -41,6 +42,7 @@ enum GTKRegistrations {
         registry.everyElementTakesItsPlace()
         registry.everyElementIsDrawnOverItsPlace()
         registry.everyElementHearsTheUser()
+        registry.everyElementRaises(VisualElementContract.isFocusedChanged)
     }
 
     /// The acts `GTKActPerformer` performs.

@@ -30,7 +30,7 @@ extension UIKitDriver {
             return (placeholder.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor)
                 .map { color($0).propValue }
         case (.placeholderColor, let editor as UIKitTextEditorView):
-            return editor.subviews.lazy.compactMap { $0 as? UILabel }.first?.foregroundStyle.map { color($0).propValue }
+            return editor.subviews.lazy.compactMap { $0 as? UILabel }.first?.textColor.map { color($0).propValue }
         case (.textContentType, let field as UITextField):
             return purpose(field.keyboardType, spelling: field.spellCheckingType).propValue
         case (.textContentType, let editor as UITextView):

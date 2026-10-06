@@ -23,6 +23,16 @@ final class UIKitWindowController {
     private let root = UIKitRootViewController()
     let presentation = WindowPresentation()
 
+    /// The scene element the window was last shown for, its menus read in `pageMenus`.
+    private weak var element: MountedElement?
+
+    /// What the window does as the user comes to it or goes to another: iPadOS keeps every window on screen active
+    /// and dims those the user is not in, which their scene's active appearance tells.
+    var onFrontMoved: ((UIWindowScene) -> Void)?
+
+    /// The scene's active appearance followed, while the window stands in it.
+    private var frontWatch: (scene: UIWindowScene, registration: UITraitChangeRegistration)?
+
     init(_ element: MountedElement, scene: UIWindowScene?) {
         if let scene { stand(in: scene) }
     }
@@ -35,11 +45,24 @@ final class UIKitWindowController {
         window.makeKeyAndVisible()
         self.window = window
         session = scene.session
+        let registration = scene.registerForTraitChanges([UITraitActiveAppearance.self]) {
+            [weak self] (scene: UIWindowScene, _: UITraitCollection) in
+            self?.onFrontMoved?(scene)
+        }
+        frontWatch = (scene, registration)
+    }
+
+    /// Stops following the scene's active appearance, as the window leaves it.
+    private func stopWatchingFront() {
+        guard let frontWatch else { return }
+        frontWatch.scene.unregisterForTraitChanges(frontWatch.registration)
+        self.frontWatch = nil
     }
 
     /// Shows what the window holds now: the arrangement of pages it shows, and the title of the page the user
     /// sees.
     func present(_ element: MountedElement, in runtime: HostRuntime) {
+        self.element = element
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let (_, arrangement) = changes.arrangement {
             root.show(arrangement?.uiKit.controller)
@@ -104,6 +127,7 @@ final class UIKitWindowController {
     /// Takes the window out of its scene, which stays: its sheets go first, heard by nobody - the tree that asked for
     /// them is gone.
     func hide() {
+        stopWatchingFront()
         root.letGo()
         window?.isHidden = true
         window?.windowScene = nil

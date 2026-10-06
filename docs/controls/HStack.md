@@ -62,7 +62,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – | – | – | ⏸ |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on HStack.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of HStack - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -70,9 +70,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what reaches HStack - Android's driver has no path for it yet; GTK 4: cannot read what reaches HStack - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of HStack - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – | – | – |  |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | · |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of HStack - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of HStack - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -97,7 +97,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of HStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of HStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of HStack - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of HStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of HStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of HStack - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – | – | – | ⏸ |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on HStack.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | – | – | – | – | · |  | HStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: HStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: HStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: HStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of HStack - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 
@@ -158,7 +158,7 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 | `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  | · |  |  |  |  | not realized; UIKit: cannot read ignoresSafeArea of HStack - UIKit's view places its children where StateUI's layout says; their frames prove it; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `clipsContent` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read clipsContent of HStack - GTK's driver has no path for it yet |
 | `letsInputThrough` | property | `Bool` | native | ◐ | ◐ |  |  | · |  | cannot read letsInputThrough of HStack - AppKit's driver has no path for it yet; UIKit: cannot read letsInputThrough of HStack - UIKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read letsInputThrough of HStack - GTK's driver has no path for it yet |
-| `hitShape` | property | `ContainerShape` | native | ✅ |  |  |  | · |  | GTK 4: cannot read hitShape of HStack - GTK's driver has no path for it yet |
+| `hitShape` | property | `ContainerShape` | native | ✅ | ◐ |  |  | · |  | UIKit: cannot read hitShape of HStack - UIKit's driver has no path for it yet; GTK 4: cannot read hitShape of HStack - GTK's driver has no path for it yet |
 | `scrollTargetLayout` | property | `Bool` | adaptive |  |  |  |  |  |  |  |
 
 ## From [StackBase](tiers/StackBase.md)

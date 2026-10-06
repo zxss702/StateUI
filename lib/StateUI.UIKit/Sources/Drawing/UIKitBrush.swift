@@ -58,7 +58,28 @@ struct UIKitBrush: Equatable {
                 y: center.y + (bounds.height > 0 ? reach / bounds.height : 0))
             gradient.frame = bounds
             return gradient
+        case .material(let kind):
+            // The platform's frosted backing is a view of its own; a layer takes this approximation.
+            let painted = layer.flatMap { $0 is CAGradientLayer ? nil : $0 } ?? CALayer()
+            painted.backgroundColor = Self.materialColor(kind)?.cgColor
+            painted.frame = bounds
+            return painted
         }
+    }
+
+    /// What a material paints as where it is drawn in a layer: the room's own colour, as translucent as the
+    /// material is thin.
+    private static func materialColor(_ kind: Int32) -> UIColor? {
+        let alpha: CGFloat = switch kind {
+        case 1: 0.2   // ultraThin
+        case 2: 0.35  // thin
+        case 3: 0.5   // regular
+        case 4: 0.65  // thick
+        case 5: 0.8   // ultraThick
+        case 6: 0.5   // bar
+        default: 0.5
+        }
+        return UIColor.systemBackground.withAlphaComponent(alpha)
     }
 
     private static func paint(_ gradient: CAGradientLayer, _ stops: [HostBrush.Stop]) {

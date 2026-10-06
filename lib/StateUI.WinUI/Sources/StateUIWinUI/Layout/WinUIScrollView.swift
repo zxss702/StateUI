@@ -45,9 +45,15 @@ final class WinUIScrollView: WinUILayoutView {
     override init() {
         super.init()
         movement.onFramesWanted = { [weak self] in self?.onFramesWanted?() }
-        scroller.onScrolled = { [weak self] standing in self?.scrolled(to: standing) }
+        scroller.onScrolled = { [weak self] standing in
+            guard let self else { return }
+            self.scroller.ears = self.scroller.ears.filter { $0.owner != nil }
+            for ear in self.scroller.ears { ear.moved() }
+            self.scrolled(to: standing)
+        }
         scroller.onHeld = { [weak self] holding in self?.scrollerHeld(holding) }
         scroller.placingLayout = self
+        document.scrollView = self
         setChildren([scroller])
         configure()
     }

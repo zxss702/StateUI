@@ -6,7 +6,7 @@ What both stacks have: the space between their children.
 
 Wears: [Layout](Layout.md)
 
-Worn by: [HStack](../HStack.md) · [VStack](../VStack.md)
+Worn by: [HStack](../HStack.md) · [LazyHStack](../LazyHStack.md) · [LazyVStack](../LazyVStack.md) · [VStack](../VStack.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Tiers/StackBaseContract.swift`.
 

@@ -4,22 +4,31 @@ Button.layoutDirection: not realized
 Canvas.isAccessibilityHidden: ✅
 CheckBox.accessibilityLabel: ✅
 ColorPicker.frame: ✅
-DatePicker.frameChanged: ✅
-DatePicker.height: ✅
-DatePicker.width: ✅
-Ellipse.isVisible: ✅
-Ellipse.translationX: 🔌 read translationX of Ellipse: the host's own transform, checked against the layer it composed itself
-Grid.scale: 🔌 read scale of Grid: the host's own transform, checked against the layer it composed itself
-HStack.rotation: 🔌 read rotation of HStack: the host's own transform, checked against the layer it composed itself
-Image.layoutDirection: not realized
-List.isAccessibilityHidden: ✅
-Text.accessibilityLabel: ✅
-Line.frame: ✅
-Map.frameChanged: not realized
-Map.height: not realized
-Map.width: not realized
-Path.isVisible: ✅
-Path.translationX: 🔌 read translationX of Path: the host's own transform, checked against the layer it composed itself
+CustomLayout.frameChanged: not realized
+CustomLayout.height: not realized
+CustomLayout.width: not realized
+DatePicker.scale: 🔌 read scale of DatePicker: the host's own transform, checked against the layer it composed itself
+Ellipse.rotation: 🔌 read rotation of Ellipse: the host's own transform, checked against the layer it composed itself
+Grid.layoutDirection: not realized
+GridRow.isAccessibilityHidden: not realized
+HStack.accessibilityLabel: ✅
+Image.frame: ✅
+LazyHGrid.accessibilityLabel: ✅
+LazyHStack.frame: ✅
+LazyVGrid.frameChanged: ✅
+LazyVGrid.height: ✅
+LazyVGrid.width: ✅
+LazyVStack.isVisible: ✅
+LazyVStack.translationX: 🔌 read translationX of LazyVStack: the host's own transform, checked against the layer it composed itself
+Line.scale: 🔌 read scale of Line: the host's own transform, checked against the layer it composed itself
+List.frameChanged: ✅
+List.height: ✅
+List.width: ✅
+Map.rotation: 🔌 read rotation of Map: the host's own transform, checked against the layer it composed itself
+Masked.isVisible: not realized
+Masked.translationX: not realized
+MenuButton.layoutDirection: not realized
+Path.isAccessibilityHidden: ✅
 Picker.scale: 🔌 read scale of Picker: the host's own transform, checked against the layer it composed itself
 Polygon.rotation: 🔌 read rotation of Polygon: the host's own transform, checked against the layer it composed itself
 Polyline.layoutDirection: not realized
@@ -35,6 +44,8 @@ SearchField.scale: 🔌 read scale of SearchField: the host's own transform, che
 Slider.rotation: 🔌 read rotation of Slider: the host's own transform, checked against the layer it composed itself
 Stepper.layoutDirection: not realized
 Switch.isAccessibilityHidden: ✅
+Text.isVisible: ✅
+Text.translationX: 🔌 read translationX of Text: the host's own transform, checked against the layer it composed itself
 TextEditor.accessibilityLabel: ✅
 TextField.frame: ✅
 TimePicker.frameChanged: ✅

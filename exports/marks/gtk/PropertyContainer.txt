@@ -11,6 +11,10 @@ Grid.accessibilityIdentifier: not realized
 GridRow.accessibilityIdentifier: not realized
 HStack.accessibilityIdentifier: not realized
 Image.accessibilityIdentifier: not realized
+LazyHGrid.accessibilityIdentifier: not realized
+LazyHStack.accessibilityIdentifier: not realized
+LazyVGrid.accessibilityIdentifier: not realized
+LazyVStack.accessibilityIdentifier: not realized
 Line.accessibilityIdentifier: not realized
 List.accessibilityIdentifier: not realized
 Map.accessibilityIdentifier: not realized

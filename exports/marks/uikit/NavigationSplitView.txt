@@ -1,5 +1,5 @@
 # revision 2.1
-Text.frameChanged: ✅
 NavigationSplitView: ✅
 NavigationSplitView.isSidebarVisible: ✅
 NavigationSplitView.isSidebarVisibleChanged: ✅
+Text.frameChanged: ✅

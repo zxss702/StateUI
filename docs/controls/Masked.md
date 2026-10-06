@@ -44,7 +44,7 @@ What anything carrying values in the tree has - a control, a `Style`, a text run
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `accessibilityIdentifier` | property | `String` | native | ✅ |  |  |  |  |  | GTK 4: not realized |
+| `accessibilityIdentifier` | property | `String` | native | ✅ |  |  |  |  |  | UIKit: not realized; GTK 4: not realized |
 
 ## From [VisualElement](tiers/VisualElement.md)
 
@@ -54,52 +54,52 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `blendMode` | property | `BlendMode` | native |  |  |  |  |  |  |  |
 | `accessibilityChildBehavior` | property | `AccessibilityChildBehavior` | native |  |  |  |  |  |  |  |
-| `accessibilityHeadingLevel` | property | `HeadingLevel` | native | · |  |  |  | · |  | cannot read a heading's level - AppKit marks a heading, not its level; GTK 4: cannot read accessibilityHeadingLevel of Masked - GTK's driver has no path for it yet |
-| `accessibilityHint` | property | `String` | native | ✅ |  |  |  | · |  | GTK 4: cannot read accessibilityHint of Masked - GTK's driver has no path for it yet |
-| `accessibilityLabel` | property | `String` | native | ✅ |  |  |  | · |  | GTK 4: cannot read accessibilityLabel of Masked - GTK's driver has no path for it yet |
+| `accessibilityHeadingLevel` | property | `HeadingLevel` | native | · |  |  |  | · |  | cannot read a heading's level - AppKit marks a heading, not its level; UIKit: not realized; GTK 4: cannot read accessibilityHeadingLevel of Masked - GTK's driver has no path for it yet |
+| `accessibilityHint` | property | `String` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read accessibilityHint of Masked - GTK's driver has no path for it yet |
+| `accessibilityLabel` | property | `String` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read accessibilityLabel of Masked - GTK's driver has no path for it yet |
 | `accessibilityTraits` | property | `AccessibilityTraits` | native |  |  |  |  |  |  |  |
-| `automationExcludedWithChildren` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read automationExcludedWithChildren of Masked - GTK's driver has no path for it yet |
-| `background` | property | `Background` | native | ✅ |  |  |  | · |  | GTK 4: cannot read background of Masked - GTK's driver has no path for it yet |
+| `automationExcludedWithChildren` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read automationExcludedWithChildren of Masked - GTK's driver has no path for it yet |
+| `background` | property | `Background` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read background of Masked - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – |  |  |  | ⏸ |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Masked.isFocusedChanged, not realized yet |
-| `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  |  |
-| `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
+| `focus` | act | `() -> Bool` |  | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
 | `hintKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
-| `ignoresInput` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read what reaches Masked - GTK's driver has no path for it yet |
-| `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read isAccessibilityHidden of Masked - GTK's driver has no path for it yet |
-| `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized |
-| `isFocusedChanged` | event | `Bool` | native | – |  |  |  |  |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
-| `isVisible` | property | `Bool` | native | ✅ |  |  |  | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
+| `ignoresInput` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read what reaches Masked - GTK's driver has no path for it yet |
+| `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read isAccessibilityHidden of Masked - GTK's driver has no path for it yet |
+| `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized |
+| `isFocusedChanged` | event | `Bool` | native | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `isVisible` | property | `Bool` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read layoutDirection of Masked - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
-| `maximumHeight` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `maximumWidth` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `minimumHeight` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `minimumWidth` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `opacity` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `pivotX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read pivotX of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read pivotX of Masked - GTK's driver has no path for it yet |
-| `pivotY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read pivotY of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read pivotY of Masked - GTK's driver has no path for it yet |
-| `rotation` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotation of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read rotation of Masked - GTK's driver has no path for it yet |
-| `rotationX` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotationX of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read rotationX of Masked - GTK's driver has no path for it yet |
-| `rotationY` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotationY of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read rotationY of Masked - GTK's driver has no path for it yet |
-| `scale` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scale of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scale of Masked - GTK's driver has no path for it yet |
-| `scaleX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scaleX of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scaleX of Masked - GTK's driver has no path for it yet |
-| `scaleY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scaleY of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read scaleY of Masked - GTK's driver has no path for it yet |
+| `maximumHeight` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `maximumWidth` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `minimumHeight` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `minimumWidth` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `opacity` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `pivotX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read pivotX of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read pivotX of Masked - GTK's driver has no path for it yet |
+| `pivotY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read pivotY of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read pivotY of Masked - GTK's driver has no path for it yet |
+| `rotation` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotation of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read rotation of Masked - GTK's driver has no path for it yet |
+| `rotationX` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotationX of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read rotationX of Masked - GTK's driver has no path for it yet |
+| `rotationY` | property | `Angle` | native | 🔌 |  |  |  | · |  | only through the host's own: read rotationY of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read rotationY of Masked - GTK's driver has no path for it yet |
+| `scale` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scale of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read scale of Masked - GTK's driver has no path for it yet |
+| `scaleX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scaleX of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read scaleX of Masked - GTK's driver has no path for it yet |
+| `scaleY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read scaleY of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read scaleY of Masked - GTK's driver has no path for it yet |
 | `shadow` | property | `DropShadow` | native |  |  |  |  |  |  |  |
-| `style` | property | `Name` | structure | ✅ |  |  |  | ✅ |  |  |
+| `style` | property | `Name` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `symbolEffect` | property | `String` | native |  |  |  |  |  |  |  |
 | `symbolEffectActive` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `symbolEffectOptions` | property | `Int` | native |  |  |  |  |  |  |  |
 | `symbolEffectValue` | property | `String` | native |  |  |  |  |  |  |  |
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
-| `translationX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationX of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of Masked - GTK's driver has no path for it yet |
-| `translationY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationY of Masked: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of Masked - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – |  |  |  | ⏸ |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on Masked.isFocusedChanged, not realized yet |
-| `width` | property | `Double` | native | ✅ |  |  |  | ✅ |  |  |
-| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
+| `translationX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationX of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationX of Masked - GTK's driver has no path for it yet |
+| `translationY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationY of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationY of Masked - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `width` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 
 ## From [View](tiers/View.md)
 
@@ -107,46 +107,46 @@ What every view a layout positions has: where it sits in its layout, the space k
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `allowDrop` | property | `Bool` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `area` | property | `Area` | structure | ✅ |  |  |  | ✅ |  |  |
-| `canDrag` | property | `Bool` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
+| `allowDrop` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `area` | property | `Area` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `canDrag` | property | `Bool` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 | `coordinateSpaceName` | property | `String` | stateUI |  |  |  |  |  |  |  |
-| `dragLeave` | event |  | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `dragOver` | event |  | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `dragStarting` | event |  | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; GTK 4: not realized |
+| `dragLeave` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `dragOver` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `dragStarting` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `dragText` | property | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `onDrop` (`drop`) | event | `String` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `dropCompleted` | event |  | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 | `dropPaths` | event | `([String], Point)` | native |  |  |  |  |  |  |  |
 | `flex` | property | `Double` | stateUI |  |  |  |  |  |  |  |
-| `frameChanged` | event | `[Double]` | native | ✅ |  |  |  | ✅ |  |  |
-| `gridColumn` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  |  |
-| `gridColumnSpan` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  |  |
-| `gridRow` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  |  |
-| `gridRowSpan` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  |  |
-| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  | ✅ |  |  |
+| `frameChanged` | event | `[Double]` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `gridColumn` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `gridColumnSpan` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `gridRow` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `gridRowSpan` | property | `Int` | stateUI | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `horizontalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `horizontalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
 | `layoutPriority` | property | `Double` | stateUI |  |  |  |  |  |  |  |
 | `namedFramesChanged` | event | `[NamedSpaceFrame]` | native |  |  |  |  |  |  |  |
-| `padding` | property | `EdgeInsets` | native | ✅ |  |  |  | ✅ |  |  |
-| `panTouchCount` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `panXChannel` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `panYChannel` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native | 🔌 |  |  |  | · |  | only through the host's own: pinch on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pinch on Masked - GTK's driver has no path for it yet |
-| `pointerEntered` | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
-| `pointerExited` | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
-| `pointerMoved` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
-| `pointerPressed` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
-| `pointerReleased` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
+| `padding` | property | `EdgeInsets` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
+| `panTouchCount` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `onPanUpdated` (`panUpdated`) | event | `(GesturePhase, Double, Double, Point?, Point?)` | native | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `panXChannel` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `panYChannel` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `pinchUpdated` | event | `(GesturePhase, Double, Point)` | native | 🔌 |  |  |  | · |  | only through the host's own: pinch on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pinch on Masked - GTK's driver has no path for it yet |
+| `pointerEntered` | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
+| `pointerExited` | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
+| `pointerMoved` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
+| `pointerPressed` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
+| `pointerReleased` | event | `Point?` | native | 🔌 |  |  |  | · |  | only through the host's own: hover on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot hover on Masked - GTK's driver has no path for it yet |
 | `pointerStyle` | property | `PointerStyle` | native |  |  |  |  |  |  |  |
-| `swipeDirection` | property | `SwipeDirection` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `swipeThreshold` | property | `Double` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
-| `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `swipeDirection` | property | `SwipeDirection` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `swipeThreshold` | property | `Double` | structure | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
+| `onSwiped` (`swiped`) | event | `SwipeDirection` | native | 🔌 |  |  |  | · |  | only through the host's own: pan on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot pan on Masked - GTK's driver has no path for it yet |
 | `tag` | property | `PropValue` | stateUI |  |  |  |  |  |  |  |
-| `tapCount` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot tap on Masked - GTK's driver has no path for it yet |
-| `onTapGesture` (`tapGesture`) | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent; GTK 4: cannot tap on Masked - GTK's driver has no path for it yet |
-| `verticalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  | ✅ |  |  |
+| `tapCount` | property | `Int` | structure | 🔌 |  |  |  | · |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot tap on Masked - GTK's driver has no path for it yet |
+| `onTapGesture` (`tapGesture`) | event |  | native | 🔌 |  |  |  | · |  | only through the host's own: tap on Masked: handed to the host's recognizer or handler, no NSEvent sent; UIKit: not realized; GTK 4: cannot tap on Masked - GTK's driver has no path for it yet |
+| `verticalAlignment` | property | `AxisAlignment` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `verticalGuide` | property | `[Double]` | stateUI |  |  |  |  |  |  |  |
 
 ## From [Layout](tiers/Layout.md)
@@ -155,10 +155,10 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  |  |  |  |  |  | not realized; GTK 4: not realized |
-| `clipsContent` | property | `Bool` | native | ✅ |  |  |  | · |  | GTK 4: cannot read clipsContent of Masked - GTK's driver has no path for it yet |
-| `letsInputThrough` | property | `Bool` | native | ◐ |  |  |  | · |  | cannot read letsInputThrough of Masked - AppKit's driver has no path for it yet; GTK 4: cannot read letsInputThrough of Masked - GTK's driver has no path for it yet |
-| `hitShape` | property | `ContainerShape` | native | ✅ |  |  |  | · |  | GTK 4: cannot read hitShape of Masked - GTK's driver has no path for it yet |
+| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
+| `clipsContent` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read clipsContent of Masked - GTK's driver has no path for it yet |
+| `letsInputThrough` | property | `Bool` | native | ◐ |  |  |  | · |  | cannot read letsInputThrough of Masked - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: cannot read letsInputThrough of Masked - GTK's driver has no path for it yet |
+| `hitShape` | property | `ContainerShape` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read hitShape of Masked - GTK's driver has no path for it yet |
 | `scrollTargetLayout` | property | `Bool` | adaptive |  |  |  |  |  |  |  |
 
 ## From [PaddingElement](tiers/PaddingElement.md)
@@ -167,7 +167,7 @@ The space kept inside an element, around what it holds.
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `contentPadding` | property | `EdgeInsets` | native |  |  |  |  | · |  | not realized; GTK 4: cannot read contentPadding of Masked - GTK's driver has no path for it yet |
+| `contentPadding` | property | `EdgeInsets` | native |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read contentPadding of Masked - GTK's driver has no path for it yet |
 
 ## From [BorderElement](tiers/BorderElement.md)
 
@@ -175,6 +175,6 @@ What an element draws of its own box: the shape its background, its outline and 
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `shape` | property | `ContainerShape` | stateUI | · |  |  |  | · |  | cannot read shape of Masked - AppKit's driver has no path for it yet; GTK 4: cannot read shape of Masked - GTK's driver has no path for it yet |
-| `stroke` | property | `Brush` | stateUI |  |  |  |  | · |  | not realized; GTK 4: cannot read stroke of Masked - GTK's driver has no path for it yet |
-| `strokeWidth` | property | `Double` | stateUI | · |  |  |  | · |  | cannot read strokeWidth of Masked - AppKit's driver has no path for it yet; GTK 4: cannot read strokeWidth of Masked - GTK's driver has no path for it yet |
+| `shape` | property | `ContainerShape` | stateUI | · |  |  |  | · |  | cannot read shape of Masked - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: cannot read shape of Masked - GTK's driver has no path for it yet |
+| `stroke` | property | `Brush` | stateUI |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read stroke of Masked - GTK's driver has no path for it yet |
+| `strokeWidth` | property | `Double` | stateUI | · |  |  |  | · |  | cannot read strokeWidth of Masked - AppKit's driver has no path for it yet; UIKit: not realized; GTK 4: cannot read strokeWidth of Masked - GTK's driver has no path for it yet |

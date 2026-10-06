@@ -9,6 +9,7 @@
 #include "Relay.h"
 
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -31,9 +32,10 @@ namespace {
     /// Shows `dialog`, handing its result to `closed` once it closes.
     void show(controls::ContentDialog const &dialog, std::function<void(controls::ContentDialogResult)> closed) {
         dialog.ShowAsync().Completed(
-            [closed](IAsyncOperation<controls::ContentDialogResult> const &operation, AsyncStatus status) {
+            guarded("handling Completed",
+                [closed](IAsyncOperation<controls::ContentDialogResult> const &operation, AsyncStatus status) {
                 closed(status == AsyncStatus::Completed ? operation.GetResults() : controls::ContentDialogResult::None);
-            });
+            }));
     }
 
     /// Words as a text block that wraps.
@@ -44,9 +46,21 @@ namespace {
         return block;
     }
 
-    void ask(xaml::XamlRoot const &root, int64_t ticket, StateUIQuestion const &question) {
+    /// A dialog made for a question, and what hands its answer back once it closes.
+    struct Asked {
         controls::ContentDialog dialog;
-        dialog.XamlRoot(root);
+        std::function<void(controls::ContentDialogResult)> closed;
+
+        /// Shows the dialog over `root`'s window.
+        void show(xaml::XamlRoot const &root) const {
+            dialog.XamlRoot(root);
+            ::show(dialog, closed);
+        }
+    };
+
+    Asked ask(int64_t ticket, StateUIQuestion const &question) {
+        controls::ContentDialog dialog;
+        std::function<void(controls::ContentDialogResult)> closed;
         dialog.Title(winrt::box_value(text(question.title)));
         auto hasMessage = question.message && *question.message;
 
@@ -55,16 +69,16 @@ namespace {
             if (hasMessage) dialog.Content(paragraph(question.message));
             dialog.CloseButtonText(text(question.accept));
             dialog.DefaultButton(controls::ContentDialogButton::Close);
-            show(dialog, [ticket](auto) { answer(ticket, true, {}, false); });
+            closed = [ticket](auto) { answer(ticket, true, {}, false); };
             break;
         case 1:
             if (hasMessage) dialog.Content(paragraph(question.message));
             dialog.PrimaryButtonText(text(question.accept));
             dialog.CloseButtonText(text(question.cancel));
             dialog.DefaultButton(controls::ContentDialogButton::Primary);
-            show(dialog, [ticket](auto result) {
+            closed = [ticket](auto result) {
                 answer(ticket, result == controls::ContentDialogResult::Primary, {}, false);
-            });
+            };
             break;
         case 2: {
             // A choice is a button of its own, the dangerous one first; the answer is the caption pressed.
@@ -79,23 +93,25 @@ namespace {
                 controls::Button button;
                 button.Content(winrt::box_value(winrt::to_hstring(caption)));
                 button.HorizontalAlignment(xaml::HorizontalAlignment::Stretch);
-                button.Click([dialog, chosen, pressed, caption](IInspectable const &, xaml::RoutedEventArgs const &) {
+                button.Click(guarded("handling Click",
+                    [dialog, chosen, pressed, caption](IInspectable const &, xaml::RoutedEventArgs const &) {
                     *chosen = caption;
                     *pressed = true;
                     dialog.Hide();
-                });
+                }));
                 choices.Children().Append(button);
             }
             dialog.Content(choices);
             if (question.cancel) {
                 auto cancel = std::string(question.cancel);
                 dialog.CloseButtonText(text(question.cancel));
-                dialog.CloseButtonClick([chosen, pressed, cancel](auto const &, auto const &) {
+                dialog.CloseButtonClick(guarded("handling CloseButtonClick",
+                    [chosen, pressed, cancel](auto const &, auto const &) {
                     *chosen = cancel;
                     *pressed = true;
-                });
+                }));
             }
-            show(dialog, [ticket, chosen, pressed](auto) { answer(ticket, *pressed, *chosen, *pressed); });
+            closed = [ticket, chosen, pressed](auto) { answer(ticket, *pressed, *chosen, *pressed); };
             break;
         }
         default: {
@@ -105,19 +121,22 @@ namespace {
             controls::TextBox field;
             if (question.placeholder) field.PlaceholderText(text(question.placeholder));
             if (question.maximumLength > 0) field.MaxLength(question.maximumLength);
-            field.InputScope(inputScope(question.purpose));
+            field.IsSpellCheckEnabled(question.spellChecked);
+            field.IsTextPredictionEnabled(question.predicted);
+            field.InputScope(inputScope(question.scope));
             field.Text(text(question.initial));
             content.Children().Append(field);
             dialog.Content(content);
             dialog.PrimaryButtonText(text(question.accept));
             dialog.CloseButtonText(text(question.cancel));
             dialog.DefaultButton(controls::ContentDialogButton::Primary);
-            show(dialog, [ticket, field](auto result) {
+            closed = [ticket, field](auto result) {
                 auto accepted = result == controls::ContentDialogResult::Primary;
                 answer(ticket, accepted, winrt::to_string(field.Text()), accepted);
-            });
+            };
         }
         }
+        return {dialog, closed};
     }
 
     /// The dialog showing over `root`'s window; null for none.
@@ -129,14 +148,14 @@ namespace {
 }
 
 namespace stateui {
-    xaml::Input::InputScope inputScope(int32_t purpose) {
+    xaml::Input::InputScope inputScope(int32_t number) {
         using name = input::InputScopeNameValue;
-        // StateUI's InputPurpose: default, plain, chat, email, numeric, telephone, text, url.
-        static name const names[] = {name::Default, name::Default, name::Chat, name::EmailSmtpAddress,
-                                     name::Number, name::TelephoneNumber, name::Text, name::Url};
+        // WinUIInputScope: default, text, chat, email, number, telephone, url.
+        static name const names[] = {name::Default, name::Text, name::Chat, name::EmailSmtpAddress,
+                                     name::Number, name::TelephoneNumber, name::Url};
         input::InputScope scope;
         input::InputScopeName scopeName;
-        scopeName.NameValue(purpose >= 0 && purpose < 8 ? names[purpose] : name::Default);
+        scopeName.NameValue(number >= 0 && number < 7 ? names[number] : name::Default);
         scope.Names().Append(scopeName);
         return scope;
     }
@@ -144,9 +163,18 @@ namespace stateui {
 
 extern "C" void stateui_winui_ask(StateUIObjectRef handle, int64_t ticket, StateUIQuestion const *question) {
     try {
-        auto root = as<xaml::UIElement>(handle).XamlRoot();
-        if (!root) return answer(ticket, false, {}, false);
-        ask(root, ticket, *question);
+        auto element = as<xaml::FrameworkElement>(handle);
+        auto asked = ask(ticket, *question);
+        if (auto root = element.XamlRoot()) return asked.show(root);
+        // A window opened a moment ago is not loaded yet: the question stands over it once it is.
+        // Design: docs/design/platforms/winui/runtime.md#questions-for-the-user
+        auto token = std::make_shared<winrt::event_token>();
+        *token = element.Loaded(guarded("handling Loaded",
+            [asked, token](IInspectable const &sender, xaml::RoutedEventArgs const &) {
+            auto loaded = sender.as<xaml::FrameworkElement>();
+            loaded.Loaded(*token);
+            asked.show(loaded.XamlRoot());
+        }));
     } catch (...) {
         report("asking the user");
         answer(ticket, false, {}, false);

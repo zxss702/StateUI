@@ -4,8 +4,6 @@
 
 The bar a page arrangement draws: its colour.
 
-Wears: [PropertyContainer](PropertyContainer.md)
-
 Worn by: [NavigationStack](../NavigationStack.md) · [TabView](../TabView.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Mixins/BarElementContract.swift`.

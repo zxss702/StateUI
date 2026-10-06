@@ -42,6 +42,7 @@
         LeadingContentContract.self, LineContract.self, MapContract.self, MenuBarContract.self,
         MenuContract.self, MenuButtonContract.self, MenuItemContract.self, DividerContract.self, ModalStackContract.self,
         NavigationStackContract.self, OverlayContract.self, PageContract.self, PathContract.self,
+        LazyHGridContract.self, LazyHStackContract.self, LazyVGridContract.self, LazyVStackContract.self,
         PickerContract.self, PinContract.self, PolygonContract.self, PolylineContract.self,
         PositionIndicatorContract.self, ProgressBarContract.self, RadioButtonContract.self,
         RectangleContract.self, SceneContract.self, ScrollViewContract.self,

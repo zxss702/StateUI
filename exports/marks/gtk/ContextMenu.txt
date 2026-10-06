@@ -1,6 +1,6 @@
 # revision 1.1
-ContextMenu: cannot read the menu of Text - GTK's driver has no path for it yet
-Divider: waits on Menu.text
-Menu.text: not realized
-MenuItem.isEnabled: cannot read the menu of Text - GTK's driver has no path for it yet
-MenuItem.text: waits on Menu.text
+ContextMenu: ✅
+Divider: ✅
+Menu.text: ✅
+MenuItem.isEnabled: ✅
+MenuItem.text: ✅

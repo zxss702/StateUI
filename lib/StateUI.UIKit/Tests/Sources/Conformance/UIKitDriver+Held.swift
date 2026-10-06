@@ -62,9 +62,9 @@ extension UIKitDriver {
         let drawn: (font: UIFont?, color: UIColor?) = switch view {
         case let label as UILabel:
             (first?[.font] as? UIFont ?? label.font, first?[.foregroundColor] as? UIColor ?? label.textColor)
-        case let field as UITextField: (field.font, field.foregroundStyle)
-        case let editor as UITextView: (editor.font, editor.foregroundStyle)
-        case let button as UIButton: (button.titleLabel?.font, button.titleLabel?.foregroundStyle)
+        case let field as UITextField: (field.font, field.textColor)
+        case let editor as UITextView: (editor.font, editor.textColor)
+        case let button as UIButton: (button.titleLabel?.font, button.titleLabel?.textColor)
         default: (nil, nil)
         }
         guard let font = drawn.font else { throw DriverCannot("read the words of a \(type(of: view))") }

@@ -12,6 +12,18 @@ extension AndroidElement {
                 host?.runtime.reducesMotion() ?? false
             })
         }
+        if type == .lazyVStack || type == .lazyHStack, let host {
+            return AndroidLazyStackView(
+                axis: type == .lazyVStack ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime), runtime: host.runtime)
+        }
+        if type == .lazyVGrid || type == .lazyHGrid, let host {
+            return AndroidLazyGridView(
+                axis: type == .lazyVGrid ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime), runtime: host.runtime)
+        }
+        // A child its parent's view draws - a map's marker - has no view of its own.
+        if element.isDrawnByParent(in: AndroidRegistrations.registry) { return nil }
         if let registered = AndroidRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },

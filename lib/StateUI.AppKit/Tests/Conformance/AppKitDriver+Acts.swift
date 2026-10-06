@@ -13,10 +13,20 @@ import AppKit
 /// Design: docs/design/platforms/appkit/conformance.md#what-the-driver-does
 extension AppKitDriver {
     func perform(_ act: UserAct, on element: MountedElement) throws {
+        try autoreleasepool { try performing(act, on: element) }
+    }
+
+    private func performing(_ act: UserAct, on element: MountedElement) throws {
         layOutWindows()
+        if element.type == .pin { return try performOnPin(act, element) }
         let native = element.native as? AppKitElement
         let view = native?.view
         switch (act, view) {
+        case (.tap(let count), let map as AppKitMapView):
+            for run in 1...max(count, 1) { native?.tapRecognizer?.clicked(run: run) }
+            map.click(at: NSPoint(x: map.bounds.midX, y: map.bounds.midY))
+        case (.endContent, let web as AppKitWebView):
+            web.navigationDelegate?.webViewWebContentProcessDidTerminate?(web)
         case (.activate, _) where element.parent?.type == .list:
             guard let items = (element.parent?.native as? AppKitElement)?.view as? AppKitItemsView,
                   case .manual(let identity) = element.id

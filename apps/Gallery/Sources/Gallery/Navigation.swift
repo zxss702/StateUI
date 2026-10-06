@@ -54,6 +54,9 @@ enum Route: Hashable {
     /// One step of the drill-down - see `LevelPage`.
     case level(Int)
 
+    /// One page of the toolbar's layers - see `ToolbarLayerPage`.
+    case layer(Int)
+
     /// A thing chosen from the search box - see `SearchSample`.
     case item(String)
 }

@@ -8,6 +8,11 @@ import AppKit
 
 /// Children placed: the layout item each child gives its parent.
 extension AppKitElement {
+    /// The view lays out, and its control writes, in the element's direction.
+    func directionChanged() {
+        view?.userInterfaceLayoutDirection = element.layoutDirection == .rightToLeft ? .rightToLeft : .leftToRight
+    }
+
     func arrangeChildren() {
         guard let view else { return }
         if let items = view as? AppKitItemsView { return items.childrenChanged() }
@@ -29,6 +34,16 @@ extension AppKitElement {
 
         if let stack = view as? AppKitStackView {
             stack.setItems(items)
+            return
+        }
+
+        if let lazy = view as? AppKitLazyView {
+            lazy.cells.takeItems()
+            lazy.setItems(children.compactMap { child in
+                guard case .manual(let identity) = child.id, let item = child.layoutItem
+                else { return nil }
+                return (identity, item)
+            })
             return
         }
 

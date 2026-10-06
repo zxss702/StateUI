@@ -7,18 +7,47 @@
 /// A tuple view keeps no element of its own: the differ splices its children
 /// into the parent element's list, so `VStack { A(); B() }` is three siblings
 /// whether the two views were written in the stack or in a body's own braces.
+///
+/// The statements are kept as they were written, not just as the nodes they
+/// make: a `ForEach` among them stays a `LazyRows`, so a lazy container the
+/// tuple lands in still names its rows before any is built.
 public struct TupleView: View {
-    /// The children, each a node - a fragment among them already unwrapped.
-    public var node: Node
+    /// The statements' views, in written order, where they were kept.
+    let elements: [Element]?
 
-    /// The statements' views, in written order.
+    /// The node for one made from a node already - a tagged copy carries its
+    /// elements where it has them, its node where it does not.
+    private var stored: Node?
+
+    /// The children, each a node - a fragment among them already unwrapped.
+    public var node: Node {
+        stored ?? Node(type: .fragment, children: (elements ?? []).flatMap { $0.node.asChildren })
+    }
+
+    /// A tuple view of the statements' own views.
     init(_ elements: [Element]) {
-        node = Node(type: .fragment, children: elements.flatMap { $0.node.asChildren })
+        self.elements = elements
+    }
+
+    /// A tuple view over an already-fragmented node.
+    init(node: Node) {
+        elements = nil
+        stored = node
+    }
+
+    /// `element` under `segment`'s path, its laziness kept.
+    static func keyed(_ segment: String, _ element: Element) -> Element {
+        (element as? any LazyRows).map { LazyKeyed(segment: segment, rows: $0) }
+            ?? Keyed(segment: segment, raw: element)
     }
 
     /// One more segment on each child's path: the differ knows the child by
     /// where it was written, not by where the group lands.
     func tagged(_ segment: String) -> TupleView {
+        if let elements {
+            return TupleView(elements.map { Self.keyed(segment, $0) })
+        }
+
         var tagged = node
         tagged.children = tagged.children.map { child in
             var child = child
@@ -28,10 +57,9 @@ public struct TupleView: View {
         return TupleView(node: tagged)
     }
 
-    /// A tuple view over an already-fragmented node.
-    init(node: Node) {
-        self.node = node
-    }
+    /// The kept statements - what a lazy container reads to find the rows
+    /// among them; nil for a tuple made of a node.
+    var lazyElements: [Element]? { elements }
 }
 
 /// Several views named as one, for factoring a fixed group out of a layout.

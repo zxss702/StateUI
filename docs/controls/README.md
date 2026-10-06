@@ -34,15 +34,19 @@ The elements a layout positions - every one wears [View](tiers/View.md).
 | [CheckBox](CheckBox.md) | 94 | 32 ✅ · 1 ☑️ | 26 ✅ · 3 – | 53 ✅ · 1 ☑️ · 3 – | 56 ✅ | 22 ✅ |  |
 | [ColorPicker](ColorPicker.md) | 93 | 27 ✅ · 3 – | 26 ✅ · 3 – | 51 ✅ · 1 ☑️ · 3 – | 50 ✅ · 3 – | 20 ✅ |  |
 | [CustomLayout](CustomLayout.md) | 99 | 28 ✅ · 3 – |  |  |  | 20 ✅ |  |
-| [DatePicker](DatePicker.md) | 108 | 35 ✅ · 1 ☑️ | 29 ✅ · 3 – | 53 ✅ · 1 ☑️ · 3 – | 63 ✅ · 1 ☑️ |  |  |
+| [DatePicker](DatePicker.md) | 108 | 35 ✅ · 1 ☑️ | 29 ✅ · 3 – | 53 ✅ · 1 ☑️ · 3 – | 63 ✅ · 1 ☑️ | 25 ✅ · 3 ☑️ |  |
 | [Ellipse](Ellipse.md) | 101 | 25 ✅ · 1 ☑️ · 3 – | 26 ✅ · 3 – | 49 ✅ · 1 ☑️ · 3 – | 58 ✅ · 3 – | 20 ✅ |  |
 | [Grid](Grid.md) | 104 | 32 ✅ · 3 – | 34 ✅ · 3 – | 55 ✅ · 1 ☑️ · 3 – | 59 ✅ · 3 – | 24 ✅ |  |
 | [GridRow](GridRow.md) | 99 |  |  |  |  |  |  |
 | [HStack](HStack.md) | 100 | 29 ✅ · 3 – | 31 ✅ · 3 – | 52 ✅ · 1 ☑️ · 3 – | 56 ✅ · 3 – | 21 ✅ |  |
 | [Image](Image.md) | 94 | 27 ✅ · 1 ☑️ · 3 – | 26 ✅ · 3 – | 50 ✅ · 1 ☑️ · 3 – | 50 ✅ · 3 – | 20 ✅ |  |
+| [LazyHGrid](LazyHGrid.md) | 105 | 27 ✅ · 1 ☑️ · 3 – | 29 ✅ · 3 – |  |  | 20 ✅ |  |
+| [LazyHStack](LazyHStack.md) | 103 | 27 ✅ · 1 ☑️ · 3 – | 29 ✅ · 3 – |  |  | 20 ✅ |  |
+| [LazyVGrid](LazyVGrid.md) | 105 | 27 ✅ · 1 ☑️ · 3 – | 29 ✅ · 3 – |  |  | 20 ✅ |  |
+| [LazyVStack](LazyVStack.md) | 103 | 27 ✅ · 1 ☑️ · 3 – | 29 ✅ · 3 – |  |  | 20 ✅ |  |
 | [Line](Line.md) | 105 | 29 ✅ · 1 ☑️ · 3 – | 30 ✅ · 3 – | 53 ✅ · 1 ☑️ · 3 – | 62 ✅ · 3 – | 20 ✅ |  |
 | [List](List.md) | 102 | 33 ✅ · 1 ☑️ | 29 ✅ · 3 – | 60 ✅ · 1 ☑️ | 59 ✅ | 23 ✅ |  |
-| [Map](Map.md) | 98 |  |  |  |  |  |  |
+| [Map](Map.md) | 98 | 32 ✅ · 1 ☑️ · 3 – | 31 ✅ · 3 – |  |  |  |  |
 | [Masked](Masked.md) | 99 | 28 ✅ · 3 – |  |  |  | 20 ✅ |  |
 | [MenuButton](MenuButton.md) | 92 | 24 ✅ · 1 ☑️ · 3 – |  |  |  | 19 ✅ |  |
 | [Path](Path.md) | 102 | 26 ✅ · 1 ☑️ · 3 – | 27 ✅ · 3 – | 50 ✅ · 1 ☑️ · 3 – | 59 ✅ · 3 – | 20 ✅ |  |
@@ -54,19 +58,19 @@ The elements a layout positions - every one wears [View](tiers/View.md).
 | [RadioButton](RadioButton.md) | 111 | 38 ✅ · 1 ☑️ | 34 ✅ · 3 – | 59 ✅ · 1 ☑️ · 3 – | 63 ✅ | 25 ✅ |  |
 | [Rectangle](Rectangle.md) | 102 | 26 ✅ · 1 ☑️ · 3 – | 27 ✅ · 3 – | 50 ✅ · 1 ☑️ · 3 – | 59 ✅ · 3 – | 20 ✅ |  |
 | [ScrollView](ScrollView.md) | 112 | 32 ✅ · 2 ☑️ · 3 – | 33 ✅ · 3 – | 52 ✅ · 1 ☑️ · 3 – | 60 ✅ · 3 – | 20 ✅ |  |
-| [SearchField](SearchField.md) | 120 | 41 ✅ · 1 ☑️ | 45 ✅ | 62 ✅ · 1 ☑️ | 63 ✅ | 23 ✅ |  |
-| [Slider](Slider.md) | 98 | 34 ✅ · 1 ☑️ | 30 ✅ · 3 – | 55 ✅ · 1 ☑️ · 3 – | 57 ✅ | 24 ✅ |  |
+| [SearchField](SearchField.md) | 120 | 41 ✅ · 1 ☑️ · 1 – | 46 ✅ | 62 ✅ · 1 ☑️ | 63 ✅ | 25 ✅ |  |
+| [Slider](Slider.md) | 98 | 34 ✅ · 1 ☑️ | 30 ✅ · 3 – | 55 ✅ · 1 ☑️ · 3 – | 57 ✅ | 24 ✅ · 2 – |  |
 | [Stepper](Stepper.md) | 96 | 31 ✅ · 1 ☑️ | 27 ✅ · 3 – | 50 ✅ · 1 ☑️ · 3 – | 57 ✅ | 20 ✅ |  |
 | [Switch](Switch.md) | 94 | 31 ✅ · 1 ☑️ | 27 ✅ · 3 – | 52 ✅ · 1 ☑️ · 3 – | 56 ✅ | 22 ✅ |  |
 | [Text](Text.md) | 115 | 37 ✅ · 1 ☑️ · 3 – | 39 ✅ · 3 – | 61 ✅ · 1 ☑️ · 3 – | 63 ✅ · 3 – | 22 ✅ |  |
-| [TextEditor](TextEditor.md) | 120 | 46 ✅ · 1 ☑️ | 46 ✅ | 62 ✅ · 1 ☑️ | 70 ✅ | 23 ✅ |  |
-| [TextField](TextField.md) | 122 | 42 ✅ · 1 ☑️ | 46 ✅ | 63 ✅ · 1 ☑️ | 68 ✅ | 23 ✅ |  |
-| [TimePicker](TimePicker.md) | 106 | 33 ✅ · 1 ☑️ | 30 ✅ | 53 ✅ · 1 ☑️ · 3 – | 58 ✅ |  |  |
+| [TextEditor](TextEditor.md) | 120 | 46 ✅ · 1 ☑️ | 46 ✅ | 62 ✅ · 1 ☑️ | 70 ✅ | 25 ✅ |  |
+| [TextField](TextField.md) | 122 | 42 ✅ · 1 ☑️ · 2 – | 48 ✅ | 63 ✅ · 1 ☑️ | 68 ✅ | 24 ✅ |  |
+| [TimePicker](TimePicker.md) | 106 | 33 ✅ · 1 ☑️ | 30 ✅ | 53 ✅ · 1 ☑️ · 3 – | 58 ✅ | 25 ✅ |  |
 | [TitleBar](TitleBar.md) | 94 |  |  |  |  |  |  |
 | [VStack](VStack.md) | 100 | 29 ✅ · 3 – | 31 ✅ · 3 – | 52 ✅ · 1 ☑️ · 3 – | 56 ✅ · 3 – | 21 ✅ |  |
-| [WebView](WebView.md) | 101 |  | 34 ✅ | 54 ✅ · 1 ☑️ · 3 – |  |  |  |
+| [WebView](WebView.md) | 101 | 39 ✅ · 1 ☑️ | 34 ✅ | 54 ✅ · 1 ☑️ · 3 – |  |  |  |
 | [ZStack](ZStack.md) | 99 | 28 ✅ · 3 – | 30 ✅ · 3 – | 51 ✅ · 1 ☑️ · 3 – | 55 ✅ · 3 – | 20 ✅ |  |
-| **Met** - ✅ and – | 3899 | 1094 of 3899 met | 1040 of 3899 met | 1751 of 3899 met | 1811 of 3899 met | 660 of 3899 met |  |
+| **Met** - ✅ and – | 4315 | 1291 of 4315 met | 1205 of 4315 met | 1751 of 4315 met | 1811 of 4315 met | 797 of 4315 met |  |
 <!-- controls:end -->
 
 ## App structure
@@ -81,15 +85,15 @@ The scene, the window and the page an application is made of, the arrangements a
 | [ContextMenu](ContextMenu.md) | 0 |  |  |  |  |  |  |
 | [Divider](Divider.md) | 0 |  |  |  |  |  |  |
 | [LeadingContent](LeadingContent.md) | 0 |  |  |  |  |  |  |
-| [Menu](Menu.md) | 4 | 2 ✅ | 1 ✅ · 1 ☑️ |  | 2 ✅ |  |  |
+| [Menu](Menu.md) | 4 | 2 ✅ | 1 ✅ · 1 ☑️ |  | 2 ✅ | 2 ✅ |  |
 | [MenuBar](MenuBar.md) | 0 |  |  |  |  |  |  |
-| [MenuItem](MenuItem.md) | 8 | 3 ✅ · 1 ☑️ | 6 ✅ | 1 – | 4 ✅ |  |  |
+| [MenuItem](MenuItem.md) | 8 | 3 ✅ · 1 ☑️ | 6 ✅ | 1 – | 4 ✅ | 3 ✅ · 2 – |  |
 | [ModalStack](ModalStack.md) | 0 |  |  |  |  |  |  |
 | [NavigationSplitView](NavigationSplitView.md) | 19 | 3 ✅ | 5 ✅ | 1 ✅ | 4 ✅ |  |  |
 | [NavigationStack](NavigationStack.md) | 18 | 1 ✅ | 6 ✅ | 1 ✅ | 3 ✅ |  |  |
 | [Overlay](Overlay.md) | 0 |  |  |  |  |  |  |
-| [Page](Page.md) | 24 | 7 ✅ | 11 ✅ | 6 ✅ | 9 ✅ | 3 ✅ |  |
-| [Pin](Pin.md) | 6 |  |  |  |  |  |  |
+| [Page](Page.md) | 24 | 7 ✅ | 12 ✅ | 6 ✅ | 9 ✅ | 4 ✅ |  |
+| [Pin](Pin.md) | 6 | 6 ✅ | 6 ✅ |  |  |  |  |
 | [Popover](Popover.md) | 3 | 2 ✅ |  |  |  |  |  |
 | [Scene](Scene.md) | 6 | 6 ✅ | 4 ✅ | 4 ✅ | 6 ✅ |  |  |
 | [Span](Span.md) | 19 |  |  |  | 9 ✅ |  |  |
@@ -100,8 +104,8 @@ The scene, the window and the page an application is made of, the arrangements a
 | [ToolbarItems](ToolbarItems.md) | 0 |  |  |  |  |  |  |
 | [ToolbarSpacer](ToolbarSpacer.md) | 2 |  |  |  |  |  |  |
 | [TrailingContent](TrailingContent.md) | 0 |  |  |  |  |  |  |
-| [WindowScene](WindowScene.md) | 25 | 15 ✅ | 4 ✅ | 2 ✅ | 23 ✅ |  |  |
-| **Met** - ✅ and – | 177 | 50 of 177 met | 55 of 177 met | 21 of 177 met | 83 of 177 met | 6 of 177 met |  |
+| [WindowScene](WindowScene.md) | 25 | 15 ✅ | 4 ✅ · 9 – | 2 ✅ | 23 ✅ |  |  |
+| **Met** - ✅ and – | 177 | 56 of 177 met | 71 of 177 met | 21 of 177 met | 83 of 177 met | 14 of 177 met |  |
 <!-- structure:end -->
 
 ## Tiers

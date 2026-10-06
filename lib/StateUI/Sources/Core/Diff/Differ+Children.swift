@@ -83,15 +83,19 @@ extension Differ {
                 id: id, rendered: match, node: childNode, sizesArrive: sizesArrive)
 
             // A fragment anchors its subtree here but mounts no element of its
-            // own: its children are patched into this list directly.
+            // own: its children are patched into this list directly - every one
+            // of them, an unchanged child as an empty patch, since an arranged
+            // list the host reads as complete cannot silently drop a seat.
             if child.type == .fragment {
                 children.append(child)
-                switch childPatch.children {
-                case .arranged(let nested), .changed(let nested):
-                    patches.append(contentsOf: nested)
-                case .unchanged:
-                    break
+                let nested: [HostPatch] = switch childPatch.children {
+                case .arranged(let list), .changed(let list): list
+                case .unchanged: []
                 }
+                let byID = Dictionary(nested.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+                patches.append(contentsOf: flattened(of: child.children).map {
+                    byID[$0.id] ?? HostPatch(id: $0.id, type: $0.type)
+                })
             } else {
                 children.append(child)
                 patches.append(childPatch)
@@ -102,8 +106,11 @@ extension Differ {
             forget(child)
         }
 
-        // The arrangement is sent only when it changed.
-        if describeAll || children.map(\.id) != rendered.map(\.id) {
+        // The arrangement is sent only when it changed - and what the host
+        // arranges is the PATCH list: a fragment's children stand in it
+        // directly, so the sequence to compare is the one the host was last
+        // told, not the one `children` keeps (which holds the fragments).
+        if describeAll || patches.map(\.id) != mountedIds(of: rendered) {
             patch.children = .arranged(patches)
         } else {
             let changed = patches.filter { !$0.isEmpty }
@@ -111,6 +118,19 @@ extension Differ {
         }
 
         return children
+    }
+
+    /// The ids a host was told this list holds: a fragment mounts nothing of
+    /// its own, so its children answer in its place - recursively, a fragment
+    /// inside one standing in it the same way.
+    func mountedIds(of rendered: [RenderedNode]) -> [ElementId] {
+        flattened(of: rendered).map(\.id)
+    }
+
+    /// The children as the host holds them: fragments lifted out, their own
+    /// children standing in their place however deep the nesting.
+    func flattened(of rendered: [RenderedNode]) -> [RenderedNode] {
+        rendered.flatMap { $0.type == .fragment ? flattened(of: $0.children) : [$0] }
     }
 
     /// The rendered element a node continues: by the author's `.id()`, then by the

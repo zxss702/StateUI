@@ -48,6 +48,16 @@ class GTKView {
     private(set) var listening: GTKListening?
     private var onHeard: ((HeardInput) -> Void)?
 
+    /// What hears the keyboard come into the view and leave it, and the controller telling it; nil while none does.
+    /// Design: docs/design/platforms/gtk/input.md#the-keyboards-focus
+    private var onFocusChanged: ((Bool) -> Void)?
+    private var focusController: OpaquePointer?
+
+    /// The menu the view offers where the user asks for one; nil for none.
+    var contextMenu: GTKContextMenu? {
+        didSet { if contextMenu !== oldValue { oldValue?.remove() } }
+    }
+
     /// The style sheet's class giving the view its padding.
     private var paddingClass: String?
 
@@ -66,6 +76,7 @@ class GTKView {
     /// owner of its child, and takes it out itself.
     isolated deinit {
         Self.live.release(number)
+        contextMenu?.remove()
         if let parent = gtk_widget_get_parent(widget), GTKPanel.holds(parent) { gtk_widget_unparent(widget) }
         g_object_unref(widget)
     }
@@ -123,6 +134,16 @@ class GTKView {
     /// Whether clicks and touches go through the view to what is behind it.
     func setIgnoresInput(_ ignores: Bool) {
         gtk_widget_set_can_target(widget, ignores ? 0 : 1)
+    }
+
+    /// Lays the view out, and writes its words, in `direction` - a field's and a stepper's through the text they
+    /// edit by.
+    /// Design: docs/design/platforms/gtk/layout.md#right-to-left
+    func setDirection(_ direction: GtkTextDirection) {
+        gtk_widget_set_direction(widget, direction)
+        guard g_type_check_instance_is_a(widget.of(GTypeInstance.self), gtk_editable_get_type()) != 0,
+              let words = gtk_editable_get_delegate(widget.opaque) else { return }
+        gtk_widget_set_direction(UnsafeMutablePointer(words), direction)
     }
 
     /// The room between the view's edge and its content, as a class of the host's style sheet; nil for none.
@@ -241,6 +262,26 @@ class GTKView {
         onHeard?(heard)
     }
 
+    /// Tells `action` when the keyboard comes into the view or a part of it, and when it leaves; nil tells no one.
+    /// Design: docs/design/platforms/gtk/input.md#the-keyboards-focus
+    func setFocusChanged(_ action: ((Bool) -> Void)?) {
+        onFocusChanged = action
+        if action == nil, let focusController {
+            gtk_widget_remove_controller(widget, focusController)
+            self.focusController = nil
+        } else if action != nil, focusController == nil {
+            let focus = gtk_event_controller_focus_new()!
+            connectSignal(UnsafeMutableRawPointer(focus), "enter", number: number) { (_: UnsafeMutableRawPointer?, data) in
+                MainActor.assumeIsolated { GTKView.find(viewNumber(data))?.onFocusChanged?(true) }
+            }
+            connectSignal(UnsafeMutableRawPointer(focus), "leave", number: number) { (_: UnsafeMutableRawPointer?, data) in
+                MainActor.assumeIsolated { GTKView.find(viewNumber(data))?.onFocusChanged?(false) }
+            }
+            gtk_widget_add_controller(widget, focus)
+            focusController = focus
+        }
+    }
+
     /// The user clicked the view.
     func clicked() {}
 
@@ -248,5 +289,7 @@ class GTKView {
     /// calls this first.
     func detach() {
         hear([]) { _ in }
+        setFocusChanged(nil)
+        contextMenu = nil
     }
 }

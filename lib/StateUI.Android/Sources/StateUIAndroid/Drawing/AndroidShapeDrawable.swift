@@ -24,7 +24,10 @@ final class AndroidShapeDrawable {
             switch BoxArithmetic.outline(value) {
             case .rectangle: self = .rectangle
             case .roundedRectangle(let radius): self = .rounded([radius, radius, radius, radius])
-            case .ellipse: self = .ellipse
+            // A capsule is corners rounded to the half-side `fitted` clamps
+            // an oversized radius to; a circle is the room's own oval.
+            case .capsule: self = .rounded(Array(repeating: .greatestFiniteMagnitude, count: 4))
+            case .ellipse, .circle: self = .ellipse
             }
         }
 
@@ -138,7 +141,23 @@ final class AndroidShapeDrawable {
             let (colors, offsets) = stops(run)
             let reach = size.map { HostBrush.reach(of: radius, width: $0.width, height: $0.height) } ?? 0
             return (3, colors, offsets, [center.x, center.y, reach].map(Float.init))
+        case .material(let kind):
+            return (1, [materialArgb(kind)], [0], [])
         }
+    }
+
+    /// What a material paints as where no frosted backing is drawn: a grey as
+    /// translucent as `Material.Kind` is thin, in ARGB.
+    private static func materialArgb(_ kind: Int32) -> Int32 {
+        let alpha: Int32 = switch kind {
+        case 1: 51    // ultraThin, 0.2
+        case 2: 89    // thin, 0.35
+        case 3: 128   // regular, 0.5
+        case 4: 166   // thick, 0.65
+        case 5: 204   // ultraThick, 0.8
+        default: 128  // bar, and anything else
+        }
+        return (alpha << 24) | (128 << 16) | (128 << 8) | 140
     }
 
     /// The outline: the brush's colour, `width` points wide as the host layer reads it - one where none is said,

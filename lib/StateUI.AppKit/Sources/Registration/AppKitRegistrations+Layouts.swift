@@ -26,6 +26,52 @@ extension AppKitRegistrations {
             }
         }
 
+        registry.add(LazyVStackContract.self, madeByHost: AppKitLazyStackView.self) { lazy in
+            lazy.applies(Self.stackMembers + [LazyVStackContract.items]) { view, values in
+                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.raises(LazyVStackContract.realizedChanged)
+        }
+
+        registry.add(LazyHStackContract.self, madeByHost: AppKitLazyStackView.self) { lazy in
+            lazy.applies(Self.stackMembers + [LazyHStackContract.items]) { view, values in
+                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            lazy.raises(LazyHStackContract.realizedChanged)
+        }
+
+        registry.add(LazyVGridContract.self, madeByHost: AppKitLazyGridView.self) { grid in
+            grid.applies([
+                LazyVGridContract.items, LazyVGridContract.flowColumns, LazyVGridContract.rowSpacing,
+                LazyVGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyVGridContract.flowColumns] ?? []
+                view.runSpacing = CGFloat(values[LazyVGridContract.rowSpacing] ?? 0)
+                view.trackSpacing = CGFloat(values[LazyVGridContract.columnSpacing] ?? 0)
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.raises(LazyVGridContract.realizedChanged)
+        }
+
+        registry.add(LazyHGridContract.self, madeByHost: AppKitLazyGridView.self) { grid in
+            grid.applies([
+                LazyHGridContract.items, LazyHGridContract.flowRows, LazyHGridContract.rowSpacing,
+                LazyHGridContract.columnSpacing, PaddingElementContract.contentPadding,
+            ]) { view, values in
+                view.tracks = values[LazyHGridContract.flowRows] ?? []
+                view.runSpacing = CGFloat(values[LazyHGridContract.columnSpacing] ?? 0)
+                view.trackSpacing = CGFloat(values[LazyHGridContract.rowSpacing] ?? 0)
+                view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
+                if view.cells.takeItems() { view.invalidateMeasurements() }
+            }
+            grid.raises(LazyHGridContract.realizedChanged)
+        }
+
         // The host makes the scroll view; its registration takes the members alone.
         // Design: docs/design/platforms/appkit/registrations.md#the-scroll-view
         registry.add(ScrollViewContract.self, madeByHost: AppKitScrollView.self) { scroll in

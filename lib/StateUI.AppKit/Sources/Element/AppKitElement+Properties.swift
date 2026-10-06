@@ -9,6 +9,8 @@ import AppKit
 /// The native view: made, and given the element's properties.
 extension AppKitElement {
     func makeView() -> NSView? {
+        // A child its parent's view draws - a map's marker - has no view of its own.
+        if element.isDrawnByParent(in: AppKitRegistrations.registry) { return nil }
         if let registered = AppKitRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },
@@ -58,6 +60,18 @@ extension AppKitElement {
             return AppKitItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false
             })
+
+        case .lazyVStack, .lazyHStack:
+            guard let host else { return nil }
+            return AppKitLazyStackView(
+                axis: type == .lazyVStack ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+
+        case .lazyVGrid, .lazyHGrid:
+            guard let host else { return nil }
+            return AppKitLazyGridView(
+                axis: type == .lazyVGrid ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
 
         case .zStack:
             return AppKitZStackView()

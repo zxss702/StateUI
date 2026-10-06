@@ -12,21 +12,20 @@ struct GTKToolbarAction {
     /// The picture the button shows in place of its title, by file name; nil for the title.
     var icon: String? = nil
     let isEnabled: Bool
+
+    /// Whether the action destroys something: libadwaita's `destructive-action` colours its button.
+    var isDestructive = false
     let perform: () -> Void
 
     /// The view the item shows on the bar, where it stands for one; nil for a titled or pictured button.
     var view: GTKView? = nil
-
-    /// The room the entry takes, where it is a `ToolbarSpacer`; nil for an action.
     var spacer: ToolbarSpacerVariant? = nil
-
-    /// Whether the entry is an action - it draws as a button, rather than a view or room.
     var isAction: Bool { view == nil && spacer == nil }
 
     /// Whether two actions draw the same button. What an action performs is taken again on every composition.
     func draws(like other: GTKToolbarAction) -> Bool {
         title == other.title && icon == other.icon && isEnabled == other.isEnabled
-            && view === other.view && spacer == other.spacer
+            && isDestructive == other.isDestructive && view === other.view && spacer == other.spacer
     }
 }
 
@@ -54,7 +53,9 @@ struct GTKPageChrome {
     /// and what turns it.
     var sidebar: (shows: Bool, toggle: () -> Void)?
 
-    /// The scene's commands, standing in the window's app menu - a menu
-    /// button at the header bar's start; empty for none.
+    /// The scene's commands, standing in the window's app menu - a menu button at the header bar's start.
     var appMenu: [MenuEntry] = []
+
+    /// The menus the page's path declares, which stand in the bar's main menu - GNOME's in place of a menu bar.
+    var mainMenu: GTKMenu?
 }

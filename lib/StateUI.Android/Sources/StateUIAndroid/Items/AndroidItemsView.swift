@@ -37,7 +37,7 @@ final class AndroidItemsView: AndroidView {
         self.cells = cells
         self.reducesMotion = reducesMotion
         super.init { number in
-            Java.new(JavaAPI.list, JavaAPI.newItemsView, .object(AndroidRenderer.context), .long(number))
+            Java.new(JavaAPI.itemsView, JavaAPI.newItemsView, .object(AndroidRenderer.context), .long(number))
         }
     }
 

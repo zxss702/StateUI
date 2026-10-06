@@ -433,6 +433,18 @@ emoji - is never split. A picker is given its choices where they changed, and
 its choice only where the tree changed it or the choices (`PickerChoices`):
 the user's own choice is never argued with.
 
+## What typing is given
+
+What a field's keyboard and the platform's checking of its words do is read
+once from what the tree says (`InputTraits`): spell checking, prediction -
+correction goes with it - and the input purpose, which picks the keys a
+screen keyboard offers and where capitals go. Plain words are taken as typed:
+no capitals, no checking, no correction, no prediction - a login, a code a
+user types or a scanner enters. An address takes no capitals; text starts
+its sentences in them; the default leaves the platform its own. Each host
+tells its toolkit these in its own terms - a keyboard type, input flags, the
+text checking a desktop does as the user types.
+
 ## A value in a range
 
 A value a control holds inside a range - a slider's, a stepper's, a progress
@@ -479,3 +491,18 @@ animated value, a **cycle** only the display cycle, a **report** only the
 user's change on its way to the core, and an **act** is a call the
 application makes on a control. [The glossary](../glossary.md) maps every
 StateUI term to the common one.
+## A day and a time
+
+A picker holds a day and a time by one arithmetic on every host
+(`CalendarArithmetic`): a day not in the Gregorian calendar - February 31st,
+a thirteenth month - is refused, and the picker goes on showing the day it
+had; a day past the range stands at its end, the range's ends in order
+whichever the tree gave first; and a time is its hours, minutes and seconds
+added up from midnight around the day, so 25:99 shows as 02:39.
+
+What a picker shows - its list, its calendar, its clock - is opened and
+closed by the program and by the user, and only the user's are heard
+(`PickerOpening`): the program asks, and the toolkit's next opening or
+closing is the echo of that request; the user's closing of what the program
+opened is the user's, and heard.
+

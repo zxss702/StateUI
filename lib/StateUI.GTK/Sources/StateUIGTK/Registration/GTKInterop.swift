@@ -216,4 +216,51 @@ public final class GTKRegistration<Realized: ElementContract, Made: GTKControl> 
     public func raises<Owner: Contract, Payload>(_ event: ElementEvent<Owner, Payload>) {
         registration.raises(event)
     }
+
+    /// The children of one contract the control draws itself - a map's markers - handed over whole, in the tree's
+    /// order, whenever the element's children change: one added, moved, taken away, or given another value. Such a
+    /// child has no widget of its own. `members` are what the control realizes of each child - a property or an
+    /// event of the child's contract or of a tier it wears; anything else is left out, and said once.
+    ///
+    ///     map.children(MarkerContract.self, members: [MarkerContract.location, MarkerContract.selected]) { control, markers in
+    ///         control.show(markers)
+    ///     }
+    ///
+    /// - Parameters:
+    ///   - contract: the children's contract.
+    ///   - members: what the control realizes of each child, written with their contracts.
+    ///   - apply: hands the control every child of the contract.
+    public func children<Child: ElementContract>(
+        _ contract: Child.Type,
+        members: [any ContractMember],
+        _ apply: @escaping (Made, [GTKChild<Child>]) -> Void
+    ) {
+        registration.children(contract, members: members) { hosted, children in
+            apply(hosted.control, children.map(GTKChild.init))
+        }
+    }
+}
+
+/// A child element the control draws itself - a map's marker: its values as the types its contract declares, and the
+/// reports its events leave through. Two are equal when they are the same child, for as long as it lives, so a
+/// control keeps what it drew for one by it.
+public struct GTKChild<Child: ElementContract>: Hashable {
+    private let child: ChildElement<Child>
+
+    init(_ child: ChildElement<Child>) {
+        self.child = child
+    }
+
+    /// One of the child's values, as the type its contract declares - nil where it is not described.
+    ///
+    /// - Parameter property: the member, written with its contract.
+    /// - Returns: the value, or nil.
+    public func value<Owner: Contract, Value: HostRepresentable>(_ property: ElementProperty<Owner, Value>) -> Value? {
+        child.value(property)
+    }
+
+    /// What the child's events and the user's values on it leave through.
+    public var reports: GTKReports<Child> {
+        GTKReports(child.reports)
+    }
 }

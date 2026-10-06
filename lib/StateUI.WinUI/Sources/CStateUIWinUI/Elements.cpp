@@ -8,11 +8,13 @@
 
 #include <algorithm>
 #include <cstring>
+#include <optional>
 
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Xaml.Documents.h>
 #include <winrt/Microsoft.UI.Xaml.Hosting.h>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Media3D.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
 using namespace stateui;
@@ -179,11 +181,57 @@ extern "C" void stateui_winui_set_z_index(StateUIObjectRef handle, int32_t z) {
     }
 }
 
+extern "C" void stateui_winui_set_flow_direction(StateUIObjectRef handle, bool rightToLeft) {
+    try {
+        as<xaml::FrameworkElement>(handle).FlowDirection(
+            rightToLeft ? xaml::FlowDirection::RightToLeft : xaml::FlowDirection::LeftToRight);
+    } catch (...) {
+        report("turning an element's direction");
+    }
+}
+
 extern "C" void stateui_winui_update_layout(StateUIObjectRef handle) {
     try {
         as<xaml::UIElement>(handle).UpdateLayout();
     } catch (...) {
         report("laying out");
+    }
+}
+
+extern "C" void stateui_winui_set_projection(StateUIObjectRef handle, double const *matrix) {
+    try {
+        auto element = as<xaml::UIElement>(handle);
+        if (!matrix) {
+            element.Projection(nullptr);
+            return;
+        }
+        xaml::Media::Media3D::Matrix3D held{
+            matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7],
+            matrix[8], matrix[9], matrix[10], matrix[11], matrix[12], matrix[13], matrix[14], matrix[15]};
+        auto projection = element.Projection().try_as<xaml::Media::Matrix3DProjection>();
+        if (!projection) {
+            projection = xaml::Media::Matrix3DProjection();
+            element.Projection(projection);
+        }
+        projection.ProjectionMatrix(held);
+    } catch (...) {
+        report("tipping an element");
+    }
+}
+
+extern "C" bool stateui_winui_projection(StateUIObjectRef handle, double *matrix) {
+    try {
+        auto projection = as<xaml::UIElement>(handle).Projection().try_as<xaml::Media::Matrix3DProjection>();
+        if (!projection) return false;
+        auto held = projection.ProjectionMatrix();
+        double const read[] = {held.M11, held.M12, held.M13, held.M14, held.M21, held.M22, held.M23, held.M24,
+                               held.M31, held.M32, held.M33, held.M34, held.OffsetX, held.OffsetY, held.OffsetZ,
+                               held.M44};
+        std::memcpy(matrix, read, sizeof read);
+        return true;
+    } catch (...) {
+        report("reading an element's tip");
+        return false;
     }
 }
 
@@ -256,8 +304,9 @@ extern "C" bool stateui_winui_is_enabled(StateUIObjectRef handle) {
 
 extern "C" bool stateui_winui_animations_enabled(void) {
     try {
-        // One, kept: a fresh UISettings for every reading is a WinRT activation each time.
-        static winrt::Windows::UI::ViewManagement::UISettings settings;
+        // One, kept for the process and never destroyed: a fresh UISettings for every reading is a WinRT activation
+        // each time.
+        static auto &settings = **new std::optional(winrt::Windows::UI::ViewManagement::UISettings());
         return settings.AnimationsEnabled();
     } catch (...) {
         report("reading whether animations are on");

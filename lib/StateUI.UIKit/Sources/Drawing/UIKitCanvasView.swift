@@ -99,16 +99,18 @@ final class UIKitCanvasView: UIView {
         context.addPath(path)
         context.setStrokeColor(color.cgColor)
         context.setLineWidth(pen.strokeWidth)
-        context.setLineCap(switch pen.strokeCap {
+        let cap: CGLineCap = switch pen.strokeCap {
         case .round: .round
         case .square: .square
         default: .butt
-        })
-        context.setLineJoin(switch pen.strokeJoin {
+        }
+        let join: CGLineJoin = switch pen.strokeJoin {
         case .round: .round
         case .bevel: .bevel
         default: .miter
-        })
+        }
+        context.setLineCap(cap)
+        context.setLineJoin(join)
         context.strokePath()
     }
 

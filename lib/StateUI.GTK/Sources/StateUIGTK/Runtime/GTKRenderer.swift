@@ -28,7 +28,8 @@ final class GTKRenderer {
     private(set) lazy var runtime = HostRuntime(
         clock: frameClock, reducesMotion: reducesMotion,
         makeNative: { [unowned self] element in GTKElement(element, host: self) }, log: { GTKRenderer.log.error($0) },
-        localization: { key in GTKStrings.resolve(key) })
+        localization: { key in GTKStrings.resolve(key) },
+        views: { GTKView.liveCount })
 
     /// What performs the acts the application calls, and answers them.
     private(set) lazy var acts = GTKActPerformer(core: runtime.core)
@@ -43,6 +44,12 @@ final class GTKRenderer {
 
     /// What the window shows, by the host layer's rule: its arrangement of pages, its overlay, and that it was made.
     private let presentation = WindowPresentation()
+
+    /// A sheet for each page the window's modal stack presents, the last on top.
+    private(set) var sheets: [(element: MountedElement, sheet: GTKSheet)] = []
+
+    /// The page the window shows the user, whose menus its main menu is.
+    var windowPage: MountedElement? { presentation.arrangement?.visiblePage }
 
     /// Whether the screen the window stands on has been told.
     private var reportedDisplay = false
@@ -150,7 +157,34 @@ final class GTKRenderer {
             }
         }
         if let overlay = changes.overlay { window.showOverlay(overlay?.gtk.view) }
+        if let pages = changes.sheets { showSheets(pages) }
         refreshChrome()
+    }
+
+    /// Keeps a sheet for each page presented, in its order: a sheet gone closes, the last first, and one new is
+    /// shown over those before it.
+    /// Design: docs/design/platforms/gtk/pages.md#sheets
+    private func showSheets(_ pages: [MountedElement]) {
+        guard let window else { return }
+        let kept = sheets.filter { entry in
+            pages.contains { $0 === entry.element && $0.gtk.view === entry.sheet.page }
+        }
+        for entry in sheets.reversed() where !kept.contains(where: { $0.sheet === entry.sheet }) { entry.sheet.close() }
+        sheets = pages.compactMap { page in
+            if let entry = kept.first(where: { $0.element === page }) { return entry }
+            guard let view = page.gtk.view else { return nil }
+            let sheet = GTKSheet(page: view, framed: GTKElement.framedTypes.contains(page.type))
+            sheet.onClosedByUser = { [weak self] in self?.dismissTopSheet() }
+            sheet.present(over: window)
+            return (page, sheet)
+        }
+    }
+
+    /// The user took the top sheet away - Escape, its close button: the modal stack is told how many remain.
+    private func dismissTopSheet() {
+        guard let element = runtime.tree.root?.first(type: .windowScene), !presentation.sheets.isEmpty
+        else { return }
+        runtime.goBack(.dismissSheet(remaining: presentation.sheets.count - 1), in: element)
     }
 
     /// Writes every shown page's chrome on its header bar, and names the window after the page the user sees.
@@ -164,6 +198,12 @@ final class GTKRenderer {
         }
         arrangement?.composeChrome()
         adaptSplitViews(in: window)
+        for (page, sheet) in sheets {
+            let chrome = page.gtk.chrome
+            sheet.frame?.show(chrome)
+            sheet.setTitle(page.visiblePage?.value(.title)?.string ?? chrome.title)
+            page.gtk.composeChrome()
+        }
         let chrome = WindowChrome(window: element.element, arrangement: presentation.arrangement)
         window.setTitle(chrome.title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
         window.setBackground(chrome.windowBackground)
@@ -177,10 +217,19 @@ final class GTKRenderer {
         view.adapt(in: window.widget)
     }
 
-    /// Goes the way back the arrangement the window shows offers, as the user does - a stack's top page going;
-    /// whether there was one.
+    /// Goes the way back the window offers (`WindowPresentation.wayBack`), as the user does: a stack's top page
+    /// going in GTK first, the path then told; a sheet going through the host layer. Whether there was one.
+    /// Design: docs/design/host/pages.md#the-way-back
     func goBack() -> Bool {
-        presentation.arrangement?.gtk.goBack() ?? false
+        guard let element = runtime.tree.root?.first(type: .windowScene), let way = presentation.wayBack
+        else { return false }
+        switch way {
+        case .pop(let stack):
+            return (stack.gtk.view as? GTKNavigationView)?.popByUser() ?? false
+        case .dismissSheet:
+            runtime.goBack(way, in: element)
+            return true
+        }
     }
 }
 

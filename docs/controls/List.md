@@ -74,7 +74,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | – | ✅ | ✅ | ⏸ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on List.isFocusedChanged, not realized yet |
+| `focus` | act | `() -> Bool` |  | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -82,9 +82,9 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of List - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | – | ✅ | ✅ |  |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: not realized |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of List - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
 | `matchedGeometrySource` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `maximumHeight` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
@@ -109,7 +109,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of List: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of List: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of List - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of List - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | – | ✅ | ✅ | ⏸ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: waits on List.isFocusedChanged, not realized yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

@@ -15,6 +15,18 @@ extension UIKitElement {
                 host?.runtime.reducesMotion() ?? false
             })
         }
+        if type == .lazyVStack || type == .lazyHStack, let host {
+            return UIKitLazyStackView(
+                axis: type == .lazyVStack ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        if type == .lazyVGrid || type == .lazyHGrid, let host {
+            return UIKitLazyGridView(
+                axis: type == .lazyVGrid ? .vertical : .horizontal,
+                cells: LazyCells(element, in: host.runtime))
+        }
+        // A child its parent's view draws - a map's marker - has no view of its own.
+        if element.isDrawnByParent(in: UIKitRegistrations.registry) { return nil }
         if let registered = UIKitRegistrations.registry.makeView(
             for: type,
             sending: { [weak self] event, values in self?.send(event, values) },

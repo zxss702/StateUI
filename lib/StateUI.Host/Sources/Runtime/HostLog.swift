@@ -63,7 +63,7 @@ import CRT
         // never entering the library.
         if let path = logFile, let stream = fopen(path, "a") {
             var text = text
-            text.withUTF8 { bytes in _ = fwrite(bytes.baseAddress, 1, bytes.count, stream) }
+            text.withUTF8 { bytes in bytes.baseAddress.map { _ = fwrite($0, 1, bytes.count, stream) } }
             fclose(stream)
         }
     }

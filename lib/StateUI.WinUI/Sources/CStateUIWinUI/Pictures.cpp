@@ -261,12 +261,13 @@ extern "C" bool stateui_winui_image_set(
         if (extension != L".svg") {
             // A bitmap's size is known once it is read; the layout holding it measures it again then.
             imaging::BitmapImage bitmap(address(path));
-            bitmap.ImageOpened([held = winrt::make_weak(image)](auto const &, xaml::RoutedEventArgs const &) {
+            bitmap.ImageOpened(guarded("handling ImageOpened",
+                [held = winrt::make_weak(image)](auto const &, xaml::RoutedEventArgs const &) {
                 auto image = held.get();
                 if (!image) return;
                 auto queue = image.DispatcherQueue();
                 (queue ? queue : winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread())
-                    .TryEnqueue([held] {
+                    .TryEnqueue(guarded("handling the enqueued measure", [held] {
                         auto image = held.get();
                         if (!image) return;
                         // The layout holding the picture measures it again: the path above it is marked and a pass
@@ -283,11 +284,12 @@ extern "C" bool stateui_winui_image_set(
                              at = xaml::Media::VisualTreeHelper::GetParent(at))
                             if (auto layout = at.try_as<xaml::UIElement>()) layout.InvalidateMeasure();
                         if (top) top.UpdateLayout();
-                    });
-            });
-            bitmap.ImageFailed([](auto const &, xaml::ExceptionRoutedEventArgs const &) {
+                    }));
+            }));
+            bitmap.ImageFailed(guarded("handling ImageFailed",
+                [](auto const &, xaml::ExceptionRoutedEventArgs const &) {
                 report("reading a picture");
-            });
+            }));
             image.Source(bitmap);
             return true;
         }

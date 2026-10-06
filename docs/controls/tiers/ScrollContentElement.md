@@ -6,7 +6,7 @@ What shows behind a scrollable view's content - a list's or an editor's own canv
 
 Wears: [PropertyContainer](PropertyContainer.md)
 
-Worn by: [List](../List.md) · [ScrollView](../ScrollView.md) · [TextEditor](../TextEditor.md)
+Worn by: [LazyHGrid](../LazyHGrid.md) · [LazyHStack](../LazyHStack.md) · [LazyVGrid](../LazyVGrid.md) · [LazyVStack](../LazyVStack.md) · [List](../List.md) · [ScrollView](../ScrollView.md) · [TextEditor](../TextEditor.md)
 
 Declared in `lib/StateUI/Sources/Contracts/Mixins/ScrollContentElementContract.swift`.
 

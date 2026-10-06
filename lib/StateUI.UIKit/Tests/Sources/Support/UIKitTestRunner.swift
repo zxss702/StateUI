@@ -24,9 +24,14 @@ enum UIKitTestRunner {
     private static var executed = 0
     private static var failed = 0
 
-    /// Plans the run in `scene`, the one every test's windows stand in, and starts it.
+    /// Whether the run has begun.
+    private static var begun = false
+
+    /// Plans the run in `scene`, the one every test's windows stand in, and starts it - once, as the scene first
+    /// stands in front: a window the first test makes before then would never hear it come to the front.
     static func begin(in scene: UIWindowScene) {
-        TestScene.scene = scene
+        guard !begun, scene.activationState == .foregroundActive else { return }
+        begun = true
         let filter = ProcessInfo.processInfo.environment["STATEUI_FILTER"] ?? ""
         let names = filter.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         planned = testCases().flatMap { testCase in
@@ -106,11 +111,21 @@ final class UIKitTestApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-/// The first scene iOS connects is the one the tests' windows stand in; the run begins with it.
+/// The first scene iOS connects is the one the tests' windows stand in; the run begins once it stands in front. A
+/// later one no test asked for - kept from an earlier run - is let go.
 @MainActor
 final class UIKitTestSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
-        guard let scene = scene as? UIWindowScene, TestScene.scene == nil else { return }
+        guard let scene = scene as? UIWindowScene else { return }
+        guard TestScene.scene == nil else {
+            return UIApplication.shared.requestSceneSessionDestruction(session, options: nil)
+        }
+        TestScene.scene = scene
+        UIKitTestRunner.begin(in: scene)
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        guard let scene = scene as? UIWindowScene, scene === TestScene.scene else { return }
         UIKitTestRunner.begin(in: scene)
     }
 }

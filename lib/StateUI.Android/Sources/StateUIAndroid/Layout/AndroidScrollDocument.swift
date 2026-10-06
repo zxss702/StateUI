@@ -18,6 +18,10 @@ final class AndroidScrollDocument: AndroidLayoutView {
         didSet { if orientation != oldValue { invalidateMeasurements() } }
     }
 
+    /// The document placed its children: the lazy runs among them hear where
+    /// the scroller's window stands.
+    var onArranged: (() -> Void)?
+
     override func contentSize(width: Double?) -> LayoutSize {
         ScrollArithmetic.contentSize(of: items.first, padding: padding, orientation: orientation, width: width)
     }
@@ -30,5 +34,6 @@ final class AndroidScrollDocument: AndroidLayoutView {
             item, padding: padding, orientation: orientation,
             in: LayoutSize(width: bounds.width, height: bounds.height))
         item.view.layout(arranged.place)
+        onArranged?()
     }
 }

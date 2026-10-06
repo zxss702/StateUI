@@ -130,7 +130,8 @@ namespace {
             if (laidOut || released) return;
             auto owner = list.get();
             if (!owner) return;
-            laidOut = owner.LayoutUpdated([weak = get_weak()](IInspectable const &, IInspectable const &) {
+            laidOut = owner.LayoutUpdated(guarded("handling LayoutUpdated",
+                [weak = get_weak()](IInspectable const &, IInspectable const &) {
                 auto self = weak.get();
                 if (!self) return;
                 auto owner = self->list.get();
@@ -138,7 +139,7 @@ namespace {
                 if (!owner) return;
                 owner.LayoutUpdated(token);
                 if (!self->released) tellShowing(owner, self->view);
-            });
+            }));
         }
 
         /// The container holding the cell numbered `number`; null where there is none.
@@ -163,14 +164,15 @@ namespace {
             if (laying > 0 || waiting.empty() || draining) return;
             draining = true;
             auto self = get_strong();
-            winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread().TryEnqueue([self] {
+            auto queue = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+            queue.TryEnqueue(guarded("handling TryEnqueue", [self] {
                 self->draining = false;
                 while (!self->waiting.empty() && self->laying == 0) {
                     auto next = std::move(self->waiting.front());
                     self->waiting.pop_front();
                     next();
                 }
-            });
+            }));
         }
     };
 
@@ -209,7 +211,8 @@ extern "C" StateUIObjectRef stateui_winui_items_make(int64_t view) {
         list.ItemTemplate(cells.as<xaml::IElementFactory>());
         list.ItemsSource(cells->source);
         list.SelectionMode(controls::ItemsViewSelectionMode::None);
-        list.SelectionChanged([view](controls::ItemsView const &sender, controls::ItemsViewSelectionChangedEventArgs const &) {
+        list.SelectionChanged(guarded("handling SelectionChanged",
+            [view](controls::ItemsView const &sender, controls::ItemsViewSelectionChangedEventArgs const &) {
             if (cellsOf(sender)->choosing) return;
             std::wstring joined;
             for (auto const &item : sender.SelectedItems()) {
@@ -217,25 +220,28 @@ extern "C" StateUIObjectRef stateui_winui_items_make(int64_t view) {
                 joined += identity(item);
             }
             callbacks.itemsChose(view, winrt::to_string(joined).c_str());
-        });
-        list.ItemInvoked([view](controls::ItemsView const &, controls::ItemsViewItemInvokedEventArgs const &args) {
+        }));
+        list.ItemInvoked(guarded("handling ItemInvoked",
+            [view](controls::ItemsView const &, controls::ItemsViewItemInvokedEventArgs const &args) {
             callbacks.itemInvoked(view, winrt::to_string(identity(args.InvokedItem())).c_str());
-        });
-        list.Loaded([view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
+        }));
+        list.Loaded(guarded("handling Loaded", [view](IInspectable const &sender, xaml::RoutedEventArgs const &) {
             auto list = sender.as<controls::ItemsView>();
             standScroller(list, cellsOf(list)->shape);
             if (auto scroller = list.ScrollView()) {
                 winrt::weak_ref<controls::ItemsView> weak = list;
-                scroller.ViewChanged([weak, view](controls::ScrollView const &, IInspectable const &) {
+                scroller.ViewChanged(guarded("handling ViewChanged",
+                    [weak, view](controls::ScrollView const &, IInspectable const &) {
                     if (auto list = weak.get()) tellShowing(list, view);
-                });
+                }));
                 // Entries changed stand in view once laid out, where the view may not move at all.
-                scroller.ExtentChanged([weak, view](controls::ScrollView const &, IInspectable const &) {
+                scroller.ExtentChanged(guarded("handling ExtentChanged",
+                    [weak, view](controls::ScrollView const &, IInspectable const &) {
                     if (auto list = weak.get()) tellShowing(list, view);
-                });
+                }));
             }
             tellShowing(list, view);
-        });
+        }));
         return detach(list);
     } catch (...) {
         report("making an ItemsView");
@@ -442,6 +448,20 @@ extern "C" void stateui_winui_items_scroll_as_user(StateUIObjectRef handle, doub
         scroller.ScrollTo(x, y, controls::ScrollingScrollOptions(controls::ScrollingAnimationMode::Disabled));
     } catch (...) {
         report("scrolling an ItemsView as the user");
+    }
+}
+
+extern "C" void stateui_winui_items_offset(StateUIObjectRef handle, double *offset) {
+    offset[0] = offset[1] = offset[2] = offset[3] = 0;
+    try {
+        auto scroller = borrow<controls::ItemsView>(handle).ScrollView();
+        if (!scroller) return;
+        offset[0] = scroller.HorizontalOffset();
+        offset[1] = scroller.VerticalOffset();
+        offset[2] = scroller.ScrollableWidth();
+        offset[3] = scroller.ScrollableHeight();
+    } catch (...) {
+        report("reading an ItemsView's view");
     }
 }
 
