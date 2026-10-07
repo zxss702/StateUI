@@ -205,8 +205,10 @@ private struct Measured: ExampleContent {
                             with: .color(Palette.accent), lineWidth: 1)
                     }
                 }
-                .frame(height: 104)
+                // The aim goes on the canvas itself, ahead of the frame:
+                // aimed at the wrapper the act would find no canvas.
                 .aim(ruler)
+                .frame(height: 104)
                 .task {
                     // measureText is an act aimed at the canvas: async, and
                     // answered by the host's own text engine.
@@ -241,8 +243,8 @@ private struct Measured: ExampleContent {
                         with: .color(Palette.accent), lineWidth: 1)
                 }
             }
-            .frame(height: 104)
             .aim(ruler)
+            .frame(height: 104)
             .task {
                 fitted = try? await ruler.measureText("Snug")
             }
