@@ -43,9 +43,9 @@ rm -rf "$application_dir"
 mkdir -p "$executable_dir" "$resources_dir/Images"
 
 cp "$binary_dir/$product" "$executable_dir/$product"
-cp "$binary_dir/libStateUI.dylib" "$executable_dir/libStateUI.dylib"
-cp "$binary_dir/libStateUIHost.dylib" "$executable_dir/libStateUIHost.dylib"
-cp "$binary_dir/libStateUIAppKit.dylib" "$executable_dir/libStateUIAppKit.dylib"
+for library in "$binary_dir"/lib*.dylib; do
+    cp "$library" "$executable_dir/$(basename "$library")"
+done
 cp -R "$gallery_dir/Resources/Images/." "$resources_dir/Images"
 
 icon_work="$(mktemp -d)"

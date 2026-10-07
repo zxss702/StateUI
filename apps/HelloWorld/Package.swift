@@ -23,7 +23,8 @@ var products: [Product] = [
 ]
 
 var targets: [Target] = [
-    .target(name: "HelloWorldUI", dependencies: ["StateUI"], path: "Sources", swiftSettings: settings),
+    .target(name: "HelloWorldUI",
+        dependencies: [.product(name: "StateUI", package: "StateUIRoot")], path: "Sources", swiftSettings: settings),
     // The application's tests - `swift test`, or StateUI: Run Tests.
     .testTarget(name: "HelloWorldTests", dependencies: ["HelloWorldUI"], path: "Tests", swiftSettings: settings),
 ]
@@ -53,7 +54,9 @@ let package = Package(
     ],
     products: products,
     // The StateUI checkout: the library at its root, and a head's host.
-    dependencies: [.package(path: "../..")]
+    // Named, so the checkout's folder may carry any name - a path dependency's
+    // identity would otherwise be the folder's.
+    dependencies: [.package(name: "StateUIRoot", path: "../..")]
         + (host == nil ? [] : [.package(name: "StateUIHead", path: "../../lib/StateUI.Head")]),
     targets: targets
 )

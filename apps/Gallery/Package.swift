@@ -27,13 +27,11 @@ var products: [Product] = [
 var targets: [Target] = [
     .target(
         name: "GalleryUI",
-        // Named WITHOUT `package:`: a path dependency's identity is the last
-        // component of its path, so naming it would tie this manifest to the
-        // checkout being called "StateUI" - and a zip unpacks as
-        // "StateUI-main". A bare name is looked for among every dependency's
-        // products, and reads the same against the published package.
         dependencies: [
-            "StateUI",
+            // The package is named by the dependency, never assumed from the
+            // checkout's folder - a clone may sit in a directory of another
+            // name (SwiftOmniUI, StateUI-main).
+            .product(name: "StateUI", package: "StateUIRoot"),
             .product(name: "StateUIFoundation", package: "StateUIFoundation"),
             .product(name: "StateUIJsonData", package: "StateUIJsonData"),
             .product(name: "JsonDataDynamic", package: "JsonData"),
@@ -50,8 +48,7 @@ var targets: [Target] = [
         name: "GalleryTests",
         dependencies: [
             "GalleryUI",
-            // The same bare-name reasoning as GalleryUI's dependencies above.
-            "StateUI",
+            .product(name: "StateUI", package: "StateUIRoot"),
         ],
         path: "Tests/GalleryTests",
         swiftSettings: settings
@@ -121,11 +118,13 @@ let package = Package(
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
-        .macOS(.v15),
+        .macOS(.v26),
     ],
     products: products,
     // The StateUI checkout: the library at its root, and a head's host.
-    dependencies: [.package(path: "../.."),
+    // Named, so the checkout's folder may carry any name - a path dependency's
+    // identity would otherwise be the folder's.
+    dependencies: [.package(name: "StateUIRoot", path: "../.."),
         // The sibling targets holding the Foundation-bound and JsonData-bound
         // halves of the surface - the samples that spell URLs, dates, attributed
         // strings and the model layer import them like any application would.
