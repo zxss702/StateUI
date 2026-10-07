@@ -414,8 +414,6 @@ final class AppKitLazyTests: XCTestCase {
             let sorted = durations.sorted()
             let p95 = sorted[Int(Double(sorted.count - 1) * 0.95)]
             measurementCounts.append(lazy.cells.measurements - measured)
-            print("LAZY_PERF count=\(count) frames=120 requests=\(lazy.cells.requests - requested) "
-                  + "measurements=\(measurementCounts.last!) median_ms=\(sorted[60]) p95_ms=\(p95) max_ms=\(sorted.last!)")
             XCTAssertLessThan(measurementCounts.last!, 500)
             #if !DEBUG
             XCTAssertLessThan(p95, 16.7, "the native scrolling work must fit a 60 Hz frame in Release")
@@ -470,9 +468,6 @@ final class AppKitLazyTests: XCTestCase {
                 windowTimes.sort()
                 layoutTimes.sort()
                 totals.sort()
-                print("LAZY_MIXED kind=\(kind) count=\(count) requests=\(lazy.cells.requests - requested) "
-                      + "searches=\(lazy.cells.searches - searched) measurements=\(lazy.cells.measurements - measured) "
-                      + "window_p95_ms=\(windowTimes[113]) layout_p95_ms=\(layoutTimes[113]) total_p95_ms=\(totals[113]) max_ms=\(totals.last!)")
                 #if !DEBUG
                 XCTAssertLessThan(totals[113], 16.7, "mixed sizes and lifecycle counters must also fit the frame")
                 #endif
@@ -482,7 +477,6 @@ final class AppKitLazyTests: XCTestCase {
 
     @MainActor
     func testGallerySizedScrollingCostAndStanding() throws {
-        let profiling = ProcessInfo.processInfo.environment["SWIFTOMNIUI_LAZY_PROFILE"] != nil
         for kind in 0..<3 {
             let renderer = AppKitRenderer.running { GalleryLazyPage(kind: kind) }
             defer { renderer.closeForTesting() }
@@ -496,8 +490,6 @@ final class AppKitLazyTests: XCTestCase {
             let counter = try XCTUnwrap(renderer.nativeViews(AppKitLabelView.self).first { $0.stringValue.hasPrefix("standing ") })
             XCTAssertGreaterThan(scroll.contentView.bounds.width, 700)
             XCTAssertGreaterThan(scroll.contentView.bounds.height, kind == 1 ? 150 : 850)
-            if profiling { _ = HostBoundary.takeInspectionLog() }
-            var profile = ""
             var durations: [Double] = []
             var boundaryDurations: [Double] = []
             var counts: Set<Int> = []
@@ -528,16 +520,11 @@ final class AppKitLazyTests: XCTestCase {
                     let visible = lazy.cells.places(in: try XCTUnwrap(lazy.span), overscan: 0)
                     XCTAssertEqual(standing, visible.count + 2)
                 }
-                if profiling { profile += "FRAME \(frame) ms=\(elapsed)\n" + HostBoundary.takeInspectionLog() }
                 RunLoop.current.run(until: Date(timeIntervalSinceNow: max(0, (16.7 - elapsed) / 1_000)))
             }
             let worst = durations.indices.max { durations[$0] < durations[$1] }!
             durations.sort()
             boundaryDurations.sort()
-            print("LAZY_GALLERY kind=\(kind) viewport=\(scroll.contentView.bounds.size) standing=\(counts.sorted()) measurements=\(lazy.cells.measurements - measured) "
-                  + "p95_ms=\(durations[170]) boundary_p95_ms=\(boundaryDurations[Int(Double(boundaryDurations.count - 1) * 0.95)]) "
-                  + "max_ms=\(durations.last!) worst_frame=\(worst)")
-            if profiling { try profile.write(toFile: "/tmp/swiftomniui-gallery-profile-\(kind).txt", atomically: true, encoding: .utf8) }
             #if !DEBUG
             XCTAssertLessThan(durations[170], 16.7)
             #endif

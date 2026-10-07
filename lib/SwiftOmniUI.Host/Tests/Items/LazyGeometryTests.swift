@@ -100,20 +100,14 @@ final class LazyGeometryTests: XCTestCase {
             for row in 0..<20 { extents.measure(identities[row], extent: Double(40 + row % 7 * 9)) }
             _ = extents.total(in: identities)
             var checksum = 0
-            let start = ContinuousClock.now
             for step in 0..<10_000 {
                 let offset = Double((step * 137) % (count * 60))
                 checksum += extents.places(in: offset..<offset + 480, overscan: 0, in: identities).count
             }
-            let lookup = start.duration(to: .now).components
-            let changedAt = ContinuousClock.now
             for row in 20..<120 {
                 extents.measure(identities[row], extent: Double(40 + row % 7 * 9))
                 _ = extents.places(in: Double(row * 65)..<Double(row * 65 + 480), overscan: 0, in: identities)
             }
-            let update = changedAt.duration(to: .now).components
-            print("LAZY_GEOMETRY count=\(count) lookup_us=\((Double(lookup.seconds) * 1e6 + Double(lookup.attoseconds) / 1e12) / 10_000) "
-                  + "measure_and_prefix_us=\((Double(update.seconds) * 1e6 + Double(update.attoseconds) / 1e12) / 100)")
             XCTAssertGreaterThan(checksum, 10_000)
         }
     }

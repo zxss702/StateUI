@@ -549,11 +549,10 @@ final class WinUILazyTests: XCTestCase {
 
     func testNaturalCompositeRowsScrollDeleteAndChangeHeightWithoutBlankChildren() throws {
         try onUIThread {
-            let manual = ProcessInfo.processInfo.environment["SWIFTOMNIUI_LAZY_MANUAL"] == "1"
             let rows = State(wrappedValue: Array(0..<1_000))
             let tall = State(wrappedValue: false)
             let standing = State(wrappedValue: 0)
-            let host = WinUIRenderer.running(room: manual ? LayoutSize(width: 1_000, height: 800) : WinUITestHost.room) {
+            let host = WinUIRenderer.running(room: WinUITestHost.room) {
                 GeometryReader { proxy in
                     Grid {
                         Text("LazyVStack, LazyHStack, LazyVGrid - children built where the window reaches, and let go where it leaves.")
@@ -607,50 +606,6 @@ final class WinUILazyTests: XCTestCase {
             let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
             let lazy = try XCTUnwrap(host.views(WinUILazyStackView.self).first)
             for _ in 0..<12 { host.step() }
-            if manual {
-                let path = "C:/Users/zxs20/SwiftOmniUI/artifacts/lazy-live-20261007.log"
-                FileManager.default.createFile(atPath: path, contents: nil)
-                let log = try FileHandle(forWritingTo: URL(fileURLWithPath: path))
-                defer { try? log.close() }
-                let began = ContinuousClock.now
-                let snapshot: (String) -> Void = { event in
-                    let time = began.duration(to: .now).components
-                    let position = scroll.scroller.standing
-                    let total = lazy.cells.total
-                    let children = lazy.mounted.sorted { (lazy.cells.position(of: $0.key) ?? 0) < (lazy.cells.position(of: $1.key) ?? 0) }
-                    let frames = children.map { identity, item in
-                        let f = item.view.laidOutFrame
-                        return "\(lazy.cells.position(of: identity) ?? -1):\(identity):view=\(item.view.number):y=\(f.y):h=\(f.height)"
-                    }.joined(separator: ";")
-                    let footer = host.views(WinUILabelView.self).first { $0.text == "- the end -" }
-                    let footerBottom = footer.map { $0.origin.y + $0.laidOutFrame.height - scroll.scroller.origin.y }
-                    let elapsed = Double(time.seconds) + Double(time.attoseconds) / 1e18
-                    let line = "t=\(elapsed) event=\(event) count=\(rows.wrappedValue.count) standing=\(standing.wrappedValue) offset=\(position.offset.y) next=\(String(describing: scroll.scroller.nextOffset)) reach=\(position.reach.y) viewport=\(scroll.scroller.laidOutFrame) total=\(total) lazyFrame=\(lazy.laidOutFrame) span=\(String(describing: lazy.span)) built=\(lazy.cells.built) work=\([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]) footerBottom=\(String(describing: footerBottom)) children=[\(frames)]\n"
-                    try? log.write(contentsOf: Data(line.utf8))
-                }
-                snapshot("READY")
-                scroll.scroller.ears.insert(WinUIScrollEar(owner: lazy) { snapshot("scroll-before") }, at: 0)
-                scroll.scroller.ears.append(WinUIScrollEar(owner: lazy) { snapshot("scroll-after") })
-                let previousHeld = scroll.scroller.onHeld
-                scroll.scroller.onHeld = { held in
-                    snapshot(held ? "manipulation-start" : "manipulation-end")
-                    previousHeld?(held)
-                }
-                var last = ""
-                while began.duration(to: .now) < .seconds(1_200), host.window?.isClosed == false {
-                    host.step()
-                    let position = scroll.scroller.standing
-                    let state = "\(rows.wrappedValue.count) \(position.offset.y) \(position.reach.y) \(lazy.cells.searches) \(lazy.cells.requests) \(lazy.cells.measurements)"
-                    if state != last {
-                        last = state
-                        snapshot("settled-pass")
-                    }
-                }
-                snapshot("CLOSED")
-                scroll.scroller.ears.removeAll { $0.owner === lazy }
-                scroll.scroller.onHeld = previousHeld
-                return
-            }
             let probe = WinUILabelView()
             probe.setTextFont(size: 14, attributes: nil, family: nil)
             for phase in 0..<3 {
