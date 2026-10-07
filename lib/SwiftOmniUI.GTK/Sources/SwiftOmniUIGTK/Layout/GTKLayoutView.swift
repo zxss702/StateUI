@@ -129,6 +129,15 @@ class GTKLayoutView: GTKPanelView {
         measurements.invalidate()
     }
 
+    /// SwiftOmniUI offers layouts a width, even when their unconstrained ideal width is smaller.
+    /// Let GTK service pending native measurement invalidations, then answer that actual proposal.
+    /// Capping it to the ideal width collapses nested scrollers and measures adaptive grids at a
+    /// different column count from the one their parent will arrange.
+    override func measure(width: Double?, height: Double?) -> LayoutSize {
+        _ = super.measure(width: width, height: height)
+        return measurements.size(offering: width) { contentSize(width: width) }
+    }
+
     /// Answers GTK's measure: the natural width across, or the height for the width `forSize`, every child
     /// measured again. The least is nothing: SwiftOmniUI's arithmetic decides what fits.
     /// Design: docs/design/platforms/gtk/layout.md#measured-per-axis

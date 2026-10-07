@@ -9,6 +9,93 @@ import XCTest
 /// A `LazyVStack` on GTK answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class GTKLazyTests: XCTestCase {
+    func testGalleryShelvesKeepTheOfferedWidthThroughComposedRows() throws {
+        try onUIThread {
+            let standing = State(wrappedValue: 0)
+            let host = GTKRenderer.running {
+                VStack {
+                    Text("\(standing.wrappedValue) tiles standing")
+                    ScrollView {
+                        LazyVStack(spacing: 18) {
+                            ForEach(0..<24) { shelf in
+                                GalleryShelf(number: shelf, standing: standing.projectedValue)
+                            }
+                        }
+                    }
+                }
+                .spacing(10)
+                .contentPadding(16)
+            }
+            for _ in 0..<30 { host.step() }
+            let outer = try XCTUnwrap(host.views(GTKScrollView.self).first)
+            for width in [560.0, 1_000, 700] {
+                host.window?.setSize(width: width, height: 600)
+                for _ in 0..<30 { host.step() }
+                let scrolls = host.views(GTKScrollView.self)
+                XCTAssertGreaterThan(scrolls.count, 2)
+                for scroll in scrolls.dropFirst() {
+                    XCTAssertEqual(scroll.frame.width, outer.frame.width, accuracy: 1,
+                                   "a composed shelf must receive the vertical viewport's width")
+                    XCTAssertEqual(scroll.scroller.standing.reach.x + scroll.frame.width,
+                                   40 * 96 + 39 * 8, accuracy: 1)
+                }
+                outer.scroller.move(to: outer.scroller.standing.reach)
+                for _ in 0..<30 { host.step() }
+                XCTAssertTrue(host.views(GTKLabelView.self).contains { $0.text == "Shelf 23" })
+                outer.scroller.move(to: .zero)
+                for _ in 0..<20 { host.step() }
+            }
+        }
+    }
+
+    func testGalleryAdaptiveGridDocumentEndsAtTheLastRowAfterResizeAndDeletion() throws {
+        try onUIThread {
+            let standing = State(wrappedValue: 0)
+            let rows = State(wrappedValue: Array(0..<500))
+            let height = State(wrappedValue: 64.0)
+            let host = GTKRenderer.running {
+                VStack {
+                    Text("\(standing.wrappedValue) standing")
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), spacing: 10)], spacing: 10) {
+                            ForEach(rows.wrappedValue) { cell in
+                                Text("Cell \(cell)")
+                                    .frame(height: height.wrappedValue)
+                                    .frame(maxWidth: .infinity)
+                                    .onAppear { standing.wrappedValue += 1 }
+                                    .onDisappear { standing.wrappedValue -= 1 }
+                            }
+                        }
+                    }
+                }
+                .spacing(10)
+                .contentPadding(16)
+            }
+            for _ in 0..<30 { host.step() }
+            let scroll = try XCTUnwrap(host.views(GTKScrollView.self).first)
+            let grid = try XCTUnwrap(host.views(GTKLazyGridView.self).first)
+            for (width, cellHeight, remove) in [(560.0, 64.0, 0), (1_000, 64, 0), (700, 88, 7), (560, 32, 11)] {
+                host.window?.setSize(width: width, height: 600)
+                height.wrappedValue = cellHeight
+                rows.wrappedValue.removeFirst(remove)
+                for _ in 0..<30 { host.step() }
+                let tracks = Int((scroll.frame.width + 10) / 106)
+                let runs = (rows.wrappedValue.count + tracks - 1) / tracks
+                let total = Double(runs) * cellHeight + Double(runs - 1) * 10
+                print("GRID before end width=\(scroll.frame.width) tracks=\(tracks) expected=\(total) reach=\(scroll.scroller.standing.reach) grid=\(grid.frame) runs=\(grid.cells.runs.total(count:runs))")
+                XCTAssertEqual(grid.cells.window?.perRun, tracks)
+                XCTAssertEqual(scroll.scroller.standing.reach.y + scroll.frame.height, total, accuracy: 1)
+                scroll.scroller.move(to: scroll.scroller.standing.reach)
+                for _ in 0..<30 { host.step() }
+                let last = try XCTUnwrap(host.views(GTKLabelView.self).first { $0.text == "Cell 499" })
+                XCTAssertEqual(last.frame.y + last.frame.height, total, accuracy: 1)
+                XCTAssertEqual(last.frame.y + last.frame.height - scroll.scroller.standing.offset.y,
+                               scroll.frame.height, accuracy: 1,
+                               "the last rendered row must meet the viewport's bottom without an empty tail")
+            }
+        }
+    }
+
     func testExactWindowsReachIdentityAndIdleInEveryDirection() throws {
         try onUIThread {
             for kind in 0..<4 {
@@ -351,6 +438,28 @@ private struct UnevenLazyPage: View {
                 }
             }
             .frame(width: 480, height: 240)
+        }
+    }
+}
+
+private struct GalleryShelf: View {
+    let number: Int
+    @Binding var standing: Int
+
+    var body: some View {
+        VStack {
+            Text("Shelf \(number)").font(.system(size: 12)).horizontalAlignment(.start)
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 8) {
+                    ForEach(0..<40) { tile in
+                        Text("\(number).\(tile)")
+                            .frame(width: 96, height: 72)
+                            .onAppear { standing += 1 }
+                            .onDisappear { standing -= 1 }
+                    }
+                }
+            }
+            .frame(height: 88)
         }
     }
 }

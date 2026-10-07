@@ -11,7 +11,10 @@ struct CanvasSample: SampleContent {
     static let scrolls = false
 
     var examples: [Example] {
-        [Example(FollowsState()), Example(FollowsAFinger()), Example(Measured())]
+        [
+            Example(FollowsState()), Example(FollowsAFinger()),
+            Example(WrittenWithContext()), Example(Measured()),
+        ]
     }
 }
 
@@ -174,11 +177,65 @@ private struct FollowsAFinger: ExampleContent {
 }
 
 /// The SwiftUI-shaped canvas: `Canvas(renderer:)` hands a `GraphicsContext`
-/// and the settled size, `context.draw(Text)` writes words, and an aim's
-/// `measureText` asks the host's text engine the room words will take.
+/// and the settled size, and `context.draw(Text)` writes words.
+private struct WrittenWithContext: ExampleContent {
+    static let code = """
+        var body: some View {
+            Canvas { context, size in
+                let middle = Point(x: size.width / 2, y: 52)
+
+                // fill and stroke take a Path, in a Shading's colour.
+                context.fill(
+                    Path(ellipseIn: Rect(middle.x - 90, 32, 180, 40)),
+                    with: .color(Palette.accent))
+
+                context.stroke(
+                    Path(roundedRect: Rect(middle.x - 100, 24, 200, 56), cornerRadius: 10),
+                    with: .color(Palette.outline), lineWidth: 1)
+
+                // A Text goes in whole - its words, colour and size are the
+                // drawing's for that call, and the anchor lands on the point.
+                context.draw(Text("In context"), at: middle)
+                context.draw(Text("at the anchor"), at: middle, anchor: .bottom)
+            }
+            .frame(height: 104)
+        }
+        """
+
+    var body: some View {
+        Canvas { context, size in
+            let middle = Point(x: size.width / 2, y: 52)
+
+            context.fill(
+                Path(ellipseIn: Rect(middle.x - 90, 32, 180, 40)),
+                with: .color(Palette.accent))
+
+            context.stroke(
+                Path(roundedRect: Rect(middle.x - 100, 24, 200, 56), cornerRadius: 10),
+                with: .color(Palette.outline), lineWidth: 1)
+
+            context.draw(Text("In context"), at: middle)
+            context.draw(Text("at the anchor"), at: middle, anchor: .bottom)
+        }
+        .frame(height: 104)
+    }
+
+    var notes: (any View)? {
+        Text("`Canvas(renderer:)` is the SwiftUI shape of the same canvas: a "
+            + "`GraphicsContext` gathering `fill`, `stroke` and `draw` calls, "
+            + "and the settled `size` beside it. The same instructions travel "
+            + "either way - `Draw.` calls and `context` calls write one list.")
+            .font(.system(size: 12))
+            .foregroundStyle(Palette.subtle)
+    }
+}
+
+/// An aim's `measureText` asks the host's own text engine the room words
+/// will take - the answer fits the box to them.
 private struct Measured: ExampleContent {
     @Aim(Canvas.self) private var ruler
     @State private var fitted: Size?
+    @State private var failed: String?
 
     static let code = """
         @Aim(Canvas.self) private var ruler
@@ -186,27 +243,22 @@ private struct Measured: ExampleContent {
 
         var body: some View {
             VStack {
-                Canvas { context, size in
-                    let words = "Snug"
-                    let middle = Point(x: size.width / 2, y: 52)
-
-                    // A Text goes in whole - its words, colour and size are
-                    // the drawing's for that call.
-                    context.draw(Text(words), at: middle)
+                Canvas {
+                    Draw.foregroundStyle(Palette.text)
+                    Draw.drawText(
+                        "Snug", x: 0, y: 44, width: 320, height: 16,
+                        horizontalAlignment: .center)
 
                     if let fitted {
-                        context.stroke(
-                            Path(roundedRect: Rect(
-                                x: middle.x - fitted.width / 2 - 8,
-                                y: middle.y - fitted.height / 2 - 6,
-                                width: fitted.width + 16,
-                                height: fitted.height + 12),
-                                cornerRadius: 6),
-                            with: .color(Palette.accent), lineWidth: 1)
+                        Draw.strokeColor(Palette.accent)
+                        Draw.drawRoundedRectangle(
+                            x: 160 - fitted.width / 2 - 8, y: 52 - fitted.height / 2 - 6,
+                            width: fitted.width + 16, height: fitted.height + 12,
+                            cornerRadius: 6)
                     }
                 }
                 // The aim goes on the canvas itself, ahead of the frame:
-                // aimed at the wrapper the act would find no canvas.
+                // aimed at a wrapper the act would find no canvas.
                 .aim(ruler)
                 .frame(height: 104)
                 .task {
@@ -226,30 +278,32 @@ private struct Measured: ExampleContent {
         VStack {
             DebugInfoLabel()
 
-            Canvas { context, size in
-                let words = "Snug"
-                let middle = Point(x: size.width / 2, y: 52)
-
-                context.draw(Text(words), at: middle)
+            Canvas {
+                Draw.foregroundStyle(Palette.text)
+                Draw.drawText(
+                    "Snug", x: 0, y: 44, width: 320, height: 16,
+                    horizontalAlignment: .center)
 
                 if let fitted {
-                    context.stroke(
-                        Path(roundedRect: Rect(
-                            x: middle.x - fitted.width / 2 - 8,
-                            y: middle.y - fitted.height / 2 - 6,
-                            width: fitted.width + 16,
-                            height: fitted.height + 12),
-                            cornerRadius: 6),
-                        with: .color(Palette.accent), lineWidth: 1)
+                    Draw.strokeColor(Palette.accent)
+                    Draw.strokeWidth(1)
+                    Draw.drawRoundedRectangle(
+                        x: 160 - fitted.width / 2 - 8, y: 52 - fitted.height / 2 - 6,
+                        width: fitted.width + 16, height: fitted.height + 12,
+                        cornerRadius: 6)
                 }
             }
             .aim(ruler)
             .frame(height: 104)
             .task {
-                fitted = try? await ruler.measureText("Snug")
+                do {
+                    fitted = try await ruler.measureText("Snug")
+                } catch {
+                    failed = String(describing: error)
+                }
             }
 
-            Text(fitted.map { "measured \(Int($0.width)) x \(Int($0.height))" }
+            Text(failed ?? fitted.map { "measured \(Int($0.width)) x \(Int($0.height))" }
                 ?? "measuring...")
                 .font(.system(size: 13))
                 .foregroundStyle(Palette.subtle)
@@ -259,11 +313,10 @@ private struct Measured: ExampleContent {
     }
 
     var notes: (any View)? {
-        Text("`Canvas(renderer:)` is the SwiftUI shape of the same canvas: a "
-            + "`GraphicsContext` gathering `fill`, `stroke` and `draw` calls, "
-            + "and the settled `size` beside it. `measureText` is asked of the "
-            + "canvas's aim - the answer is what the host's text engine gives "
-            + "the words, which is why the box fits.")
+        Text("`measureText` is an act aimed at the canvas with `@Aim`: async, "
+            + "and answered by the host's own text engine - the same one that "
+            + "draws a `Text` - which is why the box fits. `maximumWidth` wraps "
+            + "the words as a text in that much room does.")
             .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }
