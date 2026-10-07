@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "SwiftOmniUIGTK", type: .dynamic, targets: ["SwiftOmniUIGTK"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../SwiftOmniUI.Conformance"),
         .package(name: "SwiftOmniUIWebViewGTK", path: "../Backends/WebView.GTK"),
@@ -23,7 +23,7 @@ let package = Package(
         .systemLibrary(name: "CSwiftOmniUIGTK", path: "Sources/CSwiftOmniUIGTK", pkgConfig: "libadwaita-1"),
         .target(
             name: "SwiftOmniUIGTK",
-            dependencies: ["CSwiftOmniUIGTK", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: ["CSwiftOmniUIGTK", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources/SwiftOmniUIGTK",
             resources: [.copy("Resources/Icons")],
@@ -32,7 +32,7 @@ let package = Package(
         .testTarget(
             name: "SwiftOmniUIGTKTests",
             dependencies: [
-                "SwiftOmniUIGTK", "CSwiftOmniUIGTK", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                "SwiftOmniUIGTK", "CSwiftOmniUIGTK", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),
                 .product(name: "SwiftOmniUIWebViewGTK", package: "SwiftOmniUIWebViewGTK"),

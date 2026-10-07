@@ -11,7 +11,7 @@ let package = Package(
     // Fork: the host packages' macOS minimum, so the suite can also compile here. The WASI run ignores this.
     platforms: [.macOS("26.0")],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../../.."),
+        .package(name: "SwiftOmniUICore", path: "../../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../../SwiftOmniUI.Conformance"),
         .package(name: "SwiftOmniUIWeb", path: ".."),
@@ -23,7 +23,7 @@ let package = Package(
             name: "SwiftOmniUIWebTests",
             dependencies: [
                 "CWebTesting", .product(name: "SwiftOmniUIWeb", package: "SwiftOmniUIWeb"),
-                .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"), .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"), .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),
             ],
             path: "Tests",

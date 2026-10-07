@@ -11,14 +11,14 @@ let package = Package(
         .library(name: "SwiftOmniUIAppKit", type: .dynamic, targets: ["SwiftOmniUIAppKit"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../SwiftOmniUI.Conformance"),
     ],
     targets: [
         .target(
             name: "SwiftOmniUIAppKit",
-            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")],
@@ -28,7 +28,7 @@ let package = Package(
             name: "SwiftOmniUIAppKitTests",
             dependencies: [
                 "SwiftOmniUIAppKit",
-                .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),
             ],

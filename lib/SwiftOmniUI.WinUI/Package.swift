@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "SwiftOmniUIWinUI", type: .dynamic, targets: ["SwiftOmniUIWinUI"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../SwiftOmniUI.Conformance"),
     ],
@@ -34,7 +34,7 @@ let package = Package(
         ),
         .target(
             name: "SwiftOmniUIWinUI",
-            dependencies: ["CSwiftOmniUIWinUI", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: ["CSwiftOmniUIWinUI", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources/SwiftOmniUIWinUI",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -42,7 +42,7 @@ let package = Package(
         .testTarget(
             name: "SwiftOmniUIWinUITests",
             dependencies: [
-                "SwiftOmniUIWinUI", "CSwiftOmniUIWinUI", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                "SwiftOmniUIWinUI", "CSwiftOmniUIWinUI", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),
             ],

@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "SwiftOmniUIAndroidTests", type: .dynamic, targets: ["SwiftOmniUIAndroidTests"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../../.."),
+        .package(name: "SwiftOmniUICore", path: "../../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIAndroid", path: ".."),
         .package(name: "SwiftOmniUIHost", path: "../../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../../SwiftOmniUI.Conformance"),
@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "SwiftOmniUIAndroidTests",
             dependencies: [
-                .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIAndroid", package: "SwiftOmniUIAndroid"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),

@@ -11,7 +11,7 @@ let package = Package(
         .executable(name: "SwiftOmniUIUIKitTests", targets: ["SwiftOmniUIUIKitTests"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../../.."),
+        .package(name: "SwiftOmniUICore", path: "../../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIUIKit", path: ".."),
         .package(name: "SwiftOmniUIHost", path: "../../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIConformance", path: "../../SwiftOmniUI.Conformance"),
@@ -20,7 +20,7 @@ let package = Package(
         .executableTarget(
             name: "SwiftOmniUIUIKitTests",
             dependencies: [
-                .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIUIKit", package: "SwiftOmniUIUIKit"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIConformance", package: "SwiftOmniUIConformance"),

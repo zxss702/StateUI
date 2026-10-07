@@ -10,13 +10,13 @@ let package = Package(
         .library(name: "SwiftOmniUIUIKit", type: .dynamic, targets: ["SwiftOmniUIUIKit"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
     ],
     targets: [
         .target(
             name: "SwiftOmniUIUIKit",
-            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")],

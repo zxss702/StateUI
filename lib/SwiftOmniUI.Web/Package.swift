@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "SwiftOmniUIWeb", targets: ["SwiftOmniUIWeb"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
     ],
     targets: [
@@ -22,7 +22,7 @@ let package = Package(
         .systemLibrary(name: "CSwiftOmniUIWeb", path: "Sources/CSwiftOmniUIWeb"),
         .target(
             name: "SwiftOmniUIWeb",
-            dependencies: ["CSwiftOmniUIWeb", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: ["CSwiftOmniUIWeb", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources/SwiftOmniUIWeb",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]

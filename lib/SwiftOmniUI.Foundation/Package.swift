@@ -18,12 +18,12 @@ let package = Package(
         .library(name: "SwiftOmniUIFoundation", type: .dynamic, targets: ["SwiftOmniUIFoundation"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
     ],
     targets: [
         .target(
             name: "SwiftOmniUIFoundation",
-            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot")],
+            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUICore")],
             path: "Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),

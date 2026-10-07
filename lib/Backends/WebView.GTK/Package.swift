@@ -18,7 +18,7 @@ let package = Package(
         .library(name: "SwiftOmniUIWebViewGTK", type: .dynamic, targets: ["SwiftOmniUIWebViewGTK"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../../.."),
+        .package(name: "SwiftOmniUICore", path: "../../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../../SwiftOmniUI.Host"),
         .package(name: "SwiftOmniUIGTK", path: "../../SwiftOmniUI.GTK"),
     ],
@@ -31,7 +31,7 @@ let package = Package(
                 "CWebKitGTK",
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost"),
                 .product(name: "SwiftOmniUIGTK", package: "SwiftOmniUIGTK"),
-                .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
             ],
             path: "Sources/SwiftOmniUIWebViewGTK", swiftSettings: settings),
     ]

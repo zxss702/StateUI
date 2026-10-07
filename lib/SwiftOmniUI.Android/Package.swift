@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "SwiftOmniUIAndroid", type: .dynamic, targets: ["SwiftOmniUIAndroid"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         .package(name: "SwiftOmniUIHost", path: "../SwiftOmniUI.Host"),
     ],
     targets: [
@@ -26,7 +26,7 @@ let package = Package(
         ),
         .target(
             name: "SwiftOmniUIAndroid",
-            dependencies: ["CSwiftOmniUIAndroid", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            dependencies: ["CSwiftOmniUIAndroid", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources/SwiftOmniUIAndroid",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]

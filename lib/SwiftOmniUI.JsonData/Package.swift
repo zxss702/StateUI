@@ -17,7 +17,7 @@ let package = Package(
         .library(name: "SwiftOmniUIJsonData", type: .dynamic, targets: ["SwiftOmniUIJsonData"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
         // The checkout a machine holds: Packges/JsonData beside Packges/SwiftOmniUI
         // locally, zxs20/JsonData beside zxs20/SwiftOmniUI on Windows.
         .package(url: "https://github.com/zxss702/JsonData.git", branch: "main"),
@@ -26,7 +26,7 @@ let package = Package(
         .target(
             name: "SwiftOmniUIJsonData",
             dependencies: [
-                .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+                .product(name: "SwiftOmniUI", package: "SwiftOmniUICore"),
                 // Dynamic beside the bridge's own dynamic product, so one
                 // model layer is shared by every library that names it.
                 .product(name: "JsonDataDynamic", package: "JsonData"),

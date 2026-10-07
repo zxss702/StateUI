@@ -14,18 +14,18 @@ let package = Package(
         .library(name: "SwiftOmniUIHost", type: .dynamic, targets: ["SwiftOmniUIHost"]),
     ],
     dependencies: [
-        .package(name: "SwiftOmniUIRoot", path: "../.."),
+        .package(name: "SwiftOmniUICore", path: "../SwiftOmniUI/Sources"),
     ],
     targets: [
         .target(
             name: "SwiftOmniUIHost",
-            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot")],
+            dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUICore")],
             path: "Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
         .testTarget(
             name: "SwiftOmniUIHostTests",
-            dependencies: ["SwiftOmniUIHost", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot")],
+            dependencies: ["SwiftOmniUIHost", .product(name: "SwiftOmniUI", package: "SwiftOmniUICore")],
             path: "Tests",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
