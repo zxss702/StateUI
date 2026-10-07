@@ -7,9 +7,9 @@ import PackageDescription
 // module. It builds with the Swift SDK for WebAssembly, under STATEUI_HOST=web.
 let package = Package(
     name: "StateUIWeb",
-    // The WebAssembly build reads no deployment target; this floors the macOS build so the core's macOS 26
+    // The WebAssembly build reads no deployment target; this floors the macOS build so the core's macOS 15
     // floor is met there too.
-    platforms: [.macOS(.v26)],
+    platforms: [.macOS(.v15)],
     products: [
         .library(name: "StateUIWeb", targets: ["StateUIWeb"]),
     ],
