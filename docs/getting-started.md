@@ -13,7 +13,7 @@ yet.
 
 ## Requirements
 
-- macOS 26 or newer, with Xcode 27 and its Swift 6.4, for the AppKit host;
+- macOS 15 or newer, with Xcode 27 and its Swift 6.4, for the AppKit host;
 - a checkout of this repository;
 - VS Code and Node.js 20 or newer, for the SwiftOmniUI extension.
 

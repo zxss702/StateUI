@@ -131,7 +131,7 @@ npm run package
 code --install-extension ../../artifacts/swiftomniui-*.vsix
 ```
 
-The AppKit host needs only Xcode 27, on macOS 26 or newer. SwiftOmniUI builds
+The AppKit host needs only Xcode 27, on macOS 15 or newer. SwiftOmniUI builds
 with one Swift release everywhere, Swift 6.4: Xcode 27's on macOS and the
 swift.org 6.4.0 toolchain on the other platforms.
 

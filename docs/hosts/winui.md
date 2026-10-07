@@ -172,7 +172,7 @@ SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
 
 `run-app.ps1` builds the head, lays the Windows App SDK beside it and starts
 it, passing on what it writes. Everything a build writes stays in the
-application's `.build-winui\`. The application carries the Windows App SDK
+application's `.build\winui\`. The application carries the Windows App SDK
 itself - no package, no installer: its runtime, a manifest registering its
 classes and `resources.pri` stand beside the executable. `-Detach` returns once
 the application has started. Every `SWIFTOMNIUI_` variable of the shell that runs
