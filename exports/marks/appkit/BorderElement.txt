@@ -32,7 +32,7 @@ Masked.strokeWidth: cannot read strokeWidth of Masked - AppKit's driver has no p
 RadioButton.shape: not realized
 RadioButton.stroke: not realized
 RadioButton.strokeWidth: not realized
-ScrollView.shape: cannot read shape of a box shorter than its radius - AppKit's layer holds the radius it draws, at most half the box's shorter side
+ScrollView.shape: ✅
 ScrollView.stroke: ☑️ AppKit outlines a scroller in a colour on a rectangle or a rounded one; an oval, or a gradient, draws none.
 ScrollView.strokeWidth: ✅
 VStack.shape: cannot read shape of VStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it

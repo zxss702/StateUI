@@ -7,8 +7,13 @@ App.confirm: cannot read a question - GTK's driver has no path for it yet
 App.currentTime: ✅
 App.currentTimeZone: ✅
 App.handlerFailed: cannot read the log - GTK's driver has no path for it yet
-App.hideOnScreenKeyboard: cannot focus on TextField - GTK's driver has no path for it yet
+App.hideOnScreenKeyboard: ✅
+App.launchFile: not realized
+App.launchLink: not realized
+App.openFiles: not realized
 App.persistSceneValue: not realized
 App.persistValue: cannot read what is kept - GTK's driver has no path for it yet
 App.prompt: cannot read a question - GTK's driver has no path for it yet
+App.readFile: not realized
+App.saveFile: not realized
 App.utcOffset: ✅

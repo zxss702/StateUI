@@ -41,7 +41,9 @@ param(
 . (Join-Path $PSScriptRoot 'tools.ps1')
 
 Initialize-StateUIProjection
-$testing = Join-Path $StateUIWinUIHost 'Testing'
+# Our layout keeps the test target inside the host package (Tests/), not
+# upstream's nested Testing package - the package root is the build path.
+$testing = $StateUIWinUIHost
 $env:STATEUI_STALE_ONLY = if ($Stale) { '1' } else { '' }
 $scratch = @()
 if ($ScratchPath) { $scratch = @('--scratch-path', $ScratchPath) }

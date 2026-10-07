@@ -8,7 +8,12 @@ App.currentTime: ✅
 App.currentTimeZone: ✅
 App.handlerFailed: ✅
 App.hideOnScreenKeyboard: ✅
+App.launchFile: not realized
+App.launchLink: not realized
+App.openFiles: not realized
 App.persistSceneValue: ✅
 App.persistValue: ✅
 App.prompt: 🔌 read a question: the captions the host keeps, not the alert's buttons
+App.readFile: not realized
+App.saveFile: not realized
 App.utcOffset: ✅

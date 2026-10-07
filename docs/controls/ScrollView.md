@@ -25,7 +25,7 @@ See [the dictionary](README.md) for how a mark is given.
 
 | Host | Created | Members (112) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
-| AppKit | ✅ | 32 ✅ · 2 ☑️ · 3 – | `NSScrollView` |  |
+| AppKit | ✅ | 33 ✅ · 2 ☑️ · 3 – | `NSScrollView` |  |
 | UIKit | ✅ | 33 ✅ · 3 – | `UIScrollView` |  |
 | Android Views | ✅ | 52 ✅ · 1 ☑️ · 3 – | `ScrollView` / `HorizontalScrollView` |  |
 | WinUI 3 | ✅ | 60 ✅ · 3 – | `ScrollViewer` |  |
@@ -188,7 +188,7 @@ What an element draws of its own box: the shape its background, its outline and 
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `shape` | property | `ContainerShape` | stateUI | · | · | · | ✅ | · |  | cannot read shape of a box shorter than its radius - AppKit's layer holds the radius it draws, at most half the box's shorter side; UIKit: cannot read shape of ScrollView - UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it; Android Views: cannot read shape of ScrollView - StateUI draws a layout's box in a drawable of its own, which holds none of its shape; its drawing proves it; GTK 4: cannot read shape of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it |
+| `shape` | property | `ContainerShape` | stateUI | ✅ | · | · | ✅ | · |  | UIKit: cannot read shape of ScrollView - UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it; Android Views: cannot read shape of ScrollView - StateUI draws a layout's box in a drawable of its own, which holds none of its shape; its drawing proves it; GTK 4: cannot read shape of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it |
 | `stroke` | property | `Brush` | stateUI | ☑️ | ✅ | · | ✅ | · |  | AppKit outlines a scroller in a colour on a rectangle or a rounded one; an oval, or a gradient, draws none.; Android Views: cannot read stroke of ScrollView - StateUI draws a layout's box in a drawable of its own, which holds none of its stroke; its drawing proves it; GTK 4: cannot read stroke of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it |
 | `strokeWidth` | property | `Double` | stateUI | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read strokeWidth of ScrollView - StateUI draws a layout's box in a drawable of its own, which holds none of its strokeWidth; its drawing proves it; GTK 4: cannot read strokeWidth of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it |
 

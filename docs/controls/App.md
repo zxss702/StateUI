@@ -47,14 +47,14 @@ Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/AppContract.swift`
 | `currentTimeZone` | act | `() -> String` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `handlerFailed` | act | `(String) -> Void` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the log - GTK's driver has no path for it yet |
 | `hideOnScreenKeyboard` | act | `() -> Bool` |  | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot focus on TextField - Android's driver has no path for it yet; GTK 4: cannot focus on TextField - GTK's driver has no path for it yet |
-| `launchFile` | act | `(ChosenFile) -> Bool` |  |  |  |  |  |  |  |  |
-| `launchLink` | act | `(String) -> Bool` |  |  |  |  |  |  |  |  |
+| `launchFile` | act | `(ChosenFile) -> Bool` |  |  |  |  |  |  |  | not realized |
+| `launchLink` | act | `(String) -> Bool` |  |  |  |  |  |  |  | not realized |
 | `localizedString` | act | `(LocalizedStringKey) -> String` |  |  |  |  |  |  |  |  |
-| `openFiles` | act | `([FileType], Bool) -> [ChosenFile]` |  |  |  |  |  |  |  |  |
+| `openFiles` | act | `([FileType], Bool) -> [ChosenFile]` |  |  |  |  |  |  |  | not realized |
 | `persistSceneValue` | act | `(Name, Name, PropValue) -> Void` |  | ✅ |  |  | ✅ |  |  | UIKit: not realized; Android Views: not realized; GTK 4: not realized |
 | `persistValue` | act | `(Name, PropValue) -> Void` |  | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what is kept - Android's driver has no path for it yet; GTK 4: cannot read what is kept - GTK's driver has no path for it yet |
 | `prompt` | act | `(String, String, String, String, String?, Int?, InputPurpose, String) -> String?` |  | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: read a question: the captions the host keeps, not the alert's buttons; UIKit: only through the host's own: read a question: the buttons' captions the host keeps; Android Views: only through the host's own: read a question: what the relay keeps of the dialog it showed; GTK 4: cannot read a question - GTK's driver has no path for it yet |
-| `readFile` | act | `(ChosenFile) -> [UInt8]` |  |  |  |  |  |  |  |  |
-| `saveFile` | act | `([UInt8], String, [FileType]) -> ChosenFile?` |  |  |  |  |  |  |  |  |
+| `readFile` | act | `(ChosenFile) -> [UInt8]` |  |  |  |  |  |  |  | not realized |
+| `saveFile` | act | `([UInt8], String, [FileType]) -> ChosenFile?` |  |  |  |  |  |  |  | not realized |
 | `urlOpened` | event | `String` | provider |  |  |  |  |  |  |  |
 | `utcOffset` | act | `(String?, CalendarDate?) -> Int` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

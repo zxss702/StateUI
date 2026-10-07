@@ -4,14 +4,14 @@ ActivityIndicator.accessibilityHint: cannot read accessibilityHint of ActivityIn
 ActivityIndicator.accessibilityLabel: cannot read accessibilityLabel of ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.background: not realized
-ActivityIndicator.focus: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet
+ActivityIndicator.focus: – ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard
 ActivityIndicator.frame: ✅
 ActivityIndicator.frameChanged: ✅
 ActivityIndicator.height: ✅
 ActivityIndicator.ignoresInput: not realized
 ActivityIndicator.isAccessibilityHidden: cannot read isAccessibilityHidden of ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.isEnabled: ✅
-ActivityIndicator.isFocusedChanged: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet
+ActivityIndicator.isFocusedChanged: – ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard
 ActivityIndicator.isVisible: ✅
 ActivityIndicator.layoutDirection: cannot read layoutDirection of ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.maximumHeight: ✅
@@ -30,7 +30,7 @@ ActivityIndicator.scaleY: cannot read scaleY of ActivityIndicator - GTK's driver
 ActivityIndicator.style: ✅
 ActivityIndicator.translationX: cannot read translationX of ActivityIndicator - GTK's driver has no path for it yet
 ActivityIndicator.translationY: cannot read translationY of ActivityIndicator - GTK's driver has no path for it yet
-ActivityIndicator.unfocus: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet
+ActivityIndicator.unfocus: – ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard
 ActivityIndicator.width: ✅
 ActivityIndicator.zIndex: not realized
 Button.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Button - GTK's driver has no path for it yet
@@ -38,14 +38,14 @@ Button.accessibilityHint: cannot read accessibilityHint of Button - GTK's driver
 Button.accessibilityLabel: cannot read accessibilityLabel of Button - GTK's driver has no path for it yet
 Button.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Button - GTK's driver has no path for it yet
 Button.background: cannot read background of Button - GTK's driver has no path for it yet
-Button.focus: cannot read the focus of Button - GTK's driver has no path for it yet
+Button.focus: ✅
 Button.frame: ✅
 Button.frameChanged: ✅
 Button.height: ✅
 Button.ignoresInput: not realized
 Button.isAccessibilityHidden: cannot read isAccessibilityHidden of Button - GTK's driver has no path for it yet
 Button.isEnabled: ✅
-Button.isFocusedChanged: cannot read the focus of Button - GTK's driver has no path for it yet
+Button.isFocusedChanged: ✅
 Button.isVisible: ✅
 Button.layoutDirection: cannot read layoutDirection of Button - GTK's driver has no path for it yet
 Button.maximumHeight: ✅
@@ -64,7 +64,7 @@ Button.scaleY: cannot read scaleY of Button - GTK's driver has no path for it ye
 Button.style: ✅
 Button.translationX: cannot read translationX of Button - GTK's driver has no path for it yet
 Button.translationY: cannot read translationY of Button - GTK's driver has no path for it yet
-Button.unfocus: cannot read the focus of Button - GTK's driver has no path for it yet
+Button.unfocus: ✅
 Button.width: ✅
 Button.zIndex: not realized
 Canvas.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Canvas - GTK's driver has no path for it yet
@@ -72,14 +72,14 @@ Canvas.accessibilityHint: cannot read accessibilityHint of Canvas - GTK's driver
 Canvas.accessibilityLabel: cannot read accessibilityLabel of Canvas - GTK's driver has no path for it yet
 Canvas.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Canvas - GTK's driver has no path for it yet
 Canvas.background: not realized
-Canvas.focus: cannot read the focus of Canvas - GTK's driver has no path for it yet
+Canvas.focus: – Canvas takes no keyboard focus here: it refuses it, and nothing is heard
 Canvas.frame: ✅
 Canvas.frameChanged: ✅
 Canvas.height: ✅
 Canvas.ignoresInput: not realized
 Canvas.isAccessibilityHidden: cannot read isAccessibilityHidden of Canvas - GTK's driver has no path for it yet
 Canvas.isEnabled: ✅
-Canvas.isFocusedChanged: cannot read the focus of Canvas - GTK's driver has no path for it yet
+Canvas.isFocusedChanged: – Canvas takes no keyboard focus here: it refuses it, and nothing is heard
 Canvas.isVisible: ✅
 Canvas.layoutDirection: cannot read layoutDirection of Canvas - GTK's driver has no path for it yet
 Canvas.maximumHeight: ✅
@@ -98,7 +98,7 @@ Canvas.scaleY: cannot read scaleY of Canvas - GTK's driver has no path for it ye
 Canvas.style: ✅
 Canvas.translationX: cannot read translationX of Canvas - GTK's driver has no path for it yet
 Canvas.translationY: cannot read translationY of Canvas - GTK's driver has no path for it yet
-Canvas.unfocus: cannot read the focus of Canvas - GTK's driver has no path for it yet
+Canvas.unfocus: – Canvas takes no keyboard focus here: it refuses it, and nothing is heard
 Canvas.width: ✅
 Canvas.zIndex: not realized
 CheckBox.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of CheckBox - GTK's driver has no path for it yet
@@ -106,14 +106,14 @@ CheckBox.accessibilityHint: cannot read accessibilityHint of CheckBox - GTK's dr
 CheckBox.accessibilityLabel: cannot read accessibilityLabel of CheckBox - GTK's driver has no path for it yet
 CheckBox.automationExcludedWithChildren: cannot read automationExcludedWithChildren of CheckBox - GTK's driver has no path for it yet
 CheckBox.background: not realized
-CheckBox.focus: cannot read the focus of CheckBox - GTK's driver has no path for it yet
+CheckBox.focus: ✅
 CheckBox.frame: ✅
 CheckBox.frameChanged: ✅
 CheckBox.height: ✅
 CheckBox.ignoresInput: not realized
 CheckBox.isAccessibilityHidden: cannot read isAccessibilityHidden of CheckBox - GTK's driver has no path for it yet
 CheckBox.isEnabled: ✅
-CheckBox.isFocusedChanged: cannot read the focus of CheckBox - GTK's driver has no path for it yet
+CheckBox.isFocusedChanged: ✅
 CheckBox.isVisible: ✅
 CheckBox.layoutDirection: cannot read layoutDirection of CheckBox - GTK's driver has no path for it yet
 CheckBox.maximumHeight: ✅
@@ -132,7 +132,7 @@ CheckBox.scaleY: cannot read scaleY of CheckBox - GTK's driver has no path for i
 CheckBox.style: ✅
 CheckBox.translationX: cannot read translationX of CheckBox - GTK's driver has no path for it yet
 CheckBox.translationY: cannot read translationY of CheckBox - GTK's driver has no path for it yet
-CheckBox.unfocus: cannot read the focus of CheckBox - GTK's driver has no path for it yet
+CheckBox.unfocus: ✅
 CheckBox.width: ✅
 CheckBox.zIndex: not realized
 ColorPicker.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of ColorPicker - GTK's driver has no path for it yet
@@ -140,14 +140,14 @@ ColorPicker.accessibilityHint: cannot read accessibilityHint of ColorPicker - GT
 ColorPicker.accessibilityLabel: cannot read accessibilityLabel of ColorPicker - GTK's driver has no path for it yet
 ColorPicker.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ColorPicker - GTK's driver has no path for it yet
 ColorPicker.background: not realized
-ColorPicker.focus: cannot read the focus of ColorPicker - GTK's driver has no path for it yet
+ColorPicker.focus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 ColorPicker.frame: ✅
 ColorPicker.frameChanged: ✅
 ColorPicker.height: ✅
 ColorPicker.ignoresInput: not realized
 ColorPicker.isAccessibilityHidden: cannot read isAccessibilityHidden of ColorPicker - GTK's driver has no path for it yet
 ColorPicker.isEnabled: ✅
-ColorPicker.isFocusedChanged: cannot read the focus of ColorPicker - GTK's driver has no path for it yet
+ColorPicker.isFocusedChanged: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 ColorPicker.isVisible: ✅
 ColorPicker.layoutDirection: cannot read layoutDirection of ColorPicker - GTK's driver has no path for it yet
 ColorPicker.maximumHeight: ✅
@@ -166,7 +166,7 @@ ColorPicker.scaleY: cannot read scaleY of ColorPicker - GTK's driver has no path
 ColorPicker.style: ✅
 ColorPicker.translationX: cannot read translationX of ColorPicker - GTK's driver has no path for it yet
 ColorPicker.translationY: cannot read translationY of ColorPicker - GTK's driver has no path for it yet
-ColorPicker.unfocus: cannot read the focus of ColorPicker - GTK's driver has no path for it yet
+ColorPicker.unfocus: – ColorPicker takes no keyboard focus here: it refuses it, and nothing is heard
 ColorPicker.width: ✅
 ColorPicker.zIndex: not realized
 CustomLayout.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of CustomLayout - GTK's driver has no path for it yet
@@ -174,14 +174,14 @@ CustomLayout.accessibilityHint: cannot read accessibilityHint of CustomLayout - 
 CustomLayout.accessibilityLabel: cannot read accessibilityLabel of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.automationExcludedWithChildren: cannot read automationExcludedWithChildren of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.background: cannot read background of CustomLayout - GTK's driver has no path for it yet
-CustomLayout.focus: cannot read the focus of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.focus: – CustomLayout takes no keyboard focus here: it refuses it, and nothing is heard
 CustomLayout.frame: ✅
 CustomLayout.frameChanged: ✅
 CustomLayout.height: ✅
 CustomLayout.ignoresInput: cannot read what reaches CustomLayout - GTK's driver has no path for it yet
 CustomLayout.isAccessibilityHidden: cannot read isAccessibilityHidden of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.isEnabled: ✅
-CustomLayout.isFocusedChanged: cannot read the focus of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.isFocusedChanged: – CustomLayout takes no keyboard focus here: it refuses it, and nothing is heard
 CustomLayout.isVisible: ✅
 CustomLayout.layoutDirection: cannot read layoutDirection of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.maximumHeight: ✅
@@ -200,7 +200,7 @@ CustomLayout.scaleY: cannot read scaleY of CustomLayout - GTK's driver has no pa
 CustomLayout.style: ✅
 CustomLayout.translationX: cannot read translationX of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.translationY: cannot read translationY of CustomLayout - GTK's driver has no path for it yet
-CustomLayout.unfocus: cannot read the focus of CustomLayout - GTK's driver has no path for it yet
+CustomLayout.unfocus: – CustomLayout takes no keyboard focus here: it refuses it, and nothing is heard
 CustomLayout.width: ✅
 CustomLayout.zIndex: not realized
 DatePicker.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of DatePicker - GTK's driver has no path for it yet
@@ -208,14 +208,14 @@ DatePicker.accessibilityHint: cannot read accessibilityHint of DatePicker - GTK'
 DatePicker.accessibilityLabel: cannot read accessibilityLabel of DatePicker - GTK's driver has no path for it yet
 DatePicker.automationExcludedWithChildren: cannot read automationExcludedWithChildren of DatePicker - GTK's driver has no path for it yet
 DatePicker.background: not realized
-DatePicker.focus: cannot read the focus of DatePicker - GTK's driver has no path for it yet
+DatePicker.focus: ✅
 DatePicker.frame: ✅
 DatePicker.frameChanged: ✅
 DatePicker.height: ✅
 DatePicker.ignoresInput: not realized
 DatePicker.isAccessibilityHidden: cannot read isAccessibilityHidden of DatePicker - GTK's driver has no path for it yet
 DatePicker.isEnabled: ✅
-DatePicker.isFocusedChanged: cannot read the focus of DatePicker - GTK's driver has no path for it yet
+DatePicker.isFocusedChanged: ✅
 DatePicker.isVisible: ✅
 DatePicker.layoutDirection: cannot read layoutDirection of DatePicker - GTK's driver has no path for it yet
 DatePicker.maximumHeight: ✅
@@ -234,7 +234,7 @@ DatePicker.scaleY: cannot read scaleY of DatePicker - GTK's driver has no path f
 DatePicker.style: ✅
 DatePicker.translationX: cannot read translationX of DatePicker - GTK's driver has no path for it yet
 DatePicker.translationY: cannot read translationY of DatePicker - GTK's driver has no path for it yet
-DatePicker.unfocus: cannot read the focus of DatePicker - GTK's driver has no path for it yet
+DatePicker.unfocus: ✅
 DatePicker.width: ✅
 DatePicker.zIndex: not realized
 Ellipse.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Ellipse - GTK's driver has no path for it yet
@@ -242,14 +242,14 @@ Ellipse.accessibilityHint: cannot read accessibilityHint of Ellipse - GTK's driv
 Ellipse.accessibilityLabel: cannot read accessibilityLabel of Ellipse - GTK's driver has no path for it yet
 Ellipse.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Ellipse - GTK's driver has no path for it yet
 Ellipse.background: not realized
-Ellipse.focus: cannot read the focus of Ellipse - GTK's driver has no path for it yet
+Ellipse.focus: – Ellipse takes no keyboard focus here: it refuses it, and nothing is heard
 Ellipse.frame: ✅
 Ellipse.frameChanged: ✅
 Ellipse.height: ✅
 Ellipse.ignoresInput: not realized
 Ellipse.isAccessibilityHidden: cannot read isAccessibilityHidden of Ellipse - GTK's driver has no path for it yet
 Ellipse.isEnabled: ✅
-Ellipse.isFocusedChanged: cannot read the focus of Ellipse - GTK's driver has no path for it yet
+Ellipse.isFocusedChanged: – Ellipse takes no keyboard focus here: it refuses it, and nothing is heard
 Ellipse.isVisible: ✅
 Ellipse.layoutDirection: cannot read layoutDirection of Ellipse - GTK's driver has no path for it yet
 Ellipse.maximumHeight: ✅
@@ -268,7 +268,7 @@ Ellipse.scaleY: cannot read scaleY of Ellipse - GTK's driver has no path for it 
 Ellipse.style: ✅
 Ellipse.translationX: cannot read translationX of Ellipse - GTK's driver has no path for it yet
 Ellipse.translationY: cannot read translationY of Ellipse - GTK's driver has no path for it yet
-Ellipse.unfocus: cannot read the focus of Ellipse - GTK's driver has no path for it yet
+Ellipse.unfocus: – Ellipse takes no keyboard focus here: it refuses it, and nothing is heard
 Ellipse.width: ✅
 Ellipse.zIndex: not realized
 Grid.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Grid - GTK's driver has no path for it yet
@@ -276,14 +276,14 @@ Grid.accessibilityHint: cannot read accessibilityHint of Grid - GTK's driver has
 Grid.accessibilityLabel: cannot read accessibilityLabel of Grid - GTK's driver has no path for it yet
 Grid.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Grid - GTK's driver has no path for it yet
 Grid.background: cannot read background of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
-Grid.focus: cannot read the focus of Grid - GTK's driver has no path for it yet
+Grid.focus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
 Grid.frame: ✅
 Grid.frameChanged: ✅
 Grid.height: ✅
 Grid.ignoresInput: cannot read what reaches Grid - GTK's driver has no path for it yet
 Grid.isAccessibilityHidden: cannot read isAccessibilityHidden of Grid - GTK's driver has no path for it yet
 Grid.isEnabled: ✅
-Grid.isFocusedChanged: cannot read the focus of Grid - GTK's driver has no path for it yet
+Grid.isFocusedChanged: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
 Grid.isVisible: ✅
 Grid.layoutDirection: cannot read layoutDirection of Grid - GTK's driver has no path for it yet
 Grid.maximumHeight: ✅
@@ -302,7 +302,7 @@ Grid.scaleY: cannot read scaleY of Grid - GTK's driver has no path for it yet
 Grid.style: ✅
 Grid.translationX: cannot read translationX of Grid - GTK's driver has no path for it yet
 Grid.translationY: cannot read translationY of Grid - GTK's driver has no path for it yet
-Grid.unfocus: cannot read the focus of Grid - GTK's driver has no path for it yet
+Grid.unfocus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
 Grid.width: ✅
 Grid.zIndex: not realized
 GridRow.accessibilityHeadingLevel: not realized
@@ -344,14 +344,14 @@ HStack.accessibilityHint: cannot read accessibilityHint of HStack - GTK's driver
 HStack.accessibilityLabel: cannot read accessibilityLabel of HStack - GTK's driver has no path for it yet
 HStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of HStack - GTK's driver has no path for it yet
 HStack.background: cannot read background of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
-HStack.focus: cannot read the focus of HStack - GTK's driver has no path for it yet
+HStack.focus: – HStack takes no keyboard focus here: it refuses it, and nothing is heard
 HStack.frame: ✅
 HStack.frameChanged: ✅
 HStack.height: ✅
 HStack.ignoresInput: cannot read what reaches HStack - GTK's driver has no path for it yet
 HStack.isAccessibilityHidden: cannot read isAccessibilityHidden of HStack - GTK's driver has no path for it yet
 HStack.isEnabled: ✅
-HStack.isFocusedChanged: cannot read the focus of HStack - GTK's driver has no path for it yet
+HStack.isFocusedChanged: – HStack takes no keyboard focus here: it refuses it, and nothing is heard
 HStack.isVisible: ✅
 HStack.layoutDirection: cannot read layoutDirection of HStack - GTK's driver has no path for it yet
 HStack.maximumHeight: ✅
@@ -370,7 +370,7 @@ HStack.scaleY: cannot read scaleY of HStack - GTK's driver has no path for it ye
 HStack.style: ✅
 HStack.translationX: cannot read translationX of HStack - GTK's driver has no path for it yet
 HStack.translationY: cannot read translationY of HStack - GTK's driver has no path for it yet
-HStack.unfocus: cannot read the focus of HStack - GTK's driver has no path for it yet
+HStack.unfocus: – HStack takes no keyboard focus here: it refuses it, and nothing is heard
 HStack.width: ✅
 HStack.zIndex: not realized
 Image.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Image - GTK's driver has no path for it yet
@@ -378,14 +378,14 @@ Image.accessibilityHint: cannot read accessibilityHint of Image - GTK's driver h
 Image.accessibilityLabel: cannot read accessibilityLabel of Image - GTK's driver has no path for it yet
 Image.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Image - GTK's driver has no path for it yet
 Image.background: not realized
-Image.focus: cannot read the focus of Image - GTK's driver has no path for it yet
+Image.focus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
 Image.frame: ✅
 Image.frameChanged: ✅
 Image.height: ✅
 Image.ignoresInput: not realized
 Image.isAccessibilityHidden: cannot read isAccessibilityHidden of Image - GTK's driver has no path for it yet
 Image.isEnabled: ✅
-Image.isFocusedChanged: cannot read the focus of Image - GTK's driver has no path for it yet
+Image.isFocusedChanged: – Image takes no keyboard focus here: it refuses it, and nothing is heard
 Image.isVisible: ✅
 Image.layoutDirection: cannot read layoutDirection of Image - GTK's driver has no path for it yet
 Image.maximumHeight: ✅
@@ -404,7 +404,7 @@ Image.scaleY: cannot read scaleY of Image - GTK's driver has no path for it yet
 Image.style: ✅
 Image.translationX: cannot read translationX of Image - GTK's driver has no path for it yet
 Image.translationY: cannot read translationY of Image - GTK's driver has no path for it yet
-Image.unfocus: cannot read the focus of Image - GTK's driver has no path for it yet
+Image.unfocus: – Image takes no keyboard focus here: it refuses it, and nothing is heard
 Image.width: ✅
 Image.zIndex: not realized
 LazyHGrid.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of LazyHGrid - GTK's driver has no path for it yet
@@ -412,14 +412,14 @@ LazyHGrid.accessibilityHint: cannot read accessibilityHint of LazyHGrid - GTK's 
 LazyHGrid.accessibilityLabel: cannot read accessibilityLabel of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.automationExcludedWithChildren: cannot read automationExcludedWithChildren of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.background: cannot read background of LazyHGrid - GTK's driver has no path for it yet
-LazyHGrid.focus: cannot read the focus of LazyHGrid - GTK's driver has no path for it yet
+LazyHGrid.focus: – LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHGrid.frame: ✅
 LazyHGrid.frameChanged: ✅
 LazyHGrid.height: ✅
 LazyHGrid.ignoresInput: cannot read what reaches LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.isAccessibilityHidden: cannot read isAccessibilityHidden of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.isEnabled: ✅
-LazyHGrid.isFocusedChanged: cannot read the focus of LazyHGrid - GTK's driver has no path for it yet
+LazyHGrid.isFocusedChanged: – LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHGrid.isVisible: ✅
 LazyHGrid.layoutDirection: cannot read layoutDirection of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.maximumHeight: ✅
@@ -438,7 +438,7 @@ LazyHGrid.scaleY: cannot read scaleY of LazyHGrid - GTK's driver has no path for
 LazyHGrid.style: ✅
 LazyHGrid.translationX: cannot read translationX of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.translationY: cannot read translationY of LazyHGrid - GTK's driver has no path for it yet
-LazyHGrid.unfocus: cannot read the focus of LazyHGrid - GTK's driver has no path for it yet
+LazyHGrid.unfocus: – LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHGrid.width: ✅
 LazyHGrid.zIndex: not realized
 LazyHStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of LazyHStack - GTK's driver has no path for it yet
@@ -446,14 +446,14 @@ LazyHStack.accessibilityHint: cannot read accessibilityHint of LazyHStack - GTK'
 LazyHStack.accessibilityLabel: cannot read accessibilityLabel of LazyHStack - GTK's driver has no path for it yet
 LazyHStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of LazyHStack - GTK's driver has no path for it yet
 LazyHStack.background: cannot read background of LazyHStack - GTK's driver has no path for it yet
-LazyHStack.focus: cannot read the focus of LazyHStack - GTK's driver has no path for it yet
+LazyHStack.focus: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHStack.frame: ✅
 LazyHStack.frameChanged: ✅
 LazyHStack.height: ✅
 LazyHStack.ignoresInput: cannot read what reaches LazyHStack - GTK's driver has no path for it yet
 LazyHStack.isAccessibilityHidden: cannot read isAccessibilityHidden of LazyHStack - GTK's driver has no path for it yet
 LazyHStack.isEnabled: ✅
-LazyHStack.isFocusedChanged: cannot read the focus of LazyHStack - GTK's driver has no path for it yet
+LazyHStack.isFocusedChanged: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHStack.isVisible: ✅
 LazyHStack.layoutDirection: cannot read layoutDirection of LazyHStack - GTK's driver has no path for it yet
 LazyHStack.maximumHeight: ✅
@@ -472,7 +472,7 @@ LazyHStack.scaleY: cannot read scaleY of LazyHStack - GTK's driver has no path f
 LazyHStack.style: ✅
 LazyHStack.translationX: cannot read translationX of LazyHStack - GTK's driver has no path for it yet
 LazyHStack.translationY: cannot read translationY of LazyHStack - GTK's driver has no path for it yet
-LazyHStack.unfocus: cannot read the focus of LazyHStack - GTK's driver has no path for it yet
+LazyHStack.unfocus: – LazyHStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyHStack.width: ✅
 LazyHStack.zIndex: not realized
 LazyVGrid.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of LazyVGrid - GTK's driver has no path for it yet
@@ -480,14 +480,14 @@ LazyVGrid.accessibilityHint: cannot read accessibilityHint of LazyVGrid - GTK's 
 LazyVGrid.accessibilityLabel: cannot read accessibilityLabel of LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.automationExcludedWithChildren: cannot read automationExcludedWithChildren of LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.background: cannot read background of LazyVGrid - GTK's driver has no path for it yet
-LazyVGrid.focus: cannot read the focus of LazyVGrid - GTK's driver has no path for it yet
+LazyVGrid.focus: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVGrid.frame: ✅
 LazyVGrid.frameChanged: ✅
 LazyVGrid.height: ✅
 LazyVGrid.ignoresInput: cannot read what reaches LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.isAccessibilityHidden: cannot read isAccessibilityHidden of LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.isEnabled: ✅
-LazyVGrid.isFocusedChanged: cannot read the focus of LazyVGrid - GTK's driver has no path for it yet
+LazyVGrid.isFocusedChanged: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVGrid.isVisible: ✅
 LazyVGrid.layoutDirection: cannot read layoutDirection of LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.maximumHeight: ✅
@@ -506,7 +506,7 @@ LazyVGrid.scaleY: cannot read scaleY of LazyVGrid - GTK's driver has no path for
 LazyVGrid.style: ✅
 LazyVGrid.translationX: cannot read translationX of LazyVGrid - GTK's driver has no path for it yet
 LazyVGrid.translationY: cannot read translationY of LazyVGrid - GTK's driver has no path for it yet
-LazyVGrid.unfocus: cannot read the focus of LazyVGrid - GTK's driver has no path for it yet
+LazyVGrid.unfocus: – LazyVGrid takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVGrid.width: ✅
 LazyVGrid.zIndex: not realized
 LazyVStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of LazyVStack - GTK's driver has no path for it yet
@@ -514,14 +514,14 @@ LazyVStack.accessibilityHint: cannot read accessibilityHint of LazyVStack - GTK'
 LazyVStack.accessibilityLabel: cannot read accessibilityLabel of LazyVStack - GTK's driver has no path for it yet
 LazyVStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of LazyVStack - GTK's driver has no path for it yet
 LazyVStack.background: cannot read background of LazyVStack - GTK's driver has no path for it yet
-LazyVStack.focus: cannot read the focus of LazyVStack - GTK's driver has no path for it yet
+LazyVStack.focus: – LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVStack.frame: ✅
 LazyVStack.frameChanged: ✅
 LazyVStack.height: ✅
 LazyVStack.ignoresInput: cannot read what reaches LazyVStack - GTK's driver has no path for it yet
 LazyVStack.isAccessibilityHidden: cannot read isAccessibilityHidden of LazyVStack - GTK's driver has no path for it yet
 LazyVStack.isEnabled: ✅
-LazyVStack.isFocusedChanged: cannot read the focus of LazyVStack - GTK's driver has no path for it yet
+LazyVStack.isFocusedChanged: – LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVStack.isVisible: ✅
 LazyVStack.layoutDirection: cannot read layoutDirection of LazyVStack - GTK's driver has no path for it yet
 LazyVStack.maximumHeight: ✅
@@ -540,7 +540,7 @@ LazyVStack.scaleY: cannot read scaleY of LazyVStack - GTK's driver has no path f
 LazyVStack.style: ✅
 LazyVStack.translationX: cannot read translationX of LazyVStack - GTK's driver has no path for it yet
 LazyVStack.translationY: cannot read translationY of LazyVStack - GTK's driver has no path for it yet
-LazyVStack.unfocus: cannot read the focus of LazyVStack - GTK's driver has no path for it yet
+LazyVStack.unfocus: – LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard
 LazyVStack.width: ✅
 LazyVStack.zIndex: not realized
 Line.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Line - GTK's driver has no path for it yet
@@ -548,14 +548,14 @@ Line.accessibilityHint: cannot read accessibilityHint of Line - GTK's driver has
 Line.accessibilityLabel: cannot read accessibilityLabel of Line - GTK's driver has no path for it yet
 Line.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Line - GTK's driver has no path for it yet
 Line.background: not realized
-Line.focus: cannot read the focus of Line - GTK's driver has no path for it yet
+Line.focus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
 Line.frame: ✅
 Line.frameChanged: ✅
 Line.height: ✅
 Line.ignoresInput: not realized
 Line.isAccessibilityHidden: cannot read isAccessibilityHidden of Line - GTK's driver has no path for it yet
 Line.isEnabled: ✅
-Line.isFocusedChanged: cannot read the focus of Line - GTK's driver has no path for it yet
+Line.isFocusedChanged: – Line takes no keyboard focus here: it refuses it, and nothing is heard
 Line.isVisible: ✅
 Line.layoutDirection: cannot read layoutDirection of Line - GTK's driver has no path for it yet
 Line.maximumHeight: ✅
@@ -574,7 +574,7 @@ Line.scaleY: cannot read scaleY of Line - GTK's driver has no path for it yet
 Line.style: ✅
 Line.translationX: cannot read translationX of Line - GTK's driver has no path for it yet
 Line.translationY: cannot read translationY of Line - GTK's driver has no path for it yet
-Line.unfocus: cannot read the focus of Line - GTK's driver has no path for it yet
+Line.unfocus: – Line takes no keyboard focus here: it refuses it, and nothing is heard
 Line.width: ✅
 Line.zIndex: not realized
 List.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of List - GTK's driver has no path for it yet
@@ -582,14 +582,14 @@ List.accessibilityHint: cannot read accessibilityHint of List - GTK's driver has
 List.accessibilityLabel: cannot read accessibilityLabel of List - GTK's driver has no path for it yet
 List.automationExcludedWithChildren: cannot read automationExcludedWithChildren of List - GTK's driver has no path for it yet
 List.background: not realized
-List.focus: cannot read the focus of List - GTK's driver has no path for it yet
+List.focus: ✅
 List.frame: ✅
 List.frameChanged: ✅
 List.height: ✅
 List.ignoresInput: not realized
 List.isAccessibilityHidden: cannot read isAccessibilityHidden of List - GTK's driver has no path for it yet
 List.isEnabled: ✅
-List.isFocusedChanged: cannot read the focus of List - GTK's driver has no path for it yet
+List.isFocusedChanged: ✅
 List.isVisible: ✅
 List.layoutDirection: cannot read layoutDirection of List - GTK's driver has no path for it yet
 List.maximumHeight: ✅
@@ -608,7 +608,7 @@ List.scaleY: cannot read scaleY of List - GTK's driver has no path for it yet
 List.style: not realized
 List.translationX: cannot read translationX of List - GTK's driver has no path for it yet
 List.translationY: cannot read translationY of List - GTK's driver has no path for it yet
-List.unfocus: cannot read the focus of List - GTK's driver has no path for it yet
+List.unfocus: ✅
 List.width: ✅
 List.zIndex: not realized
 Map.accessibilityHeadingLevel: not realized
@@ -650,14 +650,14 @@ Masked.accessibilityHint: cannot read accessibilityHint of Masked - GTK's driver
 Masked.accessibilityLabel: cannot read accessibilityLabel of Masked - GTK's driver has no path for it yet
 Masked.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Masked - GTK's driver has no path for it yet
 Masked.background: cannot read background of Masked - GTK's driver has no path for it yet
-Masked.focus: cannot read the focus of Masked - GTK's driver has no path for it yet
+Masked.focus: – Masked takes no keyboard focus here: it refuses it, and nothing is heard
 Masked.frame: ✅
 Masked.frameChanged: ✅
 Masked.height: ✅
 Masked.ignoresInput: cannot read what reaches Masked - GTK's driver has no path for it yet
 Masked.isAccessibilityHidden: cannot read isAccessibilityHidden of Masked - GTK's driver has no path for it yet
 Masked.isEnabled: ✅
-Masked.isFocusedChanged: cannot read the focus of Masked - GTK's driver has no path for it yet
+Masked.isFocusedChanged: – Masked takes no keyboard focus here: it refuses it, and nothing is heard
 Masked.isVisible: ✅
 Masked.layoutDirection: cannot read layoutDirection of Masked - GTK's driver has no path for it yet
 Masked.maximumHeight: ✅
@@ -676,7 +676,7 @@ Masked.scaleY: cannot read scaleY of Masked - GTK's driver has no path for it ye
 Masked.style: ✅
 Masked.translationX: cannot read translationX of Masked - GTK's driver has no path for it yet
 Masked.translationY: cannot read translationY of Masked - GTK's driver has no path for it yet
-Masked.unfocus: cannot read the focus of Masked - GTK's driver has no path for it yet
+Masked.unfocus: – Masked takes no keyboard focus here: it refuses it, and nothing is heard
 Masked.width: ✅
 Masked.zIndex: not realized
 MenuButton.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of MenuButton - GTK's driver has no path for it yet
@@ -684,14 +684,14 @@ MenuButton.accessibilityHint: cannot read accessibilityHint of MenuButton - GTK'
 MenuButton.accessibilityLabel: cannot read accessibilityLabel of MenuButton - GTK's driver has no path for it yet
 MenuButton.automationExcludedWithChildren: cannot read automationExcludedWithChildren of MenuButton - GTK's driver has no path for it yet
 MenuButton.background: not realized
-MenuButton.focus: cannot read the focus of MenuButton - GTK's driver has no path for it yet
+MenuButton.focus: ✅
 MenuButton.frame: ✅
 MenuButton.frameChanged: ✅
 MenuButton.height: ✅
 MenuButton.ignoresInput: not realized
 MenuButton.isAccessibilityHidden: cannot read isAccessibilityHidden of MenuButton - GTK's driver has no path for it yet
 MenuButton.isEnabled: ✅
-MenuButton.isFocusedChanged: cannot read the focus of MenuButton - GTK's driver has no path for it yet
+MenuButton.isFocusedChanged: ✅
 MenuButton.isVisible: ✅
 MenuButton.layoutDirection: cannot read layoutDirection of MenuButton - GTK's driver has no path for it yet
 MenuButton.maximumHeight: ✅
@@ -710,7 +710,7 @@ MenuButton.scaleY: cannot read scaleY of MenuButton - GTK's driver has no path f
 MenuButton.style: not realized
 MenuButton.translationX: cannot read translationX of MenuButton - GTK's driver has no path for it yet
 MenuButton.translationY: cannot read translationY of MenuButton - GTK's driver has no path for it yet
-MenuButton.unfocus: cannot read the focus of MenuButton - GTK's driver has no path for it yet
+MenuButton.unfocus: ✅
 MenuButton.width: ✅
 MenuButton.zIndex: not realized
 Path.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Path - GTK's driver has no path for it yet
@@ -718,14 +718,14 @@ Path.accessibilityHint: cannot read accessibilityHint of Path - GTK's driver has
 Path.accessibilityLabel: cannot read accessibilityLabel of Path - GTK's driver has no path for it yet
 Path.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Path - GTK's driver has no path for it yet
 Path.background: not realized
-Path.focus: cannot read the focus of Path - GTK's driver has no path for it yet
+Path.focus: – Path takes no keyboard focus here: it refuses it, and nothing is heard
 Path.frame: ✅
 Path.frameChanged: ✅
 Path.height: ✅
 Path.ignoresInput: not realized
 Path.isAccessibilityHidden: cannot read isAccessibilityHidden of Path - GTK's driver has no path for it yet
 Path.isEnabled: ✅
-Path.isFocusedChanged: cannot read the focus of Path - GTK's driver has no path for it yet
+Path.isFocusedChanged: – Path takes no keyboard focus here: it refuses it, and nothing is heard
 Path.isVisible: ✅
 Path.layoutDirection: cannot read layoutDirection of Path - GTK's driver has no path for it yet
 Path.maximumHeight: ✅
@@ -744,7 +744,7 @@ Path.scaleY: cannot read scaleY of Path - GTK's driver has no path for it yet
 Path.style: ✅
 Path.translationX: cannot read translationX of Path - GTK's driver has no path for it yet
 Path.translationY: cannot read translationY of Path - GTK's driver has no path for it yet
-Path.unfocus: cannot read the focus of Path - GTK's driver has no path for it yet
+Path.unfocus: – Path takes no keyboard focus here: it refuses it, and nothing is heard
 Path.width: ✅
 Path.zIndex: not realized
 Picker.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Picker - GTK's driver has no path for it yet
@@ -752,14 +752,14 @@ Picker.accessibilityHint: cannot read accessibilityHint of Picker - GTK's driver
 Picker.accessibilityLabel: cannot read accessibilityLabel of Picker - GTK's driver has no path for it yet
 Picker.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Picker - GTK's driver has no path for it yet
 Picker.background: not realized
-Picker.focus: cannot read the focus of Picker - GTK's driver has no path for it yet
+Picker.focus: ✅
 Picker.frame: ✅
 Picker.frameChanged: ✅
 Picker.height: ✅
 Picker.ignoresInput: not realized
 Picker.isAccessibilityHidden: cannot read isAccessibilityHidden of Picker - GTK's driver has no path for it yet
 Picker.isEnabled: ✅
-Picker.isFocusedChanged: cannot read the focus of Picker - GTK's driver has no path for it yet
+Picker.isFocusedChanged: ✅
 Picker.isVisible: ✅
 Picker.layoutDirection: cannot read layoutDirection of Picker - GTK's driver has no path for it yet
 Picker.maximumHeight: ✅
@@ -778,7 +778,7 @@ Picker.scaleY: cannot read scaleY of Picker - GTK's driver has no path for it ye
 Picker.style: ✅
 Picker.translationX: cannot read translationX of Picker - GTK's driver has no path for it yet
 Picker.translationY: cannot read translationY of Picker - GTK's driver has no path for it yet
-Picker.unfocus: cannot read the focus of Picker - GTK's driver has no path for it yet
+Picker.unfocus: ✅
 Picker.width: ✅
 Picker.zIndex: not realized
 Polygon.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Polygon - GTK's driver has no path for it yet
@@ -786,14 +786,14 @@ Polygon.accessibilityHint: cannot read accessibilityHint of Polygon - GTK's driv
 Polygon.accessibilityLabel: cannot read accessibilityLabel of Polygon - GTK's driver has no path for it yet
 Polygon.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Polygon - GTK's driver has no path for it yet
 Polygon.background: not realized
-Polygon.focus: cannot read the focus of Polygon - GTK's driver has no path for it yet
+Polygon.focus: – Polygon takes no keyboard focus here: it refuses it, and nothing is heard
 Polygon.frame: ✅
 Polygon.frameChanged: ✅
 Polygon.height: ✅
 Polygon.ignoresInput: not realized
 Polygon.isAccessibilityHidden: cannot read isAccessibilityHidden of Polygon - GTK's driver has no path for it yet
 Polygon.isEnabled: ✅
-Polygon.isFocusedChanged: cannot read the focus of Polygon - GTK's driver has no path for it yet
+Polygon.isFocusedChanged: – Polygon takes no keyboard focus here: it refuses it, and nothing is heard
 Polygon.isVisible: ✅
 Polygon.layoutDirection: cannot read layoutDirection of Polygon - GTK's driver has no path for it yet
 Polygon.maximumHeight: ✅
@@ -812,7 +812,7 @@ Polygon.scaleY: cannot read scaleY of Polygon - GTK's driver has no path for it 
 Polygon.style: ✅
 Polygon.translationX: cannot read translationX of Polygon - GTK's driver has no path for it yet
 Polygon.translationY: cannot read translationY of Polygon - GTK's driver has no path for it yet
-Polygon.unfocus: cannot read the focus of Polygon - GTK's driver has no path for it yet
+Polygon.unfocus: – Polygon takes no keyboard focus here: it refuses it, and nothing is heard
 Polygon.width: ✅
 Polygon.zIndex: not realized
 Polyline.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Polyline - GTK's driver has no path for it yet
@@ -820,14 +820,14 @@ Polyline.accessibilityHint: cannot read accessibilityHint of Polyline - GTK's dr
 Polyline.accessibilityLabel: cannot read accessibilityLabel of Polyline - GTK's driver has no path for it yet
 Polyline.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Polyline - GTK's driver has no path for it yet
 Polyline.background: not realized
-Polyline.focus: cannot read the focus of Polyline - GTK's driver has no path for it yet
+Polyline.focus: – Polyline takes no keyboard focus here: it refuses it, and nothing is heard
 Polyline.frame: ✅
 Polyline.frameChanged: ✅
 Polyline.height: ✅
 Polyline.ignoresInput: not realized
 Polyline.isAccessibilityHidden: cannot read isAccessibilityHidden of Polyline - GTK's driver has no path for it yet
 Polyline.isEnabled: ✅
-Polyline.isFocusedChanged: cannot read the focus of Polyline - GTK's driver has no path for it yet
+Polyline.isFocusedChanged: – Polyline takes no keyboard focus here: it refuses it, and nothing is heard
 Polyline.isVisible: ✅
 Polyline.layoutDirection: cannot read layoutDirection of Polyline - GTK's driver has no path for it yet
 Polyline.maximumHeight: ✅
@@ -846,7 +846,7 @@ Polyline.scaleY: cannot read scaleY of Polyline - GTK's driver has no path for i
 Polyline.style: ✅
 Polyline.translationX: cannot read translationX of Polyline - GTK's driver has no path for it yet
 Polyline.translationY: cannot read translationY of Polyline - GTK's driver has no path for it yet
-Polyline.unfocus: cannot read the focus of Polyline - GTK's driver has no path for it yet
+Polyline.unfocus: – Polyline takes no keyboard focus here: it refuses it, and nothing is heard
 Polyline.width: ✅
 Polyline.zIndex: not realized
 PositionIndicator.accessibilityHeadingLevel: not realized
@@ -888,14 +888,14 @@ ProgressBar.accessibilityHint: cannot read accessibilityHint of ProgressBar - GT
 ProgressBar.accessibilityLabel: cannot read accessibilityLabel of ProgressBar - GTK's driver has no path for it yet
 ProgressBar.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ProgressBar - GTK's driver has no path for it yet
 ProgressBar.background: not realized
-ProgressBar.focus: cannot read the focus of ProgressBar - GTK's driver has no path for it yet
+ProgressBar.focus: – ProgressBar takes no keyboard focus here: it refuses it, and nothing is heard
 ProgressBar.frame: ✅
 ProgressBar.frameChanged: ✅
 ProgressBar.height: ✅
 ProgressBar.ignoresInput: not realized
 ProgressBar.isAccessibilityHidden: cannot read isAccessibilityHidden of ProgressBar - GTK's driver has no path for it yet
 ProgressBar.isEnabled: ✅
-ProgressBar.isFocusedChanged: cannot read the focus of ProgressBar - GTK's driver has no path for it yet
+ProgressBar.isFocusedChanged: – ProgressBar takes no keyboard focus here: it refuses it, and nothing is heard
 ProgressBar.isVisible: ✅
 ProgressBar.layoutDirection: cannot read layoutDirection of ProgressBar - GTK's driver has no path for it yet
 ProgressBar.maximumHeight: ✅
@@ -914,7 +914,7 @@ ProgressBar.scaleY: cannot read scaleY of ProgressBar - GTK's driver has no path
 ProgressBar.style: ✅
 ProgressBar.translationX: cannot read translationX of ProgressBar - GTK's driver has no path for it yet
 ProgressBar.translationY: cannot read translationY of ProgressBar - GTK's driver has no path for it yet
-ProgressBar.unfocus: cannot read the focus of ProgressBar - GTK's driver has no path for it yet
+ProgressBar.unfocus: – ProgressBar takes no keyboard focus here: it refuses it, and nothing is heard
 ProgressBar.width: ✅
 ProgressBar.zIndex: not realized
 RadioButton.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of RadioButton - GTK's driver has no path for it yet
@@ -922,14 +922,14 @@ RadioButton.accessibilityHint: cannot read accessibilityHint of RadioButton - GT
 RadioButton.accessibilityLabel: cannot read accessibilityLabel of RadioButton - GTK's driver has no path for it yet
 RadioButton.automationExcludedWithChildren: cannot read automationExcludedWithChildren of RadioButton - GTK's driver has no path for it yet
 RadioButton.background: not realized
-RadioButton.focus: cannot read the focus of RadioButton - GTK's driver has no path for it yet
+RadioButton.focus: ✅
 RadioButton.frame: ✅
 RadioButton.frameChanged: ✅
 RadioButton.height: ✅
 RadioButton.ignoresInput: not realized
 RadioButton.isAccessibilityHidden: cannot read isAccessibilityHidden of RadioButton - GTK's driver has no path for it yet
 RadioButton.isEnabled: ✅
-RadioButton.isFocusedChanged: cannot read the focus of RadioButton - GTK's driver has no path for it yet
+RadioButton.isFocusedChanged: ✅
 RadioButton.isVisible: ✅
 RadioButton.layoutDirection: cannot read layoutDirection of RadioButton - GTK's driver has no path for it yet
 RadioButton.maximumHeight: ✅
@@ -948,7 +948,7 @@ RadioButton.scaleY: cannot read scaleY of RadioButton - GTK's driver has no path
 RadioButton.style: ✅
 RadioButton.translationX: cannot read translationX of RadioButton - GTK's driver has no path for it yet
 RadioButton.translationY: cannot read translationY of RadioButton - GTK's driver has no path for it yet
-RadioButton.unfocus: cannot read the focus of RadioButton - GTK's driver has no path for it yet
+RadioButton.unfocus: ✅
 RadioButton.width: ✅
 RadioButton.zIndex: not realized
 Rectangle.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Rectangle - GTK's driver has no path for it yet
@@ -956,14 +956,14 @@ Rectangle.accessibilityHint: cannot read accessibilityHint of Rectangle - GTK's 
 Rectangle.accessibilityLabel: cannot read accessibilityLabel of Rectangle - GTK's driver has no path for it yet
 Rectangle.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Rectangle - GTK's driver has no path for it yet
 Rectangle.background: not realized
-Rectangle.focus: cannot read the focus of Rectangle - GTK's driver has no path for it yet
+Rectangle.focus: – Rectangle takes no keyboard focus here: it refuses it, and nothing is heard
 Rectangle.frame: ✅
 Rectangle.frameChanged: ✅
 Rectangle.height: ✅
 Rectangle.ignoresInput: not realized
 Rectangle.isAccessibilityHidden: cannot read isAccessibilityHidden of Rectangle - GTK's driver has no path for it yet
 Rectangle.isEnabled: ✅
-Rectangle.isFocusedChanged: cannot read the focus of Rectangle - GTK's driver has no path for it yet
+Rectangle.isFocusedChanged: – Rectangle takes no keyboard focus here: it refuses it, and nothing is heard
 Rectangle.isVisible: ✅
 Rectangle.layoutDirection: cannot read layoutDirection of Rectangle - GTK's driver has no path for it yet
 Rectangle.maximumHeight: ✅
@@ -982,7 +982,7 @@ Rectangle.scaleY: cannot read scaleY of Rectangle - GTK's driver has no path for
 Rectangle.style: ✅
 Rectangle.translationX: cannot read translationX of Rectangle - GTK's driver has no path for it yet
 Rectangle.translationY: cannot read translationY of Rectangle - GTK's driver has no path for it yet
-Rectangle.unfocus: cannot read the focus of Rectangle - GTK's driver has no path for it yet
+Rectangle.unfocus: – Rectangle takes no keyboard focus here: it refuses it, and nothing is heard
 Rectangle.width: ✅
 Rectangle.zIndex: not realized
 ScrollView.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of ScrollView - GTK's driver has no path for it yet
@@ -990,14 +990,14 @@ ScrollView.accessibilityHint: cannot read accessibilityHint of ScrollView - GTK'
 ScrollView.accessibilityLabel: cannot read accessibilityLabel of ScrollView - GTK's driver has no path for it yet
 ScrollView.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ScrollView - GTK's driver has no path for it yet
 ScrollView.background: cannot read background of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
-ScrollView.focus: cannot read the focus of ScrollView - GTK's driver has no path for it yet
+ScrollView.focus: ✅
 ScrollView.frame: ✅
 ScrollView.frameChanged: ✅
 ScrollView.height: ✅
 ScrollView.ignoresInput: not realized
 ScrollView.isAccessibilityHidden: cannot read isAccessibilityHidden of ScrollView - GTK's driver has no path for it yet
 ScrollView.isEnabled: ✅
-ScrollView.isFocusedChanged: cannot read the focus of ScrollView - GTK's driver has no path for it yet
+ScrollView.isFocusedChanged: ✅
 ScrollView.isVisible: ✅
 ScrollView.layoutDirection: cannot read layoutDirection of ScrollView - GTK's driver has no path for it yet
 ScrollView.maximumHeight: ✅
@@ -1016,7 +1016,7 @@ ScrollView.scaleY: cannot read scaleY of ScrollView - GTK's driver has no path f
 ScrollView.style: ✅
 ScrollView.translationX: cannot read translationX of ScrollView - GTK's driver has no path for it yet
 ScrollView.translationY: cannot read translationY of ScrollView - GTK's driver has no path for it yet
-ScrollView.unfocus: cannot read the focus of ScrollView - GTK's driver has no path for it yet
+ScrollView.unfocus: ✅
 ScrollView.width: ✅
 ScrollView.zIndex: not realized
 SearchField.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of SearchField - GTK's driver has no path for it yet
@@ -1024,14 +1024,14 @@ SearchField.accessibilityHint: cannot read accessibilityHint of SearchField - GT
 SearchField.accessibilityLabel: cannot read accessibilityLabel of SearchField - GTK's driver has no path for it yet
 SearchField.automationExcludedWithChildren: cannot read automationExcludedWithChildren of SearchField - GTK's driver has no path for it yet
 SearchField.background: not realized
-SearchField.focus: cannot read the focus of SearchField - GTK's driver has no path for it yet
+SearchField.focus: ✅
 SearchField.frame: ✅
 SearchField.frameChanged: ✅
 SearchField.height: ✅
 SearchField.ignoresInput: not realized
 SearchField.isAccessibilityHidden: cannot read isAccessibilityHidden of SearchField - GTK's driver has no path for it yet
 SearchField.isEnabled: ✅
-SearchField.isFocusedChanged: cannot read the focus of SearchField - GTK's driver has no path for it yet
+SearchField.isFocusedChanged: ✅
 SearchField.isVisible: ✅
 SearchField.layoutDirection: cannot read layoutDirection of SearchField - GTK's driver has no path for it yet
 SearchField.maximumHeight: ✅
@@ -1050,7 +1050,7 @@ SearchField.scaleY: cannot read scaleY of SearchField - GTK's driver has no path
 SearchField.style: ✅
 SearchField.translationX: cannot read translationX of SearchField - GTK's driver has no path for it yet
 SearchField.translationY: cannot read translationY of SearchField - GTK's driver has no path for it yet
-SearchField.unfocus: cannot read the focus of SearchField - GTK's driver has no path for it yet
+SearchField.unfocus: ✅
 SearchField.width: ✅
 SearchField.zIndex: not realized
 Slider.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Slider - GTK's driver has no path for it yet
@@ -1058,14 +1058,14 @@ Slider.accessibilityHint: cannot read accessibilityHint of Slider - GTK's driver
 Slider.accessibilityLabel: cannot read accessibilityLabel of Slider - GTK's driver has no path for it yet
 Slider.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Slider - GTK's driver has no path for it yet
 Slider.background: not realized
-Slider.focus: cannot read the focus of Slider - GTK's driver has no path for it yet
+Slider.focus: ✅
 Slider.frame: ✅
 Slider.frameChanged: ✅
 Slider.height: ✅
 Slider.ignoresInput: not realized
 Slider.isAccessibilityHidden: cannot read isAccessibilityHidden of Slider - GTK's driver has no path for it yet
 Slider.isEnabled: ✅
-Slider.isFocusedChanged: cannot read the focus of Slider - GTK's driver has no path for it yet
+Slider.isFocusedChanged: ✅
 Slider.isVisible: ✅
 Slider.layoutDirection: cannot read layoutDirection of Slider - GTK's driver has no path for it yet
 Slider.maximumHeight: ✅
@@ -1084,7 +1084,7 @@ Slider.scaleY: cannot read scaleY of Slider - GTK's driver has no path for it ye
 Slider.style: ✅
 Slider.translationX: cannot read translationX of Slider - GTK's driver has no path for it yet
 Slider.translationY: cannot read translationY of Slider - GTK's driver has no path for it yet
-Slider.unfocus: cannot read the focus of Slider - GTK's driver has no path for it yet
+Slider.unfocus: ✅
 Slider.width: ✅
 Slider.zIndex: not realized
 Stepper.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Stepper - GTK's driver has no path for it yet
@@ -1092,14 +1092,14 @@ Stepper.accessibilityHint: cannot read accessibilityHint of Stepper - GTK's driv
 Stepper.accessibilityLabel: cannot read accessibilityLabel of Stepper - GTK's driver has no path for it yet
 Stepper.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Stepper - GTK's driver has no path for it yet
 Stepper.background: not realized
-Stepper.focus: cannot read the focus of Stepper - GTK's driver has no path for it yet
+Stepper.focus: ✅
 Stepper.frame: ✅
 Stepper.frameChanged: ✅
 Stepper.height: ✅
 Stepper.ignoresInput: not realized
 Stepper.isAccessibilityHidden: cannot read isAccessibilityHidden of Stepper - GTK's driver has no path for it yet
 Stepper.isEnabled: ✅
-Stepper.isFocusedChanged: cannot read the focus of Stepper - GTK's driver has no path for it yet
+Stepper.isFocusedChanged: ✅
 Stepper.isVisible: ✅
 Stepper.layoutDirection: cannot read layoutDirection of Stepper - GTK's driver has no path for it yet
 Stepper.maximumHeight: ✅
@@ -1118,7 +1118,7 @@ Stepper.scaleY: cannot read scaleY of Stepper - GTK's driver has no path for it 
 Stepper.style: ✅
 Stepper.translationX: cannot read translationX of Stepper - GTK's driver has no path for it yet
 Stepper.translationY: cannot read translationY of Stepper - GTK's driver has no path for it yet
-Stepper.unfocus: cannot read the focus of Stepper - GTK's driver has no path for it yet
+Stepper.unfocus: ✅
 Stepper.width: ✅
 Stepper.zIndex: not realized
 Switch.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Switch - GTK's driver has no path for it yet
@@ -1126,14 +1126,14 @@ Switch.accessibilityHint: cannot read accessibilityHint of Switch - GTK's driver
 Switch.accessibilityLabel: cannot read accessibilityLabel of Switch - GTK's driver has no path for it yet
 Switch.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Switch - GTK's driver has no path for it yet
 Switch.background: not realized
-Switch.focus: cannot read the focus of Switch - GTK's driver has no path for it yet
+Switch.focus: ✅
 Switch.frame: ✅
 Switch.frameChanged: ✅
 Switch.height: ✅
 Switch.ignoresInput: not realized
 Switch.isAccessibilityHidden: cannot read isAccessibilityHidden of Switch - GTK's driver has no path for it yet
 Switch.isEnabled: ✅
-Switch.isFocusedChanged: cannot read the focus of Switch - GTK's driver has no path for it yet
+Switch.isFocusedChanged: ✅
 Switch.isVisible: ✅
 Switch.layoutDirection: cannot read layoutDirection of Switch - GTK's driver has no path for it yet
 Switch.maximumHeight: ✅
@@ -1152,7 +1152,7 @@ Switch.scaleY: cannot read scaleY of Switch - GTK's driver has no path for it ye
 Switch.style: ✅
 Switch.translationX: cannot read translationX of Switch - GTK's driver has no path for it yet
 Switch.translationY: cannot read translationY of Switch - GTK's driver has no path for it yet
-Switch.unfocus: cannot read the focus of Switch - GTK's driver has no path for it yet
+Switch.unfocus: ✅
 Switch.width: ✅
 Switch.zIndex: not realized
 Text.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Text - GTK's driver has no path for it yet
@@ -1160,14 +1160,14 @@ Text.accessibilityHint: cannot read accessibilityHint of Text - GTK's driver has
 Text.accessibilityLabel: cannot read accessibilityLabel of Text - GTK's driver has no path for it yet
 Text.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Text - GTK's driver has no path for it yet
 Text.background: cannot read background of Text - GTK's driver has no path for it yet
-Text.focus: cannot read the focus of Text - GTK's driver has no path for it yet
+Text.focus: – Text takes no keyboard focus here: it refuses it, and nothing is heard
 Text.frame: ✅
 Text.frameChanged: ✅
 Text.height: ✅
 Text.ignoresInput: not realized
 Text.isAccessibilityHidden: cannot read isAccessibilityHidden of Text - GTK's driver has no path for it yet
 Text.isEnabled: ✅
-Text.isFocusedChanged: cannot read the focus of Text - GTK's driver has no path for it yet
+Text.isFocusedChanged: – Text takes no keyboard focus here: it refuses it, and nothing is heard
 Text.isVisible: ✅
 Text.layoutDirection: cannot read layoutDirection of Text - GTK's driver has no path for it yet
 Text.maximumHeight: ✅
@@ -1186,7 +1186,7 @@ Text.scaleY: cannot read scaleY of Text - GTK's driver has no path for it yet
 Text.style: ✅
 Text.translationX: cannot read translationX of Text - GTK's driver has no path for it yet
 Text.translationY: cannot read translationY of Text - GTK's driver has no path for it yet
-Text.unfocus: cannot read the focus of Text - GTK's driver has no path for it yet
+Text.unfocus: – Text takes no keyboard focus here: it refuses it, and nothing is heard
 Text.width: ✅
 Text.zIndex: not realized
 TextEditor.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of TextEditor - GTK's driver has no path for it yet
@@ -1194,14 +1194,14 @@ TextEditor.accessibilityHint: cannot read accessibilityHint of TextEditor - GTK'
 TextEditor.accessibilityLabel: cannot read accessibilityLabel of TextEditor - GTK's driver has no path for it yet
 TextEditor.automationExcludedWithChildren: cannot read automationExcludedWithChildren of TextEditor - GTK's driver has no path for it yet
 TextEditor.background: not realized
-TextEditor.focus: cannot read the focus of TextEditor - GTK's driver has no path for it yet
+TextEditor.focus: ✅
 TextEditor.frame: ✅
 TextEditor.frameChanged: ✅
 TextEditor.height: ✅
 TextEditor.ignoresInput: not realized
 TextEditor.isAccessibilityHidden: cannot read isAccessibilityHidden of TextEditor - GTK's driver has no path for it yet
 TextEditor.isEnabled: ✅
-TextEditor.isFocusedChanged: cannot read the focus of TextEditor - GTK's driver has no path for it yet
+TextEditor.isFocusedChanged: ✅
 TextEditor.isVisible: ✅
 TextEditor.layoutDirection: cannot read layoutDirection of TextEditor - GTK's driver has no path for it yet
 TextEditor.maximumHeight: ✅
@@ -1220,7 +1220,7 @@ TextEditor.scaleY: cannot read scaleY of TextEditor - GTK's driver has no path f
 TextEditor.style: ✅
 TextEditor.translationX: cannot read translationX of TextEditor - GTK's driver has no path for it yet
 TextEditor.translationY: cannot read translationY of TextEditor - GTK's driver has no path for it yet
-TextEditor.unfocus: cannot read the focus of TextEditor - GTK's driver has no path for it yet
+TextEditor.unfocus: ✅
 TextEditor.width: ✅
 TextEditor.zIndex: not realized
 TextField.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of TextField - GTK's driver has no path for it yet
@@ -1228,14 +1228,14 @@ TextField.accessibilityHint: cannot read accessibilityHint of TextField - GTK's 
 TextField.accessibilityLabel: cannot read accessibilityLabel of TextField - GTK's driver has no path for it yet
 TextField.automationExcludedWithChildren: cannot read automationExcludedWithChildren of TextField - GTK's driver has no path for it yet
 TextField.background: not realized
-TextField.focus: cannot read the focus of TextField - GTK's driver has no path for it yet
+TextField.focus: ✅
 TextField.frame: ✅
 TextField.frameChanged: ✅
 TextField.height: ✅
 TextField.ignoresInput: not realized
 TextField.isAccessibilityHidden: cannot read isAccessibilityHidden of TextField - GTK's driver has no path for it yet
 TextField.isEnabled: ✅
-TextField.isFocusedChanged: cannot read the focus of TextField - GTK's driver has no path for it yet
+TextField.isFocusedChanged: ✅
 TextField.isVisible: ✅
 TextField.layoutDirection: cannot read layoutDirection of TextField - GTK's driver has no path for it yet
 TextField.maximumHeight: ✅
@@ -1254,7 +1254,7 @@ TextField.scaleY: cannot read scaleY of TextField - GTK's driver has no path for
 TextField.style: ✅
 TextField.translationX: cannot read translationX of TextField - GTK's driver has no path for it yet
 TextField.translationY: cannot read translationY of TextField - GTK's driver has no path for it yet
-TextField.unfocus: cannot read the focus of TextField - GTK's driver has no path for it yet
+TextField.unfocus: ✅
 TextField.width: ✅
 TextField.zIndex: not realized
 TimePicker.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of TimePicker - GTK's driver has no path for it yet
@@ -1262,14 +1262,14 @@ TimePicker.accessibilityHint: cannot read accessibilityHint of TimePicker - GTK'
 TimePicker.accessibilityLabel: cannot read accessibilityLabel of TimePicker - GTK's driver has no path for it yet
 TimePicker.automationExcludedWithChildren: cannot read automationExcludedWithChildren of TimePicker - GTK's driver has no path for it yet
 TimePicker.background: not realized
-TimePicker.focus: cannot read the focus of TimePicker - GTK's driver has no path for it yet
+TimePicker.focus: ✅
 TimePicker.frame: ✅
 TimePicker.frameChanged: ✅
 TimePicker.height: ✅
 TimePicker.ignoresInput: not realized
 TimePicker.isAccessibilityHidden: cannot read isAccessibilityHidden of TimePicker - GTK's driver has no path for it yet
 TimePicker.isEnabled: ✅
-TimePicker.isFocusedChanged: cannot read the focus of TimePicker - GTK's driver has no path for it yet
+TimePicker.isFocusedChanged: ✅
 TimePicker.isVisible: ✅
 TimePicker.layoutDirection: cannot read layoutDirection of TimePicker - GTK's driver has no path for it yet
 TimePicker.maximumHeight: ✅
@@ -1288,7 +1288,7 @@ TimePicker.scaleY: cannot read scaleY of TimePicker - GTK's driver has no path f
 TimePicker.style: ✅
 TimePicker.translationX: cannot read translationX of TimePicker - GTK's driver has no path for it yet
 TimePicker.translationY: cannot read translationY of TimePicker - GTK's driver has no path for it yet
-TimePicker.unfocus: cannot read the focus of TimePicker - GTK's driver has no path for it yet
+TimePicker.unfocus: ✅
 TimePicker.width: ✅
 TimePicker.zIndex: not realized
 TitleBar.accessibilityHeadingLevel: not realized
@@ -1330,14 +1330,14 @@ VStack.accessibilityHint: cannot read accessibilityHint of VStack - GTK's driver
 VStack.accessibilityLabel: cannot read accessibilityLabel of VStack - GTK's driver has no path for it yet
 VStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of VStack - GTK's driver has no path for it yet
 VStack.background: cannot read background of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
-VStack.focus: cannot read the focus of VStack - GTK's driver has no path for it yet
+VStack.focus: – VStack takes no keyboard focus here: it refuses it, and nothing is heard
 VStack.frame: ✅
 VStack.frameChanged: ✅
 VStack.height: ✅
 VStack.ignoresInput: cannot read what reaches VStack - GTK's driver has no path for it yet
 VStack.isAccessibilityHidden: cannot read isAccessibilityHidden of VStack - GTK's driver has no path for it yet
 VStack.isEnabled: ✅
-VStack.isFocusedChanged: cannot read the focus of VStack - GTK's driver has no path for it yet
+VStack.isFocusedChanged: – VStack takes no keyboard focus here: it refuses it, and nothing is heard
 VStack.isVisible: ✅
 VStack.layoutDirection: cannot read layoutDirection of VStack - GTK's driver has no path for it yet
 VStack.maximumHeight: ✅
@@ -1356,56 +1356,56 @@ VStack.scaleY: cannot read scaleY of VStack - GTK's driver has no path for it ye
 VStack.style: ✅
 VStack.translationX: cannot read translationX of VStack - GTK's driver has no path for it yet
 VStack.translationY: cannot read translationY of VStack - GTK's driver has no path for it yet
-VStack.unfocus: cannot read the focus of VStack - GTK's driver has no path for it yet
+VStack.unfocus: – VStack takes no keyboard focus here: it refuses it, and nothing is heard
 VStack.width: ✅
 VStack.zIndex: not realized
-WebView.accessibilityHeadingLevel: not realized
-WebView.accessibilityHint: not realized
-WebView.accessibilityLabel: not realized
-WebView.automationExcludedWithChildren: not realized
+WebView.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of WebView - GTK's driver has no path for it yet
+WebView.accessibilityHint: cannot read accessibilityHint of WebView - GTK's driver has no path for it yet
+WebView.accessibilityLabel: cannot read accessibilityLabel of WebView - GTK's driver has no path for it yet
+WebView.automationExcludedWithChildren: cannot read automationExcludedWithChildren of WebView - GTK's driver has no path for it yet
 WebView.background: not realized
-WebView.focus: not realized
-WebView.frame: not realized
-WebView.frameChanged: not realized
-WebView.height: not realized
+WebView.focus: ✅
+WebView.frame: ✅
+WebView.frameChanged: ✅
+WebView.height: ✅
 WebView.ignoresInput: not realized
-WebView.isAccessibilityHidden: not realized
-WebView.isEnabled: not realized
-WebView.isFocusedChanged: not realized
-WebView.isVisible: not realized
-WebView.layoutDirection: not realized
-WebView.maximumHeight: not realized
-WebView.maximumWidth: not realized
-WebView.minimumHeight: not realized
-WebView.minimumWidth: not realized
-WebView.opacity: not realized
-WebView.pivotX: not realized
-WebView.pivotY: not realized
-WebView.rotation: not realized
-WebView.rotationX: not realized
-WebView.rotationY: not realized
-WebView.scale: not realized
-WebView.scaleX: not realized
-WebView.scaleY: not realized
-WebView.style: not realized
-WebView.translationX: not realized
-WebView.translationY: not realized
-WebView.unfocus: not realized
-WebView.width: not realized
+WebView.isAccessibilityHidden: cannot read isAccessibilityHidden of WebView - GTK's driver has no path for it yet
+WebView.isEnabled: ✅
+WebView.isFocusedChanged: ✅
+WebView.isVisible: ✅
+WebView.layoutDirection: cannot read layoutDirection of WebView - GTK's driver has no path for it yet
+WebView.maximumHeight: ✅
+WebView.maximumWidth: ✅
+WebView.minimumHeight: ✅
+WebView.minimumWidth: ✅
+WebView.opacity: ✅
+WebView.pivotX: cannot read pivotX of WebView - GTK's driver has no path for it yet
+WebView.pivotY: cannot read pivotY of WebView - GTK's driver has no path for it yet
+WebView.rotation: cannot read rotation of WebView - GTK's driver has no path for it yet
+WebView.rotationX: cannot read rotationX of WebView - GTK's driver has no path for it yet
+WebView.rotationY: cannot read rotationY of WebView - GTK's driver has no path for it yet
+WebView.scale: cannot read scale of WebView - GTK's driver has no path for it yet
+WebView.scaleX: cannot read scaleX of WebView - GTK's driver has no path for it yet
+WebView.scaleY: cannot read scaleY of WebView - GTK's driver has no path for it yet
+WebView.style: ✅
+WebView.translationX: cannot read translationX of WebView - GTK's driver has no path for it yet
+WebView.translationY: cannot read translationY of WebView - GTK's driver has no path for it yet
+WebView.unfocus: ✅
+WebView.width: ✅
 WebView.zIndex: not realized
 ZStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of ZStack - GTK's driver has no path for it yet
 ZStack.accessibilityHint: cannot read accessibilityHint of ZStack - GTK's driver has no path for it yet
 ZStack.accessibilityLabel: cannot read accessibilityLabel of ZStack - GTK's driver has no path for it yet
 ZStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ZStack - GTK's driver has no path for it yet
 ZStack.background: cannot read background of ZStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
-ZStack.focus: cannot read the focus of ZStack - GTK's driver has no path for it yet
+ZStack.focus: – ZStack takes no keyboard focus here: it refuses it, and nothing is heard
 ZStack.frame: ✅
 ZStack.frameChanged: ✅
 ZStack.height: ✅
 ZStack.ignoresInput: cannot read what reaches ZStack - GTK's driver has no path for it yet
 ZStack.isAccessibilityHidden: cannot read isAccessibilityHidden of ZStack - GTK's driver has no path for it yet
 ZStack.isEnabled: ✅
-ZStack.isFocusedChanged: cannot read the focus of ZStack - GTK's driver has no path for it yet
+ZStack.isFocusedChanged: – ZStack takes no keyboard focus here: it refuses it, and nothing is heard
 ZStack.isVisible: ✅
 ZStack.layoutDirection: cannot read layoutDirection of ZStack - GTK's driver has no path for it yet
 ZStack.maximumHeight: ✅
@@ -1424,6 +1424,6 @@ ZStack.scaleY: cannot read scaleY of ZStack - GTK's driver has no path for it ye
 ZStack.style: ✅
 ZStack.translationX: cannot read translationX of ZStack - GTK's driver has no path for it yet
 ZStack.translationY: cannot read translationY of ZStack - GTK's driver has no path for it yet
-ZStack.unfocus: cannot read the focus of ZStack - GTK's driver has no path for it yet
+ZStack.unfocus: – ZStack takes no keyboard focus here: it refuses it, and nothing is heard
 ZStack.width: ✅
 ZStack.zIndex: not realized

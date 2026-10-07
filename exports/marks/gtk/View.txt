@@ -1280,7 +1280,7 @@ VStack.tapCount: cannot tap on VStack - GTK's driver has no path for it yet
 VStack.tapGesture: cannot tap on VStack - GTK's driver has no path for it yet
 VStack.verticalAlignment: ✅
 WebView.allowDrop: not realized
-WebView.area: not realized
+WebView.area: ✅
 WebView.canDrag: not realized
 WebView.dragLeave: not realized
 WebView.dragOver: not realized
@@ -1288,29 +1288,29 @@ WebView.dragStarting: not realized
 WebView.dragText: not realized
 WebView.drop: not realized
 WebView.dropCompleted: not realized
-WebView.frameChanged: not realized
-WebView.gridColumn: not realized
-WebView.gridColumnSpan: not realized
-WebView.gridRow: not realized
-WebView.gridRowSpan: not realized
-WebView.horizontalAlignment: not realized
-WebView.padding: not realized
-WebView.panTouchCount: not realized
-WebView.panUpdated: not realized
-WebView.panXChannel: not realized
-WebView.panYChannel: not realized
-WebView.pinchUpdated: not realized
-WebView.pointerEntered: not realized
-WebView.pointerExited: not realized
-WebView.pointerMoved: not realized
-WebView.pointerPressed: not realized
-WebView.pointerReleased: not realized
-WebView.swipeDirection: not realized
-WebView.swipeThreshold: not realized
-WebView.swiped: not realized
-WebView.tapCount: not realized
-WebView.tapGesture: not realized
-WebView.verticalAlignment: not realized
+WebView.frameChanged: ✅
+WebView.gridColumn: ✅
+WebView.gridColumnSpan: ✅
+WebView.gridRow: ✅
+WebView.gridRowSpan: ✅
+WebView.horizontalAlignment: ✅
+WebView.padding: ✅
+WebView.panTouchCount: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.panUpdated: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.panXChannel: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.panYChannel: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.pinchUpdated: cannot pinch on WebView - GTK's driver has no path for it yet
+WebView.pointerEntered: cannot hover on WebView - GTK's driver has no path for it yet
+WebView.pointerExited: cannot hover on WebView - GTK's driver has no path for it yet
+WebView.pointerMoved: cannot hover on WebView - GTK's driver has no path for it yet
+WebView.pointerPressed: cannot hover on WebView - GTK's driver has no path for it yet
+WebView.pointerReleased: cannot hover on WebView - GTK's driver has no path for it yet
+WebView.swipeDirection: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.swipeThreshold: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.swiped: cannot pan on WebView - GTK's driver has no path for it yet
+WebView.tapCount: cannot tap on WebView - GTK's driver has no path for it yet
+WebView.tapGesture: cannot tap on WebView - GTK's driver has no path for it yet
+WebView.verticalAlignment: ✅
 ZStack.allowDrop: not realized
 ZStack.area: ✅
 ZStack.canDrag: not realized
