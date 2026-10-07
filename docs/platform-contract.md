@@ -338,10 +338,15 @@ the tier.
 | `currentTimeZone` | [App](controls/App.md) |
 | `handlerFailed` | [App](controls/App.md) |
 | `hideOnScreenKeyboard` | [App](controls/App.md) |
+| `launchFile` | [App](controls/App.md) |
+| `launchLink` | [App](controls/App.md) |
 | `localizedString` | [App](controls/App.md) |
+| `openFiles` | [App](controls/App.md) |
 | `persistSceneValue` | [App](controls/App.md) |
 | `persistValue` | [App](controls/App.md) |
 | `prompt` | [App](controls/App.md) |
+| `readFile` | [App](controls/App.md) |
+| `saveFile` | [App](controls/App.md) |
 | `utcOffset` | [App](controls/App.md) |
 | `scrollTo` | [List](controls/List.md) |
 | `moveToRegion` | [Map](controls/Map.md) |
@@ -518,7 +523,7 @@ Every control, and every part an application, its windows and its pages are made
 
 | Part | Members | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | --- | ---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [App](controls/App.md) | 15 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
+| [App](controls/App.md) | 20 | 7 ✅ | 6 ✅ | 4 ✅ | 12 ✅ | 3 ✅ |  |
 | [Content](controls/Content.md) | 0 |  |  |  |  |  |  |
 | [ContextMenu](controls/ContextMenu.md) | 0 |  |  |  |  |  |  |
 | [Divider](controls/Divider.md) | 0 |  |  |  |  |  |  |
@@ -543,7 +548,7 @@ Every control, and every part an application, its windows and its pages are made
 | [ToolbarSpacer](controls/ToolbarSpacer.md) | 2 |  |  |  |  |  |  |
 | [TrailingContent](controls/TrailingContent.md) | 0 |  |  |  |  |  |  |
 | [WindowScene](controls/WindowScene.md) | 25 | 15 ✅ | 4 ✅ · 9 – | 2 ✅ | 23 ✅ |  |  |
-| **Met** - ✅ and – | 177 | 56 of 177 met | 71 of 177 met | 21 of 177 met | 83 of 177 met | 14 of 177 met |  |
+| **Met** - ✅ and – | 182 | 56 of 182 met | 71 of 182 met | 21 of 182 met | 83 of 182 met | 14 of 182 met |  |
 <!-- dictionary:end -->
 
 ## Contract members
@@ -743,7 +748,8 @@ realizes the element and each of its members.
 
 `alert`, `announce`, `chooseAction`, `chooseFiles`, `confirm`, `currentTime`,
 `currentTimeZone`, `evaluateJavaScript`, `focus`, `goBack`, `goForward`,
-`handlerFailed`, `hideOnScreenKeyboard`, `localizedString`, `moveToRegion`,
-`persistSceneValue`, `persistValue`, `prompt`, `reload`, `scrollTo`,
+`handlerFailed`, `hideOnScreenKeyboard`, `launchFile`, `launchLink`,
+`localizedString`, `moveToRegion`, `openFiles`, `persistSceneValue`,
+`persistValue`, `prompt`, `readFile`, `reload`, `saveFile`, `scrollTo`,
 `scrollToDescendant`, `unfocus`, `utcOffset`.
 <!-- vocabulary:end -->

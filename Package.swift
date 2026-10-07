@@ -22,12 +22,12 @@ import PackageDescription
 // scripts glob the same tree. A new .swift file is picked up by both.
 let package = Package(
     name: "StateUI",
-    // iOS 26, Mac Catalyst 26 and macOS 26: the releases StateUI is built and
-    // tested against, with Xcode 27.
+    // macOS 15 is the floor SCE (Logorythia) deploys to; iOS/Mac Catalyst stay
+    // at 26, the releases upstream builds and tests against.
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
-        .macOS(.v26),
+        .macOS(.v15),
     ],
     products: [
         .library(

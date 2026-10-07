@@ -16,6 +16,7 @@ let package = Package(
         .package(name: "StateUIRoot", path: "../.."),
         .package(name: "StateUIHost", path: "../StateUI.Host"),
         .package(name: "StateUIConformance", path: "../StateUI.Conformance"),
+        .package(name: "StateUIWebViewGTK", path: "../Backends/WebView.GTK"),
     ],
     targets: [
         // GTK's and libadwaita's headers and libraries, and nothing else.
@@ -33,6 +34,7 @@ let package = Package(
                 "StateUIGTK", "CStateUIGTK", .product(name: "StateUI", package: "StateUIRoot"),
                 .product(name: "StateUIHost", package: "StateUIHost"),
                 .product(name: "StateUIConformance", package: "StateUIConformance"),
+                .product(name: "StateUIWebViewGTK", package: "StateUIWebViewGTK"),
             ],
             path: "Tests",
             exclude: ["Resources"],

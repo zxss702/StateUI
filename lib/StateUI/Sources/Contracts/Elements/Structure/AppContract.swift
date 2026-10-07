@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// The application at the root of a StateUI tree, and what its host does for it
-/// with no control behind it: questions for the user, the clock and the time
-/// zone, the screen reader, what is kept.
+/// with no control behind it: questions for the user, the files they open and
+/// save, what the system launches, the clock and the time zone, the screen
+/// reader, what is kept.
 public enum AppContract: ElementContract, ApplicationTier {
     /// The node type the contract declares.
     public static let nodeType: NodeType = "App"
@@ -66,6 +67,18 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// See `OnScreenKeyboard.hide()`.
     public static let hideOnScreenKeyboard = ElementAct<Self, Void, Bool>("hideOnScreenKeyboard")
 
+    /// Opens a file the user chose in the application the system gives its
+    /// kind, answering whether one took it.
+    ///
+    /// See `ChosenFile.launch()`.
+    public static let launchFile = ElementAct<Self, ChosenFile, Bool>("launchFile")
+
+    /// Opens an address in the application the system gives it - a web page,
+    /// a mail address - answering whether one took it.
+    ///
+    /// See `Links.launch(_:)`.
+    public static let launchLink = ElementAct<Self, String, Bool>("launchLink")
+
     /// What a lookup key resolves to in the host's tables - the pattern and
     /// its arguments in, the words out; the act `*Key` members' mounted
     /// resolution shares, called directly where a string crosses outside a
@@ -74,6 +87,13 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// See `Strings.localize(_:)`.
     public static let localizedString = ElementAct<Self, LocalizedStringKey, String>(
         "localizedString")
+
+    /// Asks the user for files to open in the dialog over the showing page -
+    /// the kinds it shows, none for any, and whether it takes several -
+    /// answering the files chosen, none where it was cancelled.
+    ///
+    /// See `Dialogs.openFile(types:)`.
+    public static let openFiles = ElementAct<Self, ([FileType], Bool), [ChosenFile]>("openFiles")
 
     /// A scene key's new value, on its way to the platform's record of that
     /// scene: the scene, the key, the value.
@@ -91,6 +111,19 @@ public enum AppContract: ElementContract, ApplicationTier {
     public static let prompt = ElementAct<Self, (String, String, String, String, String?, Int?, InputPurpose, String), String?>(
         "prompt")
 
+    /// Reads a file the user chose, whole.
+    ///
+    /// See `ChosenFile.read()`.
+    public static let readFile = ElementAct<Self, ChosenFile, [UInt8]>("readFile")
+
+    /// Asks the user where to save in the dialog over the showing page, and
+    /// writes the contents there - the contents, the name it suggests and the
+    /// kinds it offers - answering the file saved, or nothing where it was
+    /// cancelled.
+    ///
+    /// See `Dialogs.saveFile(_:name:types:)`.
+    public static let saveFile = ElementAct<Self, ([UInt8], String, [FileType]), ChosenFile?>("saveFile")
+
     /// A URL the platform handed the application to open - a file opened from
     /// the file manager, a link tapped elsewhere, the URL as text.
     ///
@@ -107,7 +140,7 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// The element's own members.
     public static let members: [any ContractMember] = [
         alert, announce, chooseAction, chooseFiles, confirm, currentTime, currentTimeZone, handlerFailed,
-        hideOnScreenKeyboard, localizedString, persistSceneValue, persistValue, prompt, urlOpened,
-        utcOffset,
+        hideOnScreenKeyboard, launchFile, launchLink, localizedString, openFiles, persistSceneValue,
+        persistValue, prompt, readFile, saveFile, urlOpened, utcOffset,
     ]
 }

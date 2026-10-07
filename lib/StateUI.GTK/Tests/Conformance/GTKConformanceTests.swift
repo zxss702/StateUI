@@ -10,6 +10,11 @@ import XCTest
 /// The conformance suite on GTK: a family a contract, each one test, its verdicts GTK's column of the
 /// control dictionary.
 final class GTKConformanceTests: XCTestCase {
+    /// The host with its backends, as an application registering them runs it.
+    override func setUp() {
+        onUIThread { GTKBackends.registered }
+    }
+
     func testActivityIndicator() { conform(ActivityIndicatorTests.self) }
     func testButton() { conform(ButtonTests.self) }
     func testCanvas() { conform(CanvasTests.self) }

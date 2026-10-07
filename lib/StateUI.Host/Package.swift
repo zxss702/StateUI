@@ -8,7 +8,7 @@ let package = Package(
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
-        .macOS(.v26),
+        .macOS(.v15),
     ],
     products: [
         .library(name: "StateUIHost", type: .dynamic, targets: ["StateUIHost"]),

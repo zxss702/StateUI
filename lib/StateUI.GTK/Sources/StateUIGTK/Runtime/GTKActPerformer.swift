@@ -49,8 +49,9 @@ final class GTKActPerformer {
             }
             reply(call, [])
         case .hideOnScreenKeyboard:
-            // A desktop's keyboard is its own; no field brings one up to take down.
-            reply(call, [.bool(false)])
+            // The keyboard GNOME shows on a touch screen stands for the field holding the focus: the field lets
+            // the focus go, and the keyboard goes down. Whether a field held it.
+            reply(call, [.bool(hideKeyboard(from: window))])
         case .focus, .unfocus:
             focus(call, in: tree)
         case .persistValue:
@@ -217,6 +218,19 @@ final class GTKActPerformer {
             gtk_root_set_focus(root, nil)
         }
         reply(call, [])
+    }
+
+    /// Takes the focus off the text widget holding it in `window`, where one does - the keyboard the widget
+    /// brought up goes with it. Whether one held it.
+    private func hideKeyboard(from window: GTKWindow?) -> Bool {
+        guard let window, let root = gtk_widget_get_root(window.widget),
+              let held = gtk_root_get_focus(root),
+              [gtk_text_get_type(), gtk_text_view_get_type()].contains(where: {
+                  g_type_check_instance_is_a(held.of(GTypeInstance.self), $0) != 0
+              })
+        else { return false }
+        gtk_root_set_focus(root, nil)
+        return true
     }
 
     /// Whether the keyboard's focus stands on `widget` or a part of it.

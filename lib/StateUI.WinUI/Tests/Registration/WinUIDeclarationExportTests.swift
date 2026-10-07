@@ -43,8 +43,8 @@ final class WinUIDeclarationExportTests: XCTestCase {
         let unsupported = Set(types.filter { WinUIElement.showsUnsupported($0) }.map(\.name))
         let made = Set(WinUIRegistrations.registry.realization.elements)
 
-        XCTAssertEqual(unsupported.subtracting(WinUIRealization.unrealized).sorted(), [])
-        XCTAssertEqual(made.intersection(WinUIRealization.unrealized).sorted(), [])
+        XCTAssertEqual(unsupported.subtracting(WinUIRealization.unmade).sorted(), [])
+        XCTAssertEqual(made.intersection(WinUIRealization.unmade).sorted(), [])
     }
 
     /// What this host wrote of its register by hand is true of the contracts: no record names what its owner does

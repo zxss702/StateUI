@@ -11,8 +11,16 @@ enum WinUIRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
         "Content", "GridRow", "LeadingContent", "Map", "Masked", "Pin", "PositionIndicator", "TitleBar", "TrailingContent",
-        "WebView",
     ]
+
+    /// The entries a backend realizes on this host - a package of its own, for a library WinUI does not ship - which
+    /// the application's head registers: WebView2's web view. Realized none of until it is registered.
+    static let backends: Set<String> = ["WebView"]
+
+    /// What the running host realizes none of: what it never makes, and each backend no one registered.
+    @MainActor static var unmade: Set<String> {
+        unrealized.union(backends.subtracting(WinUIRegistrations.registry.realization.elements))
+    }
 
     /// The entries this host presents with no view of their own - a span is a run of its label's words - so no
     /// tier's record reaches them: only a member the entry's own records name is realized.
@@ -124,6 +132,21 @@ enum WinUIRealization {
         .complete("ToolbarItem", "priority"),
         .complete("ToolbarSpacer", "placement"),
         .complete("ToolbarSpacer", "variant"),
+        .notPlanned("WebView", "panTouchCount", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "panUpdated", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "panXChannel", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "panYChannel", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pinchUpdated", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pointerEntered", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pointerExited", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pointerMoved", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pointerPressed", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "pointerReleased", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "swipeDirection", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "swipeThreshold", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "swiped", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "tapCount", reason: webViewTakesTheHand),
+        .notPlanned("WebView", "tapGesture", reason: webViewTakesTheHand),
         .complete("WindowScene", "activated"),
         .complete("WindowScene", "created"),
         .complete("WindowScene", "deactivated"),
@@ -153,18 +176,22 @@ enum WinUIRealization {
     static let hitOnlyWherePainted = "WinUI hands a figure, a picture, a colour box and the activity ring only the "
         + "presses on what they paint: an empty one is never pressed, so there is nothing to let through."
 
+    /// Why a web view hears none of the user's hand as a view does.
+    static let webViewTakesTheHand = "WebView2 gives the user's hand to its page: listened to by WinUI, it ends the "
+        + "process (fail-fast in Microsoft.UI.Xaml.Controls)."
+
     /// What WinUI's registry says it realizes: the export's content.
     @MainActor static var declaration: HostDeclaration {
         let registry = WinUIRegistrations.registry
         return HostDeclaration(
             realization: registry.realization, shared: registry.sharedNames,
-            acts: (HostActs.performed + [
+            acts: (HostActs.performed + HostActs.files + [
                 AppContract.persistSceneValue, ListContract.scrollTo, ScrollViewContract.scrollToDescendant]
             ).map(\.name))
     }
 
     /// What WinUI realizes, member by member: these records before what its registry says.
     @MainActor static var register: HostRegister {
-        HostRegister(records: records, unrealized: unrealized, viewless: viewless, notPlanned: notPlanned).and(declaration)
+        HostRegister(records: records, unrealized: unmade, viewless: viewless, notPlanned: notPlanned).and(declaration)
     }
 }

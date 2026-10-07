@@ -73,7 +73,7 @@ final class WinUIDirectionTests: XCTestCase {
     /// whose views stand left to right, and of every other element WinUI's own.
     func testTheDriverReadsByTheHostExactlyTheViewsStandingLeftToRight() throws {
         try onUIThread {
-            let unmade = WinUIRealization.unrealized
+            let unmade = WinUIRealization.unmade
             for element in Specimens.wearing(VisualElementContract.self) where !unmade.contains(element) {
                 let host = WinUIRenderer.running { Specimens.page(element) }
                 let specimen = host.runtime.tree.root?.first(id: .manual("specimen"))

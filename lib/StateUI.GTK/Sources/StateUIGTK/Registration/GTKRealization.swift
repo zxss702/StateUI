@@ -11,8 +11,17 @@ enum GTKRealization {
     /// The entries this host realizes none of: those it shows as unsupported, and the parts of one.
     static let unrealized: Set<String> = [
         "Content", "GridRow", "LeadingContent", "Map",
-        "Pin", "PositionIndicator", "TrailingContent", "WebView",
+        "Pin", "PositionIndicator", "TrailingContent",
     ]
+
+    /// The entries a backend realizes on this host - a package of its own, for a library GTK does not ship - which
+    /// the application's head registers: WebKitGTK's web view. Realized none of until it is registered.
+    static let backends: Set<String> = ["WebView"]
+
+    /// What the running host realizes none of: what it never makes, and each backend no one registered.
+    @MainActor static var unmade: Set<String> {
+        unrealized.union(backends.subtracting(GTKRegistrations.registry.realization.elements))
+    }
 
     /// The entries this host presents with no view of their own - a title bar is the window's, a span a run of its
     /// label's words - so no tier's record reaches them: only a member the entry's own records name is realized.
@@ -146,8 +155,13 @@ enum GTKRealization {
             realization: registry.realization, shared: registry.sharedNames, acts: GTKRegistrations.acts.map(\.name))
     }
 
-    /// What GTK realizes, member by member: these records before what its registry says.
+    /// What GTK realizes, member by member: these records before what its registry says. A backend's entry is
+    /// unrealized only while no application registered it.
     @MainActor static var register: HostRegister {
-        HostRegister(records: records, unrealized: unrealized, viewless: viewless, notPlanned: notPlanned).and(declaration)
+        HostRegister(
+            records: records,
+            unrealized: unrealized.union(backends.subtracting(GTKRegistrations.registry.realization.elements)),
+            viewless: viewless, notPlanned: notPlanned
+        ).and(declaration)
     }
 }

@@ -11,6 +11,11 @@ import Foundation
 import XCTest
 
 final class GTKDeclarationExportTests: XCTestCase {
+    /// The host with its backends, as an application registering them runs it.
+    override func setUp() {
+        onUIThread { GTKBackends.registered }
+    }
+
     /// The export is what the registry says, to the line.
     @MainActor
     func testWhatThisHostDeclaresIsWhatItExports() throws {
@@ -43,8 +48,8 @@ final class GTKDeclarationExportTests: XCTestCase {
         let unsupported = Set(types.filter { GTKElement.showsUnsupported($0) }.map(\.name))
         let made = Set(GTKRegistrations.registry.realization.elements)
 
-        XCTAssertEqual(unsupported.subtracting(GTKRealization.unrealized).sorted(), [])
-        XCTAssertEqual(made.intersection(GTKRealization.unrealized).sorted(), [])
+        XCTAssertEqual(unsupported.subtracting(GTKRealization.unmade).sorted(), [])
+        XCTAssertEqual(made.intersection(GTKRealization.unmade).sorted(), [])
     }
 
     /// What this host wrote of its register by hand is true of the contracts: no record names what its owner does

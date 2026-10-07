@@ -462,7 +462,13 @@ final class AppKitPageTests: XCTestCase {
 
         let split = try XCTUnwrap(
             renderer.viewForTesting(id: .manual("flyout")) as? AppKitSplitView)
-        let row = try XCTUnwrap(split.detailRowForTesting)
+        let controller = try XCTUnwrap(renderer.windowsForTesting.first)
+        let row: NSView = controller.tabRowForTesting
+        if #available(macOS 26, *) {
+            XCTAssertTrue(split.detailRowForTesting === row)
+        } else {
+            XCTAssertTrue(controller.tabRowStandsInTitleBarForTesting)
+        }
         let rowFrame = row.convert(row.bounds, to: nil)
         let tabs = try XCTUnwrap(renderer.viewForTesting(id: .manual("tabs")))
         XCTAssertGreaterThan(rowFrame.height, 0)
@@ -474,7 +480,10 @@ final class AppKitPageTests: XCTestCase {
             presented: true, menu: menu, detail: navigation([home])), width: 1200))
         window.contentView?.layoutSubtreeIfNeeded()
         let shown = try XCTUnwrap(renderer.viewForTesting(id: .manual("home")))
-        XCTAssertNil(split.detailRowForTesting)
+        if #available(macOS 26, *) {
+            XCTAssertNil(split.detailRowForTesting)
+        }
+        XCTAssertFalse(controller.tabRowStandsInTitleBarForTesting)
         XCTAssertGreaterThan(
             shown.convert(shown.bounds, to: nil).maxY, rowFrame.minY,
             "the page left rises back beneath the toolbar")
@@ -504,11 +513,16 @@ final class AppKitPageTests: XCTestCase {
         let split = try XCTUnwrap(
             renderer.viewForTesting(id: .manual("flyout")) as? AppKitSplitView)
         XCTAssertEqual(controller.tabRowForTesting.controlForTesting.segmentCount, 2)
-        XCTAssertTrue(split.detailRowForTesting === controller.tabRowForTesting)
-        XCTAssertTrue(controller.tabRowSplitForTesting === split)
-        XCTAssertFalse(controller.tabRowStandsInTitleBarForTesting)
-        if #available(macOS 26.1, *) {
-            XCTAssertEqual(split.detailRowAccessoryForTesting?.preferredScrollEdgeEffectStyle, .soft)
+        if #available(macOS 26, *) {
+            XCTAssertTrue(split.detailRowForTesting === controller.tabRowForTesting)
+            XCTAssertTrue(controller.tabRowSplitForTesting === split)
+            XCTAssertFalse(controller.tabRowStandsInTitleBarForTesting)
+            if #available(macOS 26.1, *) {
+                XCTAssertEqual(split.detailRowAccessoryForTesting?.preferredScrollEdgeEffectStyle, .soft)
+            }
+        } else {
+            XCTAssertTrue(controller.tabRowStandsInTitleBarForTesting)
+            XCTAssertNil(controller.tabRowSplitForTesting)
         }
 
         renderer.applyForTesting(tree(flyout(
@@ -516,7 +530,9 @@ final class AppKitPageTests: XCTestCase {
             menu: page("menu", title: "Menu", events: 100),
             detail: page("detail", title: "Detail", events: 400))))
         XCTAssertFalse(controller.tabRowStandsInTitleBarForTesting)
-        XCTAssertNil(split.detailRowForTesting)
+        if #available(macOS 26, *) {
+            XCTAssertNil(split.detailRowForTesting)
+        }
 
         renderer.applyForTesting(tree(flyout(
             presented: true,
@@ -584,7 +600,7 @@ final class AppKitPageTests: XCTestCase {
         XCTAssertFalse(picture.isTemplate)
         XCTAssertEqual(picture.size, NSSize(width: 48, height: 48))
         XCTAssertEqual(row.frame.height, control.fittingSize.height)
-        XCTAssertEqual(control.borderShape, .capsule)
+        if #available(macOS 26, *) { XCTAssertEqual(control.borderShape, .capsule) }
     }
 
     /// A tab is named by the title and the icon of what it shows - a page,

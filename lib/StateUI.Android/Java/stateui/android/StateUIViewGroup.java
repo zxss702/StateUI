@@ -76,9 +76,92 @@ class StateUIViewGroup extends ViewGroup {
         ignoresInput = ignores;
     }
 
+    /**
+     * Whether a touch that lands on the layout itself goes on to what is under it: the children answer first,
+     * as always, and where none answers the layout takes none either.
+     */
+    private boolean letsInputThrough;
+
+    void setLetsInputThrough(boolean lets) {
+        letsInputThrough = lets;
+    }
+
+    /** The touch listener the host set, kept so a passing-through layout can step over it. */
+    private OnTouchListener touchListener;
+
+    @Override
+    public void setOnTouchListener(OnTouchListener listener) {
+        touchListener = listener;
+        super.setOnTouchListener(listener);
+    }
+
+    /** Which `ContainerShape` the layout answers touches inside - its kind, -1 for all of it - and its radius. */
+    private int hitShape = -1;
+    private float hitRadius;
+
+    void setHitShape(int kind, float radius) {
+        hitShape = kind;
+        hitRadius = radius;
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        return !ignoresInput && super.dispatchTouchEvent(event);
+        if (ignoresInput) return false;
+        if (hitShape >= 0 && event.getActionMasked() == MotionEvent.ACTION_DOWN
+                && !inHitShape(event.getX(), event.getY())) {
+            return false;
+        }
+        if (!letsInputThrough || touchListener == null) return super.dispatchTouchEvent(event);
+
+        // The children answer first, as always; where none does, the touch is not the layout's own -
+        // it steps over its listener on the way to whatever stands under it.
+        super.setOnTouchListener(null);
+        try {
+            return super.dispatchTouchEvent(event);
+        } finally {
+            super.setOnTouchListener(touchListener);
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return !letsInputThrough && super.onTouchEvent(event);
+    }
+
+    /** Whether `x`,`y` stands inside the hit shape - the `ContainerShape` kinds rectangle, rounded, oval,
+     *  capsule and circle, the radius in pixels. */
+    private boolean inHitShape(float x, float y) {
+        int width = getWidth(), height = getHeight();
+        switch (hitShape) {
+            case 1:
+                return insideRounded(x, y, width, height,
+                        Math.min(hitRadius, Math.min(width, height) / 2f));
+            case 2:
+                return insideEllipse(x, y, 0, 0, width, height);
+            case 3:
+                return insideRounded(x, y, width, height, Math.min(width, height) / 2f);
+            case 4: {
+                float side = Math.min(width, height);
+                return insideEllipse(x, y, (width - side) / 2f, (height - side) / 2f, side, side);
+            }
+            default:
+                return true;
+        }
+    }
+
+    private static boolean insideRounded(float x, float y, float width, float height, float radius) {
+        if (x < 0 || y < 0 || x > width || y > height) return false;
+        float near = x < radius ? radius : (x > width - radius ? width - radius : x);
+        float top = y < radius ? radius : (y > height - radius ? height - radius : y);
+        float across = x - near, down = y - top;
+        return across * across + down * down <= radius * radius;
+    }
+
+    private static boolean insideEllipse(float x, float y, float left, float top, float width, float height) {
+        float across = width / 2f, down = height / 2f;
+        if (across <= 0 || down <= 0) return false;
+        float nx = (x - left - across) / across, ny = (y - top - down) / down;
+        return nx * nx + ny * ny <= 1f;
     }
 
     /** A layout that does not scroll lets its children show a press at once. */

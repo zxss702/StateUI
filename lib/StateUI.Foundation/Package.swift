@@ -12,7 +12,7 @@ let package = Package(
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
-        .macOS(.v26),
+        .macOS(.v15),
     ],
     products: [
         .library(name: "StateUIFoundation", type: .dynamic, targets: ["StateUIFoundation"]),

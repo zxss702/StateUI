@@ -12,14 +12,14 @@ product="GalleryAppKit"
 # On a build directory of its own: an AppKit build compiles the application
 # under `#if APPKIT`, and the Gallery's tests, compiled without it, would
 # otherwise rebuild from scratch at every switch.
-scratch_dir="$gallery_dir/.build-appkit"
+scratch_dir="$gallery_dir/.build/appkit"
 
 # THE ONE THING THAT MAKES THIS AN APPKIT BUILD. The manifest reads it and then
-# declares the AppKit head - the target, its product and the StateUIAppKit
-# dependency - and defines APPKIT for every module of the application. A
+# declares the AppKit head - the target and StateUIHead, which brings
+# StateUIAppKit - and defines APPKIT for every module of the application. A
 # manifest cannot read a compiler flag, so it is told this way, and no flag is
 # given beside it. See apps/Gallery/Package.swift.
-export STATEUI_APPKIT=1
+export STATEUI_HOST=appkit
 
 swift build \
     --package-path "$gallery_dir" \
@@ -43,9 +43,9 @@ rm -rf "$application_dir"
 mkdir -p "$executable_dir" "$resources_dir/Images"
 
 cp "$binary_dir/$product" "$executable_dir/$product"
-for library in "$binary_dir"/lib*.dylib; do
-    cp "$library" "$executable_dir/$(basename "$library")"
-done
+cp "$binary_dir/libStateUI.dylib" "$executable_dir/libStateUI.dylib"
+cp "$binary_dir/libStateUIHost.dylib" "$executable_dir/libStateUIHost.dylib"
+cp "$binary_dir/libStateUIAppKit.dylib" "$executable_dir/libStateUIAppKit.dylib"
 cp -R "$gallery_dir/Resources/Images/." "$resources_dir/Images"
 
 icon_work="$(mktemp -d)"
@@ -78,10 +78,11 @@ plutil -insert CFBundleIdentifier -string com.stateui.gallery "$plist"
 plutil -insert CFBundleInfoDictionaryVersion -string 6.0 "$plist"
 plutil -insert CFBundleName -string "StateUI Gallery" "$plist"
 plutil -insert CFBundlePackageType -string APPL "$plist"
-plutil -insert CFBundleShortVersionString -string 0.4.0 "$plist"
+plutil -insert CFBundleShortVersionString -string 0.5.1 "$plist"
 plutil -insert CFBundleVersion -string 1 "$plist"
 plutil -insert LSMinimumSystemVersion -string 26.0 "$plist"
 plutil -insert NSHighResolutionCapable -bool true "$plist"
+plutil -insert NSLocationUsageDescription -string "The map shows where you are." "$plist"
 
 codesign --force --deep --sign - "$application_dir"
 

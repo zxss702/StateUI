@@ -88,6 +88,9 @@ final class AppKitSplitView: AppKitHitTestView {
 
     /// Shows a row across the top of the detail - the tabs of a tabbed view
     /// standing in it - as the detail item's own accessory, or takes it away.
+    /// Split view item accessories are macOS 26's; before it the window's
+    /// title bar holds the row instead (synchronizeTabRow decides).
+    @available(macOS 26, *)
     func setDetailRow(_ row: NSView?) {
         let standing = detailItem.topAlignedAccessoryViewControllers.first?.view
         guard standing !== row else { return }
@@ -119,10 +122,12 @@ final class AppKitSplitView: AppKitHitTestView {
     var detailBarColorForTesting: NSColor? { detailSurface.barColor }
     var sidebarBarColorForTesting: NSColor? { sidebarSurface.barColor }
 
+    @available(macOS 26, *)
     var detailRowForTesting: NSView? {
         detailItem.topAlignedAccessoryViewControllers.first?.view
     }
 
+    @available(macOS 26, *)
     var detailRowAccessoryForTesting: NSSplitViewItemAccessoryViewController? {
         detailItem.topAlignedAccessoryViewControllers.first
     }

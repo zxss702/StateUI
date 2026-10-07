@@ -94,7 +94,11 @@ final class ActCallTests: XCTestCase {
     /// race.
     @MainActor
     private static func begin<Value>(_ body: sending @escaping Act<Value>) -> Task<Value, Error> {
-        Task.immediate { @MainActor in try await body() }
+        if #available(macOS 26, iOS 26, macCatalyst 26, *) {
+            return Task.immediate { @MainActor in try await body() }
+        }
+        // No inline start before macOS 26: the body runs a main-queue turn later.
+        return Task { @MainActor in try await body() }
     }
 
     /// The completion id in a taken batch, which is what the host quotes back.

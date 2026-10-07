@@ -129,14 +129,25 @@ extension AppKitWindowController {
         if let placement { tabRow.apply(placement.tabs) }
 
         let column = placement?.split
+        // A split view's columns carry their own accessories on macOS 26 and
+        // later; before it the title bar's accessory holds the row even with
+        // a split, like a column-free window's.
+        let columnHoldsRow: Bool
+        if #available(macOS 26, *) {
+            columnHoldsRow = column != nil
+        } else {
+            columnHoldsRow = false
+        }
         let stays = placement == nil
             ? tabRowAccessory == nil && tabRowSplit == nil
-            : column == nil ? tabRowAccessory != nil : column === tabRowSplit
+            : columnHoldsRow ? column === tabRowSplit : tabRowAccessory != nil
         guard !stays else { return }
 
         // Out of where it stood before it stands anywhere else: a view has one
         // superview, and taking an accessory away takes its view with it.
-        tabRowSplit?.setDetailRow(nil)
+        if #available(macOS 26, *) {
+            tabRowSplit?.setDetailRow(nil)
+        }
         tabRowSplit = nil
         if let accessory = tabRowAccessory,
            let index = window.titlebarAccessoryViewControllers.firstIndex(of: accessory) {
@@ -145,7 +156,7 @@ extension AppKitWindowController {
         tabRowAccessory = nil
 
         guard placement != nil else { return }
-        if let column {
+        if let column, #available(macOS 26, *) {
             tabRow.insets = AppKitTabRow.columnInsets
             column.setDetailRow(tabRow)
             tabRowSplit = column

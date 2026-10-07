@@ -197,6 +197,8 @@ final class ContractTests: XCTestCase {
             ItemsLayout.list(), ItemsLayout.row(spacing: 8), ItemsLayout.grid(minimumItemWidth: 120, spacing: 4),
             SelectionMode.multiple, ScrollAnchor.center,
             ItemsEntries(header: "h", sections: [ItemsEntries.Section(footer: "f", items: ["1", "2"])]),
+            [0, 7, 255] as [UInt8], FileType("Page", extensions: ["html", "htm"]),
+            ChosenFile(address: "C:\\Reports\\Report.html", name: "Report.html"),
             Visibility.hidden,
             [PresentationDetent.medium, .large, .fraction(0.4), .height(220)] as [PresentationDetent],
             Edge.trailing,
@@ -227,6 +229,16 @@ final class ContractTests: XCTestCase {
         }
 
         XCTAssertEqual(missing, [], "a property holds a type with no sample here")
+    }
+
+    /// A list of bytes crosses as one run of bytes, not a list of numbers; a
+    /// kind of file keeps each extension once, bare and in lowercase, however
+    /// it was written.
+    func testBytesCrossAsOneRunAndAKindOfFileKeepsBareExtensions() {
+        XCTAssertEqual(([0, 255] as [UInt8]).propValue, .bytes([0, 255]))
+        XCTAssertNil([UInt8](propValue: .values([.number(1)])))
+        XCTAssertNil(UInt8(propValue: .number(256)))
+        XCTAssertEqual(FileType("Page", extensions: [".HTML", "*.htm", "html", "", "*"]).extensions, ["html", "htm"])
     }
 
     /// An optional value left off the end of a payload reads as nothing; a
@@ -376,7 +388,11 @@ final class ContractTests: XCTestCase {
     /// by the time this returns the act is on the act queue.
     @MainActor
     private static func begin<Value: Sendable>(_ body: sending @escaping Asking<Value>) -> Task<Value, Error> {
-        Task.immediate { @MainActor in try await body() }
+        if #available(macOS 26, iOS 26, macCatalyst 26, *) {
+            return Task.immediate { @MainActor in try await body() }
+        }
+        // No inline start before macOS 26: the body runs a main-queue turn later.
+        return Task { @MainActor in try await body() }
     }
 
     /// The completion id in a taken batch, which is what the host quotes back.

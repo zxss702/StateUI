@@ -48,7 +48,7 @@ extension Renderer {
     private func begin(_ handler: @escaping EventHandler, payload: [PropValue]?) {
         let carried = CarriedHandler(run: handler)
 
-        Task.immediate { @MainActor in
+        let run: @Sendable @MainActor () async -> Void = {
             if let payload {
                 EventBuffer.current = payload
             }
@@ -58,6 +58,14 @@ extension Renderer {
             } catch {
                 Renderer.shared.report(error)
             }
+        }
+
+        if #available(macOS 26, iOS 26, macCatalyst 26, *) {
+            Task.immediate(operation: run)
+        } else {
+            // No `Task.immediate` before macOS 26: the handler starts a main-queue
+            // turn later, still setting its own payload first.
+            Task(operation: run)
         }
 
         stateUIRunJobs()

@@ -9,6 +9,8 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -223,5 +225,15 @@ final class StateUIViews {
             return;
         }
         holder.animate().translationY(away).setDuration(duration).withEndAction(() -> parent.removeView(holder)).start();
+    }
+
+    /**
+     * Blurs what `view` draws, `radius` pixels wide - 0 clears it. Android draws a blur from version 12;
+     * below it the view shows clear.
+     */
+    static void blur(View view, float radius) {
+        if (Build.VERSION.SDK_INT < 31) return;
+        view.setRenderEffect(radius > 0
+                ? RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP) : null);
     }
 }

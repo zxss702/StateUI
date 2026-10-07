@@ -182,6 +182,23 @@ answer - the cancelling one too; a dialog dismissed any other way, Escape
 among them, answers that nothing was chosen. A prompt's field takes the
 placeholder, the most characters and the keyboard its purpose asks for.
 
+## Files
+
+A file dialog is Windows' own, from the Windows App SDK's pickers
+(`FileOpenPicker`, `FileSavePicker`), over the window the user is in, and it
+waits its turn among the questions ([files](../../host/runtime.md#files)).
+A dialog that opens filters by every kind's extensions, as one list; one that
+saves offers each kind under its caption, the first as its default
+extension. Windows shows the dialog on a thread of its own and hands back a
+path: a save's contents are written to it beside the UI thread, and the file
+is handed over only once they stand written - or the act fails with
+Windows' reason. A file is read beside the UI thread too. A chosen file's
+address is its path.
+
+A file or an address is launched through `Launcher`, which answers whether
+an application took it. Every answer reaches the host on the UI thread, by
+the ticket the call was given.
+
 ## Kept values
 
 Windows keeps no store for an application that is no package, so the host

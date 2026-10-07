@@ -14,6 +14,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.widget.PopupMenu;
 import java.util.ArrayDeque;
 
 /**
@@ -30,6 +32,16 @@ final class StateUIMenus {
     static final int DISABLED = 4, DESTRUCTIVE = 8, ON_BAR = 16;
 
     private StateUIMenus() {}
+
+    /**
+     * Shows the entries in a popup anchored to `view`: a MenuButton's menu, opening on a tap rather than a
+     * long press. An item chosen is reported to `view` by its place among the items, as `fill` wires it.
+     */
+    static void popup(Context context, View anchor, long view, int[] entries, String[] texts, Bitmap[] pictures) {
+        PopupMenu popup = new PopupMenu(context, anchor);
+        fill(context, popup.getMenu(), view, entries, texts, pictures);
+        popup.show();
+    }
 
     /**
      * Adds the entries to `menu`: a submenu's entries follow it up to its END, and a separator starts a new

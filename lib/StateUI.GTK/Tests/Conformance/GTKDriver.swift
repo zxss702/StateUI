@@ -60,9 +60,14 @@ final class GTKDriver: HostDriver {
         cannot[ability] ?? "GTK's driver has no path for it yet"
     }
 
+    /// What the driver reaches past GTK through a backend's own entry or record - the 🔌 mark's.
+    func byHost(_ ability: String) -> String? {
+        Self.backends.values.lazy.compactMap { $0.byHost[ability] }.first
+    }
+
     var renderer: GTKRenderer?
 
-    var register: HostRegister { GTKRealization.register }
+    var register: HostRegister { GTKRealization.register.and(backendRecords) }
 
     func start(clock: TestClock?, reducesMotion: Bool, _ page: @escaping @Sendable () -> any Page) -> MountedTree {
         let renderer = GTKRenderer.running(clock: clock, reducesMotion: reducesMotion, page)
@@ -86,12 +91,44 @@ final class GTKDriver: HostDriver {
         GTKView.liveCount
     }
 
+    /// Whether the element holds the keyboard: its widget or one within it is the window's focus.
+    func focused(_ element: MountedElement) throws -> Bool {
+        guard let view = (element.native as? GTKElement)?.view else {
+            throw DriverCannot("read the focus of \(element.type.name)")
+        }
+        guard let root = gtk_widget_get_root(view.widget), let focus = gtk_root_get_focus(root) else {
+            return false
+        }
+        return focus == view.widget || gtk_widget_is_ancestor(focus, view.widget) != 0
+    }
+
+    /// Where the element stands in its window, as GTK places its widget - laid out first, as a frame lays out
+    /// what the user sees before it is read.
+    func place(of element: MountedElement) throws -> Rect {
+        guard let view = (element.native as? GTKElement)?.view, let root = gtk_widget_get_root(view.widget) else {
+            throw DriverCannot("read where \(element.type.name) stands")
+        }
+        renderer?.layOut()
+        var bounds = graphene_rect_t()
+        let window = UnsafeMutableRawPointer(root).assumingMemoryBound(to: GtkWidget.self)
+        guard gtk_widget_compute_bounds(view.widget, window, &bounds) != 0 else {
+            throw DriverCannot("read where \(element.type.name) stands")
+        }
+        return Rect(
+            x: Double(bounds.origin.x), y: Double(bounds.origin.y), width: Double(bounds.size.width),
+            height: Double(bounds.size.height))
+    }
+
     func perform(_ act: UserAct, on element: MountedElement) throws {
+        if try backendPerforms(act, on: element) { return }
         if act == .goBack {
             guard renderer?.goBack() == true else { throw DriverCannot(act, on: element) }
             return
         }
         let view = (element.native as? GTKElement)?.view
+        if act == .activate, let items = element.enclosing(type: .list), try activateItem(element, in: items) {
+            return
+        }
         switch (act, view) {
         case (.activate, let button as GTKButtonView): button.click()
         case (.toggle, let toggle as GTKSwitchView): gtk_switch_set_active(toggle.widget.opaque, toggle.isOn ? 0 : 1)
@@ -107,8 +144,11 @@ final class GTKDriver: HostDriver {
         case (.type(let words), let editor as GTKTextEditorView):
             type(words, into: editor, keys: OpaquePointer(gtk_scrolled_window_get_child(editor.widget.opaque)))
         case (.submit, let field as GTKTextFieldView): GTKTestHost.emit(field.widget.opaque, "activate")
+        case (.focus, let view?): gtk_widget_grab_focus(view.widget)
         case (.choose(let place), let picker as GTKPickerView): gtk_drop_down_set_selected(picker.widget.opaque, guint(place))
         case (.scroll(let offset), let items as GTKItemsView): try scroll(items, to: offset, on: element, act)
+        case (.scroll(let offset), let scrollView as GTKScrollView): try scroll(scrollView, to: offset, on: element, act)
+        case (.choose(let place), let items as GTKItemsView): try choose(place, in: items, on: element)
         case (.open, let picker as GTKPopoverPickerView): gtk_menu_button_popup(picker.widget.opaque)
         case (.close, let picker as GTKPopoverPickerView): gtk_popover_popdown(picker.popover.of(GtkPopover.self))
         case (.pickDate(let day), let dates as GTKDatePickerView):
@@ -128,6 +168,7 @@ final class GTKDriver: HostDriver {
 
     func held(_ property: Prop, on element: MountedElement) throws -> HostValue? {
         if element.type == .menuItem { return try menuItemHolds(property, element) }
+        if let value = backendHolds(property, on: element) { return value }
         let view = (element.native as? GTKElement)?.view
         switch (property, view) {
         case (.isOn, let toggle as GTKToggleView): return toggle.isOn.propValue
@@ -156,9 +197,38 @@ final class GTKDriver: HostDriver {
         case (.format, let dates as GTKDatePickerView):
             return (Self.words(of: dates) == Self.shortForm(of: dates) ? "d" : "D").propValue
         case (.time, let times as GTKTimePickerView): return times.time.propValue
+        case (.scrollOffset, let scroll as GTKScrollView),
+             (.horizontalScrollIndicators, let scroll as GTKScrollView),
+             (.verticalScrollIndicators, let scroll as GTKScrollView):
+            return try scrollHolds(property, scroll, on: element)
+        case (.selectionMode, let items as GTKItemsView): return items.choiceMode.map { $0.propValue }
+        case (.selectedItems, let items as GTKItemsView): return items.chosenIdentities.propValue
         case (.isVisible, let view?): return (gtk_widget_get_visible(view.widget) != 0).propValue
         case (.opacity, let view?): return gtk_widget_get_opacity(view.widget).propValue
         case (.isEnabled, let view?): return (gtk_widget_get_sensitive(view.widget) != 0).propValue
+        default: throw DriverCannot(reading: property, of: element)
+        }
+    }
+
+    /// What a ScrollView's scrolled window holds: where it stands, and the bars its policies say - laid out first,
+    /// as a frame lays out what the user sees before it is read.
+    private func scrollHolds(_ property: Prop, _ scroll: GTKScrollView, on element: MountedElement) throws -> HostValue? {
+        renderer?.layOut()
+        guard let scrolled = GTKTestHost.descendants(of: scroll.widget).first(where: {
+            GTKTestHost.holds($0, gtk_scrolled_window_get_type())
+        })?.opaque else { throw DriverCannot(reading: property, of: element) }
+        var policies = (horizontal: GTK_POLICY_AUTOMATIC, vertical: GTK_POLICY_AUTOMATIC)
+        gtk_scrolled_window_get_policy(scrolled, &policies.horizontal, &policies.vertical)
+        let visibility = { (policy: GtkPolicyType) -> ScrollIndicatorVisibility in
+            policy == GTK_POLICY_ALWAYS ? .visible
+                : policy == GTK_POLICY_NEVER || policy == GTK_POLICY_EXTERNAL ? .hidden : .automatic
+        }
+        switch property {
+        case .scrollOffset:
+            return [gtk_adjustment_get_value(gtk_scrolled_window_get_hadjustment(scrolled)),
+                    gtk_adjustment_get_value(gtk_scrolled_window_get_vadjustment(scrolled))].propValue
+        case .horizontalScrollIndicators: return visibility(policies.horizontal).propValue
+        case .verticalScrollIndicators: return visibility(policies.vertical).propValue
         default: throw DriverCannot(reading: property, of: element)
         }
     }
@@ -201,5 +271,48 @@ final class GTKDriver: HostDriver {
             input.select(start: kept.unicodeScalars.count, length: 0)
         }
         GTKTestHost.emit(keys, "insert-at-cursor", words: String(words.dropFirst(kept.count)))
+    }
+
+    /// Chooses the item at `place` as the user's click does, through the list's own `list.select-item`: alone where
+    /// one may be chosen, beside those chosen - as a Ctrl click - where many may.
+    private func choose(_ place: Int, in items: GTKItemsView, on element: MountedElement) throws {
+        guard let list = items.list, let mode = items.choiceMode, mode != .none else {
+            throw DriverCannot(.choose(place), on: element)
+        }
+        var parts = [g_variant_new_uint32(guint32(place)), g_variant_new_boolean(mode == .multiple ? 1 : 0),
+                     g_variant_new_boolean(0)]
+        _ = gtk_widget_activate_action_variant(list, "list.select-item", g_variant_new_tuple(&parts, 3))
+    }
+
+    /// Activates the item `element` stands in, as a double click or Return on its row does: the list's own
+    /// `activate`; false where it stands in no item.
+    func activateItem(_ element: MountedElement, in items: MountedElement) throws -> Bool {
+        guard let view = (items.native as? GTKElement)?.view as? GTKItemsView, let list = view.list else {
+            return false
+        }
+        var item = element
+        while let parent = item.parent, parent !== items { item = parent }
+        guard let identity = view.cells.identity(of: item), let place = view.cells.identities.firstIndex(of: identity)
+        else { return false }
+        GTKTestHost.emit(list.opaque, "activate", [Double(place)])
+        return true
+    }
+}
+
+extension GTKItemsView {
+    /// How many items GTK's choice model lets the user choose, by its kind; nil before there is a list.
+    var choiceMode: SelectionMode? {
+        guard let selection else { return nil }
+        let held = UnsafeMutablePointer<GTypeInstance>(selection)
+        if g_type_check_instance_is_a(held, gtk_single_selection_get_type()) != 0 { return .single }
+        if g_type_check_instance_is_a(held, gtk_multi_selection_get_type()) != 0 { return .multiple }
+        return SelectionMode.none
+    }
+
+    /// The identities GTK's choice model holds chosen, in the order the list shows them.
+    var chosenIdentities: [String] {
+        guard let selection else { return [] }
+        let count = g_list_model_get_n_items(selection)
+        return (0..<count).filter { gtk_selection_model_is_selected(selection, $0) != 0 }.map { identity(at: $0) }
     }
 }

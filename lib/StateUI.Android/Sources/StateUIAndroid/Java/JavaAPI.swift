@@ -68,6 +68,11 @@ enum JavaAPI {
     static let setVerticalScrollBarEnabled = Java.method(view, "setVerticalScrollBarEnabled", "(Z)V")
     static let setHorizontalScrollBarEnabled = Java.method(view, "setHorizontalScrollBarEnabled", "(Z)V")
     static let setScrollbarFadingEnabled = Java.method(view, "setScrollbarFadingEnabled", "(Z)V")
+    static let setOverScrollMode = Java.method(view, "setOverScrollMode", "(I)V")
+    static let computeVerticalScrollRange = Java.method(view, "computeVerticalScrollRange", "()I")
+    static let computeVerticalScrollExtent = Java.method(view, "computeVerticalScrollExtent", "()I")
+    static let computeHorizontalScrollRange = Java.method(view, "computeHorizontalScrollRange", "()I")
+    static let computeHorizontalScrollExtent = Java.method(view, "computeHorizontalScrollExtent", "()I")
     static let getViewTreeObserver = Java.method(view, "getViewTreeObserver", "()Landroid/view/ViewTreeObserver;")
     static let viewTreeObserver = Java.findClass("android/view/ViewTreeObserver")
     static let addOnGlobalLayoutListener = Java.method(
@@ -91,6 +96,10 @@ enum JavaAPI {
     static let typeface = Java.findClass("android/graphics/Typeface")
     static let createTypeface = Java.staticMethod(
         typeface, "create", "(Ljava/lang/String;I)Landroid/graphics/Typeface;")
+    /// `Typeface.create(Typeface, weight, italic)`, from Android 9 (API 28) - the host's floor.
+    static let createWeightedTypeface = Java.staticMethod(
+        typeface, "create", "(Landroid/graphics/Typeface;IZ)Landroid/graphics/Typeface;")
+    static let setTextIsSelectable = Java.method(textView, "setTextIsSelectable", "(Z)V")
     static let setAllCaps = Java.method(textView, "setAllCaps", "(Z)V")
 
     static let setMaxLines = Java.method(textView, "setMaxLines", "(I)V")
@@ -223,6 +232,14 @@ enum JavaAPI {
 
     static let switchView = Java.findClass("android/widget/Switch")
     static let newSwitch = Java.method(switchView, "<init>", "(Landroid/content/Context;)V")
+    static let setSwitchThumbTintList = Java.method(
+        switchView, "setThumbTintList", "(Landroid/content/res/ColorStateList;)V")
+    static let getSwitchThumbTintList = Java.method(
+        switchView, "getThumbTintList", "()Landroid/content/res/ColorStateList;")
+    static let setTrackTintList = Java.method(
+        switchView, "setTrackTintList", "(Landroid/content/res/ColorStateList;)V")
+    static let getTrackTintList = Java.method(
+        switchView, "getTrackTintList", "()Landroid/content/res/ColorStateList;")
 
     static let progressBar = Java.findClass("android/widget/ProgressBar")
     static let newProgressBar = Java.method(progressBar, "<init>", "(Landroid/content/Context;)V")
@@ -250,11 +267,13 @@ enum JavaAPI {
     static let getThumbTintList = Java.method(
         seekBar, "getThumbTintList", "()Landroid/content/res/ColorStateList;")
 
-    static let scrollView = Java.findClass("android/widget/ScrollView")
+    static let scrollView = Java.findClass("stateui/android/StateUIScrollView")
     static let newScrollView = Java.method(scrollView, "<init>", "(Landroid/content/Context;)V")
+    static let setScrollable = Java.method(scrollView, "setScrollable", "(Z)V")
     static let setFillViewport = Java.method(scrollView, "setFillViewport", "(Z)V")
-    static let horizontalScrollView = Java.findClass("android/widget/HorizontalScrollView")
+    static let horizontalScrollView = Java.findClass("stateui/android/StateUIHorizontalScrollView")
     static let newHorizontalScrollView = Java.method(horizontalScrollView, "<init>", "(Landroid/content/Context;)V")
+    static let setHorizontalScrollable = Java.method(horizontalScrollView, "setScrollable", "(Z)V")
     static let setHorizontalFillViewport = Java.method(horizontalScrollView, "setFillViewport", "(Z)V")
 
     static let imageView = Java.findClass("android/widget/ImageView")
@@ -320,6 +339,10 @@ enum JavaAPI {
     static let newSizeSpan = Java.method(sizeSpan, "<init>", "(IZ)V")
     static let styleSpan = Java.findClass("android/text/style/StyleSpan")
     static let newStyleSpan = Java.method(styleSpan, "<init>", "(I)V")
+    static let typefaceSpan = Java.findClass("android/text/style/TypefaceSpan")
+    static let newTypefaceSpan = Java.method(typefaceSpan, "<init>", "(Landroid/graphics/Typeface;)V")
+    static let baselineSpan = Java.findClass("android/text/style/BaselineOffsetSpan")
+    static let newBaselineSpan = Java.method(baselineSpan, "<init>", "(I)V")
     static let underlineSpan = Java.findClass("android/text/style/UnderlineSpan")
     static let newUnderlineSpan = Java.method(underlineSpan, "<init>", "()V")
     static let strikethroughSpan = Java.findClass("android/text/style/StrikethroughSpan")
@@ -366,6 +389,8 @@ enum JavaAPI {
         viewGroupHost, "<init>", "(Landroid/content/Context;J)V")
     static let setChildren = Java.method(viewGroupHost, "setChildren", "([Landroid/view/View;)V")
     static let setIgnoresInput = Java.method(viewGroupHost, "setIgnoresInput", "(Z)V")
+    static let setLetsInputThrough = Java.method(viewGroupHost, "setLetsInputThrough", "(Z)V")
+    static let setHitShape = Java.method(viewGroupHost, "setHitShape", "(IF)V")
 
     static let itemCell = Java.findClass("stateui/android/StateUIItemCell")
     static let newItemCell = Java.method(itemCell, "<init>", "(Landroid/content/Context;JZ)V")
@@ -422,6 +447,9 @@ enum JavaAPI {
     static let fillMenu = Java.staticMethod(
         menus, "fill",
         "(Landroid/content/Context;Landroid/view/Menu;J[I[Ljava/lang/String;[Landroid/graphics/Bitmap;)V")
+    static let popupMenu = Java.staticMethod(
+        menus, "popup",
+        "(Landroid/content/Context;Landroid/view/View;J[I[Ljava/lang/String;[Landroid/graphics/Bitmap;)V")
 
     static let androidActivity = Java.findClass("android/app/Activity")
     static let activity = Java.findClass("stateui/android/StateUIActivity")
@@ -440,6 +468,7 @@ enum JavaAPI {
     static let setIcon = Java.staticMethod(views, "setIcon", "(Landroid/widget/TextView;Landroid/graphics/Bitmap;IIII)V")
     static let transformView = Java.staticMethod(views, "transform", "(Landroid/view/View;FFFFFFFFF)V")
     static let slideView = Java.staticMethod(views, "slide", "(Landroid/view/View;FFJ)V")
+    static let blurView = Java.staticMethod(views, "blur", "(Landroid/view/View;F)V")
 
     static let tabs = Java.findClass("stateui/android/StateUITabs")
     static let newTabs = Java.method(tabs, "<init>", "(Landroid/content/Context;J)V")
