@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Events the host raises on its own, heard with no control behind them.
 struct InteropEventsSample: SampleContent, ExampleContent {
@@ -11,7 +11,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
     static let title = "Hearing from " + InteropHost.name
     static let summary = "Events the host raises on its own, heard with no control behind them."
 
-    static let codeHeading = "In StateUI"
+    static let codeHeading = "In SwiftOmniUI"
 
     static let code = """
         // The application's own events, declared beside its acts.
@@ -67,7 +67,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 static func start() {
                     // What the host raises, declared where its source is
                     // wired: a handler listening for anything else is told.
-                    StateUIEvents.raises(GalleryContract.batteryChanged)
+                    SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
                     // Named in full: a C function pointer carries no context,
                     // and an unqualified call to a static method captures the
@@ -93,11 +93,11 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                     guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
                     lastSaid = (level, charging)
-                    StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+                    SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
                 }
             }
 
-            // And in main.swift, before StateUIAppKit.run(...):
+            // And in main.swift, before SwiftOmniUIAppKit.run(...):
             GalleryEventSources.start()
             """))
     #elseif UIKIT
@@ -112,7 +112,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 static func start() {
                     // What the host raises, declared where its source is
                     // wired: a handler listening for anything else is told.
-                    StateUIEvents.raises(GalleryContract.batteryChanged)
+                    SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
                     // UIKit says nothing of the battery until asked to watch it.
                     UIDevice.current.isBatteryMonitoringEnabled = true
@@ -135,11 +135,11 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                     guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
                     lastSaid = (level, charging)
-                    StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+                    SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
                 }
             }
 
-            // And in main.swift, before StateUIUIKit.run():
+            // And in main.swift, before SwiftOmniUIUIKit.run():
             GalleryEventSources.start()
             """))
     #elseif GTK
@@ -154,7 +154,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 static func start() {
                     // What the host raises, declared where its source is
                     // wired: a handler listening for anything else is told.
-                    StateUIEvents.raises(GalleryContract.batteryChanged)
+                    SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
                     // UPower's display device tells every change of the
                     // battery; a C callback carries no context, so the report
@@ -181,11 +181,11 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                     guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
                     lastSaid = (level, charging)
-                    StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+                    SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
                 }
             }
 
-            // And in main.swift, before StateUIGTK.run(applicationID:):
+            // And in main.swift, before SwiftOmniUIGTK.run(applicationID:):
             GalleryEventSources.start()
             """))
     #elseif WINUI
@@ -200,7 +200,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 static func start() {
                     // What the host raises, declared where its source is
                     // wired: a handler listening for anything else is told.
-                    StateUIEvents.raises(GalleryContract.batteryChanged)
+                    SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
                     // The gallery's relay asks Windows for each change of the
                     // battery's charge and of the power source
@@ -219,7 +219,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                     guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
                     lastSaid = (level, charging)
-                    StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+                    SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
                 }
             }
 
@@ -230,7 +230,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 Task { @MainActor in GalleryEventSources.report() }
             }
 
-            // And in main.swift, before StateUIWinUI.run():
+            // And in main.swift, before SwiftOmniUIWinUI.run():
             GalleryEventSources.start()
             """),
         .cpp("""
@@ -290,7 +290,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 static func register() {
                     // What the host raises, declared where the head starts:
                     // a handler listening for anything else is told.
-                    StateUIEvents.raises(GalleryContract.batteryChanged)
+                    SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
                 }
 
                 @MainActor
@@ -301,12 +301,12 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                     guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
                     lastSaid = (level, charging)
-                    StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+                    SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
                 }
             }
 
             // The native method GalleryDevice.java's receiver calls, by its JNI name.
-            @_cdecl("Java_com_stateui_gallery_GalleryNatives_batteryChanged")
+            @_cdecl("Java_com_swiftomniui_gallery_GalleryNatives_batteryChanged")
             public func galleryBatteryChanged(
                 _ env: UnsafeMutablePointer<JNIEnv?>?, _ owner: jclass?, _ level: jdouble, _ charging: jboolean
             ) {
@@ -314,10 +314,10 @@ struct InteropEventsSample: SampleContent, ExampleContent {
             }
             """),
         .java("""
-            // Platforms/Android/Java/com/stateui/gallery/GalleryActivity.java - the
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryActivity.java - the
             // gallery's activity: the host's own, and the battery watched while it
             // lives.
-            public final class GalleryActivity extends StateUIActivity {
+            public final class GalleryActivity extends SwiftOmniUIActivity {
                 private BroadcastReceiver battery;
 
                 @Override
@@ -333,7 +333,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 }
             }
 
-            // Platforms/Android/Java/com/stateui/gallery/GalleryDevice.java - each
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryDevice.java - each
             // change of the battery, the one standing first, told to the Swift half
             // through a native method of the gallery's.
             final class GalleryDevice {
@@ -366,7 +366,7 @@ struct InteropEventsSample: SampleContent, ExampleContent {
                 }
             }
 
-            // Platforms/Android/Java/com/stateui/gallery/GalleryNatives.java - the
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryNatives.java - the
             // native method the receiver calls, answered in Swift by its JNI name.
             final class GalleryNatives {
                 static native void batteryChanged(double level, boolean charging);
@@ -405,12 +405,12 @@ struct InteropEventsSample: SampleContent, ExampleContent {
 
     var notes: (any View)? {
         VStack {
-            Text("The host calls `StateUIEvents.raise(event, values)` when the platform "
+            Text("The host calls `SwiftOmniUIEvents.raise(event, values)` when the platform "
                 + "reports something, from any thread. Every `HostEvents.on` subscription "
                 + "to that member runs like a control's handler: on the library's "
                 + "executor, handed the values the contract declares, free to await and to "
                 + "write `@State`. The head declares each event it raises with "
-                + "`StateUIEvents.raises`, so a handler listening for one nothing raises "
+                + "`SwiftOmniUIEvents.raises`, so a handler listening for one nothing raises "
                 + "is told so once.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)

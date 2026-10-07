@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// An author holds a CONTROL as well as values, and declares it with `@Aim`:
 /// on a value you write, on a control you call.

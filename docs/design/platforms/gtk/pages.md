@@ -66,7 +66,7 @@ page for a title.
 A split view is libadwaita's `AdwOverlaySplitView`: the sidebar beside the
 detail, and over it in a window narrower than 400sp - a breakpoint of the
 window's, as GNOME's applications collapse theirs, the window then saying the
-smallest size GNOME's windows keep. Whether the sidebar shows is StateUI's
+smallest size GNOME's windows keep. Whether the sidebar shows is SwiftOmniUI's
 binding: the program's write shows or hides it, and GTK's own change - a click
 beside a sidebar over the detail, a swipe - and the detail's toggle report
 back into it. The split's first room wider than nothing decides, by the host

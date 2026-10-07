@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Content built from the space it was given, and frames reported on request.
 struct FrameReaderSample: SampleContent, ExampleContent {

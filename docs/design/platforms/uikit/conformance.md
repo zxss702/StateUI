@@ -22,7 +22,7 @@ windows out of the scene and leaves the scene for the next. XCTest is the
 simulator platform's own, read where it stands. An application on the
 simulator reads and writes the Mac's files where they are, so a run holds
 `exports` to what it says, or writes it there with
-`STATEUI_UPDATE_EXPORTS=1`, which the script hands the application.
+`SWIFTOMNIUI_UPDATE_EXPORTS=1`, which the script hands the application.
 
 ## What the driver does
 
@@ -61,7 +61,7 @@ line, whose dashes UIKit keeps in points and the driver reads back in the
 line's widths. A shape given no stroke draws no line, and holds none of it.
 A button's box, icon and breaking are its configuration's. What UIKit holds
 none of - a shape's figure placed and moved into its path, a layout's outline
-held as a path, where StateUI's layout places the children, what StateUI
+held as a path, where SwiftOmniUI's layout places the children, what SwiftOmniUI
 measures - does not apply here, its effect proven by another case.
 
 ## What goes past UIKit

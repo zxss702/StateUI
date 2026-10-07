@@ -69,7 +69,7 @@ run, and resume, on the executor of whoever called them, which for a handler is
 `MainActor`. A plain async function would run on the cooperative pool, and the
 caller would come back to life beside a render the host is running. The reply
 crosses as tagged values, so nothing is parsed: `focus` reads one bool, the
-clock its numbers, and a failure throws `StateUIError` with the host's reason.
+clock its numbers, and a failure throws `SwiftOmniUIError` with the host's reason.
 
 A resume is counted the moment the continuation is resumed and uncounted by the
 handler as the first thing after its `await`. The job a resume produces does not
@@ -161,7 +161,7 @@ model is the model's; the walk never enters a model.
 Focus is an act with two forms: `field.focus()` on a known view, and
 `OnScreenKeyboard.hide()` for whatever has the keyboard. The focused control is
 whichever one the user touched last, so the host asks its native focus system,
-and StateUI does not mirror that identity as state. The second form lets a Done
+and SwiftOmniUI does not mirror that identity as state. The second form lets a Done
 button close a keyboard it did not open. On iOS a search field on the
 navigation bar takes the whole bar while it has focus, the back button with it;
 `hide()` is what gives the bar back, which is why the keyboard sample offers it.

@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import GalleryUI
-@_spi(Host) @testable import StateUI
+@_spi(Host) @testable import SwiftOmniUI
 
 final class ResourceTests: XCTestCase {
     private var styles: [AnyStyle] {

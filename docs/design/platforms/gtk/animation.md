@@ -41,7 +41,7 @@ allocation, which draws it.
 ## Less animation
 
 A user who turns the desktop's animations off - GTK's `gtk-enable-animations`
-false, which GNOME's Reduce Animation sets - asks for less animation, and StateUI
+false, which GNOME's Reduce Animation sets - asks for less animation, and SwiftOmniUI
 hears it so: every animation arrives at its destination at once, and a
 journey's waiter hears it arrive.
 

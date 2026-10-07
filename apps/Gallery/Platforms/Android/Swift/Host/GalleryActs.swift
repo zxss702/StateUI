@@ -3,28 +3,28 @@
 
 import Android
 import GalleryUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
 /// The acts the gallery performs on this head: its clipboard and its battery, asked of the device through the
-/// gallery's own Java, com.stateui.gallery.GalleryDevice.
+/// gallery's own Java, com.swiftomniui.gallery.GalleryDevice.
 enum GalleryActs {
     /// Registers each act with the host. Said once, as the library loads.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
             Java.frame {
-                Java.callStatic(Self.device, Self.copy, .object(StateUIAndroid.context), .object(Java.string(text)))
+                Java.callStatic(Self.device, Self.copy, .object(SwiftOmniUIAndroid.context), .object(Java.string(text)))
             }
         }
 
-        StateUIActs.add(GalleryContract.readClipboard) {
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
             let text: String = Java.frame {
-                Java.text(Java.callStaticObject(Self.device, Self.paste, .object(StateUIAndroid.context)))
+                Java.text(Java.callStaticObject(Self.device, Self.paste, .object(SwiftOmniUIAndroid.context)))
             }
             return text
         }
 
-        StateUIActs.add(GalleryContract.batteryLevel) {
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
             battery()
         }
     }
@@ -34,7 +34,7 @@ enum GalleryActs {
     static func battery() -> (Double, Bool) {
         let reading = Java.frame { () -> [Double] in
             var values = [0.0, 0.0]
-            guard let array = Java.callStaticObject(Self.device, Self.batteryNow, .object(StateUIAndroid.context))
+            guard let array = Java.callStaticObject(Self.device, Self.batteryNow, .object(SwiftOmniUIAndroid.context))
             else { return values }
             values.withUnsafeMutableBufferPointer { Java.jni.GetDoubleArrayRegion(Java.env, array, 0, 2, $0.baseAddress) }
             return values
@@ -42,7 +42,7 @@ enum GalleryActs {
         return (reading[0], reading[1] != 0)
     }
 
-    @MainActor private static let device = Java.findClass("com/stateui/gallery/GalleryDevice")
+    @MainActor private static let device = Java.findClass("com/swiftomniui/gallery/GalleryDevice")
     @MainActor private static let copy = Java.staticMethod(
         device, "copy", "(Landroid/content/Context;Ljava/lang/String;)V")
     @MainActor private static let paste = Java.staticMethod(

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A column of a thousand rows, only a window's worth of which exist.
 ///

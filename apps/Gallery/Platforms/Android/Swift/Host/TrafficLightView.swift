@@ -3,10 +3,10 @@
 
 import Android
 import GalleryUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
-/// Three lamps in a dark housing, one lit: the gallery's own Java view, com.stateui.gallery.TrafficLightView, which
-/// knows nothing of StateUI. The Swift half is Sources/Samples/Interop/TrafficLight.swift.
+/// Three lamps in a dark housing, one lit: the gallery's own Java view, com.swiftomniui.gallery.TrafficLightView, which
+/// knows nothing of SwiftOmniUI. The Swift half is Sources/Samples/Interop/TrafficLight.swift.
 @MainActor
 final class TrafficLightView: AndroidControl {
     let view: JavaObject
@@ -22,13 +22,13 @@ final class TrafficLightView: AndroidControl {
 
     private let number: Int64
 
-    private static let viewClass = Java.findClass("com/stateui/gallery/TrafficLightView")
+    private static let viewClass = Java.findClass("com/swiftomniui/gallery/TrafficLightView")
     private static let make = Java.method(viewClass, "<init>", "(Landroid/content/Context;J)V")
     private static let setSignal = Java.method(viewClass, "setSignal", "(I)V")
 
     init() {
         number = GalleryControls.reserve()
-        view = Java.new(Self.viewClass, Self.make, .object(StateUIAndroid.context), .long(number))
+        view = Java.new(Self.viewClass, Self.make, .object(SwiftOmniUIAndroid.context), .long(number))
         Java.call(view.reference, Self.setSignal, .int(signal.rawValue))
         GalleryControls.hold(self, as: number)
     }
@@ -48,7 +48,7 @@ extension TrafficLightView {
     /// reports, and `property` puts the described signal on it. Said once, as the library loads.
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
             let light = TrafficLightView()
             light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
             return light

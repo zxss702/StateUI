@@ -5,7 +5,7 @@
 // page around it, the card that links to it and the route that reaches it are
 // the same for all of them.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// What a sample is called and the examples it shows.
 ///
@@ -112,7 +112,7 @@ protocol ExampleContent: View {
     ///
     /// "In Swift" for almost every example, which is all a user needs where
     /// the example is Swift alone. An example whose far side is ALSO Swift -
-    /// a host in the same process - says "In StateUI" instead, so the two
+    /// a host in the same process - says "In SwiftOmniUI" instead, so the two
     /// listings are told apart by what they ARE rather than by their language.
     static var codeHeading: String { get }
 

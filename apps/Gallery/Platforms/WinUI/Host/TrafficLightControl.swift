@@ -3,10 +3,10 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 /// Three lamps in a housing, one lit at a time - a XAML Border of three Ellipses the gallery's relay makes, which
-/// knows nothing of StateUI.
+/// knows nothing of SwiftOmniUI.
 ///
 /// `register()`, at the end of this file, adds it for `TrafficLightContract`, and that registration is the whole
 /// bridge. The Swift half is Sources/Samples/Interop/TrafficLight.swift.
@@ -49,7 +49,7 @@ extension TrafficLightControl {
     /// reports, and `property` puts the described signal on it. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
             let light = TrafficLightControl()
             light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
             return light

@@ -1,14 +1,14 @@
 # Concurrency
 
-StateUI handlers may suspend without leaving the platform UI thread. That
+SwiftOmniUI handlers may suspend without leaving the platform UI thread. That
 thread is Swift's `MainActor` on every platform: on Apple it is the main queue
-UIKit and AppKit drain, and on Android, Windows, and Linux StateUI makes it a
+UIKit and AppKit drain, and on Android, Windows, and Linux SwiftOmniUI makes it a
 queue the host drains on its UI thread. App code uses ordinary Swift
 concurrency while the host remains the owner of its native event loop.
 
 ## Handler isolation
 
-Every StateUI event, change, lifetime, ticker, and host-event handler runs on
+Every SwiftOmniUI event, change, lifetime, ticker, and host-event handler runs on
 `MainActor`. It can read and write state directly and may call an asynchronous
 function:
 
@@ -52,7 +52,7 @@ inherits its caller's executor. The setting is per target:
 ```swift quote
 .target(
     name: "NotesUI",
-    dependencies: ["StateUI"],
+    dependencies: ["SwiftOmniUI"],
     swiftSettings: [
         .enableUpcomingFeature("NonisolatedNonsendingByDefault")
     ]
@@ -114,7 +114,7 @@ Button("Rename and confirm").onClicked {
 An `async let` or child task may run work concurrently. Registry, state, and
 wake-up mechanics are safe for that route, but UI decisions still belong to
 the handler's `MainActor` continuation. Concurrency changes completion order;
-it does not weaken StateUI's identity or render ordering.
+it does not weaken SwiftOmniUI's identity or render ordering.
 
 ## Sleeping and deadlines
 
@@ -189,9 +189,9 @@ ticks.
 
 ## Foundation boundary
 
-The cross-platform StateUI module does not import Foundation. App code
+The cross-platform SwiftOmniUI module does not import Foundation. App code
 may use Foundation for networking, serialization, and domain models. At the UI
-boundary use StateUI's portable values and execution primitives:
+boundary use SwiftOmniUI's portable values and execution primitives:
 
 - `CalendarDate` and `ClockTime` for picker state;
 - `LocaleInfo` and `TimeZoneInfo` for host-normalized locale and zone facts;

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A spinner started and stopped by one flag.
 struct ActivityIndicatorSample: SampleContent, ExampleContent {

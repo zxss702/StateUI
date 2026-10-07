@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// One choice out of several, drawn as a group of radio buttons - a `Picker`
 /// wearing `.radioGroup`.

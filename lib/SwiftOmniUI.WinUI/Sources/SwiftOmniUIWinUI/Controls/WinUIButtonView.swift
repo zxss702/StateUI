@@ -1,0 +1,130 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUIHost
+import CSwiftOmniUIWinUI
+
+/// A WinUI `Button`: its caption, its look, whether it takes a press, and the click it raises.
+@MainActor
+final class WinUIButtonView: WinUIView {
+    override var takesDirection: Bool { true }
+
+    /// What the button does when the user clicks it, holds it down and lets it go.
+    var onClicked: (() -> Void)?
+    var onPressed: (() -> Void)?
+    var onReleased: (() -> Void)?
+
+    /// What a staying-pressed button reports when a press flips it - `isOn`
+    /// worn on the element at all makes it one.
+    var onToggled: ((Bool) -> Void)?
+
+    init() {
+        super.init { number in swiftomniui_winui_button_make(number) }
+    }
+
+    /// The caption.
+    func setText(_ text: String) {
+        swiftomniui_winui_set_caption(handle, text)
+    }
+
+    /// The caption the button shows now, read back from WinUI.
+    var text: String {
+        WinUIView.words(of: handle)
+    }
+
+    /// What fills the button, its outline and its shape; nil for the platform's own.
+    func setLook(background: HostValue?, stroke: HostValue?, strokeWidth: Double?, shape: HostValue?) {
+        let radius: Double = switch shape.map(BoxArithmetic.outline) {
+        case .roundedRectangle(let radius)?: radius
+        case .ellipse?, .capsule?, .circle?: .greatestFiniteMagnitude
+        case .rectangle?: 0
+        case nil: -1
+        }
+        let (fill, outline) = (WinUIBrush(background), WinUIBrush(stroke))
+        let width = BoxArithmetic.outlineWidth(stroke: stroke, width: strokeWidth)
+        paint("look", followsSize: fill.followsSize || outline.followsSize) { [handle] size in
+            fill.withRelayBrush(over: size) { fill in
+                outline.withRelayBrush(over: size) { outline in
+                    swiftomniui_winui_button_set_look(
+                        handle, fill, outline, width, radius, PressedFill.underPointer, PressedFill.pressed)
+                }
+            }
+        }
+    }
+
+    /// The logical style, mapped to the theme style WinUI names for it.
+    func setStyle(_ style: ButtonStyleKind?) {
+        swiftomniui_winui_button_set_style(handle, (style ?? .automatic).rawValue)
+    }
+
+    /// The keyboard shortcut, as the `VirtualKey` and `VirtualKeyModifiers`
+    /// numbers C++ hands straight to the accelerator.
+    func setShortcut(_ shortcut: KeyboardShortcut?) {
+        let (key, modifiers) = shortcut.map(Self.numbers) ?? (0, 0)
+        swiftomniui_winui_button_set_shortcut(handle, key, modifiers)
+    }
+
+    /// The key and modifiers as Windows numbers them: a character's ASCII,
+    /// the named keys their `VirtualKey`, the command modifier Control.
+    private static func numbers(_ shortcut: KeyboardShortcut) -> (Int32, Int32) {
+        var modifiers: Int32 = 0
+        if shortcut.modifiers.contains(.command) { modifiers |= 1 }
+        if shortcut.modifiers.contains(.shift) { modifiers |= 4 }
+        if shortcut.modifiers.contains(.option) { modifiers |= 2 }
+        if shortcut.modifiers.contains(.control) { modifiers |= 1 }
+        let key: Int32 = switch shortcut.key.name {
+        case "return", "defaultaction": 13
+        case "escape", "cancelaction": 27
+        case "tab": 9
+        case "space": 32
+        case "delete": 8
+        case "deleteforward": 46
+        case "left": 37
+        case "up": 38
+        case "right": 39
+        case "down": 40
+        case "home": 36
+        case "end": 35
+        case "pageup": 33
+        case "pagedown": 34
+        case let name where name.hasPrefix("f") && name.dropFirst().allSatisfy(\.isNumber):
+            Int32(name.dropFirst()).map { $0 >= 1 && $0 <= 24 ? 111 + $0 : 0 } ?? 0
+        case let name where name.count == 1:
+            Int32(name.uppercased().unicodeScalars.first?.value ?? 0)
+        default: 0
+        }
+        return (key, modifiers)
+    }
+
+    func setEnabled(_ enabled: Bool) {
+        swiftomniui_winui_set_enabled(handle, enabled)
+    }
+
+    /// The staying-pressed look, or none: `nil` makes the button momentary
+    /// again; worn at all the press keeps, and the user's flips come back
+    /// through `onToggled`.
+    func setOn(_ on: Bool?) {
+        swiftomniui_winui_button_set_on(handle, on != nil ? 1 : 0, (on ?? false) ? 1 : 0)
+    }
+
+    override func toggled(_ on: Bool) {
+        onToggled?(on)
+    }
+
+    override func clicked() {
+        onClicked?()
+    }
+
+    override func held(_ holding: Bool) {
+        (holding ? onPressed : onReleased)?()
+    }
+
+    override func detach() {
+        super.detach()
+        onClicked = nil
+        onPressed = nil
+        onReleased = nil
+        onToggled = nil
+    }
+}

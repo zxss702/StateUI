@@ -1,6 +1,6 @@
 # Composition and identity
 
-StateUI applications build larger meanings from small native primitives.
+SwiftOmniUI applications build larger meanings from small native primitives.
 Composition stays in Swift; identity lets the differ preserve the native
 controls, state, focus, caret, and scroll positions that belong to that
 meaning.
@@ -69,7 +69,7 @@ Badge()
 ```
 
 Write a component-specific modifier before common view modifiers. A common
-modifier such as `padding` returns StateUI's modified wrapper, whose surface is
+modifier such as `padding` returns SwiftOmniUI's modified wrapper, whose surface is
 the shared view contract rather than the original component's custom methods.
 
 ## What makes a composed view rebuild
@@ -102,7 +102,7 @@ which element from the previous description? A continuing element keeps its
 native control, local state, handlers, focus, caret, selection, and other
 platform-owned standing state.
 
-StateUI resolves identity in this order:
+SwiftOmniUI resolves identity in this order:
 
 1. An explicit `.id(...)` written by the application.
 2. The item identity supplied by `ForEach`.
@@ -187,7 +187,7 @@ between adjacent descriptions and are not a global object registry.
 
 ## Element lifetime
 
-`onAppear` and `onDisappear` describe membership in the StateUI tree, not
+`onAppear` and `onDisappear` describe membership in the SwiftOmniUI tree, not
 allocation of a platform object:
 
 ```swift internals
@@ -287,17 +287,17 @@ carried, or walked, the Swift and host costs, and how many native controls were
 made or kept. It records nothing while closed, so applications that do not use
 it pay only disabled checks.
 
-Set `STATEUI_INSPECT=1` in the host process to emit the same render record as
+Set `SWIFTOMNIUI_INSPECT=1` in the host process to emit the same render record as
 diagnostic text from the first pass. Use this for automated runs or a problem
-that happens before the inspector can be opened. `STATEUI_TALLY=1` writes the
+that happens before the inspector can be opened. `SWIFTOMNIUI_TALLY=1` writes the
 running totals instead: messages applied, controls made and kept, renders, and
 the elements alive - the numbers that tell a page left in memory from one let
 go. Both go to the standard error, which an Android application sends to
-logcat; `.scripts/Android/run-app.sh` hands every `STATEUI_` variable of the
+logcat; `.scripts/Android/run-app.sh` hands every `SWIFTOMNIUI_` variable of the
 shell that runs it to the application:
 
 ```bash
-STATEUI_TALLY=1 .scripts/Android/run-app.sh apps/Gallery debug emulator-5554
+SWIFTOMNIUI_TALLY=1 .scripts/Android/run-app.sh apps/Gallery debug emulator-5554
 ```
 
 ## Recovery and resynchronization

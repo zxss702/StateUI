@@ -1,6 +1,6 @@
 // What a route asks for that the catalog does not have.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A sample route with no sample behind it.
 ///

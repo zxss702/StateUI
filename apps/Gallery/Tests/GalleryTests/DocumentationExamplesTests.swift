@@ -90,11 +90,11 @@ final class DocumentationExamplesTests: XCTestCase {
 
         guard let module = Self.builtModuleDirectory() else {
             // Never a skip: a check that did not run reads as one that passed.
-            return XCTFail("no StateUI.swiftmodule beside the test bundle - no example was compiled")
+            return XCTFail("no SwiftOmniUI.swiftmodule beside the test bundle - no example was compiled")
         }
         let sdk = try Self.sdkPath()
         let scratch = FileManager.default.temporaryDirectory
-            .appendingPathComponent("stateui-documentation-\(UUID().uuidString)")
+            .appendingPathComponent("swiftomniui-documentation-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: scratch) }
 
@@ -217,7 +217,7 @@ final class DocumentationExamplesTests: XCTestCase {
         // code - its palette, its sample protocol. Testable, because the
         // gallery's types are internal, as an application's are; the guide's
         // own listings use the library's colours and never the gallery's.
-        let imports = ([example.internals ? "@_spi(Host) import StateUI" : "import StateUI",
+        let imports = ([example.internals ? "@_spi(Host) import SwiftOmniUI" : "import SwiftOmniUI",
                         "@testable import GalleryUI"] + lifted).joined(separator: "\n") + "\n"
         if example.fileScope {
             return "\(imports)\n\(stripped)\n"
@@ -245,7 +245,7 @@ final class DocumentationExamplesTests: XCTestCase {
         for folder in [bundle, bundle.deletingLastPathComponent()] {
             for modules in [folder, folder.appendingPathComponent("Modules")] {
                 if FileManager.default.fileExists(
-                    atPath: modules.appendingPathComponent("StateUI.swiftmodule").path) {
+                    atPath: modules.appendingPathComponent("SwiftOmniUI.swiftmodule").path) {
                     return modules
                 }
             }

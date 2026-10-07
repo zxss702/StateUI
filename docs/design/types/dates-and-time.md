@@ -5,7 +5,7 @@ the host about time zones. None of them uses Foundation.
 
 ## Without Foundation
 
-StateUI's days and times are values of its own rather than Foundation's
+SwiftOmniUI's days and times are values of its own rather than Foundation's
 `Date`. Turning a Foundation date into text needs a date formatter, a date
 formatter needs ICU, and ICU is what the library cannot have: on Windows it
 ships as separate libraries, and a mismatched one takes the process down with

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The kinds of window a gallery opens beside its main one - each a window of
 /// the gallery that opened it. See `GalleryScene`.

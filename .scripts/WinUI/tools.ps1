@@ -1,4 +1,4 @@
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@
 # Native tools write to stderr as they work; each step is judged by its exit code.
 $ErrorActionPreference = 'Continue'
 
-$StateUIRepository = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$StateUIWinUIHost = Join-Path $StateUIRepository 'lib\StateUI.WinUI'
+$SwiftOmniUIRepository = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$SwiftOmniUIWinUIHost = Join-Path $SwiftOmniUIRepository 'lib\SwiftOmniUI.WinUI'
 
 # The packages, pinned: the WebView2 is the one WinUI's nuspec names.
-$StateUIPackages = [ordered]@{
+$SwiftOmniUIPackages = [ordered]@{
     'microsoft.windows.cppwinrt'                   = '3.0.260818.1'
     'microsoft.windowsappsdk.winui'                = '1.8.260528001'
     'microsoft.windowsappsdk.foundation'           = '1.8.260527000'
@@ -35,16 +35,16 @@ $StateUIPackages = [ordered]@{
     'microsoft.web.webview2'                       = '1.0.3179.45'
 }
 
-$StateUIPackageRoot = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE '.nuget\packages' }
+$SwiftOmniUIPackageRoot = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE '.nuget\packages' }
 # The machine's own, which the toolchain builds for: a PowerShell an emulated shell starts runs as x64 on an ARM64
 # machine, and would lay x64 libraries beside ARM64 executables.
-$StateUIArchitecture = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
+$SwiftOmniUIArchitecture = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
 
 # One package's folder, fetched from nuget.org first where it is missing - its
 # SHA-512 checked against the catalog's before a byte of it is unpacked.
-function Get-StateUIPackage([string]$Id) {
-    $version = $StateUIPackages[$Id]
-    $folder = Join-Path $StateUIPackageRoot "$Id\$version"
+function Get-SwiftOmniUIPackage([string]$Id) {
+    $version = $SwiftOmniUIPackages[$Id]
+    $folder = Join-Path $SwiftOmniUIPackageRoot "$Id\$version"
     if (Test-Path (Join-Path $folder "$Id.nuspec")) { return $folder }
 
     Write-Host "fetching $Id $version"
@@ -66,19 +66,19 @@ function Get-StateUIPackage([string]$Id) {
 # The C++/WinRT projection of the Windows SDK, WinUI and the Windows App SDK,
 # into the host's .projection/, generated again when the versions change -
 # beside it, WinUI's header for drawing with DirectX into its elements.
-function Initialize-StateUIProjection {
-    $projection = Join-Path $StateUIWinUIHost '.projection'
+function Initialize-SwiftOmniUIProjection {
+    $projection = Join-Path $SwiftOmniUIWinUIHost '.projection'
     $stamp = Join-Path $projection 'versions.txt'
     $interop = 'microsoft.ui.xaml.media.dxinterop.h'
-    $versions = ($StateUIPackages.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join "`n"
+    $versions = ($SwiftOmniUIPackages.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join "`n"
     if ((Test-Path $stamp) -and ((Get-Content $stamp -Raw).Trim() -eq $versions.Trim()) -and
         (Test-Path (Join-Path $projection $interop))) { return }
 
-    $cppwinrt = Join-Path (Get-StateUIPackage 'microsoft.windows.cppwinrt') 'bin\cppwinrt.exe'
-    $winui = Get-StateUIPackage 'microsoft.windowsappsdk.winui'
-    $foundation = Get-StateUIPackage 'microsoft.windowsappsdk.foundation'
-    $experiences = Get-StateUIPackage 'microsoft.windowsappsdk.interactiveexperiences'
-    $webview = Get-StateUIPackage 'microsoft.web.webview2'
+    $cppwinrt = Join-Path (Get-SwiftOmniUIPackage 'microsoft.windows.cppwinrt') 'bin\cppwinrt.exe'
+    $winui = Get-SwiftOmniUIPackage 'microsoft.windowsappsdk.winui'
+    $foundation = Get-SwiftOmniUIPackage 'microsoft.windowsappsdk.foundation'
+    $experiences = Get-SwiftOmniUIPackage 'microsoft.windowsappsdk.interactiveexperiences'
+    $webview = Get-SwiftOmniUIPackage 'microsoft.web.webview2'
 
     Write-Host 'generating the C++/WinRT projection'
     if (Test-Path $projection) { Remove-Item -Recurse -Force $projection }
@@ -92,14 +92,14 @@ function Initialize-StateUIProjection {
 
 # What SwiftPM is told to build for `Architecture`: nothing for the toolchain's
 # own, `--arch` for another - its `--triple` builds the toolchain's own.
-function Get-StateUIArchitectureArguments([string]$Architecture) {
-    if ($Architecture -eq $StateUIArchitecture) { return @() }
+function Get-SwiftOmniUIArchitectureArguments([string]$Architecture) {
+    if ($Architecture -eq $SwiftOmniUIArchitecture) { return @() }
     return @('--arch', @{ x64 = 'x86_64'; arm64 = 'aarch64' }[$Architecture])
 }
 
 # The C++ runtime for `Architecture`, laid in `Directory` - Visual Studio's
 # app-local redistributable - which the Swift runtime links.
-function Add-StateUICppRuntime([string]$Directory, [string]$Architecture) {
+function Add-SwiftOmniUICppRuntime([string]$Directory, [string]$Architecture) {
     $studio = & (Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe') -latest -products * -property installationPath
     $release = Get-ChildItem (Join-Path $studio 'VC\Redist\MSVC') -Directory | Where-Object Name -match '^\d+\.\d+\.\d+$' |
         Sort-Object { [version]$_.Name } | Select-Object -Last 1
@@ -110,7 +110,7 @@ function Add-StateUICppRuntime([string]$Directory, [string]$Architecture) {
 
 # Says so when the editor is building for its index: it shares the processor
 # with a build, and can make it minutes longer.
-function Write-StateUIEditorBuilds {
+function Write-SwiftOmniUIEditorBuilds {
     $builds = Get-CimInstance Win32_Process -Filter "Name = 'swift-build.exe' OR Name = 'swiftc.exe' OR Name = 'clang.exe'" |
         Where-Object { $_.CommandLine -match 'index-build' }
     if ($builds) { Write-Host 'the editor is building for its index, which slows this build' }
@@ -123,9 +123,9 @@ function Write-StateUIEditorBuilds {
 # components declare registered in the manifest beside each one, and
 # resources.pri. An executable is never rewritten after its build: the next
 # build would link it again.
-function Set-StateUISelfContained([string]$Directory, [string[]]$Executables, [string]$Architecture = $StateUIArchitecture) {
+function Set-SwiftOmniUISelfContained([string]$Directory, [string[]]$Executables, [string]$Architecture = $SwiftOmniUIArchitecture) {
     $components = 'microsoft.windowsappsdk.winui', 'microsoft.windowsappsdk.foundation',
-        'microsoft.windowsappsdk.interactiveexperiences' | ForEach-Object { Get-StateUIPackage $_ }
+        'microsoft.windowsappsdk.interactiveexperiences' | ForEach-Object { Get-SwiftOmniUIPackage $_ }
 
     foreach ($component in $components) {
         $native = Join-Path $component "runtimes-framework\win-$Architecture\native"
@@ -133,14 +133,14 @@ function Set-StateUISelfContained([string]$Directory, [string[]]$Executables, [s
         if ($LASTEXITCODE -ge 8) { throw "the Windows App SDK could not be copied from $native" }
     }
     # What a backend's engine needs beside an application linking it, each backend lays itself.
-    foreach ($backend in Get-ChildItem (Join-Path $StateUIRepository 'lib\Backends') -Directory -Filter '*.WinUI') {
+    foreach ($backend in Get-ChildItem (Join-Path $SwiftOmniUIRepository 'lib\Backends') -Directory -Filter '*.WinUI') {
         $lays = Join-Path $backend.FullName 'SelfContained.ps1'
         if (Test-Path $lays) { & $lays -Directory $Directory -Architecture $Architecture }
     }
-    if ($Architecture -ne $StateUIArchitecture) { Add-StateUISwiftRuntime -Directory $Directory -Architecture $Architecture }
+    if ($Architecture -ne $SwiftOmniUIArchitecture) { Add-SwiftOmniUISwiftRuntime -Directory $Directory -Architecture $Architecture }
     $global:LASTEXITCODE = 0
 
-    $manifest = New-StateUIManifest $components
+    $manifest = New-SwiftOmniUIManifest $components
     foreach ($executable in $Executables) { [IO.File]::WriteAllText("$executable.manifest", $manifest) }
 
     # WinUI's controls find their resources in the application's index.
@@ -153,7 +153,7 @@ function Set-StateUISelfContained([string]$Directory, [string[]]$Executables, [s
 # File table and its cabinet, read through msi.dll and unpacked by expand.exe.
 # Unpacked again only where the module differs from the one laid there.
 # Design: docs/design/platforms/winui/runtime.md#another-architecture
-function Add-StateUISwiftRuntime([string]$Directory, [string]$Architecture) {
+function Add-SwiftOmniUISwiftRuntime([string]$Directory, [string]$Architecture) {
     $toolchain = Split-Path (Split-Path (Split-Path (Get-Command swift).Source))
     $swift = Split-Path (Split-Path $toolchain)
     $version = (Split-Path $toolchain -Leaf) -replace '\+.*$', ''
@@ -171,7 +171,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-public static class StateUIMergeModule {
+public static class SwiftOmniUIMergeModule {
     [DllImport("msi.dll", CharSet = CharSet.Unicode)] static extern uint MsiOpenDatabaseW(string path, IntPtr persist, out IntPtr database);
     [DllImport("msi.dll", CharSet = CharSet.Unicode)] static extern uint MsiDatabaseOpenViewW(IntPtr database, string query, out IntPtr view);
     [DllImport("msi.dll")] static extern uint MsiViewExecute(IntPtr view, IntPtr record);
@@ -223,13 +223,13 @@ public static class StateUIMergeModule {
 }
 '@ -ErrorAction SilentlyContinue
 
-    $unpacked = Join-Path $env:TEMP "stateui-swift-runtime-$Architecture-$PID"
+    $unpacked = Join-Path $env:TEMP "swiftomniui-swift-runtime-$Architecture-$PID"
     New-Item -ItemType Directory -Force $unpacked | Out-Null
     $cabinet = Join-Path $unpacked 'runtime.cab'
-    [StateUIMergeModule]::Cabinet($module, $cabinet)
+    [SwiftOmniUIMergeModule]::Cabinet($module, $cabinet)
     expand.exe $cabinet -F:* $unpacked | Out-Null
     if ($LASTEXITCODE) { throw "the Swift runtime for $Architecture could not be unpacked from $module" }
-    $names = [StateUIMergeModule]::Files($module)
+    $names = [SwiftOmniUIMergeModule]::Files($module)
     foreach ($each in Get-ChildItem $unpacked -Exclude 'runtime.cab') {
         # plutil is a tool of Foundation's, no part of what a program runs with.
         if ($names[$each.Name] -and $names[$each.Name] -ne 'plutil.exe') {
@@ -243,7 +243,7 @@ public static class StateUIMergeModule {
 # The manifest a self-contained application carries: every class each
 # component's package.appxfragment declares, in the file that holds it, and
 # the application's own settings.
-function New-StateUIManifest([string[]]$Components) {
+function New-SwiftOmniUIManifest([string[]]$Components) {
     $text = [System.Text.StringBuilder]::new()
     [void]$text.AppendLine("<?xml version='1.0' encoding='utf-8' standalone='yes'?>")
     [void]$text.AppendLine("<assembly manifestVersion='1.0' xmlns='urn:schemas-microsoft-com:asm.v1' xmlns:asmv3='urn:schemas-microsoft-com:asm.v3' xmlns:winrtv1='urn:schemas-microsoft-com:winrt.v1'>")

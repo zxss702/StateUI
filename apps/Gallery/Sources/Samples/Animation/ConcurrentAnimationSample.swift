@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Several movements in the air at once, which is what `async let` buys.
 struct ConcurrentAnimationSample: SampleContent, ExampleContent {

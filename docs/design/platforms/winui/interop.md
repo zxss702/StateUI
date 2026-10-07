@@ -12,7 +12,7 @@ of the application's own, C++/WinRT behind C functions beside its head, which
 hands it over as the host's own handles cross - a `UIElement`'s default
 interface, `AddRef`'d. The host stands it in the tree as a view of its own
 that wraps the control and holds a reference of its own to the element
-(`stateui_winui_retain`), so each side lets go of its own: the element is
+(`swiftomniui_winui_retain`), so each side lets go of its own: the element is
 placed, sized, shown and listened to like any the host makes, its own measure
 is what the host measures, and the control is held for as long as its
 element lives. The registration's appliers are handed the application's own

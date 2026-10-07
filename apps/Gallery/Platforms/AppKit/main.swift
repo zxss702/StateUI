@@ -3,9 +3,9 @@
 
 import Foundation
 import GalleryUI
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
-stateui_app_register()
+swiftomniui_app_register()
 
 // What this host answers for the application, said before it runs: the
 // controls it realizes, the acts it performs, and the pushes it reports. Each
@@ -24,7 +24,7 @@ let sourceResources = sourceApplication.appendingPathComponent("Resources/Images
 let resources = bundledResources.flatMap {
     FileManager.default.fileExists(atPath: $0.path) ? $0 : nil
 } ?? sourceResources
-let bundledIcon = Bundle.main.url(forResource: "StateUI", withExtension: "icns")
+let bundledIcon = Bundle.main.url(forResource: "SwiftOmniUI", withExtension: "icns")
 let icon = bundledIcon ?? sourceApplication.appendingPathComponent("Resources/AppIcon/appicon_macos.svg")
 
-StateUIAppKit.run(resourceDirectory: resources, applicationIcon: icon)
+SwiftOmniUIAppKit.run(resourceDirectory: resources, applicationIcon: icon)

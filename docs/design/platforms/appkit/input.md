@@ -2,13 +2,13 @@
 
 How the AppKit half meets the user's hand: which view a click reaches, where
 the keyboard focus is, and how a scroller's movement reaches the core. The
-platform owns each gesture; the host only says what StateUI needs to know.
+platform owns each gesture; the host only says what SwiftOmniUI needs to know.
 
 ## Hit testing
 
 AppKit finds the deepest native view under a point through `hitTest(_:)`.
-StateUI's input transparency is decided there, by `AppKitHitTestView`, the
-surface every StateUI container stands on. A transparent layout removes its
+SwiftOmniUI's input transparency is decided there, by `AppKitHitTestView`, the
+surface every SwiftOmniUI container stands on. A transparent layout removes its
 whole subtree from the search; with cascading off, it removes only itself and
 keeps its interactive children reachable.
 
@@ -33,7 +33,7 @@ activate the window.
 ## Focus
 
 The keyboard focus is the platform's. It moves on a click, a Tab, a Return
-and whenever AppKit takes it away, so StateUI never mirrors it as state. The
+and whenever AppKit takes it away, so SwiftOmniUI never mirrors it as state. The
 host needs two answers, and asks the window for both at the moment they
 matter:
 
@@ -94,7 +94,7 @@ bounds notifications, a scroller's clip among them - and the host layer asks
 each follower on the display's next frame, in the order they were made, as one
 of the user's transactions. The view says its place in its parent, its corner
 in its window and from the window's content, each from the top left. It says
-nothing while it stands in no window or before a layout placed it - StateUI's,
+nothing while it stands in no window or before a layout placed it - SwiftOmniUI's,
 or AppKit's giving it a size: a view that joins a shown page meets a display
 frame before its layout, and its first report is where it is laid out.
 

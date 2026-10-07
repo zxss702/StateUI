@@ -1,9 +1,9 @@
 # Items
 
-`List` shows items with the platform's own collection. StateUI says which
+`List` shows items with the platform's own collection. SwiftOmniUI says which
 items there are and builds the one the platform asks for; the platform
 scrolls them, holds each in a cell it reuses, lets the user choose and open
-one, and tells assistive technology about them. Nothing of StateUI's own
+one, and tells assistive technology about them. Nothing of SwiftOmniUI's own
 virtualization stands inside the platform's.
 
 ## Identities in order
@@ -53,5 +53,5 @@ build.
 
 ## Empty
 
-The empty view is StateUI's: while the list has no items, the List is
+The empty view is SwiftOmniUI's: while the list has no items, the List is
 that view in the list's place. A header or a footer alone is no item.

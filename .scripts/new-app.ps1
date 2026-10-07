@@ -1,4 +1,4 @@
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ---------------------------------------------------------------------------
-# Creates a new StateUI application in apps/ - the Windows half of
+# Creates a new SwiftOmniUI application in apps/ - the Windows half of
 # new-app.sh, and the same contract:
 #
 #   .\new-app.ps1 -Name MyApp [-AppsDir <dir>]
@@ -42,8 +42,8 @@ if (-not $AppsDir) { $AppsDir = Join-Path $rootDir "apps" }
 if ($Name -notmatch '^[A-Za-z][A-Za-z0-9]*$') {
     throw "'$Name' cannot name an application: letters and digits only, starting with a letter."
 }
-if ($Name -eq "StateUI") {
-    throw "'StateUI' is the library. Pick a name of the app's own."
+if ($Name -eq "SwiftOmniUI") {
+    throw "'SwiftOmniUI' is the library. Pick a name of the app's own."
 }
 
 $app = Join-Path $AppsDir $Name

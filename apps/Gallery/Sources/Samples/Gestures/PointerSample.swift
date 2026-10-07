@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A pointer's hover, movement and button over one view.
 struct PointerSample: SampleContent, ExampleContent {

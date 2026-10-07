@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import CStateUIGTK
+import CSwiftOmniUIGTK
 
 /// The battery as the desktop knows it: UPower's display device on the system bus, which GNOME's own power status
 /// reads too.
@@ -9,7 +9,7 @@ import CStateUIGTK
 enum GalleryPower {
     /// UPower's display device; nil where the system bus has no UPower.
     static let device: UnsafeMutablePointer<GDBusProxy>? = g_dbus_proxy_new_for_bus_sync(
-        G_BUS_TYPE_SYSTEM, STATEUI_DBUS_PROXY_FLAGS_NONE, nil, "org.freedesktop.UPower",
+        G_BUS_TYPE_SYSTEM, SWIFTOMNIUI_DBUS_PROXY_FLAGS_NONE, nil, "org.freedesktop.UPower",
         "/org/freedesktop/UPower/devices/DisplayDevice", "org.freedesktop.UPower.Device", nil, nil)
 
     /// The battery's level, 0 through 1, and whether the power is plugged in - both zero and false on a desktop that

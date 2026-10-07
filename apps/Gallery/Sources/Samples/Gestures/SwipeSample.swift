@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Which way a finger swiped, heard every way or narrowed to two.
 struct SwipeSample: SampleContent, ExampleContent {

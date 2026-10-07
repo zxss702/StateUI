@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A number stepped one at a time, and the same number stepped by five.
 struct StepperSample: SampleContent, ExampleContent {

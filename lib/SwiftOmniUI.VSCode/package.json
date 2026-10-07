@@ -1,0 +1,252 @@
+{
+  "name": "swiftomniui",
+  "displayName": "SwiftOmniUI",
+  "description": "Build, run and debug SwiftOmniUI applications on AppKit, UIKit, Android, WinUI, GTK and the Web.",
+  "version": "0.5.1",
+  "publisher": "idexus",
+  "license": "Apache-2.0",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/idexus/StateUI.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Debuggers",
+    "Other"
+  ],
+  "extensionPack": [
+    "swiftlang.swift-vscode"
+  ],
+  "main": "./out/Sources/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/Platforms/AppKit/main.swift",
+    "workspaceContains:**/Platforms/UIKit/main.swift",
+    "workspaceContains:**/Platforms/Android/build.gradle.kts",
+    "workspaceContains:**/Platforms/WinUI/main.swift",
+    "workspaceContains:**/Platforms/GTK/main.swift",
+    "workspaceContains:**/Platforms/Web/main.swift",
+    "onDebugResolve:swiftomniui",
+    "onDebugDynamicConfigurations:swiftomniui"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "SwiftOmniUI",
+      "properties": {
+        "swiftomniui.checkout": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "The local SwiftOmniUI checkout - the folder the repository was cloned into - that **SwiftOmniUI: New Project Group** builds a group's applications with. Empty: the checkout open in the workspace, else asked for."
+        },
+        "swiftomniui.minimumRelease": {
+          "type": "string",
+          "default": "0.5.0",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "markdownDescription": "The oldest SwiftOmniUI release **SwiftOmniUI: New Project Group** offers to clone into a group: the first whose scripts build into `.build/<host>` and name the host by `SWIFTOMNIUI_HOST`, as this extension does."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "swiftomniui.selectHost",
+        "title": "Select Host",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.selectApplication",
+        "title": "Select Application",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.selectAndroidDevice",
+        "title": "Select Android Device",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.selectUIKitDevice",
+        "title": "Select UIKit Device",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.selectBrowser",
+        "title": "Select Browser",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.newProjectGroup",
+        "title": "New Project Group",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.newApplicationInApps",
+        "title": "New Application in apps/",
+        "category": "SwiftOmniUI",
+        "enablement": "swiftomniui.hasApps"
+      },
+      {
+        "command": "swiftomniui.reinstallExtension",
+        "title": "Reinstall VS Code Extension",
+        "category": "SwiftOmniUI",
+        "enablement": "swiftomniui.hasCheckout"
+      },
+      {
+        "command": "swiftomniui.runTests",
+        "title": "Run Tests",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.conformanceRebuildAll",
+        "title": "Conformance - Rebuild all",
+        "category": "SwiftOmniUI",
+        "enablement": "swiftomniui.hasCheckout"
+      },
+      {
+        "command": "swiftomniui.conformanceRebuildChanged",
+        "title": "Conformance - Rebuild changed",
+        "category": "SwiftOmniUI",
+        "enablement": "swiftomniui.hasCheckout"
+      },
+      {
+        "command": "swiftomniui.cleanIndex",
+        "title": "Clean Index",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.checkToolchain",
+        "title": "Check Toolchain",
+        "category": "SwiftOmniUI"
+      },
+      {
+        "command": "swiftomniui.deploy",
+        "title": "Deploy",
+        "category": "SwiftOmniUI"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "swiftomniui",
+        "label": "SwiftOmniUI",
+        "languages": [
+          "swift"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "configuration": {
+                "type": "string",
+                "enum": [
+                  "debug",
+                  "release"
+                ],
+                "default": "debug",
+                "description": "Which build to run on the host chosen in the status bar."
+              },
+              "application": {
+                "type": "string",
+                "description": "The application to run - its name, `Gallery`. The one chosen with SwiftOmniUI: Select Application when absent."
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "name": "SwiftOmniUI: Debug",
+            "type": "swiftomniui",
+            "request": "launch",
+            "configuration": "debug"
+          },
+          {
+            "name": "SwiftOmniUI: Release",
+            "type": "swiftomniui",
+            "request": "launch",
+            "configuration": "release"
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "SwiftOmniUI: Debug",
+            "body": {
+              "name": "SwiftOmniUI: Debug",
+              "type": "swiftomniui",
+              "request": "launch",
+              "configuration": "debug"
+            }
+          },
+          {
+            "label": "SwiftOmniUI: Release",
+            "body": {
+              "name": "SwiftOmniUI: Release",
+              "type": "swiftomniui",
+              "request": "launch",
+              "configuration": "release"
+            }
+          }
+        ]
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "swiftomniui",
+        "required": [],
+        "properties": {
+          "application": {
+            "type": "string",
+            "description": "The application whose head is built or run."
+          },
+          "configuration": {
+            "type": "string",
+            "enum": [
+              "debug",
+              "release"
+            ]
+          },
+          "suite": {
+            "type": "string",
+            "description": "The test suite run."
+          },
+          "device": {
+            "type": "string",
+            "description": "The serial of the Android device the head runs on."
+          }
+        }
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "swiftomniui.newApplicationInApps",
+          "when": "swiftomniui.hasApps"
+        },
+        {
+          "command": "swiftomniui.reinstallExtension",
+          "when": "swiftomniui.hasCheckout"
+        },
+        {
+          "command": "swiftomniui.conformanceRebuildAll",
+          "when": "swiftomniui.hasCheckout"
+        },
+        {
+          "command": "swiftomniui.conformanceRebuildChanged",
+          "when": "swiftomniui.hasCheckout"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "node -e \"require('fs').rmSync('out', { recursive: true, force: true })\" && tsc -p .",
+    "test": "npm run compile && node out/Tests/run.js",
+    "package": "npm run compile && node out/Build/package.js"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "@types/vscode": "1.90.0",
+    "@vscode/vsce": "2.32.0",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "cheerio": "1.0.0-rc.12"
+  }
+}

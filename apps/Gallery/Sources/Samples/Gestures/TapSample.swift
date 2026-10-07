@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A tap and a double tap on a whole view.
 struct TapSample: SampleContent, ExampleContent {

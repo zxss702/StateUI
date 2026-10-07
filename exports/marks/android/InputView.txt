@@ -5,7 +5,7 @@ SearchField.isEnabled: waits on SearchField.isReadOnly
 SearchField.isReadOnly: not realized
 SearchField.isSpellCheckEnabled: not realized
 SearchField.isTextPredictionEnabled: not realized
-SearchField.maximumLength: ◐ cannot read maximumLength of SearchField - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it
+SearchField.maximumLength: ◐ cannot read maximumLength of SearchField - Android's field keeps no bound of SwiftOmniUI's: the host cuts what is typed, and typing proves it
 SearchField.placeholder: ✅
 SearchField.placeholderColor: ✅
 SearchField.selectionLength: ✅
@@ -17,7 +17,7 @@ TextEditor.isEnabled: waits on TextEditor.isReadOnly
 TextEditor.isReadOnly: not realized
 TextEditor.isSpellCheckEnabled: not realized
 TextEditor.isTextPredictionEnabled: not realized
-TextEditor.maximumLength: ◐ cannot read maximumLength of TextEditor - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it
+TextEditor.maximumLength: ◐ cannot read maximumLength of TextEditor - Android's field keeps no bound of SwiftOmniUI's: the host cuts what is typed, and typing proves it
 TextEditor.placeholder: ✅
 TextEditor.placeholderColor: ✅
 TextEditor.selectionLength: ✅
@@ -29,7 +29,7 @@ TextField.isEnabled: waits on TextField.isReadOnly
 TextField.isReadOnly: not realized
 TextField.isSpellCheckEnabled: not realized
 TextField.isTextPredictionEnabled: not realized
-TextField.maximumLength: ◐ cannot read maximumLength of TextField - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it
+TextField.maximumLength: ◐ cannot read maximumLength of TextField - Android's field keeps no bound of SwiftOmniUI's: the host cuts what is typed, and typing proves it
 TextField.placeholder: ✅
 TextField.placeholderColor: ✅
 TextField.selectionLength: ✅

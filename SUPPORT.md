@@ -1,6 +1,6 @@
 # Support
 
-**There is no support on offer, and none is being sold.** StateUI is written by
+**There is no support on offer, and none is being sold.** SwiftOmniUI is written by
 one person, in the open, and given away. At this stage of the project that is
 the whole answer.
 
@@ -20,11 +20,11 @@ the whole answer.
 - **A reply.** Issues are read when there is time to read them. Many get an
   answer; none is promised one.
 - **A response time.** There is none, and nothing here implies one.
-- **Help with your own application's code.** Questions about StateUI's own
+- **Help with your own application's code.** Questions about SwiftOmniUI's own
   behaviour are the interesting kind; an application's own design is its
   author's to answer.
 - **A stable API.** This is version 0.3 and the shape of things is still being
-  found, so **using StateUI in a project is at your own risk**: names and
+  found, so **using SwiftOmniUI in a project is at your own risk**: names and
   signatures move between versions, and there is no deprecation cycle yet to
   soften it.
 - **Backports, or a fix on your schedule.** A fix lands when it lands.
@@ -48,7 +48,7 @@ the platform is worth several that do not:
 
 - what you did, what happened, and what you expected instead
 - the platform and its version - macOS, iOS, Android, Windows or Linux
-- the StateUI version, and the Swift toolchain's
+- the SwiftOmniUI version, and the Swift toolchain's
 - the smallest piece of code that shows it
 
 A stack trace or the exact error text beats a description of it.

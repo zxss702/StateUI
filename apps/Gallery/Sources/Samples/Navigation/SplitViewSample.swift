@@ -1,6 +1,6 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
-/// A native split view whose sidebar is an ordinary StateUI page.
+/// A native split view whose sidebar is an ordinary SwiftOmniUI page.
 struct SplitViewSample: SampleContent, ExampleContent {
     /// Where the gallery is: this sample opens and closes the menu, and sends
     /// the user to the section the menu does not always list.
@@ -64,7 +64,7 @@ struct SplitViewSample: SampleContent, ExampleContent {
                     // its own - so a phase change builds that and nothing else.
                     WindowPhaseLog(log: log)
                 }
-                .onAppear { page.title = "StateUI" }
+                .onAppear { page.title = "SwiftOmniUI" }
             }
         }
 

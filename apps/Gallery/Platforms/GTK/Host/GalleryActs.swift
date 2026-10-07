@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import CStateUIGTK
+import CSwiftOmniUIGTK
 import GalleryUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
 /// The gallery's own acts, as this host answers them.
 ///
@@ -15,14 +15,14 @@ enum GalleryActs {
     /// Registers every act this host performs. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
             gdk_clipboard_set_text(clipboard(), text)
         }
         // GTK reads a clipboard only asynchronously: the performer awaits it.
-        StateUIActs.add(GalleryContract.readClipboard) {
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
             await clipboardText()
         }
-        StateUIActs.add(GalleryContract.batteryLevel) {
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
             GalleryPower.battery()
         }
     }

@@ -1,6 +1,6 @@
 # Design notes
 
-The reasons behind StateUI's code. A comment in the code says what a
+The reasons behind SwiftOmniUI's code. A comment in the code says what a
 declaration is in a line or three; the reason it is shaped so, the trap it
 avoids and the rule it keeps are here, in the present tense.
 
@@ -26,7 +26,7 @@ it.
 
 - [Architecture](architecture.md): the packages, one change end to end, and
   the threads, drawn.
-- [Glossary](glossary.md): StateUI's words and the common term for each.
+- [Glossary](glossary.md): SwiftOmniUI's words and the common term for each.
 - [`core/`](core/README.md): the core drawn - a state write to a patch, the
   display cycle, the UI thread and the typed boundary - and the reasons of each part.
 - [`views/`](views/README.md): how an application's views become the

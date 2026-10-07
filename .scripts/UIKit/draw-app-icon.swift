@@ -44,7 +44,7 @@ let contents = """
       "images" : [
         { "filename" : "appicon.png", "idiom" : "universal", "platform" : "ios", "size" : "1024x1024" }
       ],
-      "info" : { "author" : "stateui", "version" : 1 }
+      "info" : { "author" : "swiftomniui", "version" : 1 }
     }
 
     """
@@ -54,7 +54,7 @@ do {
         throw CocoaError(.fileNoSuchFile, userInfo: [NSFilePathErrorKey: artwork.path])
     }
     try files.createDirectory(at: iconSet, withIntermediateDirectories: true)
-    try "{ \"info\" : { \"author\" : \"stateui\", \"version\" : 1 } }\n"
+    try "{ \"info\" : { \"author\" : \"swiftomniui\", \"version\" : 1 } }\n"
         .write(to: catalog.appendingPathComponent("Contents.json"), atomically: true, encoding: .utf8)
     try contents.write(to: iconSet.appendingPathComponent("Contents.json"), atomically: true, encoding: .utf8)
 

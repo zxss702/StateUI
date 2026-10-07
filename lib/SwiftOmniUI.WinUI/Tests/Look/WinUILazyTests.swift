@@ -1,0 +1,588 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUIHost
+@testable import SwiftOmniUIWinUI
+import XCTest
+import CSwiftOmniUIWinUI
+import WinSDK
+
+/// A `LazyVStack` on WinUI answers the same window questions as everywhere:
+/// the rows the scroller's reach holds are mounted, and no more.
+final class WinUILazyTests: XCTestCase {
+    func testGalleryTilesReachTheLastItemWithoutReopeningThePage() throws {
+        try onUIThread {
+            let standing = State(wrappedValue: 0)
+            let host = WinUIRenderer.running {
+                VStack {
+                    Text("\(standing.wrappedValue) standing of 200")
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(1...200) { tile in
+                                Text("Tile \(tile)")
+                                    .font(.system(size: 14))
+                                    .frame(width: 140, height: 160)
+                                    .onAppear { standing.wrappedValue += 1 }
+                                    .onDisappear { standing.wrappedValue -= 1 }
+                            }
+                        }
+                    }
+                    .frame(height: 200)
+                }
+                .spacing(10)
+                .frame(width: 480)
+            }
+            for _ in 0..<20 { host.step() }
+            let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+            let lazy = try XCTUnwrap(host.views(WinUILazyStackView.self).first)
+            let total = 200.0 * 140 + 199 * 12
+            XCTAssertEqual(lazy.cells.total, total, accuracy: 1)
+            XCTAssertEqual(scroll.scroller.standing.reach.x + scroll.scroller.laidOutFrame.width,
+                           total, accuracy: 1, "the native document must replace the initial 44-point estimate")
+            scroll.scroller.move(to: scroll.scroller.standing.reach)
+            for _ in 0..<20 { host.step() }
+            let last = try XCTUnwrap(host.views(WinUILabelView.self).first { $0.text == "Tile 200" })
+            XCTAssertEqual(last.origin.x + last.laidOutFrame.width,
+                           scroll.scroller.origin.x + scroll.scroller.laidOutFrame.width, accuracy: 1)
+        }
+    }
+
+    func testGalleryAdaptiveGridAndShelvesGetTheirViewportWidthOnFirstPresentation() throws {
+        try onUIThread {
+            for shelves in [false, true] {
+                let standing = State(wrappedValue: 0)
+                let host = WinUIRenderer.running(room: LayoutSize(width: 1_000, height: 800)) {
+                    GeometryReader { proxy in
+                        Grid {
+                            Text("Lazy stacks and grids")
+                            ZStack {
+                                Grid {
+                                    VStack {
+                                        Text("\(standing.wrappedValue) standing")
+                                        ScrollView {
+                                            if shelves {
+                                                LazyVStack(spacing: 18) {
+                                                    ForEach(0..<24) { shelf in
+                                                        VStack {
+                                                            Text("Shelf \(shelf)").horizontalAlignment(.start)
+                                                            ScrollView(.horizontal) {
+                                                                LazyHStack(spacing: 8) {
+                                                                    ForEach(0..<40) { tile in
+                                                                        Text("\(shelf).\(tile)")
+                                                                            .frame(width: 96, height: 72)
+                                                                            .onAppear { standing.wrappedValue += 1 }
+                                                                            .onDisappear { standing.wrappedValue -= 1 }
+                                                                    }
+                                                                }
+                                                            }
+                                                            .frame(height: 88)
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), spacing: 10)], spacing: 10) {
+                                                    ForEach(0..<500) { cell in
+                                                        Text("Cell \(cell)")
+                                                            .frame(height: 64)
+                                                            .frame(maxWidth: .infinity)
+                                                            .onAppear { standing.wrappedValue += 1 }
+                                                            .onDisappear { standing.wrappedValue -= 1 }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .spacing(10)
+                                }
+                                .contentPadding(16)
+                            }
+                            .gridRow(1)
+                        }
+                        .rows(.auto, .fill)
+                        .rowSpacing(16)
+                        .contentPadding(24)
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                    }
+                }
+                for turn in 0..<20 {
+                    let scrolls = host.views(WinUIScrollView.self)
+                    let outer = try XCTUnwrap(scrolls.first)
+                    let width = outer.scroller.laidOutFrame.width
+                    XCTAssertGreaterThan(width, 800)
+                    if shelves {
+                        for scroll in scrolls.dropFirst() {
+                            XCTAssertEqual(scroll.scroller.laidOutFrame.width, width, accuracy: 1,
+                                           "turn \(turn): a shelf inherits the vertical viewport's width")
+                            if scroll.scroller.origin.y < outer.scroller.origin.y + outer.scroller.laidOutFrame.height,
+                               scroll.scroller.origin.y + scroll.scroller.laidOutFrame.height > outer.scroller.origin.y {
+                                XCTAssertEqual(scroll.scroller.standing.reach.x + scroll.scroller.laidOutFrame.width,
+                                               40 * 96 + 39 * 8, accuracy: 1)
+                            }
+                        }
+                        XCTAssertGreaterThan(scrolls.count, 2)
+                    } else {
+                        let grid = try XCTUnwrap(host.views(WinUILazyGridView.self).first)
+                        let tracks = Int((width + 10) / 106)
+                        XCTAssertEqual(grid.cells.window?.perRun, tracks, "turn \(turn)")
+                        XCTAssertGreaterThan(grid.mounted.count, tracks)
+                        for item in grid.mounted.values {
+                            XCTAssertGreaterThanOrEqual(item.view.laidOutFrame.width, 96,
+                                                       "turn \(turn): cells must not collapse to their text width")
+                        }
+                    }
+                    host.step()
+                }
+            }
+        }
+    }
+
+    func testNewCompositeRowsAreMeasuredBeforeTheyAreArranged() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running { LazyRowsPage() }
+            let lazy = try XCTUnwrap(host.views(WinUILazyStackView.self).first)
+            let identity = try XCTUnwrap(lazy.cells.identities.first)
+            let label = WinUILabelView()
+            label.setText("Row 0")
+            label.setTextFont(size: 14, attributes: nil, family: nil)
+            let button = WinUIButtonView()
+            button.setText("Delete")
+            button.setFont(size: 12, attributes: nil, family: nil)
+            button.setPadding(EdgeInsets(10, 4))
+            let row = WinUIGridView()
+            row.columns = [.fill, .auto]
+            row.padding = EdgeInsets(14, 4)
+            var words = WinUILayoutItem(view: label)
+            words.values.vertical = 1
+            var action = WinUILayoutItem(view: button)
+            action.values.column = 1
+            row.setItems([words, action])
+            lazy.setItems([(identity, WinUILayoutItem(view: row))])
+
+            XCTAssertEqual(label.desiredSize, .zero)
+            _ = lazy.measure(width: 480.0, height: 240.0)
+            XCTAssertGreaterThan(label.desiredSize.width, 20, "Measure must reach the row's Text before Arrange")
+            XCTAssertGreaterThan(label.desiredSize.height, 10)
+            XCTAssertGreaterThan(button.desiredSize.width, 20)
+            XCTAssertGreaterThan(lazy.measured[identity]?.size.height ?? 0, 20)
+        }
+    }
+
+    func testExactWindowsReachIdentityAndIdleInEveryDirection() throws {
+        try onUIThread {
+            for kind in 0..<4 {
+                let host = WinUIRenderer.running { ExactLazyPage(kind: kind) }
+                for _ in 0..<30 { host.step() }
+                let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+                let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                let horizontal = kind % 2 == 1
+                let perRun = kind < 2 ? 1 : 4
+                let extent = horizontal ? 80.0 : 40.0
+                let viewport = horizontal ? scroll.frame.width : scroll.frame.height
+                let reach = scroll.scroller.standing.reach
+                XCTAssertEqual(viewport, horizontal ? 480 : 240, accuracy: 1)
+                XCTAssertEqual(horizontal ? reach.x : reach.y,
+                               1_000 / Double(perRun) * extent - viewport, accuracy: 1)
+                var previous: [String: WinUIView] = [:]
+                for offset in [0.0, extent * 20, extent * 21, extent * 21 + 1,
+                               extent * 20, extent * 150, extent * 5, 0] {
+                    scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
+                    for _ in 0..<6 { host.step() }
+                    let span = try XCTUnwrap(lazy.span)
+                    let first = Int((span.lowerBound / extent).rounded(.down))
+                    let last = Int((span.upperBound / extent).rounded(.up))
+                    let expected = max(0, first - 1) * perRun..<min(1_000, (last + 1) * perRun)
+                    XCTAssertEqual(lazy.cells.built, expected, "kind \(kind), offset \(offset)")
+                    XCTAssertEqual(lazy.mounted.count, expected.count)
+                    for (identity, item) in lazy.mounted {
+                        if let kept = previous[identity] { XCTAssertTrue(kept === item.view) }
+                        XCTAssertGreaterThan(item.view.frame.width, 0)
+                        XCTAssertGreaterThan(item.view.frame.height, 0)
+                    }
+                    previous = lazy.mounted.mapValues(\.view)
+                    if kind == 1 && offset == 1_600 { XCTAssertEqual(lazy.mounted.count, 8) }
+                }
+                let work = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
+                for _ in 0..<200 { host.step() }
+                XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], work,
+                               "stationary kind \(kind) must not recalculate")
+            }
+        }
+    }
+
+    func testComposedViewportsKeepExactWindowsAndPaintIncomingCells() throws {
+        try onUIThread {
+            for count in [1_000, 10_000] {
+                for kind in 0..<4 {
+                    let host = WinUIRenderer.running { ExactLazyPage(kind: kind, count: count) }
+                    for _ in 0..<12 { host.step() }
+                    let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+                    let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                    let horizontal = kind % 2 == 1
+                    let perRun = kind < 2 ? 1 : 4
+                    let extent = horizontal ? 80.0 : 40.0
+                    var previous: [String: WinUIView] = [:]
+                    var animatedPhases: Set<Int> = []
+                    var paintedSamples = 0
+                    var lastSpan = lazy.span
+                    for step in 0..<180 {
+                        if step < 36 {
+                            let run = step < 12 ? step * 3 : step < 24 ? (36 - step) * 3 : (step - 24) * 11
+                            let offset = Double(run) * extent + (step.isMultiple(of: 2) ? 1 : 0)
+                            scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
+                        } else if (step - 36).isMultiple(of: 48) {
+                            let offset = [800.0, 4_000.0, 0][(step - 36) / 48]
+                            swiftomniui_winui_scroller_move(scroll.scroller.handle,
+                                                       horizontal ? offset : 0, horizontal ? 0 : offset, true)
+                        }
+                        host.step()
+                        let span = try XCTUnwrap(lazy.span)
+                        if span != lastSpan {
+                            if step >= 36 {
+                                let phase = (step - 36) / 48
+                                let destination = [800.0, 4_000.0, 0][phase]
+                                if abs(span.lowerBound - destination) > 1 { animatedPhases.insert(phase) }
+                            }
+                            lastSpan = span
+                        }
+                        let first = Int((span.lowerBound / extent).rounded(.down))
+                        let last = Int((span.upperBound / extent).rounded(.up))
+                        let expected = max(0, first - 1) * perRun..<min(count, (last + 1) * perRun)
+                        XCTAssertEqual(lazy.cells.built, expected, "kind \(kind), step \(step)")
+                        XCTAssertEqual(lazy.mounted.count, expected.count)
+                        for (identity, item) in lazy.mounted {
+                            XCTAssertGreaterThan(item.view.laidOutFrame.width, 0)
+                            XCTAssertGreaterThan(item.view.laidOutFrame.height, 0)
+                            XCTAssertEqual(item.view.drawnOpacity, 1)
+                            if let kept = previous[identity] { XCTAssertTrue(kept === item.view) }
+                        }
+                        previous = lazy.mounted.mapValues(\.view)
+                        if step.isMultiple(of: 6) {
+                            let frame = scroll.scroller.laidOutFrame
+                            let incoming = try XCTUnwrap(lazy.mounted[lazy.cells.identities[(last - 1) * perRun]])
+                            let cross = horizontal
+                                ? incoming.view.origin.y - scroll.scroller.origin.y + incoming.view.laidOutFrame.height - 3
+                                : incoming.view.origin.x - scroll.scroller.origin.x + incoming.view.laidOutFrame.width - 3
+                            let sample = horizontal ? (frame.width - 3, cross) : (cross, frame.height - 3)
+                            // Read the displayed desktop synchronously as well: RenderTargetBitmap pumps
+                            // messages while capturing and an animated viewport may move during that wait.
+                            var screenPixel: DWORD = 0xFFFFFFFF
+                            if let hwnd = GetActiveWindow(), let dc = GetDC(nil) {
+                                defer { _ = ReleaseDC(nil, dc) }
+                                var corner = POINT()
+                                _ = ClientToScreen(hwnd, &corner)
+                                let scale = Double(GetDpiForWindow(hwnd)) / 96
+                                let origin = scroll.scroller.origin
+                                let point = POINT(x: corner.x + LONG((origin.x + sample.0) * scale),
+                                                  y: corner.y + LONG((origin.y + sample.1) * scale))
+                                if let hit = WindowFromPoint(point), GetAncestor(hit, UINT(GA_ROOT)) == hwnd {
+                                    screenPixel = GetPixel(dc, point.x, point.y)
+                                }
+                            }
+                            if screenPixel != 0xFFFFFFFF {
+                                paintedSamples += 1
+                                let diagnostic = "screen=\(String(screenPixel, radix: 16)) count=\(count) kind=\(kind) step=\(step) sample=\(sample) span=\(span) offset=\(scroll.scroller.standing.offset) built=\(lazy.cells.built)"
+                                XCTAssertGreaterThan(screenPixel & 255, 160, "incoming cell was not painted: \(diagnostic)")
+                                XCTAssertLessThan((screenPixel >> 8) & 255, 100, "scrolling exposed a white gap: \(diagnostic)")
+                            }
+                        }
+                    }
+                    XCTAssertGreaterThan(paintedSamples, 0, "the displayed test window must be sampled")
+                    XCTAssertEqual(animatedPhases, [0, 1, 2],
+                                   "each animated scroll must exercise an intermediate effective viewport")
+                    for _ in 0..<12 { host.step() }
+                    let work = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
+                    for _ in 0..<200 { host.step() }
+                    XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], work)
+                }
+            }
+        }
+    }
+
+    func testNaturalCompositeRowsScrollDeleteAndChangeHeightWithoutBlankChildren() throws {
+        try onUIThread {
+            let manual = ProcessInfo.processInfo.environment["SWIFTOMNIUI_LAZY_MANUAL"] == "1"
+            let rows = State(wrappedValue: Array(0..<1_000))
+            let tall = State(wrappedValue: false)
+            let standing = State(wrappedValue: 0)
+            let host = WinUIRenderer.running(room: manual ? LayoutSize(width: 1_000, height: 800) : WinUITestHost.room) {
+                GeometryReader { proxy in
+                    Grid {
+                        Text("LazyVStack, LazyHStack, LazyVGrid - children built where the window reaches, and let go where it leaves.")
+                            .font(.system(size: 15))
+                        ZStack {
+                            Grid {
+                                VStack {
+                                    Text("\(standing.wrappedValue) standing")
+                                    ScrollView {
+                                        LazyVStack(spacing: 8) {
+                                            Text("- the top -")
+                                            ForEach(rows.wrappedValue) { row in
+                                                Grid {
+                                                    Text("Row \(row)" + (tall.wrappedValue && row.isMultiple(of: 3) ? "\nsecond line\nthird line" : ""))
+                                                        .font(.system(size: 14))
+                                                        .verticalAlignment(.center)
+                                                    Button("Delete", action: { rows.wrappedValue.removeAll { $0 == row } })
+                                                        .font(.system(size: 12))
+                                                        .contentPadding(EdgeInsets(10, 4))
+                                                        .bold()
+                                                        .background(Color("#CF380D"))
+                                                        .foregroundStyle(.white)
+                                                        .frame(minWidth: 44, minHeight: 44)
+                                                        .gridColumn(1)
+                                                }
+                                                .columns(.fill, .auto)
+                                                .contentPadding(EdgeInsets(14, 4))
+                                                .animation(.inherited)
+                                                .onAppear { standing.wrappedValue += 1 }
+                                                .onDisappear { standing.wrappedValue -= 1 }
+                                            }
+                                            Text("- the end -")
+                                        }
+                                    }
+                                }
+                                .spacing(10)
+                            }
+                            .contentPadding(16)
+                        }
+                        .clipsContent(true)
+                        .gridRow(1)
+                    }
+                    .rows(.auto, .fill)
+                    .rowSpacing(16)
+                    .contentPadding(24)
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .horizontalAlignment(.start)
+                    .verticalAlignment(.start)
+                }
+            }
+            let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+            let lazy = try XCTUnwrap(host.views(WinUILazyStackView.self).first)
+            for _ in 0..<12 { host.step() }
+            if manual {
+                let path = "C:/Users/zxs20/SwiftOmniUI/artifacts/lazy-live-20261007.log"
+                FileManager.default.createFile(atPath: path, contents: nil)
+                let log = try FileHandle(forWritingTo: URL(fileURLWithPath: path))
+                defer { try? log.close() }
+                let began = ContinuousClock.now
+                let snapshot: (String) -> Void = { event in
+                    let time = began.duration(to: .now).components
+                    let position = scroll.scroller.standing
+                    let total = lazy.cells.total
+                    let children = lazy.mounted.sorted { (lazy.cells.position(of: $0.key) ?? 0) < (lazy.cells.position(of: $1.key) ?? 0) }
+                    let frames = children.map { identity, item in
+                        let f = item.view.laidOutFrame
+                        return "\(lazy.cells.position(of: identity) ?? -1):\(identity):view=\(item.view.number):y=\(f.y):h=\(f.height)"
+                    }.joined(separator: ";")
+                    let footer = host.views(WinUILabelView.self).first { $0.text == "- the end -" }
+                    let footerBottom = footer.map { $0.origin.y + $0.laidOutFrame.height - scroll.scroller.origin.y }
+                    let elapsed = Double(time.seconds) + Double(time.attoseconds) / 1e18
+                    let line = "t=\(elapsed) event=\(event) count=\(rows.wrappedValue.count) standing=\(standing.wrappedValue) offset=\(position.offset.y) next=\(String(describing: scroll.scroller.nextOffset)) reach=\(position.reach.y) viewport=\(scroll.scroller.laidOutFrame) total=\(total) lazyFrame=\(lazy.laidOutFrame) span=\(String(describing: lazy.span)) built=\(lazy.cells.built) work=\([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]) footerBottom=\(String(describing: footerBottom)) children=[\(frames)]\n"
+                    try? log.write(contentsOf: Data(line.utf8))
+                }
+                snapshot("READY")
+                scroll.scroller.ears.insert(WinUIScrollEar(owner: lazy) { snapshot("scroll-before") }, at: 0)
+                scroll.scroller.ears.append(WinUIScrollEar(owner: lazy) { snapshot("scroll-after") })
+                let previousHeld = scroll.scroller.onHeld
+                scroll.scroller.onHeld = { held in
+                    snapshot(held ? "manipulation-start" : "manipulation-end")
+                    previousHeld?(held)
+                }
+                var last = ""
+                while began.duration(to: .now) < .seconds(1_200), host.window?.isClosed == false {
+                    host.step()
+                    let position = scroll.scroller.standing
+                    let state = "\(rows.wrappedValue.count) \(position.offset.y) \(position.reach.y) \(lazy.cells.searches) \(lazy.cells.requests) \(lazy.cells.measurements)"
+                    if state != last {
+                        last = state
+                        snapshot("settled-pass")
+                    }
+                }
+                snapshot("CLOSED")
+                scroll.scroller.ears.removeAll { $0.owner === lazy }
+                scroll.scroller.onHeld = previousHeld
+                return
+            }
+            let probe = WinUILabelView()
+            probe.setTextFont(size: 14, attributes: nil, family: nil)
+            for phase in 0..<3 {
+                if phase == 1 {
+                    withAnimation(nil) {
+                        rows.wrappedValue.removeFirst(40)
+                        tall.wrappedValue = true
+                    }
+                } else if phase == 2 {
+                    withAnimation(nil) { tall.wrappedValue = false }
+                }
+                for _ in 0..<12 { host.step() }
+                for step in 0..<30 {
+                    let offset = step < 24 ? Double(step < 12 ? step * 120 : (24 - step) * 120)
+                        : scroll.scroller.standing.reach.y
+                    scroll.scroller.move(to: Point(0, offset))
+                    host.step()
+                    host.layOut()
+                    let words = host.views(WinUILabelView.self).filter { $0.text.hasPrefix("Row ") }
+                    let buttons = host.views(WinUIButtonView.self)
+                    XCTAssertFalse(words.isEmpty, "phase \(phase), step \(step): nonempty data cannot render white")
+                    XCTAssertEqual(words.count, buttons.count)
+                    for word in words {
+                        XCTAssertGreaterThan(word.laidOutFrame.width, 20)
+                        XCTAssertGreaterThan(word.laidOutFrame.height, 10)
+                        XCTAssertEqual(word.drawnOpacity, 1)
+                        if let row = word.placingLayout as? WinUIGridView,
+                           let button = row.items.first(where: { $0.view is WinUIButtonView })?.view {
+                            let textFrame = word.laidOutFrame, buttonFrame = button.laidOutFrame
+                            XCTAssertEqual(textFrame.y + textFrame.height / 2,
+                                           buttonFrame.y + buttonFrame.height / 2, accuracy: 1,
+                                           "\(word.text): Text and Delete must have the same vertical centre; placed=\(String(describing: word.placed)), native=\(textFrame), desired=\(word.desiredSize), button=\(buttonFrame)")
+                            probe.setText(word.text)
+                            let natural = probe.measure(width: nil, height: nil)
+                            XCTAssertEqual(textFrame.height, natural.height, accuracy: 1,
+                                           "\(word.text): a row must not retain wrapped height from another proposal; placed=\(String(describing: word.placed)), native=\(textFrame), desired=\(word.desiredSize), natural=\(natural), grid=\(row.laidOutFrame), button=\(buttonFrame)")
+                        }
+                    }
+                    for button in buttons {
+                        XCTAssertGreaterThan(button.laidOutFrame.width, 20)
+                        XCTAssertGreaterThan(button.laidOutFrame.height, 10)
+                        XCTAssertEqual(button.drawnOpacity, 1)
+                    }
+                }
+                for _ in 0..<30 { host.step() }
+                if phase == 0 {
+                    // Visit every row so total-length assertions compare known measurements, not a
+                    // changing statistical estimate of rows the test has never displayed.
+                    for offset in stride(from: 0.0, through: scroll.scroller.standing.reach.y, by: 200) {
+                        scroll.scroller.move(to: Point(0, offset))
+                        host.step()
+                    }
+                    scroll.scroller.move(to: scroll.scroller.standing.reach)
+                    for _ in 0..<30 { host.step() }
+                    // Deleting the last visible rows must shrink an already scrolled document too.
+                    for _ in 0..<3 {
+                        let previousTotal = lazy.cells.total
+                        try XCTUnwrap(host.views(WinUIButtonView.self).last).invoke()
+                        for _ in 0..<35 { host.step() }
+                        XCTAssertEqual(previousTotal - lazy.cells.total, 60, accuracy: 5,
+                                       "removing one row must retain the sizes of surviving identities")
+                    }
+                }
+                let end = scroll.scroller.standing
+                XCTAssertEqual(end.offset.y, end.reach.y, accuracy: 1, "deletion must not leave a stale end anchor")
+                XCTAssertEqual(end.reach.y + scroll.scroller.laidOutFrame.height, lazy.cells.total, accuracy: 1,
+                               "deletion and shrinking must resize the native document, not just the lazy children")
+                let footer = try XCTUnwrap(host.views(WinUILabelView.self).first { $0.text == "- the end -" })
+                XCTAssertEqual(footer.laidOutFrame.y + footer.laidOutFrame.height,
+                               lazy.cells.total, accuracy: 1, "the actual last child must end at the document bottom")
+                XCTAssertEqual(footer.origin.y + footer.laidOutFrame.height,
+                               scroll.scroller.origin.y + scroll.scroller.laidOutFrame.height, accuracy: 1,
+                               "the visible footer must meet the viewport bottom at the scroll limit")
+                let work = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
+                for _ in 0..<200 { host.step() }
+                XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], work)
+            }
+        }
+    }
+
+    /// Of a thousand rows a window's worth are built, and no more.
+    func testOnlyTheWindowedRowsAreBuilt() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running { LazyRowsPage() }
+            host.settle { host.views(WinUILabelView.self).count > 4 }
+
+            XCTAssertLessThan(host.views(WinUILabelView.self).count, 60, "a window's reach of a thousand rows")
+        }
+    }
+
+    /// Scrolling asks the rows the window moved to be built, and lets the
+    /// ones it left go.
+    func testScrollingBuildsAheadAndLetsGoBehind() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running { LazyRowsPage() }
+            let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+            host.settle { host.views(WinUILabelView.self).contains { $0.text == "Row 0" } }
+
+            scroll.scroller.move(to: Point(0, 20_000))
+            host.settle { host.views(WinUILabelView.self).contains { $0.text == "Row 500" } }
+
+            let standing = host.views(WinUILabelView.self).map(\.text)
+            XCTAssertFalse(standing.contains("Row 0"), "the first row was let go")
+            XCTAssertLessThan(standing.count, 150, "still a window's reach")
+        }
+    }
+
+    /// The room is the run's whole length before most of its rows exist.
+    func testTheScrollRoomIsTheWholeRunAtOnce() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running { LazyRowsPage() }
+            host.settle { host.views(WinUILabelView.self).count > 4 }
+
+            // A thousand forty-point rows: the lazy view's height is their run.
+            let lazy = try XCTUnwrap(host.views(WinUILazyStackView.self).first)
+            XCTAssertEqual(lazy.laidOutFrame.height, 40_000, accuracy: 4_000)
+        }
+    }
+
+    /// Outside a scroller there is no window to narrow by: every child is
+    /// built, as a plain stack's would be.
+    func testALazyStackWithNoScrollerBuildsAll() throws {
+        try onUIThread {
+            let host = WinUIRenderer.running { LazyRowsPage(count: 30, scrolls: false) }
+            host.settle { host.views(WinUILabelView.self).count == 30 }
+
+            XCTAssertEqual(host.views(WinUILabelView.self).count, 30)
+        }
+    }
+}
+
+/// A thousand forty-point rows in a scroller - or thirty, where it does not
+/// scroll.
+private struct LazyRowsPage: View {
+    var count = 1_000
+    var scrolls = true
+
+    var body: some View {
+        if scrolls {
+            ScrollView {
+                LazyVStack {
+                    ForEach(0..<count) { row in
+                        Text("Row \(row)").frame(height: 40)
+                    }
+                }
+            }
+        } else {
+            LazyVStack {
+                ForEach(0..<count) { row in
+                    Text("Row \(row)").frame(height: 40)
+                }
+            }
+        }
+    }
+}
+
+private struct ExactLazyPage: View {
+    let kind: Int
+    var count = 1_000
+
+    var body: some View {
+        ScrollView(kind % 2 == 1 ? .horizontal : .vertical) {
+            if kind == 0 {
+                LazyVStack(spacing: 0) {
+                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                }
+            } else if kind == 1 {
+                LazyHStack(spacing: 0) {
+                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                }
+            } else if kind == 2 {
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(80)), count: 4), spacing: 0) {
+                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                }
+            } else {
+                LazyHGrid(rows: Array(repeating: GridItem(.fixed(40)), count: 4), spacing: 0) {
+                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                }
+            }
+        }
+        .frame(width: 480, height: 240)
+    }
+}

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A list that asks for thirty more as the user nears its end.
 private struct LoadingList: ExampleContent {

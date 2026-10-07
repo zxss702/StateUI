@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Builds an application's Web head for release and lays its page at a
-# destination, made anew: index.html, the relay stateui-web.js, the module
+# destination, made anew: index.html, the relay swiftomniui-web.js, the module
 # <App>Web.wasm and the pictures in Images - a folder any web server serves as
 # it is.
 #

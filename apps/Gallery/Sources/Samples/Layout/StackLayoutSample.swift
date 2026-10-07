@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The two non-wrapping stack directions.
 struct StackLayoutSample: SampleContent, ExampleContent {

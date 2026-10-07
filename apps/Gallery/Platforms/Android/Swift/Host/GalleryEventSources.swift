@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
 /// The gallery's own event on this head: the battery, which the gallery's activity watches while it lives and tells
 /// through GalleryNatives.
@@ -10,7 +10,7 @@ enum GalleryEventSources {
     /// Declares the event the activity's watcher raises. Said once, as the library loads.
     @MainActor
     static func register() {
-        StateUIEvents.raises(GalleryContract.batteryChanged)
+        SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
     }
 
     @MainActor private static var lastSaid: (level: Double, charging: Bool)?
@@ -23,6 +23,6 @@ enum GalleryEventSources {
         guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
         lastSaid = (level, charging)
-        StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+        SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
     }
 }

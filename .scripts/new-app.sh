@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ---------------------------------------------------------------------------
-# Creates a new StateUI application in apps/: one page with a counter, and a
+# Creates a new SwiftOmniUI application in apps/: one page with a counter, and a
 # head for every host.
 #
 # USAGE:
@@ -67,10 +67,10 @@ fail() {
 [[ "$NAME" =~ ^[A-Za-z][A-Za-z0-9]*$ ]] \
   || fail "'$NAME' cannot name an application: letters and digits only, starting with a letter. (No dots - Finder reads Name.App as a bundle.)"
 
-# The library's own name is taken: an app called StateUI builds a StateUI.app
+# The library's own name is taken: an app called SwiftOmniUI builds a SwiftOmniUI.app
 # around a different executable, which reads as if the library were the
 # application.
-[[ "$NAME" != "StateUI" ]] || fail "'StateUI' is the library. Pick a name of the app's own."
+[[ "$NAME" != "SwiftOmniUI" ]] || fail "'SwiftOmniUI' is the library. Pick a name of the app's own."
 
 [[ ! -e "$APPS_DIR/$NAME" ]] || fail "$APPS_DIR/$NAME already exists."
 [[ -d "$MODEL" ]] || fail "HelloWorld is not at $MODEL - it is what a new application is made from."
@@ -106,7 +106,7 @@ cat <<DONE
 Created $APP
 
 Next, from the repository root:
-  STATEUI_HOST=appkit swift run --package-path apps/$NAME --scratch-path apps/$NAME/.build/appkit ${NAME}AppKit   # the AppKit head
+  SWIFTOMNIUI_HOST=appkit swift run --package-path apps/$NAME --scratch-path apps/$NAME/.build/appkit ${NAME}AppKit   # the AppKit head
   .scripts/UIKit/run-app.sh apps/$NAME                                      # the UIKit head, on a simulator
   .scripts/Android/run-app.sh apps/$NAME                                    # the Android head
   .scripts\\WinUI\\run-app.ps1 -App apps\\$NAME                                # the WinUI head, on Windows

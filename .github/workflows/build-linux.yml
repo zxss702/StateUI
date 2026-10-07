@@ -29,7 +29,7 @@ jobs:
     # default that changed underneath.
     container: swift:6.4.0-noble
     steps:
-      # THE CHECKOUT DIRECTORY HAS TO BE CALLED StateUI: a bare "StateUI"
+      # THE CHECKOUT DIRECTORY HAS TO BE CALLED SwiftOmniUI: a bare "SwiftOmniUI"
       # dependency is matched against the package identity, which for a path
       # dependency is the directory's name.
       - uses: actions/checkout@v7.0.1
@@ -41,9 +41,9 @@ jobs:
         run: swift test
 
       - name: Host layer tests
-        run: swift test --package-path lib/StateUI.Host
+        run: swift test --package-path lib/SwiftOmniUI.Host
 
       # The conformance runner's own rules and every contract's family complete,
       # pure Swift: no host runs here, so no verdict is read or written.
       - name: Conformance runner tests
-        run: swift test --package-path lib/StateUI.Conformance
+        run: swift test --package-path lib/SwiftOmniUI.Conformance

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Gradients along a line and out from a point, on a fill, a stroke and a background.
 struct BrushSample: SampleContent, ExampleContent {

@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The screen, its density and which way it is turned.
 struct DeviceDisplaySample: SampleContent, ExampleContent {

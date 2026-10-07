@@ -7,8 +7,8 @@
        Dock than every icon beside it. The AppKit head hands this file to the
        host, and the Gallery's bundle makes its .icns from it.
 
-       The mark fills 54.17% of the body, the proportion stateui_tile.svg sets, and
-       its path is the one stateui_mark.svg carries. -->
+       The mark fills 54.17% of the body, the proportion swiftomniui_tile.svg sets, and
+       its path is the one swiftomniui_mark.svg carries. -->
   <defs>
     <linearGradient id="identity" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#512BD4"/>

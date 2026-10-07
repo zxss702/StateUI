@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The host's battery - a standard environment provider, resolved by type.
 struct BatterySample: SampleContent, ExampleContent {

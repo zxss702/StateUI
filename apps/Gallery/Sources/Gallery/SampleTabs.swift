@@ -1,6 +1,6 @@
 // A sample that holds its page still, shown as tabs.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// One tab of a sample whose examples hold the page still.
 enum SampleTab: Hashable {

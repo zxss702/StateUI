@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The user's language, region, zone and calendar habits - the HOST's
 /// answer, which is the point: Swift's own `Locale.current` is a fallback

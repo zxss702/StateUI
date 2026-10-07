@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 import Observation
 
 /// A model edited by a view that only borrows it: `@Observable` makes the

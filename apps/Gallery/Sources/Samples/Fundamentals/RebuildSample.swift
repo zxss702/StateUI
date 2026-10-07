@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// What a view answers when it is asked why it is being described.
 struct RebuildSample: SampleContent, ExampleContent {

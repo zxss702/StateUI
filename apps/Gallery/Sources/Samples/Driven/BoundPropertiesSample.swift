@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// EVERY PROPERTY CAN BE HANDED A BINDING: a font size, a colour, a flag, a
 /// placeholder, a choice, a toggle - each a plain `@State` handed on as `$x`,

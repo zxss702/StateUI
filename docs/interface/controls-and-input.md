@@ -1,6 +1,6 @@
 # Controls and input
 
-StateUI exposes a cross-platform semantic control vocabulary. A host maps each
+SwiftOmniUI exposes a cross-platform semantic control vocabulary. A host maps each
 accepted control to native behavior; it does not make the platform class part
 of application code. The complete member inventory and verified coverage are
 in [Platform contract](../platform-contract.md).
@@ -80,7 +80,7 @@ Passing `$volume` does not make the body a reader. Native input and program
 writes update the attached controls through the host-carried path. Read
 `volume` elsewhere only when the tree actually needs its discrete destination.
 
-A binding derived from arbitrary `get` and `set` closures has no StateUI
+A binding derived from arbitrary `get` and `set` closures has no SwiftOmniUI
 storage identity for the host to carry. It still behaves correctly, but it
 takes the described/event path: the getter supplies the property and the
 native report calls the setter.
@@ -192,7 +192,7 @@ animated presentation values.
 
 ## Dates and times
 
-Date and time controls use StateUI value types rather than Foundation types:
+Date and time controls use SwiftOmniUI value types rather than Foundation types:
 
 ```swift
 @State var date = CalendarDate(year: 2026, month: 9, day: 13)
@@ -258,7 +258,7 @@ not authorize production use on an unmarked host.
 
 ## Collections
 
-`List` shows items with the platform's own collection. StateUI says
+`List` shows items with the platform's own collection. SwiftOmniUI says
 which items there are and builds an item only when the platform shows it;
 the platform scrolls, reuses its cells, shows the user's choice and tells
 assistive technology about the items:

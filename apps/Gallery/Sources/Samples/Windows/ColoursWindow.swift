@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The window a gallery chooses its accent in - a window OF THE GALLERY that
 /// opened it, painting that gallery's bars and no other's. See

@@ -1,6 +1,6 @@
 # Layout
 
-StateUI describes layout intent and keeps the resulting tree identities. A
+SwiftOmniUI describes layout intent and keeps the resulting tree identities. A
 native host measures and arranges native controls. Swift owns the semantic
 rules that must stay identical across hosts; the host owns integration with its
 toolkit's measurement and display cycle.
@@ -8,7 +8,7 @@ toolkit's measurement and display cycle.
 The declared primitive vocabulary is deliberately small: vertical and
 horizontal stacks, `Grid`, `ZStack`, `ScrollView`, and ordinary view
 sizing and alignment. More specialized arrangements are composed
-from these or implemented once as StateUI-authored layout. A primitive is
+from these or implemented once as SwiftOmniUI-authored layout. A primitive is
 usable on a platform only when its row and required members are checked in the
 platform matrix.
 
@@ -287,13 +287,13 @@ The rest of the contract follows from that ownership:
   native input. Attach `onTapGesture`, `onPanUpdated`, or `onTapGesture(within:_:)` to
   the reader rather than to a held card.
 - `onTapGesture(within:_:)` receives the measured room and returns the active
-  rectangle in that room. With a scroll binding, StateUI keeps the native hit
+  rectangle in that room. With a scroll binding, SwiftOmniUI keeps the native hit
   target over that viewport rectangle as the content offset moves. Without a
   binding it falls back to the whole run.
 - `aim(_:)` exposes the underlying scroller for other aimed acts. Offset
   movement itself remains state, not an act.
 
-`ScrollViewReader` is a StateUI composition, so its availability is the combined
+`ScrollViewReader` is a SwiftOmniUI composition, so its availability is the combined
 availability of frame reporting, scrolling, driven state, and any authored
 layout used by its content. It is not an additional native control row.
 
@@ -371,13 +371,13 @@ for the selected answer changes:
 - an ancestor's position;
 - an ancestor scroll that moves it relative to the window or safe area.
 
-The host coalesces a settled layout update, and StateUI suppresses an equal
+The host coalesces a settled layout update, and SwiftOmniUI suppresses an equal
 rectangle for each handler. A handler recreated by a body rebuild starts with
 no remembered rectangle and can therefore receive the standing value once
 again. A malformed frame payload is rejected rather than delivered as a
 partial rectangle.
 
-The handler runs as an ordinary asynchronous StateUI event after layout. It may
+The handler runs as an ordinary asynchronous SwiftOmniUI event after layout. It may
 await and may write state; such a write requests a later description. The
 report never changes layout by itself. A visual transform never reports,
 because it does not alter the layout rectangle; an animated layout property
@@ -434,12 +434,12 @@ default (`.container`); the page's own layout says `.none` - edge to edge -
 to run under them, so its background colours the status bar's strip:
 
 ```swift internals
-import StateUI
+import SwiftOmniUI
 
 struct Header: View {
     var body: some View {
         VStack {
-            Text("StateUI")
+            Text("SwiftOmniUI")
         }
         .contentPadding(20, 60, 20, 20)
         .background(.steelBlue)
@@ -453,9 +453,9 @@ pads its words clear. `clipsContent` controls whether descendants may draw
 outside the assigned rectangle, cut to the layout's shape where it names one.
 The [platform contract](../platform-contract.md) says where each is realized.
 
-## StateUI-authored layouts
+## SwiftOmniUI-authored layouts
 
-`PlacedLayout` and `GalleryView` are StateUI composition mechanisms, not new
+`PlacedLayout` and `GalleryView` are SwiftOmniUI composition mechanisms, not new
 native controls. Their declarations and core tests preserve the intended
 authored-placement vocabulary, but they are deliberately outside the initial
 native-host acceptance milestone. That milestone first completes the primitive

@@ -3,7 +3,7 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 import WinSDK
 
 /// The gallery's own acts, as this host answers them.
@@ -16,13 +16,13 @@ enum GalleryActs {
     /// Registers every act this host performs. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
             Clipboard.write(text)
         }
-        StateUIActs.add(GalleryContract.readClipboard) {
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
             Clipboard.read()
         }
-        StateUIActs.add(GalleryContract.batteryLevel) {
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
             GalleryPower.battery()
         }
     }

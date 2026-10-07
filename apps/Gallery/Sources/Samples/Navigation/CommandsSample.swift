@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// `.commands` on a scene - menus of the application's own on the platform's
 /// menu surface, whichever page shows.

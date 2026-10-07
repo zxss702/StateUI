@@ -1,6 +1,6 @@
 # State and reactivity
 
-StateUI has one declaration for mutable application data: `@State`. The place
+SwiftOmniUI has one declaration for mutable application data: `@State`. The place
 where a value is used decides how it reaches the interface:
 
 - a value read while a body is built invalidates that description when it is
@@ -34,13 +34,13 @@ Reading `count` while `Counter.content` is built records `Counter` as a reader.
 Writing it schedules another build of that reader. A read performed later by a
 button handler is not a build-time read and creates no dependency.
 
-StateUI keeps the state's storage while all of these remain true:
+SwiftOmniUI keeps the state's storage while all of these remain true:
 
 - the composed view still has a place in the retained tree;
 - its identity still resolves to the same element;
 - its composed view type has not changed.
 
-Rebuilding a view creates another Swift value, but StateUI hands its state boxes
+Rebuilding a view creates another Swift value, but SwiftOmniUI hands its state boxes
 the storage held by the preceding value. A handler captured by an earlier build
 therefore continues to write the storage read by the current build. Removing
 the element ends that lifetime. See the ownership rules in
@@ -93,7 +93,7 @@ let current = launchCount.get()
 
 ## State in a class
 
-A shared model declares every property that participates in StateUI as
+A shared model declares every property that participates in SwiftOmniUI as
 `@State`. A plain stored property is ordinary Swift storage: changing it does
 not invalidate a body, wake an engine, or update a host channel.
 
@@ -130,7 +130,7 @@ Swift does not combine those ownership modifiers with a property wrapper.
 
 ### Swift Observation
 
-Swift's `@Observable` and StateUI's `@State` notify different readers. StateUI
+Swift's `@Observable` and SwiftOmniUI's `@State` notify different readers. SwiftOmniUI
 does not open an Observation tracking scope around a view description, so a
 write to an `@Observable` property alone does not request a render. Holding an
 `@Observable` model in `@State` is deprecated because it looks reactive while
@@ -161,7 +161,7 @@ func observe(_ model: ExternalModel) {
 Call the bridge from the lifetime owner and stop retaining that owner when its
 element leaves. `setNeedsRender()` is a full, unnamed invalidation: it cannot
 identify which composed body read which external property. For selective
-StateUI invalidation, copy the external values needed by the interface into an
+SwiftOmniUI invalidation, copy the external values needed by the interface into an
 adapter whose properties are `@State`.
 
 ## Borrowing with `@Binding`
@@ -238,7 +238,7 @@ followed state. Give independently carried values their own `@State` storage.
 
 ### A custom binding
 
-Use `Binding(get:set:)` at an integration boundary that StateUI does not own:
+Use `Binding(get:set:)` at an integration boundary that SwiftOmniUI does not own:
 
 ```swift
 final class ExternalSettings {
@@ -253,15 +253,15 @@ final class ExternalSettings {
 ```
 
 The setter decides whether anything is invalidated. A closure binding has no
-StateUI storage for the host to carry or for an engine to follow, so controls
+SwiftOmniUI storage for the host to carry or for an engine to follow, so controls
 read it while describing and report changes through its setter. Prefer a real
-`@State` whenever StateUI owns the value.
+`@State` whenever SwiftOmniUI owns the value.
 
 ## Selecting a reactive path
 
 Use the consequence you need as the selection rule:
 
-| Need | StateUI expression | Cost when written |
+| Need | SwiftOmniUI expression | Cost when written |
 | --- | --- | --- |
 | Change which views exist or how authored values are composed | read the state in a body | rebuild current readers, then diff |
 | Give a child access to the same value | pass `$value` to `@Binding` | determined by what the child does with it |
@@ -424,7 +424,7 @@ Text(.multi($name, $width, $height).convert { name, width, height in
 })
 ```
 
-Conversions require whole StateUI states as sources to remain on the host-cycle
+Conversions require whole SwiftOmniUI states as sources to remain on the host-cycle
 path. A binding to a member or one made from closures is evaluated as described
 data instead and cannot receive a host-carried reverse conversion.
 

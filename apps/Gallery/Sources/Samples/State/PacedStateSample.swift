@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Three roads to the same walking number, and what each one costs.
 struct PacedStateSample: SampleContent, ExampleContent {

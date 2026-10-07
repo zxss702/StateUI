@@ -4,7 +4,7 @@
 #
 # Builds an application's AppKit head for release and lays it in a folder of
 # its own, made anew: its application bundle, where a script of this folder
-# bundles it (build-<application>-appkit.sh), else the head and the StateUI
+# bundles it (build-<application>-appkit.sh), else the head and the SwiftOmniUI
 # libraries it links.
 #
 # USAGE:
@@ -26,7 +26,7 @@ if [[ -x "$bundler" ]]; then
   cp -R "$build/$product.app" "$destination/"
   echo "deployed:   $destination/$product.app"
 else
-  STATEUI_HOST=appkit swift build --package-path "$app_dir" --scratch-path "$app_dir/.build/appkit" \
+  SWIFTOMNIUI_HOST=appkit swift build --package-path "$app_dir" --scratch-path "$app_dir/.build/appkit" \
     --configuration release --product "$product"
   cp "$build/$product" "$destination/"
   find "$build" -maxdepth 1 -name '*.dylib' -exec cp {} "$destination/" \;

@@ -1,7 +1,7 @@
 # Drawing on GTK
 
 What the GTK host draws itself: a layout's box, a colour box, and a child
-placed by an engine's run. Each is a `StateUIPanel` whose snapshot the host
+placed by an engine's run. Each is a `SwiftOmniUIPanel` whose snapshot the host
 answers ([the C API](c-api.md#a-subclass-from-swift)).
 
 ## A layout's box
@@ -27,8 +27,8 @@ radius; it takes the room its layout gives it and asks for none.
 GTK sizes and draws a widget's own box - the room between its edge and its
 content - from CSS alone. The host keeps one style sheet for the whole
 display, and a rule in it for each value asked for, a class named for what
-it says - `stateui-padding-24-8-12-4`, a header bar's colours
-`stateui-bar-b512BD4FF-fFFFFFFFF` - which a widget wears to take it and takes
+it says - `swiftomniui-padding-24-8-12-4`, a header bar's colours
+`swiftomniui-bar-b512BD4FF-fFFFFFFFF` - which a widget wears to take it and takes
 off to give it up. The sheet stands above the color scheme, so its rule wins over
 the color scheme's own for the same widget. A rule is written the first time its value is
 asked for and stays, the sheet written again in the rules' order; a value
@@ -59,7 +59,7 @@ read by the core's parser, its arcs as curves - placed in the room by the host
 layer's rule ([a shape's own geometry](../../host/layout.md#a-shapes-own-geometry))
 from the bounds GSK measures. The fill and the outline are the shape's
 brushes painted through the path - a gradient runs across the shape it fills;
-dashes, gaps and their offset are outline widths in StateUI and lengths in
+dashes, gaps and their offset are outline widths in SwiftOmniUI and lengths in
 GSK, so they are multiplied by the width. A shape has no size of its own: it
 takes the room its layout gives it.
 

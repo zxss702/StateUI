@@ -1,5 +1,5 @@
 import Foundation
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A layout of the author's own: one line of arithmetic says where each card
 /// goes and how it is turned, and the host puts every card there on its own

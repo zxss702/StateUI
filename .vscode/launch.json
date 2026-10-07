@@ -1,8 +1,8 @@
 {
-  // Debugging StateUI's applications - through the StateUI extension,
-  // lib/StateUI.VSCode (install artifacts/stateui-*.vsix, built by `npm run package`).
+  // Debugging SwiftOmniUI's applications - through the SwiftOmniUI extension,
+  // lib/SwiftOmniUI.VSCode (install artifacts/swiftomniui-*.vsix, built by `npm run package`).
   //
-  // "StateUI: Debug" and "StateUI: Release" are the whole of it. The extension's
+  // "SwiftOmniUI: Debug" and "SwiftOmniUI: Release" are the whole of it. The extension's
   // status bar chooses:
   //
   //   the host         AppKit, Android, WinUI or GTK - and the editor works as it
@@ -13,18 +13,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "StateUI: Debug",
-      "type": "stateui",
+      "name": "SwiftOmniUI: Debug",
+      "type": "swiftomniui",
       "request": "launch",
       "configuration": "debug",
-      "presentation": { "group": "0 StateUI", "order": 1 }
+      "presentation": { "group": "0 SwiftOmniUI", "order": 1 }
     },
     {
-      "name": "StateUI: Release",
-      "type": "stateui",
+      "name": "SwiftOmniUI: Release",
+      "type": "swiftomniui",
       "request": "launch",
       "configuration": "release",
-      "presentation": { "group": "0 StateUI", "order": 2 }
+      "presentation": { "group": "0 SwiftOmniUI", "order": 2 }
     }
   ]
 }

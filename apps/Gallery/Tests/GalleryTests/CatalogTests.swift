@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import StateUI
+@_spi(Host) @testable import SwiftOmniUI
 @testable import GalleryUI
 
 private extension HostPatch {
@@ -309,7 +309,7 @@ private func clicked(_ title: String, in node: Node) -> EventHandler? {
     return walk(node)
 }
 
-/// A differ and the tree it last produced - the same harness StateUITests
+/// A differ and the tree it last produced - the same harness SwiftOmniUITests
 /// calls Renders, small enough to repeat rather than share across packages.
 private final class Renders {
     private let differ = Differ()
@@ -344,7 +344,7 @@ private final class Renders {
     /// two ways that both move: a type declared `private` in a file carries
     /// the file's ADDRESS - `GalleryUI.(unknown context at $11132db3c).Caption`
     /// - and a GENERIC one carries its arguments, dots and all
-    /// - `StateUI.GalleryView<Swift.Array<GalleryUI.SampleGroup>, Swift.String>`,
+    /// - `SwiftOmniUI.GalleryView<Swift.Array<GalleryUI.SampleGroup>, Swift.String>`,
     /// whose last dotted part is `String>`. So the arguments are cut off first
     /// and the last part of what is left is the name.
     var builds: [String: Int] {
@@ -734,7 +734,7 @@ final class CatalogTests: XCTestCase {
 
     #if APPKIT || UIKIT || GTK || WINUI || ANDROID
     /// Every example of this host's interop group shows both halves, named by
-    /// what they ARE: the application's half "In StateUI", and the host's in
+    /// what they ARE: the application's half "In SwiftOmniUI", and the host's in
     /// each language it is written in - its Swift first, then the relay
     /// beneath it where the host has one. Nothing else in the gallery asks
     /// that, so a section lost here would show up nowhere else.
@@ -748,7 +748,7 @@ final class CatalogTests: XCTestCase {
                 let where_ = "\(sample.id) example \(index + 1)"
                 let languages = example.hostCode.listings.map(\.language)
 
-                XCTAssertEqual(example.codeHeading, "In StateUI", "\(where_) heads its own code")
+                XCTAssertEqual(example.codeHeading, "In SwiftOmniUI", "\(where_) heads its own code")
                 XCTAssertEqual(example.hostCode.host, InteropHost.name, "\(where_) names its host")
                 XCTAssertEqual(languages.first, .swift, "\(where_) shows the host's Swift first")
                 if let relay = InteropHost.relay {
@@ -1135,7 +1135,7 @@ final class CatalogTests: XCTestCase {
     func testTheMainWindowCarriesItsNativePropertyPolicy() {
         let shown = firstPatch(window(Place().nav))
 
-        XCTAssertEqual(prop(shown, .title), .string("StateUI Gallery"))
+        XCTAssertEqual(prop(shown, .title), .string("SwiftOmniUI Gallery"))
         XCTAssertEqual(prop(shown, .width), .number(1_100))
         XCTAssertEqual(prop(shown, .height), .number(800))
         XCTAssertEqual(prop(shown, .minimumWidth), .number(700))
@@ -1160,9 +1160,9 @@ final class CatalogTests: XCTestCase {
         let shown = firstPatch(window(Place().nav, bar: state))
         let bar = try XCTUnwrap(shown.children.first { $0.type == "TitleBar" })
 
-        XCTAssertEqual(prop(bar, .title), .string("StateUI"))
+        XCTAssertEqual(prop(bar, .title), .string("SwiftOmniUI"))
         XCTAssertEqual(prop(bar, .subtitle), .string("Shared"))
-        XCTAssertEqual(prop(bar, .icon), .string("stateui_mark.png"))
+        XCTAssertEqual(prop(bar, .icon), .string("swiftomniui_mark.png"))
         XCTAssertNotNil(prop(bar, .barForegroundColor))
         XCTAssertNotNil(prop(bar, .background))
         XCTAssertNil(

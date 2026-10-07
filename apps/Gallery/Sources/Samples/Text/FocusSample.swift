@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// `@FocusState`, `.focused` and `.defaultFocus`: where the keyboard starts,
 /// and where it moves.

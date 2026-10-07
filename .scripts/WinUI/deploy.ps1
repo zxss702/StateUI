@@ -1,4 +1,4 @@
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 # ---------------------------------------------------------------------------
 # Builds an application's WinUI head for release and lays it in a folder of its
-# own with everything it runs with - StateUI, the Windows App SDK, the Swift and
+# own with everything it runs with - SwiftOmniUI, the Windows App SDK, the Swift and
 # C++ runtimes of its architecture, its pictures - so the folder runs on a
 # Windows machine with nothing of them installed.
 #
@@ -31,14 +31,14 @@ param(
     [ValidateSet('arm64', 'x64')][string]$Architecture
 )
 . (Join-Path $PSScriptRoot 'tools.ps1')
-if (-not $Architecture) { $Architecture = $StateUIArchitecture }
+if (-not $Architecture) { $Architecture = $SwiftOmniUIArchitecture }
 
 & (Join-Path $PSScriptRoot 'run-app.ps1') -App $App -Configuration release -Architecture $Architecture -BuildOnly
 if ($LASTEXITCODE) { throw "the WinUI head of $App did not build" }
 
 $application = (Resolve-Path $App).Path
-$env:STATEUI_HOST = 'winui'
-$arch = Get-StateUIArchitectureArguments $Architecture
+$env:SWIFTOMNIUI_HOST = 'winui'
+$arch = Get-SwiftOmniUIArchitectureArguments $Architecture
 $bin = (swift build --package-path $application -c release --scratch-path (Join-Path $application '.build\winui') `
     --show-bin-path @arch).Trim()
 
@@ -48,8 +48,8 @@ New-Item -ItemType Directory -Force $Destination | Out-Null
 robocopy $bin $Destination /E /XD *.objlib *.swiftmodule /XF *.lib *.exp *.ilk *.pdb plutil.exe swift-runtime.txt `
     /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "the head could not be copied from $bin" }
-Add-StateUISwiftRuntime -Directory $Destination -Architecture $Architecture
+Add-SwiftOmniUISwiftRuntime -Directory $Destination -Architecture $Architecture
 Remove-Item (Join-Path $Destination 'swift-runtime.txt') -ErrorAction SilentlyContinue
-Add-StateUICppRuntime -Directory $Destination -Architecture $Architecture
+Add-SwiftOmniUICppRuntime -Directory $Destination -Architecture $Architecture
 Write-Host "deployed $(Join-Path $Destination "$(Split-Path $application -Leaf)WinUI.exe")"
 $global:LASTEXITCODE = 0

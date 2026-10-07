@@ -1,6 +1,6 @@
-import StateUI
+import SwiftOmniUI
 
-/// Native alerts, confirmations, choices of actions and prompts, asked as awaited StateUI acts.
+/// Native alerts, confirmations, choices of actions and prompts, asked as awaited SwiftOmniUI acts.
 struct DialogsSample: SampleContent, ExampleContent {
     @State private var answer = "nothing asked yet"
     @State private var name = "Draft 1"

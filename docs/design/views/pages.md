@@ -289,7 +289,7 @@ is the window's.
 ## The application is named once
 
 `stateUIUseApp` is the one line an application writes outside its interface,
-in a `@_cdecl("stateui_app_register")` function the host calls by name at
+in a `@_cdecl("swiftomniui_app_register")` function the host calls by name at
 startup. That function lives in the application's own module and cannot move
 into the library: on Android and Windows the application is a separate native
 library, and nothing in it runs until something calls into it by name.

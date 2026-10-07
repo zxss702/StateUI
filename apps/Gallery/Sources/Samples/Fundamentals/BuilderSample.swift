@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// `if`, `if/else` and `ForEach` inside a builder - and what stays put across them.
 struct BuilderSample: SampleContent, ExampleContent {

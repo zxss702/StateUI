@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Text dragged from one view and dropped on another.
 struct DragAndDropSample: SampleContent, ExampleContent {

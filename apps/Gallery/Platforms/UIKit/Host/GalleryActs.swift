@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 import UIKit
 
 /// The gallery's own acts, as this host answers them.
@@ -17,15 +17,15 @@ enum GalleryActs {
     /// application runs.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
             UIPasteboard.general.string = text
         }
 
-        StateUIActs.add(GalleryContract.readClipboard) {
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
             UIPasteboard.general.string ?? ""
         }
 
-        StateUIActs.add(GalleryContract.batteryLevel) {
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
             battery()
         }
     }

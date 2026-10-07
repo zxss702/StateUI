@@ -34,7 +34,7 @@ uikit_build () {
 
 # uikit_bundle <binary-dir> <product> <name> <identifier> <resources-dir or ""> <bundle> <tools-dir>
 #              <own-info-plist or ""> [device-udid]
-# Assembles <bundle> for the target set: the binary, the StateUI libraries in
+# Assembles <bundle> for the target set: the binary, the SwiftOmniUI libraries in
 # Frameworks/, the pictures of <resources-dir>/Images with each SVG drawn
 # three times over, the icon drawn from <resources-dir>/AppIcon, an Info.plist
 # whose scenes are many, joined by the application's own keys - theirs where

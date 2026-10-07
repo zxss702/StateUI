@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Values changed by the sample and presented by the gallery window.
 final class TitleBarState {
@@ -38,9 +38,9 @@ struct TitleBarSample: SampleContent, ExampleContent {
             }
 
             var chrome: TitleBar {
-                TitleBar("StateUI")
+                TitleBar("SwiftOmniUI")
                     .subtitle(titleBar.subtitle)
-                    .icon("stateui_mark.png")
+                    .icon("swiftomniui_mark.png")
                     .barForegroundColor(.white)
                     .background(.cornflowerBlue)
                     .leadingContent { Button("Sidebar") }

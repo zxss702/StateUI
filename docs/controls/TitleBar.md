@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # TitleBar
 
 An authored title area attached to a window.
 
-Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping StateUI's state contract.
+Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping SwiftOmniUI's state contract.
 
 Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tiers/VisualElement.md) · [View](tiers/View.md)
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ⏸ |  | `GtkHeaderBar` | waits on TitleBar.title, not realized yet |
 | Web |  |  | no honest native counterpart | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Structure/TitleBarContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Structure/TitleBarContract.swift`.
 
 ## TitleBar's own members
 

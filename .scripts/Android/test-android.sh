@@ -10,10 +10,10 @@
 #   test-android.sh --build <abi>
 #
 # --build builds the test APK for <abi> (arm64-v8a, x86_64) with no device, prints where it is, and runs nothing;
-# STATEUI_TEST_APK=<apk> then installs that APK instead of building one - CI builds on macOS, where the pictures are
+# SWIFTOMNIUI_TEST_APK=<apk> then installs that APK instead of building one - CI builds on macOS, where the pictures are
 # drawn, and runs it on a Linux emulator.
 #
-# STATEUI_FILTER=<names> runs only the tests whose "Case.test" name holds one of the names, split at commas
+# SWIFTOMNIUI_FILTER=<names> runs only the tests whose "Case.test" name holds one of the names, split at commas
 # ("testPicker,AndroidColorBoxViewTests"), and then holds nothing to exports/: a part of the suite proves only part
 # of what the host declares.
 #
@@ -23,9 +23,9 @@
 #
 # The suite also writes what the host declares - its registry, as exports/
 # holds it for the control dictionary. The run is held to exports/android.txt;
-# STATEUI_UPDATE_EXPORTS=1 writes it instead.
+# SWIFTOMNIUI_UPDATE_EXPORTS=1 writes it instead.
 #
-# STATEUI_STALE_ONLY=1 runs only the conformance families whose verdicts in exports/marks/android stand at another
+# SWIFTOMNIUI_STALE_ONLY=1 runs only the conformance families whose verdicts in exports/marks/android stand at another
 # revision, or at none - chosen here, since the device reads no repository - and takes only theirs off the device.
 set -euo pipefail
 
@@ -34,7 +34,7 @@ repository_dir="$(cd "$script_dir/../.." && pwd)"
 # shellcheck source=tools.sh
 source "$script_dir/tools.sh"
 
-tests_dir="$repository_dir/lib/StateUI.Android/Tests"
+tests_dir="$repository_dir/lib/SwiftOmniUI.Android/Tests"
 runner="$tests_dir/Sources/Support/AndroidTestRunner.swift"
 
 # EVERY TEST IS LISTED: without discovery a `func test` that no `allTests`
@@ -51,12 +51,12 @@ done < <(find "$tests_dir/Sources" -name '*.swift')
 [[ -z "$unlisted" ]] || { echo "ERROR: listed nowhere, so never run:$unlisted"; exit 1; }
 
 if [[ "${1:-}" == --build ]]; then
-  build_head "$tests_dir" StateUIAndroidTests debug "${2:?an ABI: arm64-v8a or x86_64}"
+  build_head "$tests_dir" SwiftOmniUIAndroidTests debug "${2:?an ABI: arm64-v8a or x86_64}"
   exit
 fi
 
 marks="$repository_dir/exports/marks/android"
-stale_only="${STATEUI_STALE_ONLY:-}"
+stale_only="${SWIFTOMNIUI_STALE_ONLY:-}"
 if [[ "$stale_only" == 1 ]]; then
   stale=""
   for family in $(grep -oE 'func test[A-Za-z]+\(\) throws \{ try conform' "$tests_dir/Sources/Conformance/AndroidConformanceTests.swift" \
@@ -66,15 +66,15 @@ if [[ "$stale_only" == 1 ]]; then
       || stale="$stale,AndroidConformanceTests.test$family"
   done
   [[ -n "$stale" ]] || { echo "Every family's verdicts stand at its revision: nothing to run."; exit 0; }
-  STATEUI_FILTER="${stale#,}"
-  echo "stale:      ${STATEUI_FILTER//AndroidConformanceTests.test/}"
+  SWIFTOMNIUI_FILTER="${stale#,}"
+  echo "stale:      ${SWIFTOMNIUI_FILTER//AndroidConformanceTests.test/}"
 fi
 
 serial="$(device_serial "${1:-${ANDROID_SERIAL:-}}")"
 abi="$(device_abi "$serial")"
 echo "device:     $serial ($abi)"
 
-apk="${STATEUI_TEST_APK:-$(build_head "$tests_dir" StateUIAndroidTests debug "$abi")}"
+apk="${SWIFTOMNIUI_TEST_APK:-$(build_head "$tests_dir" SwiftOmniUIAndroidTests debug "$abi")}"
 package="$("$AAPT2" dump packagename "$apk")"
 "$ADB" -s "$serial" install -r "$apk" >/dev/null
 # The verdicts of a run before this one stay in the APK's files: none may stand for this run's.
@@ -101,30 +101,30 @@ trap cleanup EXIT
 # The follower is the log's own reader, so ending it ends the filter after it: a filter left holding the output
 # keeps whatever reads this script's output waiting. Disowned, its ending is not announced.
 "$ADB" -s "$serial" logcat -c
-"$ADB" -s "$serial" logcat -v raw -s StateUI 2>/dev/null > >(grep --line-buffered -E '\[[0-9]+/[0-9]+\]') &
+"$ADB" -s "$serial" logcat -v raw -s SwiftOmniUI 2>/dev/null > >(grep --line-buffered -E '\[[0-9]+/[0-9]+\]') &
 follower=$!
 disown "$follower"
 
 filter=()
-[[ -n "${STATEUI_FILTER:-}" ]] && filter=(-e filter "$STATEUI_FILTER")
-output="$("$ADB" -s "$serial" shell am instrument -w ${filter[@]+"${filter[@]}"} "$package/stateui.android.test.StateUITestRunner" | tr -d '\r')"
+[[ -n "${SWIFTOMNIUI_FILTER:-}" ]] && filter=(-e filter "$SWIFTOMNIUI_FILTER")
+output="$("$ADB" -s "$serial" shell am instrument -w ${filter[@]+"${filter[@]}"} "$package/swiftomniui.android.test.SwiftOmniUITestRunner" | tr -d '\r')"
 echo "$output"
 
 summary="$(grep -E '^Executed [0-9]+ tests, with [0-9]+ failures' <<< "$output" | tail -n 1)"
-[[ -n "$summary" ]] || { echo "ERROR: the tests reported nothing - read: $ADB -s $serial logcat -s StateUI"; exit 1; }
+[[ -n "$summary" ]] || { echo "ERROR: the tests reported nothing - read: $ADB -s $serial logcat -s SwiftOmniUI"; exit 1; }
 [[ "$summary" == *" with 0 failures" ]] || exit 1
-[[ -z "${STATEUI_FILTER:-}" || "$stale_only" == 1 ]] || exit 0
+[[ -z "${SWIFTOMNIUI_FILTER:-}" || "$stale_only" == 1 ]] || exit 0
 
 declared="$(mktemp -d)"
 # A run of the stale families alone runs no declaration's test.
 [[ "$stale_only" == 1 ]] && declarations=() || declarations=(android.txt)
 for name in ${declarations[@]+"${declarations[@]}"}; do
   "$ADB" -s "$serial" exec-out run-as "$package" cat "files/$name" > "$declared/$name"
-  if [[ "${STATEUI_UPDATE_EXPORTS:-}" == 1 ]]; then
+  if [[ "${SWIFTOMNIUI_UPDATE_EXPORTS:-}" == 1 ]]; then
     cp "$declared/$name" "$repository_dir/exports/$name"
   elif ! cmp -s "$declared/$name" "$repository_dir/exports/$name"; then
     echo "ERROR: exports/$name is not what the host declares - a registration changed, or something"
-    echo "stopped being realized. Run again with STATEUI_UPDATE_EXPORTS=1 and read the diff."
+    echo "stopped being realized. Run again with SWIFTOMNIUI_UPDATE_EXPORTS=1 and read the diff."
     exit 1
   fi
 done
@@ -154,13 +154,13 @@ if [[ "$stale_only" == 1 ]]; then
     if [[ ! -e "$declared/run/$(basename "$file")" ]]; then rm -f "$file"; fi
   done
 fi
-if [[ "${STATEUI_UPDATE_EXPORTS:-}" == 1 ]]; then
+if [[ "${SWIFTOMNIUI_UPDATE_EXPORTS:-}" == 1 ]]; then
   [[ "$stale_only" == 1 ]] || rm -rf "$marks"
   mkdir -p "$marks"
   cp "$held"/*.txt "$marks/"
 elif ! diff -r "$declared/run" "$declared/kept" >/dev/null 2>&1; then
   diff -r "$declared/run" "$declared/kept" | head -n 40
   echo "ERROR: exports/marks/android is not what this run proved - a verdict changed, or something stopped"
-  echo "working. Run again with STATEUI_UPDATE_EXPORTS=1 and read the diff."
+  echo "working. Run again with SWIFTOMNIUI_UPDATE_EXPORTS=1 and read the diff."
   exit 1
 fi

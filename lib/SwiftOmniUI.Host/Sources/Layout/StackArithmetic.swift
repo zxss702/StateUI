@@ -1,0 +1,246 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+@_spi(Host) import SwiftOmniUI
+
+/// A stack's arithmetic: its shown children one after another along one axis.
+/// Design: docs/design/host/layout.md#stacks
+@_spi(Host) public enum StackArithmetic {
+    /// The axis a stack runs along.
+    public enum Axis: Sendable {
+        /// Left to right.
+        case horizontal
+
+        /// Top to bottom.
+        case vertical
+    }
+
+    /// The room a stack's shown children take, each measured once for the width offered.
+    @MainActor
+    public static func size<Child: LayoutChild>(
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, width offered: Double?
+    ) -> LayoutSize {
+        let visible = items.filter(\.isShown)
+        let gaps = spacing * Double(max(visible.count - 1, 0))
+        var along = 0.0
+        var across = 0.0
+
+        switch axis {
+        case .vertical:
+            let childWidth = offered.map { max(0, $0 - padding.left - padding.right) }
+            for item in visible {
+                let margin = item.values.margin
+                let available = childWidth.map { max(0, $0 - margin.left - margin.right) }
+                let size = item.size(offered: available)
+                along += max(size.height, item.values.flex ?? 0) + margin.top + margin.bottom
+                let scrollsAcross = item.values.scrollAxes == .horizontal || item.values.scrollAxes == .both
+                let viewport = scrollsAcross && item.values.width == nil
+                    ? item.values.boundedWidth(available ?? size.width, available: available) : size.width
+                across = max(across, viewport + margin.left + margin.right)
+            }
+            return LayoutSize(
+                width: padding.left + padding.right + across,
+                height: padding.top + padding.bottom + gaps + along)
+
+        case .horizontal:
+            for item in visible {
+                let size = item.size(offered: nil)
+                let margin = item.values.margin
+                along += max(size.width, item.values.flex ?? 0) + margin.left + margin.right
+                across = max(across, size.height + margin.top + margin.bottom)
+            }
+            return LayoutSize(
+                width: padding.left + padding.right + gaps + along,
+                height: padding.top + padding.bottom + across)
+        }
+    }
+
+    /// Where each child stands in `bounds`, in order; nil for a hidden one. Right to left, the places
+    /// are turned about the middle of `bounds`.
+    @MainActor
+    public static func places<Child: LayoutChild>(
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect,
+        direction: LayoutDirection
+    ) -> [Rect?] {
+        leftToRight(of: items, axis: axis, spacing: spacing, padding: padding, in: bounds)
+            .map { $0.map { direction.places($0, in: bounds) } }
+    }
+
+    /// The places as a layout written left to right has them.
+    @MainActor
+    private static func leftToRight<Child: LayoutChild>(
+        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect
+    ) -> [Rect?] {
+        let content = bounds.inset(padding)
+        let naturals = items.map { item -> LayoutSize in
+            guard item.isShown else { return .zero }
+            let margin = item.values.margin
+            let cross = axis == .vertical ? content.width : content.height
+            return item.size(offered: axis == .vertical ? max(0, cross - margin.left - margin.right) : nil)
+        }
+        let extents = alongs(items, naturals: naturals, axis: axis, spacing: spacing, in: content)
+
+        // A baseline is a line the row shares: its place is the deepest
+        // baseline any shown child asks for, each child landing its own on it.
+        // Only the cross axis of a horizontal layout answers baseline slots.
+        var baseline = 0.0
+        if axis == .horizontal {
+            baseline = content.y + (zip(items, naturals).map { item, natural -> Double in
+                guard item.isShown, item.values.vertical == 4 || item.values.vertical == 5 else { return 0 }
+                return guide(item.values.verticalGuide, in: item, natural: natural.height,
+                             slot: item.values.vertical)
+            }.max() ?? 0)
+        }
+        var offset = axis == .vertical ? content.y : content.x
+
+        return zip(items, zip(naturals, extents)).map { item, pair in
+            let (natural, along) = pair
+            guard item.isShown else { return nil }
+            let values = item.values
+            let margin = values.margin
+
+            switch axis {
+            case .vertical:
+                offset += margin.top
+                let available = max(0, content.width - margin.left - margin.right)
+                let width = Extent.of(
+                    option: values.horizontal, stated: values.width, natural: natural.width,
+                    available: available, minimum: values.minimumWidth, maximum: values.maximumWidth)
+                let x = Extent.start(
+                    option: values.horizontal, extent: width, start: content.x + margin.left,
+                    available: available,
+                    guide: values.horizontalGuide?.slot == values.horizontal
+                        ? values.horizontalGuide?.offset : nil)
+                let place = Rect(x: x, y: offset, width: width, height: along)
+                offset += along + margin.bottom + spacing
+                return place
+
+            case .horizontal:
+                offset += margin.left
+                let available = max(0, content.height - margin.top - margin.bottom)
+                let height = Extent.of(
+                    option: values.vertical, stated: values.height, natural: natural.height,
+                    available: available, minimum: values.minimumHeight, maximum: values.maximumHeight)
+                let y: Double
+                if values.vertical == 4 || values.vertical == 5 {
+                    y = baseline - guide(values.verticalGuide, in: item,
+                                         natural: height, slot: values.vertical)
+                } else {
+                    y = Extent.start(
+                        option: values.vertical, extent: height, start: content.y + margin.top,
+                        available: available,
+                        guide: values.verticalGuide?.slot == values.vertical
+                            ? values.verticalGuide?.offset : nil)
+                }
+                let place = Rect(x: offset, y: y, width: along, height: height)
+                offset += along + margin.right + spacing
+                return place
+            }
+        }
+    }
+
+    /// Each shown child's extent along `axis`: its natural one, and for a flexible child a share of
+    /// the room left over, never under the length it named - the others keep theirs where the room
+    /// runs short.
+    @MainActor
+    private static func alongs<Child: LayoutChild>(
+        _ items: [Child], naturals: [LayoutSize], axis: Axis, spacing: Double, in content: Rect
+    ) -> [Double] {
+        var extents = zip(items, naturals).map { item, natural -> Double in
+            guard item.isShown else { return 0 }
+            let base = axis == .vertical
+                ? item.values.boundedHeight(natural.height)
+                : item.values.boundedWidth(natural.width)
+            guard let minimum = item.values.flex else { return base }
+            return axis == .vertical
+                ? item.values.boundedHeight(max(minimum, base))
+                : item.values.boundedWidth(max(minimum, base))
+        }
+        var taken = spacing * Double(max(items.filter(\.isShown).count - 1, 0))
+        for (item, extent) in zip(items, extents) where item.isShown {
+            let margin = item.values.margin
+            taken += extent + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)
+        }
+        var room = (axis == .vertical ? content.height : content.width) - taken
+
+        // Short of room, the children that speak the least keep what is left:
+        // each priority group below the loudest gives up its natural size in
+        // turn, lowest first, until the deficit is made or they reach nothing.
+        // A stated size is not negotiated: `.frame(height: 60)` means sixty,
+        // and what it cannot take it overflows, as SwiftUI's does.
+        if room < 0 {
+            let shown = items.indices.filter {
+                items[$0].isShown && items[$0].values.flex == nil
+                    && (axis == .vertical ? items[$0].values.height == nil
+                                          : items[$0].values.width == nil)
+            }
+            var deficit = -room
+            var priorities = shown.map { items[$0].values.priority }.sorted()
+            while deficit > 0, let lowest = priorities.first {
+                let group = shown.filter { items[$0].values.priority == lowest }
+                let part = deficit / Double(group.count)
+                for index in group {
+                    let gave = min(part, extents[index])
+                    extents[index] -= gave
+                    deficit -= gave
+                }
+                priorities = priorities.filter { $0 > lowest }
+            }
+            room = 0
+        }
+
+        let flexible = items.indices.filter {
+            let values = items[$0].values
+            let scrolls = values.scrollAxes == .both
+                || (axis == .vertical ? values.scrollAxes == .vertical : values.scrollAxes == .horizontal)
+            return items[$0].isShown && (values.flex != nil
+                || (scrolls && (axis == .vertical ? values.height == nil : values.width == nil)))
+        }
+        guard room > 0, !flexible.isEmpty else { return extents }
+
+        let share = room / Double(flexible.count)
+        for index in flexible {
+            extents[index] = axis == .vertical
+                ? items[index].values.boundedHeight(extents[index] + share)
+                : items[index].values.boundedWidth(extents[index] + share)
+        }
+        return extents
+    }
+
+    /// The point a child answers `slot` with: its explicit guide where
+    /// `.alignmentGuide` named one for it, its measured baseline where the
+    /// host reads one, its extent's far edge for a last baseline.
+    @MainActor
+    private static func guide<Child: LayoutChild>(
+        _ explicit: AlignmentGuide?, in child: Child, natural: Double, slot: Int32
+    ) -> Double {
+        if let explicit, explicit.slot == slot { return explicit.offset }
+        switch slot {
+        case 4: return child.firstBaseline ?? natural
+        case 5: return child.lastBaseline ?? natural
+        default: return natural / 2
+        }
+    }
+}
+
+extension LayoutDirection {
+    /// Where a place worked out left to right stands in `room` laid out this way: right to left, turned
+    /// about the room's middle, so a row fills from the right and padding and margins swap sides.
+    /// Design: docs/design/host/layout.md#right-to-left
+    @_spi(Host) public func places(_ place: Rect, in room: Rect) -> Rect {
+        guard self == .rightToLeft else { return place }
+        return Rect(x: room.x + room.width - (place.x - room.x) - place.width, y: place.y,
+                    width: place.width, height: place.height)
+    }
+}
+
+extension Rect {
+    /// This rectangle with `insets` taken off each side, never below no room.
+    func inset(_ insets: EdgeInsets) -> Rect {
+        Rect(
+            x: x + insets.left,
+            y: y + insets.top,
+            width: max(0, width - insets.left - insets.right),
+            height: max(0, height - insets.top - insets.bottom))
+    }
+}

@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// `ContentUnavailableView`: what stands where content would, while none does.
 struct ContentUnavailableSample: SampleContent, ExampleContent {

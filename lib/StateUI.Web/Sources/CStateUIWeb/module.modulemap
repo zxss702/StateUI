@@ -1,4 +1,0 @@
-module CStateUIWeb [system] {
-    header "CStateUIWeb.h"
-    export *
-}

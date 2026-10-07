@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // <gallery-rating-bar>: five stars in a row, as many lit as its `rating` attribute - an element that knows nothing
-// of StateUI. A tap on a star is the user's rating, 1 through 5: the bar lights it and raises `ratingchange`, its
+// of SwiftOmniUI. A tap on a star is the user's rating, 1 through 5: the bar lights it and raises `ratingchange`, its
 // `detail` the rating. `flash()` dims the bar and brings it back. The Swift half is
 // Platforms/Web/Host/RatingBarElement.swift.
 

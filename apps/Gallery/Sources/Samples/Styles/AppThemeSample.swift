@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The color scheme as a value a view can branch on.
 struct AppThemeSample: SampleContent, ExampleContent {

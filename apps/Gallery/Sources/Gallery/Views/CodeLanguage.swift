@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 /// The language a listing is written in: what its heading names, and which
 /// words are drawn as its keywords.
 ///

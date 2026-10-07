@@ -13,14 +13,14 @@ fun stated(name: String): String =
     providers.gradleProperty(name).orNull
         ?: error("$name is not given - build this head with .scripts/Android/run-app.sh")
 
-layout.buildDirectory.set(file(stated("stateui.build")))
+layout.buildDirectory.set(file(stated("swiftomniui.build")))
 
 android {
-    namespace = "com.stateui.gallery"
+    namespace = "com.swiftomniui.gallery"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.stateui.gallery"
+        applicationId = "com.swiftomniui.gallery"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -30,11 +30,11 @@ android {
     sourceSets {
         getByName("main") {
             manifest.srcFile("AndroidManifest.xml")
-            java.srcDir(stated("stateui.java"))
+            java.srcDir(stated("swiftomniui.java"))
             java.srcDir("Java")
-            jniLibs.srcDir(stated("stateui.libraries"))
-            assets.srcDir(stated("stateui.assets"))
-            res.srcDir(stated("stateui.res"))
+            jniLibs.srcDir(stated("swiftomniui.libraries"))
+            assets.srcDir(stated("swiftomniui.assets"))
+            res.srcDir(stated("swiftomniui.res"))
         }
     }
 

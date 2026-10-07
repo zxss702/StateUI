@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # MenuButton
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 |  | 19 ✅ | `GtkMenuButton` + `GMenu` | no run of it on these sources |
 | Web |  |  | `<details>` / ARIA `button` + `menu` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/MenuButtonContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Menus/MenuButtonContract.swift`.
 
 ## MenuButton's own members
 

@@ -1,19 +1,19 @@
 # UIKit host
 
-The UIKit host renders a StateUI application with UIKit controls on iOS and
+The UIKit host renders a SwiftOmniUI application with UIKit controls on iOS and
 iPadOS. It is Swift, in the application's own process, beside the application
 module and the library: it applies the typed sparse patches of the
 [host contract](../internals/host-contract.md) directly, over the runtime every host
 shares.
 
-It presents StateUI's controls, arrangements and pages - the
+It presents SwiftOmniUI's controls, arrangements and pages - the
 [platform contract](../platform-contract.md#control-creation) says which, member by
 member - and shows any other control's name in red where the control belongs,
 so a gap is visible rather than silent.
 
 ```text
-lib/StateUI.UIKit/
-  Sources/    StateUIUIKit: the renderer, scenes and windows, pages, controls and the registry
+lib/SwiftOmniUI.UIKit/
+  Sources/    SwiftOmniUIUIKit: the renderer, scenes and windows, pages, controls and the registry
   Tests/      the host's suite - an application of tests, run on a simulator
 .scripts/UIKit/
   build-app.sh      an application's UIKit head, bundled as an .app for a simulator or a device
@@ -46,9 +46,9 @@ never returns:
 
 ```swift quote
 import NotesUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 
-stateui_app_register()
+swiftomniui_app_register()
 
 // The controls this host realizes, the acts it performs, and the pushes it
 // reports. Each lives in Host/ beside this file.
@@ -56,29 +56,29 @@ NotesControls.register()
 NotesActs.register()
 NotesEventSources.start()
 
-StateUIUIKit.run()
+SwiftOmniUIUIKit.run()
 ```
 
 The bundle `build-app.sh` makes carries the application's `Resources/Images`
 in `Images/`, every SVG drawn three times over as PNGs, which
 `Image("mark.png")` finds as it finds the SVG on every other host, and the
-StateUI libraries in `Frameworks/`. Its icon is drawn from
+SwiftOmniUI libraries in `Frameworks/`. Its icon is drawn from
 `Resources/AppIcon`: `appicon_bkg.svg` over the whole of a 1024-pixel square
 and `appicon_mark.svg` in its middle, opaque, which iOS rounds itself. Its
 `Info.plist` says the application supports many scenes.
 
-`STATEUI_UIKIT=1` is what makes a build a UIKit one: the application's
+`SWIFTOMNIUI_UIKIT=1` is what makes a build a UIKit one: the application's
 manifest reads it, declares the `Platforms/UIKit` target and its
-`StateUIUIKit` dependency, and defines the `UIKIT` compilation condition for
+`SwiftOmniUIUIKit` dependency, and defines the `UIKIT` compilation condition for
 every module of the application. Swift written for this host alone stands
 under `#if UIKIT`.
 
-A new application made in `apps/` - **StateUI: New App in apps/**, or
+A new application made in `apps/` - **SwiftOmniUI: New App in apps/**, or
 `.scripts/new-app.sh` - has a UIKit head, as HelloWorld does.
 
 ## Scenes and windows
 
-Each StateUI window stands in a window scene of its own. On an iPad the
+Each SwiftOmniUI window stands in a window scene of its own. On an iPad the
 application opens as many scenes as its windows ask for, and the user moves
 between them and closes them as between any application's windows: a window
 hears it is activated, put in the background and closed by the user as its
@@ -95,7 +95,7 @@ iPad's main menu.
 ## Controls, acts, and events registered in Swift
 
 An application extends the host from its UIKit head. Registrations run before
-`StateUIUIKit.run`, on the main thread. Registering a contract or an act again
+`SwiftOmniUIUIKit.run`, on the main thread. Registering a contract or an act again
 replaces the earlier registration.
 
 **A host in the same process registers BY TYPE.** Every registration is
@@ -108,7 +108,7 @@ module to see them. The UIKit halves of the Gallery's own are in
 
 ### A control
 
-`StateUIControls.add` says what an application's own element IS on screen:
+`SwiftOmniUIControls.add` says what an application's own element IS on screen:
 
 ```swift quote
 public static func add<Realized: ElementContract, Made: UIView>(
@@ -130,7 +130,7 @@ public static func add<Realized: ElementContract, Made: UIView>(
 extension TrafficLightView {
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
             let light = TrafficLightView()
             light.onLampTapped = { index in
                 reports.raise(TrafficLightContract.lampTapped, index)
@@ -157,16 +157,16 @@ is a leaf here: its children reach nothing.
 
 ### An act
 
-`StateUIActs.add` registers a function the application calls by its act, and
-`StateUIActs.add(_:on:_:)` one aimed at the application's own element, handed
+`SwiftOmniUIActs.add` registers a function the application calls by its act, and
+`SwiftOmniUIActs.add(_:on:_:)` one aimed at the application's own element, handed
 that element's view:
 
 ```swift quote
-StateUIActs.add(NotesContract.setClipboard) { text in
+SwiftOmniUIActs.add(NotesContract.setClipboard) { text in
     UIPasteboard.general.string = text
 }
 
-StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
     bar.flash()
 }
 ```
@@ -178,17 +178,17 @@ fail the call with the reason, named. The Swift half is under
 
 ### An event without a control
 
-`StateUIEvents.raise` pushes an event of the application's that belongs to no
-element, and `StateUIEvents.raises` declares it where its source is wired:
+`SwiftOmniUIEvents.raise` pushes an event of the application's that belongs to no
+element, and `SwiftOmniUIEvents.raises` declares it where its source is wired:
 
 ```swift quote
-StateUIEvents.raises(NotesContract.batteryChanged)
+SwiftOmniUIEvents.raises(NotesContract.batteryChanged)
 
 UIDevice.current.isBatteryMonitoringEnabled = true
 NotificationCenter.default.addObserver(
     forName: UIDevice.batteryLevelDidChangeNotification, object: nil, queue: .main
 ) { _ in
-    StateUIEvents.raise(NotesContract.batteryChanged, Double(UIDevice.current.batteryLevel))
+    SwiftOmniUIEvents.raise(NotesContract.batteryChanged, Double(UIDevice.current.batteryLevel))
 }
 ```
 
@@ -218,8 +218,8 @@ simulator, and press **F5**.
 
 ## Debugging
 
-**StateUI: Debug** runs the application as `run-app.sh --debugger` does and
-attaches `lldb-dap` to it: a breakpoint in the application, in StateUI or in
+**SwiftOmniUI: Debug** runs the application as `run-app.sh --debugger` does and
+attaches `lldb-dap` to it: a breakpoint in the application, in SwiftOmniUI or in
 the host stops it from the first line, with its source, its stack and its
 variables. `--debugger` starts the application held until a debugger
 attaches, and writes where to `.build-uikit/debugger.json`: its process and,
@@ -243,12 +243,12 @@ application of tests, run in its own scene on a simulator:
 ```bash
 .scripts/UIKit/test-uikit.sh "iPhone 18 Pro"
 .scripts/UIKit/test-uikit.sh "iPad Air 13-inch (M4)"
-STATEUI_FILTER=testSlider .scripts/UIKit/test-uikit.sh
+SWIFTOMNIUI_FILTER=testSlider .scripts/UIKit/test-uikit.sh
 ```
 
 Each test and each conformance case says as it ends where the run stands, and
-the run ends with *Executed N tests, with M failures*. `STATEUI_FILTER` runs
+the run ends with *Executed N tests, with M failures*. `SWIFTOMNIUI_FILTER` runs
 the tests whose name holds one of its comma-separated names;
-`STATEUI_UPDATE_EXPORTS=1` writes what the run says into `exports/` instead of
+`SWIFTOMNIUI_UPDATE_EXPORTS=1` writes what the run says into `exports/` instead of
 holding it to them. The suite runs with the simulator's accessibility off, as
 a simulator starts.

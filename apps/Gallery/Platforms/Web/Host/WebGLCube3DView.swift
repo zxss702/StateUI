@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIWeb
+import SwiftOmniUIWeb
 
 /// A cube drawn by WebGL 2 in the page: the gallery's own element, `<gallery-cube3d>` of Page/cube3d.js, which knows
-/// nothing of StateUI - told what it is through its attributes. The Swift half is Sources/Samples/Interop/Cube3D.swift.
+/// nothing of SwiftOmniUI - told what it is through its attributes. The Swift half is Sources/Samples/Interop/Cube3D.swift.
 @MainActor
 final class WebGLCube3DView: WebControl {
     let element = WebPageElement(tag: "gallery-cube3d")
@@ -37,7 +37,7 @@ final class WebGLCube3DView: WebControl {
 extension WebGLCube3DView {
     /// Adds the cube for `Cube3DContract`. Said once, before the application runs.
     static func register() {
-        StateUIControls.add(Cube3DContract.self, create: { _ in WebGLCube3DView() }) { cube in
+        SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in WebGLCube3DView() }) { cube in
             cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
             cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
             cube.property(Cube3DContract.isSpinning) { control, spinning in control.isSpinning = spinning ?? true }

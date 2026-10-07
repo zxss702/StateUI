@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Single-line text fields, with focus, caret, selection and keyboard choices.
 struct TextFieldSample: SampleContent, ExampleContent {

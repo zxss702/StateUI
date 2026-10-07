@@ -1,17 +1,17 @@
 # AppKit host
 
-The AppKit host renders a StateUI application with AppKit controls on macOS. It
+The AppKit host renders a SwiftOmniUI application with AppKit controls on macOS. It
 runs in the same process as the application module and the library, and applies
 the typed sparse patches of the [host contract](../internals/host-contract.md) directly.
 
-It presents StateUI's controls, arrangements and pages over the runtime every
+It presents SwiftOmniUI's controls, arrangements and pages over the runtime every
 host shares - the [platform contract](../platform-contract.md#control-creation) says
 which, member by member - and shows any other control's name in red where the
 control belongs, so a gap is visible rather than silent.
 
 ```text
-lib/StateUI.AppKit/
-  Sources/    StateUIAppKit: the renderer, windows, sessions and the registry
+lib/SwiftOmniUI.AppKit/
+  Sources/    SwiftOmniUIAppKit: the renderer, windows, sessions and the registry
   Tests/      the host's suite
 .scripts/AppKit/
   build-gallery-appkit.sh      the Gallery's bundle, in apps/Gallery/.build-appkit
@@ -25,9 +25,9 @@ application, says what this host answers for it, then starts the host:
 
 ```swift quote
 import NotesUI
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
-stateui_app_register()
+swiftomniui_app_register()
 
 // The controls this host realizes, the acts it performs, and the pushes it
 // reports. Each lives in Host/ beside this file.
@@ -35,7 +35,7 @@ NotesControls.register()
 NotesActs.register()
 NotesEventSources.start()
 
-StateUIAppKit.run(resourceDirectory: resources, applicationIcon: icon)
+SwiftOmniUIAppKit.run(resourceDirectory: resources, applicationIcon: icon)
 ```
 
 The head finds its artwork from its own source file, `#filePath`, so it runs
@@ -52,7 +52,7 @@ condition; Swift written for this host alone stands under `#if APPKIT`. See
 ## Controls, acts, and events registered in Swift
 
 An application extends the host from its AppKit head. Registrations run before
-`StateUIAppKit.run`, on the main thread. Registering a contract or an act again
+`SwiftOmniUIAppKit.run`, on the main thread. Registering a contract or an act again
 replaces the earlier registration.
 
 **A host in the same process registers BY TYPE.** Every registration is written
@@ -68,7 +68,7 @@ them. The Swift half itself is the same for every host - one contract, one
 
 ### A control
 
-`StateUIControls.add` says what an application's own element IS on screen:
+`SwiftOmniUIControls.add` says what an application's own element IS on screen:
 
 ```swift quote
 public static func add<Realized: ElementContract, Made: NSView>(
@@ -91,7 +91,7 @@ TrafficLightView in … }` - so every applier is handed that class rather than a
 bare `NSView`.
 
 ```swift quote
-StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
     let light = TrafficLightView()
     light.onLampTapped = { index in
         reports.raise(TrafficLightContract.lampTapped, index)
@@ -115,7 +115,7 @@ is only a list:
 extension TrafficLightView {
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
             …
         }) { light in
             …
@@ -166,7 +166,7 @@ own element is a leaf here.
 
 ### An act
 
-`StateUIActs.add` registers a function the application calls by its act:
+`SwiftOmniUIActs.add` registers a function the application calls by its act:
 
 ```swift quote
 public static func add<
@@ -177,12 +177,12 @@ public static func add<
 ```
 
 ```swift quote
-StateUIActs.add(NotesContract.setClipboard) { text in
+SwiftOmniUIActs.add(NotesContract.setClipboard) { text in
     NSPasteboard.general.clearContents()
     NSPasteboard.general.setString(text, forType: .string)
 }
 
-StateUIActs.add(NotesContract.batteryLevel) {
+SwiftOmniUIActs.add(NotesContract.batteryLevel) {
     battery()
 }
 ```
@@ -192,7 +192,7 @@ the aim puts the element's identity in argument 0, and this host turns it back
 into the view its registration made.
 
 ```swift quote
-StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
     bar.flash()
 }
 ```
@@ -201,7 +201,7 @@ StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
 - **Its values.** The arguments and the answer are the act's own types. A call
   carrying anything else fails with the reason rather than running on a guess.
 - **Failure.** A thrown error fails the act: the awaiting Swift handler throws
-  `StateUIError` with the reason. An aim at nothing, or at an element no longer
+  `SwiftOmniUIError` with the reason. An aim at nothing, or at an element no longer
   on screen, fails the same way.
 - **Scope.** An act nobody registered fails with that reason, named.
 
@@ -210,7 +210,7 @@ The Swift half is under
 
 ### An event without a control
 
-`StateUIEvents.raise` pushes an event of the application's that belongs to no
+`SwiftOmniUIEvents.raise` pushes an event of the application's that belongs to no
 element, such as a power or network change:
 
 ```swift quote
@@ -224,7 +224,7 @@ public nonisolated static func raise<Owner: ApplicationTier, each Value: HostRep
 NotificationCenter.default.addObserver(
     forName: .NSProcessInfoPowerStateDidChange, object: nil, queue: nil
 ) { _ in
-    StateUIEvents.raise(
+    SwiftOmniUIEvents.raise(
         NotesContract.lowPowerChanged, ProcessInfo.processInfo.isLowPowerModeEnabled)
 }
 ```
@@ -236,10 +236,10 @@ unconditionally. The Swift side subscribes with `HostEvents.on`; see
 [Host-extension events](../interface/interaction-and-actions.md#host-extension-events).
 
 The head declares each event it raises where it wires the source, before
-`StateUIAppKit.run(resourceDirectory:applicationIcon:)`:
+`SwiftOmniUIAppKit.run(resourceDirectory:applicationIcon:)`:
 
 ```swift quote
-StateUIEvents.raises(NotesContract.lowPowerChanged)
+SwiftOmniUIEvents.raises(NotesContract.lowPowerChanged)
 ```
 
 The host tells the core what it realizes when it starts: every element of the

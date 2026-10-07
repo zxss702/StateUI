@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// A box ticked or not, on its own and several at once - a `Toggle` wearing
 /// `.checkbox`.

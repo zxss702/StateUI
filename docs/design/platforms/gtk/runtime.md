@@ -24,10 +24,10 @@ its panel and drops the reference it held.
 ## Starting
 
 The head's `main` names the application and hands the thread to
-`StateUIGTK.run(applicationID:)`, which makes an `AdwApplication` under that
+`SwiftOmniUIGTK.run(applicationID:)`, which makes an `AdwApplication` under that
 name and runs GLib's main loop on the thread until the last window closes.
 The application's first activation calls the host, whose first act is to drain
-StateUI's UI executor on that thread: the drain is what makes the thread
+SwiftOmniUI's UI executor on that thread: the drain is what makes the thread
 `MainActor`'s. The name is the one the desktop knows the application by, and
 GTK keeps one instance of it: a second launch activates the first, which
 brings its window forward.
@@ -41,7 +41,7 @@ makes - rather than by waiting for a frame.
 
 ## The doorbell
 
-A handler that awaits resumes on `MainActor`, whose jobs wait in StateUI's UI
+A handler that awaits resumes on `MainActor`, whose jobs wait in SwiftOmniUI's UI
 executor until the host drains them. A GLib thread of the host's own parks
 until the core has work, and posts one turn to the main loop with
 `g_idle_add_full` at `G_PRIORITY_DEFAULT` - input's priority, above GTK's

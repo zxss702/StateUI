@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A ticker that does not repeat, restarted by the work it started.
 struct PollSample: SampleContent, ExampleContent {

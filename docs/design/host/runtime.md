@@ -3,8 +3,8 @@
 A runtime is the part of a host that turns the core's patches and cycles into
 native views, and turns what the user does back into state. Every runtime has
 the same elements, one job each, named alike in every language. The
-toolkit-neutral elements are the host layer, `lib/StateUI.Host` - the module
-`StateUIHost`, which reaches the core through `@_spi(Host)` - and every host,
+toolkit-neutral elements are the host layer, `lib/SwiftOmniUI.Host` - the module
+`SwiftOmniUIHost`, which reaches the core through `@_spi(Host)` - and every host,
 Swift in the application's process, uses them as they are. Its folders are
 its parts; [the host layer](../../internals/host-layer.md) maps them.
 
@@ -14,12 +14,12 @@ its parts; [the host layer](../../internals/host-layer.md) maps them.
   application              views, @State, handlers, engines
        |
        v
-  StateUI core             state, keys, diffing, timing laws        lib/StateUI/Sources
+  SwiftOmniUI core             state, keys, diffing, timing laws        lib/SwiftOmniUI/Sources
        |                   HostRender / HostPatch (typed)
        v
   host layer               CoreLink        PatchIntake
-  StateUIHost             MountedTree     MountedElement
-  lib/StateUI.Host         Animator        StateChannels
+  SwiftOmniUIHost             MountedTree     MountedElement
+  lib/SwiftOmniUI.Host         Animator        StateChannels
                            DescribedMotion LayoutMotion
                            DisplayCycle    ProgramWrite
                            Pump            HandlerDispatch
@@ -27,17 +27,17 @@ its parts; [the host layer](../../internals/host-layer.md) maps them.
        v
   toolkit half             frame signal, each element's native half,
   one package per host     realizations, layout views, scrolling, gestures,
-  (lib/StateUI.AppKit,     focus, accessibility, windows and menus
-  lib/StateUI.Android,
-  lib/StateUI.WinUI,
-  lib/StateUI.GTK)
+  (lib/SwiftOmniUI.AppKit,     focus, accessibility, windows and menus
+  lib/SwiftOmniUI.Android,
+  lib/SwiftOmniUI.WinUI,
+  lib/SwiftOmniUI.GTK)
        |
        v
   native views
 ```
 
 A host links the core's dynamic library and takes the typed patch, so one
-process holds one copy of StateUI's types.
+process holds one copy of SwiftOmniUI's types.
 
 ## The parts
 
@@ -481,7 +481,7 @@ range widened over that value shows it rather than the end it stood at.
 ## The log
 
 What a host says for whoever reads its log rather than its screen is one
-line a message, begun by `StateUI` and the host's name (`HostLog`), written
+line a message, begun by `SwiftOmniUI` and the host's name (`HostLog`), written
 to standard error, which nothing buffers, so a line stands in the log before
 whatever went wrong next; a platform whose log is its own - Android's - hands
 the lines there.
@@ -505,7 +505,7 @@ application frame code, a **channel** only a state's, an **animation** one
 animated value, a **cycle** only the display cycle, a **report** only the
 user's change on its way to the core, and an **act** is a call the
 application makes on a control. [The glossary](../glossary.md) maps every
-StateUI term to the common one.
+SwiftOmniUI term to the common one.
 ## A day and a time
 
 A picker holds a day and a time by one arithmetic on every host

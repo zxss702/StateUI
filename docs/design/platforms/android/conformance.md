@@ -69,14 +69,14 @@ what is asked, in the units Android keeps it in: a text view's lines,
 ellipsis, gravity, letter spacing in pixels, line spacing, paint flags, hint,
 selection and kind of input; a view's padding in whole pixels, back to whole
 points; a layout's clipping to its outline, a scroller's bars, a picture's
-scale type, a control's tint. What StateUI draws in its own views and
-drawables - a shape's paint, a layout's box - and where StateUI's layout places
+scale type, a control's tint. What SwiftOmniUI draws in its own views and
+drawables - a shape's paint, a layout's box - and where SwiftOmniUI's layout places
 the children hold nothing of Android's: they do not apply here, each proven by
 its effect in another case.
 
 ## Running the stale families
 
-The device reads no repository, so `STATEUI_STALE_ONLY=1` is the script's to
+The device reads no repository, so `SWIFTOMNIUI_STALE_ONLY=1` is the script's to
 answer: it runs the families whose verdict files in `exports/marks/android`
 open with another revision than `.scripts/Marks/revision.sh` gives, or with
 none, and takes only theirs off the device.

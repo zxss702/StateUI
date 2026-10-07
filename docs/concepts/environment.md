@@ -113,7 +113,7 @@ facts on its UI thread. Each field is `@State`, so reading one field subscribes
 to that field rather than to its whole provider.
 
 There are seven host domains. Their ordered property schemas are part of
-StateUI's contract:
+SwiftOmniUI's contract:
 
 | Domain and type | Properties | Meaning and initial fallback |
 | --- | --- | --- |
@@ -149,7 +149,7 @@ The closed vocabulary used by these fields is:
 | `ApplicationPhase` | `active`, `inactive`, `background` |
 
 The [Platform contract](../platform-contract.md) is the implementation-status
-authority. A public provider describes the StateUI schema; it does not imply
+authority. A public provider describes the SwiftOmniUI schema; it does not imply
 that every host can produce every fact. Where no checked host integration
 proves a capability, rely on the documented fallback.
 
@@ -219,7 +219,7 @@ defined in [Architecture](architecture.md#application-sessions).
 
 ## Portable calendar values
 
-StateUI's public date and time values represent what controls actually edit:
+SwiftOmniUI's public date and time values represent what controls actually edit:
 
 - `CalendarDate` is a calendar day: year, month, and day, with no time or zone;
 - `ClockTime` is a time of day: hour, minute, second, and an optional
@@ -286,7 +286,7 @@ question for work that already runs asynchronously.
 
 ## Foundation boundary
 
-The cross-platform StateUI library does not import Foundation. Applications
+The cross-platform SwiftOmniUI library does not import Foundation. Applications
 may import Foundation for their own models, serialization, networking, and
 calendar arithmetic:
 
@@ -297,7 +297,7 @@ let payload = try JSONEncoder().encode(["ready": true])
 let size = payload.count
 ```
 
-Keep portable interface decisions on StateUI's host-normalized boundary:
+Keep portable interface decisions on SwiftOmniUI's host-normalized boundary:
 
 - use `LocaleInfo` for the current language, region, clock convention, units,
   and IANA zone;
@@ -310,7 +310,7 @@ Keep portable interface decisions on StateUI's host-normalized boundary:
   which nothing drains on Android, Windows, or Linux.
 
 An application can convert between its Foundation-rich domain model and these
-small StateUI values at its boundary. That keeps the library's description
+small SwiftOmniUI values at its boundary. That keeps the library's description
 and native-host contracts deterministic while leaving the
 application free to use Foundation where its deployment targets provide the
 semantics it needs.

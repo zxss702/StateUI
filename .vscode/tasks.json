@@ -1,11 +1,11 @@
 {
-  // Tests and builds, for running by hand. The launches are the StateUI
-  // extension's "StateUI: Debug" and "StateUI: Release", which build the same
+  // Tests and builds, for running by hand. The launches are the SwiftOmniUI
+  // extension's "SwiftOmniUI: Debug" and "SwiftOmniUI: Release", which build the same
   // way these do.
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Test StateUI",
+      "label": "Test SwiftOmniUI",
       "type": "shell",
       "command": "swift",
       "args": ["test", "--package-path", "${workspaceFolder}"],
@@ -14,10 +14,10 @@
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
     {
-      "label": "Test StateUI.AppKit",
+      "label": "Test SwiftOmniUI.AppKit",
       "type": "shell",
       "command": "swift",
-      "args": ["test", "--package-path", "${workspaceFolder}/lib/StateUI.AppKit"],
+      "args": ["test", "--package-path", "${workspaceFolder}/lib/SwiftOmniUI.AppKit"],
       "problemMatcher": [],
       "group": "test",
       "presentation": { "reveal": "always", "panel": "dedicated" }
@@ -70,7 +70,7 @@
       ],
       // What makes this an AppKit build: the manifest declares the head and
       // defines APPKIT only then - see apps/Gallery/Package.swift.
-      "options": { "env": { "STATEUI_APPKIT": "1" } },
+      "options": { "env": { "SWIFTOMNIUI_APPKIT": "1" } },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
@@ -87,7 +87,7 @@
         "--product",
         "HelloWorldAppKit"
       ],
-      "options": { "env": { "STATEUI_APPKIT": "1" } },
+      "options": { "env": { "SWIFTOMNIUI_APPKIT": "1" } },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
     }

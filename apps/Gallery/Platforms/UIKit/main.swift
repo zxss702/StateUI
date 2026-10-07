@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 
-stateui_app_register()
+swiftomniui_app_register()
 
 // What this host answers for the application, said before it runs: the
 // controls it realizes, the acts it performs, and the pushes it reports. Each
@@ -13,4 +13,4 @@ GalleryControls.register()
 GalleryActs.register()
 GalleryEventSources.start()
 
-StateUIUIKit.run()
+SwiftOmniUIUIKit.run()

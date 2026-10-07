@@ -15,11 +15,11 @@ product="GalleryAppKit"
 scratch_dir="$gallery_dir/.build/appkit"
 
 # THE ONE THING THAT MAKES THIS AN APPKIT BUILD. The manifest reads it and then
-# declares the AppKit head - the target and StateUIHead, which brings
-# StateUIAppKit - and defines APPKIT for every module of the application. A
+# declares the AppKit head - the target and SwiftOmniUIHead, which brings
+# SwiftOmniUIAppKit - and defines APPKIT for every module of the application. A
 # manifest cannot read a compiler flag, so it is told this way, and no flag is
 # given beside it. See apps/Gallery/Package.swift.
-export STATEUI_HOST=appkit
+export SWIFTOMNIUI_HOST=appkit
 
 swift build \
     --package-path "$gallery_dir" \
@@ -50,7 +50,7 @@ cp -R "$gallery_dir/Resources/Images/." "$resources_dir/Images"
 
 icon_work="$(mktemp -d)"
 trap 'rm -rf "$icon_work"' EXIT
-iconset="$icon_work/StateUI.iconset"
+iconset="$icon_work/SwiftOmniUI.iconset"
 mkdir -p "$iconset"
 # The artwork already on macOS's icon grid - drawn edge to edge, the icon
 # would stand larger in the Dock than every one beside it.
@@ -66,17 +66,17 @@ sips -s format png -z 256 256 "$source_icon" --out "$iconset/icon_256x256.png" >
 sips -s format png -z 512 512 "$source_icon" --out "$iconset/icon_256x256@2x.png" >/dev/null
 sips -s format png -z 512 512 "$source_icon" --out "$iconset/icon_512x512.png" >/dev/null
 sips -s format png -z 1024 1024 "$source_icon" --out "$iconset/icon_512x512@2x.png" >/dev/null
-iconutil -c icns "$iconset" -o "$resources_dir/StateUI.icns"
+iconutil -c icns "$iconset" -o "$resources_dir/SwiftOmniUI.icns"
 
 plist="$contents_dir/Info.plist"
 plutil -create xml1 "$plist"
 plutil -insert CFBundleDevelopmentRegion -string en "$plist"
-plutil -insert CFBundleDisplayName -string "StateUI Gallery" "$plist"
+plutil -insert CFBundleDisplayName -string "SwiftOmniUI Gallery" "$plist"
 plutil -insert CFBundleExecutable -string "$product" "$plist"
-plutil -insert CFBundleIconFile -string StateUI "$plist"
-plutil -insert CFBundleIdentifier -string com.stateui.gallery "$plist"
+plutil -insert CFBundleIconFile -string SwiftOmniUI "$plist"
+plutil -insert CFBundleIdentifier -string com.swiftomniui.gallery "$plist"
 plutil -insert CFBundleInfoDictionaryVersion -string 6.0 "$plist"
-plutil -insert CFBundleName -string "StateUI Gallery" "$plist"
+plutil -insert CFBundleName -string "SwiftOmniUI Gallery" "$plist"
 plutil -insert CFBundlePackageType -string APPL "$plist"
 plutil -insert CFBundleShortVersionString -string 0.5.1 "$plist"
 plutil -insert CFBundleVersion -string 1 "$plist"

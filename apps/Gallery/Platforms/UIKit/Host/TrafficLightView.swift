@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 import UIKit
 
 /// Three lamps in a housing, one lit at a time - an ordinary `UIView` that
-/// knows nothing of StateUI.
+/// knows nothing of SwiftOmniUI.
 ///
 /// `register()`, at the end of this file, adds it for `TrafficLightContract`,
 /// and that registration is the whole bridge. The Swift half is
@@ -108,7 +108,7 @@ extension TrafficLightView {
     /// described signal on it. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
             let light = TrafficLightView()
             light.onLampTapped = { index in
                 reports.raise(TrafficLightContract.lampTapped, index)

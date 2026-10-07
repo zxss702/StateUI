@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import HelloWorldUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 
-stateui_app_register()
-StateUIUIKit.run()
+swiftomniui_app_register()
+SwiftOmniUIUIKit.run()

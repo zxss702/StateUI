@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import HelloWorldUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
 // What Android calls as it loads this library: the application is named to
 // the host, and the host registers the native methods its activity calls.
 @_cdecl("JNI_OnLoad")
 public func JNI_OnLoad(_ machine: UnsafeMutableRawPointer?, _ reserved: UnsafeMutableRawPointer?) -> Int32 {
-    stateui_app_register()
-    return StateUIAndroid.load(machine)
+    swiftomniui_app_register()
+    return SwiftOmniUIAndroid.load(machine)
 }

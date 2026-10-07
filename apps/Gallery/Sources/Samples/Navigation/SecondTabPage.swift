@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The other tab: a plain page, and the one that writes the selection.
 ///

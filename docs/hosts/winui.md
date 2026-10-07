@@ -1,6 +1,6 @@
 # WinUI host
 
-The WinUI host renders a StateUI application with WinUI 3 on Windows. It is
+The WinUI host renders a SwiftOmniUI application with WinUI 3 on Windows. It is
 Swift, in the application's own process, beside the application module and the
 library: it applies the typed sparse patches of the
 [host contract](../internals/host-contract.md) directly and calls WinUI through a C++/WinRT
@@ -13,7 +13,7 @@ title, the way back, the sidebar's toggle and the page's actions. A
 WinUI's navigation pane, beside the detail in a wide window and over it in a
 narrow one; a `TabView`'s tabs stand beneath the title bar.
 
-It presents StateUI's controls, arrangements and pages over the runtime every
+It presents SwiftOmniUI's controls, arrangements and pages over the runtime every
 host shares - the [platform contract](../platform-contract.md#control-creation) says
 which, member by member. A layout paints its box - its background,
 outline and shape - and cuts what it holds to it; a scroller reports where the
@@ -25,9 +25,9 @@ everything arrive at once. Any other control shows
 its name in red where it belongs, so a gap is visible rather than silent.
 
 ```text
-lib/StateUI.WinUI/
-  Sources/StateUIWinUI/      the host: its runtime, elements, registrations, layout and window
-  Sources/CStateUIWinUI/     the relay: C++/WinRT behind the C functions its header declares
+lib/SwiftOmniUI.WinUI/
+  Sources/SwiftOmniUIWinUI/      the host: its runtime, elements, registrations, layout and window
+  Sources/CSwiftOmniUIWinUI/     the relay: C++/WinRT behind the C functions its header declares
   Tests/                     the host's suite, run by swift test
 .scripts/WinUI/
   tools.ps1                  the Windows App SDK's versions, the projection, a directory made self-contained
@@ -55,15 +55,15 @@ application and hands the thread to the host:
 
 ```swift quote
 import NotesUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
-stateui_app_register()
-StateUIWinUI.run()
+swiftomniui_app_register()
+SwiftOmniUIWinUI.run()
 ```
 
-`STATEUI_WINUI=1` is what makes a build a WinUI one: the application's
+`SWIFTOMNIUI_WINUI=1` is what makes a build a WinUI one: the application's
 manifest reads it, declares the `Platforms/WinUI` target, the executable it
-makes and the `StateUIWinUI` dependency, and defines the `WINUI` compilation
+makes and the `SwiftOmniUIWinUI` dependency, and defines the `WINUI` compilation
 condition for every module of the application. The executable links as a
 windowed application - `/SUBSYSTEM:WINDOWS` with `/ENTRY:mainCRTStartup` -
 so started by itself it opens no console; started from a terminal it writes
@@ -76,7 +76,7 @@ head, as HelloWorld does.
 ## Controls, acts, and events registered in Swift
 
 An application extends the host from its WinUI head. Registrations run before
-`StateUIWinUI.run`, on the main thread. Registering a contract or an act again
+`SwiftOmniUIWinUI.run`, on the main thread. Registering a contract or an act again
 replaces the earlier registration. Every registration is written against the
 application's own contracts, so they are `public`: the host lives in a module
 of its own and must see them. The Gallery's WinUI halves are in
@@ -89,7 +89,7 @@ shows, a `WinUIControl`. Swift never calls WinRT itself: the element is made
 by a relay of the application's own - C++/WinRT beside its head, behind C
 functions, a C++ target of the head's package that includes the projection
 the host generated - and handed over as the host's own handles are, a
-`UIElement`'s default interface, `AddRef`'d. `StateUIControls.add` says which
+`UIElement`'s default interface, `AddRef`'d. `SwiftOmniUIControls.add` says which
 contract it realizes:
 
 ```swift quote
@@ -108,7 +108,7 @@ public static func add<Realized: ElementContract, Made: WinUIControl>(
   described, and `raises(_:)` records an event the control raises.
 
 ```swift quote
-StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
+SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
     let light = TrafficLightControl()
     light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
     return light
@@ -133,16 +133,16 @@ GTK.
 
 ### An act
 
-`StateUIActs.add` registers a function the application calls by its act, and
-`StateUIActs.add(_:on:_:)` one aimed at the application's own element, handed
+`SwiftOmniUIActs.add` registers a function the application calls by its act, and
+`SwiftOmniUIActs.add(_:on:_:)` one aimed at the application's own element, handed
 that element's control:
 
 ```swift quote
-StateUIActs.add(GalleryContract.readClipboard) { () -> String in
+SwiftOmniUIActs.add(GalleryContract.readClipboard) { () -> String in
     Clipboard.read()
 }
 
-StateUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
     bar.flash()
 }
 ```
@@ -155,13 +155,13 @@ may call Win32 itself through `WinSDK` - the Gallery's clipboard does.
 
 ### An event without a control
 
-`StateUIEvents.raise` pushes an event of the application's that belongs to no
-element, from any thread; `StateUIEvents.raises` declares it before the host
+`SwiftOmniUIEvents.raise` pushes an event of the application's that belongs to no
+element, from any thread; `SwiftOmniUIEvents.raises` declares it before the host
 runs, so a handler listening for one no source raises is told so.
 
 ```swift quote
-StateUIEvents.raises(GalleryContract.batteryChanged)
-StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
+SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
 ```
 
 ## Running
@@ -175,8 +175,8 @@ it, passing on what it writes. Everything a build writes stays in the
 application's `.build-winui\`. The application carries the Windows App SDK
 itself - no package, no installer: its runtime, a manifest registering its
 classes and `resources.pri` stand beside the executable. `-Detach` returns once
-the application has started. Every `STATEUI_` variable of the shell that runs
-it - `STATEUI_TALLY=1`, `STATEUI_INSPECT=1` - reaches the application.
+the application has started. Every `SWIFTOMNIUI_` variable of the shell that runs
+it - `SWIFTOMNIUI_TALLY=1`, `SWIFTOMNIUI_INSPECT=1` - reaches the application.
 
 Keep an application's folder near the root of a drive: the Swift compiler on
 Windows fails with "the filename or extension is too long" under a deep path.
@@ -187,7 +187,7 @@ Windows fails with "the filename or extension is too long" under a deep path.
 .scripts\WinUI\test-winui.ps1
 ```
 
-The suite is XCTest, run by `swift test` in `lib\StateUI.WinUI`. WinUI's
+The suite is XCTest, run by `swift test` in `lib\SwiftOmniUI.WinUI`. WinUI's
 controls stand on the test thread with no loop of WinUI's running, and a test
 lets the thread's messages run where WinUI lays out. The test runner is given
 the Windows App SDK as an application is, before the run.

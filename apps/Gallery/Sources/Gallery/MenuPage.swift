@@ -1,6 +1,6 @@
 // The menu that slides in from the side.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery's sidebar - and it is an ordinary page.
 ///
@@ -60,7 +60,7 @@ struct MenuPage: View {
         // header says it too.
         .ignoresSafeArea(.none)
         .onAppear {
-            page.title = "StateUI"
+            page.title = "SwiftOmniUI"
 
             // The image hosts use for the pane's navigation affordance.
             page.icon = "nav_menu_dark.png"
@@ -83,13 +83,13 @@ struct MenuPage: View {
     private var header: any View {
         VStack {
             if device.formFactor != .phone {
-                Image("stateui_mark.png")
+                Image("swiftomniui_mark.png")
                     .frame(width: 51)
                     .frame(height: 51)
                     .horizontalAlignment(.start)
             }
 
-            Text("StateUI")
+            Text("SwiftOmniUI")
                 .font(.system(size: 24))
                 .bold()
                 .tracking(-0.5)

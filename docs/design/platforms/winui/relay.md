@@ -1,7 +1,7 @@
 # The relay
 
 Swift does not call WinRT's own interfaces. Beneath the WinUI host stands a
-C++/WinRT relay, the package's C++ target `CStateUIWinUI`, behind plain C
+C++/WinRT relay, the package's C++ target `CSwiftOmniUIWinUI`, behind plain C
 functions its header declares - one set per family of controls, so the host
 and the relay are each held to the types by their own compiler. SwiftPM
 compiles it as C++20 over the projection `tools.ps1` generates; it links into
@@ -17,7 +17,7 @@ work it asks for.
 ## The C surface
 
 A handle is a WinRT object's default interface, `AddRef`'d, which the host
-lets go of with `stateui_winui_release`. A handle is read back as the type it
+lets go of with `swiftomniui_winui_release`. A handle is read back as the type it
 was made as with no `QueryInterface`, or as any of its interfaces with one.
 No C++ exception leaves a function of the relay: each catches whatever its
 body throws - WinUI's, the standard library's, any other - says what failed
@@ -42,10 +42,10 @@ and a view that has left answers nothing.
 
 ## What a test reads
 
-The relay keeps one reader for tests: `stateui_winui_read(element, name)`
+The relay keeps one reader for tests: `swiftomniui_winui_read(element, name)`
 answers what WinUI holds of the element's property of that name, as words - a
 colour as #AARRGGBB, a number, 0 or 1, sides and corners as four numbers - or
--1 for a property the element has none of. Beside it, `stateui_winui_question`
-reads the dialog showing over a window and `stateui_winui_announced` what the
+-1 for a property the element has none of. Beside it, `swiftomniui_winui_question`
+reads the dialog showing over a window and `swiftomniui_winui_announced` what the
 relay told the screen reader, which WinUI keeps nowhere a test can ask. A test
 reads the control; it never asks the host what it wrote.

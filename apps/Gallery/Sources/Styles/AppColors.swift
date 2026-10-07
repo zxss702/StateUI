@@ -1,4 +1,4 @@
-// The gallery's raw colours: the StateUI ramp - Swift's orange against a deep
+// The gallery's raw colours: the SwiftOmniUI ramp - Swift's orange against a deep
 // violet, so the gallery looks like this library rather than like a template.
 //
 // Two decisions carry the whole look, and neither is decoration:
@@ -21,7 +21,7 @@
 // that file; the colours that must not follow the color scheme, and a sample showing a
 // colour of its own, read them directly.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Every colour the gallery is built from, named for what it is rather than
 /// what it is for.

@@ -5,10 +5,10 @@ import Foundation
 import MetalKit
 import QuartzCore
 import GalleryUI
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
 /// A cube turning on the GPU - an ordinary `MTKView` that knows nothing of
-/// StateUI.
+/// SwiftOmniUI.
 ///
 /// `register()`, at the end of this file, adds it for `Cube3DContract`, and
 /// that registration is the whole bridge. The Swift half is
@@ -319,7 +319,7 @@ extension MetalCube3DView {
     /// this folder.
     @MainActor
     static func register() {
-        StateUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
+        SwiftOmniUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
             MetalCube3DView()
         }) { cube in
             cube.property(Cube3DContract.size) { view, size in

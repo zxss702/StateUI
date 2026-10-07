@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Six outlines, filled and stroked - with dashes, joins and a fill rule.
 struct ShapesSample: SampleContent, ExampleContent {
@@ -66,7 +66,7 @@ struct ShapesSample: SampleContent, ExampleContent {
                     .frame(height: 56)
 
                 // The one shape that is whatever you can write down: SVG path
-                // syntax, normalized by StateUI for every native backend.
+                // syntax, normalized by SwiftOmniUI for every native backend.
                 Path("M 28,0 L 56,56 L 0,56 Z")
                     .fill(Palette.accent)
                     .frame(width: 56)
@@ -324,7 +324,7 @@ struct ShapesSample: SampleContent, ExampleContent {
 
             Text("A `Path` is whatever you can write down: `M` moves the pen, `L` draws a "
                 + "line to a point, `Z` closes the figure back to where it started - the "
-                + "same SVG path vocabulary on every StateUI host. A `Polygon` closes its "
+                + "same SVG path vocabulary on every SwiftOmniUI host. A `Polygon` closes its "
                 + "figure for you and a `Polyline` leaves it open.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)

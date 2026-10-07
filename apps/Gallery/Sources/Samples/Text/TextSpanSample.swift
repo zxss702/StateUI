@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Runs of text inside one Text, each with a look of its own.
 struct TextSpanSample: SampleContent, ExampleContent {

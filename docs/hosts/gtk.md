@@ -1,12 +1,12 @@
 # GTK host
 
-The GTK host renders a StateUI application with GTK 4 and libadwaita on
+The GTK host renders a SwiftOmniUI application with GTK 4 and libadwaita on
 Linux. It is Swift, in the application's own process, beside the application
 module and the library: it applies the typed sparse patches of the
 [host contract](../internals/host-contract.md) directly and calls GTK and libadwaita
 through their C API, with nothing beneath it in another language.
 
-It presents StateUI's controls, arrangements and pages over the runtime every
+It presents SwiftOmniUI's controls, arrangements and pages over the runtime every
 host shares - the [platform contract](../platform-contract.md#control-creation) says
 which, member by member. Each page stands under a header bar of its own that
 slides with it, a sidebar beside the detail or over it in a narrow window,
@@ -19,9 +19,9 @@ rather than silent. It looks as the desktop's own applications do:
 libadwaita's widgets, and the light or dark style the desktop is set to.
 
 ```text
-lib/StateUI.GTK/
-  Sources/StateUIGTK/        the host: its runtime, elements, registrations, layout and window
-  Sources/CStateUIGTK/       GTK's and libadwaita's headers, found by pkg-config
+lib/SwiftOmniUI.GTK/
+  Sources/SwiftOmniUIGTK/        the host: its runtime, elements, registrations, layout and window
+  Sources/CSwiftOmniUIGTK/       GTK's and libadwaita's headers, found by pkg-config
   Tests/                     the host's suite, run by swift test
 .scripts/GTK/
   run-app.sh                 builds an application's GTK head and starts it
@@ -47,19 +47,19 @@ and hands the thread to the host, under the application's reverse-DNS name:
 
 ```swift quote
 import NotesUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
-stateui_app_register()
-StateUIGTK.run(applicationID: "com.example.notes")
+swiftomniui_app_register()
+SwiftOmniUIGTK.run(applicationID: "com.example.notes")
 ```
 
 The name is the one the desktop knows the application by. GTK keeps one
 instance of it: launched again, the running application brings its window
 forward.
 
-`STATEUI_GTK=1` is what makes a build a GTK one: the application's manifest
+`SWIFTOMNIUI_GTK=1` is what makes a build a GTK one: the application's manifest
 reads it, declares the `Platforms/GTK` target, the executable it makes and the
-`StateUIGTK` dependency, and defines the `GTK` compilation condition for every
+`SwiftOmniUIGTK` dependency, and defines the `GTK` compilation condition for every
 module of the application. Swift written for this host alone stands under
 `#if GTK`.
 
@@ -69,7 +69,7 @@ as HelloWorld does.
 ## Controls, acts, and events registered in Swift
 
 An application extends the host from its GTK head. Registrations run before
-`StateUIGTK.run`, on the main thread. Registering a contract or an act again
+`SwiftOmniUIGTK.run`, on the main thread. Registering a contract or an act again
 replaces the earlier registration. Every registration is written against the
 application's own contracts, so they are `public`: the host lives in a module
 of its own and must see them. The Gallery's GTK halves are in
@@ -78,7 +78,7 @@ of its own and must see them. The Gallery's GTK halves are in
 ### A control
 
 A control of the application's own is an object that makes and holds the GTK
-widget it shows, a `GTKControl`; `StateUIControls.add` says which contract it
+widget it shows, a `GTKControl`; `SwiftOmniUIControls.add` says which contract it
 realizes:
 
 ```swift quote
@@ -97,7 +97,7 @@ public static func add<Realized: ElementContract, Made: GTKControl>(
   described, and `raises(_:)` records an event the control raises.
 
 ```swift quote
-StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
+SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
     let light = TrafficLightWidget()
     light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
     return light
@@ -121,16 +121,16 @@ host drawing it in its own way.
 
 ### An act
 
-`StateUIActs.add` registers a function the application calls by its act, and
-`StateUIActs.add(_:on:_:)` one aimed at the application's own element, handed
+`SwiftOmniUIActs.add` registers a function the application calls by its act, and
+`SwiftOmniUIActs.add(_:on:_:)` one aimed at the application's own element, handed
 that element's control:
 
 ```swift quote
-StateUIActs.add(GalleryContract.readClipboard) { () -> String in
+SwiftOmniUIActs.add(GalleryContract.readClipboard) { () -> String in
     clipboardText()
 }
 
-StateUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
     bar.flash()
 }
 ```
@@ -143,13 +143,13 @@ refused by name.
 
 ### An event without a control
 
-`StateUIEvents.raise` pushes an event of the application's that belongs to no
-element, from any thread; `StateUIEvents.raises` declares it before the host
+`SwiftOmniUIEvents.raise` pushes an event of the application's that belongs to no
+element, from any thread; `SwiftOmniUIEvents.raises` declares it before the host
 runs, so a handler listening for one no source raises is told so.
 
 ```swift quote
-StateUIEvents.raises(GalleryContract.batteryChanged)
-StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
+SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
 ```
 
 ## Running
@@ -166,17 +166,17 @@ named by the application's ID and installed for the user in
 `~/.local/share/icons` and `~/.local/share/applications`. GNOME finds a
 window's icon through that entry. `release` builds the optimized head, `--detach` returns once
 the application has started, and `--build-only` builds it and starts
-nothing. Every `STATEUI_` variable of the shell that runs it -
-`STATEUI_TALLY=1`, `STATEUI_INSPECT=1` - reaches the application.
+nothing. Every `SWIFTOMNIUI_` variable of the shell that runs it -
+`SWIFTOMNIUI_TALLY=1`, `SWIFTOMNIUI_INSPECT=1` - reaches the application.
 
-In VS Code, with **GTK** chosen in the status bar, **StateUI: Debug** builds
+In VS Code, with **GTK** chosen in the status bar, **SwiftOmniUI: Debug** builds
 the head with `run-app.sh --build-only` and starts it under `lldb-dap`, so a
 breakpoint in the application's Swift holds from the first line.
 
 ## Testing
 
 ```bash
-swift test --package-path lib/StateUI.GTK
+swift test --package-path lib/SwiftOmniUI.GTK
 ```
 
 The suite is XCTest. GTK's widgets stand on the test thread with no main loop

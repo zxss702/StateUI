@@ -6,7 +6,7 @@
 // module of its own: these declarations are the application's API towards its
 // own host.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery's own acts and events - the ones with no control behind them.
 ///

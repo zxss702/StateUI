@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # TabView
 
 A page showing several pages, one at a time, with a bar to choose between them.
 
-Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping StateUI's state contract.
+Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping SwiftOmniUI's state contract.
 
 Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [BarElement](tiers/BarElement.md) · [PageElement](tiers/PageElement.md)
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ✅ |  | `GtkStack` + `GtkStackSwitcher`; libadwaita `AdwViewStack` |  |
 | Web |  |  | ARIA `tablist` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Navigation/TabViewContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Navigation/TabViewContract.swift`.
 
 ## TabView's own members
 

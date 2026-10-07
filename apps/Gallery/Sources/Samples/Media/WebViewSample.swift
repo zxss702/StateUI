@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A page of the web: fetched by URL, and HTML written in place.
 struct WebViewSample: SampleContent {
@@ -67,7 +67,7 @@ private struct WebBrowserPart: ExampleContent {
                         .aim(browser)
                         // What the view calls itself to the server. Left
                         // unwritten it is the platform's own browser string.
-                        .userAgent("StateUI Gallery")
+                        .userAgent("SwiftOmniUI Gallery")
                         .canGoBack($hasBack)
                         .canGoForward($hasForward)
                         .onNavigating { report in
@@ -132,7 +132,7 @@ private struct WebBrowserPart: ExampleContent {
                 .aim(browser)
                 // What the view calls itself to the server. Left unwritten it
                 // is the platform's own browser string.
-                .userAgent("StateUI Gallery")
+                .userAgent("SwiftOmniUI Gallery")
                 .canGoBack($hasBack)
                 .canGoForward($hasForward)
                 .onNavigating { report in

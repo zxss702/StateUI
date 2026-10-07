@@ -9,16 +9,16 @@
     <application
         android:icon="@mipmap/appicon"
         android:roundIcon="@mipmap/appicon"
-        android:label="StateUI Gallery"
+        android:label="SwiftOmniUI Gallery"
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <activity
-            android:name="com.stateui.gallery.GalleryActivity"
+            android:name="com.swiftomniui.gallery.GalleryActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|density">
             <!-- The library this head's Swift is built into; its JNI_OnLoad starts the host. -->
-            <meta-data android:name="stateui.library" android:value="GalleryAndroid" />
+            <meta-data android:name="swiftomniui.library" android:value="GalleryAndroid" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

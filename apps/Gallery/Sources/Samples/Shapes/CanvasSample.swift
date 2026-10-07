@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A canvas drawn from state, and one drawn from a finger.
 struct CanvasSample: SampleContent {

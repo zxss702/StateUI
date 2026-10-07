@@ -3,7 +3,7 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 /// The gallery's own controls, as this host realizes them.
 ///

@@ -1,10 +1,10 @@
 # Host layer
 
-A host - the platform backend that shows StateUI with one toolkit - is Swift in
+A host - the platform backend that shows SwiftOmniUI with one toolkit - is Swift in
 the application's process, and most of what it does is the same on every
 platform. That part is the host layer: the toolkit-neutral half of every
-runtime, in `lib/StateUI.Host` - the module `StateUIHost`, a library of its own
-beside the [`StateUI` core](core.md), which it reaches through `@_spi(Host)`.
+runtime, in `lib/SwiftOmniUI.Host` - the module `SwiftOmniUIHost`, a library of its own
+beside the [`SwiftOmniUI` core](core.md), which it reaches through `@_spi(Host)`.
 It holds the mounted tree, the turn and the display frame, the animations, the
 layout arithmetic, and the rules that turn what the user does into state.
 Every host runs on it and adds only its toolkit's calls.
@@ -22,7 +22,7 @@ the calls its toolkit alone can make. A rule found in one host belongs in the
 layer: it is written there with its tests, and every host calls it.
 
 ```text
-lib/StateUI.Host/Sources/
+lib/SwiftOmniUI.Host/Sources/
   Runtime/       the runtime's parts, the turn, the frame, the line to the core
   Tree/          the mounted tree, each element's native half, the windows
   Pages/         what an arrangement shows, a page's phases, the window's chrome
@@ -39,7 +39,7 @@ The design notes give each part's reasons: [the runtime](../design/host/runtime.
 [the mounted tree](../design/host/tree.md), [pages](../design/host/pages.md),
 [layout](../design/host/layout.md), [animation](../design/host/animation.md),
 [patches](../design/host/patches.md) and [conformance](../design/host/conformance.md).
-The [glossary](../design/glossary.md) maps StateUI's words to the common ones.
+The [glossary](../design/glossary.md) maps SwiftOmniUI's words to the common ones.
 
 ## What a host provides
 
@@ -318,7 +318,7 @@ toolkit's calls:
 
 ## Layout
 
-`Layout/` holds StateUI's layout arithmetic: pure functions, the same children
+`Layout/` holds SwiftOmniUI's layout arithmetic: pure functions, the same children
 in and the same rectangles out. A host calls them from its own layout pass and
 measures only its native views.
 
@@ -546,11 +546,11 @@ and nothing more.
 
 ## Diagnostics
 
-- **`HostLog`** writes one line a message, begun by `StateUI` and the host's
+- **`HostLog`** writes one line a message, begun by `SwiftOmniUI` and the host's
   name, to standard error, which nothing buffers; a platform whose log is its
   own is handed the lines. ([The log](../design/host/runtime.md#the-log))
 - **`DiagnosticText`** and **`RenderTally`** write the running tally
-  (`STATEUI_TALLY=1`) and every inspected pass (`STATEUI_INSPECT=1`) as text,
+  (`SWIFTOMNIUI_TALLY=1`) and every inspected pass (`SWIFTOMNIUI_INSPECT=1`) as text,
   and count what applying one message costs. The mounted tree keeps them; the
   host adds nothing.
   ([What a message costs](../design/host/patches.md#what-a-message-costs),
@@ -558,11 +558,11 @@ and nothing more.
 
 ## Testing
 
-- The layer's own tests, in `lib/StateUI.Host/Tests`, prove its rules and
+- The layer's own tests, in `lib/SwiftOmniUI.Host/Tests`, prove its rules and
   arithmetic, pure, in its own package's suite on every platform the core
   builds on. They need no toolkit: a hand-wound clock reproduces every frame,
   and a native half of the test's own stands for a view.
-- The conformance suite, in `lib/StateUI.Conformance`, proves the
+- The conformance suite, in `lib/SwiftOmniUI.Conformance`, proves the
   contract's effects on each real toolkit: a case is written once, and every
   host's suite runs it through the host's driver. It asserts effects - a
   state written, a handler heard, what is shown or let go - never a look, and
@@ -583,7 +583,7 @@ Something new reaches the hosts in one order:
 2. Write the shared part in the host layer, in its part's folder, one element
    a file, under `@_spi(Host)`, with its `///` and a `Design:` line naming
    its section.
-3. Prove it with pure tests in `lib/StateUI.Host/Tests`; a
+3. Prove it with pure tests in `lib/SwiftOmniUI.Host/Tests`; a
    defect is proved red before it is fixed.
 4. Give its reason a section in its design note under `docs/design/host/`,
    and the type a line in its part above.

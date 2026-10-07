@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A thousand rows, of which only the ones on screen are built.
 private struct LongList: ExampleContent {

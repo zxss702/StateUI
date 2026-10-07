@@ -218,7 +218,7 @@ is true of one. The unlabelled position already means the initial value.
 whose key is its name - and it asks for nothing to be declared. The application
 listing `persistentKeys` is how the host knows what to read, and a key nobody
 listed would survive one launch and be lost: the store keeps a manifest of its
-own under `__stateui.keys`, every claimed key written into it as it is claimed,
+own under `__swiftomniui.keys`, every claimed key written into it as it is claimed,
 `kind:name` a line. The manifest's key is always listed, so the host reads it
 with the rest; the keys it names are registered on arrival and read in a second
 pass, and a state claimed under one takes its stored value exactly as a declared

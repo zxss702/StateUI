@@ -15,13 +15,13 @@
 #   --port        the port to serve on; 8460 when not given
 #
 # The page stands in <app-dir>/.build/web/site/<configuration>: index.html,
-# the relay stateui-web.js and its look stateui-web.css, the module <App>Web.wasm and the application's
+# the relay swiftomniui-web.js and its look swiftomniui-web.css, the module <App>Web.wasm and the application's
 # pictures in Images. It is served on the same port from run to run, so its
 # address - and what the browser keeps for it - stays the same, on every
 # interface of this machine, so a tablet on its network opens it too; a server this
 # script started for the application before is stopped first. Once the server
-# listens, <app-dir>/.build/web/server.json says where. Every STATEUI_ variable
-# of the calling shell - STATEUI_TALLY=1 - reaches the application as a
+# listens, <app-dir>/.build/web/server.json says where. Every SWIFTOMNIUI_ variable
+# of the calling shell - SWIFTOMNIUI_TALLY=1 - reaches the application as a
 # parameter of the page's address.
 set -euo pipefail
 
@@ -56,20 +56,20 @@ facts="$scratch/server.json"
 . "$here/swift-sdk.sh"
 
 # --- the head ----------------------------------------------------------------
-STATEUI_HOST=web swift build \
+SWIFTOMNIUI_HOST=web swift build \
   --package-path "$app_dir" \
   --scratch-path "$scratch" \
   --configuration "$configuration" \
   --swift-sdk "$sdk" \
   --product "$product"
-products="$(STATEUI_HOST=web swift build --package-path "$app_dir" --scratch-path "$scratch" \
+products="$(SWIFTOMNIUI_HOST=web swift build --package-path "$app_dir" --scratch-path "$scratch" \
   --configuration "$configuration" --swift-sdk "$sdk" --show-bin-path)"
 
 # --- the page ----------------------------------------------------------------
 rm -rf "$site"
 mkdir -p "$site"
 cp "$products/$product.wasm" "$site/"
-cp "$checkout/lib/StateUI.Web/JavaScript/stateui-web.js" "$checkout/lib/StateUI.Web/JavaScript/stateui-web.css" "$site/"
+cp "$checkout/lib/SwiftOmniUI.Web/JavaScript/swiftomniui-web.js" "$checkout/lib/SwiftOmniUI.Web/JavaScript/swiftomniui-web.css" "$site/"
 stamp="$(date +%s)"
 # The application's own scripts - the custom elements its controls show - beside the page, each loaded before it.
 scripts=""
@@ -82,7 +82,7 @@ if [[ -d "$app_dir/Platforms/Web/Page" ]]; then
 fi
 sed -e "s/{{application}}/$application/g" -e "s/{{module}}/$product.wasm/g" -e "s/{{stamp}}/$stamp/g" \
   -e "s#{{scripts}}#$scripts#" \
-  "$checkout/lib/StateUI.Web/JavaScript/index.html" > "$site/index.html"
+  "$checkout/lib/SwiftOmniUI.Web/JavaScript/index.html" > "$site/index.html"
 if [[ -d "$app_dir/Resources/Images" ]]; then
   mkdir -p "$site/Images"
   cp -R "$app_dir/Resources/Images/." "$site/Images/"
@@ -98,7 +98,7 @@ rm -f "$facts"
 query=""
 while IFS='=' read -r name value; do
   query+="${query:+&}$name=$value"
-done < <(env | grep '^STATEUI_' | grep -v '^STATEUI_HOST=' || true)
+done < <(env | grep '^SWIFTOMNIUI_' | grep -v '^SWIFTOMNIUI_HOST=' || true)
 
 python3 -u "$here/serve.py" "$site" "$port" "$facts" ${query:+"?$query"} &
 server=$!

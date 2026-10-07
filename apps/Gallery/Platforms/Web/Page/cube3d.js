@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // <gallery-cube3d>: a cube drawn by WebGL 2 on a canvas of its own, turning on the browser's display frames while
-// it is in view - an element that knows nothing of StateUI. Its attributes say what it is: `size`, the edge as a
+// it is in view - an element that knows nothing of SwiftOmniUI. Its attributes say what it is: `size`, the edge as a
 // share of its room from 0 to 1; `color`, 0 teal, 1 amber, 2 violet; `spinning`, present while it turns. The Swift
 // half is Platforms/Web/Host/WebGLCube3DView.swift.
 

@@ -1,6 +1,6 @@
 // The Swift behind an example.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The code that produced an example, in a box of its own.
 ///

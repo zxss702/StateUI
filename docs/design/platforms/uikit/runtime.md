@@ -20,9 +20,9 @@ tells it what the device, the display and the application are.
 
 ## Scenes
 
-A StateUI scene is a window scene of UIKit's own. Each scene iOS connects -
+A SwiftOmniUI scene is a window scene of UIKit's own. Each scene iOS connects -
 the one it opens at launch, and each window the user opens on an iPad - tells
-the core to connect a scene, and the StateUI window that scene's render holds
+the core to connect a scene, and the SwiftOmniUI window that scene's render holds
 stands in it: a window of the scene's, its root view showing the window's
 arrangement of pages within the safe area, the title of the page the user
 sees the scene's title. A window the tree lets go of lets its scene go with

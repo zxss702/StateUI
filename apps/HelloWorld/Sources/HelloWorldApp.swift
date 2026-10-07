@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The application: one window, one page.
 ///
@@ -25,14 +25,14 @@ struct HelloWorldApp: App {
 // host as native controls. The page it opens is MainPage.swift beside this
 // file - and where an app wants a stack, tabs or a menu, a `NavigationStack`,
 // a `TabView` or a `NavigationSplitView` goes in the window's closure instead,
-// each over state the app owns. The sample app in the StateUI repository is
+// each over state the app owns. The sample app in the SwiftOmniUI repository is
 // written that way throughout.
 
 /// The one thing this module exports - the line that names this application to
 /// the host. It cannot move into the library: the dependency runs app ->
 /// library, and a host that loads the app as a separate native library finds it
 /// by this name.
-@_cdecl("stateui_app_register")
-public func stateui_app_register() {
+@_cdecl("swiftomniui_app_register")
+public func swiftomniui_app_register() {
     stateUIUseApp(HelloWorldApp())
 }

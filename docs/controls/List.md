@@ -1,8 +1,8 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # List
 
-The platform's own collection of items: StateUI says which items there are, in order, and builds the one the platform asks for; the platform scrolls them, holds each in a cell it reuses, lets the user choose and open one, and tells assistive technology about them.
+The platform's own collection of items: SwiftOmniUI says which items there are, in order, and builds the one the platform asks for; the platform scrolls them, holds each in a cell it reuses, lets the user choose and open one, and tells assistive technology about them.
 
 Layer: `native`. Every base host presents it with its native toolkit.
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ✅ | 23 ✅ | `GtkListView` / `GtkGridView` |  |
 | Web |  |  | semantic list or grid | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Collections/ListContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Collections/ListContract.swift`.
 
 ## List's own members
 

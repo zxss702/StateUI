@@ -1,6 +1,6 @@
 # The core
 
-The core is `lib/StateUI/Sources/Core`: state, invalidation, keys and
+The core is `lib/SwiftOmniUI/Sources/Core`: state, invalidation, keys and
 diffing, the display cycle, acts, the UI thread's executor and the typed
 boundary a host reads. It holds the reasons behind the code; the code's
 comments say what a thing is and point here. Every note describes the
@@ -32,7 +32,7 @@ The core's sources stand in one folder per topic, one element to a file, and
                   bodies READ @State; handlers WRITE @State and call acts
         |
         v
-  +---------------------------- StateUI core -----------------------------+
+  +---------------------------- SwiftOmniUI core -----------------------------+
   |                                                                        |
   |   @State box --adopt--> State.Storage ---------------------------+     |
   |                          | read at build: ReadScope records it   |     |
@@ -67,7 +67,7 @@ library and calls `HostBoundary`, behind `@_spi(Host)`: `render(baseline:)`
 answers a typed `HostRender` holding the sparse `HostPatch`, `cycle` a
 `HostCycle`, `takeActCalls` typed `HostActCall`s, and the reports come back
 the same way - `dispatch`, `report`, `reply`, `raise`, one setter per standard
-provider. One process holds one copy of StateUI's types, and nothing
+provider. One process holds one copy of SwiftOmniUI's types, and nothing
 serializes the patch between the core and a host. Code in a platform's own
 language - Java through JNI, C++ behind a C ABI - is a relay beneath the Swift
 host and never calls the core.
@@ -159,7 +159,7 @@ UI thread under a debugger. The host asks instead (concurrency.md).
 
 ## Where things live
 
-Each folder of `lib/StateUI/Sources/Core` is one topic, and the note beside it
+Each folder of `lib/SwiftOmniUI/Sources/Core` is one topic, and the note beside it
 holds its reasons. A type's extensions stand in its folder, named
 `Type+Responsibility.swift`.
 

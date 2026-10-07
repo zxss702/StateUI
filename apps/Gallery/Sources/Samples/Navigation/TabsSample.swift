@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A native tab arrangement and the selection binding that says which tab is showing.
 ///

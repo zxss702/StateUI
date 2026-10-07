@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// <gallery-traffic-light>: three lamps in a housing, one lit at a time - an element that knows nothing of StateUI.
+// <gallery-traffic-light>: three lamps in a housing, one lit at a time - an element that knows nothing of SwiftOmniUI.
 // Its `signal` attribute says which lamp is lit, 0 red, 1 amber, 2 green; a tap on a lamp raises `lamptap`, its
 // `detail` the lamp's index top to bottom. It does not switch itself: whoever owns the state decides. The Swift
 // half is Platforms/Web/Host/TrafficLightElement.swift.

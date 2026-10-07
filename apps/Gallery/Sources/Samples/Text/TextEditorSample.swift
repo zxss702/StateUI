@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Text of several lines, in an editor of a stated height and one that grows.
 struct TextEditorSample: SampleContent, ExampleContent {

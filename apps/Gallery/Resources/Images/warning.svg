@@ -3,7 +3,7 @@
   <!-- The warning triangle, for a sample that shows a TRAP rather than a way to
        do something. One path and `evenodd`, so the mark is CUT OUT of the
        triangle and whatever is behind shows through it - the same trick the
-       StateUI mark uses, and what lets one file read on the light theme and
+       SwiftOmniUI mark uses, and what lets one file read on the light theme and
        the dark one alike. Amber rather than red: this is "mind this", not
        "something broke". -->
   <path fill="#F5B301" fill-rule="evenodd" d="M 24,4 L 46,42 L 2,42 Z

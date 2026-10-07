@@ -10,7 +10,7 @@ changed that value and reports the user's change back
 
 Android tells a view's owner what its user did through listener interfaces:
 a click, a turn, a thumb moved, words typed, a Return. The Java layer has one
-listener class for all of them, `StateUIListener`, made for one view with that
+listener class for all of them, `SwiftOmniUIListener`, made for one view with that
 view's number, which forwards each call to Swift by the number
 ([JNI](jni.md)). A view hands the same listener to every setter it needs, so a
 field's typing and its Return reach the same Swift view.
@@ -97,7 +97,7 @@ thumb follows.
 A view with a tap handler is given the same listener a button has, and a
 click on it is its tap: Android's own touch handling decides what a tap is,
 and a drag that becomes a scroll is no tap. A view whose handler goes away is
-no longer clickable, so it stops taking touches. A StateUI layout that
+no longer clickable, so it stops taking touches. A SwiftOmniUI layout that
 ignores input takes no touch at all, and the touch goes to whatever stands
 behind it.
 
@@ -145,7 +145,7 @@ sent again only when the room changes.
 ## A picker
 
 A picker is Android's dropdown spinner. A spinner always shows one of its
-rows, and StateUI's choice may be none, so the first row is the title: the
+rows, and SwiftOmniUI's choice may be none, so the first row is the title: the
 closed field shows it, in the color scheme's hint colour, while nothing is chosen,
 and the open list leaves it out; a choice is the row after its index. Android
 tells a spinner's selection as it next measures or lays the spinner out -
@@ -243,6 +243,6 @@ given the whole touch; a control keeps its own.
 
 A view made of parts - a stepper's two buttons, a web view's page - would hand
 its listener only what no part takes, so its gestures see the touches and the
-hovering first, before the parts do (`StateUIWatch`): a drag or a pinch under
+hovering first, before the parts do (`SwiftOmniUIWatch`): a drag or a pinch under
 way takes the rest of the touch from the parts, which are told it was called
 off, and a touch no part takes stays the view's where its element listens.

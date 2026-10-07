@@ -1,13 +1,13 @@
 # Getting started
 
-StateUI applications keep their interface and application state in a
+SwiftOmniUI applications keep their interface and application state in a
 platform-neutral Swift module. A small native executable imports that module
 and the selected host package. The same application module can therefore be
 started by another host without changing its view tree.
 
 Five native hosts are active - AppKit, UIKit, Android Views, WinUI 3 and
 GTK 4 - each Swift, in the application's own process. The supported setup is a
-StateUI checkout: each host is a sibling Swift package whose manifest uses a
+SwiftOmniUI checkout: each host is a sibling Swift package whose manifest uses a
 local dependency on the repository root. No host has a published package route
 yet.
 
@@ -15,7 +15,7 @@ yet.
 
 - macOS 26 or newer, with Xcode 27 and its Swift 6.4, for the AppKit host;
 - a checkout of this repository;
-- VS Code and Node.js 20 or newer, for the StateUI extension.
+- VS Code and Node.js 20 or newer, for the SwiftOmniUI extension.
 
 [UIKit host](hosts/uikit.md#requirements) lists what the UIKit host needs for
 the iOS simulator, [Android Views host](hosts/android.md#requirements) what the
@@ -24,14 +24,14 @@ WinUI host needs on Windows, and [GTK host](hosts/gtk.md#requirements) what
 the GTK host needs on Linux.
 
 With the extension installed ([Installing the extension](#installing-the-extension)),
-**StateUI: Check Toolchain** in the Command Palette looks on this machine for
+**SwiftOmniUI: Check Toolchain** in the Command Palette looks on this machine for
 what these pages list for its platform's hosts, and says what to install for
 whatever is missing.
 
 ## Working in VS Code
 
-VS Code is where StateUI applications are built, run, debugged, and tested. The
-StateUI extension in `lib/StateUI.VSCode` chooses the host and the application
+VS Code is where SwiftOmniUI applications are built, run, debugged, and tested. The
+SwiftOmniUI extension in `lib/SwiftOmniUI.VSCode` chooses the host and the application
 once, and everything after that - the editor's completion, the launches, and
 the suites - works as that host.
 
@@ -40,13 +40,13 @@ the suites - works as that host.
 The extension is built from the checkout. From the repository root:
 
 ```bash
-cd lib/StateUI.VSCode
+cd lib/SwiftOmniUI.VSCode
 npm ci
 npm run package
-code --install-extension ../../artifacts/stateui-*.vsix
+code --install-extension ../../artifacts/swiftomniui-*.vsix
 ```
 
-`npm run package` writes `stateui-<version>.vsix` into `artifacts/` at the repository root.
+`npm run package` writes `swiftomniui-<version>.vsix` into `artifacts/` at the repository root.
 Without the `code` command on the path, use **Extensions: Install from VSIX…**
 in the Command Palette and pick that file. Build and install it again after
 pulling changes to the extension.
@@ -56,7 +56,7 @@ The extension installs the **Swift** extension (swiftlang) with it. Install
 
 ### Running an application
 
-Open the repository folder. The status bar shows two StateUI items:
+Open the repository folder. The status bar shows two SwiftOmniUI items:
 
 - **the host** - AppKit or Android. The editor works as that host: code under
   `#if APPKIT` is completed only while AppKit is chosen, and as Android the
@@ -71,7 +71,7 @@ Open the repository folder. The status bar shows two StateUI items:
 While the host is Android a third item shows the device: an attached phone or
 a running emulator, or an emulator started when it is picked.
 
-Press **F5** to run **StateUI: Debug**, or choose **StateUI: Release** in Run
+Press **F5** to run **SwiftOmniUI: Debug**, or choose **SwiftOmniUI: Release** in Run
 and Debug. On AppKit the application's head is built and started under
 `lldb-dap`. On Android it is built, installed and started on the chosen device,
 and its terminal follows the application's log; a Debug launch then attaches
@@ -82,7 +82,7 @@ each one into the chosen host's own debugger.
 
 ### Commands
 
-The Command Palette offers the rest under **StateUI:**
+The Command Palette offers the rest under **SwiftOmniUI:**
 
 | Command | What it does |
 | --- | --- |
@@ -94,7 +94,7 @@ The Command Palette offers the rest under **StateUI:**
 | Clean Index | removes the language server's index and builds it again |
 | Check Toolchain | what this machine has of what its hosts need, and what to install for the rest |
 
-The extension's own README, `lib/StateUI.VSCode/README.md`, describes each of
+The extension's own README, `lib/SwiftOmniUI.VSCode/README.md`, describes each of
 them in detail.
 
 ### From the command line
@@ -103,7 +103,7 @@ Every launch has a command-line equivalent. Build HelloWorld's AppKit head from
 the repository root:
 
 ```bash
-STATEUI_APPKIT=1 swift build --package-path apps/HelloWorld --product HelloWorldAppKit
+SWIFTOMNIUI_APPKIT=1 swift build --package-path apps/HelloWorld --product HelloWorldAppKit
 ```
 
 The variable is what makes it an AppKit build: the manifest then declares the
@@ -182,8 +182,8 @@ An application has two concerns:
 ```text
 NotesUI                     NotesAppKit
 ------------------------    ---------------------------
-imports StateUI             imports NotesUI
-App and scenes      imports StateUIAppKit
+imports SwiftOmniUI             imports NotesUI
+App and scenes      imports SwiftOmniUIAppKit
 windows and pages           locates native resources
 state and styles            starts the AppKit host
 no toolkit imports          contains no application UI
@@ -202,11 +202,11 @@ struct RegisteredWindow: WindowScene {
 }
 
 struct RegisteredPage: View {
-    var body: some View { Text("Hello, StateUI") }
+    var body: some View { Text("Hello, SwiftOmniUI") }
 }
 
-@_cdecl("stateui_app_register")
-public func stateui_app_register() {
+@_cdecl("swiftomniui_app_register")
+public func swiftomniui_app_register() {
     stateUIUseApp(RegisteredApp())
 }
 ```
@@ -216,9 +216,9 @@ The AppKit executable registers the module and starts the host:
 ```swift quote
 import Foundation
 import NotesUI
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
-stateui_app_register()
+swiftomniui_app_register()
 
 let application = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()
@@ -226,7 +226,7 @@ let application = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()
 let resources = application.appendingPathComponent("Resources/Images", isDirectory: true)
 
-StateUIAppKit.run(
+SwiftOmniUIAppKit.run(
     resourceDirectory: resources,
     applicationIcon: application.appendingPathComponent("Resources/AppIcon/appicon_macos.svg"))
 ```
@@ -240,7 +240,7 @@ belong to one application tree, renderer generation, and native host. Opening a
 new scene does not start another host; it asks that host to materialize another
 native scene session.
 
-The UIKit head calls the same `stateui_app_register` before `StateUIUIKit.run`;
+The UIKit head calls the same `swiftomniui_app_register` before `SwiftOmniUIUIKit.run`;
 [UIKit host](hosts/uikit.md) describes that head. The Android head calls it
 when Android loads its library; [Android Views host](hosts/android.md)
 describes that head.
@@ -267,8 +267,8 @@ apps/Notes/
   Tests/
 ```
 
-The application target depends only on the `StateUI` product. The executable
-target depends on the application target and `StateUIAppKit`. Both targets
+The application target depends only on the `SwiftOmniUI` product. The executable
+target depends on the application target and `SwiftOmniUIAppKit`. Both targets
 enable `NonisolatedNonsendingByDefault`; [Concurrency](interface/concurrency.md) explains
 why that module-wide setting is part of the application contract.
 
@@ -312,14 +312,14 @@ passed to the host and refer to them through `ImageSource` or a string-literal
 file name:
 
 ```swift
-Image("stateui_tile.png")
+Image("swiftomniui_tile.png")
     .frame(height: 120)
     .horizontalAlignment(.center)
 ```
 
 The AppKit head reads `Resources/` beside its own sources, and the Android
 head's build draws `Resources/Images` into the application's assets and its
-icon from `Resources/AppIcon`. StateUI's core does not read a filesystem or
+icon from `Resources/AppIcon`. SwiftOmniUI's core does not read a filesystem or
 choose a platform image class.
 
 ## Next steps

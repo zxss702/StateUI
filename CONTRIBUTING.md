@@ -1,6 +1,6 @@
-# Contributing to StateUI
+# Contributing to SwiftOmniUI
 
-StateUI is one platform-neutral Swift model with independent native hosts.
+SwiftOmniUI is one platform-neutral Swift model with independent native hosts.
 Changes should make that model smaller, clearer, and more deterministic.
 
 ## Begin with evidence
@@ -31,10 +31,10 @@ requirement.
 
 ## Keep the core platform-neutral
 
-Code under `lib/StateUI/Sources` and `lib/StateUI.Host/Sources` does not
+Code under `lib/SwiftOmniUI/Sources` and `lib/SwiftOmniUI.Host/Sources` does not
 import Foundation or a platform UI framework. Each host is a sibling package of
-its own - `lib/StateUI.AppKit`, `lib/StateUI.Android`, `lib/StateUI.WinUI`,
-`lib/StateUI.GTK` - standing on the host layer, with its build in
+its own - `lib/SwiftOmniUI.AppKit`, `lib/SwiftOmniUI.Android`, `lib/SwiftOmniUI.WinUI`,
+`lib/SwiftOmniUI.GTK` - standing on the host layer, with its build in
 `.scripts/<Platform>`. Swift written for one host alone stands under that
 host's condition - `#if APPKIT`, `#if ANDROID`, `#if WINUI`, `#if GTK` - which
 its builds define.
@@ -47,13 +47,13 @@ several C runtimes can share a Windows process.
 
 Swift owns identity, diffing, state, journeys, and motion descriptions. Hosts
 own native objects, platform callbacks, and display-frame property motion. Keep
-renderers thin and derive richer behavior from StateUI primitives where that
+renderers thin and derive richer behavior from SwiftOmniUI primitives where that
 produces one honest cross-platform contract.
 
 ## Write current documentation
 
 README, `docs/`, and public API documentation are the handbook. Describe what
-StateUI is now, why the current rule exists, and any current trap. Do not
+SwiftOmniUI is now, why the current rule exists, and any current trap. Do not
 narrate migration history or explain the API by comparison with another
 framework.
 
@@ -64,7 +64,7 @@ they need to try.
 ## Test
 
 Run the suite owned by the area while iterating, then every suite before
-handing off a complete vertical change. In VS Code, run **StateUI: Run Tests**
+handing off a complete vertical change. In VS Code, run **SwiftOmniUI: Run Tests**
 once with AppKit and once with Android chosen. From a terminal,
 `.scripts/test-native.sh` runs every Swift suite on this Mac, and
 `.scripts/Android/test-android.sh <serial>` the Android host's on a device:
@@ -77,7 +77,7 @@ once with AppKit and once with Android chosen. From a terminal,
 A plain `swift test` compiles no code under a host's condition, so it does not
 test any host's half on its own.
 
-Run the Gallery with **StateUI: Debug** on each host the change reaches. From a
+Run the Gallery with **SwiftOmniUI: Debug** on each host the change reaches. From a
 terminal:
 
 ```bash
@@ -103,8 +103,8 @@ Do not include generated-by text or authorship trailers.
 
 ## Contribution terms
 
-StateUI is distributed under the Apache License 2.0. A submitted contribution
-is accepted under the terms of the current [StateUI contributor agreement](CLA.md)
+SwiftOmniUI is distributed under the Apache License 2.0. A submitted contribution
+is accepted under the terms of the current [SwiftOmniUI contributor agreement](CLA.md)
 as well as the project's source license. The first pull request from a
 contributor triggers the repository's electronic CLA record; do not include
 work owned by another party unless its source, license, and submission authority

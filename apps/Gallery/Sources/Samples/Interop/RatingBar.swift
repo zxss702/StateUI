@@ -8,7 +8,7 @@
 // PUBLIC, because a host in the same process registers BY TYPE and lives in a
 // module of its own - see GalleryContract.swift.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery's own rating bar, declared: its node type, the tier it wears,
 /// and its members, each with its value's type.

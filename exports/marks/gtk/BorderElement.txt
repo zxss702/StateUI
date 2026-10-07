@@ -5,15 +5,15 @@ Button.strokeWidth: cannot read strokeWidth of Button - GTK's driver has no path
 CustomLayout.shape: cannot read shape of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.stroke: cannot read stroke of CustomLayout - GTK's driver has no path for it yet
 CustomLayout.strokeWidth: cannot read strokeWidth of CustomLayout - GTK's driver has no path for it yet
-Grid.shape: cannot read shape of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
-Grid.stroke: cannot read stroke of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
-Grid.strokeWidth: cannot read strokeWidth of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+Grid.shape: cannot read shape of Grid - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
+Grid.stroke: cannot read stroke of Grid - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
+Grid.strokeWidth: cannot read strokeWidth of Grid - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
 GridRow.shape: not realized
 GridRow.stroke: not realized
 GridRow.strokeWidth: not realized
-HStack.shape: cannot read shape of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
-HStack.stroke: cannot read stroke of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
-HStack.strokeWidth: cannot read strokeWidth of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+HStack.shape: cannot read shape of HStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
+HStack.stroke: cannot read stroke of HStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
+HStack.strokeWidth: cannot read strokeWidth of HStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
 LazyHGrid.shape: cannot read shape of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.stroke: cannot read stroke of LazyHGrid - GTK's driver has no path for it yet
 LazyHGrid.strokeWidth: cannot read strokeWidth of LazyHGrid - GTK's driver has no path for it yet
@@ -32,12 +32,12 @@ Masked.strokeWidth: cannot read strokeWidth of Masked - GTK's driver has no path
 RadioButton.shape: not realized
 RadioButton.stroke: not realized
 RadioButton.strokeWidth: not realized
-ScrollView.shape: cannot read shape of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
-ScrollView.stroke: cannot read stroke of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
-ScrollView.strokeWidth: cannot read strokeWidth of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
-VStack.shape: cannot read shape of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
-VStack.stroke: cannot read stroke of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
-VStack.strokeWidth: cannot read strokeWidth of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
-ZStack.shape: cannot read shape of ZStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
-ZStack.stroke: cannot read stroke of ZStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
-ZStack.strokeWidth: cannot read strokeWidth of ZStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+ScrollView.shape: cannot read shape of ScrollView - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
+ScrollView.stroke: cannot read stroke of ScrollView - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
+ScrollView.strokeWidth: cannot read strokeWidth of ScrollView - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+VStack.shape: cannot read shape of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
+VStack.stroke: cannot read stroke of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
+VStack.strokeWidth: cannot read strokeWidth of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it
+ZStack.shape: cannot read shape of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it
+ZStack.stroke: cannot read stroke of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it
+ZStack.strokeWidth: cannot read strokeWidth of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it

@@ -1,7 +1,7 @@
 THIRD-PARTY NOTICES
 ===================
 
-StateUI - the library, its native hosts, the sample applications and everything
+SwiftOmniUI - the library, its native hosts, the sample applications and everything
 else in the project - is distributed under the Apache License 2.0. Its full text
 is in LICENSE, and the attribution it asks a copy to carry is in NOTICE; both
 travel wherever this file does, and the source is at
@@ -10,12 +10,12 @@ travel wherever this file does, and the source is at
 
 This file is about what a BUILT APPLICATION carries, not about this repository,
 and it is at the root rather than beside the samples because it is true of ANY
-application built with StateUI, not only of the ones here.
+application built with SwiftOmniUI, not only of the ones here.
 
 Nothing third-party is checked in: the Swift toolchain is installed rather than
 vendored, a host links its platform's own toolkit, and every picture in the
 samples is hand-written SVG. Beyond its own code and this library, an
-application built with StateUI carries the Swift runtime on a platform that
+application built with SwiftOmniUI carries the Swift runtime on a platform that
 does not provide one - see below. A platform's toolkit is part of the platform,
 not of the application.
 

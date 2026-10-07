@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # VStack
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ✅ | 21 ✅ | `GtkBox` |  |
 | Web |  |  | flexbox | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Layouts/VStackContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/VStackContract.swift`.
 
 ## VStack's own members
 
@@ -59,7 +59,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `accessibilityLabel` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read accessibilityLabel of VStack - GTK's driver has no path for it yet |
 | `accessibilityTraits` | property | `AccessibilityTraits` | native |  |  |  |  |  |  |  |
 | `automationExcludedWithChildren` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read automationExcludedWithChildren of VStack - GTK's driver has no path for it yet |
-| `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
+| `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | VStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: VStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: VStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: VStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of VStack - GTK's driver has no path for it yet |
@@ -155,7 +155,7 @@ What every layout has: the screen's unsafe strips it keeps clear of, and whether
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  | · |  |  |  |  | not realized; UIKit: cannot read ignoresSafeArea of VStack - UIKit's view places its children where StateUI's layout says; their frames prove it; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
+| `ignoresSafeArea` | property | `SafeAreaEdges` | adaptive |  | · |  |  |  |  | not realized; UIKit: cannot read ignoresSafeArea of VStack - UIKit's view places its children where SwiftOmniUI's layout says; their frames prove it; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `clipsContent` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read clipsContent of VStack - GTK's driver has no path for it yet |
 | `letsInputThrough` | property | `Bool` | native | ◐ | ◐ |  |  | · |  | cannot read letsInputThrough of VStack - AppKit's driver has no path for it yet; UIKit: cannot read letsInputThrough of VStack - UIKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read letsInputThrough of VStack - GTK's driver has no path for it yet |
 | `hitShape` | property | `ContainerShape` | native | ✅ | ◐ |  |  | · |  | UIKit: cannot read hitShape of VStack - UIKit's driver has no path for it yet; GTK 4: cannot read hitShape of VStack - GTK's driver has no path for it yet |
@@ -183,6 +183,6 @@ What an element draws of its own box: the shape its background, its outline and 
 
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
-| `shape` | property | `ContainerShape` | stateUI | · | · | · | ✅ | · |  | cannot read shape of VStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it; UIKit: cannot read shape of VStack - UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it; Android Views: cannot read shape of VStack - StateUI draws a layout's box in a drawable of its own, which holds none of its shape; its drawing proves it; GTK 4: cannot read shape of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it |
-| `stroke` | property | `Brush` | stateUI |  | ✅ | · | ✅ | · |  | not realized; Android Views: cannot read stroke of VStack - StateUI draws a layout's box in a drawable of its own, which holds none of its stroke; its drawing proves it; GTK 4: cannot read stroke of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it |
-| `strokeWidth` | property | `Double` | stateUI | · | ✅ | · | ✅ | · |  | cannot read strokeWidth of VStack - StateUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it; Android Views: cannot read strokeWidth of VStack - StateUI draws a layout's box in a drawable of its own, which holds none of its strokeWidth; its drawing proves it; GTK 4: cannot read strokeWidth of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it |
+| `shape` | property | `ContainerShape` | stateUI | · | · | · | ✅ | · |  | cannot read shape of VStack - SwiftOmniUI draws a layout's box in its view's draw(_:), which holds none of its shape; its drawing proves it; UIKit: cannot read shape of VStack - UIKit holds a layout's outline as its layer's path, no shape; its drawing proves it; Android Views: cannot read shape of VStack - SwiftOmniUI draws a layout's box in a drawable of its own, which holds none of its shape; its drawing proves it; GTK 4: cannot read shape of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its shape; its drawing proves it |
+| `stroke` | property | `Brush` | stateUI |  | ✅ | · | ✅ | · |  | not realized; Android Views: cannot read stroke of VStack - SwiftOmniUI draws a layout's box in a drawable of its own, which holds none of its stroke; its drawing proves it; GTK 4: cannot read stroke of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its stroke; its drawing proves it |
+| `strokeWidth` | property | `Double` | stateUI | · | ✅ | · | ✅ | · |  | cannot read strokeWidth of VStack - SwiftOmniUI draws a layout's box in its view's draw(_:), which holds none of its strokeWidth; its drawing proves it; Android Views: cannot read strokeWidth of VStack - SwiftOmniUI draws a layout's box in a drawable of its own, which holds none of its strokeWidth; its drawing proves it; GTK 4: cannot read strokeWidth of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its strokeWidth; its drawing proves it |

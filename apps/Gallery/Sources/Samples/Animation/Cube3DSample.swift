@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A cube the host draws on the GPU - Metal on AppKit and UIKit, OpenGL 3.3 on GTK, Direct3D 11.1 on WinUI,
 /// OpenGL ES 3.0 on Android - with everything about it described from this side.
@@ -11,26 +11,26 @@ struct Cube3DSample: SampleContent, ExampleContent {
     #if APPKIT
     static let id = "appKitMetal"
     static let title = "A Metal view"
-    static let summary = "A cube drawn on the GPU by the host, sized and coloured from StateUI."
+    static let summary = "A cube drawn on the GPU by the host, sized and coloured from SwiftOmniUI."
     #elseif UIKIT
     static let id = "uiKitMetal"
     static let title = "A Metal view"
-    static let summary = "A cube drawn on the GPU by the host, sized and coloured from StateUI."
+    static let summary = "A cube drawn on the GPU by the host, sized and coloured from SwiftOmniUI."
     #elseif GTK
     static let id = "gtkOpenGL"
     static let title = "An OpenGL view"
-    static let summary = "A cube drawn by OpenGL 3.3 in the host, sized and coloured from StateUI."
+    static let summary = "A cube drawn by OpenGL 3.3 in the host, sized and coloured from SwiftOmniUI."
     #elseif WINUI
     static let id = "winUIDirect3D"
     static let title = "A Direct3D view"
-    static let summary = "A cube drawn by Direct3D 11.1 in the host, sized and coloured from StateUI."
+    static let summary = "A cube drawn by Direct3D 11.1 in the host, sized and coloured from SwiftOmniUI."
     #else
     static let id = "androidOpenGLES"
     static let title = "An OpenGL ES view"
-    static let summary = "A cube drawn by OpenGL ES 3.0 in the host, sized and coloured from StateUI."
+    static let summary = "A cube drawn by OpenGL ES 3.0 in the host, sized and coloured from SwiftOmniUI."
     #endif
 
-    static let codeHeading = "In StateUI"
+    static let codeHeading = "In SwiftOmniUI"
 
     /// The names the picker offers, in the order `CubeColor` declares them -
     /// so the chosen index IS the vocabulary's member number.
@@ -119,7 +119,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
         in: InteropHost.name,
         .swift("""
             // Platforms/AppKit/Host/MetalCube3DView.swift - an ordinary MTKView
-            // that knows nothing of StateUI. It draws in `draw(_:)`, so it
+            // that knows nothing of SwiftOmniUI. It draws in `draw(_:)`, so it
             // needs no delegate beside it.
             final class MetalCube3DView: MTKView {
                 var cubeSize: Double = 0.6 {
@@ -201,7 +201,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             extension MetalCube3DView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
+                    SwiftOmniUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
                         MetalCube3DView()
                     }) { cube in
                         cube.property(Cube3DContract.size) { view, size in
@@ -256,7 +256,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
         in: InteropHost.name,
         .swift("""
             // Platforms/UIKit/Host/MetalCube3DView.swift - an ordinary MTKView
-            // that knows nothing of StateUI. It draws in `draw(_:)`, so it
+            // that knows nothing of SwiftOmniUI. It draws in `draw(_:)`, so it
             // needs no delegate beside it.
             final class MetalCube3DView: MTKView {
                 var cubeSize: Double = 0.6 {
@@ -338,7 +338,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             extension MetalCube3DView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
+                    SwiftOmniUIControls.add(Cube3DContract.self, create: { _ -> MetalCube3DView in
                         MetalCube3DView()
                     }) { cube in
                         cube.property(Cube3DContract.size) { view, size in
@@ -449,7 +449,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             extension OpenGLCube3DWidget {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(Cube3DContract.self, create: { _ in OpenGLCube3DWidget() }) { cube in
+                    SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in OpenGLCube3DWidget() }) { cube in
                         cube.property(Cube3DContract.size) { control, size in
                             control.cubeSize = size ?? 0.6
                         }
@@ -516,7 +516,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             extension Direct3DCube3DControl {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(Cube3DContract.self, create: { _ in Direct3DCube3DControl() }) { cube in
+                    SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in Direct3DCube3DControl() }) { cube in
                         cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
                         cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
                         cube.property(Cube3DContract.isSpinning) { control, spinning in
@@ -528,7 +528,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             """),
         .cpp("""
             // Platforms/WinUI/Relay/Cube3D.cpp - a SwapChainPanel, an element that
-            // knows nothing of StateUI, drawn into by a Direct3D 11.1 device. It
+            // knows nothing of SwiftOmniUI, drawn into by a Direct3D 11.1 device. It
             // follows WinUI's frames only while it spins and stands on screen, and a
             // value changed while it stands still draws the one frame it needs.
             namespace {
@@ -709,7 +709,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
             extension GLESCube3DView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(Cube3DContract.self, create: { _ in GLESCube3DView() }) { cube in
+                    SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in GLESCube3DView() }) { cube in
                         cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
                         cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
                         cube.property(Cube3DContract.isSpinning) { control, spinning in
@@ -720,9 +720,9 @@ struct Cube3DSample: SampleContent, ExampleContent {
             }
             """),
         .java("""
-            // Platforms/Android/Java/com/stateui/gallery/Cube3DView.java - the surface
+            // Platforms/Android/Java/com/swiftomniui/gallery/Cube3DView.java - the surface
             // the Swift half draws the cube into: a TextureView, drawn as a view is,
-            // so the opacity, transform and clip StateUI puts on every view hold for
+            // so the opacity, transform and clip SwiftOmniUI puts on every view hold for
             // it. It hands its surface over as it comes and goes, and asks for the
             // display's frames while it spins and stands in a window.
             final class Cube3DView extends TextureView implements TextureView.SurfaceTextureListener, Choreographer.FrameCallback {
@@ -810,7 +810,7 @@ struct Cube3DSample: SampleContent, ExampleContent {
                 }
             }
 
-            // Platforms/Android/Java/com/stateui/gallery/GalleryNatives.java - what
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryNatives.java - what
             // the view tells its Swift half, which answers each by its JNI name.
             final class GalleryNatives {
                 static native void surfaceReady(long control, Surface surface, int width, int height);
@@ -885,34 +885,34 @@ struct Cube3DSample: SampleContent, ExampleContent {
 
     #if APPKIT
     private static let drawnBy = "The cube is an `MTKView` the gallery registers with "
-        + "`StateUIControls.add`, exactly as it registers a view that draws with a layer. A "
+        + "`SwiftOmniUIControls.add`, exactly as it registers a view that draws with a layer. A "
         + "view that draws on the GPU is still an `NSView`, so the registration has nothing "
         + "extra to say."
     private static let stopsWith = "The loop also stops with the window, so nothing is "
         + "left turning behind a page you have left."
     #elseif UIKIT
     private static let drawnBy = "The cube is an `MTKView` the gallery registers with "
-        + "`StateUIControls.add`, exactly as it registers a view that draws with a layer. A "
+        + "`SwiftOmniUIControls.add`, exactly as it registers a view that draws with a layer. A "
         + "view that draws on the GPU is still a `UIView`, so the registration has nothing "
         + "extra to say."
     private static let stopsWith = "The loop also stops with the window, so nothing is "
         + "left turning behind a page you have left."
     #elseif GTK
     private static let drawnBy = "The cube is a `GtkGLArea` drawing with OpenGL 3.3 core, "
-        + "held by a `GTKControl` the gallery registers with `StateUIControls.add` - a "
+        + "held by a `GTKControl` the gallery registers with `SwiftOmniUIControls.add` - a "
         + "widget like any other, so the registration has nothing extra to say."
     private static let stopsWith = "GTK ticks only a widget on screen, so nothing is "
         + "left turning behind a page you have left."
     #elseif WINUI
     private static let drawnBy = "The cube is a `SwapChainPanel` drawing with Direct3D 11.1, "
         + "made by the gallery's own C++/WinRT relay and held by a `WinUIControl` the gallery "
-        + "registers with `StateUIControls.add` - an element like any other, so the "
+        + "registers with `SwiftOmniUIControls.add` - an element like any other, so the "
         + "registration has nothing extra to say."
     private static let stopsWith = "The cube follows WinUI's frames only while it stands on "
         + "screen, so nothing is left turning behind a page you have left."
     #else
     private static let drawnBy = "The cube is a `TextureView` of the gallery's own Java, drawn into with OpenGL ES "
-        + "3.0 from Swift and held by an `AndroidControl` the gallery registers with `StateUIControls.add` - a view "
+        + "3.0 from Swift and held by an `AndroidControl` the gallery registers with `SwiftOmniUIControls.add` - a view "
         + "like any other, so the registration has nothing extra to say."
     private static let stopsWith = "The cube asks for the display's frames only while it stands in a window, so "
         + "nothing is left turning behind a page you have left."

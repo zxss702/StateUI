@@ -1,8 +1,8 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # LazyVStack
 
-A column a scroller builds as it scrolls into view: StateUI says which children there are, in order, and builds the ones the host asks for; the host keeps them stacked, measures the ones it holds, and stands the rest for by their measure so the scroll room is known before they exist.
+A column a scroller builds as it scrolls into view: SwiftOmniUI says which children there are, in order, and builds the ones the host asks for; the host keeps them stacked, measures the ones it holds, and stands the rest for by their measure so the scroll room is known before they exist.
 
 Layer: `native`. Every base host presents it with its native toolkit.
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 |  | 20 ✅ | custom `GtkWidget` driven the same | no run of it on these sources |
 | Web |  |  | custom element driven the same | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Layouts/LazyVStackContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/LazyVStackContract.swift`.
 
 ## LazyVStack's own members
 

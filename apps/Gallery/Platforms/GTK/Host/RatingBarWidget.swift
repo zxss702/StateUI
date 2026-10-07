@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import CStateUIGTK
+import CSwiftOmniUIGTK
 import GalleryUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
-/// Five stars in a row, as many lit as the rating - a `GtkBox` of labels that knows nothing of StateUI.
+/// Five stars in a row, as many lit as the rating - a `GtkBox` of labels that knows nothing of SwiftOmniUI.
 ///
 /// The Swift half is Sources/Samples/Interop/RatingBar.swift; the act aimed at a bar, `flash`, is registered at the
 /// end of this file beside the control it flashes.
@@ -95,7 +95,7 @@ extension RatingBarWidget {
     /// Adds the bar for `RatingBarContract`, and the act aimed at one bar. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(RatingBarContract.self, create: { reports -> RatingBarWidget in
+        SwiftOmniUIControls.add(RatingBarContract.self, create: { reports -> RatingBarWidget in
             let bar = RatingBarWidget()
             // A tapped star is the USER's change: it lands on the state the value is carried in, and raises the event
             // with it.
@@ -111,7 +111,7 @@ extension RatingBarWidget {
         }
 
         // Aimed at one bar: the identity the aim sent is turned back into the control this host made for it.
-        StateUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
+        SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
             bar.flash()
         }
     }

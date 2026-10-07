@@ -14,8 +14,8 @@
 #
 # A running copy of the head is stopped first: a GTK application is one
 # instance, and a second launch would only bring the first one forward.
-# Everything a build writes stays under <app-dir>/.build/gtk. Every STATEUI_
-# variable of the calling shell - STATEUI_TALLY=1, STATEUI_INSPECT=1 - reaches
+# Everything a build writes stays under <app-dir>/.build/gtk. Every SWIFTOMNIUI_
+# variable of the calling shell - SWIFTOMNIUI_TALLY=1, SWIFTOMNIUI_INSPECT=1 - reaches
 # the application.
 set -euo pipefail
 
@@ -42,7 +42,7 @@ executable="$scratch/$configuration/$product"
 # The executable is written again; a running copy goes first, found by its path.
 pkill -f "^$executable( |$)" 2>/dev/null && sleep 0.3 || true
 
-STATEUI_HOST=gtk swift build \
+SWIFTOMNIUI_HOST=gtk swift build \
   --package-path "$app_dir" \
   --scratch-path "$scratch" \
   --configuration "$configuration" \

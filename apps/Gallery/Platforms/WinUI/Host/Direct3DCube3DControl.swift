@@ -3,10 +3,10 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 /// A cube drawn by Direct3D 11.1 in a SwapChainPanel the gallery's relay makes - Platforms/WinUI/Relay/Cube3D.cpp,
-/// an element that knows nothing of StateUI. It turns on WinUI's frames only while it spins and stands on screen.
+/// an element that knows nothing of SwiftOmniUI. It turns on WinUI's frames only while it spins and stands on screen.
 /// The Swift half is Sources/Samples/Interop/Cube3D.swift.
 @MainActor
 final class Direct3DCube3DControl: WinUIControl {
@@ -52,7 +52,7 @@ extension Direct3DCube3DControl {
     /// Adds the cube for `Cube3DContract`. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(Cube3DContract.self, create: { _ in Direct3DCube3DControl() }) { cube in
+        SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in Direct3DCube3DControl() }) { cube in
             cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
             cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
             cube.property(Cube3DContract.isSpinning) { control, spinning in control.isSpinning = spinning ?? true }

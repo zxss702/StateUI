@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # WebView
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 |  |  | WebKitGTK `WebKitWebView` | not realized |
 | Web |  |  | `<iframe>` (?) | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/WebViewContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/WebViewContract.swift`.
 
 ## WebView's own members
 

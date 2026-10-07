@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A layout whose children travel to their new places when the layout changes.
 struct LivingLayoutSample: SampleContent, ExampleContent {

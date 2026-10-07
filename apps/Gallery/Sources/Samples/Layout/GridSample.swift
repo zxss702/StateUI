@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Rows and columns with each child's place written on the child.
 struct GridSample: SampleContent {

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The library's own way to tell the time: acts, not Foundation.
 struct HostTimeSample: SampleContent, ExampleContent {

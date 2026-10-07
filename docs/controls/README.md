@@ -1,6 +1,6 @@
 # Control dictionary
 
-Every element StateUI declares - each control, and each part an application, its windows and its pages are made of - member by member, with what each target host's tests proved of it.
+Every element SwiftOmniUI declares - each control, and each part an application, its windows and its pages are made of - member by member, with what each target host's tests proved of it.
 
 A page is its element's contract rendered: the members it declares itself, then one section per tier it wears, each linking that tier's page. Every member shows its kind - a property, an event or an act - its value, the layer that realizes it, and a mark for each platform, because a host realizes the same inherited member differently on different elements: a background is a layer colour on a label and a drawn fill on an outlined layout.
 
@@ -19,7 +19,7 @@ A page is its element's contract rendered: the members it declares itself, then 
 | empty | Not realized, or no run - the note says which. |
 <!-- legend:end -->
 
-A host's column is its tests' verdicts: each host's suite runs the conformance families - one for each contract, a case for every cell of every page - and writes what each said under `exports/marks/<host>/`, one line a member of an element, read here. A host's register - its records, what its runtime registers, what it never has - decides whether a case runs and what its verdict says, and nothing it declares marks a cell by itself. A tier's member is marked on every element wearing the tier, each by its own case. A row has one Notes cell for every host: AppKit's note as written, then each other host's as `Android Views: …`, joined by `; `. Nothing on a page is written by hand: `ControlDictionaryTests` fails when a page or a table below differs from the contracts and the verdicts, or when a verdict names what no contract declares, and `STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests` writes them again.
+A host's column is its tests' verdicts: each host's suite runs the conformance families - one for each contract, a case for every cell of every page - and writes what each said under `exports/marks/<host>/`, one line a member of an element, read here. A host's register - its records, what its runtime registers, what it never has - decides whether a case runs and what its verdict says, and nothing it declares marks a cell by itself. A tier's member is marked on every element wearing the tier, each by its own case. A row has one Notes cell for every host: AppKit's note as written, then each other host's as `Android Views: …`, joined by `; `. Nothing on a page is written by hand: `ControlDictionaryTests` fails when a page or a table below differs from the contracts and the verdicts, or when a verdict names what no contract declares, and `SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests` writes them again.
 
 ## Controls
 
@@ -143,8 +143,8 @@ Which layer realizes an element or a member - the word each page and each row us
 
 <!-- layers:begin -->
 - `native` - Every base host presents it with its native toolkit.
-- `adaptive` - Every base host presents it by its platform's conventions, keeping StateUI's state contract.
-- `stateUI` - StateUI composes it from smaller primitives before a host receives the tree.
+- `adaptive` - Every base host presents it by its platform's conventions, keeping SwiftOmniUI's state contract.
+- `stateUI` - SwiftOmniUI composes it from smaller primitives before a host receives the tree.
 - `structure` - It carries structure or protocol data rather than configuring a visual platform object.
 - `provider` - An optional provider supplies it: a package, or the application that registers it with its hosts.
 <!-- layers:end -->

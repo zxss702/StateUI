@@ -1,6 +1,6 @@
 # Styles and drawing
 
-StateUI resolves styles, color scheme variants, and visual-state setters in Swift
+SwiftOmniUI resolves styles, color scheme variants, and visual-state setters in Swift
 before a host receives a control patch. The host sees the effective semantic
 properties it must apply; it does not run a second style cascade.
 
@@ -129,7 +129,7 @@ view has normal, disabled, focused and pointer-over; a button adds pressed, a
 switch on and off, a check box on, a radio button checked and unchecked. A
 state the control never enters does not compile.
 
-StateUI decides which state a control is in, the same way on every platform:
+SwiftOmniUI decides which state a control is in, the same way on every platform:
 the first that holds of disabled, pressed, pointer-over, focused, on or
 checked, off or unchecked - and normal when none does. What the control shows
 is every state that holds at once, the earlier in that order winning a value
@@ -240,7 +240,7 @@ Rectangle()
 ```
 
 The host maps this description to its native path and paint types. Path data
-and fill rules are StateUI values; platform path objects do not cross the
+and fill rules are SwiftOmniUI values; platform path objects do not cross the
 boundary.
 
 ## Canvas

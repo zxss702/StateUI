@@ -1,12 +1,12 @@
 # Glossary
 
-StateUI's words and the common term for each. Comments and design notes use
-the common term where one exists; a name in the API keeps its StateUI word,
+SwiftOmniUI's words and the common term for each. Comments and design notes use
+the common term where one exists; a name in the API keeps its SwiftOmniUI word,
 and this table maps the two.
 
 ## People and structure
 
-| StateUI term | Common term | What it means here |
+| SwiftOmniUI term | Common term | What it means here |
 | --- | --- | --- |
 | user | user | the person using the application |
 | application, scene, window, page | same | the structure an application declares: `App -> Scene -> WindowScene -> Page` |
@@ -15,7 +15,7 @@ and this table maps the two.
 | tier | trait | a set of members several elements share, such as `VisualElement` |
 | member | property, event or method | a property, an event or an act an element declares |
 | wear (a tier) | adopt, conform to | an element contract taking a tier's members |
-| layer (`ElementLayer`) | implementation source | who realizes a node type or a member: the platform, an adaptation, StateUI, the structure or a provider |
+| layer (`ElementLayer`) | implementation source | who realizes a node type or a member: the platform, an adaptation, SwiftOmniUI, the structure or a provider |
 | slot | named placeholder | a structural child that holds authored content in a known place: `Content`, `LeadingContent`, `TitleView` |
 | slot child | auxiliary child | a child a modifier appends after the laid-out ones: a context menu |
 | watcher (`.onChange`) | change observer | a view that runs code when a value it watches changes |
@@ -28,7 +28,7 @@ and this table maps the two.
 
 ## State and reactivity
 
-| StateUI term | Common term | What it means here |
+| SwiftOmniUI term | Common term | What it means here |
 | --- | --- | --- |
 | `@State` | state | the one declaration of mutable state |
 | `Binding` (`$x`) | binding | a borrowed reference to a state |
@@ -51,7 +51,7 @@ and this table maps the two.
 
 ## Identity and diffing
 
-| StateUI term | Common term | What it means here |
+| SwiftOmniUI term | Common term | What it means here |
 | --- | --- | --- |
 | identity, `.id()`, `ElementId` | key | what keeps an element the same element across renders: an explicit `.id()`, then the builder path, then the position |
 | render | reconcile | build the patch between the tree the host holds and the tree the state describes |
@@ -84,7 +84,7 @@ and this table maps the two.
 
 ## Animation
 
-| StateUI term | Common term | What it means here |
+| SwiftOmniUI term | Common term | What it means here |
 | --- | --- | --- |
 | animation (`Animation`) | animation timing | how a change animates: an eased curve over a duration, a spring, or none |
 | law, animation law | timing function | the curve or spring that gives a value at a time (`HostMotionLaw`) |
@@ -101,11 +101,11 @@ and this table maps the two.
 
 ## The runtime
 
-| StateUI term | Common term | What it means here |
+| SwiftOmniUI term | Common term | What it means here |
 | --- | --- | --- |
-| host | platform backend | the code that shows StateUI with one toolkit |
+| host | platform backend | the code that shows SwiftOmniUI with one toolkit |
 | runtime | backend runtime | a host's elements: the host layer and its toolkit half |
-| host layer | shared backend code | the toolkit-neutral elements in `lib/StateUI.Host`, the module `StateUIHost` |
+| host layer | shared backend code | the toolkit-neutral elements in `lib/SwiftOmniUI.Host`, the module `SwiftOmniUIHost` |
 | display cycle, cycle | frame update | the ordered work of one display frame |
 | frame clock | display link, vsync | what ticks once per display frame while something holds it |
 | doorbell | wake-up thread | a thread parked until the core has work, which then wakes the UI thread |

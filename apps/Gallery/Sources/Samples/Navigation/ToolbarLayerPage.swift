@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A page the toolbar's layers push: its own actions on the bar while it is shown, and a way one page deeper.
 ///

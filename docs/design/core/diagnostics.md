@@ -22,7 +22,7 @@ page that was left and still stands in memory shows as a number that does not
 come back down. It tells a leaked page from memory the allocator has not handed
 back yet, which a process's resident size cannot. A host reads the tally
 through `HostBoundary.tally` - a Swift runtime writes it with its own totals
-under `STATEUI_TALLY=1` (host/patches.md) - and the per-cycle trace through
+under `SWIFTOMNIUI_TALLY=1` (host/patches.md) - and the per-cycle trace through
 `HostBoundary.cycleTrace`, built only when the host's trace switch is on: this
 side has no environment to read.
 
@@ -44,7 +44,7 @@ the differ writes an entry for every composed view it reaches:
 Nothing runs while nobody looks: every hook in the differ is one read of
 `recording`, false until an inspector opens, so an application that never opens
 one pays a branch per composed view. A host that wants every pass as text
-(`STATEUI_INSPECT=1`) asks for the log once, and recording then stays on.
+(`SWIFTOMNIUI_INSPECT=1`) asks for the log once, and recording then stays on.
 
 The inspector is not its own subject. It is a tree like any other, built again
 whenever a pass lands, so its own views are muted - their time is kept apart and

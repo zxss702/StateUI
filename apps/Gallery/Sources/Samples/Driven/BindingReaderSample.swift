@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A binding is no reader: one state, handed on as `$level` to a knob that
 /// drags it and to two meters that show it - one by READING the value, one by

@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The platform's materials and a `LinearGradient`, each worn as a
 /// `ShapeStyle` on a background - translucency that shows the page through.

@@ -23,10 +23,10 @@ product="${name}UIKit"
 scratch="$app_dir/.build/uikit"
 [[ -z "$device" ]] || uikit_target iphoneos
 
-export STATEUI_HOST=uikit
+export SWIFTOMNIUI_HOST=uikit
 binary_dir="$(uikit_build "$app_dir" "$scratch" "$configuration" "$product")"
 bundle="$binary_dir/$product.app"
-identifier="com.stateui.$(tr '[:upper:]' '[:lower:]' <<< "$name")"
+identifier="com.swiftomniui.$(tr '[:upper:]' '[:lower:]' <<< "$name")"
 uikit_bundle "$binary_dir" "$product" "$name" "$identifier" "$app_dir/Resources" "$bundle" "$binary_dir/tools" \
   "$app_dir/Platforms/UIKit/Info.plist" $device
 echo "$bundle"

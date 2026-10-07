@@ -1,20 +1,20 @@
 # Android Views host
 
-The Android Views host renders a StateUI application with Android views. It is
+The Android Views host renders a SwiftOmniUI application with Android views. It is
 Swift, in the application's own process, beside the application module and the
 library: it applies the typed sparse patches of the
 [host contract](../internals/host-contract.md) directly and calls the views through JNI.
 
-It presents StateUI's controls, arrangements and pages over the runtime every
+It presents SwiftOmniUI's controls, arrangements and pages over the runtime every
 host shares - the [platform contract](../platform-contract.md#control-creation) says
 which, member by member - and shows any other control's name in red where the control
 belongs, so a gap is visible rather than silent.
 
 ```text
-lib/StateUI.Android/
-  Sources/StateUIAndroid/    the host: its runtime, elements, registrations, layout and JNI
-  Sources/CStateUIAndroid/   the NDK's C surface: JNI, the looper, the log
-  Java/stateui/android/      the Java layer: the activity, the layout view group, the frame callback, the listener
+lib/SwiftOmniUI.Android/
+  Sources/SwiftOmniUIAndroid/    the host: its runtime, elements, registrations, layout and JNI
+  Sources/CSwiftOmniUIAndroid/   the NDK's C surface: JNI, the looper, the log
+  Java/swiftomniui/android/      the Java layer: the activity, the layout view group, the frame callback, the listener
   Tests/                     the host's suite, run in a test APK on a device
 .scripts/Android/
   build-swift.sh             an application's Swift for Android, for the ABIs asked
@@ -50,31 +50,31 @@ names the application and hands the virtual machine to the host:
 
 ```swift quote
 import NotesUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
 @_cdecl("JNI_OnLoad")
 public func JNI_OnLoad(_ machine: UnsafeMutableRawPointer?, _ reserved: UnsafeMutableRawPointer?) -> Int32 {
-    stateui_app_register()
-    return StateUIAndroid.load(machine)
+    swiftomniui_app_register()
+    return SwiftOmniUIAndroid.load(machine)
 }
 ```
 
 The head's `AndroidManifest.xml` declares the host's activity,
-`stateui.android.StateUIActivity`, with the library to load as its
-`stateui.library`. The activity loads it and starts the host; an application
+`swiftomniui.android.SwiftOmniUIActivity`, with the library to load as its
+`swiftomniui.library`. The activity loads it and starts the host; an application
 needs no Java of its own. Its `build.gradle.kts` depends on AndroidX's
 `recyclerview`, the collection an List stands on. One that extends the host with views of its own
 keeps their Java beside the head, in `Java/`, and may extend the activity,
 declaring its own class in the manifest instead.
 
-`STATEUI_ANDROID=1` is what makes a build an Android Views one: the
+`SWIFTOMNIUI_ANDROID=1` is what makes a build an Android Views one: the
 application's manifest reads it, declares the `Platforms/Android/Swift` target,
-the library it makes and the `StateUIAndroid` dependency, and defines the
+the library it makes and the `SwiftOmniUIAndroid` dependency, and defines the
 `ANDROID` compilation condition for every module of the application. Swift
 written for this host alone stands under `#if ANDROID`. `build-swift.sh` sets
 nothing else: the library itself is built as every host builds it.
 
-A new application made in `apps/` - **StateUI: New App in apps/**, or
+A new application made in `apps/` - **SwiftOmniUI: New App in apps/**, or
 `.scripts/new-app.sh` - has an Android head, as HelloWorld does, and runs and
 is debugged as soon as it is made.
 
@@ -82,7 +82,7 @@ is debugged as soon as it is made.
 
 An application extends the host from its Android head. Registrations run in
 `JNI_OnLoad`, on the UI thread - the main actor's - before
-`StateUIAndroid.load`. Registering a contract or an act again replaces the
+`SwiftOmniUIAndroid.load`. Registering a contract or an act again replaces the
 earlier registration. Every registration is written against the
 application's own contracts, so they are `public`: the host lives in a module
 of its own and must see them. The Gallery's Android halves are in
@@ -93,8 +93,8 @@ of its own and must see them. The Gallery's Android halves are in
 A control of the application's own is an object holding the Android view it
 shows, an `AndroidControl`. The view is a class of the application's own
 Java, made from Swift through `Java` - the host's JNI, the same calls it
-makes itself - with the activity, `StateUIAndroid.context`, and held as a
-`JavaObject`. `StateUIControls.add` says which contract it realizes:
+makes itself - with the activity, `SwiftOmniUIAndroid.context`, and held as a
+`JavaObject`. `SwiftOmniUIControls.add` says which contract it realizes:
 
 ```swift quote
 public static func add<Realized: ElementContract, Made: AndroidControl>(
@@ -112,7 +112,7 @@ public static func add<Realized: ElementContract, Made: AndroidControl>(
   described, and `raises(_:)` records an event the control raises.
 
 ```swift quote
-StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
     let light = TrafficLightView()
     light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
     return light
@@ -136,18 +136,18 @@ it spins and stands in a window - the same declaration Metal draws on AppKit.
 
 ### An act
 
-`StateUIActs.add` registers a function the application calls by its act, and
-`StateUIActs.add(_:on:_:)` one aimed at the application's own element, handed
+`SwiftOmniUIActs.add` registers a function the application calls by its act, and
+`SwiftOmniUIActs.add(_:on:_:)` one aimed at the application's own element, handed
 that element's control:
 
 ```swift quote
-StateUIActs.add(GalleryContract.setClipboard) { text in
+SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
     Java.frame {
-        Java.callStatic(device, copy, .object(StateUIAndroid.context), .object(Java.string(text)))
+        Java.callStatic(device, copy, .object(SwiftOmniUIAndroid.context), .object(Java.string(text)))
     }
 }
 
-StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
     bar.flash()
 }
 ```
@@ -159,15 +159,15 @@ an aim at nothing; an act nobody registered is refused by name.
 
 ### An event without a control
 
-`StateUIEvents.raise` pushes an event of the application's that belongs to no
-element, from any thread; `StateUIEvents.raises` declares it before the host
+`SwiftOmniUIEvents.raise` pushes an event of the application's that belongs to no
+element, from any thread; `SwiftOmniUIEvents.raises` declares it before the host
 starts, so a handler listening for one no source raises is told so. Its
 source is often Android's own - the Gallery's activity registers a receiver
 for the battery while it lives:
 
 ```swift quote
-StateUIEvents.raises(GalleryContract.batteryChanged)
-StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
+SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
 ```
 
 ## Running
@@ -187,8 +187,8 @@ stripped, with the unstripped copies kept in `.build-android/symbols/` for
 `Resources/Images` are drawn for it as the APK is built: an SVG three times
 over, as a PNG, which `Image("mark.png")` finds as it finds the SVG on every
 other host. An application's `print` reaches logcat under the
-tag `StateUI`, and so does what `STATEUI_TALLY=1` and `STATEUI_INSPECT=1`
-write: `run-app.sh` hands every `STATEUI_` variable of the shell that runs it
+tag `SwiftOmniUI`, and so does what `SWIFTOMNIUI_TALLY=1` and `SWIFTOMNIUI_INSPECT=1`
+write: `run-app.sh` hands every `SWIFTOMNIUI_` variable of the shell that runs it
 to the application's environment. A head's manifest asks for
 `ACCESS_NETWORK_STATE`, which the host needs to report the network to the
 application's views.
@@ -197,9 +197,9 @@ In VS Code, choose **Android** as the host and a device, and press **F5**.
 
 ## Debugging
 
-**StateUI: Debug** builds, installs and starts the application as `run-app.sh`
+**SwiftOmniUI: Debug** builds, installs and starts the application as `run-app.sh`
 does, and then attaches `lldb-dap` to it: a breakpoint in the application, in
-StateUI or in the host stops it, with its source, its stack and its variables.
+SwiftOmniUI or in the host stops it, with its source, its stack and its variables.
 It is the application running that is attached to, so what runs before - the
 first render - runs without the debugger. Only a debug build can be debugged.
 
@@ -213,7 +213,7 @@ it listens and which process to attach to. From a terminal, with the toolchain's
 cat apps/Gallery/.build-android/debugger.json
 lldb -o "settings set plugin.jit-loader.gdb.enable off" \
      -o "platform select remote-android" \
-     -o "platform connect unix-abstract-connect://emulator-5554/com.stateui.gallery/stateui-debugger.sock" \
+     -o "platform connect unix-abstract-connect://emulator-5554/com.swiftomniui.gallery/swiftomniui-debugger.sock" \
      -o "settings append target.exec-search-paths $PWD/apps/Gallery/.build-android/symbols/arm64-v8a" \
      -o "process attach --pid <process from debugger.json>" \
      -o "process handle SIGSEGV SIGBUS --pass true --stop false --notify false"
@@ -245,6 +245,6 @@ to run while a test or a case is listed nowhere.
 
 The test APK can be built on one machine and run on another:
 `test-android.sh --build x86_64` builds it for that ABI with no device and
-prints where it is, and `STATEUI_TEST_APK=<apk> test-android.sh` installs
+prints where it is, and `SWIFTOMNIUI_TEST_APK=<apk> test-android.sh` installs
 that APK instead of building one. CI builds on macOS, where the build draws
 the pictures, and runs the suite on a Linux emulator.

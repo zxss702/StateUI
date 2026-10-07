@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A row taken away, and the stack closing over it.
 struct RemovingRowSample: SampleContent, ExampleContent {

@@ -1,6 +1,6 @@
 // One tappable row: a title, a line about it, and where it goes.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery's one navigational shape - a row on a group's page.
 ///

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A run of cards swiped through, in a shape one word chooses.
 struct GalleryViewSample: SampleContent, ExampleContent {

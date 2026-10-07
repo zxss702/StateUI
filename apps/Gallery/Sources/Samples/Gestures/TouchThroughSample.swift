@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Input that goes through a view to the one below - past the view alone, or
 /// past its children too.

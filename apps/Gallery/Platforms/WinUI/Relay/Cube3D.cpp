@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// A cube drawn by Direct3D 11.1 into WinUI's SwapChainPanel - an element that knows nothing of StateUI. Its device
+// A cube drawn by Direct3D 11.1 into WinUI's SwapChainPanel - an element that knows nothing of SwiftOmniUI. Its device
 // asks for feature level 11_1 alone; its swap chain is the panel's, sized in pixels for the panel's scale; it turns
 // on WinUI's frames only while it spins and stands on screen, so nothing turns behind a page the user has left, and
 // a value changed while it stands still draws the one frame it needs.

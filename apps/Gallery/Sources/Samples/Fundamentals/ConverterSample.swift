@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A BINDING CONVERTED ON ITS WAY TO A CONTROL: one state shown in two units,
 /// a caption worked out from it, two states worked into one - all by engines

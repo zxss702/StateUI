@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A day picked from a calendar: a binding, and the event that answers a pick.
 struct DatePickerSample: SampleContent, ExampleContent {

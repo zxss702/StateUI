@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The public animation vocabulary: `withAnimation` around a state write, and
 /// `.animation(_:value:)` on the view the change lands on.

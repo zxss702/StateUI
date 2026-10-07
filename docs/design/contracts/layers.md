@@ -9,8 +9,8 @@ dictionary prints it beside every row.
 | Layer | Who realizes it | Elements |
 | --- | --- | --- |
 | `native` | every base host, with its toolkit's own control | ActivityIndicator, Button, Canvas, ColorPicker, DatePicker, HStack, Image, Text, Picker, ProgressBar, ScrollView, SearchField, Slider, Stepper, Switch, TextEditor, TextField, TimePicker, VStack, WebView, ZStack |
-| `adaptive` | every base host, by its platform's conventions, keeping StateUI's state contract | NavigationStack, Page, NavigationSplitView, TabView, TitleBar |
-| `stateUI` | StateUI, composed from smaller primitives before a host receives the tree | CheckBox, Ellipse, Grid, Line, Path, Polygon, Polyline, PositionIndicator, RadioButton, Rectangle |
+| `adaptive` | every base host, by its platform's conventions, keeping SwiftOmniUI's state contract | NavigationStack, Page, NavigationSplitView, TabView, TitleBar |
+| `stateUI` | SwiftOmniUI, composed from smaller primitives before a host receives the tree | CheckBox, Ellipse, Grid, Line, Path, Polygon, Polyline, PositionIndicator, RadioButton, Rectangle |
 | `structure` | nobody draws it: it carries structure or protocol data | App, Scene, WindowScene, the menus, the slots and collections, Span |
 | `provider` | an optional provider: a package, or the application that registers it | Map, Pin, and an application's own elements |
 
@@ -20,7 +20,7 @@ element and for each member.
 ## An element and its members
 
 A member's layer is its own and may differ from its element's. A `CheckBox`
-is composed by StateUI, yet whether it is ticked is `native`: the primitive
+is composed by SwiftOmniUI, yet whether it is ticked is `native`: the primitive
 it is composed from is drawn by the host. A `Picker` is native, yet its list
 of options is `structure`, data the host lays into its control. A `Map` is a
 provider's, yet whether a drag pans it is `native`. A member that carries a
@@ -36,7 +36,7 @@ toolkit has the control, the layer is `native`. Where platforms answer the
 same need their own way - a navigation bar, tabs, a sidebar, a safe area, an
 on-screen keyboard's return key - it is `adaptive`, and the state it carries
 still means the same everywhere. A derived layout or a richer control is
-composed by StateUI over measurement, placement, scrolling and the
+composed by SwiftOmniUI over measurement, placement, scrolling and the
 primitives, so every host does not re-create it: that is `stateUI`. A member
 no target can honestly provide is not kept at all.
 
@@ -47,8 +47,8 @@ every contract says it the same way:
 
 ```text
   native      Every base host presents it with its native control.
-  adaptive    Every base host presents it by its platform's conventions, keeping StateUI's state contract.
-  stateUI     StateUI composes it from smaller primitives before a host receives the tree.
+  adaptive    Every base host presents it by its platform's conventions, keeping SwiftOmniUI's state contract.
+  stateUI     SwiftOmniUI composes it from smaller primitives before a host receives the tree.
   structure   It carries structure, not a platform control of its own.
   provider    An optional provider supplies it; no base host has to.
 ```

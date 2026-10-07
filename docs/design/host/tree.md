@@ -71,7 +71,7 @@ each of those reports that it is off. Which they are is the tree's to say,
 the same on every host: the radio buttons of its `groupName` anywhere in its
 window, or, where it names no group, the radio buttons beside it under the
 same parent. A native group of the platform's is not used: it holds only its
-own direct children, while StateUI's may stand anywhere in a window's
+own direct children, while SwiftOmniUI's may stand anywhere in a window's
 layouts.
 
 ## Drawn over its place

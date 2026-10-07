@@ -1,5 +1,5 @@
 import Foundation
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A gallery's main window: what it is called, how big it opens, what is
 /// presented over it - and THE ARRANGEMENT, which is the reason this is a type
@@ -73,7 +73,7 @@ struct MainWindow: WindowScene {
         // the same corner of the screen at every launch is worse than letting
         // the platform place it.
         .onAppear {
-            window.title = "StateUI Gallery"
+            window.title = "SwiftOmniUI Gallery"
             window.width = 1100
             window.height = 800
             #if APPKIT
@@ -262,9 +262,9 @@ struct MainWindow: WindowScene {
     /// Native desktop chrome whose values and slot contents are described by
     /// the gallery scene. See Samples/Windows/TitleBarSample.swift.
     private var chrome: TitleBar {
-        TitleBar("StateUI")
+        TitleBar("SwiftOmniUI")
             .subtitle(bar.subtitle)
-            .icon("stateui_mark.png")
+            .icon("swiftomniui_mark.png")
             .background(barColour)
             .barForegroundColor(Palette.onBrand)
             .trailingContent {

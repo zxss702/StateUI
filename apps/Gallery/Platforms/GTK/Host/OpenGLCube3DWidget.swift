@@ -3,12 +3,12 @@
 
 // Epoxy loads each GL function into a global pointer of its own, which GTK has made current before any call here.
 @preconcurrency import CGalleryOpenGL
-import CStateUIGTK
+import CSwiftOmniUIGTK
 import GalleryUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
 /// A cube drawn by OpenGL 3.3 core in a `GtkGLArea`, turning on the widget's frame clock - a widget that knows
-/// nothing of StateUI. The Swift half is Sources/Samples/Interop/Cube3D.swift.
+/// nothing of SwiftOmniUI. The Swift half is Sources/Samples/Interop/Cube3D.swift.
 @MainActor
 final class OpenGLCube3DWidget: GTKControl {
     let widget: UnsafeMutablePointer<GtkWidget>
@@ -113,7 +113,7 @@ final class OpenGLCube3DWidget: GTKControl {
     isolated deinit {
         if tick != 0 { gtk_widget_remove_tick_callback(widget, tick) }
         g_signal_handlers_disconnect_matched(
-            UnsafeMutableRawPointer(widget), STATEUI_SIGNAL_MATCH_DATA, 0, 0, nil, nil,
+            UnsafeMutableRawPointer(widget), SWIFTOMNIUI_SIGNAL_MATCH_DATA, 0, 0, nil, nil,
             Unmanaged.passUnretained(self).toOpaque())
         g_object_unref(widget)
     }
@@ -268,7 +268,7 @@ extension OpenGLCube3DWidget {
     /// Adds the cube for `Cube3DContract`. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(Cube3DContract.self, create: { _ in OpenGLCube3DWidget() }) { cube in
+        SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in OpenGLCube3DWidget() }) { cube in
             cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
             cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
             cube.property(Cube3DContract.isSpinning) { control, spinning in control.isSpinning = spinning ?? true }

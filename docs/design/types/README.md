@@ -1,6 +1,6 @@
 # Values an application passes
 
-`lib/StateUI/Sources/Types` holds the values an application hands to StateUI:
+`lib/SwiftOmniUI/Sources/Types` holds the values an application hands to SwiftOmniUI:
 colours, insets, rectangles, brushes, animation, transforms, placements, dates
 and times, gestures, the closed vocabularies, and the objects that carry what
 the host knows. Each value says how it crosses to a host and how it comes
@@ -20,7 +20,7 @@ control takes.
 ## The notes
 
 - [Closed vocabularies](vocabularies.md) - every enum and flag set crosses as
-  a number StateUI owns.
+  a number SwiftOmniUI owns.
 - [How a value crosses](values.md) - which kind of `PropValue` each value
   becomes, and how it is read back.
 - [Colour and color scheme](colour-and-color-scheme.md) - four channels, and a half for

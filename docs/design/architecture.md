@@ -1,6 +1,6 @@
 # Architecture
 
-StateUI is a Swift core that describes native interfaces, and hosts that show
+SwiftOmniUI is a Swift core that describes native interfaces, and hosts that show
 the description with each platform's own toolkit. This page draws the whole:
 the packages, what crosses between them, and where each part of the work runs.
 [The runtime](host/runtime.md) draws a host's inside.
@@ -17,39 +17,39 @@ the packages, what crosses between them, and where each part of the work runs.
         |
         |  depends on
         v
-  StateUI  (lib/StateUI, a dynamic library; no Foundation; every platform)
+  SwiftOmniUI  (lib/SwiftOmniUI, a dynamic library; no Foundation; every platform)
     Sources/Views, Types, Contracts       what an application writes with
     Sources/Core                          state, keys, diffing, cycles, the typed boundary
         |
         |  @_spi(Host)
         v
-  StateUIHost  (lib/StateUI.Host, a dynamic library)
+  SwiftOmniUIHost  (lib/SwiftOmniUI.Host, a dynamic library)
     Sources                               the host layer every host stands on
         |
         |  typed HostRender / HostPatch
         v
-  StateUI.AppKit (lib/StateUI.AppKit)          StateUI.Android (lib/StateUI.Android)
+  SwiftOmniUI.AppKit (lib/SwiftOmniUI.AppKit)          SwiftOmniUI.Android (lib/SwiftOmniUI.Android)
     Swift, in the application's process          Swift, in the application's process,
     over AppKit                                  Java beneath it through JNI
         |                                             |
         v                                             v
     AppKit views                                  Android views
 
-  StateUI.WinUI (lib/StateUI.WinUI)            StateUI.GTK (lib/StateUI.GTK)
+  SwiftOmniUI.WinUI (lib/SwiftOmniUI.WinUI)            SwiftOmniUI.GTK (lib/SwiftOmniUI.GTK)
     Swift, in the application's process,         Swift, in the application's process,
     C++/WinRT beneath it behind a C ABI          over GTK 4's and libadwaita's C API
         |                                             |
         v                                             v
     WinUI 3 elements                              GTK widgets
 
-  lib/StateUI.VSCode                      the editor extension: new application,
+  lib/SwiftOmniUI.VSCode                      the editor extension: new application,
                                           build, run and debug for every head
 ```
 
-Every host is Swift and links the one dynamic StateUI library, so a process
-holds one copy of StateUI's types. Code in the platform's own language - Java
+Every host is Swift and links the one dynamic SwiftOmniUI library, so a process
+holds one copy of SwiftOmniUI's types. Code in the platform's own language - Java
 through JNI, C++/WinRT behind a C ABI - relays calls beneath the host and holds
-no StateUI logic.
+no SwiftOmniUI logic.
 
 ## One change, end to end
 
@@ -97,7 +97,7 @@ clock, and work reaches the UI thread through the host's doorbell.
 
 ## Where to read next
 
-- [Glossary](glossary.md): StateUI's words and the common term for each.
+- [Glossary](glossary.md): SwiftOmniUI's words and the common term for each.
 - [The runtime](host/runtime.md): a host's elements, one frame, one turn and a
   user's change, drawn.
 - [Animation in the runtime](host/animation.md) and [patches in the

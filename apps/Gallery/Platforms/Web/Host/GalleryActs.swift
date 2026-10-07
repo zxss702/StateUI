@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIWeb
+import SwiftOmniUIWeb
 
 /// The gallery's own acts, as this host answers them: through the page's own scripts, Page/gallery-acts.js, which
 /// reach the browser's clipboard and battery.
@@ -15,14 +15,14 @@ enum GalleryActs {
     /// Registers every act this host performs. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
-            _ = try await StateUIScripts.call("setClipboard", text)
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
+            _ = try await SwiftOmniUIScripts.call("setClipboard", text)
         }
-        StateUIActs.add(GalleryContract.readClipboard) {
-            try await StateUIScripts.call("readClipboard")
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
+            try await SwiftOmniUIScripts.call("readClipboard")
         }
-        StateUIActs.add(GalleryContract.batteryLevel) {
-            battery(try await StateUIScripts.call("batteryLevel"))
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
+            battery(try await SwiftOmniUIScripts.call("batteryLevel"))
         }
     }
 

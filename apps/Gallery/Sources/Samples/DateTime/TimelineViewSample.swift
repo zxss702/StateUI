@@ -1,6 +1,6 @@
 import Foundation
-import StateUI
-import StateUIFoundation
+import SwiftOmniUI
+import SwiftOmniUIFoundation
 
 /// `TimelineView`: a view rebuilt on a schedule, each build handed its moment.
 struct TimelineViewSample: SampleContent, ExampleContent {

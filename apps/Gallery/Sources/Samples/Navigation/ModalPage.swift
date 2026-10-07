@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A page presented OVER everything - the bars, the menu and the stack alike.
 ///

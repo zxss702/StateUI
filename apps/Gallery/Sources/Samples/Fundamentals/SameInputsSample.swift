@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A composed view is built again when what it was built with changed, or
 /// when a state it read changed - and not otherwise.

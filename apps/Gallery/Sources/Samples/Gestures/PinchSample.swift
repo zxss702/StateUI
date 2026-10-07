@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Two fingers scaling a view, and every report the pinch sends as it arrives.
 struct PinchSample: SampleContent, ExampleContent {

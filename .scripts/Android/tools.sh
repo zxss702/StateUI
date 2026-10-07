@@ -34,7 +34,7 @@ gradle_binary () {
     return
   fi
 
-  distribution="$HOME/.gradle/wrapper/dists/gradle-$GRADLE_VERSION-bin/stateui"
+  distribution="$HOME/.gradle/wrapper/dists/gradle-$GRADLE_VERSION-bin/swiftomniui"
   mkdir -p "$distribution"
   echo "downloading Gradle $GRADLE_VERSION..." >&2
   curl -fsSL "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -o "$distribution/gradle.zip"
@@ -53,7 +53,7 @@ build_head () {
 
   # A command substitution runs this function without `set -e`, so every
   # step that can fail says so: a failed build must never package the last one.
-  STATEUI_HOST=android SWIFT_CONFIG="$configuration" ABIS="$abi" \
+  SWIFTOMNIUI_HOST=android SWIFT_CONFIG="$configuration" ABIS="$abi" \
     "$script_dir/build-swift.sh" "$app" "$product" "$build" >&2 || return 1
 
   # Android draws no SVG: the application's pictures are drawn for it, into the APK's assets.
@@ -83,11 +83,11 @@ build_head () {
     --project-dir "$head" \
     --project-cache-dir "$build/gradle-project" \
     --console=plain --quiet \
-    -Pstateui.build="$build/gradle" \
-    -Pstateui.java="$repository_dir/lib/StateUI.Android/Java" \
-    -Pstateui.libraries="$build/jniLibs" \
-    -Pstateui.assets="$build/assets" \
-    -Pstateui.res="$build/res" \
+    -Pswiftomniui.build="$build/gradle" \
+    -Pswiftomniui.java="$repository_dir/lib/SwiftOmniUI.Android/Java" \
+    -Pswiftomniui.libraries="$build/jniLibs" \
+    -Pswiftomniui.assets="$build/assets" \
+    -Pswiftomniui.res="$build/res" \
     "$task" >&2 || return 1
 
   apk="$(find "$build/gradle/outputs/apk/$configuration" -name '*.apk' 2>/dev/null | head -n 1)"

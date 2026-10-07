@@ -3,16 +3,16 @@
 ## Repository layout
 
 ```text
-Package.swift                      StateUI core package and core tests
-lib/StateUI/Sources/               platform-neutral StateUI
-lib/StateUI/Tests/                 core tests and shared test support
-lib/StateUI.Host/                  the host layer every host stands on, and its tests
-lib/StateUI.Conformance/           the conformance suite every host's tests run
-lib/StateUI.AppKit/                independent AppKit host package and tests
-lib/StateUI.Android/               Android Views host package, its Java layer and tests
-lib/StateUI.WinUI/                 WinUI host package, its C++/WinRT relay and tests
-lib/StateUI.GTK/                   GTK host package, Swift over GTK's C API, and tests
-lib/StateUI.VSCode/                the editor extension
+Package.swift                      SwiftOmniUI core package and core tests
+lib/SwiftOmniUI/Sources/               platform-neutral SwiftOmniUI
+lib/SwiftOmniUI/Tests/                 core tests and shared test support
+lib/SwiftOmniUI.Host/                  the host layer every host stands on, and its tests
+lib/SwiftOmniUI.Conformance/           the conformance suite every host's tests run
+lib/SwiftOmniUI.AppKit/                independent AppKit host package and tests
+lib/SwiftOmniUI.Android/               Android Views host package, its Java layer and tests
+lib/SwiftOmniUI.WinUI/                 WinUI host package, its C++/WinRT relay and tests
+lib/SwiftOmniUI.GTK/                   GTK host package, Swift over GTK's C API, and tests
+lib/SwiftOmniUI.VSCode/                the editor extension
 .scripts/AppKit/                   AppKit Gallery bundling
 .scripts/Android/                  Android Views builds, runs, devices and tests
 .scripts/WinUI/                    WinUI builds, runs and tests, and the Windows App SDK
@@ -37,14 +37,14 @@ platform entry points.
 Swift written for one host alone stands under the condition named for it:
 `#if APPKIT`, `#if ANDROID`, `#if WINUI` and `#if GTK`, which every build of an
 application for that host defines through its manifest, from
-`STATEUI_APPKIT=1`, `STATEUI_ANDROID=1`, `STATEUI_WINUI=1` and
-`STATEUI_GTK=1`. `NativeProjectTests` refuses
+`SWIFTOMNIUI_APPKIT=1`, `SWIFTOMNIUI_ANDROID=1`, `SWIFTOMNIUI_WINUI=1` and
+`SWIFTOMNIUI_GTK=1`. `NativeProjectTests` refuses
 any other mention of a host in the library and in the applications'
 `Sources/`.
 
-`STATEUI_APPKIT=1` is what makes a build an AppKit one. An application's
+`SWIFTOMNIUI_APPKIT=1` is what makes a build an AppKit one. An application's
 manifest reads it and then declares the `Platforms/AppKit` target, the product
-it makes and the `StateUIAppKit` dependency, and defines `APPKIT` for every
+it makes and the `SwiftOmniUIAppKit` dependency, and defines `APPKIT` for every
 module of the application. A manifest cannot read a compiler flag - a flag
 reaches the targets of a build, never the manifest describing them - so no
 `-Xswiftc -DAPPKIT` is given beside the variable. Without it, `swift test`
@@ -52,7 +52,7 @@ resolves no host package and compiles no line of one host's half, and a
 `Platforms/AppKit/` folder needs no condition inside it.
 
 `.scripts/AppKit/build-gallery-appkit.sh` and the AppKit tasks set the variable
-for a build. The editor gets it from the StateUI extension (`lib/StateUI.VSCode`):
+for a build. The editor gets it from the SwiftOmniUI extension (`lib/SwiftOmniUI.VSCode`):
 choosing AppKit in its status bar sets the variable for the Swift language
 server and restarts it, which then resolves `Platforms/AppKit` and completes the
 code inside `#if APPKIT`, with no window reload. A
@@ -107,15 +107,15 @@ Treat one control, property, event, or host action as one vertical change:
    where executing the contract shows the effect.
 6. Add or update the smallest Gallery demonstration and handbook section.
 7. Let the host say what it realizes, only after its tests pass. A member a
-   registration takes or raises records itself: with `STATEUI_UPDATE_EXPORTS=1`,
-   `swift test --package-path lib/StateUI.AppKit` and
+   registration takes or raises records itself: with `SWIFTOMNIUI_UPDATE_EXPORTS=1`,
+   `swift test --package-path lib/SwiftOmniUI.AppKit` and
    `.scripts/Android/test-android.sh <serial>` write `exports/appkit.txt` and
    `android.txt`, and the contracts name each member's owner when the
    documents are rendered. What a registry cannot know stays written by hand,
    in `AppKitRealization` and `AndroidRealization` - every judgement: a partial
    record saying what is missing, what a host realizes none of, and what it
    presents with no view of its own.
-   Then `STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests`
+   Then `SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests`
    writes `docs/controls/` and the tables of `platform-contract.md`.
 
 Removing a capability follows the same path: remove stale vocabulary, host
@@ -136,11 +136,11 @@ Build the runnable Gallery bundle:
 Build the smaller example:
 
 ```bash
-STATEUI_APPKIT=1 swift build --package-path apps/HelloWorld --product HelloWorldAppKit
+SWIFTOMNIUI_APPKIT=1 swift build --package-path apps/HelloWorld --product HelloWorldAppKit
 ```
 
-In VS Code, the StateUI extension (`lib/StateUI.VSCode`) runs either
-application: "StateUI: Debug" and "StateUI: Release" build and start the one
+In VS Code, the SwiftOmniUI extension (`lib/SwiftOmniUI.VSCode`) runs either
+application: "SwiftOmniUI: Debug" and "SwiftOmniUI: Release" build and start the one
 chosen in its status bar, on the host chosen there; installing it is under
 [Working in VS Code](getting-started.md#working-in-vs-code). The Gallery's
 build assembles its resources, icon, runtime libraries, and ad-hoc signature.
@@ -180,14 +180,14 @@ Each suite lives beside the package whose behavior it verifies:
 
 ```bash
 swift test
-swift test --package-path lib/StateUI.Host
-swift test --package-path lib/StateUI.Conformance
-swift test --package-path lib/StateUI.AppKit
+swift test --package-path lib/SwiftOmniUI.Host
+swift test --package-path lib/SwiftOmniUI.Conformance
+swift test --package-path lib/SwiftOmniUI.AppKit
 swift test --package-path apps/Gallery
 ```
 
 `.scripts/test-native.sh` runs these Swift suites, then the Gallery again as an
-AppKit build (`STATEUI_APPKIT=1`), on a build directory of its own:
+AppKit build (`SWIFTOMNIUI_APPKIT=1`), on a build directory of its own:
 
 ```bash
 .scripts/test-native.sh
@@ -198,7 +198,7 @@ layer's suite proves the rules every host shares, pure, with no toolkit. The
 conformance package's own tests prove its runner and that every member has
 its case; each host's suite runs the cases themselves. The AppKit suite drives
 native AppKit objects. The Gallery's treats Gallery as application behavior
-and compiles the documentation examples. In VS Code, **StateUI: Run Tests**
+and compiles the documentation examples. In VS Code, **SwiftOmniUI: Run Tests**
 runs them as the chosen host.
 
 The Android Views host's suite runs on a device, in a test APK:
@@ -218,7 +218,7 @@ The GTK host's suite runs on Linux, in a desktop session whose display shows
 its windows:
 
 ```bash
-swift test --package-path lib/StateUI.GTK
+swift test --package-path lib/SwiftOmniUI.GTK
 ```
 
 A passing unit suite does not prove native drawing or interaction. Exercise a
@@ -253,14 +253,14 @@ copyable application examples as plain `swift` so API drift fails visibly.
 ## Distribution boundary
 
 The repository-root `Package.swift` is the package boundary for the
-platform-neutral `StateUI` product. Native hosts remain sibling packages so a
+platform-neutral `SwiftOmniUI` product. Native hosts remain sibling packages so a
 consumer selects a toolkit without pulling it into the core. The current AppKit
 package uses the root checkout as a local dependency; the complete remote
 library-plus-host installation path is not published yet. Keep Getting Started
 honest about that state until both products have a supported versioned route.
 
 A release has one version, stated in the editor extension's
-`lib/StateUI.VSCode/package.json`. Every other place that names it - the
+`lib/SwiftOmniUI.VSCode/package.json`. Every other place that names it - the
 published-package line in each `Package.swift`, each Android head's version,
 the Gallery's AppKit bundle, the bug report's example - names the same one, and
 `ReleaseTests` holds them to it.

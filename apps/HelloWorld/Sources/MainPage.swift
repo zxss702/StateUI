@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// The opening page: a text entry and counter shared by every host.
 ///
@@ -14,11 +14,11 @@ struct MainPage: View {
 
     var body: some View {
         VStack {
-            Image("stateui_tile.png")
+            Image("swiftomniui_tile.png")
                 .frame(height: 120)
                 .horizontalAlignment(.center)
 
-            Text(name.isEmpty ? "Hello, StateUI!" : "Hello, \(name)!")
+            Text(name.isEmpty ? "Hello, SwiftOmniUI!" : "Hello, \(name)!")
                 .font(.system(size: 28))
                 .bold()
                 .horizontalAlignment(.center)

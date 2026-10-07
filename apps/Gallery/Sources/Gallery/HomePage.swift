@@ -1,6 +1,6 @@
 // Where the gallery opens.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// What this is, and every group there is.
 ///
@@ -138,12 +138,12 @@ struct HomePage: View {
                 // show through the gradient.
                 ZStack {
                     VStack {
-                        Image("stateui_mark.png")
+                        Image("swiftomniui_mark.png")
                             .frame(width: 84)
                             .frame(height: 84)
                             .horizontalAlignment(.start)
 
-                        Text("StateUI Gallery")
+                        Text("SwiftOmniUI Gallery")
                             .font(.system(size: 34))
                             .bold()
                             .tracking(-0.5)

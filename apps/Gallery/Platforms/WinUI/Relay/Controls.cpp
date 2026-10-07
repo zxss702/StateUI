@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// The gallery's traffic light and rating bar as WinUI elements that know nothing of StateUI: a housing of three
+// The gallery's traffic light and rating bar as WinUI elements that know nothing of SwiftOmniUI: a housing of three
 // lamps drawn with XAML's shapes, and WinUI's own RatingControl.
 
 #include "Relay.h"

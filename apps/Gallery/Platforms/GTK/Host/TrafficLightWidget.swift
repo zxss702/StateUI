@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import CStateUIGTK
+import CSwiftOmniUIGTK
 import GalleryUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
-/// Three lamps in a housing, one lit at a time - a `GtkDrawingArea` that knows nothing of StateUI.
+/// Three lamps in a housing, one lit at a time - a `GtkDrawingArea` that knows nothing of SwiftOmniUI.
 ///
 /// `register()`, at the end of this file, adds it for `TrafficLightContract`, and that registration is the whole
 /// bridge. The Swift half is Sources/Samples/Interop/TrafficLight.swift.
@@ -112,7 +112,7 @@ extension TrafficLightWidget {
     /// reports, and `property` puts the described signal on it. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
             let light = TrafficLightWidget()
             light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
             return light

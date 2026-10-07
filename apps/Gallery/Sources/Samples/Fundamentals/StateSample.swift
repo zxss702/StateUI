@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// `@State` owns a value, `@Binding` borrows one - the whole of how this library
 /// remembers anything.

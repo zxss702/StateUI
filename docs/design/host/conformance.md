@@ -24,7 +24,7 @@ beside the native API they prove.
 
 ## A case
 
-A case is written once, in `lib/StateUI.Conformance`, as a page,
+A case is written once, in `lib/SwiftOmniUI.Conformance`, as a page,
 what the user and the program do to it, and what must follow. It says which
 members of the contract it covers; it runs on a host only where the host
 realizes all of them, by the host's register (`HostRegister`), so a case can
@@ -54,10 +54,10 @@ floor is `Aspects.holds`: the value the tree gives reaches the native
 control, and so does the value the tree changes it to. An event is heard
 once for the user's act and not at all for the program's; an act answers,
 and refuses or cancels as the contract says. Where a property has an effect
-a case can see without reading the control - a frame, a colour StateUI draws,
+a case can see without reading the control - a frame, a colour SwiftOmniUI draws,
 what a press reaches - a case of the effect stands beside it. A property no
-toolkit holds - a radio button's set, which StateUI keeps - has its effect
-alone; where one host's toolkit holds a property another leaves to StateUI's
+toolkit holds - a radio button's set, which SwiftOmniUI keeps - has its effect
+alone; where one host's toolkit holds a property another leaves to SwiftOmniUI's
 arithmetic - a stack's spacing - the second's driver says why it cannot read
 it, and the effect proves it there.
 
@@ -88,7 +88,7 @@ by another case - the driver lists apart (`platformHasNone`, or a read's
 `because:`): a case needing it does not apply there. Besides a
 member's value a driver reads a view's menu, whether it holds the keyboard,
 what a press at a point reaches, the question the window shows, what the
-screen reader was told, the colour StateUI draws at a point - never a native
+screen reader was told, the colour SwiftOmniUI draws at a point - never a native
 control's look - the host's log and what it keeps; each read a host does not
 have yet is its driver's "cannot". A case's first start of an application is
 its first launch: the driver forgets what the host's stores keep, and a
@@ -112,7 +112,7 @@ speed.
 
 ## A colour drawn
 
-A colour StateUI draws is read at a point of what it draws and held as a
+A colour SwiftOmniUI draws is read at a point of what it draws and held as a
 screen shows it: where the smoothing of an edge touches the pixel read, a
 colour drawn whole comes back a few steps off in a channel - at one pixel a
 DIP, the middle of a line four DIPs wide is a pixel or two. `Session.shows`
@@ -137,7 +137,7 @@ once, each writing its own file of verdicts; the dictionary reads them all.
 ## What a run proves
 
 A run gives a verdict on every member its cases cover, one line each under
-`exports/marks/<host>/<Family>.txt`, written with `STATEUI_UPDATE_EXPORTS=1`
+`exports/marks/<host>/<Family>.txt`, written with `SWIFTOMNIUI_UPDATE_EXPORTS=1`
 and held to the file otherwise: ✅ where a passing case proved it, ☑️ with
 what the host's register says is missing, – with why where the host's family
 never has it or a case proved it absent, and - empty in the dictionary - "not realized" or what the

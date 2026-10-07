@@ -34,7 +34,7 @@ A bitmap WinUI renders of an element that is no panel - a shape, a picture -
 holds what the element draws from the first thing drawn, not its room from
 its corner, and a picture's own control stands where its picture is fitted.
 The driver renders the layout placing the element, a panel it renders whole,
-and reads the element's point there, from where StateUI placed the element.
+and reads the element's point there, from where SwiftOmniUI placed the element.
 A large panel's bitmap comes smaller than the screen shows it, so a point is
 read by the bitmap's own scale.
 
@@ -54,13 +54,13 @@ windows in all, run in one process by default.
 ## What the driver reads
 
 A member's value is read from the control WinUI holds, never from what the
-host last wrote: through the relay's one reader, `stateui_winui_read`, by the
+host last wrote: through the relay's one reader, `swiftomniui_winui_read`, by the
 native property's name - a font, a colour, a padding, a border, a field's
 placeholder and bound, a path's paint, a layout's box, a range, a date, a scroll
 bar, the chrome's title, way back and actions, a row's tabs - and the relay's
 older readers of words, toggles, values, choices and dates. What WinUI keeps
 nowhere - a shape's aspect and transform, folded into its figure; an editor's
-growing, which is StateUI's measuring - the driver says it cannot read, with
+growing, which is SwiftOmniUI's measuring - the driver says it cannot read, with
 why, and a case of the effect proves the member.
 
 A running ring's automation peer says it is busy before the name its element

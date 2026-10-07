@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// `@AppStorage` - a value kept in the platform's settings store under a key,
 /// lent to the view as an ordinary property and its bindings.

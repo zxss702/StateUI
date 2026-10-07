@@ -56,7 +56,7 @@ Swift object, and a raw pointer handed to it would outlive the view. Each view
 is given a number instead, and Java calls back with that number: the host
 finds the live view by it, and a callback for a view that has left finds
 nothing and does nothing. The number is given before the Java object is made,
-so a `StateUIViewGroup` knows it from its constructor.
+so a `SwiftOmniUIViewGroup` knows it from its constructor.
 
 ## Strings
 
@@ -72,7 +72,7 @@ and says which call raised it.
 
 ## The natives
 
-The Java layer declares the host's native methods on `StateUIHost`: the
+The Java layer declares the host's native methods on `SwiftOmniUIHost`: the
 activity's start and its lifecycle, the display's frame, what the user does
 to a control - a click, a turn, a slider's move and drag, words typed, a
 Return, a menu asked for and its item chosen - a layout's measure and

@@ -4,7 +4,7 @@
 import AppKit
 import GalleryUI
 import IOKit.ps
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
 /// The gallery's own acts, as this host answers them.
 ///
@@ -18,16 +18,16 @@ enum GalleryActs {
     /// application runs.
     @MainActor
     static func register() {
-        StateUIActs.add(GalleryContract.setClipboard) { text in
+        SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(text, forType: .string)
         }
 
-        StateUIActs.add(GalleryContract.readClipboard) {
+        SwiftOmniUIActs.add(GalleryContract.readClipboard) {
             NSPasteboard.general.string(forType: .string) ?? ""
         }
 
-        StateUIActs.add(GalleryContract.batteryLevel) {
+        SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
             battery()
         }
     }

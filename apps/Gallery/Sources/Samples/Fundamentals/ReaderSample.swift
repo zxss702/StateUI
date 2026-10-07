@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// WHO IS THE READER: one state, written by a slider and a button, and seven
 /// places it is used - each wearing its own build count, so the rule is on the

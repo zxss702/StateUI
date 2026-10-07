@@ -1,9 +1,9 @@
 // The gallery's user interface, written in Swift.
 //
 // Everything in this directory is compiled into a SEPARATE Swift module from the
-// StateUI library - named after the project, so here it is
+// SwiftOmniUI library - named after the project, so here it is
 // "GalleryUI". The dependency runs one way: this module imports
-// StateUI, never the reverse. That is what allows the library to be published
+// SwiftOmniUI, never the reverse. That is what allows the library to be published
 // on its own, and what lets a second app exist alongside this one without either
 // knowing about the other.
 //
@@ -26,7 +26,7 @@
 // Nothing lists these files: the build discovers them by globbing this
 // directory, subdirectories and all.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery application.
 ///
@@ -73,9 +73,9 @@ struct GalleryApp: App {
 /// compiled. So the app says which one it is, and a host that loads the app as
 /// a separate native library finds it by this name.
 ///
-/// The name is fixed by convention (`stateui_app_register`) so the host can
+/// The name is fixed by convention (`swiftomniui_app_register`) so the host can
 /// find it whatever the module is called.
-@_cdecl("stateui_app_register")
-public func stateui_app_register() {
+@_cdecl("swiftomniui_app_register")
+public func swiftomniui_app_register() {
     stateUIUseApp(GalleryApp())
 }

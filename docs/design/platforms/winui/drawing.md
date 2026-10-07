@@ -1,6 +1,6 @@
 # Drawing on WinUI
 
-How the WinUI host paints what StateUI draws of its own: a layout's box and
+How the WinUI host paints what SwiftOmniUI draws of its own: a layout's box and
 the brushes it is painted with, and a child a placing layout stands and draws
 ([layout](layout.md)).
 
@@ -18,8 +18,8 @@ made again, the two being different elements.
 A brush crosses as its parts ([brushes](../../types/brushes.md)) and becomes
 WinUI's own: a `SolidColorBrush`, or a `LinearGradientBrush` or
 `RadialGradientBrush` whose points are fractions of the painted box, as
-StateUI's are. WinUI reads a radial gradient's radius per axis, each a
-fraction of its own side, which would stretch StateUI's circle over anything
+SwiftOmniUI's are. WinUI reads a radial gradient's radius per axis, each a
+fraction of its own side, which would stretch SwiftOmniUI's circle over anything
 not square; so the host hands it each side's share of the one reach
 (`HostBrush.reach`) for the box's size, and a view painted with such a brush
 paints it again at each new size. A shape's brushes are mapped over its
@@ -84,9 +84,9 @@ layout gives it. WinUI cuts an element to the place it is put in where it
 measured larger, so a figure a lean or a cap takes past its room would be
 cut there: the figure measures its `Path` with no bound, which tells how far
 it reaches, and puts it in a place from the room's corner as far as that -
-the frame StateUI reports stays the room. Dashes, gaps and their offset are outline widths in WinUI
-as in StateUI; a mitred corner's limit WinUI measures against half the
-outline's width and StateUI against the whole, so it is doubled.
+the frame SwiftOmniUI reports stays the room. Dashes, gaps and their offset are outline widths in WinUI
+as in SwiftOmniUI; a mitred corner's limit WinUI measures against half the
+outline's width and SwiftOmniUI against the whole, so it is doubled.
 
 
 ## A canvas
@@ -94,7 +94,7 @@ outline's width and StateUI against the whole, so it is doubled.
 A Canvas replays its drawing with Direct2D, the drawing API WinUI itself
 draws with. The canvas is a panel of the relay's with no size of its own,
 painted with a `SurfaceImageSource` that Direct2D draws into: the drawing
-crosses in one call as StateUI's three lists
+crosses in one call as SwiftOmniUI's three lists
 ([three lists for a relay](../../types/drawing.md#three-lists-for-a-relay)),
 the relay keeps it, and on the next display frame replays it on a surface of
 the canvas's size in pixels at the window's rasterization scale, cleared

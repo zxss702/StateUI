@@ -23,9 +23,9 @@ VoiceOver meets the control, not on the view around it.
 ## A stated size
 
 A size the tree states for a view - its width, height and bounds - is what
-StateUI's layouts measure and place it by; the view also carries it as a
+SwiftOmniUI's layouts measure and place it by; the view also carries it as a
 constraint, for a measurement of AppKit's own to read. That constraint stands
-just short of required: a layout of StateUI's places the view by its frame,
+just short of required: a layout of SwiftOmniUI's places the view by its frame,
 whose constraints stand over it until the first layout gives that frame,
 and two required answers to one width are a conflict AppKit reports.
 
@@ -49,7 +49,7 @@ updates its layer. An oval scroller cuts and draws no outline.
 ## Scroll bars
 
 A ScrollView and an List lay their scroll bars over what they show,
-whatever the Mac is set to show. StateUI gives what they hold their whole
+whatever the Mac is set to show. SwiftOmniUI gives what they hold their whole
 width - a list's item as wide as the list - and a bar standing beside it
 takes 17 points of that: a Mac with a mouse and no trackpad shows its bars
 always, beside the content, and a hosted CI runner is such a Mac. The style
@@ -60,11 +60,11 @@ AppleShowScrollBars Always`, and delete that key afterwards.
 
 ## A radio button's set
 
-StateUI owns a radio button's set - its name, across the whole window - and
+SwiftOmniUI owns a radio button's set - its name, across the whole window - and
 turns the others of a set off as one is checked. AppKit keeps sets of its own:
 the radio buttons of one superview sharing one action turn each other off as
-one is clicked, whatever sets StateUI put them in. So the host's radio button
-takes a turn only from StateUI's own writes and from a click on itself, which
+one is clicked, whatever sets SwiftOmniUI put them in. So the host's radio button
+takes a turn only from SwiftOmniUI's own writes and from a click on itself, which
 its cell makes; AppKit's turning off of the others is refused.
 ## A web view
 
@@ -77,5 +77,5 @@ as it ends, with how; the way back and forward said as a navigation commits
 and ends, only a flag that changed; its web process dying. A step back,
 forward or a load again the program asks for carries that as its cause; a
 page still coming is asked for again. macOS's WebKit also declares a legacy
-`WebHistory` class, so the host names the host layer's `StateUIHost.WebHistory`
+`WebHistory` class, so the host names the host layer's `SwiftOmniUIHost.WebHistory`
 in full.

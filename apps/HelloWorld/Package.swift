@@ -5,12 +5,12 @@ import PackageDescription
 // build is for. SourceKit understands only code a SwiftPM package holds, so the
 // editor completes the application through this manifest as well.
 
-// The host a build is for: STATEUI_HOST - appkit, uikit, android, winui, gtk or web -
+// The host a build is for: SWIFTOMNIUI_HOST - appkit, uikit, android, winui, gtk or web -
 // which its script or the editor sets, or none for plain Swift. The
 // application's Swift for that host alone stands under its condition -
-// `#if APPKIT` - and ../../lib/StateUI.Head brings the host itself to the head.
+// `#if APPKIT` - and ../../lib/SwiftOmniUI.Head brings the host itself to the head.
 let host = ["AppKit", "UIKit", "Android", "WinUI", "GTK", "Web"]
-    .first { $0.lowercased() == Context.environment["STATEUI_HOST"] }
+    .first { $0.lowercased() == Context.environment["SWIFTOMNIUI_HOST"] }
 
 // NonisolatedNonsendingByDefault is the one setting an application must not
 // leave out; see the note in ../../Package.swift.
@@ -18,20 +18,20 @@ let settings: [SwiftSetting] = [.enableUpcomingFeature("NonisolatedNonsendingByD
     + (host.map { [.define($0.uppercased())] } ?? [])
 
 var products: [Product] = [
-    // Dynamic, so a head and its host share one StateUI runtime; on the Web one module holds them all.
+    // Dynamic, so a head and its host share one SwiftOmniUI runtime; on the Web one module holds them all.
     .library(name: "HelloWorldUI", type: host == "Web" ? nil : .dynamic, targets: ["HelloWorldUI"]),
 ]
 
 var targets: [Target] = [
     .target(name: "HelloWorldUI",
-        dependencies: [.product(name: "StateUI", package: "StateUIRoot")], path: "Sources", swiftSettings: settings),
-    // The application's tests - `swift test`, or StateUI: Run Tests.
+        dependencies: [.product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot")], path: "Sources", swiftSettings: settings),
+    // The application's tests - `swift test`, or SwiftOmniUI: Run Tests.
     .testTarget(name: "HelloWorldTests", dependencies: ["HelloWorldUI"], path: "Tests", swiftSettings: settings),
 ]
 
 // The head in Platforms/<Host>: an executable its host runs, and on Android a
-// library the platform loads. StateUIHead brings the host.
-let head: [Target.Dependency] = ["HelloWorldUI", .product(name: "StateUIHead", package: "StateUIHead")]
+// library the platform loads. SwiftOmniUIHead brings the host.
+let head: [Target.Dependency] = ["HelloWorldUI", .product(name: "SwiftOmniUIHead", package: "SwiftOmniUIHead")]
 switch host {
 case "Android"?:
     products.append(.library(name: "HelloWorldAndroid", type: .dynamic, targets: ["HelloWorldAndroid"]))
@@ -46,17 +46,17 @@ case nil:
 
 let package = Package(
     name: "HelloWorldUI",
-    // StateUI's floor, which an application cannot go below.
+    // SwiftOmniUI's floor, which an application cannot go below.
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
         .macOS(.v15),
     ],
     products: products,
-    // The StateUI checkout: the library at its root, and a head's host.
+    // The SwiftOmniUI checkout: the library at its root, and a head's host.
     // Named, so the checkout's folder may carry any name - a path dependency's
     // identity would otherwise be the folder's.
-    dependencies: [.package(name: "StateUIRoot", path: "../..")]
-        + (host == nil ? [] : [.package(name: "StateUIHead", path: "../../lib/StateUI.Head")]),
+    dependencies: [.package(name: "SwiftOmniUIRoot", path: "../..")]
+        + (host == nil ? [] : [.package(name: "SwiftOmniUIHead", path: "../../lib/SwiftOmniUI.Head")]),
     targets: targets
 )

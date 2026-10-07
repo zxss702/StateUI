@@ -26,10 +26,10 @@ Android, drawn over the place its layout gave it, so moving one never moves
 the layout's arithmetic. A translation is in points and becomes pixels at the
 display's density; rotations are in degrees, clockwise in the screen's plane,
 and a positive turn about either axis in depth sends the top, or the right
-edge, away - Android's own directions are StateUI's. `scale` multiplies both
+edge, away - Android's own directions are SwiftOmniUI's. `scale` multiplies both
 axes over `scaleX` and `scaleY`.
 
-StateUI's pivot is a fraction of the view's size; Android's is in pixels. At
+SwiftOmniUI's pivot is a fraction of the view's size; Android's is in pixels. At
 the centre Android keeps the pivot there itself as the size changes; any other
 pivot is put back in pixels each time the view is placed.
 
@@ -37,7 +37,7 @@ pivot is put back in pixels each time the view is placed.
 
 A user who turns the system's animations off - the animator duration scale
 at zero, which `ValueAnimator.areAnimatorsEnabled()` reports - asks for less
-animation, and StateUI hears it so: every animation arrives at its destination
+animation, and SwiftOmniUI hears it so: every animation arrives at its destination
 at once, and a journey's waiter hears it arrive.
 
 ## Joining and leaving

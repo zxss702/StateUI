@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 import UIKit
 
 /// The gallery's own pushes: what this host reports without being asked.
@@ -25,7 +25,7 @@ enum GalleryEventSources {
     /// Declares what the gallery raises and starts watching. Said once,
     /// before the application runs.
     static func start() {
-        StateUIEvents.raises(GalleryContract.batteryChanged)
+        SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
         UIDevice.current.isBatteryMonitoringEnabled = true
         for name in [UIDevice.batteryLevelDidChangeNotification, UIDevice.batteryStateDidChangeNotification] {
@@ -44,6 +44,6 @@ enum GalleryEventSources {
         guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
         lastSaid = (level, charging)
-        StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+        SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
     }
 }

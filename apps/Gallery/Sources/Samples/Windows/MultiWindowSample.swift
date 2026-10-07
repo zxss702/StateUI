@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A gallery is a SCENE: its main window, the windows it opens beside it, and
 /// the state they share - and another gallery is one more scene.

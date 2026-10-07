@@ -7,7 +7,7 @@
 // A new GROUP is a `SampleGroup(…)` below plus an icon in Resources/Images. The
 // menu, the sections and the home page are all built from this list.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The samples, grouped as a user would look for them.
 ///

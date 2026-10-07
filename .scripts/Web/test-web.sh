@@ -2,15 +2,15 @@
 # SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-# Builds the Web host's suite, lib/StateUI.Web/Testing, for WebAssembly
+# Builds the Web host's suite, lib/SwiftOmniUI.Web/Testing, for WebAssembly
 # and runs it: the host's own tests in Node over a page with just enough of a
 # DOM, through the host's own relay - or, with --browser, the tests that need a
 # browser's own page, in one, headless: the conformance suite, whose layout,
 # focus, dialogs and input its cases need, and the host's tests that run a host.
-# The browser is Google Chrome or Chromium, or the one STATEUI_BROWSER names. A
-# conformance run with STATEUI_UPDATE_EXPORTS=1 writes each verdict file under
-# the revision its family stands at (lib/StateUI.Conformance/revisions.txt);
-# STATEUI_STALE_ONLY=1 runs only the families whose verdicts stand at another
+# The browser is Google Chrome or Chromium, or the one SWIFTOMNIUI_BROWSER names. A
+# conformance run with SWIFTOMNIUI_UPDATE_EXPORTS=1 writes each verdict file under
+# the revision its family stands at (lib/SwiftOmniUI.Conformance/revisions.txt);
+# SWIFTOMNIUI_STALE_ONLY=1 runs only the families whose verdicts stand at another
 # revision, or at none.
 #
 # USAGE:
@@ -24,22 +24,22 @@ set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 checkout="$(cd "$here/../.." && pwd)"
-package="$checkout/lib/StateUI.Web/Testing"
+package="$checkout/lib/SwiftOmniUI.Web/Testing"
 scratch="$package/.build/web"
 
 . "$here/swift-sdk.sh"
 
-STATEUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --build-tests
-products="$(STATEUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --show-bin-path)"
-program="$products/StateUIWebTests-test-runner.wasm"
-relay="$checkout/lib/StateUI.Web/JavaScript/stateui-web.js"
-conformance="StateUIWebTests.WebConformanceTests"
+SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --build-tests
+products="$(SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --show-bin-path)"
+program="$products/SwiftOmniUIWebTests-test-runner.wasm"
+relay="$checkout/lib/SwiftOmniUI.Web/JavaScript/swiftomniui-web.js"
+conformance="SwiftOmniUIWebTests.WebConformanceTests"
 # The classes whose tests need a browser's own page: the host's own, and the conformance suite.
-hosts_in_browser="StateUIWebTests.WebDrawnChildrenTests,StateUIWebTests.WebShapeRoomTests,StateUIWebTests.WebKeyboardTests,StateUIWebTests.WebFrameReportTests,StateUIWebTests.WebWindowClosingTests,StateUIWebTests.WebHistoryTests"
+hosts_in_browser="SwiftOmniUIWebTests.WebDrawnChildrenTests,SwiftOmniUIWebTests.WebShapeRoomTests,SwiftOmniUIWebTests.WebKeyboardTests,SwiftOmniUIWebTests.WebFrameReportTests,SwiftOmniUIWebTests.WebWindowClosingTests,SwiftOmniUIWebTests.WebHistoryTests"
 in_browser="$conformance,$hosts_in_browser"
 
 browser () {
-  if [[ -n "${STATEUI_BROWSER:-}" ]]; then echo "$STATEUI_BROWSER"; return; fi
+  if [[ -n "${SWIFTOMNIUI_BROWSER:-}" ]]; then echo "$SWIFTOMNIUI_BROWSER"; return; fi
   for candidate in "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
     "/Applications/Chromium.app/Contents/MacOS/Chromium"; do
     [[ -x "$candidate" ]] && { echo "$candidate"; return; }
@@ -47,7 +47,7 @@ browser () {
   for name in google-chrome google-chrome-stable chromium chromium-browser; do
     command -v "$name" && return
   done
-  echo "ERROR: no Google Chrome or Chromium found - STATEUI_BROWSER names one" >&2
+  echo "ERROR: no Google Chrome or Chromium found - SWIFTOMNIUI_BROWSER names one" >&2
   exit 1
 }
 
@@ -69,6 +69,6 @@ fi
 selected="${1:-}"
 if [[ -z "$selected" ]]; then
   selected="$(node "$package/JavaScript/run.mjs" "$relay" "$program" --list-tests \
-    | grep -E '^StateUIWebTests\.' | grep -v -E "^(${in_browser//,/|})/" | paste -sd, -)"
+    | grep -E '^SwiftOmniUIWebTests\.' | grep -v -E "^(${in_browser//,/|})/" | paste -sd, -)"
 fi
 exec node "$package/JavaScript/run.mjs" "$relay" "$program" "$selected"

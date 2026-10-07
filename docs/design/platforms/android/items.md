@@ -1,7 +1,7 @@
 # Items
 
 An List is AndroidX's `RecyclerView` in the relay's
-`StateUIItemsView`, its adapter over the list's identities. The recycler
+`SwiftOmniUIItemsView`, its adapter over the list's identities. The recycler
 scrolls, reuses its cells and tells TalkBack; each cell holds one entry's
 subtree, which it asks the tree for through the host layer's `ItemsCells`
 ([items](../../host/items.md)). The list is a room: it measures as wide as
@@ -36,7 +36,7 @@ before the recycler lays its cells out in that width.
 
 ## A cell
 
-A cell is the relay's `StateUIItemCell`, a StateUI layout the recycler
+A cell is the relay's `SwiftOmniUIItemCell`, a SwiftOmniUI layout the recycler
 measures and places, holding the entry's subtree as a page holds its child.
 A cell whose entry is still on its way keeps the room of a row: measured of
 nothing, every cell would fit in view at once and the recycler would ask

@@ -1,6 +1,6 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
-/// A native context menu attached to any StateUI view.
+/// A native context menu attached to any SwiftOmniUI view.
 struct ContextMenuSample: SampleContent, ExampleContent {
     @State private var items = ["Alpha", "Beta", "Gamma"]
     @State private var chosen = "nothing yet"

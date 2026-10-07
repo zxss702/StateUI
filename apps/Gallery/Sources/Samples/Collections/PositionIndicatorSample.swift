@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Dots marking a place in a sequence: their shape, their cap and a lone one.
 struct PositionIndicatorSample: SampleContent, ExampleContent {

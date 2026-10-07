@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// How dark the gallery's own demonstration paints - kept as the text it is
 /// spelled with, which is what makes conformance one line.
@@ -9,13 +9,13 @@ enum Shade: String, PersistentValue {
 
 extension PersistentKey {
     /// How many times the user has pressed the button, ever.
-    static let visits = PersistentKey("dev.stateui.gallery.visits", of: Int.self)
+    static let visits = PersistentKey("dev.swiftomniui.gallery.visits", of: Int.self)
 
     /// What the user is called.
-    static let who = PersistentKey("dev.stateui.gallery.who", of: String.self)
+    static let who = PersistentKey("dev.swiftomniui.gallery.who", of: String.self)
 
     /// Whether the panel below paints loudly.
-    static let shade = PersistentKey("dev.stateui.gallery.shade", of: Shade.self)
+    static let shade = PersistentKey("dev.swiftomniui.gallery.shade", of: Shade.self)
 }
 
 /// `@State` under a key is state the application KEEPS - the value is there
@@ -39,9 +39,9 @@ struct PersistentStateSample: SampleContent, ExampleContent {
         }
 
         extension PersistentKey {
-            static let visits = PersistentKey("dev.stateui.gallery.visits", of: Int.self)
-            static let who = PersistentKey("dev.stateui.gallery.who", of: String.self)
-            static let shade = PersistentKey("dev.stateui.gallery.shade", of: Shade.self)
+            static let visits = PersistentKey("dev.swiftomniui.gallery.visits", of: Int.self)
+            static let who = PersistentKey("dev.swiftomniui.gallery.who", of: String.self)
+            static let shade = PersistentKey("dev.swiftomniui.gallery.shade", of: Shade.self)
         }
 
         // Into the application's session as it is made, so the host knows

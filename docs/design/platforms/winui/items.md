@@ -1,6 +1,6 @@
 # Items
 
-An List is a StateUI layout holding WinUI's own `List`, its
+An List is a SwiftOmniUI layout holding WinUI's own `List`, its
 source an observable vector of the list's identities and its item template
 an element factory of the relay's: each entry's cell is a panel of the
 host's, stood in an `ItemContainer`, holding the entry's subtree it asks the
@@ -46,7 +46,7 @@ nothing.
 
 ## A cell
 
-A cell is a StateUI panel WinUI places, so it answers WinUI's measure with
+A cell is a SwiftOmniUI panel WinUI places, so it answers WinUI's measure with
 the room its entry takes. A cell whose entry is still on its way keeps the
 room of a row: measured of nothing, every cell would fit in view at once and
 the list would ask for every entry. An entry whose size changes is measured

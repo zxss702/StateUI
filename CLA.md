@@ -1,7 +1,7 @@
-# StateUI Individual Contributor License Agreement
+# SwiftOmniUI Individual Contributor License Agreement
 
 Version 1, 2026-08-25. Adapted from the Apache Software Foundation Individual
-Contributor License Agreement v2.0. "The Project" means StateUI; "the Owner"
+Contributor License Agreement v2.0. "The Project" means SwiftOmniUI; "the Owner"
 means Paweł Krzywdziński, or the successor in interest to whom the rights in
 the Project are transferred.
 

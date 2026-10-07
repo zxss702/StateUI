@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Builds an application's GTK head for release and lays it in a folder of its
-# own, made anew: the head, the StateUI libraries it links, and its pictures.
+# own, made anew: the head, the SwiftOmniUI libraries it links, and its pictures.
 #
 # USAGE:
 #   deploy.sh <app-dir> <destination>

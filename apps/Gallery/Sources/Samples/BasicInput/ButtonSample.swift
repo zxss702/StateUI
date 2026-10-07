@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A button wired to a click, beside an outlined one and a disabled one.
 struct ButtonSample: SampleContent, ExampleContent {

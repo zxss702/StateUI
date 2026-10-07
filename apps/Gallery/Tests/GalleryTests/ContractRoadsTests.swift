@@ -14,7 +14,7 @@ import XCTest
 /// The pair is what makes the refusal mean something: the two listings differ
 /// in that one spelling, so a failure is the spelling's and never a typo's.
 ///
-/// Compiled as an application compiles - a plain `import StateUI` - with the
+/// Compiled as an application compiles - a plain `import SwiftOmniUI` - with the
 /// compiler and the module the handbook's examples are checked against.
 final class ContractRoadsTests: XCTestCase {
     /// A road taken away, and the contract's road to the same place.
@@ -216,11 +216,11 @@ final class ContractRoadsTests: XCTestCase {
     func testEveryUntypedRoadIsClosedAndItsContractRoadOpen() throws {
         guard let module = DocumentationExamplesTests.builtModuleDirectory() else {
             // Never a skip: a check that did not run reads as one that passed.
-            return XCTFail("no StateUI.swiftmodule beside the test bundle - no road was checked")
+            return XCTFail("no SwiftOmniUI.swiftmodule beside the test bundle - no road was checked")
         }
         let sdk = try DocumentationExamplesTests.sdkPath()
         let scratch = FileManager.default.temporaryDirectory
-            .appendingPathComponent("stateui-roads-\(UUID().uuidString)")
+            .appendingPathComponent("swiftomniui-roads-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: scratch) }
 
@@ -264,7 +264,7 @@ final class ContractRoadsTests: XCTestCase {
         let body = listing.split(separator: "\n", omittingEmptySubsequences: false)
             .map { $0.isEmpty ? "" : "    \($0)" }
             .joined(separator: "\n")
-        let header = spi ? "@_spi(Host) import StateUI" : "import StateUI"
+        let header = spi ? "@_spi(Host) import SwiftOmniUI" : "import SwiftOmniUI"
 
         return "\(header)\n\n\(declarations)\n\nfunc road() async throws {\n\(body)\n}\n"
     }

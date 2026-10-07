@@ -7,7 +7,7 @@ child an engine places, and the application's pictures.
 ## A shape and its brush
 
 A layout's own box, a ColorPicker and any background that is not one plain colour are
-drawn by one drawable of the host's, `StateUIShapeDrawable`: a rectangle, a
+drawn by one drawable of the host's, `SwiftOmniUIShapeDrawable`: a rectangle, a
 rectangle with rounded corners, or an ellipse, filled with a brush and
 outlined in one colour. The Swift host tells it every part as the host layer
 reads a box ([a box](../../host/layout.md#a-box)) - the shape's kind, each
@@ -74,7 +74,7 @@ own name, which is kept at one pixel a point.
 An image is measured at its picture's own size in points, read from the
 file's header alone: the size is at the display's density, and Android's own
 measure would scale it a second time. The four aspects are Android's four
-scale types, and an image cuts what it draws to its bounds, since a StateUI
+scale types, and an image cuts what it draws to its bounds, since a SwiftOmniUI
 layout does not. A picture is read, measured and drawn at the host's own
 density: its drawable targets that density, where Android's would take the
 system's.
@@ -83,7 +83,7 @@ A picture's pixels are read when its view is placed, at the fewest the view
 needs: one pixel in two, four, up to sixteen across and down, while that
 still covers the view, scaled to the display's density as it is read. A card
 showing a picture three times smaller than it was drawn holds a quarter of
-its pixels, in memory and on the GPU alike. A StateUI layout measures a
+its pixels, in memory and on the GPU alike. A SwiftOmniUI layout measures a
 height it has not settled yet, so the size a view is placed at is the one
 that decides; a size given whole by a parent of Android's decides as well.
 The bitmap says the density a whole one would have, so Android draws it at
@@ -110,7 +110,7 @@ as one array of commands in pixels, and the brush, the outline, a
 rectangle's corners - fitted as a box's are - and the six numbers one call
 each. The fill is the brush
 every shape of the host's paints with; the outline is a colour - a gradient's
-first - and its dashes count in the outline's width, as StateUI's do. A
+first - and its dashes count in the outline's width, as SwiftOmniUI's do. A
 shape asks for no room of its own.
 
 ## A canvas

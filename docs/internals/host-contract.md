@@ -115,7 +115,7 @@ not rebuilt.
 
 A complete resynchronization sends the complete event map with those same
 stable ids. When an event is removed, an explicit map replacement makes the
-host detach its native callback and StateUI retires the handler. When an
+host detach its native callback and SwiftOmniUI retires the handler. When an
 element leaves, all handler ids owned by it stop answering. A late native
 callback for a removed element is ignored; it must never reach a closure now
 owned by another identity.
@@ -142,7 +142,7 @@ not ask the application to construct a separate recovery tree.
 ## State cycles
 
 The host resolves every `HostStateBinding` against the state board owned by
-StateUI. `HostStateMode` states which direction may write. `HostStateKind`
+SwiftOmniUI. `HostStateMode` states which direction may write. `HostStateKind`
 states whether the channel carries a discrete value, journey lanes, text, a
 feed, or another declared host shape.
 
@@ -150,7 +150,7 @@ On a native display frame the host:
 
 1. applies pending program writes;
 2. advances active property transitions, layout animation, and journey channels;
-3. runs StateUI engines in deterministic priority order;
+3. runs SwiftOmniUI engines in deterministic priority order;
 4. publishes the complete value and changed-lane mask for every changed state;
 5. requests another display frame only while animation or an engine continues.
 
@@ -178,7 +178,7 @@ of its members - an `ElementLayer`:
 - `native` — every base host is required to map the semantic capability to its
   toolkit;
 - `adaptive` — each host follows its platform convention while preserving the
-  StateUI state contract;
+  SwiftOmniUI state contract;
 - `stateUI` — the core derives the behavior from smaller primitives;
 - `structure` — it carries tree or protocol structure;
 - `provider` — an optional package owns the capability.
@@ -217,18 +217,18 @@ after its element is dropped. What every host shares - the mounted tree, the
 turn and the frame, the animations, the layout arithmetic and the rules of the
 user's input - is the [host layer](host-layer.md), which every host runs on.
 
-Platform-native classes are implementation choices behind semantic StateUI
+Platform-native classes are implementation choices behind semantic SwiftOmniUI
 tokens. They never enter application source, `HostPatch`, event payloads, or
 state values.
 
-Each host is a sibling package linked to the `StateUI` library, so platform
+Each host is a sibling package linked to the `SwiftOmniUI` library, so platform
 dependencies never enter the core. `PlacedLayout` and
-`GalleryView` remain StateUI-owned composition mechanisms and do not justify a
+`GalleryView` remain SwiftOmniUI-owned composition mechanisms and do not justify a
 larger renderer surface.
 
 ## Collections
 
-`List` is the shared collection surface. StateUI owns the item order, the
+`List` is the shared collection surface. SwiftOmniUI owns the item order, the
 identities, their changes, and the subtree for an identity; the toolkit owns
 the viewport, cell reuse, input, keyboard navigation, and accessibility. The
 adapters are `NSCollectionView`, `UICollectionView`, Android `RecyclerView`,
@@ -254,16 +254,16 @@ Every carried value is one case of `HostValue`:
 | `.numbers`, `.strings` | homogeneous lists |
 | `.color` | four RGBA channels |
 | `.values` | a list of values of different kinds |
-| `.enumeration` | an `Int32` member of a closed StateUI vocabulary |
+| `.enumeration` | an `Int32` member of a closed SwiftOmniUI vocabulary |
 | `.name` | an open, author-named vocabulary |
 | `.nothing` | semantic absence |
 
 `.string`, `.enumeration`, `.name`, and `.nothing` are not interchangeable.
-Authored text remains text; closed library vocabulary has stable StateUI
+Authored text remains text; closed library vocabulary has stable SwiftOmniUI
 numbers; open names stay names; absence never borrows an empty string,
 sentinel number, or empty list.
 
 The patch is deterministic. Every dictionary- or set-derived collection is
-sorted by its stable StateUI name, and subtree shapes use a stable hash rather
+sorted by its stable SwiftOmniUI name, and subtree shapes use a stable hash rather
 than Swift's randomized `Hashable`, so the same session renders the same
 patches in every run.

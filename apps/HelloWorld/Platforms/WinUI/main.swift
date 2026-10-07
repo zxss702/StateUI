@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import HelloWorldUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 // Register the application module, then hand WinUI this thread until the last
 // window closes.
-stateui_app_register()
-StateUIWinUI.run()
+swiftomniui_app_register()
+SwiftOmniUIWinUI.run()

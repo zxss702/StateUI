@@ -19,8 +19,8 @@
 #
 # The Swift is built for the device's ABI alone, by build-swift.sh; Gradle
 # packages it with the host's Java layer. Everything a build writes stays under
-# <app-dir>/.build/android. Every STATEUI_ variable of the calling shell -
-# STATEUI_TALLY=1, STATEUI_INSPECT=1 - reaches the application's environment.
+# <app-dir>/.build/android. Every SWIFTOMNIUI_ variable of the calling shell -
+# SWIFTOMNIUI_TALLY=1, SWIFTOMNIUI_INSPECT=1 - reaches the application's environment.
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -61,10 +61,10 @@ package="$("$AAPT2" dump packagename "$apk")"
 switches=()
 while IFS= read -r name; do
   switches+=(-e "$name" "${!name}")
-done < <(compgen -e | grep '^STATEUI_' || true)
+done < <(compgen -e | grep '^SWIFTOMNIUI_' || true)
 # The activity the launcher opens, as the APK declares it: the host's own, or one an application extends it with.
 activity="$("$AAPT2" dump badging "$apk" | sed -n "s/^launchable-activity: name='\([^']*\)'.*/\1/p" | head -n 1)"
-"$ADB" -s "$serial" shell am start -W -n "$package/${activity:-stateui.android.StateUIActivity}" "${switches[@]+"${switches[@]}"}"
+"$ADB" -s "$serial" shell am start -W -n "$package/${activity:-swiftomniui.android.SwiftOmniUIActivity}" "${switches[@]+"${switches[@]}"}"
 
 process=""
 for _ in 1 2 3 4 5 6 7 8 9 10; do
@@ -92,10 +92,10 @@ if [[ "$debugger" == 1 ]]; then
   # listens on a socket named after the package. A server left from the last run is stopped first: stopping the
   # application does not stop what run-as started; and the new one is renamed into place, since a running
   # server's file cannot be written over.
-  socket="$package/stateui-debugger.sock"
-  "$ADB" -s "$serial" push "$server" /data/local/tmp/stateui-lldb-server >/dev/null
+  socket="$package/swiftomniui-debugger.sock"
+  "$ADB" -s "$serial" push "$server" /data/local/tmp/swiftomniui-lldb-server >/dev/null
   "$ADB" -s "$serial" shell run-as "$package" sh -c "'pkill -x lldb-server; \
-    cp /data/local/tmp/stateui-lldb-server lldb-server.new && chmod 700 lldb-server.new && mv lldb-server.new lldb-server'"
+    cp /data/local/tmp/swiftomniui-lldb-server lldb-server.new && chmod 700 lldb-server.new && mv lldb-server.new lldb-server'"
   "$ADB" -s "$serial" shell \
     "run-as $package sh -c './lldb-server platform --server --listen unix-abstract:///$socket </dev/null >/dev/null 2>&1 &'" \
     </dev/null

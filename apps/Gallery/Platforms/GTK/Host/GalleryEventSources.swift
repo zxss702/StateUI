@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import CStateUIGTK
+import CSwiftOmniUIGTK
 import GalleryUI
-import StateUIGTK
+import SwiftOmniUIGTK
 
 /// The gallery's own pushes, as this host raises them: the battery, as UPower tells it.
 enum GalleryEventSources {
@@ -13,7 +13,7 @@ enum GalleryEventSources {
     /// Declares what the host raises and wires its source. Said once, before the application runs.
     @MainActor
     static func start() {
-        StateUIEvents.raises(GalleryContract.batteryChanged)
+        SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
         guard let device = GalleryPower.device else { return }
         // A C callback carries no context; the report is named in full.
@@ -32,6 +32,6 @@ enum GalleryEventSources {
         guard level > 0, lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
         lastSaid = (level, charging)
-        StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+        SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
     }
 }

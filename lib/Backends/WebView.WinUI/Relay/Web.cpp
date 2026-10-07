@@ -31,7 +31,7 @@ namespace core = winrt::Microsoft::Web::WebView2::Core;
 namespace streams = winrt::Windows::Storage::Streams;
 
 namespace {
-    /// Why the platform says a navigation began, as StateUI's WebNavigationType: the page again (4), a step
+    /// Why the platform says a navigation began, as SwiftOmniUI's WebNavigationType: the page again (4), a step
     /// through the history it does not tell apart (0), a new page (3).
     int32_t told(core::CoreWebView2NavigationKind kind) {
         switch (kind) {
@@ -41,7 +41,7 @@ namespace {
         }
     }
 
-    /// How a navigation ended, as StateUI's WebNavigationResult: arrived (1), called off (2), timed out (3), failed
+    /// How a navigation ended, as SwiftOmniUI's WebNavigationResult: arrived (1), called off (2), timed out (3), failed
     /// (4).
     int32_t ended(bool arrived, core::CoreWebView2WebErrorStatus status) {
         if (arrived) return 1;
@@ -122,7 +122,7 @@ namespace {
     }
 }
 
-extern "C" WebViewObjectRef stateui_webview_winui_make(int64_t view) {
+extern "C" WebViewObjectRef swiftomniui_webview_winui_make(int64_t view) {
     try {
         controls::WebView2 web;
         web.CoreWebView2Initialized(guarded("handling CoreWebView2Initialized",
@@ -151,7 +151,7 @@ extern "C" WebViewObjectRef stateui_webview_winui_make(int64_t view) {
     }
 }
 
-extern "C" void stateui_webview_winui_show(WebViewObjectRef handle, int64_t view, char const *address,
+extern "C" void swiftomniui_webview_winui_show(WebViewObjectRef handle, int64_t view, char const *address,
                                        char const *document, char const *agent) {
     try {
         auto web = as<controls::WebView2>(handle);
@@ -173,11 +173,11 @@ extern "C" void stateui_webview_winui_show(WebViewObjectRef handle, int64_t view
     }
 }
 
-extern "C" void stateui_webview_winui_set_callbacks(WebViewWinUICallbacks const *given) {
+extern "C" void swiftomniui_webview_winui_set_callbacks(WebViewWinUICallbacks const *given) {
     callbacks = *given;
 }
 
-extern "C" void stateui_webview_winui_release(WebViewObjectRef handle, int64_t view) {
+extern "C" void swiftomniui_webview_winui_release(WebViewObjectRef handle, int64_t view) {
     try {
         served.erase(view);
         ownAgents.erase(view);
@@ -188,7 +188,7 @@ extern "C" void stateui_webview_winui_release(WebViewObjectRef handle, int64_t v
     }
 }
 
-extern "C" void stateui_webview_winui_set_agent(WebViewObjectRef handle, int64_t view, char const *agent) {
+extern "C" void swiftomniui_webview_winui_set_agent(WebViewObjectRef handle, int64_t view, char const *agent) {
     try {
         if (auto page = as<controls::WebView2>(handle).CoreWebView2()) name(page, view, text(agent));
     } catch (...) {
@@ -196,7 +196,7 @@ extern "C" void stateui_webview_winui_set_agent(WebViewObjectRef handle, int64_t
     }
 }
 
-extern "C" void stateui_webview_winui_step(WebViewObjectRef handle, int32_t step) {
+extern "C" void swiftomniui_webview_winui_step(WebViewObjectRef handle, int32_t step) {
     try {
         auto web = as<controls::WebView2>(handle);
         if (step == 1) web.GoBack();
@@ -207,7 +207,7 @@ extern "C" void stateui_webview_winui_step(WebViewObjectRef handle, int32_t step
     }
 }
 
-extern "C" void stateui_webview_winui_evaluate(WebViewObjectRef handle, char const *script, int64_t ticket) {
+extern "C" void swiftomniui_webview_winui_evaluate(WebViewObjectRef handle, char const *script, int64_t ticket) {
     try {
         auto web = as<controls::WebView2>(handle);
         auto queue = web.DispatcherQueue();
@@ -226,7 +226,7 @@ extern "C" void stateui_webview_winui_evaluate(WebViewObjectRef handle, char con
     }
 }
 
-extern "C" int32_t stateui_webview_winui_read(
+extern "C" int32_t swiftomniui_webview_winui_read(
     WebViewObjectRef handle, int64_t view, char const *what, char *utf8, int32_t capacity
 ) {
     try {
@@ -249,7 +249,7 @@ extern "C" int32_t stateui_webview_winui_read(
     }
 }
 
-extern "C" bool stateui_webview_winui_end_content(WebViewObjectRef handle) {
+extern "C" bool swiftomniui_webview_winui_end_content(WebViewObjectRef handle) {
     try {
         // What the system does to a web process it ends: each process drawing pages, ended from outside.
         auto page = as<controls::WebView2>(handle).CoreWebView2();

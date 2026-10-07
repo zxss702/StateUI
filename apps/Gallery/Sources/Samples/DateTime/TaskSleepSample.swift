@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A countdown written by hand: a loop, a sleep and a flag.
 struct TaskSleepSample: SampleContent, ExampleContent {

@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// `UnevenRoundedRectangle`: each corner rounds by its own radius.
 struct UnevenRoundedSample: SampleContent, ExampleContent {

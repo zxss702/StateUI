@@ -25,7 +25,7 @@ An element is moved, turned and scaled by a `CompositeTransform`, its render
 transform, drawn over the place its layout gave it, so moving one never moves
 the layout's arithmetic. A translation is in DIPs, a rotation in degrees,
 clockwise in the screen's plane; `scale` multiplies both axes over `scaleX`
-and `scaleY`. StateUI's pivot is a fraction of the element's size and the
+and `scaleY`. SwiftOmniUI's pivot is a fraction of the element's size and the
 transform's centre is in DIPs: the host puts it back each time the element is
 placed at a new size. The element's own `Translation`, `Rotation`, `Scale` and
 `CenterPoint` go unused: a layout cut to its outline takes the element's
@@ -35,7 +35,7 @@ refuses those four to such an element.
 ## Less animation
 
 A user who turns Windows' animation effects off - `UISettings.AnimationsEnabled`
-false - asks for less animation, and StateUI hears it so: every animation arrives
+false - asks for less animation, and SwiftOmniUI hears it so: every animation arrives
 at its destination at once, and a journey's waiter hears it arrive.
 
 ## Joining and leaving

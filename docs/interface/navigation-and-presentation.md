@@ -1,6 +1,6 @@
 # Navigation and presentation
 
-Navigation and presentation are readable application state. StateUI does not
+Navigation and presentation are readable application state. SwiftOmniUI does not
 store a second router or command history beside that state. A host materializes
 native containers and reports committed user actions back to the same
 bindings.
@@ -95,7 +95,7 @@ NavigationSplitView($menuOpen, sidebar: {
 ```
 
 The sidebar is a page, so its header, rows, and actions are composed from the
-same controls as any other page. StateUI does not require a special menu-item
+same controls as any other page. SwiftOmniUI does not require a special menu-item
 model. A committed native show or hide writes `menuOpen`; assigning the state
 shows or hides the sidebar.
 

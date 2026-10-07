@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # PositionIndicator
 
 The row of dots under a run of cards, saying how many there are and which one is showing.
 
-Layer: `stateUI`. StateUI composes it from smaller primitives before a host receives the tree.
+Layer: `stateUI`. SwiftOmniUI composes it from smaller primitives before a host receives the tree.
 
 Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tiers/VisualElement.md) · [View](tiers/View.md)
 
@@ -25,14 +25,14 @@ See [the dictionary](README.md) for how a mark is given.
 
 | Host | Created | Members (98) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
-| AppKit |  |  | composed by StateUI | not realized |
-| UIKit |  |  | composed by StateUI | not realized |
-| Android Views |  |  | composed by StateUI | not realized |
-| WinUI 3 |  |  | composed by StateUI | not realized |
-| GTK 4 |  |  | composed by StateUI | not realized |
-| Web |  |  | composed by StateUI | no host yet |
+| AppKit |  |  | composed by SwiftOmniUI | not realized |
+| UIKit |  |  | composed by SwiftOmniUI | not realized |
+| Android Views |  |  | composed by SwiftOmniUI | not realized |
+| WinUI 3 |  |  | composed by SwiftOmniUI | not realized |
+| GTK 4 |  |  | composed by SwiftOmniUI | not realized |
+| Web |  |  | composed by SwiftOmniUI | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Collections/PositionIndicatorContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Collections/PositionIndicatorContract.swift`.
 
 ## PositionIndicator's own members
 

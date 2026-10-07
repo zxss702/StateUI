@@ -1,4 +1,4 @@
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@
 #   -BuildOnly     starts nothing: the head stands ready for a debugger to start
 #
 # Everything a build writes stays under <App>\.build\winui, each architecture's
-# head in a folder of its own (--show-bin-path). Every STATEUI_ variable of the
-# calling shell - STATEUI_TALLY=1, STATEUI_INSPECT=1 - reaches the
+# head in a folder of its own (--show-bin-path). Every SWIFTOMNIUI_ variable of the
+# calling shell - SWIFTOMNIUI_TALLY=1, SWIFTOMNIUI_INSPECT=1 - reaches the
 # application's environment.
 # ---------------------------------------------------------------------------
 param(
@@ -37,8 +37,8 @@ param(
     [switch]$BuildOnly
 )
 . (Join-Path $PSScriptRoot 'tools.ps1')
-if (-not $Architecture) { $Architecture = $StateUIArchitecture }
-$arch = Get-StateUIArchitectureArguments $Architecture
+if (-not $Architecture) { $Architecture = $SwiftOmniUIArchitecture }
+$arch = Get-SwiftOmniUIArchitectureArguments $Architecture
 
 $application = (Resolve-Path $App).Path
 $name = Split-Path $application -Leaf
@@ -52,16 +52,16 @@ if ($running) {
 }
 $global:LASTEXITCODE = 0
 
-Initialize-StateUIProjection
-$env:STATEUI_HOST = 'winui'
+Initialize-SwiftOmniUIProjection
+$env:SWIFTOMNIUI_HOST = 'winui'
 Write-Host "building ${name}WinUI, $Configuration, $Architecture - SwiftPM reads the packages first, printing nothing"
-Write-StateUIEditorBuilds
+Write-SwiftOmniUIEditorBuilds
 swift build --package-path $application -c $Configuration --product "${name}WinUI" --scratch-path $scratch @arch
 if ($LASTEXITCODE) { throw "the WinUI head of $name did not build" }
 Write-Host "laying the Windows App SDK beside ${name}WinUI.exe"
 $bin = (swift build --package-path $application -c $Configuration --scratch-path $scratch --show-bin-path @arch).Trim()
 $executable = Join-Path $bin "${name}WinUI.exe"
-Set-StateUISelfContained -Directory $bin -Executables $executable -Architecture $Architecture
+Set-SwiftOmniUISelfContained -Directory $bin -Executables $executable -Architecture $Architecture
 
 # The application's pictures stand beside it, where its WinUI host reads them.
 $images = Join-Path $application 'Resources\Images'

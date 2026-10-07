@@ -1,9 +1,9 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 struct LabelSample: SampleContent, ExampleContent {
     static let id = "label"
     static let title = "Text"
-    static let summary = "Read-only native text with StateUI typography and alignment."
+    static let summary = "Read-only native text with SwiftOmniUI typography and alignment."
 
     static let code = """
         VStack {
@@ -137,7 +137,7 @@ struct LabelSample: SampleContent, ExampleContent {
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
-            Text("Formatting is expressed by StateUI properties and TextSpan runs; "
+            Text("Formatting is expressed by SwiftOmniUI properties and TextSpan runs; "
                 + "the native host remains responsible for shaping and drawing glyphs.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)

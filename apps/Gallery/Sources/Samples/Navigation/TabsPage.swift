@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The first tab of the tabs demonstration - the one holding a stack of its own.
 ///

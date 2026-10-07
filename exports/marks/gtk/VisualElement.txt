@@ -275,7 +275,7 @@ Grid.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of Grid - 
 Grid.accessibilityHint: cannot read accessibilityHint of Grid - GTK's driver has no path for it yet
 Grid.accessibilityLabel: cannot read accessibilityLabel of Grid - GTK's driver has no path for it yet
 Grid.automationExcludedWithChildren: cannot read automationExcludedWithChildren of Grid - GTK's driver has no path for it yet
-Grid.background: cannot read background of Grid - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
+Grid.background: cannot read background of Grid - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
 Grid.focus: – Grid takes no keyboard focus here: it refuses it, and nothing is heard
 Grid.frame: ✅
 Grid.frameChanged: ✅
@@ -343,7 +343,7 @@ HStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of HStac
 HStack.accessibilityHint: cannot read accessibilityHint of HStack - GTK's driver has no path for it yet
 HStack.accessibilityLabel: cannot read accessibilityLabel of HStack - GTK's driver has no path for it yet
 HStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of HStack - GTK's driver has no path for it yet
-HStack.background: cannot read background of HStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
+HStack.background: cannot read background of HStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
 HStack.focus: – HStack takes no keyboard focus here: it refuses it, and nothing is heard
 HStack.frame: ✅
 HStack.frameChanged: ✅
@@ -989,7 +989,7 @@ ScrollView.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of S
 ScrollView.accessibilityHint: cannot read accessibilityHint of ScrollView - GTK's driver has no path for it yet
 ScrollView.accessibilityLabel: cannot read accessibilityLabel of ScrollView - GTK's driver has no path for it yet
 ScrollView.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ScrollView - GTK's driver has no path for it yet
-ScrollView.background: cannot read background of ScrollView - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
+ScrollView.background: cannot read background of ScrollView - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
 ScrollView.focus: ✅
 ScrollView.frame: ✅
 ScrollView.frameChanged: ✅
@@ -1329,7 +1329,7 @@ VStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of VStac
 VStack.accessibilityHint: cannot read accessibilityHint of VStack - GTK's driver has no path for it yet
 VStack.accessibilityLabel: cannot read accessibilityLabel of VStack - GTK's driver has no path for it yet
 VStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of VStack - GTK's driver has no path for it yet
-VStack.background: cannot read background of VStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
+VStack.background: cannot read background of VStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
 VStack.focus: – VStack takes no keyboard focus here: it refuses it, and nothing is heard
 VStack.frame: ✅
 VStack.frameChanged: ✅
@@ -1397,7 +1397,7 @@ ZStack.accessibilityHeadingLevel: cannot read accessibilityHeadingLevel of ZStac
 ZStack.accessibilityHint: cannot read accessibilityHint of ZStack - GTK's driver has no path for it yet
 ZStack.accessibilityLabel: cannot read accessibilityLabel of ZStack - GTK's driver has no path for it yet
 ZStack.automationExcludedWithChildren: cannot read automationExcludedWithChildren of ZStack - GTK's driver has no path for it yet
-ZStack.background: cannot read background of ZStack - StateUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
+ZStack.background: cannot read background of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it
 ZStack.focus: – ZStack takes no keyboard focus here: it refuses it, and nothing is heard
 ZStack.frame: ✅
 ZStack.frameChanged: ✅

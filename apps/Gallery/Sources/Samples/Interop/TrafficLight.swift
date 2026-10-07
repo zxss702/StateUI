@@ -8,7 +8,7 @@
 // PUBLIC, because a host in the same process registers BY TYPE and lives in a
 // module of its own - see GalleryContract.swift.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// What the light can show.
 ///

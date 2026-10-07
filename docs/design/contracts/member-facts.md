@@ -18,7 +18,7 @@ each defaults to the common case.
 A change to a property animates to its new value unless its member says
 `travels: false`, which the library says where there is no half way. A
 host still snaps a transition it cannot interpolate; this keeps the ones
-StateUI knows are meaningless out of the patch.
+SwiftOmniUI knows are meaningless out of the patch.
 
 ```text
   a place or a count       gridRow, gridColumn and their spans, tapCount, panTouchCount,

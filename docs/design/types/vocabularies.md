@@ -1,13 +1,13 @@
 # Closed vocabularies
 
-A closed vocabulary is a set of choices StateUI names: a line break, an
+A closed vocabulary is a set of choices SwiftOmniUI names: a line break, an
 alignment, an easing curve, a timing law, a battery state, a gesture phase.
 Each crosses to a host as a number, never as its spelling, and the host maps
 that number onto its own toolkit's member.
 
-## The numbers belong to StateUI
+## The numbers belong to SwiftOmniUI
 
-A case's number is part of StateUI's contract, never a toolkit's. What a
+A case's number is part of SwiftOmniUI's contract, never a toolkit's. What a
 case promises is what its documentation says; the number is only how it
 crosses. A host translates its native value onto this vocabulary on the way
 in and out, so a native enum's numbering never reaches the patch, and a
@@ -33,7 +33,7 @@ value written out as text.
 ## Flag sets carry bits
 
 `FontAttributes`, `TextDecorations` and `SwipeDirection` are option sets, so `.bold` and `[.bold, .italic]` both
-work. Their bits are StateUI's own by the same rule, `1 << 0` upwards in
+work. Their bits are SwiftOmniUI's own by the same rule, `1 << 0` upwards in
 declaration order, and a composite such as `.all` or `.position` is the OR of
 its parts. A set crosses as one `.enumeration` holding its bits.
 

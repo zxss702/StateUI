@@ -1,6 +1,6 @@
 # Menus on Android
 
-How the Android Views host shows StateUI's menus: a stack's bar's actions and
+How the Android Views host shows SwiftOmniUI's menus: a stack's bar's actions and
 a view's context menu, both Android's own menus, written from the same
 entries. What a menu promises is
 [navigation](../../../interface/navigation-and-presentation.md#menu-bars-and-context-menus)'s.

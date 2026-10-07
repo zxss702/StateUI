@@ -1,8 +1,8 @@
-# StateUI core
+# SwiftOmniUI core
 
-The core is the `StateUI` library, in `lib/StateUI/Sources`: one dynamic
+The core is the `SwiftOmniUI` library, in `lib/SwiftOmniUI/Sources`: one dynamic
 library, the same on every platform, which every application and every host
-links, so a process holds one copy of StateUI's types. It imports no
+links, so a process holds one copy of SwiftOmniUI's types. It imports no
 Foundation and no platform framework, depends on no package and exports no C
 function. It owns the UI tree, state, identity and diffing, the state side of
 the display cycle, the timing laws of animation, acts, scenes and sessions, and
@@ -15,7 +15,7 @@ boundary hands over.
 
 ## The rule
 
-The core decides once what is StateUI's to decide, and nothing after it
+The core decides once what is SwiftOmniUI's to decide, and nothing after it
 decides again; one concept has one owner, one spelling and one source:
 
 - **One direction.** An application depends on the core, the host layer
@@ -48,7 +48,7 @@ decides again; one concept has one owner, one spelling and one source:
   ([One process, one host](host-contract.md#one-process-one-host))
 
 ```text
-lib/StateUI/Sources/
+lib/SwiftOmniUI/Sources/
   Views/         what an application writes
     Structure/ Navigation/ Menus/   the application, its pages, their furniture
     Tiers/ Mixins/ Bindings/        tier protocols, modifiers, carried twins
@@ -98,7 +98,7 @@ The design notes give each part's reasons - [views](../design/views/README.md),
 [the core](../design/core/README.md), whose
 [state write from start to finish](../design/core/README.md#a-state-write-from-start-to-finish)
 follows one change through - and the [glossary](../design/glossary.md) maps
-StateUI's words to the common ones.
+SwiftOmniUI's words to the common ones.
 
 ## Who reaches what
 
@@ -107,7 +107,7 @@ Each part below says who reaches it:
 - *App* - the public API, what an application's module spells, each
   declaration with its `///`.
 - *Host* - `@_spi(Host) public`, what the host layer and a host read after
-  `@_spi(Host) import StateUI`. An application never sees it.
+  `@_spi(Host) import SwiftOmniUI`. An application never sees it.
 - *Internal* - nobody outside the module; the core's tests reach it through
   `@testable import`.
 
@@ -162,10 +162,10 @@ turns the nodes into the patch.
   [controls and input](../interface/controls-and-input.md), [layout](../interface/layout.md))
 - **The composed layouts** - `GeometryReader`, `ScrollViewReader` and `PlacedLayout`
   (`Layouts/`), `GalleryView` and `PositionIndicator` (`Collections/`) - are
-  StateUI's composition over measurement, placement and scrolling, which no
+  SwiftOmniUI's composition over measurement, placement and scrolling, which no
   host builds again. *App.*
   ([Measured layouts](../design/views/measured-layouts.md);
-  [StateUI-authored layouts](../interface/layout.md#stateui-authored-layouts))
+  [SwiftOmniUI-authored layouts](../interface/layout.md#swiftomniui-authored-layouts))
 - **`Style`**, **`StyleSheet`**, **`StyleTarget`** and **`VisualState`**
   (`Styles/`) are resolved before the patch: a node reaches the host already
   styled. *App*; the merge (`styled`, `DeclaredState`) is internal.
@@ -182,7 +182,7 @@ turns the nodes into the patch.
 sessions whose properties are `@State`. A value that crosses is
 `HostRepresentable` - how it becomes a `PropValue` and comes back - or a
 `StateValue`, how it lies on a carried state's image, so no host parses or
-guesses anything. A closed vocabulary crosses as a number StateUI owns, an
+guesses anything. A closed vocabulary crosses as a number SwiftOmniUI owns, an
 author's open vocabulary as a `Name`, and absence as `.nothing`.
 *App*; a host is handed them as values.
 ([From a value to a host](../design/types/README.md#from-a-value-to-a-host),
@@ -363,7 +363,7 @@ type's extensions in its folder as `Type+Responsibility.swift`
 
 ### Acts
 
-- **`stateUICall`**, **`stateUISend`** and **`StateUIError`** call an act of
+- **`stateUICall`**, **`stateUISend`** and **`SwiftOmniUIError`** call an act of
   the application's - one with no control behind it - awaited or sent, and
   throw what a host could not do. *App.*
   ([An act is a member](../design/core/acts.md#an-act-is-a-member);
@@ -534,7 +534,7 @@ force ([values a host is handed](host-contract.md#values-a-host-is-handed)).
 
 ## Testing
 
-The core's suite, `lib/StateUI/Tests`, is `swift test` at the repository
+The core's suite, `lib/SwiftOmniUI/Tests`, is `swift test` at the repository
 root. It needs no toolkit, runs on every platform the core builds on, and
 asserts on the typed patch a host is handed, by the rule each case keeps,
 never against a stored copy
@@ -561,10 +561,10 @@ never against a stored copy
   ([what a host never does](host-layer.md#what-a-host-never-does));
   `ToolchainTests`, `ReleaseTests`, `AppsTests` and `VsCodeTests` keep one
   Swift release, one version, the applications and the editor.
-- **The host layer's suite**, `swift test --package-path lib/StateUI.Host`,
+- **The host layer's suite**, `swift test --package-path lib/SwiftOmniUI.Host`,
   proves its rules with no toolkit, the core's `HostMotionLaw` among them
   (`MotionLawTests`). ([Testing](host-layer.md#testing))
-- **The conformance suite**, `lib/StateUI.Conformance`, proves the contract's
+- **The conformance suite**, `lib/SwiftOmniUI.Conformance`, proves the contract's
   effects through every host's driver; its own tests prove the runner and that
   every member has its case (`ContractCompletenessTests`).
   ([Conformance](../design/host/conformance.md))
@@ -574,7 +574,7 @@ never against a stored copy
 
 ## Changing the core
 
-A change to what StateUI promises is one vertical change, in one order:
+A change to what SwiftOmniUI promises is one vertical change, in one order:
 
 1. Decide its cross-platform name, its owner and its layer: what the core
    decides, what the host layer computes for every host, and what only a

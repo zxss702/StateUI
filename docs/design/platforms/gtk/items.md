@@ -1,6 +1,6 @@
 # Items
 
-An List is a StateUI layout holding GTK's own list view in a scrolled
+An List is a SwiftOmniUI layout holding GTK's own list view in a scrolled
 window - a `GtkListView` down or across, a `GtkGridView` in columns - over a
 `GtkStringList` of the list's identities, its rows made by a signal factory.
 Each row's child is a panel of the host's, holding the entry's subtree it
@@ -34,7 +34,7 @@ list is given.
 
 ## A cell
 
-A cell is a StateUI panel GTK places, so it answers GTK's measure with the
+A cell is a SwiftOmniUI panel GTK places, so it answers GTK's measure with the
 room its entry takes, and the list stands each row at its natural size (the
 scrollable's natural policy): at its least, a panel's nothing, every row
 would stand in view at once. A cell whose entry is still on its way keeps the room

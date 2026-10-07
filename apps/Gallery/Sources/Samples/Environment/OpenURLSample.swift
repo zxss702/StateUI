@@ -1,6 +1,6 @@
 import Foundation
-import StateUI
-import StateUIFoundation
+import SwiftOmniUI
+import SwiftOmniUIFoundation
 
 /// `.onOpenURL`: the URLs the platform hands the application, answered here.
 struct OpenURLSample: SampleContent, ExampleContent {

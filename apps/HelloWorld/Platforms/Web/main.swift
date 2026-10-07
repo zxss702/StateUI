@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import HelloWorldUI
-import StateUIWeb
+import SwiftOmniUIWeb
 
 // Register the application module, then show it in the page; the browser
 // calls it from then on.
-stateui_app_register()
-StateUIWeb.run(name: "HelloWorld")
+swiftomniui_app_register()
+SwiftOmniUIWeb.run(name: "HelloWorld")

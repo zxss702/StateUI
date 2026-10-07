@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The window a gallery chooses its font in - a window OF THE GALLERY that
 /// opened it: it closes with that gallery, may step aside for another, and

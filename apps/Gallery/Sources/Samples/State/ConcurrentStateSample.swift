@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Where `@State` may be written from, and the one move that is forbidden.
 ///

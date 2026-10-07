@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
-  <!-- The app icon's foreground: the StateUI mark, in white, on the gradient
+  <!-- The app icon's foreground: the SwiftOmniUI mark, in white, on the gradient
        appicon_bkg.svg paints. The same two plates and the same opening as
-       Resources/Images/stateui_mark.svg - one mark, drawn once per place it is
+       Resources/Images/swiftomniui_mark.svg - one mark, drawn once per place it is
        needed. See that file for what the shape says.
 
-       THE MARK FILLS 54.17% OF THE BOX, which is what stateui_tile.svg does and
+       THE MARK FILLS 54.17% OF THE BOX, which is what swiftomniui_tile.svg does and
        what every piece of this artwork does now: one proportion, so the mark reads
        the same wherever it is drawn. Android is the exception it cannot solve on
        its own - a launcher shows only the middle of an adaptive icon, so an

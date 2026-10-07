@@ -1,6 +1,6 @@
 # Interaction and actions
 
-StateUI distinguishes three things:
+SwiftOmniUI distinguishes three things:
 
 - state says what the interface currently means;
 - an event reports something the user or platform committed;
@@ -35,7 +35,7 @@ Handlers run in writing order. A control's two-way binding is committed before
 its handler starts, so the handler observes the new state. Programmatic writes
 do not dispatch user events.
 
-Handlers are `async throws`. They may suspend and continue on StateUI's UI
+Handlers are `async throws`. They may suspend and continue on SwiftOmniUI's UI
 isolation domain. An uncaught error is reported through the host rather than
 being discarded. [Concurrency](concurrency.md) defines the execution model.
 
@@ -170,7 +170,7 @@ Button("Delete").onClicked {
 }
 ```
 
-StateUI also provides a one-button `alert`, a `chooseAction` that returns the
+SwiftOmniUI also provides a one-button `alert`, a `chooseAction` that returns the
 chosen caption, and a prompt that returns typed text or `nil` on cancellation.
 An accepted empty prompt is `""`, distinct from cancellation.
 
@@ -202,7 +202,7 @@ Button("Export").onClicked {
 ```
 
 `stateUICall` hands the act the arguments its contract declares, waits for the
-answer it declares, and throws `StateUIError` on a host failure or an answer
+answer it declares, and throws `SwiftOmniUIError` on a host failure or an answer
 of another shape. `stateUISend` is fire-and-forget and therefore has no error
 result; use it only when no later decision depends on success.
 
@@ -216,7 +216,7 @@ The AppKit host registers them in Swift, typed by the same contract the call
 is written against:
 
 ```swift quote
-StateUIActs.add(NotesContract.exportDocument) { draft in
+SwiftOmniUIActs.add(NotesContract.exportDocument) { draft in
     "~/Documents/\(draft).pdf"
 }
 ```
@@ -226,7 +226,7 @@ the identity back into the view its registration made - so the performer is
 handed the view itself:
 
 ```swift quote
-StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
     bar.flash()
 }
 ```
@@ -268,12 +268,12 @@ subscription is written against, and from any thread - so a source is wired
 where the platform reports it:
 
 ```swift quote
-StateUIEvents.raise(NotesContract.importFinished, location)
+SwiftOmniUIEvents.raise(NotesContract.importFinished, location)
 ```
 
 A raise nobody hears is an ordinary answer rather than a failure, so a host
 wires its sources unconditionally. The head declares what it raises,
-`StateUIEvents.raises(NotesContract.importFinished)`, and a subscription to an
+`SwiftOmniUIEvents.raises(NotesContract.importFinished)`, and a subscription to an
 event no head declared is said once, as a misspelled name would be.
 
 ## Accessibility and automation
@@ -295,7 +295,7 @@ Use `isAccessibilityHidden` and
 semantics require it.
 
 `accessibilityIdentifier` is an external stable identifier for UI automation. It is not
-the tree's `.id`, and assigning one does not change StateUI identity.
+the tree's `.id`, and assigning one does not change SwiftOmniUI identity.
 
 Announce an important asynchronous change that has no visible focused element:
 

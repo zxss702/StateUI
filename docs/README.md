@@ -1,11 +1,11 @@
-# StateUI handbook
+# SwiftOmniUI handbook
 
-This handbook is the complete conceptual guide to the current StateUI model.
-The declarations in `lib/StateUI/Sources` are the API reference, the Gallery
+This handbook is the complete conceptual guide to the current SwiftOmniUI model.
+The declarations in `lib/SwiftOmniUI/Sources` are the API reference, the Gallery
 exercises the contract, and the platform matrix records which native hosts have
 proved each part.
 
-StateUI is under active development. Before 1.0, public declarations and the
+SwiftOmniUI is under active development. Before 1.0, public declarations and the
 host contract may change together when native evidence improves the shared
 model. A declaration that has no checked host in the platform matrix is not a
 usable platform promise.
@@ -17,13 +17,13 @@ design notes beside them.
 
 ## Start here
 
-- [Getting started](getting-started.md) sets up VS Code and the StateUI
+- [Getting started](getting-started.md) sets up VS Code and the SwiftOmniUI
   extension, builds the smallest application, and explains the application
   module, native host, resources, and registration boundary.
 
 ## Concepts
 
-- [Architecture](concepts/architecture.md) defines StateUI's two reactive
+- [Architecture](concepts/architecture.md) defines SwiftOmniUI's two reactive
   paths, `Journey`, host-side animation, engines, and ownership split.
 - [State and reactivity](concepts/state-and-reactivity.md) is the practical
   guide to `@State`, `@Binding`, persistence, conversions, sampling, and
@@ -42,7 +42,7 @@ design notes beside them.
   covers stacks, tabs, split views, modal pages, toolbars, menu bars, and
   context menus.
 - [Layout](interface/layout.md) covers stacks, grids, layers, scrolling,
-  frame readings, sizing, and the boundary for StateUI-authored layouts.
+  frame readings, sizing, and the boundary for SwiftOmniUI-authored layouts.
 - [Controls and input](interface/controls-and-input.md) explains control
   initializers, modifiers, two-way input, text, selection, focus, and control
   events.
@@ -62,7 +62,7 @@ design notes beside them.
 - [Host contract](internals/host-contract.md) specifies typed sparse patches,
   update order, host-carried state, native ownership, and the values a host is
   handed.
-- [StateUI core](internals/core.md) maps the library every application and
+- [SwiftOmniUI core](internals/core.md) maps the library every application and
   host links, folder by folder: what each part owns, who reaches it, and the
   typed boundary a host reads.
 - [Host layer](internals/host-layer.md) maps the Swift every host runs on,
@@ -91,7 +91,7 @@ process.
 - [Project structure and development](development.md) covers repository
   layout, Gallery samples, vertical feature work, tests, and native builds.
 - [Design notes](design/README.md) draw the architecture and give the reasons
-  behind the code, with a glossary of StateUI's terms.
+  behind the code, with a glossary of SwiftOmniUI's terms.
 - [Contributing](../CONTRIBUTING.md) states the evidence, documentation, and
   review rules for changing the contract.
 
@@ -99,19 +99,19 @@ process.
 
 - [License](../LICENSE) and [NOTICE](../NOTICE) state the terms and attribution
   carried by the source.
-- [Trademark policy](../TRADEMARK.md) explains use of the StateUI name and
+- [Trademark policy](../TRADEMARK.md) explains use of the SwiftOmniUI name and
   mark, including forks and integrations.
 - [Contributor agreement](../CLA.md) records the terms accepted for submitted
   contributions.
 
 ## Sources of truth
 
-StateUI uses one source for each kind of question:
+SwiftOmniUI uses one source for each kind of question:
 
 | Question | Source |
 | --- | --- |
-| What StateUI means | this handbook and public `///` documentation |
-| What an application can spell | public declarations in `lib/StateUI/Sources` |
+| What SwiftOmniUI means | this handbook and public `///` documentation |
+| What an application can spell | public declarations in `lib/SwiftOmniUI/Sources` |
 | What crosses a host boundary | the element contracts and [Host contract](internals/host-contract.md) |
 | What a particular host implements | [Platform contract](platform-contract.md) and the [control dictionary](controls/README.md) |
 | What works as visible behavior | the native Gallery |

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A tab the USER added - the reason the tab list is something that changes
 /// rather than a fixed set.

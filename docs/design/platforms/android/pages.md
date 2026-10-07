@@ -105,7 +105,7 @@ What a window lays over everything it shows - the inspector docked in it -
 stands in the activity's root as its top child, over the page and over every
 page the modal stack presents: a page that rises after it lifts the overlay
 over itself again. It is laid out over the whole root, and takes no touch of
-its own, as no StateUI layout on Android does: a touch beside what it holds
+its own, as no SwiftOmniUI layout on Android does: a touch beside what it holds
 goes on to the page under it. The host holds the overlay by its mounted
 element, as it does the arrangement, and takes its view out of the root when
 the window no longer describes it.

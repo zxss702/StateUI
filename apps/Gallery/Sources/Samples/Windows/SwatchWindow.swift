@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A window FOR A VALUE: one per swatch number, the number lent to the window
 /// as its own - so writing it makes the same window about another swatch, and

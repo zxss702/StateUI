@@ -1,4 +1,4 @@
-# Copyright 2026 the StateUI project authors
+# Copyright 2026 the SwiftOmniUI project authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ---------------------------------------------------------------------------
-# Runs the WinUI host's tests: `swift test` in lib\StateUI.WinUI\Testing,
+# Runs the WinUI host's tests: `swift test` in lib\SwiftOmniUI.WinUI\Testing,
 # whose test runner is given the Windows App SDK first, as an application is -
 # WinUI's classes are found through the runner's manifest.
 #
@@ -26,9 +26,9 @@
 # request. A filter runs the tests it names, each in a process of its own.
 #
 # The tests are built, the Windows App SDK laid beside the runner, and the run
-# skips the build. A run with STATEUI_UPDATE_EXPORTS=1 writes each verdict file
+# skips the build. A run with SWIFTOMNIUI_UPDATE_EXPORTS=1 writes each verdict file
 # under the revision its family stands at
-# (lib/StateUI.Conformance/revisions.txt); -Stale runs only the conformance
+# (lib/SwiftOmniUI.Conformance/revisions.txt); -Stale runs only the conformance
 # families whose verdicts stand at another revision, or at none - each other
 # one's process ends at once.
 # ---------------------------------------------------------------------------
@@ -40,21 +40,21 @@ param(
 )
 . (Join-Path $PSScriptRoot 'tools.ps1')
 
-Initialize-StateUIProjection
+Initialize-SwiftOmniUIProjection
 # Our layout keeps the test target inside the host package (Tests/), not
 # upstream's nested Testing package - the package root is the build path.
-$testing = $StateUIWinUIHost
-$env:STATEUI_STALE_ONLY = if ($Stale) { '1' } else { '' }
+$testing = $SwiftOmniUIWinUIHost
+$env:SWIFTOMNIUI_STALE_ONLY = if ($Stale) { '1' } else { '' }
 $scratch = @()
 if ($ScratchPath) { $scratch = @('--scratch-path', $ScratchPath) }
 
 Write-Host 'building the WinUI host tests - SwiftPM reads the packages first, printing nothing'
-Write-StateUIEditorBuilds
+Write-SwiftOmniUIEditorBuilds
 swift build --package-path $testing --build-tests @scratch
 if ($LASTEXITCODE) { throw 'the WinUI host tests did not build' }
 Write-Host 'laying the Windows App SDK beside the test runner'
 $bin = (swift build --package-path $testing @scratch --show-bin-path).Trim()
-Set-StateUISelfContained -Directory $bin -Executables (Join-Path $bin 'StateUIWinUITests-test-runner.exe')
+Set-SwiftOmniUISelfContained -Directory $bin -Executables (Join-Path $bin 'SwiftOmniUIWinUITests-test-runner.exe')
 
 # A variable's name is its parameter's whatever the case, so the arguments have one of their own.
 $apart = @('--parallel', '--num-workers', '1')

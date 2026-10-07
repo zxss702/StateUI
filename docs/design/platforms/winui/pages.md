@@ -3,7 +3,7 @@
 How the WinUI host presents a window's arrangement of pages - a navigation
 stack, a split view, a set of tabs - as a Windows desktop application
 presents its own: one chrome across the top of the window, WinUI's own
-navigation pane, and the way back the mouse and the keyboard offer. StateUI
+navigation pane, and the way back the mouse and the keyboard offer. SwiftOmniUI
 keeps every page, the path and the selection; WinUI is given no second
 navigation model to reconcile with them.
 
@@ -79,7 +79,7 @@ the view, so the sidebar has been laid out in it by then; everything in the
 pane is measured again, or a layout inside keeps the places that first layout
 gave it - a footer under a scroller stood below the window.
 
-Whether the sidebar shows is StateUI's binding, which follows what WinUI
+Whether the sidebar shows is SwiftOmniUI's binding, which follows what WinUI
 shows: the pane opening or closing of WinUI's accord - a click beside it, the
 window's room - reaches the binding. The host's one adaptation is that a
 window wide enough for both panes opens with the sidebar shown; after that,

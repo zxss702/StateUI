@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A colour, a size, a padding and a font size, each read off a state the host
 /// moves on its own frames.

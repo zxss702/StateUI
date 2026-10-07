@@ -19,7 +19,7 @@ set -euo pipefail
 command="${1:-}"
 
 list_macos () {
-  local page; page="$(mktemp -t stateui-browsers).html"
+  local page; page="$(mktemp -t swiftomniui-browsers).html"
   echo "<html></html>" > "$page"
   osascript -l JavaScript - "$page" <<'JXA'
 function run(argv) {

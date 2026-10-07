@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A page's actions coming and going with the page: a pushed page's own stand nearer the title, the gallery's keep
 /// their place, and back the bar stands as it stood.

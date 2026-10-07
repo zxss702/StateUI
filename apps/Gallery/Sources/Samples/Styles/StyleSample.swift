@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Where the gallery's appearance actually comes from.
 struct StyleSample: SampleContent, ExampleContent {

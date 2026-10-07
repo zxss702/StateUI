@@ -96,12 +96,12 @@ jobs:
         run: |
           set -euo pipefail
           apk="$(.scripts/Android/test-android.sh --build x86_64 | tail -n 1)"
-          cp "$apk" "$RUNNER_TEMP/StateUIAndroidTests.apk"
+          cp "$apk" "$RUNNER_TEMP/SwiftOmniUIAndroidTests.apk"
 
       - uses: actions/upload-artifact@v5
         with:
           name: android-tests
-          path: ${{ runner.temp }}/StateUIAndroidTests.apk
+          path: ${{ runner.temp }}/SwiftOmniUIAndroidTests.apk
           retention-days: 3
 
   test:
@@ -137,4 +137,4 @@ jobs:
           profile: pixel_3a
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
-          script: STATEUI_TEST_APK="${{ runner.temp }}/android-tests/StateUIAndroidTests.apk" .scripts/Android/test-android.sh
+          script: SWIFTOMNIUI_TEST_APK="${{ runner.temp }}/android-tests/SwiftOmniUIAndroidTests.apk" .scripts/Android/test-android.sh

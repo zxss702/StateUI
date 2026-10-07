@@ -1,6 +1,6 @@
 # Applications and sessions
 
-StateUI separates structural declarations from the identity-bearing objects
+SwiftOmniUI separates structural declarations from the identity-bearing objects
 that exist while an application runs:
 
 ```text
@@ -233,7 +233,7 @@ does not silently start referring to a newer scene after its own scene ends.
 Restoration has two inputs with different owners:
 
 - the platform reconnects scene and native-window identities that were open;
-- StateUI restores declared window kinds, per-value identities, and
+- SwiftOmniUI restores declared window kinds, per-value identities, and
   `@State(sceneKey:)` values into the matching scene session.
 
 Restoration never changes the structural contract. A window kind must still be
@@ -428,7 +428,7 @@ does not invent navigation phases for a visibility change that was not a
 navigation move. As with windows, a duplicate report of the standing phase is
 a no-op.
 
-`onAppear` and `onDisappear` describe the lifetime of a StateUI element;
+`onAppear` and `onDisappear` describe the lifetime of a SwiftOmniUI element;
 they are not substitutes for page appearance or window activation. Use the
 session phase whose scope matches the work.
 
@@ -460,7 +460,7 @@ the visible page's own furniture: the leading and trailing content as toolbar
 items and the content in the centre. The title, subtitle and icon stand as
 text at the trailing edge of the title bar. AppKit owns placement, window
 dragging, overflow and the toolbar's material, so the title area's colours are
-the system's; the slot items keep the same StateUI-created native views across
+the system's; the slot items keep the same SwiftOmniUI-created native views across
 updates.
 
 Set the title bar through the window session. A platform without an authored
@@ -470,7 +470,7 @@ must carry a check before an application relies on it.
 
 ## Reading support status
 
-The types above define StateUI's cross-platform vocabulary. They do not make a
+The types above define SwiftOmniUI's cross-platform vocabulary. They do not make a
 blanket implementation claim. The platform matrix deliberately verifies these
 groups separately:
 

@@ -3,10 +3,10 @@
 
 import Foundation
 import HelloWorldUI
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
 // Register the application module before the native host requests its root.
-stateui_app_register()
+swiftomniui_app_register()
 
 // The application's artwork, found from this file's own place: SwiftPM builds
 // no bundle to carry it, so it is read where the application keeps it,
@@ -17,6 +17,6 @@ let application = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()
 let resources = application.appendingPathComponent("Resources/Images", isDirectory: true)
 
-StateUIAppKit.run(
+SwiftOmniUIAppKit.run(
     resourceDirectory: resources,
     applicationIcon: application.appendingPathComponent("Resources/AppIcon/appicon_macos.svg"))

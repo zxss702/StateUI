@@ -1,0 +1,654 @@
+/* SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors */
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/* The Web host's look: a current web page's, light or dark as the user's system is. What an application says of
+   an element's look is that element's own style, which wins over every rule here.
+   Design: docs/design/platforms/web/look.md */
+
+:root {
+  color-scheme: light dark;
+  --swiftomniui-accent: #4f46e5;
+  --swiftomniui-surface: #ffffff;
+  --swiftomniui-raised: #f6f7f9;
+  --swiftomniui-text: #17181c;
+  --swiftomniui-muted: #5d6270;
+  --swiftomniui-line: rgb(15 23 42 / 0.09);
+  --swiftomniui-line-strong: rgb(15 23 42 / 0.18);
+  --swiftomniui-shade: rgb(15 23 42 / 0.36);
+  --swiftomniui-radius: 10px;
+  --swiftomniui-bar-height: 56px;
+  --swiftomniui-sidebar-width: 288px;
+  --swiftomniui-bar-side: 64px;
+  --swiftomniui-slide: 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --swiftomniui-raised-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 12px 32px rgb(15 23 42 / 0.14);
+  --swiftomniui-focus: 0 0 0 3px color-mix(in srgb, var(--swiftomniui-accent) 38%, transparent);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --swiftomniui-accent: #8b85ff;
+    --swiftomniui-surface: #111216;
+    --swiftomniui-raised: #191b21;
+    --swiftomniui-text: #eceef2;
+    --swiftomniui-muted: #9aa0ad;
+    --swiftomniui-line: rgb(255 255 255 / 0.08);
+    --swiftomniui-line-strong: rgb(255 255 255 / 0.16);
+    --swiftomniui-shade: rgb(0 0 0 / 0.55);
+  }
+}
+
+/* The words stand at the sizes the page gives them: a phone's browser enlarges none it finds in a wide block. */
+html, body { margin: 0; height: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  background: var(--swiftomniui-surface);
+  color: var(--swiftomniui-text);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+*, *::before, *::after { box-sizing: border-box; }
+/* The width the layout gives a view is its own: a child does not take it. */
+@property --swiftomniui-width { syntax: "*"; inherits: false; }
+[hidden] { display: none !important; }
+
+/* While the application loads: its name, a ring turning and a bar of how much has come, in the page's middle. */
+.swiftomniui-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  background: var(--swiftomniui-surface);
+  transition: opacity 0.3s ease;
+}
+.swiftomniui-loading[data-done] { opacity: 0; pointer-events: none; }
+.swiftomniui-loading-name { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.swiftomniui-loading .swiftomniui-activity { width: 28px; height: 28px; border-width: 3px; }
+.swiftomniui-loading-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  width: min(240px, 60vw);
+  height: 4px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--swiftomniui-line-strong);
+  color: var(--swiftomniui-accent);
+}
+.swiftomniui-loading-bar::-webkit-progress-bar { background: var(--swiftomniui-line-strong); }
+.swiftomniui-loading-bar::-webkit-progress-value { background: var(--swiftomniui-accent); transition: width 0.15s linear; }
+.swiftomniui-loading-bar::-moz-progress-bar { background: var(--swiftomniui-accent); }
+.swiftomniui-loading-bar:indeterminate {
+  background: linear-gradient(90deg, var(--swiftomniui-line-strong) 0%, var(--swiftomniui-accent) 50%, var(--swiftomniui-line-strong) 100%);
+  background-size: 200% 100%;
+  animation: swiftomniui-sweep 1.1s linear infinite;
+}
+.swiftomniui-loading-bar:indeterminate::-webkit-progress-bar { background: transparent; }
+.swiftomniui-loading-bar:indeterminate::-moz-progress-bar { background: transparent; }
+@keyframes swiftomniui-sweep { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+/* The window: its bar over the room its pages stand in. */
+.swiftomniui-window {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.swiftomniui-room { grid-row: 2; grid-column: 1; display: grid; min-height: 0; min-width: 0; position: relative; }
+.swiftomniui-overlays { grid-row: 2; grid-column: 1; z-index: 20; min-height: 0; min-width: 0; }
+
+/* The bar: what leads it, the page's title centred, the trailing actions. */
+.swiftomniui-bar {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: var(--swiftomniui-bar-height);
+  padding: 0 12px;
+  background: var(--swiftomniui-bar-background, color-mix(in srgb, var(--swiftomniui-surface) 82%, transparent));
+  color: var(--swiftomniui-bar-foreground, var(--swiftomniui-text));
+  border-bottom: 1px solid var(--swiftomniui-line);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+}
+.swiftomniui-bar-lead, .swiftomniui-bar-side, .swiftomniui-bar-start { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.swiftomniui-bar:not([data-sidebar]) .swiftomniui-bar-title[data-repeats] { display: none; }
+/* A view a page declares in place of its title stands where the title would, at its own size. */
+.swiftomniui-bar-title[data-holds-view] { display: grid; justify-items: center; overflow: visible; font-weight: inherit; font-size: inherit; }
+.swiftomniui-bar-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.swiftomniui-bar-name { font-weight: 650; font-size: 17px; letter-spacing: -0.01em; white-space: nowrap; }
+.swiftomniui-bar-subtitle { font-size: 12.5px; opacity: 0.72; white-space: nowrap; }
+.swiftomniui-bar-heading { display: flex; flex-direction: column; min-width: 0; }
+.swiftomniui-bar-title {
+  grid-column: 2;
+  font-weight: 600;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.swiftomniui-bar > .swiftomniui-bar-actions { grid-column: 3; justify-self: end; }
+
+/* With a split view, five columns whose widths move with its sidebar: the part over the sidebar - the toggle alone
+   while the sidebar is hidden - what leads the detail, the title, the trailing actions, and as much again as the
+   first part, so the title stands centred over the detail beside a sidebar shown and over the whole bar else. */
+.swiftomniui-bar[data-sidebar] {
+  grid-template-columns: var(--swiftomniui-bar-side) minmax(0, 1fr) auto minmax(0, 1fr) var(--swiftomniui-bar-side);
+  column-gap: 0;
+  padding: 0;
+  transition: grid-template-columns var(--swiftomniui-slide);
+}
+.swiftomniui-bar[data-sidebar] .swiftomniui-bar-lead { display: contents; }
+.swiftomniui-bar[data-sidebar] .swiftomniui-bar-side {
+  position: relative;
+  align-self: stretch;
+  justify-content: flex-end;
+  padding-inline: 12px 10px;
+}
+.swiftomniui-bar[data-sidebar] .swiftomniui-bar-brand {
+  position: absolute;
+  inset: 0;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0s linear 0.15s;
+}
+.swiftomniui-bar[data-sidebar] .swiftomniui-bar-start { transition: padding var(--swiftomniui-slide); }
+.swiftomniui-bar[data-sidebar] .swiftomniui-bar-title { grid-column: 3; padding-inline: 10px; }
+.swiftomniui-bar[data-sidebar] > .swiftomniui-bar-actions { grid-column: 4 / 6; margin-inline-end: 12px; }
+@media (min-width: 901px) {
+  .swiftomniui-bar[data-sidebar="shown"] {
+    grid-template-columns: var(--swiftomniui-sidebar-width) minmax(0, 1fr) auto minmax(0, 1fr) 0px;
+  }
+  .swiftomniui-bar[data-sidebar="shown"] .swiftomniui-bar-brand { opacity: 1; visibility: visible; transition: opacity 0.3s ease 0.1s; }
+  .swiftomniui-bar[data-sidebar="shown"] .swiftomniui-bar-start { padding-inline-start: 10px; }
+  .swiftomniui-bar[data-sidebar="shown"] .swiftomniui-bar-title[data-repeats] { visibility: hidden; }
+}
+
+/* Its buttons: round and glassy, each on its own, an action group's sharing one capsule. */
+.swiftomniui-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  min-width: 42px;
+  justify-content: center;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--swiftomniui-glass);
+  box-shadow: var(--swiftomniui-glass-edge);
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.swiftomniui-bar {
+  --swiftomniui-glass: color-mix(in srgb, currentColor 13%, transparent);
+  --swiftomniui-glass-edge: inset 0 0.5px 0 color-mix(in srgb, white 28%, transparent), 0 1px 4px rgb(0 0 0 / 0.08);
+}
+/* The actions at an edge of the bar: each group of them together on a glass of its own, apart from the next. */
+.swiftomniui-bar-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.swiftomniui-bar-group, .swiftomniui-bar-actions > button {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: 999px;
+  background: var(--swiftomniui-glass);
+  box-shadow: var(--swiftomniui-glass-edge);
+}
+.swiftomniui-bar-actions:not(:has(> :not([hidden]))) { display: none; }
+.swiftomniui-bar-group button { background: transparent; box-shadow: none; }
+.swiftomniui-bar button:hover { background: color-mix(in srgb, currentColor 20%, transparent); }
+.swiftomniui-bar button:active { background: color-mix(in srgb, currentColor 27%, transparent); }
+.swiftomniui-bar button:focus-visible { outline: none; box-shadow: var(--swiftomniui-focus); }
+.swiftomniui-bar button:disabled { opacity: 0.4; cursor: default; }
+.swiftomniui-bar button img { width: 22px; height: 22px; }
+.swiftomniui-glyph {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  -webkit-mask: var(--swiftomniui-glyph) center / contain no-repeat;
+  mask: var(--swiftomniui-glyph) center / contain no-repeat;
+}
+.swiftomniui-glyph[data-glyph="sidebar"] {
+  --swiftomniui-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='3'/%3E%3Cpath d='M9 4v16'/%3E%3C/svg%3E");
+}
+.swiftomniui-glyph[data-glyph="back"] {
+  --swiftomniui-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E");
+}
+[dir="rtl"] .swiftomniui-glyph[data-glyph="back"] { transform: scaleX(-1); }
+.swiftomniui-glyph[data-glyph="more"] {
+  --swiftomniui-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Ccircle cx='5' cy='12' r='1.9'/%3E%3Ccircle cx='12' cy='12' r='1.9'/%3E%3Ccircle cx='19' cy='12' r='1.9'/%3E%3C/svg%3E");
+}
+.swiftomniui-glyph[data-glyph="close"] {
+  --swiftomniui-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");
+}
+
+/* A menu: a popover over everything, an entry a row, a submenu its own popover beside it. */
+.swiftomniui-menu {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  min-width: 200px;
+  max-width: min(320px, calc(100vw - 16px));
+  max-height: calc(100dvh - 16px);
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--swiftomniui-line);
+  border-radius: 12px;
+  background: var(--swiftomniui-surface);
+  color: var(--swiftomniui-text);
+  box-shadow: var(--swiftomniui-raised-shadow);
+}
+.swiftomniui-menu:popover-open { display: grid; animation: swiftomniui-fade-in 0.12s ease; }
+.swiftomniui-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.swiftomniui-menu > button:hover:not(:disabled), .swiftomniui-menu > button:focus-visible { background: var(--swiftomniui-raised); outline: none; }
+.swiftomniui-menu > button:disabled { opacity: 0.45; cursor: default; }
+.swiftomniui-menu > button[data-destructive] { color: #d92d20; }
+.swiftomniui-menu > button[aria-haspopup]::after { content: "›"; margin-inline-start: auto; opacity: 0.6; }
+.swiftomniui-menu > button img { width: 18px; height: 18px; }
+.swiftomniui-menu > [role="separator"] { height: 1px; margin: 5px 6px; background: var(--swiftomniui-line); }
+
+/* A sheet: the browser's modal dialog, a card in the middle over a shade, from the bottom where the page is narrow;
+   its bar the page's chrome, the page under it. */
+.swiftomniui-sheet {
+  width: min(560px, calc(100vw - 32px));
+  height: min(640px, calc(100dvh - 64px));
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--swiftomniui-surface);
+  color: var(--swiftomniui-text);
+  box-shadow: var(--swiftomniui-raised-shadow);
+}
+.swiftomniui-sheet[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); animation: swiftomniui-rise 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.swiftomniui-sheet::backdrop { background: var(--swiftomniui-shade); animation: swiftomniui-fade-in 0.2s ease; }
+.swiftomniui-sheet > .swiftomniui-bar { border-radius: 0; }
+.swiftomniui-sheet-room { display: grid; min-height: 0; min-width: 0; position: relative; }
+@media (max-width: 600px) {
+  .swiftomniui-sheet { width: 100vw; max-width: 100vw; height: calc(100dvh - 48px); margin: auto 0 0; border-radius: 16px 16px 0 0; }
+}
+@keyframes swiftomniui-rise { from { transform: translateY(24px); opacity: 0; } }
+
+/* A question for the user: the browser's modal dialog, its words over its buttons. */
+.swiftomniui-question {
+  width: min(400px, calc(100vw - 32px));
+  padding: 24px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--swiftomniui-surface);
+  color: var(--swiftomniui-text);
+  box-shadow: var(--swiftomniui-raised-shadow);
+}
+.swiftomniui-question[open] { display: grid; gap: 12px; animation: swiftomniui-rise 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.swiftomniui-question::backdrop { background: var(--swiftomniui-shade); }
+.swiftomniui-question h2 { margin: 0; font-size: 18px; font-weight: 650; }
+.swiftomniui-question p { margin: 0; color: var(--swiftomniui-muted); line-height: 1.45; }
+.swiftomniui-question input {
+  font: inherit; width: 100%; min-height: 40px; padding: 8px 12px; border-radius: var(--swiftomniui-radius);
+  border: 1px solid var(--swiftomniui-line-strong); background: var(--swiftomniui-surface); color: var(--swiftomniui-text);
+}
+.swiftomniui-question-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.swiftomniui-question[data-kind="choice"] .swiftomniui-question-buttons { flex-direction: column; align-items: stretch; }
+.swiftomniui-question button {
+  font: inherit; font-weight: 600; min-height: 40px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--swiftomniui-line-strong); background: var(--swiftomniui-raised); color: var(--swiftomniui-text);
+}
+.swiftomniui-question button[data-role="accept"] { background: var(--swiftomniui-accent); border-color: transparent; color: white; }
+.swiftomniui-question button[data-role="destructive"] { color: #d92d20; }
+.swiftomniui-question button:focus-visible { outline: none; box-shadow: var(--swiftomniui-focus); }
+
+/* A split view: its sidebar beside the detail, sliding out as its column closes, or over it as a drawer where the
+   page is narrow. A change the user or the tree makes moves; the first room's does not. */
+.swiftomniui-split {
+  display: grid;
+  grid-template-columns: var(--swiftomniui-sidebar-width) minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.swiftomniui-split[data-sidebar="hidden"] { grid-template-columns: 0px minmax(0, 1fr); }
+.swiftomniui-split[data-moves] { transition: grid-template-columns var(--swiftomniui-slide); }
+.swiftomniui-sidebar {
+  display: grid;
+  width: var(--swiftomniui-sidebar-width);
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--swiftomniui-raised);
+  border-inline-end: 1px solid var(--swiftomniui-line);
+}
+.swiftomniui-split[data-sidebar="hidden"] > .swiftomniui-sidebar { transform: translateX(-100%); visibility: hidden; }
+[dir="rtl"] .swiftomniui-split[data-sidebar="hidden"] > .swiftomniui-sidebar { transform: translateX(100%); }
+.swiftomniui-split[data-moves] > .swiftomniui-sidebar { transition: transform var(--swiftomniui-slide), visibility 0s; }
+.swiftomniui-split[data-moves][data-sidebar="hidden"] > .swiftomniui-sidebar {
+  transition: transform var(--swiftomniui-slide), visibility 0s linear 0.32s;
+}
+.swiftomniui-detail { display: grid; min-height: 0; min-width: 0; }
+.swiftomniui-scrim { display: none; }
+
+@media (max-width: 900px) {
+  .swiftomniui-split, .swiftomniui-split[data-sidebar="hidden"] { grid-template-columns: minmax(0, 1fr); }
+  .swiftomniui-detail { grid-column: 1; grid-row: 1; }
+  .swiftomniui-sidebar, .swiftomniui-split[data-sidebar="hidden"] > .swiftomniui-sidebar {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 30;
+    width: min(86vw, var(--swiftomniui-sidebar-width));
+    visibility: visible;
+    border-inline-end: 1px solid var(--swiftomniui-line);
+    box-shadow: var(--swiftomniui-raised-shadow);
+    transform: translateX(-104%);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  [dir="rtl"] .swiftomniui-sidebar, [dir="rtl"] .swiftomniui-split[data-sidebar="hidden"] > .swiftomniui-sidebar { transform: translateX(104%); }
+  .swiftomniui-split[data-sidebar="shown"] > .swiftomniui-sidebar { transform: none; }
+  .swiftomniui-split[data-sidebar="shown"] > .swiftomniui-scrim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 25;
+    background: var(--swiftomniui-shade);
+    animation: swiftomniui-fade-in 0.2s ease;
+  }
+}
+
+/* A stack shows its top page. */
+.swiftomniui-stack { display: grid; min-height: 0; min-width: 0; }
+.swiftomniui-stack > [data-covered] { display: none !important; }
+
+/* A collection: a scroller asking for no room of its own, over a cell an entry - down, across or in columns - one
+   whose entry never came keeping a row's room. */
+.swiftomniui-items { display: block; min-width: 0; min-height: 0; contain: size; overflow: auto; }
+.swiftomniui-items[data-layout="row"] { overflow-y: hidden; overscroll-behavior-x: contain; }
+.swiftomniui-items:not([data-layout="row"]) { overflow-x: hidden; overscroll-behavior-y: contain; }
+.swiftomniui-items-content { display: flex; flex-direction: column; min-width: 0; }
+.swiftomniui-items[data-layout="row"] > .swiftomniui-items-content { flex-direction: row; align-items: stretch; height: 100%; width: max-content; }
+.swiftomniui-items[data-layout="grid"] > .swiftomniui-items-content { display: grid; align-content: start; }
+.swiftomniui-items[data-layout="grid"] .swiftomniui-item[data-part] { grid-column: 1 / -1; }
+.swiftomniui-item { flex: none; }
+.swiftomniui-item:empty { min-height: 44px; }
+.swiftomniui-items[data-layout="row"] .swiftomniui-item:empty { min-height: 0; min-width: 44px; }
+.swiftomniui-item[aria-selected] { cursor: pointer; border-radius: 8px; }
+.swiftomniui-item[aria-selected="true"] { background: color-mix(in srgb, var(--swiftomniui-accent) 16%, transparent); }
+
+/* A web view: the browser's own frame over the room its layout gives it, the box taking no room of its own. */
+.swiftomniui-frame { position: relative; min-width: 0; min-height: 0; background: white; }
+.swiftomniui-frame > iframe { position: absolute; inset: 0; display: block; width: 100%; height: 100%; border: 0; }
+.swiftomniui-color-box { display: grid; }
+
+/* A canvas: its drawing on a surface filling the room its layout gives it, the surface taking no room of its own. */
+.swiftomniui-canvas { position: relative; min-width: 0; min-height: 0; overflow: hidden; touch-action: none; }
+.swiftomniui-canvas > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* A tabbed view: the strip of its tabs' names over the one cell its pages share, the chosen one shown. */
+.swiftomniui-tabs { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; }
+.swiftomniui-tabs > .swiftomniui-tab-strip {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--swiftomniui-surface);
+  border-bottom: 1px solid var(--swiftomniui-line);
+}
+.swiftomniui-room .swiftomniui-tab-strip > button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--swiftomniui-muted);
+  font-weight: 550;
+  white-space: nowrap;
+  filter: none;
+}
+.swiftomniui-room .swiftomniui-tab-strip > button { display: inline-flex; align-items: center; gap: 6px; }
+.swiftomniui-room .swiftomniui-tab-strip > button > img { width: 18px; height: 18px; contain: none; }
+.swiftomniui-room .swiftomniui-tab-strip > button:hover { color: var(--swiftomniui-text); }
+.swiftomniui-room .swiftomniui-tab-strip > button[aria-selected="true"] { color: var(--swiftomniui-accent); border-bottom-color: var(--swiftomniui-accent); }
+/* A covered tab is laid out unseen, so a page sized by its own frame knows it before it shows. */
+.swiftomniui-tab-pages > [data-covered] { visibility: hidden !important; overflow: clip; }
+.swiftomniui-stack > [data-arriving] { animation: swiftomniui-arrive 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+/* A scroller. */
+.swiftomniui-scroller {
+  min-height: 0;
+  min-width: 0;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, currentColor 28%, transparent) transparent;
+}
+.swiftomniui-scroller[data-bars="never"] { scrollbar-width: none; }
+.swiftomniui-scroller[data-bars="never"]::-webkit-scrollbar { display: none; }
+
+/* Controls, where the application gives them no look of their own. */
+.swiftomniui-room button {
+  font: inherit;
+  font-weight: 550;
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 1px solid var(--swiftomniui-line-strong);
+  border-radius: var(--swiftomniui-radius);
+  background: var(--swiftomniui-raised);
+  color: var(--swiftomniui-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+/* A button's picture stands beside its words, the two in its middle; alone, it fills the button. */
+.swiftomniui-button { display: inline-flex; align-items: center; justify-content: center; }
+.swiftomniui-button > span { min-width: 0; }
+.swiftomniui-button > img { contain: none; }
+.swiftomniui-button[data-alone] > span { display: none; }
+.swiftomniui-button[data-alone] > img { width: 100%; height: 100%; }
+.swiftomniui-room button:hover { filter: brightness(0.97); border-color: color-mix(in srgb, currentColor 30%, transparent); }
+.swiftomniui-room button:active { filter: brightness(0.92); }
+.swiftomniui-room button:disabled { opacity: 0.45; cursor: default; filter: none; }
+.swiftomniui-room input:not([type="checkbox"], [type="radio"], [type="range"]), .swiftomniui-room textarea, .swiftomniui-room select {
+  font: inherit;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--swiftomniui-line-strong);
+  border-radius: var(--swiftomniui-radius);
+  background: var(--swiftomniui-surface);
+  color: var(--swiftomniui-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+/* A field is as wide as its words or its placeholder - as a native one measures - not twenty characters. */
+.swiftomniui-room input.swiftomniui-field { field-sizing: content; }
+.swiftomniui-room input::placeholder, .swiftomniui-room textarea::placeholder { color: var(--swiftomniui-placeholder, var(--swiftomniui-muted)); }
+.swiftomniui-room textarea { min-height: 88px; line-height: 1.45; resize: vertical; }
+/* An editor growing with its words is as tall as they are, from one line. */
+.swiftomniui-room textarea[data-grows] { min-height: 0; }
+/* A select's and a search field's padding - 12 and 34 points either side - yields to a narrower room the layout gives
+   it (--swiftomniui-width), each side in its share, so the field stands as wide as its room. */
+.swiftomniui-room :is(select, input[type="search"]) { --swiftomniui-field-room: calc(var(--swiftomniui-width, 100vw) - 2px); }
+.swiftomniui-room input[type="search"] {
+  padding-inline-start: min(34px, calc(var(--swiftomniui-field-room) * 0.7391));
+  padding-inline-end: min(12px, calc(var(--swiftomniui-field-room) * 0.2609));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 11px center;
+  background-size: 16px;
+}
+[dir="rtl"] .swiftomniui-room input[type="search"] { background-position: right 11px center; }
+.swiftomniui-room :is(button, input, textarea, select):focus-visible {
+  outline: none;
+  border-color: var(--swiftomniui-accent);
+  box-shadow: var(--swiftomniui-focus);
+}
+.swiftomniui-room :is(input[type="checkbox"], input[type="radio"], input[type="range"], progress) { accent-color: var(--swiftomniui-accent); }
+/* A bar of work done, a ring while work goes on, a radio button with its caption, a choice from a list. */
+.swiftomniui-progress { display: grid; align-items: center; min-width: 80px; }
+.swiftomniui-room progress {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--swiftomniui-line-strong);
+  color: var(--swiftomniui-on, var(--swiftomniui-accent));
+}
+.swiftomniui-room progress::-webkit-progress-bar { background: var(--swiftomniui-line-strong); border-radius: 999px; }
+.swiftomniui-room progress::-webkit-progress-value { background: var(--swiftomniui-on, var(--swiftomniui-accent)); border-radius: 999px; transition: width 0.2s ease; }
+.swiftomniui-room progress::-moz-progress-bar { background: var(--swiftomniui-on, var(--swiftomniui-accent)); border-radius: 999px; }
+.swiftomniui-activity {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid color-mix(in srgb, var(--swiftomniui-on, var(--swiftomniui-accent)) 22%, transparent);
+  border-top-color: var(--swiftomniui-on, var(--swiftomniui-accent));
+  visibility: hidden;
+}
+.swiftomniui-activity[data-running] { visibility: visible; animation: swiftomniui-turn 0.8s linear infinite; }
+/* A toggle and a ring stand at their own size in the middle of the frame the layout gives their view, a bar of work
+   done across its middle. */
+.swiftomniui-toggle, .swiftomniui-indicator { display: inline-grid; place-items: center; }
+.swiftomniui-toggle { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.swiftomniui-toggle[aria-disabled] { cursor: default; }
+.swiftomniui-radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.swiftomniui-radio[aria-disabled] { opacity: 0.45; cursor: default; }
+.swiftomniui-room select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-inline-start: min(12px, calc(var(--swiftomniui-field-room) * 0.2609));
+  padding-inline-end: min(34px, calc(var(--swiftomniui-field-room) * 0.7391));
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+[dir="rtl"] .swiftomniui-room select { background-position: left 10px center; }
+
+/* A switch drawn as one, a slider across its room, a stepper's field between its buttons. */
+.swiftomniui-room input.swiftomniui-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 26px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--swiftomniui-line-strong);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.swiftomniui-room input.swiftomniui-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.swiftomniui-room input.swiftomniui-switch:checked { background: var(--swiftomniui-on, var(--swiftomniui-accent)); }
+.swiftomniui-room input.swiftomniui-switch:checked::before { transform: translateX(18px); }
+[dir="rtl"] .swiftomniui-room input.swiftomniui-switch:checked::before { transform: translateX(-18px); }
+.swiftomniui-room input.swiftomniui-switch:disabled { opacity: 0.45; cursor: default; }
+.swiftomniui-room input[type="checkbox"]:not(.swiftomniui-switch), .swiftomniui-room input[type="radio"] { width: 18px; height: 18px; margin: 0; }
+.swiftomniui-room input[type="range"] { min-width: 120px; margin: 0; }
+.swiftomniui-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--swiftomniui-line-strong);
+  border-radius: var(--swiftomniui-radius);
+  overflow: hidden;
+  background: var(--swiftomniui-surface);
+}
+.swiftomniui-room .swiftomniui-stepper button {
+  min-width: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+.swiftomniui-room .swiftomniui-stepper input {
+  width: 76px;
+  border: 0;
+  border-inline: 1px solid var(--swiftomniui-line);
+  border-radius: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+.swiftomniui-stepper input::-webkit-inner-spin-button, .swiftomniui-stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.swiftomniui-room .swiftomniui-stepper:focus-within { border-color: var(--swiftomniui-accent); box-shadow: var(--swiftomniui-focus); }
+.swiftomniui-room .swiftomniui-stepper :focus-visible { box-shadow: none; }
+
+.swiftomniui-room [data-taps] { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.swiftomniui-room [data-taps]:focus-visible { outline: none; box-shadow: var(--swiftomniui-focus); }
+[data-lets-through] { pointer-events: none; }
+[data-lets-through] > :not([data-lets-through]) { pointer-events: auto; }
+
+/* A picture: as large as itself, its proportions binding neither length - as a native picture view's. */
+.swiftomniui-picture { contain: size; }
+
+/* A shape: its drawing on a surface over the room its layout gives it, the surface taking no room of its own. */
+.swiftomniui-shape { position: relative; min-width: 0; min-height: 0; }
+.swiftomniui-shape > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+
+.swiftomniui-unsupported {
+  align-self: start;
+  justify-self: start;
+  padding: 3px 8px;
+  border: 1px dashed currentColor;
+  border-radius: 6px;
+  color: #e5484d;
+  font-size: 12.5px;
+}
+.swiftomniui-failure { margin: 16px; color: #e5484d; white-space: pre-wrap; }
+
+@keyframes swiftomniui-fade-in { from { opacity: 0; } }
+@keyframes swiftomniui-turn { to { transform: rotate(1turn); } }
+@keyframes swiftomniui-arrive { from { opacity: 0; transform: translateY(6px); } }
+/* What the page tells a screen reader, which nobody sees. */
+.swiftomniui-announcer { position: fixed; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* A control answers every tap: a second one soon after the first is its own, never the page's zoom. */
+.swiftomniui-window :is(button, input, select, textarea, label, [data-taps]) { touch-action: manipulation; }
+
+@media (prefers-reduced-motion: reduce) {
+  .swiftomniui-sidebar, .swiftomniui-split, .swiftomniui-bar, .swiftomniui-bar *, .swiftomniui-stack > [data-arriving], .swiftomniui-scrim,
+  .swiftomniui-loading-bar {
+    transition: none !important;
+    animation: none !important;
+  }
+  .swiftomniui-activity[data-running] { animation-duration: 2.4s; }
+}

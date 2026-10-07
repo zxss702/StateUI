@@ -4,9 +4,9 @@
 import Android
 import CGalleryGLES
 import GalleryUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
-/// A cube drawn with OpenGL ES 3.0 into the surface of the gallery's own Java view, com.stateui.gallery.Cube3DView -
+/// A cube drawn with OpenGL ES 3.0 into the surface of the gallery's own Java view, com.swiftomniui.gallery.Cube3DView -
 /// a TextureView that asks for the display's frames while the cube spins and stands in a window. The Swift half is
 /// Sources/Samples/Interop/Cube3D.swift.
 @MainActor
@@ -37,13 +37,13 @@ final class GLESCube3DView: AndroidControl {
     private var angle = 0.0
     private var lastFrame: Int64 = 0
 
-    private static let viewClass = Java.findClass("com/stateui/gallery/Cube3DView")
+    private static let viewClass = Java.findClass("com/swiftomniui/gallery/Cube3DView")
     private static let make = Java.method(viewClass, "<init>", "(Landroid/content/Context;J)V")
     private static let setSpinning = Java.method(viewClass, "setSpinning", "(Z)V")
 
     init() {
         number = GalleryControls.reserve()
-        view = Java.new(Self.viewClass, Self.make, .object(StateUIAndroid.context), .long(number))
+        view = Java.new(Self.viewClass, Self.make, .object(SwiftOmniUIAndroid.context), .long(number))
         GalleryControls.hold(self, as: number)
     }
 
@@ -278,7 +278,7 @@ extension GLESCube3DView {
     /// Adds the cube for `Cube3DContract`. Said once, as the library loads.
     @MainActor
     static func register() {
-        StateUIControls.add(Cube3DContract.self, create: { _ in GLESCube3DView() }) { cube in
+        SwiftOmniUIControls.add(Cube3DContract.self, create: { _ in GLESCube3DView() }) { cube in
             cube.property(Cube3DContract.size) { control, size in control.cubeSize = size ?? 0.6 }
             cube.property(Cube3DContract.color) { control, color in control.color = color ?? .teal }
             cube.property(Cube3DContract.isSpinning) { control, spinning in control.isSpinning = spinning ?? true }

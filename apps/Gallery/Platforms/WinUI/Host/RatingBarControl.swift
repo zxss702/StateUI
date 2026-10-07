@@ -3,7 +3,7 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 /// Five stars the user picks from - WinUI's own RatingControl, made by the gallery's relay - and a flash an aimed act
 /// asks for.
@@ -53,7 +53,7 @@ extension RatingBarControl {
     /// Adds the bar for `RatingBarContract`, and performs its aimed `flash`. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(RatingBarContract.self, create: { reports -> RatingBarControl in
+        SwiftOmniUIControls.add(RatingBarContract.self, create: { reports -> RatingBarControl in
             let bar = RatingBarControl()
             bar.onRatingChanged = { rating in
                 reports.report(RatingBarContract.rating, rating, as: RatingBarContract.ratingChanged)
@@ -65,7 +65,7 @@ extension RatingBarControl {
         }
 
         // Aimed at one bar: the identity the aim sent is turned back into the control this host made for it.
-        StateUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
+        SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
             bar.flash()
         }
     }

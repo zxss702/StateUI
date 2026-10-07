@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # Popover
 
 A transient view presented over a window, anchored to the element that carries it - the platform's own popover, flyout, or anchored panel.
 
-Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping StateUI's state contract.
+Layer: `adaptive`. Every base host presents it by its platform's conventions, keeping SwiftOmniUI's state contract.
 
 Inherits nothing: every member below is its own.
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ⏸ |  | `GtkPopover` | waits on Popover.isOpen, not realized yet |
 | Web |  |  | anchored popover (?) | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Menus/PopoverContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Menus/PopoverContract.swift`.
 
 ## Popover's own members
 

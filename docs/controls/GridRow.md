@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # GridRow
 
@@ -26,13 +26,13 @@ See [the dictionary](README.md) for how a mark is given.
 | Host | Created | Members (99) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  |  | custom `NSView` | no run of it on these sources |
-| UIKit |  |  | composed by StateUI | no run of it on these sources |
-| Android Views |  |  | composed by StateUI | no run of it on these sources |
-| WinUI 3 |  |  | composed by StateUI | no run of it on these sources |
-| GTK 4 |  |  | composed by StateUI | no run of it on these sources |
-| Web |  |  | composed by StateUI | no host yet |
+| UIKit |  |  | composed by SwiftOmniUI | no run of it on these sources |
+| Android Views |  |  | composed by SwiftOmniUI | no run of it on these sources |
+| WinUI 3 |  |  | composed by SwiftOmniUI | no run of it on these sources |
+| GTK 4 |  |  | composed by SwiftOmniUI | no run of it on these sources |
+| Web |  |  | composed by SwiftOmniUI | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Layouts/GridRowContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/GridRowContract.swift`.
 
 ## GridRow's own members
 

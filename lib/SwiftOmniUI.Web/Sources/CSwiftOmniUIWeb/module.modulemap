@@ -1,0 +1,4 @@
+module CSwiftOmniUIWeb [system] {
+    header "CSwiftOmniUIWeb.h"
+    export *
+}

@@ -3,7 +3,7 @@
 
 import CGalleryWinUI
 import GalleryUI
-import StateUIWinUI
+import SwiftOmniUIWinUI
 
 /// The gallery's own pushes, as this host raises them: the battery, as Windows tells it.
 enum GalleryEventSources {
@@ -13,7 +13,7 @@ enum GalleryEventSources {
     /// Declares what the host raises and wires its source. Said once, before the application runs.
     @MainActor
     static func start() {
-        StateUIEvents.raises(GalleryContract.batteryChanged)
+        SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
         gallery_battery_watch(batteryChanged)
         report()
@@ -25,7 +25,7 @@ enum GalleryEventSources {
         guard level > 0, lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
         lastSaid = (level, charging)
-        StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+        SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
     }
 }
 

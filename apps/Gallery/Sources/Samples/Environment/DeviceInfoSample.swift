@@ -1,4 +1,4 @@
-import StateUI
+import SwiftOmniUI
 
 /// DeviceInfo and AppInfo - the two providers whose facts mostly stand still:
 /// what machine this is, and what app this is.

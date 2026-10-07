@@ -108,7 +108,7 @@ reason, an unrealized one on a tier.
 A verdict stands until a change changes what its family's cases prove, and
 the one who makes such a change says so. The conformance package, where the
 families are, holds the revision each stands at in
-`lib/StateUI.Conformance/revisions.txt` - a line naming the family alone on
+`lib/SwiftOmniUI.Conformance/revisions.txt` - a line naming the family alone on
 every host, a line naming a host and the family on that host alone, 1 where
 no line names it (`HostVerdict.revision`). A change to the cases, or to what every host
 decides alike, raises the family's own; a change one host alone makes raises
@@ -125,8 +125,8 @@ family as it stands, and a note repeating it on every stale cell of every host
 only hides the notes that count. A run of the family makes it fresh again;
 nothing a person remembers does.
 
-A run asked for the stale families alone - `STATEUI_STALE_ONLY=1`, `-Stale` on
-Windows, `StateUI: Conformance - Rebuild changed` in the editor - runs only the
+A run asked for the stale families alone - `SWIFTOMNIUI_STALE_ONLY=1`, `-Stale` on
+Windows, `SwiftOmniUI: Conformance - Rebuild changed` in the editor - runs only the
 families whose file names another revision, or none, or has no file yet; the
 others end at once, their files left as they stand.
 
@@ -145,10 +145,10 @@ case judges stays empty with why.
 
 ## Rendering again
 
-`STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests` writes the
+`SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests` writes the
 pages and the matrix's blocks again. Without the variable, the suite refuses
 a document that differs from what the contracts render, a line that is no
 verdict, and a verdict on what no contract of its element declares. A change
 to a contract's first paragraph, a member or a layer is committed together
 with the pages it renders; a host's verdicts are written again through that
-host's own suite, with `STATEUI_UPDATE_EXPORTS=1`, and the pages after them.
+host's own suite, with `SWIFTOMNIUI_UPDATE_EXPORTS=1`, and the pages after them.

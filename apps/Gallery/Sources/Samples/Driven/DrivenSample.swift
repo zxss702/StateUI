@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A value both sides hold, moved by the host and read by arithmetic that
 /// describes nothing.

@@ -1,0 +1,4 @@
+module CSwiftOmniUIGTK [system] {
+    header "CSwiftOmniUIGTK.h"
+    export *
+}

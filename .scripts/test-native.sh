@@ -8,14 +8,14 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repository_dir="$(cd "$script_dir/.." && pwd)"
 
 swift test --package-path "$repository_dir"
-swift test --package-path "$repository_dir/lib/StateUI.Host"
-swift test --package-path "$repository_dir/lib/StateUI.Conformance"
-swift test --package-path "$repository_dir/lib/StateUI.AppKit"
+swift test --package-path "$repository_dir/lib/SwiftOmniUI.Host"
+swift test --package-path "$repository_dir/lib/SwiftOmniUI.Conformance"
+swift test --package-path "$repository_dir/lib/SwiftOmniUI.AppKit"
 swift test --package-path "$repository_dir/apps/Gallery"
 swift test --package-path "$repository_dir/apps/HelloWorld"
 
 # And Swift written for the AppKit host alone stands under `#if APPKIT`, so the
-# Gallery runs once more as an AppKit build - STATEUI_HOST=appkit, which its
+# Gallery runs once more as an AppKit build - SWIFTOMNIUI_HOST=appkit, which its
 # manifest reads to define that condition - on the directory that build keeps.
-STATEUI_HOST=appkit swift test --package-path "$repository_dir/apps/Gallery" \
+SWIFTOMNIUI_HOST=appkit swift test --package-path "$repository_dir/apps/Gallery" \
   --scratch-path "$repository_dir/apps/Gallery/.build/appkit"

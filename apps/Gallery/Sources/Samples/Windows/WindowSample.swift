@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Native window identity, geometry, constraints, operations and translucency.
 struct WindowSample: SampleContent, ExampleContent {

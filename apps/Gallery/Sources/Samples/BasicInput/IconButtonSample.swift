@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Two buttons whose content is an icon, each drawn once per color scheme.
 struct IconButtonSample: SampleContent, ExampleContent {

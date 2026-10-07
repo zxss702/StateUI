@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The page the menu does not always list - see `MenuPage`, where the row is
 /// written inside an `if`.

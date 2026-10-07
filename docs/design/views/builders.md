@@ -1,7 +1,7 @@
 # Builders
 
 A result builder turns the statements of a closure into the list a container
-holds. StateUI has one for views, and one each for menu entries, windows,
+holds. SwiftOmniUI has one for views, and one each for menu entries, windows,
 window groups and styles. The view builder also gives every view it collects
 a key.
 

@@ -63,7 +63,7 @@ behind it, a menu entry's NSMenuItem and a toolbar item's NSToolbarItem -
 never from what the host last wrote. A
 view's transform is the drawing's where the view's layer holds that drawing
 now, and none where AppKit holds another. A colour is read from the view
-displayed into a context of sRGB, which StateUI's colours are: a bitmap in
+displayed into a context of sRGB, which SwiftOmniUI's colours are: a bitmap in
 the screen's own space holds the screen's numbers. A heading's level stays
 unread, with why: AppKit marks a heading, not its level. What the driver cannot read or do yet it says with why, and the
 case stays empty in AppKit's column rather than failing.
@@ -72,8 +72,8 @@ A label's words are read from the text field it lays out, a field's from its
 text field, an editor's from its text view; a button's and a scroller's
 outline from their layer, which holds the radius it draws - at most half the
 box's shorter side, where a radius past that is not read. What AppKit holds
-none of - what StateUI draws in a view's `draw(_:)`, where StateUI's layout
-places the children, what StateUI measures and what the host cuts - does not
+none of - what SwiftOmniUI draws in a view's `draw(_:)`, where SwiftOmniUI's layout
+places the children, what SwiftOmniUI measures and what the host cuts - does not
 apply here, its effect proven by another case. A field's spelling and caret
 live on the editor AppKit lends the field while the user edits it, and are
 not read.

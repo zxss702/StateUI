@@ -6,13 +6,13 @@ import PackageDescription
 // package holds, so the editor completes the application through this
 // manifest as well.
 
-// The host a build is for: STATEUI_HOST - appkit, uikit, android, winui, gtk or web -
+// The host a build is for: SWIFTOMNIUI_HOST - appkit, uikit, android, winui, gtk or web -
 // which its script or the editor sets, or none for plain Swift - and then
 // `swift test` compiles no line of any host's half. The application's Swift for that host alone stands under its
-// condition - `#if APPKIT` - and ../../lib/StateUI.Head brings the host itself
+// condition - `#if APPKIT` - and ../../lib/SwiftOmniUI.Head brings the host itself
 // to the head.
 let host = ["AppKit", "UIKit", "Android", "WinUI", "GTK", "Web"]
-    .first { $0.lowercased() == Context.environment["STATEUI_HOST"] }
+    .first { $0.lowercased() == Context.environment["SWIFTOMNIUI_HOST"] }
 
 // NonisolatedNonsendingByDefault is the one setting an application must not
 // leave out; see the note in ../../Package.swift.
@@ -20,7 +20,7 @@ let settings: [SwiftSetting] = [.enableUpcomingFeature("NonisolatedNonsendingByD
     + (host.map { [.define($0.uppercased())] } ?? [])
 
 var products: [Product] = [
-    // Dynamic, so a head and its host share one StateUI runtime; on the Web one module holds them all.
+    // Dynamic, so a head and its host share one SwiftOmniUI runtime; on the Web one module holds them all.
     .library(name: "GalleryUI", type: host == "Web" ? nil : .dynamic, targets: ["GalleryUI"]),
 ]
 
@@ -30,10 +30,10 @@ var targets: [Target] = [
         dependencies: [
             // The package is named by the dependency, never assumed from the
             // checkout's folder - a clone may sit in a directory of another
-            // name (SwiftOmniUI, StateUI-main).
-            .product(name: "StateUI", package: "StateUIRoot"),
-            .product(name: "StateUIFoundation", package: "StateUIFoundation"),
-            .product(name: "StateUIJsonData", package: "StateUIJsonData"),
+            // name (SwiftOmniUI, SwiftOmniUI-main).
+            .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
+            .product(name: "SwiftOmniUIFoundation", package: "SwiftOmniUIFoundation"),
+            .product(name: "SwiftOmniUIJsonData", package: "SwiftOmniUIJsonData"),
             .product(name: "JsonDataDynamic", package: "JsonData"),
         ],
         // path: "Sources" - that whole folder is the app's code: the
@@ -48,7 +48,7 @@ var targets: [Target] = [
         name: "GalleryTests",
         dependencies: [
             "GalleryUI",
-            .product(name: "StateUI", package: "StateUIRoot"),
+            .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
         ],
         path: "Tests/GalleryTests",
         swiftSettings: settings
@@ -56,13 +56,13 @@ var targets: [Target] = [
 ]
 
 // The head in Platforms/<Host>: an executable its host runs, and on Android a
-// library the platform loads. StateUIHead brings the host; the gallery's cube
+// library the platform loads. SwiftOmniUIHead brings the host; the gallery's cube
 // adds a native module to three of them.
-let head: [Target.Dependency] = ["GalleryUI", .product(name: "StateUIHead", package: "StateUIHead")]
+let head: [Target.Dependency] = ["GalleryUI", .product(name: "SwiftOmniUIHead", package: "SwiftOmniUIHead")]
 // The web view's backend where the host's platform does not ship one - GTK's WebKitGTK, WinUI's WebView2 - which
 // the head registers: ../../lib/Backends/WebView.<Host>.
 let webBackend: [Target.Dependency] = host.flatMap { host in
-    ["GTK", "WinUI"].contains(host) ? [.product(name: "StateUIWebView\(host)", package: "StateUIWebView\(host)")] : nil
+    ["GTK", "WinUI"].contains(host) ? [.product(name: "SwiftOmniUIWebView\(host)", package: "SwiftOmniUIWebView\(host)")] : nil
 } ?? []
 switch host {
 case "Android"?:
@@ -85,7 +85,7 @@ case "WinUI"?:
             name: "CGalleryWinUI",
             path: "Platforms/WinUI/Relay",
             cxxSettings: [
-                .unsafeFlags(["-I", Context.packageDirectory + "/../../lib/StateUI.WinUI/.projection"]),
+                .unsafeFlags(["-I", Context.packageDirectory + "/../../lib/SwiftOmniUI.WinUI/.projection"]),
             ],
             linkerSettings: [
                 .linkedLibrary("d3d11"), .linkedLibrary("dxgi"), .linkedLibrary("d3dcompiler"),
@@ -114,30 +114,30 @@ case nil:
 
 let package = Package(
     name: "GalleryUI",
-    // StateUI's floor, which an application cannot go below.
+    // SwiftOmniUI's floor, which an application cannot go below.
     platforms: [
         .iOS(.v26),
         .macCatalyst(.v26),
         .macOS(.v26),
     ],
     products: products,
-    // The StateUI checkout: the library at its root, and a head's host.
+    // The SwiftOmniUI checkout: the library at its root, and a head's host.
     // Named, so the checkout's folder may carry any name - a path dependency's
     // identity would otherwise be the folder's.
-    dependencies: [.package(name: "StateUIRoot", path: "../.."),
+    dependencies: [.package(name: "SwiftOmniUIRoot", path: "../.."),
         // The sibling targets holding the Foundation-bound and JsonData-bound
         // halves of the surface - the samples that spell URLs, dates, attributed
         // strings and the model layer import them like any application would.
-        .package(name: "StateUIFoundation", path: "../../lib/StateUI.Foundation"),
-        .package(name: "StateUIJsonData", path: "../../lib/StateUI.JsonData"),
-        // Declared like StateUI.JsonData declares it, so the graph holds one
+        .package(name: "SwiftOmniUIFoundation", path: "../../lib/SwiftOmniUI.Foundation"),
+        .package(name: "SwiftOmniUIJsonData", path: "../../lib/SwiftOmniUI.JsonData"),
+        // Declared like SwiftOmniUI.JsonData declares it, so the graph holds one
         // package: an `@Model` the samples declare expands to JsonData's own
         // symbols, which a linker only reaches through a product named by them.
         .package(url: "https://github.com/zxss702/JsonData.git", branch: "main"),
     ]
-        + (host == nil ? [] : [.package(name: "StateUIHead", path: "../../lib/StateUI.Head")])
+        + (host == nil ? [] : [.package(name: "SwiftOmniUIHead", path: "../../lib/SwiftOmniUI.Head")])
         + (webBackend.isEmpty ? [] : host.map { host in
-            [.package(name: "StateUIWebView\(host)", path: "../../lib/Backends/WebView.\(host)")]
+            [.package(name: "SwiftOmniUIWebView\(host)", path: "../../lib/Backends/WebView.\(host)")]
         } ?? []),
     targets: targets,
     cxxLanguageStandard: .cxx20

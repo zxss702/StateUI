@@ -1,6 +1,6 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
-/// The accessible meaning and stable external identity of a StateUI view.
+/// The accessible meaning and stable external identity of a SwiftOmniUI view.
 struct SemanticsSample: SampleContent, ExampleContent {
     @State private var described = true
 

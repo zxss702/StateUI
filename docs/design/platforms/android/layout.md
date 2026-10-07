@@ -1,13 +1,13 @@
 # Layout on Android
 
-StateUI owns layout on Android as it does on every host: a layout's children
+SwiftOmniUI owns layout on Android as it does on every host: a layout's children
 are measured and placed by the core's arithmetic
 ([layout](../../host/layout.md)), and the toolkit contributes only what a
 child measures natively.
 
 ## A layout is a view group
 
-A StateUI layout is a `StateUIViewGroup`. Android asks it to measure and to
+A SwiftOmniUI layout is a `SwiftOmniUIViewGroup`. Android asks it to measure and to
 place its children, and it forwards both to Swift with its number: the
 measure to the arithmetic's size for the width offered, the placement to the
 arithmetic's rectangles. A child is measured through Android's own
@@ -31,7 +31,7 @@ that element up to the root and asks Android to lay out again.
 
 ## Children past the edges
 
-A StateUI layout does not cut its children off at its edges: a child moved,
+A SwiftOmniUI layout does not cut its children off at its edges: a child moved,
 turned, or still on its way to a place a patch gave it, is drawn where it
 stands. Android's view groups cut their children off by default, so every
 layout view group is told not to, at its content and at its padding.
@@ -39,11 +39,11 @@ layout view group is told not to, at its content and at its padding.
 
 ## Scrolling
 
-A ScrollView is a StateUI layout like any other to its parent, measured by
+A ScrollView is a SwiftOmniUI layout like any other to its parent, measured by
 the core's scroll arithmetic, and inside it stands Android's own scroller: a
 `ScrollView` to scroll down, a `HorizontalScrollView` to scroll across, and
 the second inside the first to scroll both ways, each axis native. The
-innermost holds the document, a StateUI layout that stands the content where
+innermost holds the document, a SwiftOmniUI layout that stands the content where
 the arithmetic says. The scroller fills its viewport with the document, so a
 short content still has the whole room to stand in, and the scroller's
 padding is the document's own rather than the native scroller's. Several
@@ -74,5 +74,5 @@ window, and that place from the safe area's corner, all in points. The host hear
 asks only the views that are read; a view that did not move says nothing. A
 view reports on a frame rather than inside Android's layout pass, so what a
 handler renders is laid out in a pass of its own. A view no layout has placed
-yet - StateUI's, or Android's giving it a size - says nothing, so its first
+yet - SwiftOmniUI's, or Android's giving it a size - says nothing, so its first
 report is where it is laid out.

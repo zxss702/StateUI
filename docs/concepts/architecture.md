@@ -1,6 +1,6 @@
 # Architecture
 
-StateUI is a platform-neutral Swift model for native interfaces. Swift owns
+SwiftOmniUI is a platform-neutral Swift model for native interfaces. Swift owns
 the description tree, identity, state, diffing, and animation laws. A platform
 host owns native objects, platform lifecycle, input callbacks, layout
 integration, and display-frame updates.
@@ -66,12 +66,12 @@ through that storage and is visible before the write returns.
 
 Reading a wrapped state value while a composed body is built records that body
 as a reader. A later write invalidates only the current readers of that state.
-StateUI rebuilds those descriptions and diffs their result against the retained
+SwiftOmniUI rebuilds those descriptions and diffs their result against the retained
 tree.
 
 ```swift internals
 struct Greeting: View {
-    @State private var name = "StateUI"
+    @State private var name = "SwiftOmniUI"
 
     var body: some View {
         VStack {
@@ -99,7 +99,7 @@ It is intentionally not a frame loop.
 ## Reactive path 2: host-carried state
 
 Handing a `Binding` to a control, driven modifier, feed, conversion, or engine
-does not read its wrapped value for dependency tracking. StateUI registers one
+does not read its wrapped value for dependency tracking. SwiftOmniUI registers one
 typed state channel and the host can read or report it without rebuilding the
 body.
 
@@ -155,7 +155,7 @@ does not create a render loop.
 
 `onChange` belongs to the description path. It compares the value carried by
 the previous and current descriptions and runs after the tree walk. `onAppear`
-and `onDisappear` describe StateUI element lifetime, not native allocation
+and `onDisappear` describe SwiftOmniUI element lifetime, not native allocation
 callbacks.
 
 ## Journey
@@ -208,7 +208,7 @@ The complete animation contract, including selection precedence, awaited journey
 outcomes, visibility, layout lanes, and the `Walked` value set, is in
 [Animation and journeys](animation-and-journeys.md).
 
-StateUI describes destinations once. A host that implements the corresponding
+SwiftOmniUI describes destinations once. A host that implements the corresponding
 animation surface advances current property values and layout placements on its
 native display clock and lands exactly on the described destination. Until a
 host has that checked matrix row, an application relies only on the final
@@ -254,7 +254,7 @@ same; only the animation is shortened or removed.
 
 ## Custom engines
 
-`Animation.custom` gives the walk to StateUI code. An engine runs inside the host
+`Animation.custom` gives the walk to SwiftOmniUI code. An engine runs inside the host
 display cycle, reads and writes state, and returns `.again` while it needs
 another frame or `.wait` until a followed state is written.
 
@@ -309,8 +309,8 @@ struct HandbookPage: View {
     @Environment private var page: PageSession
 
     var body: some View {
-        Text("Hello from StateUI")
-            .onAppear { page.title = "StateUI" }
+        Text("Hello from SwiftOmniUI")
+            .onAppear { page.title = "SwiftOmniUI" }
     }
 }
 ```
@@ -318,7 +318,7 @@ struct HandbookPage: View {
 An application can own multiple scene sessions. A scene owns its main window
 and any windows opened from its declared `WindowGroup`s. Activation,
 restoration, focus, hiding, and closure are mapped to those sessions while
-StateUI retains deterministic state and tree ownership.
+SwiftOmniUI retains deterministic state and tree ownership.
 
 Navigation paths, tab selections, sidebar visibility, and modal stacks are
 state. A control method is invoked through an `@Aim`; an aim identifies a

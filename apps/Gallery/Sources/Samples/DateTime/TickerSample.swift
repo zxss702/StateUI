@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The same countdown as Task.sleep, out of the library's own timer.
 struct TickerSample: SampleContent, ExampleContent {

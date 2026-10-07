@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIWeb
+import SwiftOmniUIWeb
 
 /// Five stars in a row, as many lit as the rating: the gallery's own element, `<gallery-rating-bar>` of
-/// Page/rating-bar.js, which knows nothing of StateUI.
+/// Page/rating-bar.js, which knows nothing of SwiftOmniUI.
 ///
 /// The Swift half is Sources/Samples/Interop/RatingBar.swift; the act aimed at a bar, `flash`, is registered at the
 /// end of this file.
@@ -41,7 +41,7 @@ final class RatingBarElement: WebControl {
 extension RatingBarElement {
     /// Adds the bar for `RatingBarContract`, and the act aimed at one bar. Said once, before the application runs.
     static func register() {
-        StateUIControls.add(RatingBarContract.self, create: { reports -> RatingBarElement in
+        SwiftOmniUIControls.add(RatingBarContract.self, create: { reports -> RatingBarElement in
             let bar = RatingBarElement()
             // A tapped star is the USER's change: it lands on the state the value is carried in, and raises the event
             // with it.
@@ -57,7 +57,7 @@ extension RatingBarElement {
         }
 
         // Aimed at one bar: the identity the aim sent is turned back into the control this host made for it.
-        StateUIActs.add(RatingBarContract.flash, on: RatingBarElement.self) { bar in
+        SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarElement.self) { bar in
             bar.flash()
         }
     }

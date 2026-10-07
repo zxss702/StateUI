@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIAndroid
+import SwiftOmniUIAndroid
 
 /// The controls this head realizes for the gallery's own elements, and each one's number, which its Java view tells
 /// the Swift half by.

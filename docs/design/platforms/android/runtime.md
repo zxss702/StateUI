@@ -24,9 +24,9 @@ the system bars; the host shows the first window's page in it.
 ## Starting
 
 The activity loads the head's library - named by the manifest's
-`stateui.library` - whose `JNI_OnLoad` names the application and registers
+`swiftomniui.library` - whose `JNI_OnLoad` names the application and registers
 the host's natives. Its `onCreate` then starts the host on the UI thread. The
-first thing the start does is drain StateUI's UI executor on that thread: the
+first thing the start does is drain SwiftOmniUI's UI executor on that thread: the
 drain is what makes the thread `MainActor`'s, and every native call after it
 asserts that isolation rather than assuming a thread.
 
@@ -42,7 +42,7 @@ whole tree.
 
 ## The doorbell
 
-A handler that awaits resumes on `MainActor`, whose jobs wait in StateUI's UI
+A handler that awaits resumes on `MainActor`, whose jobs wait in SwiftOmniUI's UI
 executor until the host drains them. A thread of the host's own parks until
 the core has work, and writes an eventfd that the main looper watches; the
 looper's callback runs a turn. Nothing on that path enters the JVM.
@@ -69,7 +69,7 @@ are on one clock.
 
 An Android application's standard output goes nowhere. The host points stdout
 and stderr at a pipe whose reader writes each line to logcat under the tag
-`StateUI`, so an application's `print` reaches the log the scripts follow.
+`SwiftOmniUI`, so an application's `print` reaches the log the scripts follow.
 
 ## The environment
 
@@ -122,17 +122,17 @@ answers nothing of another's.
 
 An act no control of the library's stands behind - one the application's
 contract declares - is performed by what the application registered for it
-(`StateUIActs`, the host layer's `InteropActs`), handed the values its
+(`SwiftOmniUIActs`, the host layer's `InteropActs`), handed the values its
 contract declares and answered with those it returns, once the performer
 returns; an act nothing registered is refused by its name. An event the
-application raises (`StateUIEvents`) reaches every listener to it. Both are
+application raises (`SwiftOmniUIEvents`) reaches every listener to it. Both are
 said as the library loads: `JNI_OnLoad` runs on the UI thread, before
-`StateUIAndroid.load(_:)` starts the host.
+`SwiftOmniUIAndroid.load(_:)` starts the host.
 
 ## The application's own controls
 
 An element of the application's own is realized by a control the
-application registered (`StateUIControls`): an object holding an Android view
+application registered (`SwiftOmniUIControls`): an object holding an Android view
 of the application's own Java, made from Swift through the host's JNI - the
 same `Java` calls the host makes, published for this - with the activity.
 The host wraps the view as one of its own (`AndroidHostedView`) and places,

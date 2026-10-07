@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIUIKit
+import SwiftOmniUIUIKit
 import UIKit
 
 /// Five stars, filled up to a rating - an ordinary `UIView` with one value.
@@ -106,7 +106,7 @@ extension RatingBarView {
     /// one. Said once, before the application runs.
     @MainActor
     static func register() {
-        StateUIControls.add(RatingBarContract.self, create: { reports -> RatingBarView in
+        SwiftOmniUIControls.add(RatingBarContract.self, create: { reports -> RatingBarView in
             let bar = RatingBarView()
 
             // A tapped star is the USER's change: it lands on the state the
@@ -126,7 +126,7 @@ extension RatingBarView {
 
         // Aimed at one bar: the identity the aim sent is turned back into the
         // view this host made, and the performer is handed that view.
-        StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+        SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
             bar.flash()
         }
     }

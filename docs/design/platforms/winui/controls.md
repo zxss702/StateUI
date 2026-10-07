@@ -23,7 +23,7 @@ as its text block was. What assistive technology meets of a label is its text
 block - a border has no automation peer - so its identifier, name, hint and
 heading level are the text block's.
 
-WinUI spaces letters in thousandths of an em and lines in DIPs, where StateUI
+WinUI spaces letters in thousandths of an em and lines in DIPs, where SwiftOmniUI
 gives the first in points and the second as a multiple of the font's own
 line: both are worked out against the font's size, a line of Segoe UI taken as
 four thirds of it. The lines a label's break allows are the host layer's
@@ -200,7 +200,7 @@ characters that fit and writes them back, as the program, when typing goes
 past the bound. A `textCase` puts every letter typed in its case through the
 text box's `CharacterCasing`, and the host writes the program's words in it
 too. An editor's `TextBox` ends each line with a carriage
-return, where StateUI's words end it with a line feed: the host reads and
+return, where SwiftOmniUI's words end it with a line feed: the host reads and
 hears every line's end as a line feed.
 
 A test types by writing the field's words outside a program's write, which

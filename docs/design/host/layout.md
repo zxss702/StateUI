@@ -1,7 +1,7 @@
 # Layout in the runtime
 
-StateUI owns its layouts' semantics: where a child of a stack, a grid, a
-ZStack or a page goes is StateUI's arithmetic, the same on every
+SwiftOmniUI owns its layouts' semantics: where a child of a stack, a grid, a
+ZStack or a page goes is SwiftOmniUI's arithmetic, the same on every
 host, and a toolkit only measures its own views and moves them. [The
 runtime](runtime.md) draws where layout sits in a frame; [animation](animation.md)
 says how a child travels to the place this arithmetic gives it.

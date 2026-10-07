@@ -1,6 +1,6 @@
 // The frame every sample is shown in.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// One sample on one scroller: the line saying what it is about, then each
 /// example with its notes and its Swift under it.

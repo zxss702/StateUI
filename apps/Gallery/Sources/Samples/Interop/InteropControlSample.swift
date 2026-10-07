@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A control the application registers with its host, described here like any
 /// other.
@@ -10,7 +10,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
     static let title = InteropHost.control
     static let summary = InteropHost.controlSummary
 
-    static let codeHeading = "In StateUI"
+    static let codeHeading = "In SwiftOmniUI"
 
     static let code = """
         public enum TrafficSignal: Int32, CaseIterable, HostRepresentable {
@@ -69,7 +69,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
         in: InteropHost.name,
         .swift("""
             // Platforms/AppKit/Host/TrafficLightView.swift - an ordinary
-            // NSView that knows nothing of StateUI.
+            // NSView that knows nothing of SwiftOmniUI.
             final class TrafficLightView: NSView {
                 var onLampTapped: ((Int) -> Void)?
 
@@ -114,7 +114,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             extension TrafficLightView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+                    SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
                         let light = TrafficLightView()
                         light.onLampTapped = { index in
                             reports.raise(TrafficLightContract.lampTapped, index)
@@ -137,7 +137,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
         in: InteropHost.name,
         .swift("""
             // Platforms/UIKit/Host/TrafficLightView.swift - an ordinary
-            // UIView that knows nothing of StateUI.
+            // UIView that knows nothing of SwiftOmniUI.
             final class TrafficLightView: UIView {
                 var onLampTapped: ((Int) -> Void)?
 
@@ -186,7 +186,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             extension TrafficLightView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+                    SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
                         let light = TrafficLightView()
                         light.onLampTapped = { index in
                             reports.raise(TrafficLightContract.lampTapped, index)
@@ -209,7 +209,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
         in: InteropHost.name,
         .swift("""
             // Platforms/GTK/Host/TrafficLightWidget.swift - a GtkDrawingArea,
-            // drawn by cairo, that knows nothing of StateUI. A GTKControl is an
+            // drawn by cairo, that knows nothing of SwiftOmniUI. A GTKControl is an
             // object holding the widget it shows.
             @MainActor
             final class TrafficLightWidget: GTKControl {
@@ -233,7 +233,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             extension TrafficLightWidget {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
+                    SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightWidget in
                         let light = TrafficLightWidget()
                         light.onLampTapped = { index in
                             reports.raise(TrafficLightContract.lampTapped, index)
@@ -284,7 +284,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             extension TrafficLightControl {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
+                    SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightControl in
                         let light = TrafficLightControl()
                         light.onLampTapped = { index in
                             reports.raise(TrafficLightContract.lampTapped, index)
@@ -302,7 +302,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             """),
         .cpp("""
             // Platforms/WinUI/Relay/Controls.cpp - the lamps as XAML that knows
-            // nothing of StateUI: a Border holding three Ellipses. Each function is
+            // nothing of SwiftOmniUI: a Border holding three Ellipses. Each function is
             // C++/WinRT behind the C name the Swift half calls, declared in
             // include/CGalleryWinUI.h; a tap is told through the callbacks the Swift
             // half handed over, by the number it made the control with.
@@ -353,7 +353,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
         .swift("""
             // Platforms/Android/Swift/Host/TrafficLightView.swift. The lamps
             // are a View of the gallery's own Java - TrafficLightView.java,
-            // beside the head - that knows nothing of StateUI; the control
+            // beside the head - that knows nothing of SwiftOmniUI; the control
             // makes it and holds it.
             @MainActor
             final class TrafficLightView: AndroidControl {
@@ -368,7 +368,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
 
                 init() {
                     number = GalleryControls.reserve()
-                    view = Java.new(Self.viewClass, Self.make, .object(StateUIAndroid.context), .long(number))
+                    view = Java.new(Self.viewClass, Self.make, .object(SwiftOmniUIAndroid.context), .long(number))
                     GalleryControls.hold(self, as: number)
                 }
 
@@ -385,7 +385,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
             extension TrafficLightView {
                 @MainActor
                 static func register() {
-                    StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
+                    SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightView in
                         let light = TrafficLightView()
                         light.onLampTapped = { index in
                             reports.raise(TrafficLightContract.lampTapped, index)
@@ -404,8 +404,8 @@ struct InteropControlSample: SampleContent, ExampleContent {
             TrafficLightView.register()
             """),
         .java("""
-            // Platforms/Android/Java/com/stateui/gallery/TrafficLightView.java - a
-            // View that knows nothing of StateUI. It is told which lamp is lit, and
+            // Platforms/Android/Java/com/swiftomniui/gallery/TrafficLightView.java - a
+            // View that knows nothing of SwiftOmniUI. It is told which lamp is lit, and
             // tells a tap through a native method of the gallery's, by the number
             // its Swift half made it with.
             final class TrafficLightView extends View {
@@ -471,7 +471,7 @@ struct InteropControlSample: SampleContent, ExampleContent {
                 }
             }
 
-            // Platforms/Android/Java/com/stateui/gallery/GalleryNatives.java - what
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryNatives.java - what
             // the gallery's own views tell its Swift half, which answers each by its
             // JNI name.
             final class GalleryNatives {

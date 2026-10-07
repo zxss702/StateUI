@@ -2,7 +2,7 @@
 //
 // A style with no key applies to every control of its type, so most of the
 // gallery's appearance is decided here rather than in the views, in the values
-// of the StateUI ramp.
+// of the SwiftOmniUI ramp.
 //
 // Every colour comes through `Palette`, one name per job. That is what makes the
 // look changeable in one file, and what makes it coherent: nothing here picks a
@@ -17,7 +17,7 @@
 //     NavigationStack and TabView are written on the arrangement itself -
 //     see MainWindow.detail.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The application's styles, as the sheet the differ resolves against.
 enum AppStyles {

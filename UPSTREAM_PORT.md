@@ -1,7 +1,7 @@
 # Upstream selective port — progress & handoff
 
 摘取式合并（不做整体 merge，见 AGENTS.md「Upstream merges are cherry-picks, not merges」）。
-全部工作已提交于 `8e765f394`（另加未提交的 `lib/StateUI.Web/Package.swift` floor 降级）。
+全部工作已提交于 `8e765f394`（另加未提交的 `lib/SwiftOmniUI.Web/Package.swift` floor 降级）。
 
 ## 已完成
 
@@ -11,8 +11,8 @@
 |---|---|
 | AppKit | 原有实现，已验证 |
 | GTK | `lib/Backends/WebView.GTK` 从上游整包落地；**真机验证**：OrbStack VM 中 WebKitGTK 13/13 成员、7 个 conformance session 全过 |
-| WinUI | `lib/Backends/WebView.WinUI` 整包落地（C++/WinRT relay + `StateUIWebViewWinUI.register()`），`unrealized` 摘除；**待 Windows 实机验证** |
-| Web | `StateUIWeb` 内 WebView=iframe，随 Web 宿主落地 |
+| WinUI | `lib/Backends/WebView.WinUI` 整包落地（C++/WinRT relay + `SwiftOmniUIWebViewWinUI.register()`），`unrealized` 摘除；**待 Windows 实机验证** |
+| Web | `SwiftOmniUIWeb` 内 WebView=iframe，随 Web 宿主落地 |
 | UIKit/Android | 宿主内建，exports 已有成员（端口工作暂停，见下） |
 
 ### Core/Host（文件对话框）
@@ -67,13 +67,13 @@ iOS/Catalyst 保持 26。修复的真实 API 差距：
   List `scrollContentBackground`；Page `contentPadding`；Text `selectable`；
   acts `persistSceneValue`/`chooseFiles`。
 - 参照：`exports/{appkit,gtk,winui}.txt` 并集 vs `exports/uikit.txt`；
-  上游源 `upstream/code:lib/StateUI/StateUI.UIKit`。
+  上游源 `upstream/code:lib/SwiftOmniUI/SwiftOmniUI.UIKit`。
 
 ### Android 成员缺口（部分 Java 已落地）
 
-- 已落：`StateUIScrollView`/`StateUIHorizontalScrollView`（`scrollable`→`isScrollDisabled`）、
-  `StateUIViewGroup`（`letsInputThrough`/`hitShape`）、`StateUIViews.blur`（RenderEffect 31+）、
-  `StateUIMenus.popup`、`JavaAPI.swift` 全套 JNI 绑定。
+- 已落：`SwiftOmniUIScrollView`/`SwiftOmniUIHorizontalScrollView`（`scrollable`→`isScrollDisabled`）、
+  `SwiftOmniUIViewGroup`（`letsInputThrough`/`hitShape`）、`SwiftOmniUIViews.blur`（RenderEffect 31+）、
+  `SwiftOmniUIMenus.popup`、`JavaAPI.swift` 全套 JNI 绑定。
 - 待做：Swift 侧成员接线（同 UIKit 清单）+ **Map/Pin 全家** + acts
   （`localizedString`/`moveToRegion`/`scrollToDescendant`/`persistSceneValue`/文件 acts）
   + Lazy 成员注册管线核查（`exports/android.txt` 可能是旧快照）。
@@ -84,13 +84,13 @@ iOS/Catalyst 保持 26。修复的真实 API 差距：
   `matchedGeometry`/`symbolEffect`/`controlSize`/`flex`/`tag`
   （Web 的 `VisualElementContract` 只覆盖 7 个成员）；
   `Masked`/`CustomLayout`/`ModalStack`/`Popover`/`Sheet`/`FileImporter` 等 → 进 `unrealized` 报告。
-- WASM 编译未验证（Swift SDK 已装：`swift build --swift-sdk` in `lib/StateUI.Web`）。
+- WASM 编译未验证（Swift SDK 已装：`swift build --swift-sdk` in `lib/SwiftOmniUI.Web`）。
 
 ## 验证待办
 
 - [ ] Windows 同步 + WinUI 套件（`.scripts/WinUI/test-winui.ps1`，交互会话计划任务）
-- [ ] GTK exports 再生后复测（VM: `STATEUI_UPDATE_EXPORTS=1 xvfb-run -a swift test`）
-- [ ] `STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests`（core）
+- [ ] GTK exports 再生后复测（VM: `SWIFTOMNIUI_UPDATE_EXPORTS=1 xvfb-run -a swift test`）
+- [ ] `SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests`（core）
 - [ ] GTK VM 环境需 `libwebkitgtk-6.0-dev` + `fonts-ubuntu` + `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1`（webview 测试）
 - [ ] `exports/`、`exports/marks/`、`docs/controls/` 再生产物提交
 

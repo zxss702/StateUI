@@ -1,6 +1,6 @@
 import Foundation
-import StateUI
-import StateUIFoundation
+import SwiftOmniUI
+import SwiftOmniUIFoundation
 
 /// `Text(AttributedString)`: runs keep the look the string wrote for them.
 struct AttributedTextSample: SampleContent, ExampleContent {
@@ -41,12 +41,12 @@ struct AttributedTextSample: SampleContent, ExampleContent {
     private static var rich: AttributedString? {
         #if APPKIT || UIKIT
         return try? AttributedString(
-            markdown: "**StateUI** shows _attributed_ runs - "
+            markdown: "**SwiftOmniUI** shows _attributed_ runs - "
                 + "~~crossed out~~ words and `code` too.")
         #else
         var link = AttributeContainer()
-        link.link = URL(string: "https://stateui.dev")
-        return AttributedString("StateUI shows attributed runs - ")
+        link.link = URL(string: "https://swiftomniui.dev")
+        return AttributedString("SwiftOmniUI shows attributed runs - ")
             + AttributedString("a link", attributes: link)
             + AttributedString(" beside plain words.")
         #endif

@@ -1,7 +1,7 @@
 # Platform contract
 
-This document is the shared delivery contract for StateUI's hosts: AppKit,
-UIKit, Android Views, WinUI 3, GTK 4, and Web DOM/CSS. It records the StateUI
+This document is the shared delivery contract for SwiftOmniUI's hosts: AppKit,
+UIKit, Android Views, WinUI 3, GTK 4, and Web DOM/CSS. It records the SwiftOmniUI
 surface and the implementation evidence for each host.
 
 ## Reading the matrix
@@ -23,7 +23,7 @@ host merely implements or declares by hand earns a mark.
 | 🔌 | Its tests passed only through the host's own entry or record - an act the driver hands past the toolkit's input, a read of what the host keeps rather than what the toolkit holds - which the driver names; it is not counted as met. |
 | · | The host realizes it, but its driver cannot yet do or read what the test needs. |
 | ⏸ | Its test waits on another member the host does not realize. |
-| ⌛ | The verdict was written at another revision of its family than it stands at: each run writes its family's revision over its verdicts, and a change that changes what a family's cases prove raises the family's in `lib/StateUI.Conformance/revisions.txt`, so a verdict of another is stale until the host's suite runs the family again. It carries no note: what that run said is no verdict of the family as it stands. |
+| ⌛ | The verdict was written at another revision of its family than it stands at: each run writes its family's revision over its verdicts, and a change that changes what a family's cases prove raises the family's in `lib/SwiftOmniUI.Conformance/revisions.txt`, so a verdict of another is stale until the host's suite runs the family again. It carries no note: what that run said is no verdict of the family as it stands. |
 | empty | Not realized on that host, or no run of it; the note says which. It is deliberately not an estimate of how difficult the work will be. |
 
 A host's totals count its ✅ and – as met. An element's ✅ under
@@ -39,13 +39,13 @@ no one mark says it for a host, and the tables naming them here carry none.
 Member by member and element by element, the marks live in [the control
 dictionary](controls/README.md). Every table of marks here that a contract can
 say is rendered from the contracts and from each host's verdicts, as the
-dictionary is: `STATEUI_UPDATE_DOCS=1 swift test --filter
+dictionary is: `SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter
 ControlDictionaryTests` writes them, and the test fails while one differs -
 also once a source a verdict rests on changes and the verdict turns stale. The
 capabilities, the standard environment and the core view members name no
 contract member and carry no mark.
 
-The matrix describes observable StateUI semantics. Platform classes are
+The matrix describes observable SwiftOmniUI semantics. Platform classes are
 implementation details. A host may choose another native class when it
 preserves the same state, event, accessibility, lifetime, and animation contract.
 
@@ -62,15 +62,15 @@ preserves the same state, event, accessibility, lifetime, and animation contract
 
 Every host is Swift in the application's process. Code in a platform's own
 language - Java, C++/WinRT, JavaScript - relays calls beneath it and holds no
-StateUI logic.
+SwiftOmniUI logic.
 
 Web is last in the implementation order. The native desktop and mobile hosts
 settle the common semantics before they are mapped to the browser.
 
 ## Admission rule
 
-A base control remains in StateUI only when it has one honest semantic contract
-across the target toolkits or is derived once in StateUI from smaller accepted
+A base control remains in SwiftOmniUI only when it has one honest semantic contract
+across the target toolkits or is derived once in SwiftOmniUI from smaller accepted
 primitives. An optional capability belongs to a provider package. A control,
 property, or event that meets neither rule does not remain as an inert API.
 
@@ -162,7 +162,7 @@ The AppKit split view uses `NSSplitViewController`.
 Page arrangements expose an optional flat `barBackgroundColor`. A
 `NavigationStack` additionally exposes `barForegroundColor` for its title and native
 action affordances. A tab selector keeps the toolkit's selected and unselected
-appearance. An unwritten background retains the native material; StateUI does
+appearance. An unwritten background retains the native material; SwiftOmniUI does
 not ask a host to rasterize an arbitrary brush into page chrome.
 
 On AppKit a written bar colour paints the band the title bar and toolbar cover
@@ -177,28 +177,28 @@ title bar's, each falling back to the other and then to white or black by the ba
 On the system's material both keep the system's colours.
 
 `List` is the native virtualized collection. It presents identified
-items as a list, a row or a grid, and StateUI builds an item only when the
+items as a list, a row or a grid, and SwiftOmniUI builds an item only when the
 platform's collection shows it. Its host adapters map to `NSCollectionView`,
 `UICollectionView`, `RecyclerView`, WinUI `List`, `GtkListView` or
 `GtkGridView`, and a semantic DOM list/grid; each member's mark is its case's
 verdict on that host, as for every element.
 
 `ForEach`, `GeometryReader`, `ScrollViewReader`, `PlacedLayout`, and `GalleryView` are
-StateUI compositions or readers rather than additional platform controls. The
+SwiftOmniUI compositions or readers rather than additional platform controls. The
 core implements them once; their platform behavior depends only on the
 primitive rows they use.
 
 ## Native control mapping
 
-The table names the native class or API that each host adapts for a StateUI
+The table names the native class or API that each host adapts for a SwiftOmniUI
 surface. It records no implementation status; the ✅ tables keep that. Where a
 host already creates a node, its column names the class it uses.
-`composed by StateUI` marks a surface StateUI derives from other rows,
+`composed by SwiftOmniUI` marks a surface SwiftOmniUI derives from other rows,
 `structure` a node that creates no native object, `—` a toolkit without an
 honest native counterpart, and `(?)` a mapping that is not yet confirmed. A host
 may still choose another class that preserves the same contract.
 
-| StateUI surface | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
+| SwiftOmniUI surface | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | --- | --- | --- | --- | --- | --- | --- |
 | `App` / `Scene` | `NSApplication` / structure | `UIApplication` / `UIWindowScene` | `App` / structure | `App` / structure | `GtkApplication` / structure | `document` / structure |
 | `WindowScene` | `NSWindow` | `UIWindow` | `Activity` | `Window` | `GtkApplicationWindow` | browser `window` |
@@ -217,7 +217,7 @@ may still choose another class that preserves the same contract.
 | `VStack` / `HStack` | custom `NSView` | custom `UIView` | custom `ViewGroup` | `StackPanel` | `GtkBox` | flexbox |
 | `LazyVStack` / `LazyHStack` | custom `NSView` realizing the window it sees through the scroller | custom `UIView` driven the same | custom `ViewGroup` driven the same | custom `Panel` driven the same | custom `GtkWidget` driven the same | custom element driven the same |
 | `LazyVGrid` / `LazyHGrid` | custom `NSView` realizing the window it sees through the scroller | custom `UIView` driven the same | custom `ViewGroup` driven the same | custom `Panel` driven the same | custom `GtkWidget` driven the same | custom element driven the same |
-| `Grid` / `GridRow` | custom `NSView` | composed by StateUI | composed by StateUI | composed by StateUI | composed by StateUI | composed by StateUI |
+| `Grid` / `GridRow` | custom `NSView` | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI |
 | `CustomLayout` | custom `NSView` measured and placed by the `Layout` object | custom `UIView` driven the same | custom `ViewGroup` driven the same | custom `Panel` driven the same | `GtkLayoutManager` on a `GtkWidget` | custom element driven the same |
 | `Masked` | custom `NSView` drawn through the mask child's alpha | custom `UIView` masked the same | custom `ViewGroup` masked the same | `Opacity` over a masked `Panel` | `GskMaskNode` over the content child | CSS `mask-image` |
 | `ScrollView` | `NSScrollView` | `UIScrollView` | `ScrollView` / `HorizontalScrollView` | `ScrollViewer` | `GtkScrolledWindow` | `overflow: auto` |
@@ -232,8 +232,8 @@ may still choose another class that preserves the same contract.
 | `DatePicker` | `NSDatePicker` | `UIDatePicker` | `DatePickerDialog` | `CalendarDatePicker` | `GtkCalendar` in a `GtkPopover` | `<input type=date>` |
 | `TimePicker` | `NSDatePicker` in time mode | `UIDatePicker` in time mode | `TimePickerDialog` | `TimePicker` | — | `<input type=time>` |
 | `Switch` | `NSSwitch` | `UISwitch` | `Switch` | `ToggleSwitch` | `GtkSwitch` | checkbox `<input>` with `role=switch` |
-| `CheckBox` | `NSButton` checkbox | composed by StateUI | `CheckBox` | `CheckBox` | `GtkCheckButton` | `<input type=checkbox>` |
-| `RadioButton` | `NSButton` radio | composed by StateUI | `RadioButton` | `RadioButton` | grouped `GtkCheckButton` | `<input type=radio>` |
+| `CheckBox` | `NSButton` checkbox | composed by SwiftOmniUI | `CheckBox` | `CheckBox` | `GtkCheckButton` | `<input type=checkbox>` |
+| `RadioButton` | `NSButton` radio | composed by SwiftOmniUI | `RadioButton` | `RadioButton` | grouped `GtkCheckButton` | `<input type=radio>` |
 | `Slider` | `NSSlider` | `UISlider` | `SeekBar` | `Slider` | `GtkScale` | `<input type=range>` |
 | `Stepper` | `NSStepper` | `UIStepper` | custom `NumberPicker`-based view | `NumberBox` | `GtkSpinButton` | `<input type=number>` |
 | `ProgressBar` | `NSProgressIndicator` bar | `UIProgressView` | horizontal `ProgressBar` | `ProgressBar` | `GtkProgressBar` | `<progress>` |
@@ -241,7 +241,7 @@ may still choose another class that preserves the same contract.
 | `Canvas` | custom `NSView` drawing | `UIView` `draw(_:)` | `View` `onDraw(Canvas)` | Direct2D in a `SurfaceImageSource` | `GtkDrawingArea` | `<canvas>` |
 | `Rectangle` / `Ellipse` | `NSView` drawing `NSBezierPath` | `UIView` drawing `UIBezierPath` | `View` drawing `Path` | `Microsoft.UI.Xaml.Shapes` | `GskPath` in a snapshot | inline SVG |
 | `Line` / `Path` / `Polygon` / `Polyline` | `NSView` drawing `NSBezierPath` | `UIView` drawing `UIBezierPath` | `View` drawing `Path` | `Microsoft.UI.Xaml.Shapes` | `GskPath` in a snapshot | inline SVG |
-| `PositionIndicator` | composed by StateUI | composed by StateUI | composed by StateUI | composed by StateUI | composed by StateUI | composed by StateUI |
+| `PositionIndicator` | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI | composed by SwiftOmniUI |
 | `WebView` | `WKWebView` | `WKWebView` | `WebView` | `WebView2` | WebKitGTK `WebKitWebView` | `<iframe>` (?) |
 | `Map` / `Pin` | `MKMapView` / `MKAnnotation` | `MKMapView` / `MKAnnotation` | Google Play services `MapView` / `Marker` (?) | `MapControl` (?) | libshumate `ShumateMap` / `ShumateMarker` | — |
 | `List` | `NSCollectionView` / `NSTableView` | `UICollectionView` | AndroidX `RecyclerView` | `List` | `GtkListView` / `GtkGridView` | semantic list or grid |
@@ -290,12 +290,12 @@ as such, so none is claimed for any host.
 - layout animation through `HostPatch.animation` and `AnimationLanes`
 - Journey completion and interruption
 - Journey stop and snap
-- StateUI display-cycle engines
+- SwiftOmniUI display-cycle engines
 - element teardown releases external native attachments
 
 ## Standard environment
 
-StateUI's seven standard environment domains, each a set of facts a host
+SwiftOmniUI's seven standard environment domains, each a set of facts a host
 supplies and keeps current. These carry no mark: no conformance case gives a
 verdict for a domain as a whole, so none is claimed for any host.
 
@@ -317,7 +317,7 @@ An act is what the application asks a host to do rather than describes: ask
 the user a question, read the clock or the time zone, keep a value, take a
 web view back or move a map. An act of the application's contract aims at
 nothing; an element's act aims at one element of its kind. Calendar values are
-portable StateUI values; reading the current clock or time zone is a host act
+portable SwiftOmniUI values; reading the current clock or time zone is a host act
 because the host owns the active locale and zone database - `currentTime` is
 `ClockTime.now()`, `currentTimeZone` is `TimeZoneInfo.local()`, and `utcOffset`
 is `TimeZoneInfo.utcOffset(of:on:)`. The table names each act; its marks are
@@ -364,7 +364,7 @@ A property or event of the three tiers every view wears -
 [VisualElement](controls/tiers/VisualElement.md) and
 [View](controls/tiers/View.md) - is named here and marked on the page of each
 view: every view realizes it apart, and one may have what another lacks. The
-core view members are StateUI's own API, which a host serves without a member
+core view members are SwiftOmniUI's own API, which a host serves without a member
 of its own; no case gives them a verdict of their own, so no page marks them:
 
 - identity: `id`

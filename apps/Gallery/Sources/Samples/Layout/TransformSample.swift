@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// One colour per family, so the three rows read apart at a glance rather than
 /// as one long run of identical squares.

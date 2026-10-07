@@ -81,7 +81,7 @@ the straight line, and every other curve is worth having only because it is
 not. `In` curves start slowly, `Out` curves end slowly and `InOut` curves do
 both, which is why `.cubicOut` suits something arriving on screen and
 `.cubicIn` something leaving. The curves and the two laws are
-[closed vocabularies](vocabularies.md#the-numbers-belong-to-stateui).
+[closed vocabularies](vocabularies.md#the-numbers-belong-to-swiftomniui).
 
 ## Groups of values
 

@@ -4,7 +4,7 @@
 import AppKit
 import GalleryUI
 import IOKit.ps
-import StateUIAppKit
+import SwiftOmniUIAppKit
 
 /// The gallery's own pushes: what this host reports without being asked.
 ///
@@ -24,7 +24,7 @@ enum GalleryEventSources {
     /// before the application runs.
     @MainActor
     static func start() {
-        StateUIEvents.raises(GalleryContract.batteryChanged)
+        SwiftOmniUIEvents.raises(GalleryContract.batteryChanged)
 
         // Named in full: a C function pointer carries no context at all, and
         // an unqualified call to a static method captures the type implicitly.
@@ -45,6 +45,6 @@ enum GalleryEventSources {
         guard lastSaid?.level != level || lastSaid?.charging != charging else { return }
 
         lastSaid = (level, charging)
-        StateUIEvents.raise(GalleryContract.batteryChanged, level, charging)
+        SwiftOmniUIEvents.raise(GalleryContract.batteryChanged, level, charging)
     }
 }

@@ -1,11 +1,11 @@
 # Layout on WinUI
 
-StateUI's layouts place their children by the core's arithmetic
+SwiftOmniUI's layouts place their children by the core's arithmetic
 ([layout](../../host/layout.md)); WinUI measures and draws each child.
 
 ## A layout is a panel
 
-Every StateUI layout is the relay's panel, a `Panel` whose `MeasureOverride`
+Every SwiftOmniUI layout is the relay's panel, a `Panel` whose `MeasureOverride`
 and `ArrangeOverride` call the host, which answers with the core's arithmetic
 and measures and places each child through the relay. WinUI lays out by
 asking: a child is placed only inside its parent's arrangement
@@ -20,7 +20,7 @@ measures every shown child; WinUI answers a child it measured at the same
 size from what it kept, and measures one it did not.
 
 A native control is measured at each width the arithmetic offers it. A
-layout of StateUI's asks for no room, so it is measured at the width of the
+layout of SwiftOmniUI's asks for no room, so it is measured at the width of the
 place it stands in: WinUI measures it again only where a change beneath
 marked it. Put in a place of another width, it is measured there first, which
 measures its own children at the widths its arrangement then gives them - a
@@ -63,7 +63,7 @@ place arrived.
 
 A control's style aligns it inside the place its parent arranges it in - a
 `Button` to the left and to the middle, at the size it asked for - where a
-StateUI layout decides the place itself. So every element the host holds is
+SwiftOmniUI layout decides the place itself. So every element the host holds is
 told to stretch across whatever place it is arranged in, once, as it is made:
 the layout's place is the control's size.
 
@@ -72,8 +72,8 @@ the layout's place is the control's size.
 WinUI arranges an element at no less than the size it last asked for in
 `Measure`, and cuts it to the place it was given - so a child placed smaller
 than its content would be laid out at its content's size and clipped, where
-StateUI places it at its place and lets it draw past its edges. A StateUI
-layout that another StateUI layout places therefore asks WinUI for no room:
+SwiftOmniUI places it at its place and lets it draw past its edges. A SwiftOmniUI
+layout that another SwiftOmniUI layout places therefore asks WinUI for no room:
 its parent reads its size from the core's arithmetic (`naturalSize`), and
 WinUI arranges it exactly where the parent puts it. A layout WinUI itself
 places - the window's content, a scroller's document - answers with the room
@@ -87,7 +87,7 @@ the whole content, and the pass never settles.
 ## A change told upward
 
 WinUI hears of a child's new size only as a change in what the child asks
-for, and a StateUI layout placed by another asks for no room, as a picture
+for, and a SwiftOmniUI layout placed by another asks for no room, as a picture
 does. So a layout WinUI measures by itself - a picture read below it, words
 changed - whose natural size has changed tells the layout placing it, which
 measures again, and so on up; a layout measured inside its parent's own
@@ -100,7 +100,7 @@ A view whose frame the tree reads - a state its frame drives, or a handler
 for its changes - says where it stands on the display's next frame after a
 layout pass or a scroll: its frame in its parent, its place in the window's
 content, and that place from the page's corner, all in DIPs. The host hears
-every StateUI layout WinUI arranges and every scroller's movement, and asks
+every SwiftOmniUI layout WinUI arranges and every scroller's movement, and asks
 only the views that are read, in the order they were made; a view that did
 not move says nothing. It speaks on a frame rather than inside WinUI's pass,
 so what a handler renders is laid out in a pass of its own.
@@ -124,7 +124,7 @@ runs the other way.
 
 ## Scrolling
 
-A ScrollView is a StateUI layout holding WinUI's `ScrollViewer`, which holds
+A ScrollView is a SwiftOmniUI layout holding WinUI's `ScrollViewer`, which holds
 the document the core's scroll arithmetic lays out - never smaller than the
 viewport, and several children stacked down. The scroller is measured with no
 room in the directions it scrolls: it measures its document without bound

@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// An ENGINE: arithmetic the host runs on its own frames, keeping what it
 /// remembers in `@State` nobody reads.

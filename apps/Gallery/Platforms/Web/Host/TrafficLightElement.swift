@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import GalleryUI
-import StateUIWeb
+import SwiftOmniUIWeb
 
 /// Three lamps in a housing, one lit at a time: the gallery's own element, `<gallery-traffic-light>` of
-/// Page/traffic-light.js, which knows nothing of StateUI.
+/// Page/traffic-light.js, which knows nothing of SwiftOmniUI.
 ///
 /// `register()`, at the end of this file, adds it for `TrafficLightContract`, and that registration is the whole
 /// bridge. The Swift half is Sources/Samples/Interop/TrafficLight.swift.
@@ -33,7 +33,7 @@ final class TrafficLightElement: WebControl {
 extension TrafficLightElement {
     /// Adds the lamps for `TrafficLightContract`. Said once, before the application runs.
     static func register() {
-        StateUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightElement in
+        SwiftOmniUIControls.add(TrafficLightContract.self, create: { reports -> TrafficLightElement in
             let light = TrafficLightElement()
             light.onLampTapped = { index in reports.raise(TrafficLightContract.lampTapped, index) }
             return light

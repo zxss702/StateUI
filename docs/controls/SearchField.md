@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # SearchField
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ✅ | 25 ✅ | `GtkSearchEntry` |  |
 | Web |  |  | `<input type=search>` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Text/SearchFieldContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Text/SearchFieldContract.swift`.
 
 ## SearchField's own members
 
@@ -163,7 +163,7 @@ What every field a user types into has: the text's limits and caret, the keyboar
 | `isReadOnly` | property | `Bool` | native | ✅ | ✅ |  | ✅ | ◐ |  | Android Views: not realized; GTK 4: cannot read isReadOnly of SearchField - GTK's driver has no path for it yet |
 | `isSpellCheckEnabled` | property | `Bool` | native | · | ✅ |  |  | · |  | cannot read isSpellCheckEnabled of SearchField - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read isSpellCheckEnabled of SearchField - GTK's driver has no path for it yet |
 | `isTextPredictionEnabled` | property | `Bool` | native | · | ✅ |  |  | · |  | cannot read isTextPredictionEnabled of SearchField - AppKit's driver has no path for it yet; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read isTextPredictionEnabled of SearchField - GTK's driver has no path for it yet |
-| `maximumLength` | property | `Int` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot read maximumLength of SearchField - Android's field keeps no bound of StateUI's: the host cuts what is typed, and typing proves it |
+| `maximumLength` | property | `Int` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot read maximumLength of SearchField - Android's field keeps no bound of SwiftOmniUI's: the host cuts what is typed, and typing proves it |
 | `placeholder` | property | `String` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read placeholder of SearchField - GTK's driver has no path for it yet |
 | `placeholderKey` | property | `LocalizedStringKey` | native |  |  |  |  |  |  |  |
 | `placeholderColor` | property | `Color` | native | · | · | ✅ |  | · |  | cannot read placeholderColor of SearchField - AppKit's driver has no path for it yet; UIKit: cannot read placeholderColor of SearchField - UIKit's driver has no path for it yet; WinUI 3: not realized; GTK 4: cannot read placeholderColor of SearchField - GTK's driver has no path for it yet |

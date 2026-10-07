@@ -8,7 +8,7 @@ maps its native input onto this vocabulary before reporting it.
 
 A gesture's payload carries one typed value per part of its contract, and
 nothing is formatted or parsed: a number crosses as its own bits, and a
-member of a closed vocabulary as StateUI's number for it.
+member of a closed vocabulary as SwiftOmniUI's number for it.
 
 ```text
   swiped          the direction, as the one number its bits are
@@ -19,7 +19,7 @@ member of a closed vocabulary as StateUI's number for it.
 
 ## Phases
 
-`GesturePhase` numbers its cases by StateUI's declaration order, so a
+`GesturePhase` numbers its cases by SwiftOmniUI's declaration order, so a
 platform release cannot reinterpret a stored or transported report. A
 platform that reports no distinct beginning starts a gesture at `.running`,
 so a handler reads the values each report carries rather than relying on

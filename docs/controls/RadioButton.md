@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # RadioButton
 
 One choice out of several, where picking one clears the rest.
 
-Layer: `stateUI`. StateUI composes it from smaller primitives before a host receives the tree.
+Layer: `stateUI`. SwiftOmniUI composes it from smaller primitives before a host receives the tree.
 
 Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tiers/VisualElement.md) · [View](tiers/View.md) · [TextElement](tiers/TextElement.md) · [TextStyleElement](tiers/TextStyleElement.md) · [FontElement](tiers/FontElement.md) · [PaddingElement](tiers/PaddingElement.md) · [BorderElement](tiers/BorderElement.md) · [ControlSizeElement](tiers/ControlSizeElement.md)
 
@@ -26,13 +26,13 @@ See [the dictionary](README.md) for how a mark is given.
 | Host | Created | Members (111) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 38 ✅ · 1 ☑️ | `NSButton` radio |  |
-| UIKit | ✅ | 34 ✅ · 3 – | composed by StateUI |  |
+| UIKit | ✅ | 34 ✅ · 3 – | composed by SwiftOmniUI |  |
 | Android Views | ✅ | 59 ✅ · 1 ☑️ · 3 – | `RadioButton` |  |
 | WinUI 3 | ✅ | 63 ✅ | `RadioButton` |  |
 | GTK 4 | ✅ | 25 ✅ | grouped `GtkCheckButton` |  |
 | Web |  |  | `<input type=radio>` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/RadioButtonContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/RadioButtonContract.swift`.
 
 ## RadioButton's own members
 

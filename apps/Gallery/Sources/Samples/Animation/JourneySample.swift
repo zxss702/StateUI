@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A value that changes TRAVELS - the default, and the three laws it can travel
 /// under.
@@ -146,7 +146,7 @@ struct JourneySample: SampleContent, ExampleContent {
                 .foregroundStyle(Palette.subtle)
 
             Text("Change the law to compare eased, spring, slow and immediate "
-                + "animation. StateUI sends destinations; the host supplies the frames.")
+                + "animation. SwiftOmniUI sends destinations; the host supplies the frames.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
         }

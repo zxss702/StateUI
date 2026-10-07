@@ -1,11 +1,11 @@
 # Layout on GTK
 
-StateUI's layouts place their children by the core's arithmetic
+SwiftOmniUI's layouts place their children by the core's arithmetic
 ([layout](../../host/layout.md)); GTK measures and draws each widget.
 
 ## A layout is a panel
 
-Every StateUI layout is a `StateUIPanel`, a widget subclass whose measure and
+Every SwiftOmniUI layout is a `SwiftOmniUIPanel`, a widget subclass whose measure and
 allocate call the host, which answers with the core's arithmetic and measures
 and places each child. GTK lays out by asking: a child is allocated only
 inside its parent's allocation, so a layout never places a child outside the
@@ -52,18 +52,18 @@ A view whose frame the tree reads - a state its frame drives, or a handler
 for its changes - says where it stands on the display's next frame after a
 layout or a scroll: its frame in its parent, its place in the window, and
 that place from the top left of its page's content, beneath the page's own
-header bar, all in logical pixels. The host hears every StateUI panel GTK
+header bar, all in logical pixels. The host hears every SwiftOmniUI panel GTK
 allocates and every scroller's movement, and asks only the views that are
 read, in the order they were made; a view that did not move says nothing. It
 speaks on a frame rather than inside GTK's allocation, so what a handler
 renders is laid out in a pass of its own. A view in no window, or one no
-layout has placed yet - neither StateUI's nor GTK's allocation - stands
+layout has placed yet - neither SwiftOmniUI's nor GTK's allocation - stands
 nowhere and says nothing: a frame's tick comes before its layout, so a view
 made just before it would otherwise say it stands at zero.
 
 ## Scrolling
 
-A ScrollView is a StateUI layout holding GTK's `GtkScrolledWindow`, which
+A ScrollView is a SwiftOmniUI layout holding GTK's `GtkScrolledWindow`, which
 holds the document the core's scroll arithmetic lays out - never smaller than
 the viewport, and several children stacked down. GTK puts the document in a
 `GtkViewport`, which the host tells to give it its natural size along the ways
@@ -81,7 +81,7 @@ state and its handlers, and rests once it has stood still, as on every host
 program moves the view by setting the adjustments, which GTK tells inside the
 program's write: `ProgramWrite` drops that echo, and nothing else is kept.
 
-A viewport owns its child: a view whose parent is not a StateUI panel is not
+A viewport owns its child: a view whose parent is not a SwiftOmniUI panel is not
 taken out by the view as it goes, and the scroller takes its document out of
 the viewport before it goes itself.
 ## Right to left

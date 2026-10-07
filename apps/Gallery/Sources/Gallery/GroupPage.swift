@@ -1,6 +1,6 @@
 // One category, listing what is in it.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The page behind a sidebar entry: every sample in that group, one card each.
 ///

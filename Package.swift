@@ -1,7 +1,7 @@
 // swift-tools-version:6.4
 import PackageDescription
 
-// The StateUI library.
+// The SwiftOmniUI library.
 //
 // A self-contained Swift package: it knows nothing about any particular
 // application, which is what allows it to be published and consumed on its own.
@@ -14,14 +14,14 @@ import PackageDescription
 //
 //     .package(url: "https://github.com/idexus/StateUI.git", exact: "0.4.0")
 //
-// The code stays under lib/StateUI/ regardless, which is what the paths below
+// The code stays under lib/SwiftOmniUI/ regardless, which is what the paths below
 // say. Native host packages remain siblings so their platform dependencies do
 // not enter the cross-platform core.
 //
 // Sources are never listed: SwiftPM globs the target's path, and the build
 // scripts glob the same tree. A new .swift file is picked up by both.
 let package = Package(
-    name: "StateUI",
+    name: "SwiftOmniUI",
     // macOS 15 is the floor SCE (Logorythia) deploys to; iOS/Mac Catalyst stay
     // at 26, the releases upstream builds and tests against.
     platforms: [
@@ -31,9 +31,9 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "StateUI",
+            name: "SwiftOmniUI",
             type: .dynamic,
-            targets: ["StateUI"]
+            targets: ["SwiftOmniUI"]
         ),
     ],
     // NO DEPENDENCIES, and it is worth a sentence: everything here is this
@@ -42,8 +42,8 @@ let package = Package(
     // like the one a view uses and needs no compiler plugin, so a cold build
     // compiles this package and nothing else.
     targets: [
-        // path: "lib/StateUI/Sources" rather than the default
-        // Sources/StateUI/.
+        // path: "lib/SwiftOmniUI/Sources" rather than the default
+        // Sources/SwiftOmniUI/.
         //
         // SwiftPM looks for Sources/<TargetName>/ unless told otherwise. The
         // code stays under lib/, and stating the path lets the manifest remain
@@ -58,14 +58,14 @@ let package = Package(
         // what extends that to the functions an APPLICATION writes, which no
         // annotation of ours can reach. It becomes the default in Swift 7.
         .target(
-            name: "StateUI",
-            path: "lib/StateUI/Sources",
+            name: "SwiftOmniUI",
+            path: "lib/SwiftOmniUI/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
         .testTarget(
-            name: "StateUITests",
-            dependencies: ["StateUI"],
-            path: "lib/StateUI/Tests",
+            name: "SwiftOmniUITests",
+            dependencies: ["SwiftOmniUI"],
+            path: "lib/SwiftOmniUI/Tests",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
     ]

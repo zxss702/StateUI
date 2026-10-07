@@ -60,7 +60,7 @@ A property says three things about itself beside its value's type:
 ```
 
 A host still snaps a transition it cannot interpolate; `travels` keeps the
-ones StateUI knows are invalid out of the patch. Every host has to agree with
+ones SwiftOmniUI knows are invalid out of the patch. Every host has to agree with
 the members that say `cleared` is false, or the difference shows only on a
 screen. A property no library contract declares - an application's own -
 animates, is cleared, and says nothing of animation.

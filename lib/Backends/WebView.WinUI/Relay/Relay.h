@@ -41,7 +41,7 @@ namespace webview {
         } catch (...) {
             words = "an exception of no kind known";
         }
-        std::fprintf(stderr, "StateUI WebView WinUI: %s failed: %s\n", where, words.c_str());
+        std::fprintf(stderr, "SwiftOmniUI WebView WinUI: %s failed: %s\n", where, words.c_str());
         std::fflush(stderr);
     }
 

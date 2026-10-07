@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Who is signed in - the object a whole branch shares. Its properties are
 /// `@State`, so a write to one rebuilds exactly the views that READ it.

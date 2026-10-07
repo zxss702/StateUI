@@ -1,4 +1,4 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # Slider
 
@@ -32,7 +32,7 @@ See [the dictionary](README.md) for how a mark is given.
 | GTK 4 | ✅ | 24 ✅ · 2 – | `GtkScale` |  |
 | Web |  |  | `<input type=range>` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/SliderContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/SliderContract.swift`.
 
 ## Slider's own members
 

@@ -1,10 +1,10 @@
-<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: STATEUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
+<!-- Rendered by ControlDictionaryTests from the contracts and the verdicts each host's runs of its tests wrote under exports/marks: SWIFTOMNIUI_UPDATE_DOCS=1 swift test --filter ControlDictionaryTests writes it again. -->
 
 # CheckBox
 
 A box that is ticked or not.
 
-Layer: `stateUI`. StateUI composes it from smaller primitives before a host receives the tree.
+Layer: `stateUI`. SwiftOmniUI composes it from smaller primitives before a host receives the tree.
 
 Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tiers/VisualElement.md) · [View](tiers/View.md) · [TintElement](tiers/TintElement.md) · [ControlSizeElement](tiers/ControlSizeElement.md)
 
@@ -26,13 +26,13 @@ See [the dictionary](README.md) for how a mark is given.
 | Host | Created | Members (94) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 32 ✅ · 1 ☑️ | `NSButton` checkbox |  |
-| UIKit | ✅ | 26 ✅ · 3 – | composed by StateUI |  |
+| UIKit | ✅ | 26 ✅ · 3 – | composed by SwiftOmniUI |  |
 | Android Views | ✅ | 53 ✅ · 1 ☑️ · 3 – | `CheckBox` |  |
 | WinUI 3 | ✅ | 56 ✅ | `CheckBox` |  |
 | GTK 4 | ✅ | 22 ✅ | `GtkCheckButton` |  |
 | Web |  |  | `<input type=checkbox>` | no host yet |
 
-Declared in `lib/StateUI/Sources/Contracts/Elements/Controls/CheckBoxContract.swift`.
+Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/CheckBoxContract.swift`.
 
 ## CheckBox's own members
 

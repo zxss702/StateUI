@@ -1,6 +1,6 @@
 // One row of the menu.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A picture, a caption, and somewhere to go.
 ///

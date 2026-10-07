@@ -5,7 +5,7 @@
 // is shared too. A guard that asks "is this one of the application's elements"
 // reads it here rather than keeping a copy, so no copy can fall behind.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// The gallery's own elements: a control, a container, and a control with a
 /// declared value.

@@ -1,6 +1,6 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
-/// A native slider driven by one shared StateUI journey.
+/// A native slider driven by one shared SwiftOmniUI journey.
 struct SliderSample: SampleContent, ExampleContent {
     @State private var volume = 40.0
     @State private var soundOn = true

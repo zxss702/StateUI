@@ -6,9 +6,9 @@
 // puts none on the bar: the native navigation surface owns a leading sidebar
 // toggle on the root and gives that slot to the back button on pushed pages.
 
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
-/// The gallery's home button - the StateUI type, given one more way to make
+/// The gallery's home button - the SwiftOmniUI type, given one more way to make
 /// itself. It is declared here rather than in the library because there is
 /// nothing general about it: it knows this app's state and this app's icon.
 extension ToolbarItem {

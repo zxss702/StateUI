@@ -28,10 +28,10 @@ executor's queue, which rings the doorbell. The WinUI element goes with it.
 ## Starting
 
 The head's `main` names the application and hands the thread to
-`StateUIWinUI.run()`, which loads the Windows App SDK the application carries
+`SwiftOmniUIWinUI.run()`, which loads the Windows App SDK the application carries
 and starts WinUI's `App` there; WinUI's loop runs that thread until
 the last window closes. Its `OnLaunched` calls the host, whose first act is to
-drain StateUI's UI executor on that thread: the drain is what makes the thread
+drain SwiftOmniUI's UI executor on that thread: the drain is what makes the thread
 `MainActor`'s, and every native call after it asserts that isolation rather
 than assuming a thread.
 
@@ -53,7 +53,7 @@ shell that starts it, so `run-app.ps1` waits for it itself.
 WinUI's control resources, `XamlControlsResources`, name types such as the
 acrylic brushes, and only an application that answers for the types
 (`IXamlMetadataProvider`) lets the framework resolve them - an application the
-XAML compiler would write, and the relay's `StateUIApplication` writes by
+XAML compiler would write, and the relay's `SwiftOmniUIApplication` writes by
 hand, handing `XamlControlsXamlMetaDataProvider`'s answers on. The provider is
 made on the first question, as the compiler's own is.
 
@@ -64,7 +64,7 @@ template only in a window of that thread once the thread's messages ran.
 
 ## The doorbell
 
-A handler that awaits resumes on `MainActor`, whose jobs wait in StateUI's UI
+A handler that awaits resumes on `MainActor`, whose jobs wait in SwiftOmniUI's UI
 executor until the host drains them. A thread of the host's own parks until
 the core has work, and posts one turn to the UI thread's `DispatcherQueue`
 through the relay; the turn runs on the UI thread among WinUI's own work.

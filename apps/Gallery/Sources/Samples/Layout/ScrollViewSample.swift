@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// A strip of tiles a fixed distance apart - the shape the grid and throw
 /// examples are cut from. A tile is 140 wide with 20 between them, so one

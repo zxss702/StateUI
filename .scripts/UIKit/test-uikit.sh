@@ -11,21 +11,21 @@
 #
 # The simulator is a name ("iPhone 18 Pro", "iPad Air 13-inch (M4)") or a
 # UDID; the one booted, else an iPhone, where none is named.
-# STATEUI_FILTER=<names> runs only the tests whose "Case.test" name holds one
-# of the names, split at commas. STATEUI_UPDATE_EXPORTS=1 writes what the run
+# SWIFTOMNIUI_FILTER=<names> runs only the tests whose "Case.test" name holds one
+# of the names, split at commas. SWIFTOMNIUI_UPDATE_EXPORTS=1 writes what the run
 # says into exports/ instead of holding it to them, each verdict file under the
-# revision its family stands at (lib/StateUI.Conformance/revisions.txt);
-# STATEUI_STALE_ONLY=1 runs only the conformance families whose verdicts stand
+# revision its family stands at (lib/SwiftOmniUI.Conformance/revisions.txt);
+# SWIFTOMNIUI_STALE_ONLY=1 runs only the conformance families whose verdicts stand
 # at another revision, or at none.
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$script_dir/tools.sh"
 repository_dir="$(cd "$script_dir/../.." && pwd)"
-package="$repository_dir/lib/StateUI.UIKit/Tests"
+package="$repository_dir/lib/SwiftOmniUI.UIKit/Tests"
 scratch="$package/.build"
-product="StateUIUIKitTests"
-identifier="com.stateui.uikit.tests"
+product="SwiftOmniUIUIKitTests"
+identifier="com.swiftomniui.uikit.tests"
 
 read -r kind device _ <<< "$(uikit_destination "${1:-}")"
 [[ -n "$kind" ]] || exit 1
@@ -52,8 +52,8 @@ uikit_bundle "$binary_dir" "$product" "$product" "$identifier" "$package/Resourc
 xcrun simctl install "$device" "$bundle"
 output="$(mktemp)"
 trap 'rm -f "$output"' EXIT
-SIMCTL_CHILD_STATEUI_FILTER="${STATEUI_FILTER:-}" SIMCTL_CHILD_STATEUI_UPDATE_EXPORTS="${STATEUI_UPDATE_EXPORTS:-}" \
-SIMCTL_CHILD_STATEUI_STALE_ONLY="${STATEUI_STALE_ONLY:-}" \
+SIMCTL_CHILD_SWIFTOMNIUI_FILTER="${SWIFTOMNIUI_FILTER:-}" SIMCTL_CHILD_SWIFTOMNIUI_UPDATE_EXPORTS="${SWIFTOMNIUI_UPDATE_EXPORTS:-}" \
+SIMCTL_CHILD_SWIFTOMNIUI_STALE_ONLY="${SWIFTOMNIUI_STALE_ONLY:-}" \
   xcrun simctl launch --console-pty --terminate-running-process "$device" "$identifier" 2>&1 | tee "$output"
 
 summary="$(tr -d '\r' < "$output" | grep -E '^Executed [0-9]+ tests, with [0-9]+ failures' | tail -n 1)"

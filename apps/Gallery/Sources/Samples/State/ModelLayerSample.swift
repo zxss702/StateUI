@@ -1,6 +1,6 @@
 import Foundation
-import StateUI
-import StateUIJsonData
+import SwiftOmniUI
+import SwiftOmniUIJsonData
 
 /// A row the sample's store keeps.
 @Model

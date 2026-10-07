@@ -3,7 +3,7 @@
 #
 # Sourced by the Web scripts: sets `sdk` to the Swift SDK for WebAssembly of the
 # compiler's release - the one whose id ends in _wasm, as its _wasm-embedded
-# sibling is Embedded Swift, which StateUI is not written for - or stops,
+# sibling is Embedded Swift, which SwiftOmniUI is not written for - or stops,
 # saying where to get it.
 
 release_of () {

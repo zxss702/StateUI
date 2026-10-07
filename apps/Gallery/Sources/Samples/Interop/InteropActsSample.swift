@@ -1,5 +1,5 @@
 #if APPKIT || UIKIT || GTK || WINUI || ANDROID
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Functions the application registers with its host, called like the acts the
 /// library ships: typed arguments in, typed values back, a thrown error on
@@ -14,7 +14,7 @@ struct InteropActsSample: SampleContent, ExampleContent {
     static let summary = "A function the app registers with its host - called, awaited, and failing out loud."
 
     /// Both halves are Swift here, so the headings say what each one IS.
-    static let codeHeading = "In StateUI"
+    static let codeHeading = "In SwiftOmniUI"
 
     static let code = """
         // The application's own acts and events, with no control behind them.
@@ -108,16 +108,16 @@ struct InteropActsSample: SampleContent, ExampleContent {
             enum GalleryActs {
                 @MainActor
                 static func register() {
-                    StateUIActs.add(GalleryContract.setClipboard) { text in
+                    SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(text, forType: .string)
                     }
 
-                    StateUIActs.add(GalleryContract.readClipboard) {
+                    SwiftOmniUIActs.add(GalleryContract.readClipboard) {
                         NSPasteboard.general.string(forType: .string) ?? ""
                     }
 
-                    StateUIActs.add(GalleryContract.batteryLevel) {
+                    SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
                         battery()
                     }
                 }
@@ -130,15 +130,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             extension RatingBarView {
                 @MainActor
                 static func register() {
-                    // … StateUIControls.add(RatingBarContract.self, …)
+                    // … SwiftOmniUIControls.add(RatingBarContract.self, …)
 
-                    StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+                    SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
                         bar.flash()
                     }
                 }
             }
 
-            // And in main.swift, before StateUIAppKit.run(...):
+            // And in main.swift, before SwiftOmniUIAppKit.run(...):
             GalleryControls.register()   // RatingBarView.register(), and the rest
             GalleryActs.register()
             """))
@@ -152,15 +152,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             enum GalleryActs {
                 @MainActor
                 static func register() {
-                    StateUIActs.add(GalleryContract.setClipboard) { text in
+                    SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
                         UIPasteboard.general.string = text
                     }
 
-                    StateUIActs.add(GalleryContract.readClipboard) {
+                    SwiftOmniUIActs.add(GalleryContract.readClipboard) {
                         UIPasteboard.general.string ?? ""
                     }
 
-                    StateUIActs.add(GalleryContract.batteryLevel) {
+                    SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
                         battery()
                     }
                 }
@@ -173,15 +173,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             extension RatingBarView {
                 @MainActor
                 static func register() {
-                    // … StateUIControls.add(RatingBarContract.self, …)
+                    // … SwiftOmniUIControls.add(RatingBarContract.self, …)
 
-                    StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+                    SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
                         bar.flash()
                     }
                 }
             }
 
-            // And in main.swift, before StateUIUIKit.run():
+            // And in main.swift, before SwiftOmniUIUIKit.run():
             GalleryControls.register()   // RatingBarView.register(), and the rest
             GalleryActs.register()
             """))
@@ -196,15 +196,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             enum GalleryActs {
                 @MainActor
                 static func register() {
-                    StateUIActs.add(GalleryContract.setClipboard) { text in
+                    SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
                         gdk_clipboard_set_text(clipboard(), text)
                     }
 
-                    StateUIActs.add(GalleryContract.readClipboard) {
+                    SwiftOmniUIActs.add(GalleryContract.readClipboard) {
                         await clipboardText()   // gdk_clipboard_read_text_async
                     }
 
-                    StateUIActs.add(GalleryContract.batteryLevel) {
+                    SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
                         GalleryPower.battery()  // UPower, on the system bus
                     }
                 }
@@ -217,15 +217,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             extension RatingBarWidget {
                 @MainActor
                 static func register() {
-                    // … StateUIControls.add(RatingBarContract.self, …)
+                    // … SwiftOmniUIControls.add(RatingBarContract.self, …)
 
-                    StateUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
+                    SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarWidget.self) { bar in
                         bar.flash()   // libadwaita's animation of its opacity
                     }
                 }
             }
 
-            // And in main.swift, before StateUIGTK.run(applicationID:):
+            // And in main.swift, before SwiftOmniUIGTK.run(applicationID:):
             GalleryControls.register()   // RatingBarWidget.register(), and the rest
             GalleryActs.register()
             """))
@@ -239,15 +239,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             enum GalleryActs {
                 @MainActor
                 static func register() {
-                    StateUIActs.add(GalleryContract.setClipboard) { text in
+                    SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
                         Clipboard.write(text)   // OpenClipboard, CF_UNICODETEXT
                     }
 
-                    StateUIActs.add(GalleryContract.readClipboard) {
+                    SwiftOmniUIActs.add(GalleryContract.readClipboard) {
                         Clipboard.read()
                     }
 
-                    StateUIActs.add(GalleryContract.batteryLevel) {
+                    SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
                         GalleryPower.battery()  // GetSystemPowerStatus
                     }
                 }
@@ -260,15 +260,15 @@ struct InteropActsSample: SampleContent, ExampleContent {
             extension RatingBarControl {
                 @MainActor
                 static func register() {
-                    // … StateUIControls.add(RatingBarContract.self, …)
+                    // … SwiftOmniUIControls.add(RatingBarContract.self, …)
 
-                    StateUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
+                    SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarControl.self) { bar in
                         bar.flash()   // a Storyboard fading its opacity, in the relay
                     }
                 }
             }
 
-            // And in main.swift, before StateUIWinUI.run():
+            // And in main.swift, before SwiftOmniUIWinUI.run():
             GalleryControls.register()   // RatingBarControl.register(), and the rest
             GalleryActs.register()
             """),
@@ -319,24 +319,24 @@ struct InteropActsSample: SampleContent, ExampleContent {
         .swift("""
             // Platforms/Android/Swift/Host/GalleryActs.swift, said as the
             // library loads. The device is asked through the gallery's own
-            // Java, com.stateui.gallery.GalleryDevice, which `Java` calls.
+            // Java, com.swiftomniui.gallery.GalleryDevice, which `Java` calls.
             enum GalleryActs {
                 @MainActor
                 static func register() {
-                    StateUIActs.add(GalleryContract.setClipboard) { text in
+                    SwiftOmniUIActs.add(GalleryContract.setClipboard) { text in
                         Java.frame {
                             Java.callStatic(
-                                device, copy, .object(StateUIAndroid.context), .object(Java.string(text)))
+                                device, copy, .object(SwiftOmniUIAndroid.context), .object(Java.string(text)))
                         }
                     }
 
-                    StateUIActs.add(GalleryContract.readClipboard) {
+                    SwiftOmniUIActs.add(GalleryContract.readClipboard) {
                         Java.frame {
-                            Java.text(Java.callStaticObject(device, paste, .object(StateUIAndroid.context)))
+                            Java.text(Java.callStaticObject(device, paste, .object(SwiftOmniUIAndroid.context)))
                         }
                     }
 
-                    StateUIActs.add(GalleryContract.batteryLevel) {
+                    SwiftOmniUIActs.add(GalleryContract.batteryLevel) {
                         battery()   // the sticky ACTION_BATTERY_CHANGED, read in GalleryDevice.java
                     }
                 }
@@ -349,28 +349,28 @@ struct InteropActsSample: SampleContent, ExampleContent {
             extension RatingBarView {
                 @MainActor
                 static func register() {
-                    // … StateUIControls.add(RatingBarContract.self, …)
+                    // … SwiftOmniUIControls.add(RatingBarContract.self, …)
 
-                    StateUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
+                    SwiftOmniUIActs.add(RatingBarContract.flash, on: RatingBarView.self) { bar in
                         bar.flash()   // the view's own animate(), in its Java
                     }
                 }
             }
 
-            // And in JNI_OnLoad, on the UI thread, before StateUIAndroid.load(machine):
+            // And in JNI_OnLoad, on the UI thread, before SwiftOmniUIAndroid.load(machine):
             MainActor.assumeIsolated {
                 GalleryControls.register()   // RatingBarView.register(), and the rest
                 GalleryActs.register()
             }
             """),
         .java("""
-            // Platforms/Android/Java/com/stateui/gallery/GalleryDevice.java - what
+            // Platforms/Android/Java/com/swiftomniui/gallery/GalleryDevice.java - what
             // the gallery's own acts ask of the device, each a static method the
             // Swift half calls through `Java`.
             final class GalleryDevice {
                 static void copy(Context context, String text) {
                     context.getSystemService(ClipboardManager.class)
-                            .setPrimaryClip(ClipData.newPlainText("StateUI Gallery", text));
+                            .setPrimaryClip(ClipData.newPlainText("SwiftOmniUI Gallery", text));
                 }
 
                 // The clipboard's text; empty where it holds none.
@@ -397,7 +397,7 @@ struct InteropActsSample: SampleContent, ExampleContent {
                 }
             }
 
-            // Platforms/Android/Java/com/stateui/gallery/RatingBarView.java - the act
+            // Platforms/Android/Java/com/swiftomniui/gallery/RatingBarView.java - the act
             // aimed at the bar is the view's own animation.
             final class RatingBarView extends View {
                 // … the stars drawn, and a tap told as TrafficLightView tells a lamp
@@ -471,7 +471,7 @@ struct InteropActsSample: SampleContent, ExampleContent {
 
     var notes: (any View)? {
         VStack {
-            Text("`StateUIActs.add` registers a function under an act the "
+            Text("`SwiftOmniUIActs.add` registers a function under an act the "
                 + "application's contract declares, with what it takes and answers. "
                 + "`stateUICall` calls it from any handler: typed arguments in, typed "
                 + "values back, and the compiler refuses a performer of another shape." + InteropHost.awaiting)
@@ -480,7 +480,7 @@ struct InteropActsSample: SampleContent, ExampleContent {
 
             Text("A performer that throws, a name nothing registered, and an answer of "
                 + "another shape than the contract's resume the handler by throwing "
-                + "`StateUIError` with the reason. Prefix the names with the application's "
+                + "`SwiftOmniUIError` with the reason. Prefix the names with the application's "
                 + "own, so they never meet the library's.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)

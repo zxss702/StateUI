@@ -1,4 +1,4 @@
-@_spi(Host) import StateUI
+@_spi(Host) import SwiftOmniUI
 
 /// Pictures from the app's resources: fitted, filled, and one per color scheme.
 struct ImageSample: SampleContent, ExampleContent {
