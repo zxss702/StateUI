@@ -46,6 +46,7 @@ final class WinUILabelView: WinUITextView {
                     guard let source = run.image, source.symbol == nil else { return "" }
                     return PictureArithmetic.files(for: source.file).joined(separator: "\n")
                 }) { images in
+                    WinUIStrings.withCStrings(runs.map { $0.image?.symbol ?? "" }) { glyphs in
                     let words = runs.indices.map { index in
                         let run = runs[index]
                         let look = run.look
@@ -62,9 +63,10 @@ final class WinUILabelView: WinUITextView {
                             strikethrough: look.decorations.contains(.strikethrough), family: families[index],
                             spacing: Int32((spacing * 1000).rounded()),
                             baseline: look.baselineOffset ?? 0, image: images[index],
-                            glyph: run.image?.symbol.map { WinUISymbols.glyph(named: $0) } ?? 0)
+                            glyph: glyphs[index])
                     }
                     swiftomniui_winui_text_set_runs(handle, words, Int32(words.count))
+                    }
                 }
             }
         }

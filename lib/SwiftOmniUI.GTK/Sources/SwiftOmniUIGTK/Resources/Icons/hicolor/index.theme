@@ -1,0 +1,10 @@
+[Icon Theme]
+Name=SwiftOmniUI Bundled
+Comment=Symbolic icons bundled with SwiftOmniUI's GTK host
+Inherits=
+Directories=scalable/actions
+
+[scalable/actions]
+Size=16
+Type=Scalable
+Context=Actions

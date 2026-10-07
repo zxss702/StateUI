@@ -26,6 +26,7 @@ let package = Package(
             dependencies: ["CSwiftOmniUIGTK", .product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot"),
                 .product(name: "SwiftOmniUIHost", package: "SwiftOmniUIHost")],
             path: "Sources/SwiftOmniUIGTK",
+            resources: [.copy("Resources/Icons")],
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
         .testTarget(

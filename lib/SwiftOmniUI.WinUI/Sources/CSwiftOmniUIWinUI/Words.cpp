@@ -163,13 +163,12 @@ extern "C" void swiftomniui_winui_text_set_runs(SwiftOmniUIObjectRef handle, Swi
             auto const &run = runs[index];
             // A picture or a glyph in the line stands as an inline element; a run raised on its baseline is a
             // block of its words shifted up in one too.
-            if (run.glyph || (run.image && *run.image) || run.baseline != 0) {
+            if ((run.glyph && *run.glyph) || (run.image && *run.image) || run.baseline != 0) {
                 documents::InlineUIContainer holder;
-                if (run.glyph) {
+                if (run.glyph && *run.glyph) {
                     controls::TextBlock mark;
                     mark.FontFamily(media::FontFamily(L"Segoe Fluent Icons, Segoe MDL2 Assets"));
-                    wchar_t glyph[2] = {static_cast<wchar_t>(run.glyph), 0};
-                    mark.Text(winrt::hstring(glyph));
+                    mark.Text(text(run.glyph));
                     if (run.size > 0) mark.FontSize(run.size);
                     if (run.hasColor) mark.Foreground(media::SolidColorBrush(color(run.color)));
                     holder.Child(mark);
@@ -193,7 +192,7 @@ extern "C" void swiftomniui_winui_text_set_runs(SwiftOmniUIObjectRef handle, Swi
                     holder.Child(part);
                 }
                 inlines.Append(holder);
-                at += run.glyph || (run.image && *run.image) ? 1
+                at += (run.glyph && *run.glyph) || (run.image && *run.image) ? 1
                     : static_cast<int32_t>(text(run.text).size());
                 continue;
             }

@@ -41,8 +41,16 @@ struct OpenURLSample: SampleContent, ExampleContent {
 
     var body: some View {
         VStack {
-            Image(systemName: "link")
-                .tint(Palette.accent)
+            Image(systemName: {
+                #if os(macOS)
+                return "link"
+                #elseif os(Windows)
+                return "\u{E71B}"
+                #else
+                return "chain-link-symbolic"
+                #endif
+            }())
+            .tint(Palette.accent)
 
             Text(last)
                 .font(.system(size: 13, design: .monospaced))

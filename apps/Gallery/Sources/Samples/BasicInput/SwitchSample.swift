@@ -34,7 +34,15 @@ struct SwitchSample: SampleContent, ExampleContent {
 
             // A toggle as a button that holds its pressed look.
             Toggle(isOn: $boldOn) {
-                Label("Bold", systemImage: "bold")
+                Label("Bold", systemImage: {
+                    #if os(macOS)
+                    return "bold"
+                    #elseif os(Windows)
+                    return "\\u{E8DD}"
+                    #else
+                    return "text-bold-symbolic"
+                    #endif
+                }())
             }
             .toggleStyle(.button)
         }
@@ -61,7 +69,15 @@ struct SwitchSample: SampleContent, ExampleContent {
             // A toggle as a button that holds its pressed look - a toolbar's,
             // which is what `.toggleStyle(.button)` asks of each host.
             Toggle(isOn: $boldOn) {
-                Label("Bold", systemImage: "bold")
+                Label("Bold", systemImage: {
+                    #if os(macOS)
+                    return "bold"
+                    #elseif os(Windows)
+                    return "\u{E8DD}"
+                    #else
+                    return "text-bold-symbolic"
+                    #endif
+                }())
             }
             .toggleStyle(.button)
             .accessibilityIdentifier("switch.bold")

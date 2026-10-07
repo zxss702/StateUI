@@ -17,9 +17,14 @@ enum GTKPictures {
         PictureArithmetic.files(for: name).map { folder + "/" + $0 }.first { g_file_test($0, G_FILE_TEST_IS_REGULAR) != 0 }
     }
 
-    /// An image showing the picture `name` names as an icon `size` logical pixels across, which GTK draws at the
-    /// display's scale; nil where there is no such picture.
+    /// An image showing `name` as an icon `size` logical pixels across, which GTK draws at the display's scale:
+    /// the icon theme's icon for a name it knows, else the file `name` names; nil where there is neither.
     static func icon(named name: String, size: Int32) -> GTKWidget? {
+        if GTKSymbols.has(name) {
+            let image = gtk_image_new_from_icon_name(name)
+            if let image { gtk_image_set_pixel_size(image.opaque, size) }
+            return image
+        }
         guard let path = path(of: name), let file = g_file_new_for_path(path) else { return nil }
         let icon = g_file_icon_new(file)
         let image = gtk_image_new_from_gicon(icon)

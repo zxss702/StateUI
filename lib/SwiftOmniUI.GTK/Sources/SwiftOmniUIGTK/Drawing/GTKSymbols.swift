@@ -3,20 +3,23 @@
 
 import CSwiftOmniUIGTK
 
-/// The logical symbol names `Image(systemName:)` writes, mapped to the
-/// freedesktop icon names the platform's icon theme calls them - the system's
-/// own symbols, drawn as the theme draws them.
-///
-/// A name is asked of the icon theme rather than a file table, so whichever
-/// theme the user runs answers it; a name nobody knows answers the theme's
-/// missing-image icon.
+/// The names `Image(systemName:)` writes are the platform's own: freedesktop
+/// icon names, asked of the icon theme rather than a table, so whichever theme
+/// the user runs answers them - the icons bundled beside the process's products
+/// (`*.resources`/`*.bundle`'s `Icons`, laid out as an icon theme) standing in its search
+/// paths, so the names a theme lacks still answer. A name nobody knows shows
+/// the theme's missing-image icon.
+@MainActor
 enum GTKSymbols {
+    /// Whether the bundled icons stand in the theme's search paths yet.
+    private static var registered = false
+
     /// The file the icon theme keeps `name`'s icon at, or nil where the theme has none.
     static func path(of name: String, size: Int32 = 32) -> String? {
         guard let display = gdk_display_get_default() else { return nil }
         guard let theme = gtk_icon_theme_get_for_display(display) else { return nil }
-        let iconName = icons[name] ?? "image-missing"
-        guard let icon = g_themed_icon_new(iconName) else { return nil }
+        registerBundledIcons(in: theme)
+        guard let icon = g_themed_icon_new(name) else { return nil }
         defer { g_object_unref(UnsafeMutableRawPointer(icon)) }
         let scale = 1
         let paintable = gtk_icon_theme_lookup_by_gicon(
@@ -29,77 +32,42 @@ enum GTKSymbols {
         return g_file_get_path(file).map { String(cString: $0) }
     }
 
-    /// `systemName` to freedesktop icon name, on the names SF Symbols calls things.
-    private static let icons: [String: String] = [
-        "alarm": "alarm-symbolic",
-        "arrow.clockwise": "view-refresh-symbolic",
-        "arrow.down": "go-down-symbolic",
-        "arrow.left": "go-previous-symbolic",
-        "arrow.right": "go-next-symbolic",
-        "arrow.up": "go-up-symbolic",
-        "bell": "preferences-system-notifications-symbolic",
-        "book": "x-office-document-symbolic",
-        "bookmark": "bookmark-new-symbolic",
-        "calendar": "x-office-calendar-symbolic",
-        "camera": "camera-photo-symbolic",
-        "checkmark": "emblem-ok-symbolic",
-        "checkmark.circle": "emblem-ok-symbolic",
-        "chevron.down": "pan-down-symbolic",
-        "chevron.left": "go-previous-symbolic",
-        "chevron.right": "go-next-symbolic",
-        "chevron.up": "pan-up-symbolic",
-        "clock": "preferences-system-time-symbolic",
-        "doc": "text-x-generic-symbolic",
-        "ellipsis": "view-more-symbolic",
-        "envelope": "mail-unread-symbolic",
-        "eye": "view-reveal-symbolic",
-        "eye.slash": "view-conceal-symbolic",
-        "flag": "flag-thick-symbolic",
-        "folder": "folder-symbolic",
-        "folder.fill": "folder-symbolic",
-        "gear": "emblem-system-symbolic",
-        "gearshape": "emblem-system-symbolic",
-        "gearshape.fill": "emblem-system-symbolic",
-        "globe": "applications-internet-symbolic",
-        "heart": "emblem-favorite-symbolic",
-        "heart.fill": "starred-symbolic",
-        "house": "go-home-symbolic",
-        "house.fill": "go-home-symbolic",
-        "link": "insert-link-symbolic",
-        "list.bullet": "view-list-symbolic",
-        "lock": "system-lock-screen-symbolic",
-        "lock.fill": "system-lock-screen-symbolic",
-        "lock.open": "channel-secure-symbolic",
-        "magnifyingglass": "system-search-symbolic",
-        "minus": "list-remove-symbolic",
-        "moon": "night-light-symbolic",
-        "paintbrush": "applications-graphics-symbolic",
-        "paperplane": "mail-send-symbolic",
-        "pause.fill": "media-playback-pause-symbolic",
-        "pencil": "document-edit-symbolic",
-        "person": "avatar-default-symbolic",
-        "person.fill": "avatar-default-symbolic",
-        "phone": "call-start-symbolic",
-        "photo": "insert-image-symbolic",
-        "pin": "mark-location-symbolic",
-        "play.fill": "media-playback-start-symbolic",
-        "plus": "list-add-symbolic",
-        "printer": "printer-symbolic",
-        "questionmark": "dialog-question-symbolic",
-        "questionmark.circle": "dialog-question-symbolic",
-        "questionmark.square": "dialog-question-symbolic",
-        "square.and.arrow.up": "document-send-symbolic",
-        "star": "non-starred-symbolic",
-        "star.fill": "starred-symbolic",
-        "stop.fill": "media-playback-stop-symbolic",
-        "sun.max": "display-brightness-symbolic",
-        "tag": "tag-symbolic",
-        "trash": "user-trash-symbolic",
-        "trash.fill": "user-trash-symbolic",
-        "tray": "mail-folder-inbox-symbolic",
-        "wifi": "network-wireless-symbolic",
-        "wifi.slash": "network-wireless-disabled-symbolic",
-        "xmark": "window-close-symbolic",
-        "xmark.circle": "window-close-symbolic",
-    ]
+    /// Whether the icon theme knows `name` - the bundled icons registered first.
+    static func has(_ name: String) -> Bool {
+        guard let display = gdk_display_get_default() else { return false }
+        guard let theme = gtk_icon_theme_get_for_display(display) else { return false }
+        registerBundledIcons(in: theme)
+        return gtk_icon_theme_has_icon(theme, name) != 0
+    }
+
+    /// Adds every `*.resources/Icons` folder beside the executable to the theme's search paths - this package's
+    /// bundled symbolic icons, and any an application bundles of its own.
+    private static func registerBundledIcons(in theme: OpaquePointer) {
+        guard !registered else { return }
+        registered = true
+        for folder in Self.iconFolders() {
+            gtk_icon_theme_add_search_path(theme, folder)
+        }
+    }
+
+    /// Every `Icons` folder under a `*.resources` or `*.bundle` directory beside the executable - the resource
+    /// bundles SwiftPM names one or the other.
+    private static func iconFolders() -> [String] {
+        guard let link = g_file_read_link("/proc/self/exe", nil) else { return [] }
+        defer { g_free(link) }
+        guard let folder = g_path_get_dirname(link) else { return [] }
+        defer { g_free(folder) }
+        let root = String(cString: folder)
+        guard let entries = g_dir_open(root, 0, nil) else { return [] }
+        defer { g_dir_close(entries) }
+
+        var folders: [String] = []
+        while let entry = g_dir_read_name(entries) {
+            let name = String(cString: entry)
+            guard name.hasSuffix(".resources") || name.hasSuffix(".bundle") else { continue }
+            let icons = root + "/" + name + "/Icons"
+            if g_file_test(icons, G_FILE_TEST_IS_DIR) != 0 { folders.append(icons) }
+        }
+        return folders
+    }
 }

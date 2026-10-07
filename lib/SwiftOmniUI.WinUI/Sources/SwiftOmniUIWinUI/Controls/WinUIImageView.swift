@@ -31,15 +31,15 @@ final class WinUIImageView: WinUIView {
     private var symbol = false
 
     /// Shows the picture `source` names, filling its room as `aspect` says. Its layout is told itself: WinUI hears
-    /// nothing from a picture that asks it for no room. A source naming a symbol shows the Segoe Fluent Icons
-    /// glyph the name maps to, or the question mark where the name is unknown.
+    /// nothing from a picture that asks it for no room. A source naming a symbol shows it as a Segoe Fluent Icons
+    /// glyph - the platform's own symbol set, where the name is the glyph.
     func apply(source: ImageSource?, aspect: ContentMode) {
         symbol = source?.symbol != nil
         file = source?.file ?? ""
         self.aspect = aspect
         var size = [0.0, 0.0]
         if let name = source?.symbol {
-            found = swiftomniui_winui_image_set_symbol(handle, WinUISymbols.glyph(named: name), aspect.rawValue)
+            found = swiftomniui_winui_image_set_symbol(handle, name, aspect.rawValue)
             if !found { WinUIRenderer.log.error("no symbol \(name) the platform knows") }
         } else {
             let files = PictureArithmetic.files(for: file)

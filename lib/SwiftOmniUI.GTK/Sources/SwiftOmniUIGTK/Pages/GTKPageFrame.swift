@@ -165,7 +165,7 @@ final class GTKPageFrame {
         }
         if sidebarButton == nil {
             let button = GTKButtonView(toggles: true)
-            gtk_button_set_icon_name(button.widget.of(GtkButton.self), "sidebar-show-symbolic")
+            gtk_button_set_icon_name(button.widget.of(GtkButton.self), "sidebar-left-symbolic")
             gtk_widget_set_tooltip_text(button.widget, "Toggle Sidebar")
             adw_header_bar_pack_start(header.opaque, button.widget)
             sidebarButton = button

@@ -29,7 +29,15 @@ extension ToolbarItem {
     /// and there is no other stack anywhere to go stale - the page the user
     /// was looking at does not linger under the group it came from.
     static func home(_ nav: Navigation) -> ToolbarItem {
-        ToolbarItem("Home", systemImage: "house") { nav.home() }
+        ToolbarItem("Home", systemImage: {
+            #if os(macOS)
+            return "house"
+            #elseif os(Windows)
+            return "\u{E80F}"
+            #else
+            return "go-home-symbolic"
+            #endif
+        }()) { nav.home() }
             .id("home")
             // THE ONE CONTROL ON EVERY PAGE, and the only way back from a
             // sample that does not go through the sidebar - so it is the handle

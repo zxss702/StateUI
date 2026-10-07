@@ -208,15 +208,15 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_image_make(void) {
     }
 }
 
-extern "C" bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef handle, uint32_t codepoint, int32_t aspect) {
+extern "C" bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef handle, char const *glyph, int32_t aspect) {
     try {
+        if (!glyph || !*glyph) return false;
         auto grid = imageGrid(handle);
         auto image = imageChild(grid);
         auto box = symbolBox(grid);
         image.Source(nullptr);
         image.Visibility(xaml::Visibility::Collapsed);
-        wchar_t glyph[2] = {static_cast<wchar_t>(codepoint), 0};
-        box.Child().as<controls::FontIcon>().Glyph(glyph);
+        box.Child().as<controls::FontIcon>().Glyph(winrt::to_hstring(glyph));
         box.Stretch(aspect == 2 ? xaml::Media::Stretch::Fill : xaml::Media::Stretch::Uniform);
         box.Visibility(xaml::Visibility::Visible);
         return true;

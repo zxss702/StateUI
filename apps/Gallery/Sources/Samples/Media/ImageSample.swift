@@ -49,15 +49,32 @@ struct ImageSample: SampleContent, ExampleContent {
                 }
             }
 
-            // A systemName names a symbol, not a file: the host draws the one
-            // its own set knows. A Label is a title with a symbol at its head.
+            // A systemName names a symbol in the platform's own set - the SF
+            // name on a Mac, the Fluent glyph on Windows, the theme name on
+            // Linux. The call site picks with #if.
             HStack {
-                Image(systemName: "star.fill")
+                Image(systemName: {
+                    #if os(macOS)
+                    return "star.fill"
+                    #elseif os(Windows)
+                    return "\\u{E734}"
+                    #else
+                    return "star-symbolic"
+                    #endif
+                }())
                     .resizable()
                     .frame(width: 24)
                     .frame(height: 24)
 
-                Label("Starred", systemImage: "star.fill")
+                Label("Starred", systemImage: {
+                    #if os(macOS)
+                    return "star.fill"
+                    #elseif os(Windows)
+                    return "\\u{E734}"
+                    #else
+                    return "star-symbolic"
+                    #endif
+                }())
             }
 
             // `.clipShape` cuts the view to the outline a shape stands for.
@@ -184,9 +201,18 @@ struct ImageSample: SampleContent, ExampleContent {
 
             // `systemName` names a symbol, not a file: the host draws the one
             // its own set knows - SF Symbols on a Mac, Fluent Icons on
-            // Windows, the icon theme on Linux.
+            // Windows, the icon theme on Linux. Each platform names them its
+            // own way, so the list itself is per-platform.
             HStack {
-                ForEach(["star", "heart.fill", "house", "gearshape", "magnifyingglass"], id: \.self) { name in
+                #if os(macOS)
+                let names = ["star", "heart.fill", "house", "gearshape", "magnifyingglass"]
+                #elseif os(Windows)
+                let names = ["\u{E735}", "\u{EB51}", "\u{E80F}", "\u{E713}", "\u{E721}"]
+                #else
+                let names = ["star-symbolic", "heart-symbolic", "go-home-symbolic", "cogged-wheel-symbolic", "loupe-symbolic"]
+                #endif
+
+                ForEach(names, id: \.self) { name in
                     Image(systemName: name)
                         .resizable()
                         .frame(width: 24)
@@ -199,9 +225,25 @@ struct ImageSample: SampleContent, ExampleContent {
             // A Label is a title with a symbol at its head - and its style
             // picks which of the two shows.
             HStack {
-                Label("Starred", systemImage: "star.fill")
+                Label("Starred", systemImage: {
+                    #if os(macOS)
+                    return "star.fill"
+                    #elseif os(Windows)
+                    return "\u{E734}"
+                    #else
+                    return "star-symbolic"
+                    #endif
+                }())
 
-                Label("Bookmarked", systemImage: "bookmark")
+                Label("Bookmarked", systemImage: {
+                    #if os(macOS)
+                    return "bookmark"
+                    #elseif os(Windows)
+                    return "\u{E8A4}"
+                    #else
+                    return "bookmark-symbolic"
+                    #endif
+                }())
                     .labelStyle(.iconOnly)
                     .frame(width: 24)
                     .frame(height: 24)
@@ -233,11 +275,12 @@ struct ImageSample: SampleContent, ExampleContent {
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 
-            Text("`Image(systemName:)` asks for no file: the name is a logical "
-                + "symbol, and each host maps it to its own set - SF Symbols on "
-                + "macOS, Segoe Fluent Icons on Windows, the icon theme on "
-                + "Linux. `Label` pairs one with a title, and `.labelStyle` "
-                + "picks which of the two shows.")
+            Text("`Image(systemName:)` asks for no file: the name is a symbol "
+                + "in the PLATFORM's own set - an SF Symbols name on macOS, the "
+                + "Segoe Fluent glyph itself on Windows, the icon-theme name on "
+                + "Linux. The library holds no table between them; the call site "
+                + "names its own platform behind `#if os(...)`. `Label` pairs "
+                + "one with a title, and `.labelStyle` picks which shows.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.subtle)
 

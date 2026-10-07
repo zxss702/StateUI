@@ -16,13 +16,13 @@ struct ContentUnavailableSample: SampleContent, ExampleContent {
         } else {
             ContentUnavailableView(
                 "No Notes",
-                systemImage: "note.text",
+                systemImage: noteIcon,
                 description: "Create a note to see it listed here.")
         }
 
         // The full form, with an action:
         ContentUnavailableView {
-            Label("No Selection", systemImage: "cursorarrow.rays")
+            Label("No Selection", systemImage: selectionIcon)
         } description: {
             Text("Pick a note from the list.")
         } actions: {
@@ -57,7 +57,15 @@ struct ContentUnavailableSample: SampleContent, ExampleContent {
                 } else {
                     ContentUnavailableView(
                         "No Notes",
-                        systemImage: "note.text",
+                        systemImage: {
+                            #if os(macOS)
+                            return "note.text"
+                            #elseif os(Windows)
+                            return "\u{E70B}"
+                            #else
+                            return "notebook-symbolic"
+                            #endif
+                        }(),
                         description: "Create a note to see it listed here.")
                 }
             }

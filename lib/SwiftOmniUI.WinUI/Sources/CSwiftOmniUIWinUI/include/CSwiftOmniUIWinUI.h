@@ -399,7 +399,7 @@ void swiftomniui_winui_text_set_text(SwiftOmniUIObjectRef text, char const *utf8
 /// them, as 0xAARRGGBB; its size in DIPs, 0 for the label's; bold, italic, and lines under or through it; its font
 /// family, empty for the label's; the space between its letters in thousandths of an em of its size; how far its
 /// baseline rises in DIPs; the '\n'-joined candidate files it draws as a glyph in the line, empty for none; and a
-/// Fluent glyph's codepoint where it is a symbol, 0 for none.
+/// Fluent glyph where it is a symbol, empty for none.
 typedef struct {
     char const *text;
     uint32_t color;
@@ -415,7 +415,7 @@ typedef struct {
     int32_t spacing;
     double baseline;
     char const *image;
-    uint32_t glyph;
+    char const *glyph;
 } SwiftOmniUIWordsRun;
 
 /// Shows `runs`, in order, as the text block's words, each as it says, in place of its words.
@@ -978,10 +978,10 @@ SwiftOmniUIObjectRef swiftomniui_winui_image_make(void);
 bool swiftomniui_winui_image_set(SwiftOmniUIObjectRef image, char const *const *names, int32_t count, int32_t aspect,
                              double *size);
 
-/// A symbol in place of the picture: `codepoint` is the glyph number in Segoe Fluent Icons, which the logical
-/// symbol name was mapped to by the caller. The Fluent font is the platform's own symbol set, which is why the
-/// glyph and not the name crosses. Answers false for a missing element.
-bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef image, uint32_t codepoint, int32_t aspect);
+/// A symbol in place of the picture: `glyph` is the Segoe Fluent Icons glyph the symbol is shown as, in UTF-8 -
+/// the Fluent font is the platform's own symbol set, which is why the glyph and not a name crosses. Answers false
+/// for a missing element or an empty glyph.
+bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef image, char const *glyph, int32_t aspect);
 
 /// The size of the bitmap `image` shows, in DIPs; zero until it is read, and for an SVG. Once it is read, the
 /// layout holding the image is asked to measure again.
