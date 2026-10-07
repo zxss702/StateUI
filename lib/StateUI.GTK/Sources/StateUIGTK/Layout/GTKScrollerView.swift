@@ -21,11 +21,18 @@ final class GTKScrollerView: GTKView {
     /// dropped.
     var ears: [GTKScrollEar] = []
 
-    private var content: GTKView?
+    private(set) var content: GTKView?
 
     init() {
         super.init { _ in gtk_scrolled_window_new() }
         for adjustment in [horizontal, vertical] {
+            connectSignal(UnsafeMutableRawPointer(adjustment), "changed", number: number) { _, data in
+                MainActor.assumeIsolated {
+                    guard let view = GTKView.find(viewNumber(data)) as? GTKScrollerView else { return }
+                    view.ears = view.ears.filter { $0.owner != nil }
+                    for ear in view.ears { ear.moved() }
+                }
+            }
             connectSignal(UnsafeMutableRawPointer(adjustment), "value-changed", number: number) { _, data in
                 MainActor.assumeIsolated {
                     guard let view = GTKView.find(viewNumber(data)) as? GTKScrollerView else { return }

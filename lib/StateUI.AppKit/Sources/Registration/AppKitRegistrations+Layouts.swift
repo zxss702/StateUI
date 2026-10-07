@@ -30,7 +30,6 @@ extension AppKitRegistrations {
             lazy.applies(Self.stackMembers + [LazyVStackContract.items]) { view, values in
                 view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             lazy.raises(LazyVStackContract.realizedChanged)
         }
@@ -39,7 +38,6 @@ extension AppKitRegistrations {
             lazy.applies(Self.stackMembers + [LazyHStackContract.items]) { view, values in
                 view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             lazy.raises(LazyHStackContract.realizedChanged)
         }
@@ -53,7 +51,6 @@ extension AppKitRegistrations {
                 view.runSpacing = CGFloat(values[LazyVGridContract.rowSpacing] ?? 0)
                 view.trackSpacing = CGFloat(values[LazyVGridContract.columnSpacing] ?? 0)
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             grid.raises(LazyVGridContract.realizedChanged)
         }
@@ -67,7 +64,6 @@ extension AppKitRegistrations {
                 view.runSpacing = CGFloat(values[LazyHGridContract.columnSpacing] ?? 0)
                 view.trackSpacing = CGFloat(values[LazyHGridContract.rowSpacing] ?? 0)
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             grid.raises(LazyHGridContract.realizedChanged)
         }

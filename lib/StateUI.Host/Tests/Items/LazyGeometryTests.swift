@@ -1,0 +1,134 @@
+// SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
+// SPDX-License-Identifier: Apache-2.0
+
+@_spi(Host) @testable import StateUI
+@_spi(Host) @testable import StateUIHost
+import XCTest
+
+final class LazyGeometryTests: XCTestCase {
+    func testEstimatedLengthAndExactIntersections() {
+        let identities = (0..<10_000).map(String.init)
+        var extents = LazyExtents()
+        extents.measure("0", extent: 40)
+        XCTAssertEqual(extents.total(in: identities), 400_000, accuracy: 0.001)
+        XCTAssertEqual(extents.places(in: 800..<1_040, overscan: 0, in: identities), 20..<26)
+        XCTAssertEqual(extents.places(in: 801..<1_041, overscan: 0, in: identities), 20..<27)
+        XCTAssertEqual(extents.places(in: 399_960..<400_010, overscan: 0, in: identities), 9_999..<10_000)
+        XCTAssertEqual(extents.places(in: 400_000..<400_010, overscan: 0, in: identities), 0..<0)
+        extents.spacing = 10
+        extents.padding = (5, 7)
+        XCTAssertEqual(extents.places(in: 45..<55, overscan: 0, in: identities), 0..<0)
+        XCTAssertEqual(extents.total(in: identities), 500_002, accuracy: 0.001)
+    }
+
+    func testVariableExtentsMatchIntersectionsAcrossTheWholeRun() {
+        let identities = (0..<200).map(String.init)
+        let sizes = (0..<200).map { Double(($0 * 37) % 113 + 1) }
+        var extents = LazyExtents()
+        extents.spacing = 3
+        extents.padding = (11, 9)
+        for index in identities.indices { extents.measure(identities[index], extent: sizes[index]) }
+        var origins: [Double] = []
+        var position = 11.0
+        for size in sizes { origins.append(position); position += size + 3 }
+        for start in stride(from: 0.0, through: position, by: 17) {
+            let intersecting = sizes.indices.filter { origins[$0] < start + 130 && origins[$0] + sizes[$0] > start }
+            let expected = intersecting.first.map { $0..<(intersecting.last! + 1) } ?? 0..<0
+            XCTAssertEqual(extents.places(in: start..<start + 130, overscan: 0, in: identities), expected)
+        }
+        let reversed = Array(identities.reversed())
+        extents.keep(identities: Set(reversed))
+        XCTAssertEqual(extents.offset(of: 1, in: reversed), 11 + sizes.last! + 3)
+    }
+
+    func testGridMeasurementsCanShrinkAndRegroup() {
+        var runs = LazyRunExtents()
+        runs.measure(0, extent: 100)
+        XCTAssertEqual(runs.total(count: 500), 50_000)
+        runs.measure(0, extent: 20)
+        XCTAssertEqual(runs.total(count: 500), 10_000)
+        runs.measure(1, extent: 40)
+        XCTAssertEqual(runs.offset(of: 2, count: 500), 60)
+        let revision = runs.revision
+        runs.measure(1, extent: 40)
+        XCTAssertEqual(runs.revision, revision)
+        runs.reset()
+        runs.measure(0, extent: 50)
+        XCTAssertEqual(runs.total(count: 250), 12_500)
+        XCTAssertEqual(runs.places(in: 100..<200, overscan: 0, count: 250), 2..<4)
+    }
+
+    @MainActor
+    func testDeletingRowsKeepsKnownSizesAndTheVisibleAnchor() throws {
+        let runtime = HostRuntime.still()
+        var identities = ["header"] + (0..<1_000).map(String.init) + ["footer"]
+        var patch = HostPatch(id: .manual("lazy"), type: .lazyVStack)
+        patch.properties = [.items: .strings(identities)]
+        runtime.tree.apply(patch, complete: true)
+        let cells = LazyCells(try XCTUnwrap(runtime.tree.root), in: runtime)
+        cells.takeItems()
+        cells.extents.spacing = 8
+        // A short header/footer must not replace the many row measurements after each deletion.
+        for identity in identities {
+            cells.extents.measure(identity, extent: identity == "header" || identity == "footer" ? 20 : 52)
+        }
+        cells.show((cells.total - 600)..<cells.total)
+        for removed in ["0", "998", "500"] {
+            let before = cells.total
+            identities.removeAll { $0 == removed }
+            patch.properties = [.items: .strings(identities)]
+            patch.lazyContentChanged = true
+            runtime.tree.apply(patch, complete: false)
+            XCTAssertTrue(cells.takeItems())
+            XCTAssertEqual(before - cells.total, 60, accuracy: 0.001)
+            XCTAssertEqual(cells.correctedOrigin(), cells.total - 600)
+            XCTAssertEqual(cells.extents.extent(of: "header"), 20)
+            XCTAssertEqual(cells.extents.extent(of: "999"), 52)
+        }
+        // An update with unchanged identities can change the content's natural height.
+        runtime.tree.apply(patch, complete: false)
+        XCTAssertTrue(cells.takeItems())
+        cells.extents.measure("999", extent: 100)
+        XCTAssertEqual(cells.extents.extent(of: "500"), 100)
+
+    }
+
+    func testViewportLookupAndMeasurementUpdateBenchmark() {
+        for count in [1_000, 10_000] {
+            let identities = (0..<count).map(String.init)
+            var extents = LazyExtents()
+            for row in 0..<20 { extents.measure(identities[row], extent: Double(40 + row % 7 * 9)) }
+            _ = extents.total(in: identities)
+            var checksum = 0
+            let start = ContinuousClock.now
+            for step in 0..<10_000 {
+                let offset = Double((step * 137) % (count * 60))
+                checksum += extents.places(in: offset..<offset + 480, overscan: 0, in: identities).count
+            }
+            let lookup = start.duration(to: .now).components
+            let changedAt = ContinuousClock.now
+            for row in 20..<120 {
+                extents.measure(identities[row], extent: Double(40 + row % 7 * 9))
+                _ = extents.places(in: Double(row * 65)..<Double(row * 65 + 480), overscan: 0, in: identities)
+            }
+            let update = changedAt.duration(to: .now).components
+            print("LAZY_GEOMETRY count=\(count) lookup_us=\((Double(lookup.seconds) * 1e6 + Double(lookup.attoseconds) / 1e12) / 10_000) "
+                  + "measure_and_prefix_us=\((Double(update.seconds) * 1e6 + Double(update.attoseconds) / 1e12) / 100)")
+            XCTAssertGreaterThan(checksum, 10_000)
+        }
+    }
+
+    func testScrollAxesUseViewportSpaceAndKeepCrossAxisAndBounds() {
+        var values = LayoutValues()
+        values.scrollAxes = .vertical
+        XCTAssertEqual(values.sized(LayoutSize(width: 120, height: 40_000)), LayoutSize(width: 120, height: 0))
+        values.minimumHeight = 80
+        values.maximumHeight = 240
+        XCTAssertEqual(values.sized(LayoutSize(width: 120, height: 40_000)).height, 80)
+        values.height = 300
+        XCTAssertEqual(values.sized(LayoutSize(width: 120, height: 40_000)).height, 240)
+        values = LayoutValues()
+        values.scrollAxes = .horizontal
+        XCTAssertEqual(values.sized(LayoutSize(width: 40_000, height: 56)), LayoutSize(width: 0, height: 56))
+    }
+}

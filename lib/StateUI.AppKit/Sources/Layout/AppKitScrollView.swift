@@ -221,7 +221,12 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
         boxShape.cut(layer)
     }
 
+    /// Clip notifications during document arrangement describe intermediate geometry, not a user scroll.
+    private(set) var isArrangingDocument = false
+
     override func layout() {
+        isArrangingDocument = true
+        defer { isArrangingDocument = false }
         super.layout()
         cutToShape()
         documentSurface.arrange(in: contentSize)
@@ -459,6 +464,8 @@ private final class AppKitScrollDocumentView: NSView, AppKitMeasurementCaching {
             item, padding: EdgeInsets(padding), orientation: orientation, in: LayoutSize(viewport))
         frame = NSRect(origin: .zero, size: NSSize(arranged.document))
         item.view.frame = NSRect(placed: arranged.place)
+        // A tab can become visible without changing its document's frame.
+        // Lazy descendants still need their first visible viewport notification.
         item.view.needsLayout = true
     }
 }

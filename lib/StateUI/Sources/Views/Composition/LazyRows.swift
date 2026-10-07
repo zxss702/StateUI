@@ -18,6 +18,10 @@ protocol LazyRows: Element {
     /// The identity `index`'s row carries - `nil` for one with none.
     func lazyRowIdentity(at index: Int) -> String?
 
+    /// Whether a fresh source can reuse the previous source's identity index.
+    /// Row builders are always refreshed, even when this answers true.
+    func hasSameLazyIdentities(as other: any LazyRows) -> Bool
+
     /// The row at `index`, built only when asked.
     func lazyRow(at index: Int) -> any Element
 }
@@ -42,6 +46,11 @@ struct LazyKeyed: LazyRows {
 
     func lazyRowIdentity(at index: Int) -> String? {
         rows.lazyRowIdentity(at: index).map { "\(segment).\($0)" }
+    }
+
+    func hasSameLazyIdentities(as other: any LazyRows) -> Bool {
+        guard let other = other as? Self, segment == other.segment else { return false }
+        return rows.hasSameLazyIdentities(as: other.rows)
     }
 
     /// The row under this segment - the key gains it; a `manual` id is the

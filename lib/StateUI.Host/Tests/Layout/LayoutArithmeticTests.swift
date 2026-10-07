@@ -7,6 +7,21 @@ import XCTest
 
 /// The layout arithmetic every Swift host places its children with.
 final class LayoutArithmeticTests: XCTestCase {
+    @MainActor
+    func testHorizontalScrollerFillsItsViewportInsideMargins() {
+        var scroll = Child(width: 0, height: 56)
+        scroll.values.scrollAxes = .horizontal
+        scroll.values.margin = EdgeInsets(10)
+        XCTAssertEqual(StackArithmetic.size(of: [scroll], axis: .vertical, spacing: 0,
+                                             padding: EdgeInsets(6), width: 100).width, 100)
+        scroll.values.maximumWidth = 50
+        XCTAssertEqual(StackArithmetic.size(of: [scroll], axis: .vertical, spacing: 0,
+                                             padding: EdgeInsets(6), width: 100).width, 82)
+        scroll.values.width = 30
+        XCTAssertEqual(StackArithmetic.size(of: [scroll], axis: .vertical, spacing: 0,
+                                             padding: EdgeInsets(6), width: 100).width, 62)
+    }
+
     /// A row of an arrangement's own stands across the top or the bottom of its room, the page taking the rest -
     /// never less than none where the row is taller than the room.
     func testARowBesideAPageLeavesItTheRest() {

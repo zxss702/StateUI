@@ -255,6 +255,7 @@ extension Differ {
                 element: id)
         }
 
+        let lazySource = node.lazyWindow != nil ? node : nil
         node = ReadScope.observed(into: &reads) {
             let shallow = { () -> Node in
                 var made = node
@@ -571,6 +572,22 @@ extension Differ {
         let children = reconcileChildren(
             of: previous, node: node, into: &patch, sizesArrive: node.childSizesArrive)
 
+        if let source = lazySource {
+            // Recreating a content closure (for example for a sibling's lifetime
+            // counter) does not change the measurements of the retained rows.
+            // Keep its fresh builders and handlers, but invalidate sizes only
+            // when the source's reads, identities, or retained children changed.
+            let contentReads = (previous?.reads ?? []).subtracting(source.lazyWindow.map { [$0] } ?? [])
+            let changedChildren: [HostPatch] = switch patch.children {
+            case .arranged(let patches), .changed(let patches): patches
+            case .unchanged: []
+            }
+            patch.lazyContentChanged = previous == nil
+                || previous?.props[.items] != node.props[.items]
+                || !contentReads.isDisjoint(with: self.changed)
+                || changedChildren.contains { !$0.fresh && !$0.isEmpty }
+        }
+
         // A text rebuilt under one element takes the last layout report over:
         // its folded answer keeps saying where the words stand until the host
         // says again.
@@ -627,6 +644,7 @@ extension Differ {
             readings: readings,
             children: children
         )
+        result.lazySource = lazySource
         result.sizesArrive = sizesArrive
         result.visualInput = visualInput
         result.visualState = visualState

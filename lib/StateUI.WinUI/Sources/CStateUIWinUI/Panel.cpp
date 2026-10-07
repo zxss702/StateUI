@@ -7,6 +7,7 @@
 
 #include "Relay.h"
 
+#include <algorithm>
 #include <vector>
 
 #include <winrt/Microsoft.UI.Xaml.Automation.Peers.h>
@@ -65,6 +66,7 @@ namespace {
 
         /// Whether assistive technology meets none of what stands in the panel.
         bool childrenHidden = false;
+        xaml::FrameworkElement::EffectiveViewportChanged_revoker viewportChanged;
     };
 
     /// The panel a handle or a peer's owner holds, reached through an interface the panel implements itself: the
@@ -96,7 +98,18 @@ extern "C" void stateui_winui_panel_set_children(
         std::vector<xaml::UIElement> held;
         held.reserve(count);
         for (int32_t index = 0; index < count; ++index) held.push_back(as<xaml::UIElement>(children[index]));
-        items.ReplaceAll(held);
+        // A lazy window usually changes at its edges. Keep the intersecting
+        // UIElements attached, preserving their native state and composition.
+        for (uint32_t index = items.Size(); index > 0; --index) {
+            auto child = items.GetAt(index - 1);
+            if (std::find(held.begin(), held.end(), child) == held.end()) items.RemoveAt(index - 1);
+        }
+        for (uint32_t index = 0; index < held.size(); ++index) {
+            if (index < items.Size() && items.GetAt(index) == held[index]) continue;
+            uint32_t previous;
+            if (items.IndexOf(held[index], previous)) items.RemoveAt(previous);
+            items.InsertAt(index, held[index]);
+        }
     } catch (...) {
         report("holding a panel's children");
     }
@@ -107,5 +120,23 @@ extern "C" void stateui_winui_panel_hide_children(StateUIObjectRef handle, bool 
         panel(as<xaml::UIElement>(handle))->childrenHidden = hidden;
     } catch (...) {
         report("hiding a panel's children from assistive technology");
+    }
+}
+
+extern "C" void stateui_winui_panel_watch_viewport(StateUIObjectRef handle, bool enabled) {
+    try {
+        auto element = as<xaml::FrameworkElement>(handle);
+        auto owner = panel(element);
+        owner->viewportChanged.revoke();
+        if (enabled) {
+            owner->viewportChanged = element.EffectiveViewportChanged(winrt::auto_revoke,
+                guarded("handling EffectiveViewportChanged",
+                    [view = owner->view](xaml::FrameworkElement const &, xaml::EffectiveViewportChangedEventArgs const &args) {
+                        auto viewport = args.EffectiveViewport();
+                        callbacks.viewportChanged(view, viewport.X, viewport.Y, viewport.Width, viewport.Height);
+                    }));
+        }
+    } catch (...) {
+        report("watching a panel's viewport");
     }
 }

@@ -25,6 +25,10 @@
     /// instead, which costs one property rather than the element and its subtree.
     public var replace = false
 
+    /// A lazy container rebuilt its content source, rather than only its window.
+    /// Hosts invalidate cached offscreen sizes when that source can have changed.
+    public var lazyContentChanged = false
+
     /// Whether this render brings the complete element. Renderer-only merge
     /// bookkeeping; it is not part of the host contract and never crosses a
     /// typed boundary.

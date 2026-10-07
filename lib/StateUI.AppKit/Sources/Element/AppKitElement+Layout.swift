@@ -38,7 +38,13 @@ extension AppKitElement {
         }
 
         if let lazy = view as? AppKitLazyView {
-            lazy.cells.takeItems()
+            if lazy.cells.takeItems() {
+                lazy.measured = [:]
+                lazy.invalidateMeasurements()
+                // takeItems already discarded stale sizes or kept surviving identities. Do not
+                // reset that decision again merely because the host's measurement cache changed.
+                lazy.measuredRevision = lazy.measurements.revision
+            }
             lazy.setItems(children.compactMap { child in
                 guard case .manual(let identity) = child.id, let item = child.layoutItem
                 else { return nil }

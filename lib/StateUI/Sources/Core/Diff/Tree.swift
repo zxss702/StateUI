@@ -65,10 +65,21 @@ final class RenderedNode {
     /// container's braces.
     var view: String?
 
-    /// The states this element's builds read, fixed for its life: the renderer counts
-    /// it as their reader from `init` to `deinit`.
+    /// The states this element's builds read. A lazy window can add dependencies
+    /// while reusing its source; the renderer counts only the changed readers.
     /// Design: docs/design/core/invalidation.md#live-readers
-    let reads: Set<ObjectIdentifier>
+    var reads: Set<ObjectIdentifier> {
+        didSet {
+            let added = reads.subtracting(oldValue)
+            let removed = oldValue.subtracting(reads)
+            if !added.isEmpty { Renderer.shared.reading(added) }
+            if !removed.isEmpty { Renderer.shared.unreading(removed) }
+        }
+    }
+
+    /// A lazy container's identities and row closures, before materialization.
+    /// A data or environment rebuild replaces this with a fresh description.
+    var lazySource: Node?
 
     /// How many times this element has been described, for `debugInfo()`.
     var builds: Int
@@ -220,8 +231,9 @@ extension HostPatch {
     /// Whether this patch says nothing beyond naming the element, so its parent
     /// leaves it out. A changed driven set counts, an emptied one included.
     /// Design: docs/design/core/identity-and-diffing.md#merging-patches
-    var isEmpty: Bool {
+    @_spi(Host) public var isEmpty: Bool {
         !replace
+            && !lazyContentChanged
             && animation == nil
             && properties.isEmpty
             && clearedProperties.isEmpty
@@ -259,6 +271,7 @@ extension HostPatch {
 
         merged.clearedProperties.sort()
 
+        merged.lazyContentChanged = lazyContentChanged || later.lazyContentChanged
         merged.animation = later.animation ?? animation
         merged.driven = later.driven ?? driven
         merged.events = later.events ?? events

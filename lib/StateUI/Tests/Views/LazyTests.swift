@@ -13,6 +13,26 @@ import XCTest
 private final class Built {
     var count = 0
     var numbers: [Int: Int] = [:]
+    var appeared: [Int] = []
+    var disappeared: [Int] = []
+}
+
+private struct CountedLazyIdentity: Hashable, CustomStringConvertible {
+    let value: Int
+    let built: Built
+
+    var description: String {
+        built.count += 1
+        return String(value)
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.value == rhs.value && lhs.built === rhs.built
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
+    }
 }
 
 /// The lazy view under test, built inside a body - where it always stands
@@ -45,6 +65,113 @@ final class LazyStackTests: XCTestCase {
         let handler = try XCTUnwrap(list.events?[.realizedChanged], "the lazy stack hears no realizedChanged")
         renders.fire(handler, with: [.strings(identities)])
         return renders.revisit(changed: Renderer.shared.pendingChanges)
+    }
+
+    func testLazyDefaultsRespectFramesAndAlignmentInsideBuilderFragments() throws {
+        for horizontal in [false, true] {
+            let renders = Renders()
+            let type: NodeType = horizontal ? .lazyHGrid : .lazyVGrid
+            let patch = renders.render(LazyPage {
+                if horizontal {
+                    LazyHGrid(rows: [GridItem(.fixed(100))]) {
+                        ForEach(0..<3) { row in
+                            Text("\(row)").frame(maxHeight: .infinity)
+                        }
+                    }
+                } else {
+                    LazyVGrid(columns: [GridItem(.fixed(100))]) {
+                        ForEach(0..<3) { row in
+                            Text("\(row)").frame(maxWidth: .infinity)
+                        }
+                    }
+                }
+            }.node)
+            let grid = try lazy(type, in: patch)
+            let ids = try XCTUnwrap(grid.props[.items]?.strings)
+            let shown = try lazy(type, in: realize(Array(ids.prefix(2)), in: renders, lazy: grid))
+            let words = shown.subtree.filter { $0.type == .text }
+            XCTAssertEqual(words.count, 2)
+            for word in words {
+                XCTAssertEqual(word.props[horizontal ? .verticalAlignment : .horizontalAlignment], .enumeration(3))
+            }
+        }
+    }
+
+    func testScrollingReusesThePreparedSourceAndDataChangesRebuildIt() throws {
+        let built = Built()
+        let renders = Renders()
+        let stack = try lazy(.lazyVStack, in: renders.render(LazyPage {
+            LazyVStack {
+                let _ = { built.count += 1 }()
+                ForEach(0..<10_000) { Text("\($0)") }
+            }
+        }.node))
+        XCTAssertEqual(built.count, 1)
+        for first in stride(from: 0, through: 900, by: 10) {
+            _ = try realize((first..<first + 8).map { "0.\($0)" }, in: renders, lazy: stack)
+        }
+        XCTAssertEqual(built.count, 1, "a viewport update must not rebuild ten thousand identities")
+        _ = renders.render(LazyPage {
+            LazyVStack {
+                let _ = { built.count += 1 }()
+                ForEach(0..<100) { Text("Updated \($0)") }
+            }
+        }.node)
+        XCTAssertEqual(built.count, 2, "a fresh source replaces the cached content")
+    }
+
+    func testParentUpdatesReuseIdentitiesAndKeepFreshRowBuilders() throws {
+        let built = Built()
+        let items = (0..<1_000).map { CountedLazyIdentity(value: $0, built: built) }
+        let renders = Renders()
+        for version in 0..<3 {
+            let before = built.count
+            let patch = renders.render(LazyPage {
+                LazyVStack {
+                    ForEach(items) { item in Text("Version \(version / 2), row \(item.value)") }
+                }
+            }.node)
+            if version == 0 {
+                XCTAssertEqual(built.count, 1_000)
+                let stack = try lazy(.lazyVStack, in: patch)
+                _ = try realize(["0.3", "0.4"], in: renders, lazy: stack)
+            } else {
+                XCTAssertEqual(built.count - before, 2, "only the two mounted rows stringify their identities")
+                if version == 1 {
+                    XCTAssertTrue(patch.isEmpty, "fresh closures with unchanged output must not invalidate measurements")
+                } else {
+                    let stack = try lazy(.lazyVStack, in: patch)
+                    XCTAssertTrue(stack.lazyContentChanged)
+                    XCTAssertEqual(stack.child("0.3")?.props[.text], .string("Version 1, row 3"))
+                    XCTAssertEqual(stack.child("0.4")?.props[.text], .string("Version 1, row 4"))
+                }
+            }
+        }
+    }
+
+    func testCompositeRowsRetainTheirEntireSubtreeWhenTheWindowMoves() throws {
+        let built = Built()
+        let renders = Renders()
+        let stack = try lazy(.lazyVStack, in: renders.render(LazyPage {
+            LazyVStack {
+                ForEach(0..<100) { row in
+                    Grid {
+                        Text("Row \(row)")
+                        Button("Delete") {}
+                    }
+                    .frame(maxWidth: .infinity)
+                    .onAppear { built.appeared.append(row) }
+                    .onDisappear { built.disappeared.append(row) }
+                }
+            }
+        }.node))
+        _ = try realize(["0.3", "0.4"], in: renders, lazy: stack)
+        XCTAssertEqual(built.appeared.sorted(), [3, 4])
+        let moved = try lazy(.lazyVStack, in: realize(["0.4", "0.5"], in: renders, lazy: stack))
+        XCTAssertEqual(built.appeared.sorted(), [3, 4, 5], "row 4 must not appear again")
+        XCTAssertEqual(built.disappeared, [3], "only the departing row ends its lifetime")
+        let retained = try XCTUnwrap(moved.child("0.4"))
+        XCTAssertTrue(retained.children.isEmpty, "the retained row's label and button need no new arrangement")
     }
 
     /// Every identity crosses in `items`, and no `ForEach` row's content runs

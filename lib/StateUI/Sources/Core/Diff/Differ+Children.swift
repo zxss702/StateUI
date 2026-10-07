@@ -14,7 +14,8 @@ extension Differ {
         of previous: RenderedNode?,
         node: Node,
         into patch: inout HostPatch,
-        sizesArrive: Bool
+        sizesArrive: Bool,
+        keepingLazyRows: Bool = false
     ) -> [RenderedNode] {
         let rendered = previous?.children ?? []
 
@@ -79,8 +80,13 @@ extension Differ {
 
             used.insert(id)
 
-            let (child, childPatch) = element(
-                id: id, rendered: match, node: childNode, sizesArrive: sizesArrive)
+            let (child, childPatch) = if keepingLazyRows, let match {
+                // Only the viewport moved. Keep the retained row's description,
+                // while still visiting any state changes inside its subtree.
+                revisit(match, walking: false)
+            } else {
+                element(id: id, rendered: match, node: childNode, sizesArrive: sizesArrive)
+            }
 
             // A fragment anchors its subtree here but mounts no element of its
             // own: its children are patched into this list directly - every one

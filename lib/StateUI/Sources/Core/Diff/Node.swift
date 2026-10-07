@@ -258,6 +258,9 @@ public struct Node {
     /// Design: docs/design/core/identity-and-diffing.md#containers-run-their-own-content
     var producer: (() -> [Node])?
 
+    /// Only this state changing can reuse a lazy container's prepared source.
+    var lazyWindow: ObjectIdentifier?
+
     /// Runs the producer, if pending, filing its nodes ahead of the slots. Idempotent.
     mutating func materialize() {
         guard let make = producer else { return }

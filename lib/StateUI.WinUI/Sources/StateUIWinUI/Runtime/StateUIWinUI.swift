@@ -54,6 +54,12 @@ enum WinUICallbacks {
                     WinUIRenderer.shared?.runtime.frames.laidOut()
                 }
             },
+            viewportChanged: { view, x, y, width, height in
+                MainActor.assumeIsolated {
+                    (WinUIView.find(view) as? WinUILazyView)?.viewportChanged(
+                        Rect(x: x, y: y, width: width, height: height))
+                }
+            },
             clicked: { view in
                 MainActor.assumeIsolated { WinUIView.find(view)?.clicked() }
             },
@@ -70,9 +76,19 @@ enum WinUICallbacks {
             submitted: { view in
                 MainActor.assumeIsolated { (WinUIView.find(view) as? WinUIInputView)?.onSubmitted?() }
             },
+            scrolling: { view, x, y in
+                MainActor.assumeIsolated {
+                    guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
+                    scroller.nextOffset = Point(x: x, y: y)
+                    scroller.ears.removeAll { $0.owner == nil }
+                    for ear in scroller.ears { ear.moved() }
+                }
+            },
             scrolled: { view, x, y in
                 MainActor.assumeIsolated {
-                    (WinUIView.find(view) as? WinUIScrollerView)?.onScrolled?(Point(x: x, y: y))
+                    guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
+                    scroller.nextOffset = nil
+                    scroller.onScrolled?(Point(x: x, y: y))
                     WinUIRenderer.shared?.runtime.frames.laidOut()
                 }
             },

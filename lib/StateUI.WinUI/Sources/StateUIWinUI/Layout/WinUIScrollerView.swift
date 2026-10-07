@@ -12,6 +12,9 @@ final class WinUIScrollerView: WinUIView {
     /// Says where the view stands after it changed, in DIPs.
     var onScrolled: ((Point) -> Void)?
 
+    /// The next actual viewport during ViewChanging. It is not the inertia's predicted final offset.
+    var nextOffset: Point?
+
     /// Says the user took hold of the scroller, or let go of it.
     var onHeld: ((Bool) -> Void)?
 
@@ -48,7 +51,7 @@ final class WinUIScrollerView: WinUIView {
 
     /// Moves the view to `target` at once; the scroller says where it stands once it has moved.
     func move(to target: Point) {
-        stateui_winui_scroller_move(handle, target.x, target.y)
+        stateui_winui_scroller_move(handle, target.x, target.y, false)
     }
 
     /// Where the view stands, and the farthest it reaches, in DIPs.

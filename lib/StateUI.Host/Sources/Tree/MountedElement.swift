@@ -35,6 +35,10 @@ import CRT
     /// Whether the last patch changed this element's children - the first counts.
     public private(set) var childrenChanged = false
 
+    /// A content rebuild invalidates lazy measurements; viewport updates do not.
+    public private(set) var lazyContentRevision = 0
+    private var lazyIdentities: Set<String> = []
+
     /// The child the host keeps for this element as one its parent's view draws - a map's marker - the same object
     /// for as long as the element lives (`asChild`).
     var keptChild: HostChild?
@@ -132,6 +136,7 @@ import CRT
             if let sceneBegan { tree.tally?.scenes[patch.id, default: .zero] += ContinuousClock.now - sceneBegan }
         }
 
+        if patch.lazyContentChanged { lazyContentRevision += 1 }
         let previouslyShown = isPagePresented ? shownChildren : []
         var changed = Set(patch.clearedProperties)
         changed.formUnion(patch.properties.keys)
@@ -179,15 +184,19 @@ import CRT
             if type == .app { tree.layoutMotion.applicationMotion = animation.animation }
         }
 
-        if case .unchanged = patch.children { childrenChanged = false } else { childrenChanged = true }
+        if case .unchanged = patch.children { childrenChanged = patch.lazyContentChanged } else { childrenChanged = true }
 
+        let lazy = type == .lazyVStack || type == .lazyHStack || type == .lazyVGrid || type == .lazyHGrid
+        if lazy, changed.contains(.items) || !described {
+            lazyIdentities = Set(value(.items)?.strings ?? [])
+        }
         switch patch.children {
         case .unchanged:
             break
 
         case .arranged(let childPatches):
             writingOrder = Dictionary(childPatches.enumerated().map { ($1.id, $0) }) { first, _ in first }
-            arrange(childPatches, tree: tree)
+            arrange(childPatches, tree: tree, virtualized: lazy ? lazyIdentities : nil)
 
         case .changed(let childPatches):
             for childPatch in childPatches {
@@ -243,14 +252,18 @@ import CRT
     }
 
     /// Reconciles a complete child arrangement by key.
-    private func arrange(_ patches: [HostPatch], tree: MountedTree) {
+    private func arrange(_ patches: [HostPatch], tree: MountedTree, virtualized: Set<String>?) {
         let before = children
         let previous = Dictionary(uniqueKeysWithValues: children.map { ($0.id, $0) })
 
         var arranged = patches.map { patch in
             if let child = previous[patch.id], child.type == patch.type, !patch.replace {
                 child.parent = self
-                child.apply(patch)
+                // A lazy window's complete arrangement includes unchanged seats.
+                // Their native properties, effects and descendants need no update.
+                if virtualized == nil || !patch.isEmpty || child.isDeparting {
+                    child.apply(patch)
+                }
                 return child
             }
 
@@ -261,7 +274,13 @@ import CRT
         // lands.
         let staying = Set(arranged.map(ObjectIdentifier.init))
         for child in before where !staying.contains(ObjectIdentifier(child)) {
-            if child.depart(room: child.native.departingRoom, closed: { [weak self] in
+            let recycling: Bool
+            if case .manual(let identity) = child.id, let virtualized {
+                recycling = virtualized.contains(identity)
+            } else {
+                recycling = false
+            }
+            if !recycling, child.depart(room: child.native.departingRoom, closed: { [weak self] in
                 self?.departed(child)
             }) { arranged.append(child) }
         }
@@ -540,6 +559,9 @@ import CRT
             values.margin = insets(.padding)
         }
         values.flex = stated(.flex)
+        if type == .scrollView {
+            values.scrollAxes = value(.orientation)?.enumeration.flatMap(Axis.init(rawValue:)) ?? .vertical
+        }
         values.horizontal = value(.horizontalAlignment)?.enumeration ?? 3
         values.vertical = value(.verticalAlignment)?.enumeration ?? 3
         values.width = stated(.width)

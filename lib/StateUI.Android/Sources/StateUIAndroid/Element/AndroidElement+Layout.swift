@@ -16,7 +16,10 @@ extension AndroidElement {
     func arrangeChildren() {
         if let items = view as? AndroidItemsView { return items.childrenChanged() }
         if let lazy = view as? AndroidLazyView {
-            lazy.cells.takeItems()
+            if lazy.cells.takeItems() {
+                lazy.measured = [:]
+                lazy.invalidateMeasurements()
+            }
             lazy.direction = element.layoutDirection
             lazy.setItems(element.arrangedChildren.compactMap { child in
                 guard case .manual(let identity) = child.id, let item = child.android.layoutItem

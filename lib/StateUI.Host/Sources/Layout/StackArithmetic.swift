@@ -30,9 +30,13 @@
             let childWidth = offered.map { max(0, $0 - padding.left - padding.right) }
             for item in visible {
                 let margin = item.values.margin
-                let size = item.size(offered: childWidth.map { max(0, $0 - margin.left - margin.right) })
+                let available = childWidth.map { max(0, $0 - margin.left - margin.right) }
+                let size = item.size(offered: available)
                 along += max(size.height, item.values.flex ?? 0) + margin.top + margin.bottom
-                across = max(across, size.width + margin.left + margin.right)
+                let scrollsAcross = item.values.scrollAxes == .horizontal || item.values.scrollAxes == .both
+                let viewport = scrollsAcross && item.values.width == nil
+                    ? item.values.boundedWidth(available ?? size.width, available: available) : size.width
+                across = max(across, viewport + margin.left + margin.right)
             }
             return LayoutSize(
                 width: padding.left + padding.right + across,
@@ -185,7 +189,13 @@
             room = 0
         }
 
-        let flexible = items.indices.filter { items[$0].isShown && items[$0].values.flex != nil }
+        let flexible = items.indices.filter {
+            let values = items[$0].values
+            let scrolls = values.scrollAxes == .both
+                || (axis == .vertical ? values.scrollAxes == .vertical : values.scrollAxes == .horizontal)
+            return items[$0].isShown && (values.flex != nil
+                || (scrolls && (axis == .vertical ? values.height == nil : values.width == nil)))
+        }
         guard room > 0, !flexible.isEmpty else { return extents }
 
         let share = room / Double(flexible.count)

@@ -160,10 +160,23 @@ final class AndroidScrollView: AndroidLayoutView {
             let corner = Point(x: origin.x + frame.x, y: origin.y + frame.y)
             if let lazy = item.view as? AndroidLazyView, orientation.takes(lazy.axis) {
                 let extent = lazy.axis == .vertical ? frame.height : frame.width
+                var correction = 0.0
+                if let origin = lazy.anchorTarget {
+                    lazy.anchorTarget = nil
+                    var target = offset
+                    if lazy.axis == .vertical {
+                        target.y = corner.y + origin
+                        correction = target.y - offset.y
+                    } else {
+                        target.x = corner.x + origin
+                        correction = target.x - offset.x
+                    }
+                    move(to: target)
+                }
                 let (low, high) = lazy.axis == .vertical
                     ? (window.y - corner.y, window.y + window.height - corner.y)
                     : (window.x - corner.x, window.x + window.width - corner.x)
-                let lo = max(0, low), hi = min(extent, high)
+                let lo = max(0, low + correction), hi = min(extent, high + correction)
                 lazy.windowMoved(to: hi > lo ? lo..<hi : nil)
             }
             if let nested = item.view as? AndroidLayoutView, !(nested is AndroidScrollView) {

@@ -24,6 +24,10 @@ using winrt::Windows::Foundation::Size;
 extern "C" void stateui_winui_fill_place(StateUIObjectRef handle) {
     try {
         auto element = as<xaml::FrameworkElement>(handle);
+        // StateUI measures and places in DIPs. Rounding each nested measure independently can subtract a
+        // physical pixel from a text column before its final placement. Keep the layout in those same DIPs;
+        // XAML still applies the window's current rasterization scale when it renders.
+        element.UseLayoutRounding(false);
         element.HorizontalAlignment(xaml::HorizontalAlignment::Stretch);
         element.VerticalAlignment(xaml::VerticalAlignment::Stretch);
     } catch (...) {

@@ -100,6 +100,9 @@ typedef struct {
     /// A panel's ArrangeOverride: the view places its children in the size given.
     void (*arrange)(int64_t view, double width, double height);
 
+    /// A virtualizing panel's effective viewport, including independent touch scrolling and ancestor clipping.
+    void (*viewportChanged)(int64_t view, double x, double y, double width, double height);
+
     /// A button's Click.
     void (*clicked)(int64_t view);
 
@@ -114,6 +117,9 @@ typedef struct {
 
     /// A single-line field's Enter.
     void (*submitted)(int64_t view);
+
+    /// The next view WinUI is about to display, before its ViewChanged notification.
+    void (*scrolling)(int64_t view, double x, double y);
 
     /// A scroller's view changed: where it stands now, in DIPs.
     void (*scrolled)(int64_t view, double x, double y);
@@ -314,6 +320,9 @@ void stateui_winui_invalidate_arrange(StateUIObjectRef element);
 
 /// Runs WinUI's layout pass over the element's tree now, as its next frame would.
 void stateui_winui_update_layout(StateUIObjectRef element);
+
+/// Listens for a lazy panel's native effective viewport; ordinary panels do not subscribe.
+void stateui_winui_panel_watch_viewport(StateUIObjectRef panel, bool enabled);
 
 /// Moves, turns and scales the element where its layout put it: DIPs and degrees, about the point
 /// (`centerX`, `centerY`) of it, in DIPs.
@@ -685,7 +694,7 @@ void stateui_winui_scroller_set(StateUIObjectRef scroller, StateUIObjectRef cont
 
 /// Moves the scroller's view to `x`, `y` DIPs at once; the scroller keeps it within what it can reach, and says where
 /// it stands through `scrolled` once it has moved.
-void stateui_winui_scroller_move(StateUIObjectRef scroller, double x, double y);
+void stateui_winui_scroller_move(StateUIObjectRef scroller, double x, double y, bool animated);
 
 /// Where the scroller's view would stand for `descendant` where the anchors say, in DIPs, read into `place`: the
 /// fraction of each across the child and the room, `NAN` for "only where it is not wholly in view". `found` says
@@ -695,6 +704,9 @@ void stateui_winui_scroller_place_for(StateUIObjectRef scroller, StateUIObjectRe
 
 /// Where the scroller's view stands, then the farthest it reaches across and down, in DIPs: four values.
 void stateui_winui_scroller_offset(StateUIObjectRef scroller, double *offset);
+
+/// The viewport in a descendant's coordinates, calculated in the document so composition scrolling cannot lag.
+void stateui_winui_scroller_viewport(StateUIObjectRef scroller, StateUIObjectRef descendant, double *viewport);
 
 /// An ItemsView: WinUI's ItemsView over the identities the host gives it; the cell of each entry is the host's
 /// (`itemCell`, `itemHeld`, `itemLetGo`), and what stands in view, the user's choice and an item invoked are told.

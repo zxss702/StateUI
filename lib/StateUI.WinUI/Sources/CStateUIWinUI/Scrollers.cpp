@@ -26,6 +26,11 @@ namespace {
 extern "C" StateUIObjectRef stateui_winui_scroller_make(int64_t view) {
     try {
         controls::ScrollViewer scroller;
+        scroller.ViewChanging(guarded("handling ViewChanging",
+            [view](IInspectable const &, controls::ScrollViewerViewChangingEventArgs const &args) {
+            auto next = args.NextView();
+            callbacks.scrolling(view, next.HorizontalOffset(), next.VerticalOffset());
+        }));
         scroller.ViewChanged(guarded("handling ViewChanged",
             [view](IInspectable const &sender, controls::ScrollViewerViewChangedEventArgs const &) {
             auto scroller = sender.as<controls::ScrollViewer>();
@@ -64,11 +69,11 @@ extern "C" void stateui_winui_scroller_set(
     }
 }
 
-extern "C" void stateui_winui_scroller_move(StateUIObjectRef handle, double x, double y) {
+extern "C" void stateui_winui_scroller_move(StateUIObjectRef handle, double x, double y, bool animated) {
     try {
         borrow<controls::ScrollViewer>(handle).ChangeView(
             winrt::box_value(x).as<winrt::Windows::Foundation::IReference<double>>(),
-            winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
+            winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, !animated);
     } catch (...) {
         report("moving a scroller");
     }
@@ -123,5 +128,23 @@ extern "C" void stateui_winui_scroller_offset(StateUIObjectRef handle, double *o
         offset[3] = scroller.ScrollableHeight();
     } catch (...) {
         report("reading a scroller");
+    }
+}
+
+extern "C" void stateui_winui_scroller_viewport(
+    StateUIObjectRef handle, StateUIObjectRef descendant, double *viewport
+) {
+    viewport[0] = viewport[1] = viewport[2] = viewport[3] = 0;
+    try {
+        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto content = scroller.Content().try_as<xaml::UIElement>();
+        if (!content) return;
+        auto corner = as<xaml::UIElement>(descendant).TransformToVisual(content).TransformPoint({0, 0});
+        viewport[0] = scroller.HorizontalOffset() - corner.X;
+        viewport[1] = scroller.VerticalOffset() - corner.Y;
+        viewport[2] = scroller.ViewportWidth();
+        viewport[3] = scroller.ViewportHeight();
+    } catch (...) {
+        report("reading a descendant's scroll viewport");
     }
 }

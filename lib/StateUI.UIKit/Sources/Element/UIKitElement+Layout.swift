@@ -17,7 +17,10 @@ extension UIKitElement {
     func arrangeChildren() {
         if let items = view as? UIKitItemsView { return items.childrenChanged() }
         if let lazy = view as? UIKitLazyView {
-            lazy.cells.takeItems()
+            if lazy.cells.takeItems() {
+                lazy.measured = [:]
+                lazy.invalidateMeasurements()
+            }
             lazy.direction = element.layoutDirection
             lazy.laidOut = { [weak host] in host?.runtime.frames.laidOut() }
             lazy.setItems(element.arrangedChildren.compactMap { child in

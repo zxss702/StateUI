@@ -31,8 +31,17 @@ class UIKitLazyView: UIKitLayoutView {
     /// The offset observation, kept for as long as it watches.
     private var observing: NSKeyValueObservation?
 
+    /// Natural sizes survive scrolling; content invalidation or a changed
+    /// cross-axis proposal clears only the measurements that can be stale.
+    var measured: [String: (proposal: Double?, size: LayoutSize)] = [:]
+    var measuredRevision = -1
+    var measuredAcross: Double?
+    var naturalAcross = 44.0
+    var anchorTarget: Double?
+
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
+    private var fillingWindow = false
 
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
@@ -48,8 +57,14 @@ class UIKitLazyView: UIKitLayoutView {
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: UIKitLayoutItem)]) {
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
-        guard now.keys != held.keys || now.contains(where: { held[$0.key]?.view !== $0.value.view })
-        else { return }
+        guard now.keys != held.keys || now.contains(where: {
+            held[$0.key]?.view !== $0.value.view || held[$0.key]?.values != $0.value.values
+        }) else { return }
+        for (identity, previous) in held {
+            if now[identity]?.view !== previous.view || now[identity]?.values != previous.values {
+                measured.removeValue(forKey: identity)
+            }
+        }
         for gone in held where now[gone.key] == nil {
             gone.value.view.removeFromSuperview()
         }
@@ -58,6 +73,7 @@ class UIKitLazyView: UIKitLayoutView {
         }
         held = now
         forgetMeasurements()
+        measuredRevision = measurements.revision
         setNeedsLayout()
     }
 
@@ -115,8 +131,16 @@ class UIKitLazyView: UIKitLayoutView {
                 if self.window != nil { self.cells.tellAll() }
                 return
             }
-            guard let span = self.span else { return }
-            self.tellWindow(span)
+            if let origin = self.anchorTarget, let scroll = self.watching {
+                var target = scroll.contentOffset
+                scroll.superview?.layoutIfNeeded()
+                let corner = self.convert(self.bounds.origin, to: scroll)
+                if self.axis == .vertical { target.y = corner.y + origin }
+                else { target.x = corner.x + origin }
+                self.anchorTarget = nil
+                scroll.setContentOffset(target, animated: false)
+            }
+            self.tellWindow(self.span ?? 0..<0)
         }
     }
 
@@ -138,8 +162,32 @@ class UIKitLazyView: UIKitLayoutView {
     }
 
     private func windowMoved() {
+        guard !fillingWindow else { return }
+        guard anchorTarget == nil else {
+            retell()
+            return
+        }
+        fillingWindow = true
+        defer { fillingWindow = false }
+        var passes = 0
+        repeat {
+            tellWindow(span ?? 0..<0)
+            watching?.superview?.layoutIfNeeded()
+            layoutIfNeeded()
+            if let origin = anchorTarget, let scroll = watching {
+                scroll.superview?.layoutIfNeeded()
+                let corner = convert(bounds.origin, to: scroll)
+                var target = scroll.contentOffset
+                if axis == .vertical { target.y = corner.y + origin }
+                else { target.x = corner.x + origin }
+                anchorTarget = nil
+                scroll.setContentOffset(target, animated: false)
+            }
+            passes += 1
+            let revision = self is UIKitLazyGridView ? cells.runs.revision : cells.extents.revision
+            if cells.window?.span == (span ?? 0..<0), cells.window?.revision == revision { break }
+        } while passes < 8
         retell()
-        setNeedsLayout()
     }
 
     override func layoutSubviews() {
@@ -169,17 +217,12 @@ final class UIKitLazyStackView: UIKitLazyView {
     var padding = EdgeInsets(0) {
         didSet {
             if padding != oldValue {
-                cells.extents.padding = (head: head, tail: tail)
+                cells.extents.padding = (head: axis == .vertical ? padding.top : padding.left,
+                                       tail: axis == .vertical ? padding.bottom : padding.right)
                 forgetMeasurements()
             }
         }
     }
-
-    /// The padding before the first child on the run.
-    private var head: Double { axis == .vertical ? padding.top : padding.left }
-
-    /// The padding after the last child on the run.
-    private var tail: Double { axis == .vertical ? padding.bottom : padding.right }
 
     /// The room a child gets across - inside the padding.
     private var acrossRoom: Double {
@@ -193,42 +236,53 @@ final class UIKitLazyStackView: UIKitLazyView {
         let total = cells.total
         return axis == .vertical
             ? LayoutSize(width: width ?? 0, height: total)
-            : LayoutSize(width: total, height: acrossRoom)
+            : LayoutSize(width: total, height: naturalAcross + padding.top + padding.bottom)
     }
 
     /// Every mounted child measures, is stood at its offset, and the window
     /// re-asks what the tree builds.
     override func arrange(in bounds: Rect) {
-        measureHeld()
-        arrangeHeld()
-    }
-
-    override func tellWindow(_ span: Range<Double>) {
-        let wanted = cells.places(in: span, overscan: 0)
-        cells.tell(first: wanted.lowerBound, last: wanted.upperBound - 1)
-    }
-
-    /// Measures every held child on the run and keeps its extent, margin in.
-    /// A changed mean moves every place after the measured - the whole run's
-    /// estimate is the scroll room, so it asks to be laid out again.
-    private func measureHeld() {
-        let estimate = cells.extents.estimate
-        let offered = max(0, acrossRoom)
+        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        let across = max(0, acrossRoom)
+        let revision = cells.extents.revision
+        if measuredAcross != across {
+            cells.extents.reset()
+            measured = [:]
+            measuredAcross = across
+        }
+        if measuredRevision != measurements.revision {
+            measured = [:]
+            cells.extents.reset()
+        }
         for (identity, item) in held {
+            guard !item.departing, cells.position(of: identity) != nil else { continue }
             let margin = item.values.margin
-            let size = item.size(offered: axis == .vertical
-                ? max(0, offered - margin.left - margin.right) : nil)
+            let proposal: Double? = axis == .vertical
+                ? max(0, across - margin.left - margin.right) : nil
+            let size: LayoutSize
+            if let cached = measured[identity], cached.proposal == proposal {
+                size = cached.size
+            } else {
+                size = item.size(offered: proposal)
+                measured[identity] = (proposal, size)
+                cells.measurements += 1
+            }
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
             cells.extents.measure(identity, extent: extent)
         }
-        if cells.extents.estimate != estimate { invalidateMeasurements() }
-    }
-
-    /// Stands every held child at its offset on the run.
-    private func arrangeHeld() {
-        let across = max(0, acrossRoom)
+        let cross = held.compactMap { identity, item -> Double? in
+            guard !item.departing, let size = measured[identity]?.size else { return nil }
+            return size.height + item.values.margin.top + item.values.margin.bottom
+        }.max() ?? (cells.identities.isEmpty ? 0 : 44)
+        if axis == .horizontal, naturalAcross != cross {
+            naturalAcross = cross
+            invalidateMeasurements()
+        }
+        if let origin = cells.correctedOrigin() { anchorTarget = origin }
+        if cells.extents.revision != revision { invalidateMeasurements() }
+        measuredRevision = measurements.revision
         for (identity, item) in held {
             guard let place = cells.position(of: identity) else { continue }
             let margin = item.values.margin
@@ -239,7 +293,7 @@ final class UIKitLazyStackView: UIKitLazyView {
                 let open = across - margin.left - margin.right
                 let width = Extent.of(
                     option: item.values.horizontal, stated: item.values.width,
-                    natural: item.size(offered: nil).width,
+                    natural: measured[identity]!.size.width,
                     available: open, minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
                 let x = padding.left + margin.left + Extent.start(
@@ -253,7 +307,7 @@ final class UIKitLazyStackView: UIKitLazyView {
                 let open = across - margin.top - margin.bottom
                 let height = Extent.of(
                     option: item.values.vertical, stated: item.values.height,
-                    natural: item.size(offered: nil).height,
+                    natural: measured[identity]!.size.height,
                     available: open, minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)
                 let y = padding.top + margin.top + Extent.start(
@@ -268,6 +322,10 @@ final class UIKitLazyStackView: UIKitLazyView {
                 frame,
                 in: Rect(x: 0, y: 0, width: Double(bounds.width), height: Double(bounds.height))))
         }
+    }
+
+    override func tellWindow(_ span: Range<Double>) {
+        cells.show(span)
     }
 }
 
@@ -289,7 +347,8 @@ final class UIKitLazyGridView: UIKitLazyView {
     var padding = EdgeInsets(0) {
         didSet {
             if padding != oldValue {
-                cells.runs.padding = (head: head, tail: tail)
+                cells.runs.padding = (head: axis == .vertical ? padding.top : padding.left,
+                                       tail: axis == .vertical ? padding.bottom : padding.right)
                 forgetMeasurements()
             }
         }
@@ -299,18 +358,13 @@ final class UIKitLazyGridView: UIKitLazyView {
     /// a changed count makes new runs, and their measures go.
     private var columns: [Double] = [] {
         didSet {
-            if columns.count != oldValue.count {
+            if columns != oldValue {
+                measured = [:]
                 cells.runs.reset()
                 forgetMeasurements()
             }
         }
     }
-
-    /// The padding before the first run.
-    private var head: Double { axis == .vertical ? padding.top : padding.left }
-
-    /// The padding after the last run.
-    private var tail: Double { axis == .vertical ? padding.bottom : padding.right }
 
     /// The room across - inside the padding, the tracks take it all.
     private var acrossRoom: Double {
@@ -325,61 +379,59 @@ final class UIKitLazyGridView: UIKitLazyView {
     /// The runs the cells make.
     private var runCount: Int { (cells.identities.count + perRun - 1) / perRun }
 
-    /// Resolves the tracks for the room now where it moved.
-    private func resolveTracks() {
+    /// As wide as offered and as long as the runs measure.
+    override func contentSize(width: Double?) -> LayoutSize {
+        let room = max(0, axis == .vertical
+            ? (width.map { $0 - padding.left - padding.right } ?? acrossRoom)
+            : acrossRoom)
+        let proposed = LazyGridTracks.resolve(tracks, width: room, spacing: trackSpacing)
+        let count = (cells.identities.count + max(1, proposed.count) - 1) / max(1, proposed.count)
+        let total = cells.runs.total(count: count)
+        return axis == .vertical
+            ? LayoutSize(width: width ?? 0, height: total)
+            : LayoutSize(width: total, height:
+                LazyGridTracks.extents(proposed, width: room, spacing: trackSpacing).reduce(0, +)
+                + Double(max(0, proposed.count - 1)) * trackSpacing + padding.top + padding.bottom)
+    }
+
+    override func arrange(in bounds: Rect) {
+        places.begin(width: bounds.width, animating: cells.animatesChanges)
         let room = max(0, acrossRoom)
         let next = LazyGridTracks.extents(
             LazyGridTracks.resolve(tracks, width: room, spacing: trackSpacing),
             width: room, spacing: trackSpacing)
         if next != columns { columns = next }
-    }
-
-    /// As wide as offered and as long as the runs measure.
-    override func contentSize(width: Double?) -> LayoutSize {
-        let total = cells.runs.total(count: runCount)
-        return axis == .vertical
-            ? LayoutSize(width: width ?? 0, height: total)
-            : LayoutSize(width: total, height: acrossRoom)
-    }
-
-    override func arrange(in bounds: Rect) {
-        resolveTracks()
-        measureHeld()
-        arrangeHeld()
-    }
-
-    override func tellWindow(_ span: Range<Double>) {
-        resolveTracks()
-        let wanted = cells.runs.places(in: span, overscan: 0, count: runCount)
-        cells.tellRuns(first: wanted.lowerBound, last: wanted.upperBound - 1, perRun: perRun)
-    }
-
-    /// Measures every held cell's run: its extent is the longest cell's. A
-    /// changed mean moves every run after the measured, so the scroll room is
-    /// laid out again.
-    private func measureHeld() {
-        let estimate = cells.runs.estimate
         let widths = columns
         guard !widths.isEmpty else { return }
+        let revision = cells.runs.revision
+        if measuredRevision != measurements.revision {
+            measured = [:]
+            cells.runs.reset()
+        }
+        var runExtents: [Int: Double] = [:]
         for (identity, item) in held {
             guard let place = cells.position(of: identity) else { continue }
-            let row = place / widths.count, column = place % widths.count
+            let run = place / widths.count, track = place % widths.count
             let margin = item.values.margin
-            let offered: Double? = axis == .vertical
-                ? max(0, widths[column] - margin.left - margin.right) : nil
-            let size = item.size(offered: offered)
+            let proposal: Double? = axis == .vertical
+                ? max(0, widths[track] - margin.left - margin.right) : nil
+            let size: LayoutSize
+            if let cached = measured[identity], cached.proposal == proposal {
+                size = cached.size
+            } else {
+                size = item.size(offered: proposal)
+                measured[identity] = (proposal, size)
+                cells.measurements += 1
+            }
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
-            cells.runs.measure(row, extent: extent)
+            runExtents[run] = max(runExtents[run] ?? 0, extent)
         }
-        if cells.runs.estimate != estimate { invalidateMeasurements() }
-    }
-
-    /// Stands every held cell at its run and track.
-    private func arrangeHeld() {
-        let widths = columns
-        guard !widths.isEmpty else { return }
+        for (run, extent) in runExtents { cells.runs.measure(run, extent: extent) }
+        if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
+        if cells.runs.revision != revision { invalidateMeasurements() }
+        measuredRevision = measurements.revision
         var trackOrigins: [Double] = []
         var start = axis == .vertical ? padding.left : padding.top
         for width in widths {
@@ -397,7 +449,7 @@ final class UIKitLazyGridView: UIKitLazyView {
                 let open = widths[track] - margin.left - margin.right
                 let width = Extent.of(
                     option: item.values.horizontal, stated: item.values.width,
-                    natural: item.size(offered: nil).width,
+                    natural: measured[identity]!.size.width,
                     available: max(0, open), minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
                 let x = trackOrigins[track] + margin.left + Extent.start(
@@ -411,7 +463,7 @@ final class UIKitLazyGridView: UIKitLazyView {
                 let open = widths[track] - margin.top - margin.bottom
                 let height = Extent.of(
                     option: item.values.vertical, stated: item.values.height,
-                    natural: item.size(offered: nil).height,
+                    natural: measured[identity]!.size.height,
                     available: max(0, open), minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)
                 let y = trackOrigins[track] + margin.top + Extent.start(
@@ -426,6 +478,10 @@ final class UIKitLazyGridView: UIKitLazyView {
                 frame,
                 in: Rect(x: 0, y: 0, width: Double(bounds.width), height: Double(bounds.height))))
         }
+    }
+
+    override func tellWindow(_ span: Range<Double>) {
+        cells.show(span, perRun: perRun, grid: true)
     }
 }
 

@@ -31,6 +31,10 @@
     /// nil for a child that takes its natural size.
     public var flex: Double?
 
+    /// A scroller takes a viewport along these axes; its document's natural
+    /// extent is not a minimum size for the enclosing layout.
+    public var scrollAxes = Axis.neither
+
     /// Across its slot: 0 start, 1 centre, 2 end, 3 fill.
     public var horizontal: Int32 = 3
 
@@ -96,7 +100,9 @@
     /// A child's size from what it measured: a stated width or height before the measured one, each within its
     /// bounds.
     public func sized(_ measured: LayoutSize) -> LayoutSize {
-        LayoutSize(width: boundedWidth(width ?? measured.width), height: boundedHeight(height ?? measured.height))
+        LayoutSize(
+            width: boundedWidth(width ?? (scrollAxes == .horizontal || scrollAxes == .both ? 0 : measured.width)),
+            height: boundedHeight(height ?? (scrollAxes == .vertical || scrollAxes == .both ? 0 : measured.height)))
     }
 
     /// `proposed`, held within the child's least and most width and the room `available`.
@@ -211,6 +217,8 @@ extension LayoutChild {
 /// Design: docs/design/host/layout.md#measured-once
 @_spi(Host) @MainActor public final class MeasurementCache {
     private var sizes: [(width: Double?, size: LayoutSize)] = []
+    /// Changes when a native or content update invalidates the cached sizes.
+    public private(set) var revision = 0
 
     /// A cache holding nothing yet.
     public init() {}
@@ -228,6 +236,7 @@ extension LayoutChild {
     /// Forgets every kept size.
     public func invalidate() {
         sizes.removeAll(keepingCapacity: true)
+        revision += 1
     }
 
     /// A parent offers a view one or two widths in a pass: its natural width and the width it lays it out in.

@@ -131,8 +131,11 @@ final class Differ {
         _ rendered: RenderedNode,
         walking: Bool = true
     ) -> (node: RenderedNode, patch: HostPatch) {
+        let windowOnly = rendered.lazySource?.lazyWindow.map {
+            rendered.reads.intersection(changed) == Set([$0])
+        } ?? false
         if let placeholder = rendered.placeholder,
-            !rendered.reads.isDisjoint(with: changed) {
+            !rendered.reads.isDisjoint(with: changed), !windowOnly {
             return element(
                 id: rendered.id,
                 rendered: rendered,
@@ -167,32 +170,51 @@ final class Differ {
         let held = mountedIds(of: rendered.children)
         var addressed: [HostPatch] = []
 
-        for (index, child) in rendered.children.enumerated() {
-            let (node, childPatch) = revisit(child)
-            rendered.children[index] = node
-
-            if node.type == .fragment {
-                let nested: [HostPatch] = switch childPatch.children {
-                case .arranged(let list), .changed(let list): list
-                case .unchanged: []
-                }
-                let byID = Dictionary(
-                    nested.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-                addressed.append(contentsOf: flattened(of: node.children).map {
-                    byID[$0.id] ?? HostPatch(id: $0.id, type: $0.type)
-                })
-            } else {
-                addressed.append(childPatch)
+        if windowOnly, var source = rendered.lazySource {
+            // Scrolling changes only the selected identities. Keep the prepared
+            // ForEach source and its index; new row reads still join this element.
+            var reads = rendered.reads
+            let frame = BuildScope.Frame(
+                view: rendered.view ?? rendered.type.name,
+                builds: rendered.builds + 1,
+                read: reads, changed: changed, names: named, everything: false)
+            ReadScope.observed(into: &reads) {
+                BuildScope.within(frame) { source.materialize() }
             }
-        }
-
-        if addressed.map(\.id) != held {
-            patch.children = .arranged(addressed)
+            rendered.reads = reads
+            rendered.builds += 1
+            rendered.children = reconcileChildren(
+                of: rendered, node: source, into: &patch, sizesArrive: rendered.sizesArrive,
+                keepingLazyRows: true)
         } else {
-            let changedChildren = addressed.filter { !$0.isEmpty }
-            if !changedChildren.isEmpty {
-                patch.children = .changed(changedChildren)
+            for (index, child) in rendered.children.enumerated() {
+                let (node, childPatch) = revisit(child)
+                rendered.children[index] = node
+
+                if node.type == .fragment {
+                    let nested: [HostPatch] = switch childPatch.children {
+                    case .arranged(let list), .changed(let list): list
+                    case .unchanged: []
+                    }
+                    let byID = Dictionary(
+                        nested.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+                    addressed.append(contentsOf: flattened(of: node.children).map {
+                        byID[$0.id] ?? HostPatch(id: $0.id, type: $0.type)
+                    })
+                } else {
+                    addressed.append(childPatch)
+                }
             }
+
+            if addressed.map(\.id) != held {
+                patch.children = .arranged(addressed)
+            } else {
+                let changedChildren = addressed.filter { !$0.isEmpty }
+                if !changedChildren.isEmpty {
+                    patch.children = .changed(changedChildren)
+                }
+            }
+
         }
 
         // A kept element folds its subtree's preference answers again - a

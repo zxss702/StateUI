@@ -46,6 +46,11 @@ class WinUIView {
     /// What the view paints with brushes that follow its size, by what they paint.
     private var paintsBySize: [String: (LayoutSize) -> Void] = [:]
 
+    /// Native sizes by proposal. DesiredSize alone belongs only to the last Measure call: a grid can ask for
+    /// both an unconstrained size and a wrapped size before arranging either one.
+    private var measuredSizes: [(width: Double?, height: Double?, size: LayoutSize)] = []
+    private var pendingMeasures: [(width: Double?, height: Double?)] = []
+
     private static let live = LiveViews<WinUIView>()
 
     /// Takes the next number and holds the element `make` makes, handed that number.
@@ -161,19 +166,67 @@ class WinUIView {
 
     /// Asks WinUI to measure this element again, and every panel above it.
     func invalidateMeasure() {
+        measuredSizes.removeAll(keepingCapacity: true)
         stateui_winui_invalidate_measure(handle)
     }
 
     /// The element's size for the room offered, in DIPs; nil offers any.
     /// Design: docs/design/platforms/winui/layout.md#measured-every-pass
     func measure(width: Double?, height: Double?) -> LayoutSize {
-        // An arrangement asking a child's size reads what the pass already measured: measuring an element
+        // An arrangement asking a child's size reads what this proposal measured: measuring an element
         // while WinUI arranges marks it, and the marked element is measured and arranged again for ever -
         // XAML aborts the eighth such pass with a layout cycle.
-        guard Self.arranging == 0 else { return desiredSize }
+        // WinUI receives single-precision proposals. Use that same value for the cache key so a width
+        // travelling through Measure and Arrange does not become two different proposals.
+        let width = width.map { Double(Float($0)) }
+        let height = height.map { Double(Float($0)) }
+        if Self.arranging > 0 {
+            if let measured = measuredSizes.first(where: { $0.width == width && $0.height == height }) {
+                return measured.size
+            }
+
+            // Pixel rounding can narrow a text's arranged proposal slightly. A wider measurement whose
+            // complete lines still fit has exactly the same wrapping; it needs no deferred repair.
+            if self is WinUILabelView, let width,
+               let measured = measuredSizes.last(where: {
+                   $0.height == height && ($0.width ?? .infinity) >= width && $0.size.width <= width
+               }) {
+                return measured.size
+            }
+
+            // A new width can first appear during arrangement (a centred child, a resized column). Complete
+            // that proposal after this pass and discard the ancestors' provisional arithmetic. Coalesce all
+            // proposals for this view into one turn; once measured, the same arrangement posts nothing.
+            if !pendingMeasures.contains(where: { $0.width == width && $0.height == height }) {
+                let scheduled = !pendingMeasures.isEmpty
+                pendingMeasures.append((width, height))
+                if !scheduled {
+                    WinUIDoorbell.afterPass { [weak self] in
+                        guard let self else { return }
+                        let proposals = self.pendingMeasures
+                        self.pendingMeasures.removeAll(keepingCapacity: true)
+                        for proposal in proposals {
+                            _ = self.measure(width: proposal.width, height: proposal.height)
+                        }
+                        var ancestor = self.placingLayout
+                        while let layout = ancestor {
+                            layout.forgetMeasurements()
+                            ancestor = layout.placingLayout
+                        }
+                        self.placingLayout?.invalidateMeasure()
+                    }
+                }
+            }
+            return desiredSize
+        }
         var size = [0.0, 0.0]
         stateui_winui_measure(handle, width ?? .infinity, height ?? .infinity, &size)
-        return LayoutSize(width: size[0], height: size[1])
+        let measured = LayoutSize(width: size[0], height: size[1])
+        measuredSizes.removeAll { $0.width == width && $0.height == height }
+        // Only a few proposals are active at a time. Resizing must not retain every width ever visited.
+        if measuredSizes.count == 8 { measuredSizes.removeFirst() }
+        measuredSizes.append((width, height, measured))
+        return measured
     }
 
     /// What the element last measured at, read from WinUI without marking it.

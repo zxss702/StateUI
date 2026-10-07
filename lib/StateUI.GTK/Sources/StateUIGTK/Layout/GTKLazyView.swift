@@ -28,6 +28,15 @@ class GTKLazyView: GTKTravellingLayout {
     private weak var watching: GTKScrollView?
     private var ear: GTKScrollEar?
 
+    /// Natural sizes survive scrolling; content invalidation or a changed
+    /// cross-axis proposal clears only the measurements that can be stale.
+    var measured: [String: (proposal: Double?, size: LayoutSize)] = [:]
+    var measuredRevision = -1
+    var measuredAcross: Double?
+    var naturalAcross = 44.0
+    var anchorTarget: Double?
+    var geometryChanged = false
+
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
 
@@ -40,12 +49,25 @@ class GTKLazyView: GTKTravellingLayout {
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: GTKLayoutItem)]) {
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
-        guard now.keys != mounted.keys || now.contains(where: { mounted[$0.key]?.view !== $0.value.view })
-        else { return }
+        guard now.keys != mounted.keys || now.contains(where: {
+            mounted[$0.key]?.view !== $0.value.view || mounted[$0.key]?.values != $0.value.values
+        }) else { return }
+        if now.contains(where: { identity, item in
+            mounted[identity].map { $0.values != item.values } ?? false
+        }) {
+            cells.extents.reset()
+            cells.runs.reset()
+        }
+        for (identity, previous) in mounted {
+            if now[identity]?.view !== previous.view || now[identity]?.values != previous.values {
+                measured.removeValue(forKey: identity)
+            }
+        }
         mounted = now
         for item in items { item.item.view.placingLayout = self }
         setChildren(items.map(\.item.view))
         invalidateMeasurements()
+        measuredRevision = measurements.revision
     }
 
     /// The nearest scroller clipping this run on its own axis, or none: a
@@ -65,13 +87,18 @@ class GTKLazyView: GTKTravellingLayout {
     /// The window the run shows - the scroller's room brought into this view,
     /// along the run.
     var span: Range<Double>? {
-        guard !cells.identities.isEmpty, let scroll = clip else { return nil }
+        guard !cells.identities.isEmpty, let scroll = clip,
+              let document = scroll.scroller.content else { return nil }
         var bounds = graphene_rect_t()
-        guard gtk_widget_compute_bounds(self.widget, scroll.widget, &bounds) != 0 else { return nil }
+        guard gtk_widget_compute_bounds(self.widget, document.widget, &bounds) != 0 else { return nil }
         let room = axis == .vertical
             ? Double(gtk_widget_get_height(scroll.widget))
             : Double(gtk_widget_get_width(scroll.widget))
-        let start = axis == .vertical ? Double(bounds.origin.y) : Double(bounds.origin.x)
+        // value-changed precedes the viewport's allocation. Document coordinates plus the
+        // adjustment's current offset describe one instant; the old viewport transform does not.
+        let offset = scroll.scroller.standing.offset
+        let start = axis == .vertical
+            ? Double(bounds.origin.y) - offset.y : Double(bounds.origin.x) - offset.x
         let own = axis == .vertical
             ? Double(gtk_widget_get_height(widget))
             : Double(gtk_widget_get_width(widget))
@@ -90,14 +117,44 @@ class GTKLazyView: GTKTravellingLayout {
             guard let self else { return }
             self.retellQueued = false
             self.watchClip()
+            if self.geometryChanged {
+                self.geometryChanged = false
+                self.invalidateMeasurements()
+                self.measuredRevision = self.measurements.revision
+                // GTK updates the adjustment's bounds during allocation. Applying an anchor now
+                // would use the previous extent and the next allocation would clamp it again.
+                // allocate schedules the next retell after the new document has been committed.
+                return
+            }
             // No clip to narrow by means all of it stands in view - a lazy
             // container outside any scroller builds every child.
             guard self.watching != nil else {
                 self.cells.tellAll()
                 return
             }
-            guard let span = self.span else { return }
-            self.tellWindow(span)
+            if let origin = self.anchorTarget, let scroll = self.watching,
+               let document = scroll.scroller.content as? GTKScrollDocument {
+                let size = document.contentSize(width: Double(gtk_widget_get_width(document.widget)))
+                let room = self.axis == .vertical
+                    ? Double(gtk_widget_get_height(scroll.scroller.widget))
+                    : Double(gtk_widget_get_width(scroll.scroller.widget))
+                let extent = self.axis == .vertical ? size.height : size.width
+                let reach = self.axis == .vertical
+                    ? scroll.scroller.standing.reach.y : scroll.scroller.standing.reach.x
+                // An idle callback can follow measurement but precede the frame's allocation.
+                // Keep the anchor until the adjustment contains this document's current extent;
+                // writing earlier loses it when GTK constrains the value to the old bounds.
+                guard abs(max(room, extent) - room - reach) < 1 else { return }
+                var target = scroll.scroller.standing.offset
+                var bounds = graphene_rect_t()
+                if gtk_widget_compute_bounds(self.widget, document.widget, &bounds) != 0 {
+                    if self.axis == .vertical { target.y = Double(bounds.origin.y) + origin }
+                    else { target.x = Double(bounds.origin.x) + origin }
+                    self.anchorTarget = nil
+                    scroll.scroller.move(to: target)
+                }
+            }
+            self.tellWindow(self.span ?? 0..<0)
         }
     }
 
@@ -108,6 +165,7 @@ class GTKLazyView: GTKTravellingLayout {
     private func watchClip() {
         let scroller = clip
         guard scroller !== watching else { return }
+        ear?.owner = nil
         watching = scroller
         let ear = GTKScrollEar(owner: self) { [weak self] in
             self?.windowMoved()
@@ -117,8 +175,10 @@ class GTKLazyView: GTKTravellingLayout {
     }
 
     private func windowMoved() {
+        if GTKView.allocating == 0, !geometryChanged, anchorTarget == nil {
+            tellWindow(span ?? 0..<0)
+        }
         retell()
-        invalidateMeasurements()
     }
 
     /// Every allocation re-asks the window - GTK allocates the document again
@@ -153,23 +213,11 @@ final class GTKLazyStackView: GTKLazyView {
     var padding = EdgeInsets(0) {
         didSet {
             if padding != oldValue {
-                cells.extents.padding = (head: head, tail: tail)
+                cells.extents.padding = (head: axis == .vertical ? padding.top : padding.left,
+                                       tail: axis == .vertical ? padding.bottom : padding.right)
                 invalidateMeasurements()
             }
         }
-    }
-
-    /// The padding before the first child on the run.
-    private var head: Double { axis == .vertical ? padding.top : padding.left }
-
-    /// The padding after the last child on the run.
-    private var tail: Double { axis == .vertical ? padding.bottom : padding.right }
-
-    /// The room a child gets across - inside the padding.
-    private func acrossRoom(in bounds: Rect) -> Double {
-        axis == .vertical
-            ? bounds.width - padding.left - padding.right
-            : bounds.height - padding.top - padding.bottom
     }
 
     /// As wide as offered and as long as the run measures.
@@ -177,32 +225,66 @@ final class GTKLazyStackView: GTKLazyView {
         let total = cells.total
         return axis == .vertical
             ? LayoutSize(width: width ?? 0, height: total)
-            : LayoutSize(width: total, height: 0)
+            : LayoutSize(width: total, height: naturalAcross + padding.top + padding.bottom)
     }
 
     /// Every mounted child measures, is stood at its offset, and the window
     /// re-asks what the tree builds.
     override func arrange(in bounds: Rect) {
-        beginArrangement(width: bounds.width)
-        let estimate = cells.extents.estimate
-        let across = max(0, acrossRoom(in: bounds))
+        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        let across = max(0, axis == .vertical
+            ? bounds.width - padding.left - padding.right
+            : bounds.height - padding.top - padding.bottom)
+        let revision = cells.extents.revision
+        if measuredAcross != across {
+            cells.extents.reset()
+            measured = [:]
+            measuredAcross = across
+        }
+        if measuredRevision != measurements.revision { measured = [:] }
         for (identity, item) in mounted {
+            guard !item.departing, cells.position(of: identity) != nil else { continue }
             let margin = item.values.margin
-            let size = item.size(offered: axis == .vertical
-                ? max(0, across - margin.left - margin.right) : nil)
+            let proposal: Double? = axis == .vertical
+                ? max(0, across - margin.left - margin.right) : nil
+            let size: LayoutSize
+            if let cached = measured[identity], cached.proposal == proposal {
+                size = cached.size
+            } else {
+                size = item.size(offered: proposal)
+                measured[identity] = (proposal, size)
+                cells.measurements += 1
+            }
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
             cells.extents.measure(identity, extent: extent)
-
-            guard let place = cells.position(of: identity) else { continue }
+        }
+        let cross = mounted.compactMap { identity, item -> Double? in
+            guard !item.departing, let size = measured[identity]?.size else { return nil }
+            return size.height + item.values.margin.top + item.values.margin.bottom
+        }.max() ?? (cells.identities.isEmpty ? 0 : 44)
+        if axis == .horizontal, naturalAcross != cross {
+            naturalAcross = cross
+            invalidateMeasurements()
+        }
+        if let origin = cells.correctedOrigin() { anchorTarget = origin }
+        if cells.extents.revision != revision {
+            measurements.invalidate()
+            geometryChanged = true
+        }
+        measuredRevision = measurements.revision
+        for (identity, item) in mounted {
+            let margin = item.values.margin
+            guard let place = cells.position(of: identity), let size = measured[identity]?.size else { continue }
+            let extent = cells.extents.extent(of: identity)
             let run = cells.offset(of: place)
             let frame: Rect
             if axis == .vertical {
                 let open = across - margin.left - margin.right
                 let width = Extent.of(
                     option: item.values.horizontal, stated: item.values.width,
-                    natural: size.width - margin.left - margin.right,
+                    natural: size.width,
                     available: open, minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
                 let x = padding.left + margin.left + Extent.start(
@@ -216,7 +298,7 @@ final class GTKLazyStackView: GTKLazyView {
                 let open = across - margin.top - margin.bottom
                 let height = Extent.of(
                     option: item.values.vertical, stated: item.values.height,
-                    natural: size.height - margin.top - margin.bottom,
+                    natural: size.height,
                     available: open, minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)
                 let y = padding.top + margin.top + Extent.start(
@@ -229,12 +311,10 @@ final class GTKLazyStackView: GTKLazyView {
             }
             self.place(item, at: direction.places(frame, in: bounds))
         }
-        if cells.extents.estimate != estimate { invalidateMeasurements() }
     }
 
     override func tellWindow(_ span: Range<Double>) {
-        let wanted = cells.places(in: span, overscan: 0)
-        cells.tell(first: wanted.lowerBound, last: wanted.upperBound - 1)
+        cells.show(span)
     }
 }
 
@@ -257,7 +337,8 @@ final class GTKLazyGridView: GTKLazyView {
     var padding = EdgeInsets(0) {
         didSet {
             if padding != oldValue {
-                cells.runs.padding = (head: head, tail: tail)
+                cells.runs.padding = (head: axis == .vertical ? padding.top : padding.left,
+                                       tail: axis == .vertical ? padding.bottom : padding.right)
                 invalidateMeasurements()
             }
         }
@@ -267,18 +348,13 @@ final class GTKLazyGridView: GTKLazyView {
     /// a changed count makes new runs, and their measures go.
     private var columns: [Double] = [] {
         didSet {
-            if columns.count != oldValue.count {
+            if columns != oldValue {
+                measured = [:]
                 cells.runs.reset()
                 invalidateMeasurements()
             }
         }
     }
-
-    /// The padding before the first run.
-    private var head: Double { axis == .vertical ? padding.top : padding.left }
-
-    /// The padding after the last run.
-    private var tail: Double { axis == .vertical ? padding.bottom : padding.right }
 
     /// The room across - inside the padding, the tracks take it all.
     private var acrossRoom = 0.0
@@ -289,53 +365,74 @@ final class GTKLazyGridView: GTKLazyView {
     /// The runs the cells make.
     private var runCount: Int { (cells.identities.count + perRun - 1) / perRun }
 
-    /// Resolves the tracks for the room now where it moved.
-    private func resolveTracks() {
+    /// As wide as offered and as long as the runs measure.
+    override func contentSize(width: Double?) -> LayoutSize {
+        let room = max(0, axis == .vertical
+            ? (width.map { $0 - padding.left - padding.right } ?? acrossRoom)
+            : acrossRoom)
+        let proposed = LazyGridTracks.resolve(tracks, width: room, spacing: trackSpacing)
+        let count = (cells.identities.count + max(1, proposed.count) - 1) / max(1, proposed.count)
+        let total = cells.runs.total(count: count)
+        return axis == .vertical
+            ? LayoutSize(width: width ?? 0, height: total)
+            : LayoutSize(width: total, height:
+                LazyGridTracks.extents(proposed, width: room, spacing: trackSpacing).reduce(0, +)
+                + Double(max(0, proposed.count - 1)) * trackSpacing + padding.top + padding.bottom)
+    }
+
+    override func arrange(in bounds: Rect) {
+        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        acrossRoom = axis == .vertical
+            ? bounds.width - padding.left - padding.right
+            : bounds.height - padding.top - padding.bottom
         let room = max(0, acrossRoom)
         let next = LazyGridTracks.extents(
             LazyGridTracks.resolve(tracks, width: room, spacing: trackSpacing),
             width: room, spacing: trackSpacing)
         if next != columns { columns = next }
-    }
-
-    /// As wide as offered and as long as the runs measure.
-    override func contentSize(width: Double?) -> LayoutSize {
-        if let width { acrossRoom = width }
-        let total = cells.runs.total(count: runCount)
-        return axis == .vertical
-            ? LayoutSize(width: width ?? 0, height: total)
-            : LayoutSize(width: total, height: acrossRoom)
-    }
-
-    override func arrange(in bounds: Rect) {
-        beginArrangement(width: bounds.width)
-        acrossRoom = axis == .vertical
-            ? bounds.width - padding.left - padding.right
-            : bounds.height - padding.top - padding.bottom
-        resolveTracks()
         let widths = columns
         guard !widths.isEmpty else { return }
-        let estimate = cells.runs.estimate
+        let revision = cells.runs.revision
+        if measuredRevision != measurements.revision { measured = [:] }
+        var runExtents: [Int: Double] = [:]
+        for (identity, item) in mounted {
+            guard let place = cells.position(of: identity) else { continue }
+            let run = place / widths.count, track = place % widths.count
+            let margin = item.values.margin
+            let proposal: Double? = axis == .vertical
+                ? max(0, widths[track] - margin.left - margin.right) : nil
+            let size: LayoutSize
+            if let cached = measured[identity], cached.proposal == proposal {
+                size = cached.size
+            } else {
+                size = item.size(offered: proposal)
+                measured[identity] = (proposal, size)
+                cells.measurements += 1
+            }
+            let extent = axis == .vertical
+                ? size.height + margin.top + margin.bottom
+                : size.width + margin.left + margin.right
+            runExtents[run] = max(runExtents[run] ?? 0, extent)
+        }
+        for (run, extent) in runExtents { cells.runs.measure(run, extent: extent) }
+        if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
+        if cells.runs.revision != revision {
+            measurements.invalidate()
+            geometryChanged = true
+        }
+        measuredRevision = measurements.revision
+        var trackOrigins: [Double] = []
+        var start = axis == .vertical ? padding.left : padding.top
+        for width in widths {
+            trackOrigins.append(start)
+            start += width + trackSpacing
+        }
 
         for (identity, item) in mounted {
             guard let place = cells.position(of: identity) else { continue }
             let run = place / widths.count, track = place % widths.count
             let margin = item.values.margin
-            let offered: Double? = axis == .vertical
-                ? max(0, widths[track] - margin.left - margin.right) : nil
-            let size = item.size(offered: offered)
-            let extent = axis == .vertical
-                ? size.height + margin.top + margin.bottom
-                : size.width + margin.left + margin.right
-            cells.runs.measure(run, extent: extent)
-
-            var trackOrigins: [Double] = []
-            var start = axis == .vertical ? padding.left : padding.top
-            for width in widths {
-                trackOrigins.append(start)
-                start += width + trackSpacing
-            }
-
+            let size = measured[identity]!.size
             let origin = cells.runs.offset(of: run, count: runCount)
             let runExtent = cells.runs.extent(of: run)
             let frame: Rect
@@ -343,7 +440,7 @@ final class GTKLazyGridView: GTKLazyView {
                 let open = widths[track] - margin.left - margin.right
                 let width = Extent.of(
                     option: item.values.horizontal, stated: item.values.width,
-                    natural: size.width - margin.left - margin.right,
+                    natural: size.width,
                     available: max(0, open), minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
                 let x = trackOrigins[track] + margin.left + Extent.start(
@@ -357,7 +454,7 @@ final class GTKLazyGridView: GTKLazyView {
                 let open = widths[track] - margin.top - margin.bottom
                 let height = Extent.of(
                     option: item.values.vertical, stated: item.values.height,
-                    natural: size.height - margin.top - margin.bottom,
+                    natural: size.height,
                     available: max(0, open), minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)
                 let y = trackOrigins[track] + margin.top + Extent.start(
@@ -370,13 +467,10 @@ final class GTKLazyGridView: GTKLazyView {
             }
             self.place(item, at: direction.places(frame, in: bounds))
         }
-        if cells.runs.estimate != estimate { invalidateMeasurements() }
     }
 
     override func tellWindow(_ span: Range<Double>) {
-        resolveTracks()
-        let wanted = cells.runs.places(in: span, overscan: 0, count: runCount)
-        cells.tellRuns(first: wanted.lowerBound, last: wanted.upperBound - 1, perRun: perRun)
+        cells.show(span, perRun: perRun, grid: true)
     }
 }
 

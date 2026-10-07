@@ -56,7 +56,6 @@ extension GTKRegistrations {
             lazy.applies(stackMembers + [LazyVStackContract.items]) { view, values in
                 view.spacing = values[StackBaseContract.spacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
             lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
@@ -69,7 +68,6 @@ extension GTKRegistrations {
             lazy.applies(stackMembers + [LazyHStackContract.items]) { view, values in
                 view.spacing = values[StackBaseContract.spacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
             lazy.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
@@ -87,7 +85,6 @@ extension GTKRegistrations {
                 view.runSpacing = values[LazyVGridContract.rowSpacing] ?? 0
                 view.trackSpacing = values[LazyVGridContract.columnSpacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }
@@ -105,7 +102,6 @@ extension GTKRegistrations {
                 view.runSpacing = values[LazyHGridContract.columnSpacing] ?? 0
                 view.trackSpacing = values[LazyHGridContract.rowSpacing] ?? 0
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
-                if view.cells.takeItems() { view.invalidateMeasurements() }
             }
             grid.applies(boxMembers) { view, values in applyBox(view, values) }
             grid.property(VisualElementContract.ignoresInput) { view, ignores in view.setIgnoresInput(ignores ?? false) }

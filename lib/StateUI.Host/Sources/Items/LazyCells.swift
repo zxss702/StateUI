@@ -22,22 +22,26 @@
     /// Every child's identity in the order it shows, as last taken.
     public private(set) var identities: [String] = []
 
+    private var contentRevision = -1
     private var positions: [String: Int] = [:]
 
-    /// The identities the tree was last told to build.
-    private var built: Set<String> = []
+    /// Data changes may animate; a window moved by scrolling never does.
+    public private(set) var animatesChanges = false
+    /// The source positions mounted, including the fixed neighbour window.
+    public private(set) var built: Range<Int> = 0..<0
 
-    /// The window the host last asked for and when - the run's pace is read
-    /// from how it moves, and the reach held around it grows and shrinks
-    /// with it.
-    private var lastAsk: (first: Int, last: Int, at: ContinuousClock.Instant)?
+    /// The last viewport and geometry asked for. Identical layout notices do
+    /// not perform another range lookup or send another render.
+    public var window: (span: Range<Double>, revision: Int, perRun: Int)?
 
-    /// How fast the window moves, in places a second - smoothed, and let go
-    /// once the window rests.
-    private var pace: Double = 0
+    /// Diagnostic counts for the work a lazy window actually performs.
+    public private(set) var requests = 0
+    /// Viewport range lookups performed.
+    public var searches = 0
+    /// Native child measurements performed.
+    public var measurements = 0
 
-    /// A pending collapse of the reach after the window settles.
-    private var settling: Task<Void, Never>?
+    private var anchor: (identity: String, place: Int, inset: Double, origin: Double, viewport: Double, trailing: Bool)?
 
     /// The run's arithmetic: measured extents by identity, the rest by the
     /// mean of the measured.
@@ -53,21 +57,23 @@
         self.runtime = runtime
     }
 
-    /// Takes the identities the element carries now; whether they changed.
-    /// Measures of identities no longer shown are let go; a moved identity
-    /// keeps its measure at its new place.
+    /// Takes a fresh content source. Insertions, removals and moves preserve the
+    /// measured sizes of surviving identities; changed content invalidates them.
     @discardableResult
     public func takeItems() -> Bool {
         let now = element?.value(.items)?.strings ?? []
-        guard now != identities else { return false }
+        let revision = element?.lazyContentRevision ?? 0
+        guard now != identities || revision != contentRevision else { return false }
+        animatesChanges = now != identities && !identities.isEmpty
+        contentRevision = revision
+        if now != identities { extents.keep(identities: Set(now)) }
+        else { extents.reset() }
         identities = now
+        if now.isEmpty { anchor = nil }
         positions = Dictionary(identities.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
-        built = []
-        lastAsk = nil
-        pace = 0
-        settling?.cancel()
-        settling = nil
-        extents.keep(identities: Set(now))
+        built = 0..<0
+        window = nil
+        runs.reset()
         return true
     }
 
@@ -108,222 +114,252 @@
         extents.total(in: identities)
     }
 
-    /// The children of places `first..<last` are the ones the host can show;
-    /// those plus a reach around them are what the tree is told to build -
-    /// told only where the answer changed.
-    ///
-    /// The reach is not a constant: a window in motion leads its way by a
-    /// stretch that grows with its pace (momentum keeps the places ahead
-    /// built before they arrive), and a window at rest holds little beyond
-    /// what it shows - the places left behind are let go.
-    /// Design: docs/design/host/items.md#within-reach
-    public func tell(first: Int, last: Int) {
-        guard let element, let runtime, !identities.isEmpty else { return }
-        let first = max(0, first), last = min(last, identities.count - 1)
-        guard first <= last else { return }
-
-        let now = ContinuousClock.now
-        if let prev = lastAsk {
-            let (seconds, attoseconds) = (now - prev.at).components
-            let dt = Double(seconds) + Double(attoseconds) / 1e18
-            // A gap this long is a fresh settling, not movement in progress.
-            if dt > 0.4 { pace = 0 }
-            else if dt > 0 {
-                pace += (Double(first - prev.first) / dt - pace) * min(1, dt * 8)
-            }
+    /// Reads a viewport only when it or the content geometry changed. Shared
+    /// by every host's stack and grid, including empty and clipped windows.
+    public func show(_ span: Range<Double>, perRun: Int = 1, grid: Bool = false) {
+        let revision = grid ? runs.revision : extents.revision
+        guard window?.span != span || window?.revision != revision || window?.perRun != perRun else { return }
+        let moved = window?.revision == revision && window?.span != span
+        window = (span, revision, perRun)
+        searches += 1
+        let wanted = grid
+            ? runs.places(in: span, overscan: 0, count: (identities.count + perRun - 1) / perRun)
+            : extents.places(in: span, overscan: 0, in: identities)
+        if !wanted.isEmpty, anchor == nil || moved {
+            let place = wanted.lowerBound * perRun
+            let origin = grid
+                ? runs.offset(of: wanted.lowerBound, count: (identities.count + perRun - 1) / perRun)
+                : extents.offset(of: place, in: identities)
+            let total = grid
+                ? runs.total(count: (identities.count + perRun - 1) / perRun)
+                : extents.total(in: identities)
+            anchor = (identities[place], place, span.lowerBound - origin, span.lowerBound,
+                      span.upperBound - span.lowerBound, span.lowerBound > 0 && abs(span.upperBound - total) < 1)
         }
-        lastAsk = (first, last, now)
-
-        // A settled window keeps what it shows and a breath more; a moving
-        // one leads the way it goes by up to two more of itself.
-        let window = last - first + 1
-        let lead = min(2 * window + 4, Int(abs(pace) * 0.15))
-        let before = pace < -0.5 ? max(2, lead) : 2
-        let after = pace > 0.5 ? max(2, lead) : 2
-        let within = Array(identities[max(0, first - before)...min(identities.count - 1, last + after)])
-        if Set(within) != built {
-            built = Set(within)
-            element.send(.realizedChanged, [.strings(within)], in: runtime)
-        }
-        settle()
+        guard let element, let runtime else { return }
+        let lower = min(identities.count, max(0, wanted.lowerBound - 1) * perRun)
+        let upper = min(identities.count, (wanted.upperBound + 1) * perRun)
+        let within = !wanted.isEmpty && lower < upper ? lower..<upper : 0..<0
+        guard within != built else { return }
+        animatesChanges = false
+        built = within
+        requests += 1
+        element.send(.realizedChanged, [.strings(Array(identities[within]))], in: runtime)
     }
 
-    /// After the window rests, the reach is drawn in to the window alone -
-    /// run once the motion has had its moment to be over.
-    private func settle() {
-        settling?.cancel()
-        guard lastAsk != nil else { return }
-        settling = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(450))
-            guard let self, let ask = self.lastAsk, !Task.isCancelled else { return }
-            let (seconds, attoseconds) = (ContinuousClock.now - ask.at).components
-            guard Double(seconds) + Double(attoseconds) / 1e18 > 0.35 else { return }
-            self.pace = 0
-            let within = Set(self.identities[ask.first...ask.last])
-            guard within != self.built, let element = self.element, let runtime = self.runtime
-            else { return }
-            self.built = within
-            element.send(.realizedChanged, [.strings(self.identities[ask.first...ask.last].map { $0 })], in: runtime)
-        }
+    /// The corrected viewport origin after measurements or data move its anchor.
+    /// A viewport at the end stays at the end. Hosts apply this absolute origin
+    /// because their native scroller may already have clamped a shrinking document.
+    public func correctedOrigin(perRun: Int = 1, grid: Bool = false) -> Double? {
+        guard let held = anchor, !identities.isEmpty else { return nil }
+        let place = positions[held.identity] ?? min(held.place, identities.count - 1)
+        let start = grid
+            ? runs.offset(of: place / perRun, count: (identities.count + perRun - 1) / perRun)
+            : extents.offset(of: place, in: identities)
+        let total = grid
+            ? runs.total(count: (identities.count + perRun - 1) / perRun)
+            : extents.total(in: identities)
+        let origin = max(0, held.trailing ? total - held.viewport : start + held.inset)
+        anchor = (identities[place], place, held.inset, origin, held.viewport, held.trailing)
+        return abs(origin - held.origin) > 0.0001 ? origin : nil
     }
 
-    /// A grid asks by RUN - a row at a time: `first..<last` rows of `perRun`
-    /// cells are the ones in view, and the cells those rows hold are told.
-    public func tellRuns(first: Int, last: Int, perRun: Int) {
-        let perRun = max(1, perRun)
-        tell(first: first * perRun, last: (last + 1) * perRun - 1)
-    }
-
-    /// The tree builds every child - a lazy container standing outside any
-    /// scroller has no viewport to narrow by.
+    /// Without a scroller there is no viewport to narrow by.
     public func tellAll() {
-        guard let element, let runtime, Set(identities) != built else { return }
-        built = Set(identities)
+        guard let element, let runtime, built != 0..<identities.count else { return }
+        built = 0..<identities.count
+        requests += 1
         element.send(.realizedChanged, [.strings(identities)], in: runtime)
     }
+
 }
 
-/// Where a lazy container's children stand along its run, before and after
-/// they exist: the ones mounted are measured, and the rest stand for by the
-/// mean of the measured - so the scroll room is known at once, and a child
-/// taking its own size shifts only the places after it.
+/// Measured child extents and a cached prefix of their estimated places.
+/// The host invalidates measurements when the source or its cross-axis size changes.
 @_spi(Host) public struct LazyExtents: Sendable {
-    /// The gap between one child and the next.
-    public var spacing: Double = 0
-
-    /// The room kept before the first child and after the last.
-    public var padding: (head: Double, tail: Double) = (0, 0)
-
-    /// The extent a child no measure has answered for yet - the mean of the
-    /// ones measured, the first guess before any is.
+    /// The spacing between adjacent children or runs.
+    public var spacing: Double = 0 {
+        didSet { if spacing != oldValue { revision += 1; prefix = [] } }
+    }
+    /// Space before the first and after the last child or run.
+    public var padding: (head: Double, tail: Double) = (0, 0) {
+        didSet { if padding != oldValue { revision += 1; prefix = [] } }
+    }
+    /// The mean measured extent used for unseen children or runs.
     public private(set) var estimate: Double = 44
-
-    /// The measured extents, by identity.
+    /// Geometry version used to reuse viewport searches.
+    public private(set) var revision = 0
     private var measured: [String: Double] = [:]
+    private var sum = 0.0
+    private var prefix: [Double] = []
 
-    /// An empty book - the estimate stands for every child until one is
-    /// measured.
+    /// Starts with a provisional extent until the first window is measured.
     public init() {}
 
-    /// `identity`'s child is `extent` long on the run.
+    /// A complete child measurement. Zero is a valid size.
     public mutating func measure(_ identity: String, extent: Double) {
-        guard extent > 0 else { return }
+        guard extent.isFinite, extent >= 0, measured[identity] != extent else { return }
+        let previous = measured[identity] ?? estimate
+        sum += extent - (measured[identity] ?? 0)
         measured[identity] = extent
-        estimate = measured.values.reduce(0, +) / Double(measured.count)
+        let next = sum / Double(measured.count)
+        if extent != previous || next != estimate {
+            revision += 1
+            prefix = []
+        }
+        estimate = next
     }
 
-    /// Measures of identities no longer shown are let go.
+    /// Reordering invalidates positions even when every identity survives.
     public mutating func keep(identities: Set<String>) {
         measured = measured.filter { identities.contains($0.key) }
+        sum = measured.values.reduce(0, +)
+        estimate = measured.isEmpty ? 44 : sum / Double(measured.count)
+        revision += 1
+        prefix = []
     }
 
-    /// Where `place`'s child begins on the run, counting the padding head.
-    public func offset(of place: Int, in identities: [String]) -> Double {
-        var offset = padding.head + spacing * Double(min(place, identities.count))
-        for index in 0..<min(place, identities.count) { offset += extent(of: identities[index]) }
-        return offset
+    /// Forget sizes that were measured under a different layout proposal.
+    public mutating func reset() {
+        measured = [:]
+        sum = 0
+        revision += 1
+        prefix = []
+        // Keep the last useful estimate until the new visible measurements arrive.
     }
 
-    /// The length `identity`'s child takes on the run, measured or estimated.
+    /// The measured child extent, or the current estimate.
     public func extent(of identity: String) -> Double {
         measured[identity] ?? estimate
     }
 
-    /// The whole run's length, both paddings in.
-    public func total(in identities: [String]) -> Double {
-        guard !identities.isEmpty else { return padding.head + padding.tail }
+    /// The prefix is rebuilt once per geometry change, never once per child.
+    public mutating func offset(of place: Int, in identities: [String]) -> Double {
+        if prefix.count != identities.count + 1 {
+            prefix = [padding.head]
+            prefix.reserveCapacity(identities.count + 1)
+            for index in 0..<identities.count {
+                prefix.append(prefix[index] + extent(of: identities[index]) + spacing)
+            }
+        }
+        return prefix[max(0, min(place, identities.count))]
+    }
+
+    /// Estimated length of the entire data source, including both paddings.
+    public mutating func total(in identities: [String]) -> Double {
+        guard identities.count > 0 else { return padding.head + padding.tail }
         return offset(of: identities.count, in: identities) + padding.tail - spacing
     }
 
-    /// The places standing in `span` - `from` to `to` on the run - widened by
-    /// `overscan` at both ends.
-    public func places(in span: Range<Double>, overscan: Double, in identities: [String]) -> Range<Int> {
-        guard !identities.isEmpty else { return 0..<0 }
+    /// Only actual intersections count as visible; spacing is not a child.
+    public mutating func places(in span: Range<Double>, overscan: Double, in identities: [String]) -> Range<Int> {
+        guard identities.count > 0, !span.isEmpty else { return 0..<0 }
+        _ = offset(of: 0, in: identities)
         let lo = span.lowerBound - overscan, hi = span.upperBound + overscan
-        var first = identities.count, last = -1
-        var y = padding.head
-        for (index, identity) in identities.enumerated() {
-            let next = y + extent(of: identity) + (index + 1 < identities.count ? spacing : 0)
-            if next > lo && y < hi {
-                first = min(first, index)
-                last = index
-            }
-            y = next
+        var lower = 0, upper = identities.count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if prefix[middle + 1] - spacing <= lo { lower = middle + 1 }
+            else { upper = middle }
         }
-        guard last >= 0 else { return 0..<0 }
-        return first..<(last + 1)
+        let first = lower
+        upper = identities.count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if prefix[middle] < hi { lower = middle + 1 }
+            else { upper = middle }
+        }
+        return first < lower ? first..<lower : 0..<0
     }
 }
 
-/// A grid's run arithmetic: one extent a row (or a column, across), measured
-/// of the longest cell it holds. Runs are named by their place, not a child's
-/// identity - a changed column count makes new runs, and the measures go with
-/// the old ones.
+/// Measured row or column extents and a cached prefix of their estimated places.
+/// The host invalidates measurements when the source or its cross-axis size changes.
 @_spi(Host) public struct LazyRunExtents: Sendable {
-    /// The gap between one run and the next.
-    public var spacing: Double = 0
-
-    /// The room kept before the first run and after the last.
-    public var padding: (head: Double, tail: Double) = (0, 0)
-
-    /// The extent a run no measure has answered for yet - the mean of the
-    /// ones measured, the first guess before any is.
+    /// The spacing between adjacent children or runs.
+    public var spacing: Double = 0 {
+        didSet { if spacing != oldValue { revision += 1; prefix = [] } }
+    }
+    /// Space before the first and after the last child or run.
+    public var padding: (head: Double, tail: Double) = (0, 0) {
+        didSet { if padding != oldValue { revision += 1; prefix = [] } }
+    }
+    /// The mean measured extent used for unseen children or runs.
     public private(set) var estimate: Double = 44
-
-    /// The measured extents, by place.
+    /// Geometry version used to reuse viewport searches.
+    public private(set) var revision = 0
     private var measured: [Int: Double] = [:]
+    private var sum = 0.0
+    private var prefix: [Double] = []
 
-    /// An empty book - the estimate stands for every run until one is
-    /// measured.
+    /// Starts with a provisional extent until the first window is measured.
     public init() {}
 
-    /// `run`'s longest cell is `extent` on the run.
+    /// A complete run, measured as the largest of its current cells. Zero is a valid size.
     public mutating func measure(_ run: Int, extent: Double) {
-        guard extent > 0 else { return }
-        measured[run] = max(extent, measured[run] ?? 0)
-        estimate = measured.values.reduce(0, +) / Double(measured.count)
+        guard extent.isFinite, extent >= 0, measured[run] != extent else { return }
+        let previous = measured[run] ?? estimate
+        sum += extent - (measured[run] ?? 0)
+        measured[run] = extent
+        let next = sum / Double(measured.count)
+        if extent != previous || next != estimate {
+            revision += 1
+            prefix = []
+        }
+        estimate = next
     }
 
-    /// Every measure is let go - the runs count anew.
+    /// Forget sizes that were measured under a different layout proposal.
     public mutating func reset() {
         measured = [:]
-        estimate = 44
+        sum = 0
+        revision += 1
+        prefix = []
+        // Keep the last useful estimate until the new visible measurements arrive.
     }
 
-    /// The length `run` takes, measured or estimated.
+    /// The measured run extent, or the current estimate.
     public func extent(of run: Int) -> Double {
         measured[run] ?? estimate
     }
 
-    /// Where `run` begins on the run, counting the padding head.
-    public func offset(of run: Int, count: Int) -> Double {
-        var offset = padding.head + spacing * Double(min(run, count))
-        for index in 0..<min(run, count) { offset += extent(of: index) }
-        return offset
+    /// The prefix is rebuilt once per geometry change, never once per child.
+    public mutating func offset(of place: Int, count: Int) -> Double {
+        if prefix.count != count + 1 {
+            prefix = [padding.head]
+            prefix.reserveCapacity(count + 1)
+            for index in 0..<count {
+                prefix.append(prefix[index] + extent(of: index) + spacing)
+            }
+        }
+        return prefix[max(0, min(place, count))]
     }
 
-    /// The whole run's length over `count` runs, both paddings in.
-    public func total(count: Int) -> Double {
+    /// Estimated length of the entire data source, including both paddings.
+    public mutating func total(count: Int) -> Double {
         guard count > 0 else { return padding.head + padding.tail }
         return offset(of: count, count: count) + padding.tail - spacing
     }
 
-    /// The runs standing in `span`, widened by `overscan` at both ends.
-    public func places(in span: Range<Double>, overscan: Double, count: Int) -> Range<Int> {
-        guard count > 0 else { return 0..<0 }
+    /// Only actual intersections count as visible; spacing is not a child.
+    public mutating func places(in span: Range<Double>, overscan: Double, count: Int) -> Range<Int> {
+        guard count > 0, !span.isEmpty else { return 0..<0 }
+        _ = offset(of: 0, count: count)
         let lo = span.lowerBound - overscan, hi = span.upperBound + overscan
-        var first = count, last = -1
-        var y = padding.head
-        for index in 0..<count {
-            let next = y + extent(of: index) + (index + 1 < count ? spacing : 0)
-            if next > lo && y < hi {
-                first = min(first, index)
-                last = index
-            }
-            y = next
+        var lower = 0, upper = count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if prefix[middle + 1] - spacing <= lo { lower = middle + 1 }
+            else { upper = middle }
         }
-        guard last >= 0 else { return 0..<0 }
-        return first..<(last + 1)
+        let first = lower
+        upper = count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if prefix[middle] < hi { lower = middle + 1 }
+            else { upper = middle }
+        }
+        return first < lower ? first..<lower : 0..<0
     }
 }
 

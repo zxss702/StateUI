@@ -90,6 +90,13 @@ extension ForEach: LazyRows {
         String(describing: items[self.items.index(items.startIndex, offsetBy: index)][keyPath: identity])
     }
 
+    func hasSameLazyIdentities(as other: any LazyRows) -> Bool {
+        guard let other = other as? Self, identity == other.identity,
+              let current = items as? any Equatable, let previous = other.items as? any Equatable
+        else { return false }
+        return Input.same([("items", .value(current))], [("items", .value(previous))])
+    }
+
     func lazyRow(at index: Int) -> any Element {
         let item = items[items.index(items.startIndex, offsetBy: index)]
         return KeyedRow(identity: String(describing: item[keyPath: identity]), element: content(item))

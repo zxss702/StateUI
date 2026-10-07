@@ -37,6 +37,9 @@ public struct LazyVGrid: View {
     /// The cells the host has asked for.
     @State private var realized: [String] = []
 
+    /// The identity index survives parent updates; builders stay current.
+    @State private var children = LazyChildren()
+
     /// A grid filling `columns` with what the closure describes, row first,
     /// its cells centered across where a column does not say.
     ///
@@ -98,10 +101,13 @@ public struct LazyVGrid: View {
         let across = alignment.axis
         element.node.write(
             LazyVGridContract.items,
-            LazyChildren.take(content(), into: &element.node, realized: realized) { cell, index in
-                let item = columns[index % count]
+            children.take(content(), into: &element.node, realized: held) { cell, index in
+                let item = columns.isEmpty ? GridItem() : columns[index % count]
                 let over = item.alignment?.horizontal.axis ?? across
-                if over != .fill { cell.write(ViewContract.horizontalAlignment, over) }
+                if cell.props[.horizontalAlignment] == nil {
+                    cell.write(ViewContract.horizontalAlignment,
+                               cell.props[.maximumWidth]?.number == .infinity ? .fill : over)
+                }
                 if let down = item.alignment?.vertical.axis, down != .fill {
                     cell.write(ViewContract.verticalAlignment, down)
                 }
@@ -142,6 +148,9 @@ public struct LazyHGrid: View {
 
     /// The cells the host has asked for.
     @State private var realized: [String] = []
+
+    /// The identity index survives parent updates; builders stay current.
+    @State private var children = LazyChildren()
 
     /// A grid filling `rows` with what the closure describes, column first,
     /// its cells centered down where a row does not say.
@@ -195,10 +204,13 @@ public struct LazyHGrid: View {
         let down = alignment.axis
         element.node.write(
             LazyHGridContract.items,
-            LazyChildren.take(content(), into: &element.node, realized: realized) { cell, index in
-                let item = rows[index % count]
+            children.take(content(), into: &element.node, realized: held) { cell, index in
+                let item = rows.isEmpty ? GridItem() : rows[index % count]
                 let over = item.alignment?.vertical.axis ?? down
-                if over != .fill { cell.write(ViewContract.verticalAlignment, over) }
+                if cell.props[.verticalAlignment] == nil {
+                    cell.write(ViewContract.verticalAlignment,
+                               cell.props[.maximumHeight]?.number == .infinity ? .fill : over)
+                }
                 if let across = item.alignment?.horizontal.axis, across != .fill {
                     cell.write(ViewContract.horizontalAlignment, across)
                 }
