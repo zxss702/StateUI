@@ -62,6 +62,7 @@ final class GTKLazyTests: XCTestCase {
                                 Text("Cell \(cell)")
                                     .frame(height: height.wrappedValue)
                                     .frame(maxWidth: .infinity)
+                                    .background(.red)
                                     .onAppear { standing.wrappedValue += 1 }
                                     .onDisappear { standing.wrappedValue -= 1 }
                             }
@@ -82,7 +83,6 @@ final class GTKLazyTests: XCTestCase {
                 let tracks = Int((scroll.frame.width + 10) / 106)
                 let runs = (rows.wrappedValue.count + tracks - 1) / tracks
                 let total = Double(runs) * cellHeight + Double(runs - 1) * 10
-                print("GRID before end width=\(scroll.frame.width) tracks=\(tracks) expected=\(total) reach=\(scroll.scroller.standing.reach) grid=\(grid.frame) runs=\(grid.cells.runs.total(count:runs))")
                 XCTAssertEqual(grid.cells.window?.perRun, tracks)
                 XCTAssertEqual(scroll.scroller.standing.reach.y + scroll.frame.height, total, accuracy: 1)
                 scroll.scroller.move(to: scroll.scroller.standing.reach)
@@ -92,6 +92,10 @@ final class GTKLazyTests: XCTestCase {
                 XCTAssertEqual(last.frame.y + last.frame.height - scroll.scroller.standing.offset.y,
                                scroll.frame.height, accuracy: 1,
                                "the last rendered row must meet the viewport's bottom without an empty tail")
+                let colors = GTKTestHost.pixels(of: scroll.widget, at: [
+                    (last.frame.x + last.frame.width / 2, scroll.frame.height - 4),
+                ])
+                XCTAssertEqual(colors, [0xFFFF0000], "GTK must paint the last cell at the actual viewport bottom")
             }
         }
     }

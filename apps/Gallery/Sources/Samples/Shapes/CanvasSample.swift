@@ -196,7 +196,9 @@ private struct WrittenWithContext: ExampleContent {
                 // A Text goes in whole - its words, colour and size are the
                 // drawing's for that call, and the anchor lands on the point.
                 context.draw(Text("In context"), at: middle)
-                context.draw(Text("at the anchor"), at: middle, anchor: .bottom)
+                context.draw(
+                    Text("at the anchor"), at: Point(x: middle.x, y: 76),
+                    anchor: .bottom)
             }
             .frame(height: 104)
         }
@@ -215,7 +217,9 @@ private struct WrittenWithContext: ExampleContent {
                 with: .color(Palette.outline), lineWidth: 1)
 
             context.draw(Text("In context"), at: middle)
-            context.draw(Text("at the anchor"), at: middle, anchor: .bottom)
+            context.draw(
+                Text("at the anchor"), at: Point(x: middle.x, y: 76),
+                anchor: .bottom)
         }
         .frame(height: 104)
     }
@@ -245,8 +249,10 @@ private struct Measured: ExampleContent {
             VStack {
                 Canvas {
                     Draw.foregroundStyle(Palette.text)
+                    // The box a drawText cuts at: taller than a line, so a
+                    // descender - a g's tail - is not cut off it.
                     Draw.drawText(
-                        "Snug", x: 0, y: 44, width: 320, height: 16,
+                        "Snug", x: 0, y: 40, width: 320, height: 24,
                         horizontalAlignment: .center)
 
                     if let fitted {
@@ -280,8 +286,10 @@ private struct Measured: ExampleContent {
 
             Canvas {
                 Draw.foregroundStyle(Palette.text)
+                // The box a drawText cuts at: taller than a line, so a
+                // descender - a g's tail - is not cut off it.
                 Draw.drawText(
-                    "Snug", x: 0, y: 44, width: 320, height: 16,
+                    "Snug", x: 0, y: 40, width: 320, height: 24,
                     horizontalAlignment: .center)
 
                 if let fitted {

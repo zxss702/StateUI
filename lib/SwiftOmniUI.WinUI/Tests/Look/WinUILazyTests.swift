@@ -5,12 +5,67 @@
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIWinUI
 import XCTest
+import SwiftOmniUIConformance
 import CSwiftOmniUIWinUI
 import WinSDK
 
 /// A `LazyVStack` on WinUI answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class WinUILazyTests: XCTestCase {
+    func testDeletingDataAnimatesRetainedRowsAfterTheMeasureWindowChanges() throws {
+        try onUIThread {
+            let clock = TestClock()
+            let rows = State(wrappedValue: Array(0..<1_000))
+            let standing = State(wrappedValue: 0)
+            let host = WinUIRenderer.running(clock: clock) {
+                VStack {
+                    Text("\(standing.wrappedValue) standing")
+                    ScrollView {
+                        LazyVStack(spacing: 8) {
+                            ForEach(rows.wrappedValue) { row in
+                                HStack {
+                                    Text("Row \(row)")
+                                    Button("Delete \(row)") { rows.wrappedValue.removeAll { $0 == row } }
+                                }
+                                .frame(height: 48)
+                                .animation(.inherited)
+                                .onAppear { standing.wrappedValue += 1 }
+                                .onDisappear { standing.wrappedValue -= 1 }
+                            }
+                        }
+                        .animation(.eased(200, .linear))
+                    }
+                    .frame(width: 480, height: 300)
+                }
+            }
+            for _ in 0..<20 { host.step() }
+            let label = try XCTUnwrap(host.views(WinUILabelView.self).first { $0.text == "Row 2" })
+            let row = try XCTUnwrap(label.placingLayout)
+            let before = row.laidOutFrame.y
+            try XCTUnwrap(host.views(WinUIButtonView.self).first { $0.text == "Delete 1" }).invoke()
+            for _ in 0..<8 { host.step() }
+            XCTAssertTrue(host.views(WinUILabelView.self).first { $0.text == "Row 2" } === label)
+            XCTAssertEqual(row.laidOutFrame.y, before, accuracy: 1,
+                           "Measure may realize the changed window but must not discard the data animation")
+            clock.now = 100
+            host.frame()
+            XCTAssertEqual(row.laidOutFrame.y, before - 28, accuracy: 1,
+                           "the surviving row moves halfway through its 56-point gap")
+            XCTAssertEqual(row.drawnOpacity, 1)
+            XCTAssertEqual(label.drawnOpacity, 1)
+            clock.now = 200
+            host.frame()
+            XCTAssertEqual(row.laidOutFrame.y, before - 56, accuracy: 1)
+            let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+            for offset in [560.0, 1_120, 280] {
+                scroll.scroller.move(to: Point(0, offset))
+                for _ in 0..<8 { host.step() }
+                XCTAssertFalse(host.runtime.animator.isMoving, "scroll realization never starts an animation")
+                for label in host.views(WinUILabelView.self) { XCTAssertEqual(label.drawnOpacity, 1) }
+            }
+        }
+    }
+
     func testGalleryTilesReachTheLastItemWithoutReopeningThePage() throws {
         try onUIThread {
             let standing = State(wrappedValue: 0)

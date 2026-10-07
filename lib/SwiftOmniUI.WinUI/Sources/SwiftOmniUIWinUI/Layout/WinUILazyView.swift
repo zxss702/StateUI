@@ -38,6 +38,10 @@ class WinUILazyView: WinUITravellingLayout {
     var geometryChanged = false
     var measuredExtent = 0.0
 
+    /// A data patch must reach Arrange even when Measure realizes its new viewport first.
+    /// Viewport realization clears the shared scroll-animation flag before that arrangement.
+    var animatesDataChange = false
+
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
     private var effectiveViewport: Rect?
@@ -190,7 +194,8 @@ class WinUILazyView: WinUITravellingLayout {
     /// Every pass re-asks the window: a place in the air lands in the one it
     /// asks for, and a move of the scroller's brings one.
     override func arrange(in bounds: Rect) {
-        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        places.begin(width: bounds.width, animating: animatesDataChange || cells.animatesChanges)
+        animatesDataChange = false
         retell()
     }
 
