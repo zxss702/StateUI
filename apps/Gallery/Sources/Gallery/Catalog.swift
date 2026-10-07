@@ -141,6 +141,7 @@ final class Catalog {
                     Sample(TextFieldSample()),
                     Sample(TextEditorSample()),
                     Sample(FocusSample()),
+                    Sample(FocusedValueSample()),
                     Sample(SearchFieldSample()),
                     Sample(KeyboardSample()),
                 ]),
@@ -191,6 +192,7 @@ final class Catalog {
                 card: ImageSource("cat_shapes.png"),
                 samples: [
                     Sample(ShapesSample()),
+                    Sample(PathSample()),
                     Sample(UnevenRoundedSample()),
                     Sample(BrushSample()),
                     Sample(MaterialSample()),

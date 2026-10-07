@@ -57,6 +57,7 @@ struct MultiWindowSample: SampleContent, ExampleContent {
                     WindowGroup(.swatch, for: Int.self) { number in     // one per value,
                         SwatchWindow(number: number)                    // its value lent
                     }
+                    .defaultPosition(.center)        // and opens centred on the screen
                 } main: {
                     MainWindow(style: style)
                 }
@@ -204,7 +205,9 @@ struct MultiWindowSample: SampleContent, ExampleContent {
     var notes: (any View)? {
         Text("Fonts and Colours are this gallery's own windows: they change its font "
             + "and accent, and close with it. A swatch window exists once per value, "
-            + "its number lent to it as a binding. Another gallery is one more scene, "
+            + "its number lent to it as a binding, and `.defaultPosition(.center)` "
+            + "opens it centred on the screen - `.defaultPlacement` carries a "
+            + "`WindowPlacement` with a size too. Another gallery is one more scene, "
             + "with windows and state of its own.")
             .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)

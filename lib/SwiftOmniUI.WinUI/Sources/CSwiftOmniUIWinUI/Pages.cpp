@@ -21,13 +21,15 @@ namespace {
     using winrt::Windows::System::VirtualKey;
     using winrt::Windows::System::VirtualKeyModifiers;
 
-    /// The `key`+`modifiers` accelerator on every button in `element`'s template loses it. The window's own
-    /// accelerators already answer the shortcut, and a button's own one shows its tooltip on hover - which never
-    /// closes over an airspace island like a WebView, where pointer moves never reach XAML.
+    /// The `key`+`modifiers` accelerator on every button in `element`'s template loses it, and every element's
+    /// accelerator tooltip is hidden. The window's own accelerators already answer the shortcut, and a button's
+    /// own one shows its tooltip on hover - which never closes over an airspace island like a WebView, where
+    /// pointer moves never reach XAML.
     void unaccelerate(xaml::DependencyObject const &element, VirtualKey key, VirtualKeyModifiers modifiers) {
         for (int32_t index = 0, count = media::VisualTreeHelper::GetChildrenCount(element); index < count; ++index) {
             auto child = media::VisualTreeHelper::GetChild(element, index);
             if (auto ui = child.try_as<xaml::UIElement>()) {
+                ui.KeyboardAcceleratorPlacementMode(xaml::Input::KeyboardAcceleratorPlacementMode::Hidden);
                 auto accelerators = ui.KeyboardAccelerators();
                 for (uint32_t at = 0; at < accelerators.Size();) {
                     auto accelerator = accelerators.GetAt(at);

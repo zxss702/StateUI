@@ -11,7 +11,7 @@ struct CanvasSample: SampleContent {
     static let scrolls = false
 
     var examples: [Example] {
-        [Example(FollowsState()), Example(FollowsAFinger())]
+        [Example(FollowsState()), Example(FollowsAFinger()), Example(Measured())]
     }
 }
 
@@ -168,6 +168,100 @@ private struct FollowsAFinger: ExampleContent {
     var notes: (any View)? {
         Text("Every point the finger reports is a write: the trail changes, the "
             + "drawing is described again, and the new instructions travel.")
+            .font(.system(size: 12))
+            .foregroundStyle(Palette.subtle)
+    }
+}
+
+/// The SwiftUI-shaped canvas: `Canvas(renderer:)` hands a `GraphicsContext`
+/// and the settled size, `context.draw(Text)` writes words, and an aim's
+/// `measureText` asks the host's text engine the room words will take.
+private struct Measured: ExampleContent {
+    @Aim(Canvas.self) private var ruler
+    @State private var fitted: Size?
+
+    static let code = """
+        @Aim(Canvas.self) private var ruler
+        @State private var fitted: Size?
+
+        var body: some View {
+            VStack {
+                Canvas { context, size in
+                    let words = "Snug"
+                    let middle = Point(x: size.width / 2, y: 52)
+
+                    // A Text goes in whole - its words, colour and size are
+                    // the drawing's for that call.
+                    context.draw(Text(words), at: middle)
+
+                    if let fitted {
+                        context.stroke(
+                            Path(roundedRect: Rect(
+                                x: middle.x - fitted.width / 2 - 8,
+                                y: middle.y - fitted.height / 2 - 6,
+                                width: fitted.width + 16,
+                                height: fitted.height + 12),
+                                cornerRadius: 6),
+                            with: .color(Palette.accent), lineWidth: 1)
+                    }
+                }
+                .frame(height: 104)
+                .aim(ruler)
+                .task {
+                    // measureText is an act aimed at the canvas: async, and
+                    // answered by the host's own text engine.
+                    fitted = try? await ruler.measureText("Snug")
+                }
+
+                Text(fitted.map {
+                    "measured \\(Int($0.width)) x \\(Int($0.height))" }
+                    ?? "measuring...")
+            }
+        }
+        """
+
+    var body: some View {
+        VStack {
+            DebugInfoLabel()
+
+            Canvas { context, size in
+                let words = "Snug"
+                let middle = Point(x: size.width / 2, y: 52)
+
+                context.draw(Text(words), at: middle)
+
+                if let fitted {
+                    context.stroke(
+                        Path(roundedRect: Rect(
+                            x: middle.x - fitted.width / 2 - 8,
+                            y: middle.y - fitted.height / 2 - 6,
+                            width: fitted.width + 16,
+                            height: fitted.height + 12),
+                            cornerRadius: 6),
+                        with: .color(Palette.accent), lineWidth: 1)
+                }
+            }
+            .frame(height: 104)
+            .aim(ruler)
+            .task {
+                fitted = try? await ruler.measureText("Snug")
+            }
+
+            Text(fitted.map { "measured \(Int($0.width)) x \(Int($0.height))" }
+                ?? "measuring...")
+                .font(.system(size: 13))
+                .foregroundStyle(Palette.subtle)
+                .horizontalAlignment(.center)
+        }
+        .spacing(12)
+    }
+
+    var notes: (any View)? {
+        Text("`Canvas(renderer:)` is the SwiftUI shape of the same canvas: a "
+            + "`GraphicsContext` gathering `fill`, `stroke` and `draw` calls, "
+            + "and the settled `size` beside it. `measureText` is asked of the "
+            + "canvas's aim - the answer is what the host's text engine gives "
+            + "the words, which is why the box fits.")
             .font(.system(size: 12))
             .foregroundStyle(Palette.subtle)
     }

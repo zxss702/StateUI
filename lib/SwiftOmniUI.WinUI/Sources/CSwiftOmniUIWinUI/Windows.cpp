@@ -43,6 +43,10 @@ namespace {
                     args.Handled(true);
                 }))),
             true);
+        // Hidden keeps the accelerators' tooltip from showing on hover - an accelerator added to a container
+        // shows it over whatever child the pointer rests on (microsoft-ui-xaml#8), and over an airspace island
+        // like a WebView the pointer never reaches XAML to close it again.
+        grid.KeyboardAcceleratorPlacementMode(xaml::Input::KeyboardAcceleratorPlacementMode::Hidden);
         auto accelerate = [&](VirtualKey key, VirtualKeyModifiers modifiers) {
             xaml::Input::KeyboardAccelerator accelerator;
             accelerator.Key(key);
