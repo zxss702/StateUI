@@ -231,7 +231,8 @@ final class GTKLazyStackView: GTKLazyView {
     /// Every mounted child measures, is stood at its offset, and the window
     /// re-asks what the tree builds.
     override func arrange(in bounds: Rect) {
-        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        places.begin(width: axis == .vertical ? bounds.width : bounds.height, animating: cells.animatesChanges)
+        cells.animatesChanges = false
         let across = max(0, axis == .vertical
             ? bounds.width - padding.left - padding.right
             : bounds.height - padding.top - padding.bottom)
@@ -269,6 +270,12 @@ final class GTKLazyStackView: GTKLazyView {
             invalidateMeasurements()
         }
         if let origin = cells.correctedOrigin() { anchorTarget = origin }
+        if cells.anchorShift != 0 {
+            places.layoutMotion?.shift(mounts: mounted.values.map(\.mount),
+                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                                 axis == .vertical ? cells.anchorShift : 0))
+            cells.anchorShift = 0
+        }
         if cells.extents.revision != revision {
             measurements.invalidate()
             geometryChanged = true
@@ -309,7 +316,9 @@ final class GTKLazyStackView: GTKLazyView {
                 frame = Rect(x: run + margin.left, y: y,
                              width: extent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: direction.places(frame, in: bounds))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: direction.places(frame, in: bounds))
         }
     }
 
@@ -381,7 +390,8 @@ final class GTKLazyGridView: GTKLazyView {
     }
 
     override func arrange(in bounds: Rect) {
-        places.begin(width: bounds.width, animating: cells.animatesChanges)
+        places.begin(width: axis == .vertical ? bounds.width : bounds.height, animating: cells.animatesChanges)
+        cells.animatesChanges = false
         acrossRoom = axis == .vertical
             ? bounds.width - padding.left - padding.right
             : bounds.height - padding.top - padding.bottom
@@ -416,6 +426,12 @@ final class GTKLazyGridView: GTKLazyView {
         }
         for (run, extent) in runExtents { cells.runs.measure(run, extent: extent) }
         if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
+        if cells.anchorShift != 0 {
+            places.layoutMotion?.shift(mounts: mounted.values.map(\.mount),
+                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                                 axis == .vertical ? cells.anchorShift : 0))
+            cells.anchorShift = 0
+        }
         if cells.runs.revision != revision {
             measurements.invalidate()
             geometryChanged = true
@@ -465,7 +481,9 @@ final class GTKLazyGridView: GTKLazyView {
                 frame = Rect(x: origin + margin.left, y: y,
                              width: runExtent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: direction.places(frame, in: bounds))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: direction.places(frame, in: bounds))
         }
     }
 

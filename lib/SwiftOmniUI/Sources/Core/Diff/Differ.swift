@@ -241,6 +241,7 @@ final class Differ {
                 let changedChildren = addressed.filter { !$0.isEmpty }
                 if !changedChildren.isEmpty {
                     patch.children = .changed(changedChildren)
+                    if rendered.lazySource != nil { patch.lazyContentChanged = true }
                 }
             }
 

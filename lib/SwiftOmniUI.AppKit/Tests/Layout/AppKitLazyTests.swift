@@ -15,6 +15,131 @@ import XCTest
 /// rows cost, not the thousand.
 final class AppKitLazyTests: XCTestCase {
     @MainActor
+    func testDeletingBeforeTheViewportKeepsThePresentedAnchor() throws {
+        for kind in 0..<4 {
+            let horizontal = kind % 2 == 1
+            let perRun = kind < 2 ? 1 : 2
+            let clock = TestClock()
+            let rows = State(wrappedValue: Array(0..<100))
+            stateUIUseApp(OneWindowApplication(page: {
+                let content = ForEach(rows.wrappedValue) { number in
+                    Text("Row \(number)").frame(width: 40, height: 40)
+                }
+                return ScrollView(horizontal ? .horizontal : .vertical) {
+                    Group {
+                        if kind == 0 { LazyVStack(spacing: 0) { content } }
+                        else if kind == 1 { LazyHStack(spacing: 0) { content } }
+                        else if kind == 2 {
+                            LazyVGrid(columns: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                        } else {
+                            LazyHGrid(rows: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                        }
+                    }
+                    .animation(.eased(200, .linear))
+                }
+                .frame(width: 240, height: 240)
+            }))
+            let host = testRenderer(clock: { clock.now })
+            host.startForTesting()
+            settle(host, turns: 8)
+            let scroll = try XCTUnwrap(host.nativeViews(AppKitScrollView.self).first)
+            let lazy = try XCTUnwrap(host.nativeViews(AppKitLazyView.self).first)
+            scroll.contentView.scroll(to: NSPoint(x: horizontal ? 400 : 0, y: horizontal ? 0 : 400))
+            scroll.reflectScrolledClipView(scroll.contentView)
+            settle(host, turns: 8)
+            let identity = lazy.cells.identities[10 * perRun]
+            let retained = try XCTUnwrap(lazy.held[identity]?.view)
+            for removed in [11, 9, 0] {
+                let relative = (horizontal ? retained.frame.minX : retained.frame.minY)
+                    - (horizontal ? scroll.contentView.bounds.minX : scroll.contentView.bounds.minY)
+                let began = clock.now
+                rows.wrappedValue.removeAll { (removed * perRun..<((removed + 1) * perRun)).contains($0) }
+                for tick in stride(from: 0.0, through: 240.0, by: 40) {
+                    clock.now = began + tick
+                    settle(host, turns: 8)
+                    XCTAssertEqual((horizontal ? retained.frame.minX : retained.frame.minY)
+                                   - (horizontal ? scroll.contentView.bounds.minX : scroll.contentView.bounds.minY), relative, accuracy: 1,
+                                   "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                }
+            }
+            host.closeForTesting()
+        }
+    }
+
+    @MainActor
+    func testDataChangesAnimateInEveryLazyDirection() throws {
+        for kind in 0..<4 {
+            let clock = TestClock()
+            let rows = State(wrappedValue: Array(0..<40))
+            let extent = State(wrappedValue: 40.0)
+            let horizontal = kind % 2 == 1
+            let perRun = kind < 2 ? 1 : 2
+            stateUIUseApp(OneWindowApplication(page: {
+                let content = ForEach(rows.wrappedValue) { number in
+                    ResizingLazyRow(number: number, varies: number < perRun,
+                                    horizontal: horizontal, extent: extent.projectedValue)
+                }
+                return ScrollView(horizontal ? .horizontal : .vertical) {
+                    Group {
+                        if kind == 0 { LazyVStack(spacing: 0) { content } }
+                        else if kind == 1 { LazyHStack(spacing: 0) { content } }
+                        else if kind == 2 {
+                            LazyVGrid(columns: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                        } else {
+                            LazyHGrid(rows: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                        }
+                    }
+                    .animation(.eased(200, .linear))
+                }
+                .frame(width: 240, height: 240)
+            }))
+            let host = testRenderer(clock: { clock.now })
+            host.startForTesting()
+            settle(host, turns: 8)
+            let lazy = try XCTUnwrap(host.nativeViews(AppKitLazyView.self).first)
+            let identity = lazy.cells.identities[perRun * 2]
+            let retained = try XCTUnwrap(lazy.held[identity]?.view)
+            for operation in 0..<5 {
+                let before = horizontal ? retained.frame.origin.x : retained.frame.origin.y
+                let began = clock.now
+                let leaving = lazy.held[lazy.cells.identities[perRun]]?.view
+                if operation == 0 { rows.wrappedValue.removeSubrange(perRun..<perRun * 2) }
+                else if operation == 1 { rows.wrappedValue.insert(contentsOf: 100..<100 + perRun, at: perRun) }
+                else if operation == 2 { rows.wrappedValue.swapAt(perRun * 2, perRun * 3) }
+                else if operation == 3 { extent.wrappedValue = 80 }
+                else { extent.wrappedValue = 40 }
+                settle(host, turns: 8)
+                let joining = operation == 1 ? lazy.held[lazy.cells.identities[perRun]]?.view : nil
+                if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).alphaValue, 1, accuracy: 0.01) }
+                if let joining { XCTAssertEqual(joining.alphaValue, 0, accuracy: 0.01) }
+                let target = before + (operation == 0 || operation == 4 ? -40 : 40)
+                XCTAssertNotEqual(before, target, "kind \(kind), operation \(operation) must move the retained row")
+                XCTAssertEqual(horizontal ? retained.frame.origin.x : retained.frame.origin.y, before, accuracy: 1,
+                               "kind \(kind), operation \(operation) must start at the old position")
+                clock.now = began + 100
+                settle(host, turns: 8)
+                XCTAssertEqual(horizontal ? retained.frame.origin.x : retained.frame.origin.y, (before + target) / 2, accuracy: 1,
+                               "kind \(kind), operation \(operation) must pass through the midpoint")
+                if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).alphaValue, 0.5, accuracy: 0.01) }
+                if let joining { XCTAssertEqual(joining.alphaValue, 0.5, accuracy: 0.01) }
+                clock.now = began + 200
+                settle(host, turns: 8)
+                XCTAssertEqual(horizontal ? retained.frame.origin.x : retained.frame.origin.y, target, accuracy: 1)
+                XCTAssertTrue(lazy.held[identity]?.view === retained)
+                if let joining { XCTAssertEqual(joining.alphaValue, 1, accuracy: 0.01) }
+            }
+            let scroll = try XCTUnwrap(host.nativeViews(AppKitScrollView.self).first)
+            scroll.contentView.scroll(to: NSPoint(x: horizontal ? 480 : 0, y: horizontal ? 0 : 480))
+            scroll.reflectScrolledClipView(scroll.contentView)
+            settle(host, turns: 8)
+            XCTAssertFalse(host.runtime.animator.isMoving, "scrolling must not start data transitions")
+            for item in lazy.held.values { XCTAssertEqual(item.view.alphaValue, 1, accuracy: 0.01) }
+
+            host.closeForTesting()
+        }
+    }
+
+    @MainActor
     func testExactWindowsRetainViewsAndStayIdleInEveryDirection() throws {
         for kind in 0..<4 {
             let renderer = AppKitRenderer.running { ExactLazyPage(kind: kind) }
@@ -1005,4 +1130,20 @@ private func settle(_ renderer: AppKitRenderer, turns: Int = 30) {
         }
     }
 }
+/// Its own state read changes the child without rebuilding the lazy source.
+private struct ResizingLazyRow: View {
+    let number: Int
+    let varies: Bool
+    let horizontal: Bool
+    @Binding var extent: Double
+
+    var body: some View {
+        Text("Row \(number)")
+            .frame(width: horizontal && varies ? extent : 40,
+                   height: !horizontal && varies ? extent : 40)
+            .transition(.opacity)
+            .animation(.eased(200, .linear))
+    }
+}
+
 #endif

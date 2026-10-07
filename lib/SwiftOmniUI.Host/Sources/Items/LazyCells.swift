@@ -25,8 +25,11 @@
     private var contentRevision = -1
     private var positions: [String: Int] = [:]
 
-    /// Data changes may animate; a window moved by scrolling never does.
-    public private(set) var animatesChanges = false
+    /// Content changes waiting for arrangement. Measurement and viewport realization must
+    /// not consume this; the host clears it after beginning the changed arrangement.
+    public var animatesChanges = false
+    /// New source identities awaiting their first placement; recycled neighbours never enter here.
+    public var inserting: Set<String> = []
     /// The source positions mounted, including the fixed neighbour window.
     public private(set) var built: Range<Int> = 0..<0
 
@@ -40,6 +43,9 @@
     public var searches = 0
     /// Native child measurements performed.
     public var measurements = 0
+
+    /// Document-coordinate correction not yet applied to the mounted presentation frames.
+    public var anchorShift = 0.0
 
     private var anchor: (identity: String, place: Int, inset: Double, origin: Double, viewport: Double, trailing: Bool)?
 
@@ -64,8 +70,10 @@
         let now = element?.value(.items)?.strings ?? []
         let revision = element?.lazyContentRevision ?? 0
         guard now != identities || revision != contentRevision else { return false }
-        animatesChanges = now != identities && !identities.isEmpty
+        animatesChanges = animatesChanges || !identities.isEmpty
         contentRevision = revision
+        if !identities.isEmpty { inserting.formUnion(Set(now).subtracting(identities)) }
+        inserting.formIntersection(now)
         if now != identities { extents.keep(identities: Set(now)) }
         else { extents.reset() }
         identities = now
@@ -120,6 +128,7 @@
         let revision = grid ? runs.revision : extents.revision
         guard window?.span != span || window?.revision != revision || window?.perRun != perRun else { return }
         let moved = window?.revision == revision && window?.span != span
+        if moved { inserting.removeAll() }
         window = (span, revision, perRun)
         searches += 1
         let wanted = grid
@@ -141,7 +150,7 @@
         let upper = min(identities.count, (wanted.upperBound + 1) * perRun)
         let within = !wanted.isEmpty && lower < upper ? lower..<upper : 0..<0
         guard within != built else { return }
-        animatesChanges = false
+        if !inserting.isDisjoint(with: identities[within]) { animatesChanges = true }
         built = within
         requests += 1
         element.send(.realizedChanged, [.strings(Array(identities[within]))], in: runtime)
@@ -160,6 +169,7 @@
             ? runs.total(count: (identities.count + perRun - 1) / perRun)
             : extents.total(in: identities)
         let origin = max(0, held.trailing ? total - held.viewport : start + held.inset)
+        anchorShift += origin - held.origin
         anchor = (identities[place], place, held.inset, origin, held.viewport, held.trailing)
         return abs(origin - held.origin) > 0.0001 ? origin : nil
     }

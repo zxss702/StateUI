@@ -250,7 +250,8 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
     /// re-asks what the tree builds.
     override func layout() {
         super.layout()
-        places.begin(width: Double(bounds.width), animating: cells.animatesChanges)
+        places.begin(width: Double(axis == .vertical ? bounds.width : bounds.height), animating: cells.animatesChanges)
+        cells.animatesChanges = false
         let across = Double(max(0, acrossRoom))
         let revision = cells.extents.revision
         if measuredAcross != across {
@@ -288,6 +289,12 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
             invalidateMeasurements()
         }
         if let origin = cells.correctedOrigin() { anchorTarget = origin }
+        if cells.anchorShift != 0 {
+            places.layoutMotion?.shift(mounts: held.values.map(\.mount),
+                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                                 axis == .vertical ? cells.anchorShift : 0))
+            cells.anchorShift = 0
+        }
         if cells.extents.revision != revision {
             geometryChanged = true
             invalidateMeasurements()
@@ -328,7 +335,9 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
                 frame = NSRect(x: run + margin.left, y: y,
                                width: extent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
         }
     }
 
@@ -407,7 +416,8 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
 
     override func layout() {
         super.layout()
-        places.begin(width: Double(bounds.width), animating: cells.animatesChanges)
+        places.begin(width: Double(axis == .vertical ? bounds.width : bounds.height), animating: cells.animatesChanges)
+        cells.animatesChanges = false
         let room = max(0, Double(acrossRoom))
         let next = LazyGridTracks.extents(
             LazyGridTracks.resolve(tracks, width: room, spacing: Double(trackSpacing)),
@@ -442,6 +452,12 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
         }
         for (run, extent) in runExtents { cells.runs.measure(run, extent: extent) }
         if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
+        if cells.anchorShift != 0 {
+            places.layoutMotion?.shift(mounts: held.values.map(\.mount),
+                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                                 axis == .vertical ? cells.anchorShift : 0))
+            cells.anchorShift = 0
+        }
         if cells.runs.revision != revision {
             geometryChanged = true
             invalidateMeasurements()
@@ -489,7 +505,9 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
                 frame = NSRect(x: origin + margin.left, y: y,
                                width: extent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
         }
     }
 

@@ -166,6 +166,33 @@ extension PlacedView {
         }
     }
 
+    /// Moves the document coordinate system with a corrected scroll anchor. Existing animation
+    /// starts and destinations move together, preserving both screen position and elapsed time.
+    public func shift(mounts: [UInt64], by offset: Point) {
+        guard offset != .zero else { return }
+        for mount in mounts {
+            guard let seat = seats[mount], let view = seat.view else { continue }
+            var frame = seat.standing ?? view.placedFrame
+            frame.x += offset.x
+            frame.y += offset.y
+            let key = AnimationTarget.placed(mount)
+            if let running = animator.animation(for: key) {
+                var start = running.from
+                var destination = running.destination
+                start[0] += offset.x
+                start[1] += offset.y
+                destination[0] += offset.x
+                destination[1] += offset.y
+                animator.start(RunningAnimation(from: start, destination: destination,
+                                                velocity: running.velocity, animation: running.animation,
+                                                began: running.began), for: key)
+                seats[mount]?.standing = frame
+                view.travels(to: Self.rect(destination))
+            }
+            view.placedFrame = frame
+        }
+    }
+
     /// Forgets the place of an element that leaves the tree.
     public func remove(mount: UInt64) {
         seats[mount] = nil

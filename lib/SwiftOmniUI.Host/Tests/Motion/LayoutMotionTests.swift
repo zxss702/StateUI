@@ -28,6 +28,27 @@ final class LayoutMotionTests: XCTestCase {
         XCTAssertFalse(layout.animator.isMoving)
     }
 
+    func testAnchorCorrectionTranslatesAnExistingAnimationWithoutRestartingIt() {
+        let layout = HandWoundLayout()
+        let moved = Placed()
+        layout.arrange([(moved, 1, Self.row(0, x: 80, y: 400))])
+        layout.arrange([(moved, 1, Self.row(0, x: 120, y: 360))])
+        layout.frame(at: 80)
+        XCTAssertEqual(moved.placedFrame.y, 384, accuracy: 1e-9)
+
+        layout.animation.shift(mounts: [1], by: Point(-20, -40))
+        XCTAssertEqual(moved.placedFrame.x, 76, accuracy: 1e-9)
+        XCTAssertEqual(moved.placedFrame.y, 344, accuracy: 1e-9)
+        layout.arrange([(moved, 1, Self.row(0, x: 100, y: 320))], patched: false)
+        layout.frame(at: 100)
+        XCTAssertEqual(moved.placedFrame.x, 80, accuracy: 1e-9)
+        XCTAssertEqual(moved.placedFrame.y, 340, accuracy: 1e-9)
+        layout.frame(at: 200)
+        XCTAssertEqual(moved.placedFrame.x, 100, accuracy: 1e-9)
+        XCTAssertEqual(moved.placedFrame.y, 320, accuracy: 1e-9)
+        XCTAssertFalse(layout.animator.isMoving)
+    }
+
     /// A child whose place travels is told where it is bound as it sets out - a view laying out words lays them out
     /// at that size, never at the widths it passes through - and bound nowhere once it lands or merely arrives.
     func testATravellingChildIsToldWhereItIsBound() {

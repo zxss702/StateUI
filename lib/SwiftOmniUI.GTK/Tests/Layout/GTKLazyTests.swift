@@ -4,11 +4,132 @@
 @_spi(Host) import SwiftOmniUI
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIGTK
+import SwiftOmniUIConformance
 import XCTest
 
 /// A `LazyVStack` on GTK answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class GTKLazyTests: XCTestCase {
+    func testDeletingBeforeTheViewportKeepsThePresentedAnchor() throws {
+        try onUIThread {
+            for kind in 0..<4 {
+                let horizontal = kind % 2 == 1
+                let perRun = kind < 2 ? 1 : 2
+                let clock = TestClock()
+                let rows = State(wrappedValue: Array(0..<100))
+                let host = GTKRenderer.running(clock: clock) {
+                    let content = ForEach(rows.wrappedValue) { number in
+                        Text("Row \(number)").frame(width: 40, height: 40)
+                    }
+                    return ScrollView(horizontal ? .horizontal : .vertical) {
+                        Group {
+                            if kind == 0 { LazyVStack(spacing: 0) { content } }
+                            else if kind == 1 { LazyHStack(spacing: 0) { content } }
+                            else if kind == 2 {
+                                LazyVGrid(columns: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                            } else {
+                                LazyHGrid(rows: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                            }
+                        }
+                        .animation(.eased(200, .linear))
+                    }
+                    .frame(width: 240, height: 240)
+                }
+
+                for _ in 0..<8 { host.step() }
+                let scroll = try XCTUnwrap(host.views(GTKScrollView.self).first)
+                let lazy = try XCTUnwrap(host.views(GTKLazyView.self).first)
+                scroll.scroller.move(to: Point(horizontal ? 400 : 0, horizontal ? 0 : 400))
+                for _ in 0..<8 { host.step() }
+                let identity = lazy.cells.identities[10 * perRun]
+                let retained = try XCTUnwrap(lazy.mounted[identity]?.view)
+                for removed in [11, 9, 0] {
+                    let relative = (horizontal ? retained.placedFrame.x : retained.placedFrame.y)
+                        - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y)
+                    let began = clock.now
+                    rows.wrappedValue.removeAll { (removed * perRun..<((removed + 1) * perRun)).contains($0) }
+                    for tick in stride(from: 0.0, through: 240.0, by: 40) {
+                        clock.now = began + tick
+                        for _ in 0..<8 { host.step() }
+                        XCTAssertEqual((horizontal ? retained.placedFrame.x : retained.placedFrame.y)
+                                       - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y), relative, accuracy: 1,
+                                       "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                    }
+                }
+            }
+        }
+    }
+
+    func testDataChangesAnimateInEveryLazyDirection() throws {
+        try onUIThread {
+            for kind in 0..<4 {
+                let clock = TestClock()
+                let rows = State(wrappedValue: Array(0..<40))
+                let extent = State(wrappedValue: 40.0)
+                let horizontal = kind % 2 == 1
+                let perRun = kind < 2 ? 1 : 2
+                let host = GTKRenderer.running(clock: clock) {
+                    let content = ForEach(rows.wrappedValue) { number in
+                        ResizingLazyRow(number: number, varies: number < perRun,
+                                        horizontal: horizontal, extent: extent.projectedValue)
+                    }
+                    return ScrollView(horizontal ? .horizontal : .vertical) {
+                        Group {
+                            if kind == 0 { LazyVStack(spacing: 0) { content } }
+                            else if kind == 1 { LazyHStack(spacing: 0) { content } }
+                            else if kind == 2 {
+                                LazyVGrid(columns: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                            } else {
+                                LazyHGrid(rows: [GridItem(.fixed(40)), GridItem(.fixed(40))], spacing: 0) { content }
+                            }
+                        }
+                        .animation(.eased(200, .linear))
+                    }
+                    .frame(width: 240, height: 240)
+                }
+                for _ in 0..<8 { host.step() }
+                let lazy = try XCTUnwrap(host.views(GTKLazyView.self).first)
+                let identity = lazy.cells.identities[perRun * 2]
+                let retained = try XCTUnwrap(lazy.mounted[identity]?.view)
+                for operation in 0..<5 {
+                    let before = horizontal ? retained.placedFrame.x : retained.placedFrame.y
+                    let began = clock.now
+                    let leaving = lazy.mounted[lazy.cells.identities[perRun]]?.view
+                    if operation == 0 { rows.wrappedValue.removeSubrange(perRun..<perRun * 2) }
+                    else if operation == 1 { rows.wrappedValue.insert(contentsOf: 100..<100 + perRun, at: perRun) }
+                    else if operation == 2 { rows.wrappedValue.swapAt(perRun * 2, perRun * 3) }
+                    else if operation == 3 { extent.wrappedValue = 80 }
+                    else { extent.wrappedValue = 40 }
+                    for _ in 0..<8 { host.step() }
+                    let joining = operation == 1 ? lazy.mounted[lazy.cells.identities[perRun]]?.view : nil
+                    if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).drawnOpacity, 1, accuracy: 0.01) }
+                    if let joining { XCTAssertEqual(joining.drawnOpacity, 0, accuracy: 0.01) }
+                    let target = before + (operation == 0 || operation == 4 ? -40 : 40)
+                    XCTAssertNotEqual(before, target, "kind \(kind), operation \(operation) must move the retained row")
+                    XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, before, accuracy: 1,
+                                   "kind \(kind), operation \(operation) must start at the old position")
+                    clock.now = began + 100
+                    for _ in 0..<8 { host.step() }
+                    XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, (before + target) / 2, accuracy: 1,
+                                   "kind \(kind), operation \(operation) must pass through the midpoint")
+                    if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).drawnOpacity, 0.5, accuracy: 0.01) }
+                    if let joining { XCTAssertEqual(joining.drawnOpacity, 0.5, accuracy: 0.01) }
+                    clock.now = began + 200
+                    for _ in 0..<8 { host.step() }
+                    XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, target, accuracy: 1)
+                    XCTAssertTrue(lazy.mounted[identity]?.view === retained)
+                    if let joining { XCTAssertEqual(joining.drawnOpacity, 1, accuracy: 0.01) }
+                }
+                let scroll = try XCTUnwrap(host.views(GTKScrollView.self).first)
+                scroll.scroller.move(to: Point(horizontal ? 480 : 0, horizontal ? 0 : 480))
+                for _ in 0..<8 { host.step() }
+                XCTAssertFalse(host.runtime.animator.isMoving, "scrolling must not start data transitions")
+                for item in lazy.mounted.values { XCTAssertEqual(item.view.drawnOpacity, 1, accuracy: 0.01) }
+
+            }
+        }
+    }
+
     func testGalleryShelvesKeepTheOfferedWidthThroughComposedRows() throws {
         try onUIThread {
             let standing = State(wrappedValue: 0)
@@ -465,5 +586,21 @@ private struct GalleryShelf: View {
             }
             .frame(height: 88)
         }
+    }
+}
+
+/// Its own state read changes the child without rebuilding the lazy source.
+private struct ResizingLazyRow: View {
+    let number: Int
+    let varies: Bool
+    let horizontal: Bool
+    @Binding var extent: Double
+
+    var body: some View {
+        Text("Row \(number)")
+            .frame(width: horizontal && varies ? extent : 40,
+                   height: !horizontal && varies ? extent : 40)
+            .transition(.opacity)
+            .animation(.eased(200, .linear))
     }
 }

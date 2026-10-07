@@ -280,7 +280,7 @@ import CRT
             } else {
                 recycling = false
             }
-            if !recycling, child.depart(room: child.native.departingRoom, closed: { [weak self] in
+            if !recycling, child.isDeparting || child.depart(room: child.native.departingRoom, closed: { [weak self] in
                 self?.departed(child)
             }) { arranged.append(child) }
         }

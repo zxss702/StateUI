@@ -33,6 +33,23 @@ final class DepartureTests: XCTestCase {
         XCTAssertEqual(parent.children.map(\.id), [], "gone once it lands")
     }
 
+    func testAnotherWindowArrangementDoesNotDiscardADepartingChild() {
+        let (runtime, clock) = Self.stack(transition: .opacity)
+        let parent = runtime.tree.root!
+        let child = parent.children[0]
+        Self.apply(children: [], to: parent.id, in: runtime)
+        clock.time = 50
+        runtime.displayCycle.frame(now: 50)
+        Self.apply(children: [], to: parent.id, in: runtime)
+        XCTAssertTrue(parent.children.first === child)
+        clock.time = 100
+        runtime.displayCycle.frame(now: 100)
+        XCTAssertEqual(runtime.tree.presentedPropertyValue(mount: child.mount, property: .opacity), .number(0.5))
+        clock.time = 200
+        runtime.displayCycle.frame(now: 200)
+        XCTAssertTrue(parent.children.isEmpty)
+    }
+
     /// A child without a transition still leaves at once.
     func testADropWithoutATransitionLeavesAtOnce() {
         let (runtime, _) = Self.stack(transition: nil)

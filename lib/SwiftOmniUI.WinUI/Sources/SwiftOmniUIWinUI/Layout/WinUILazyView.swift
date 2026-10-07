@@ -38,10 +38,6 @@ class WinUILazyView: WinUITravellingLayout {
     var geometryChanged = false
     var measuredExtent = 0.0
 
-    /// A data patch must reach Arrange even when Measure realizes its new viewport first.
-    /// Viewport realization clears the shared scroll-animation flag before that arrangement.
-    var animatesDataChange = false
-
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
     private var effectiveViewport: Rect?
@@ -194,8 +190,14 @@ class WinUILazyView: WinUITravellingLayout {
     /// Every pass re-asks the window: a place in the air lands in the one it
     /// asks for, and a move of the scroller's brings one.
     override func arrange(in bounds: Rect) {
-        places.begin(width: bounds.width, animating: animatesDataChange || cells.animatesChanges)
-        animatesDataChange = false
+        places.begin(width: axis == .vertical ? bounds.width : bounds.height, animating: cells.animatesChanges)
+        cells.animatesChanges = false
+        if cells.anchorShift != 0 {
+            places.layoutMotion?.shift(mounts: mounted.values.map(\.mount),
+                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                                 axis == .vertical ? cells.anchorShift : 0))
+            cells.anchorShift = 0
+        }
         retell()
     }
 
@@ -326,7 +328,9 @@ final class WinUILazyStackView: WinUILazyView {
                 frame = Rect(x: run + margin.left, y: y,
                              width: extent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: direction.places(frame, in: bounds))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: direction.places(frame, in: bounds))
         }
     }
 
@@ -490,7 +494,9 @@ final class WinUILazyGridView: WinUILazyView {
                 frame = Rect(x: origin + margin.left, y: y,
                              width: runExtent - margin.left - margin.right, height: height)
             }
-            self.place(item, at: direction.places(frame, in: bounds))
+            var placed = item
+            if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            self.place(placed, at: direction.places(frame, in: bounds))
         }
     }
 

@@ -17,7 +17,6 @@ extension WinUIElement {
         if let items = view as? WinUIItemsView { return items.childrenChanged() }
         if let lazy = view as? WinUILazyView {
             if lazy.cells.takeItems() {
-                lazy.animatesDataChange = lazy.animatesDataChange || lazy.cells.animatesChanges
                 lazy.measured = [:]
                 lazy.invalidateMeasurements()
             }
