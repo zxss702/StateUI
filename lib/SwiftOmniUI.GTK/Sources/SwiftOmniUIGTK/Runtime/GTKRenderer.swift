@@ -152,6 +152,10 @@ final class GTKRenderer {
                     guard let self, let element else { return }
                     windowClosed(element)
                 }
+                controller.window.onActiveChanged = { [weak self, weak element] active in
+                    guard let self, let element else { return }
+                    runtime.windowStateChanged(element, minimized: false, activated: active)
+                }
                 return controller
             },
             close: { $0.close() })

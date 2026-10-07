@@ -37,6 +37,9 @@ final class GTKWindow {
     /// while there is one: the tree decides whether it goes. nil lets GTK take the window down itself.
     var onClosedByUser: (() -> Void)?
 
+    /// What the window does when the desktop activates it or takes that away.
+    var onActiveChanged: ((Bool) -> Void)?
+
     /// The number the window's signals carry, one across the process.
     private let number: Int64
     private static var nextNumber: Int64 = 1
@@ -66,6 +69,13 @@ final class GTKWindow {
                 guard let onClosedByUser = GTKWindow.open[viewNumber(data)]?.onClosedByUser else { return 0 }
                 onClosedByUser()
                 return 1
+            }
+        }
+        connectNotify(UnsafeMutableRawPointer(widget), "is-active", number: number) { widget, _, data in
+            MainActor.assumeIsolated {
+                guard let widget, let window = GTKWindow.open[viewNumber(data)] else { return }
+                window.onActiveChanged?(
+                    gtk_window_is_active(widget.assumingMemoryBound(to: GtkWindow.self)) != 0)
             }
         }
     }
