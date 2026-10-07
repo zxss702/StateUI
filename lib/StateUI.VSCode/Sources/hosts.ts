@@ -5,19 +5,13 @@
 // editor - one host's.
 
 /** A host an application is built for and run on. */
-export type Host = "appkit" | "uikit" | "android" | "winui" | "gtk";
+export type Host = "appkit" | "uikit" | "android" | "winui" | "gtk" | "web";
 
 /** What the extension knows about one host. */
 export interface HostDescription {
     readonly id: Host;
     readonly label: string;
     readonly detail: string;
-
-    /**
-     * The variable an application's manifest reads to declare this host's head
-     * and define its compilation condition.
-     */
-    readonly variable: string;
 
     /**
      * Where the language server keeps its index while the editor works as this
@@ -35,7 +29,7 @@ export interface HostDescription {
     readonly target?: {
         readonly triple: string;
 
-        /** What names the Swift SDK in its id: `android` in `swift-6.4.0-RELEASE_android`. */
+        /** What ends the Swift SDK's id: `android` in `swift-6.4.0-RELEASE_android`. */
         readonly swiftSDK?: string;
 
         /** Where that Swift SDK is installed from. */
@@ -51,22 +45,30 @@ export interface HostDescription {
 
 /** Every host, in the order the picker offers them. */
 export const hosts: readonly HostDescription[] = [
-    { id: "appkit", label: "AppKit", detail: "macOS, in the application's own process", variable: "STATEUI_APPKIT", indexPath: ".build-appkit/index-build", platforms: ["darwin"] },
+    { id: "appkit", label: "AppKit", detail: "macOS, in the application's own process", indexPath: ".build/appkit/index-build", platforms: ["darwin"] },
     {
-        id: "uikit", label: "UIKit", detail: "iOS and iPadOS on a simulator, in the application's own process", variable: "STATEUI_UIKIT",
-        indexPath: ".build-uikit/index-build", platforms: ["darwin"],
+        id: "uikit", label: "UIKit", detail: "iOS and iPadOS on a simulator, in the application's own process",
+        indexPath: ".build/uikit/index-build", platforms: ["darwin"],
         target: { triple: "arm64-apple-ios26.0-simulator", xcodeSDK: "iphonesimulator" },
     },
     {
-        id: "android", label: "Android", detail: "Android Views, in the application's own process", variable: "STATEUI_ANDROID",
-        indexPath: ".build-android/index-build", platforms: ["darwin"],
+        id: "android", label: "Android", detail: "Android Views, in the application's own process",
+        indexPath: ".build/android/index-build", platforms: ["darwin"],
         target: {
             triple: "aarch64-unknown-linux-android28", swiftSDK: "android",
             swiftSDKGuide: "https://www.swift.org/documentation/articles/swift-sdk-for-android-getting-started.html",
         },
     },
-    { id: "winui", label: "WinUI", detail: "WinUI 3 on Windows, in the application's own process", variable: "STATEUI_WINUI", indexPath: ".build-winui/index-build", platforms: ["win32"] },
-    { id: "gtk", label: "GTK", detail: "GTK 4 with libadwaita on Linux, in the application's own process", variable: "STATEUI_GTK", indexPath: ".build-gtk/index-build", platforms: ["linux"] },
+    { id: "winui", label: "WinUI", detail: "WinUI 3 on Windows, in the application's own process", indexPath: ".build/winui/index-build", platforms: ["win32"] },
+    { id: "gtk", label: "GTK", detail: "GTK 4 with libadwaita on Linux, in the application's own process", indexPath: ".build/gtk/index-build", platforms: ["linux"] },
+    {
+        id: "web", label: "Web", detail: "a page in the browser chosen, the application a WebAssembly module in it",
+        indexPath: ".build/web/index-build", platforms: ["darwin", "linux"],
+        target: {
+            triple: "wasm32-unknown-wasip1", swiftSDK: "wasm",
+            swiftSDKGuide: "https://www.swift.org/documentation/articles/wasm-getting-started.html",
+        },
+    },
 ];
 
 /**
@@ -75,7 +77,7 @@ export const hosts: readonly HostDescription[] = [
  */
 export const plainIndexPath = ".build/index-build";
 
-/** The hosts this machine builds and runs - AppKit, UIKit and Android on macOS, WinUI on Windows, GTK on Linux. */
+/** The hosts this machine builds and runs - AppKit, UIKit and Android on macOS, WinUI on Windows, GTK on Linux, Web on macOS and Linux. */
 export function availableHosts(platform: NodeJS.Platform = process.platform): HostDescription[] {
     return hosts.filter((each) => each.platforms.includes(platform));
 }
@@ -86,16 +88,13 @@ export function describe(host: Host): HostDescription {
 }
 
 /**
- * The environment that makes a process work as `host`: that host's variable
- * set, and every other host's variable absent - every one of them, with no
- * host. At most one at a time, so a manifest is never asked to be two hosts.
+ * The variable a build names its host by - `STATEUI_HOST=appkit` - which an
+ * application's manifest reads to declare that host's head and define its
+ * condition. One variable holds one host, so no build is two hosts' at once.
  */
+export const hostVariable = "STATEUI_HOST";
+
+/** The environment that makes a process work as `host`: the variable naming it, and absent with no host. */
 export function environment(host: Host | undefined): Record<string, string | undefined> {
-    const values: Record<string, string | undefined> = {};
-
-    for (const each of hosts) {
-        values[each.variable] = each.id === host ? "1" : undefined;
-    }
-
-    return values;
+    return { [hostVariable]: host };
 }
