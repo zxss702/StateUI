@@ -12,7 +12,7 @@ struct SymbolSample: SampleContent, ExampleContent {
     /// (caption, systemName) pairs - the caption is what a reader of the row
     /// sees; the name is what `Image(systemName:)` is handed. Each platform
     /// speaks its own vocabulary, so each names every symbol its own way.
-    #if os(macOS)
+    #if os(macOS) || os(iOS)
     private static let symbols: [(String, String)] = [
         ("star.fill", "star.fill"),
         ("heart.fill", "heart.fill"),
@@ -75,7 +75,7 @@ struct SymbolSample: SampleContent, ExampleContent {
         // A symbol is named in the platform's own vocabulary. Pick it at the
         // call site with #if - three spellings, one Image:
         Image(systemName: {
-            #if os(macOS)
+            #if os(macOS) || os(iOS)
             return "wifi"
             #elseif os(Windows)
             return "\\u{E701}"

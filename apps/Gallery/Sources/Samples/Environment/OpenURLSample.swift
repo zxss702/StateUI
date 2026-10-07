@@ -42,7 +42,7 @@ struct OpenURLSample: SampleContent, ExampleContent {
     var body: some View {
         VStack {
             Image(systemName: {
-                #if os(macOS)
+                #if os(macOS) || os(iOS)
                 return "link"
                 #elseif os(Windows)
                 return "\u{E71B}"

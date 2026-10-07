@@ -30,7 +30,7 @@ extension ToolbarItem {
     /// was looking at does not linger under the group it came from.
     static func home(_ nav: Navigation) -> ToolbarItem {
         ToolbarItem("Home", systemImage: {
-            #if os(macOS)
+            #if os(macOS) || os(iOS)
             return "house"
             #elseif os(Windows)
             return "\u{E80F}"

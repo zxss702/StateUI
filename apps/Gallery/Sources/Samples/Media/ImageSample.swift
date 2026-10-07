@@ -54,7 +54,7 @@ struct ImageSample: SampleContent, ExampleContent {
             // Linux. The call site picks with #if.
             HStack {
                 Image(systemName: {
-                    #if os(macOS)
+                    #if os(macOS) || os(iOS)
                     return "star.fill"
                     #elseif os(Windows)
                     return "\\u{E734}"
@@ -67,7 +67,7 @@ struct ImageSample: SampleContent, ExampleContent {
                     .frame(height: 24)
 
                 Label("Starred", systemImage: {
-                    #if os(macOS)
+                    #if os(macOS) || os(iOS)
                     return "star.fill"
                     #elseif os(Windows)
                     return "\\u{E734}"
@@ -204,7 +204,7 @@ struct ImageSample: SampleContent, ExampleContent {
             // Windows, the icon theme on Linux. Each platform names them its
             // own way, so the list itself is per-platform.
             HStack {
-                #if os(macOS)
+                #if os(macOS) || os(iOS)
                 let names = ["star", "heart.fill", "house", "gearshape", "magnifyingglass"]
                 #elseif os(Windows)
                 let names = ["\u{E735}", "\u{EB51}", "\u{E80F}", "\u{E713}", "\u{E721}"]
@@ -226,7 +226,7 @@ struct ImageSample: SampleContent, ExampleContent {
             // picks which of the two shows.
             HStack {
                 Label("Starred", systemImage: {
-                    #if os(macOS)
+                    #if os(macOS) || os(iOS)
                     return "star.fill"
                     #elseif os(Windows)
                     return "\u{E734}"
@@ -236,7 +236,7 @@ struct ImageSample: SampleContent, ExampleContent {
                 }())
 
                 Label("Bookmarked", systemImage: {
-                    #if os(macOS)
+                    #if os(macOS) || os(iOS)
                     return "bookmark"
                     #elseif os(Windows)
                     return "\u{E8A4}"
