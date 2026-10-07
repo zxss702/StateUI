@@ -15,6 +15,40 @@ import XCTest
 /// rows cost, not the thousand.
 final class AppKitLazyTests: XCTestCase {
     @MainActor
+    func testAddingToAnEmptyLazyStackRunsTheInsertionTransition() throws {
+        let clock = TestClock()
+        let rows = State(wrappedValue: [Int]())
+        stateUIUseApp(OneWindowApplication(page: {
+            LazyVStack(spacing: 0) {
+                ForEach(rows.wrappedValue) { number in
+                    Text("Row \(number)").frame(height: 40)
+                }
+            }
+            .animation(.eased(200, .linear))
+            .frame(width: 240, height: 240)
+        }))
+        let host = testRenderer(clock: { clock.now })
+        host.startForTesting()
+        settle(host, turns: 8)
+        let lazy = try XCTUnwrap(host.nativeViews(AppKitLazyView.self).first)
+        for number in 0..<2 {
+            rows.wrappedValue = [number]
+            settle(host, turns: 8)
+            let row = try XCTUnwrap(lazy.held.values.first?.view)
+            XCTAssertEqual(row.alphaValue, 0, accuracy: 0.01)
+            clock.now += 100
+            settle(host, turns: 8)
+            XCTAssertEqual(row.alphaValue, 0.5, accuracy: 0.01)
+            clock.now += 100
+            settle(host, turns: 8)
+            XCTAssertEqual(row.alphaValue, 1, accuracy: 0.01)
+            rows.wrappedValue = []
+            settle(host, turns: 8)
+        }
+        host.closeForTesting()
+    }
+
+    @MainActor
     func testDeletingBeforeTheViewportKeepsThePresentedAnchor() throws {
         for kind in 0..<4 {
             let horizontal = kind % 2 == 1
@@ -56,10 +90,12 @@ final class AppKitLazyTests: XCTestCase {
                 rows.wrappedValue.removeAll { (removed * perRun..<((removed + 1) * perRun)).contains($0) }
                 for tick in stride(from: 0.0, through: 240.0, by: 40) {
                     clock.now = began + tick
-                    settle(host, turns: 8)
-                    XCTAssertEqual((horizontal ? retained.frame.minX : retained.frame.minY)
+                    for _ in 0..<8 {
+                        settle(host, turns: 1)
+                        XCTAssertEqual((horizontal ? retained.frame.minX : retained.frame.minY)
                                    - (horizontal ? scroll.contentView.bounds.minX : scroll.contentView.bounds.minY), relative, accuracy: 1,
                                    "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                    }
                 }
             }
             host.closeForTesting()
@@ -113,7 +149,6 @@ final class AppKitLazyTests: XCTestCase {
                 if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).alphaValue, 1, accuracy: 0.01) }
                 if let joining { XCTAssertEqual(joining.alphaValue, 0, accuracy: 0.01) }
                 let target = before + (operation == 0 || operation == 4 ? -40 : 40)
-                XCTAssertNotEqual(before, target, "kind \(kind), operation \(operation) must move the retained row")
                 XCTAssertEqual(horizontal ? retained.frame.origin.x : retained.frame.origin.y, before, accuracy: 1,
                                "kind \(kind), operation \(operation) must start at the old position")
                 clock.now = began + 100

@@ -79,7 +79,10 @@
         if now != identities { extents.keep(identities: Set(now)) }
         else { extents.reset() }
         identities = now
-        if now.isEmpty { anchor = nil; anchorShift = 0 }
+        if now.isEmpty {
+            anchor = nil
+            anchorShift = 0
+        }
         positions = Dictionary(identities.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
         built = 0..<0
         window = nil

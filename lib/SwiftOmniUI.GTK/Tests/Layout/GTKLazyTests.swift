@@ -10,6 +10,40 @@ import XCTest
 /// A `LazyVStack` on GTK answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class GTKLazyTests: XCTestCase {
+    func testAddingToAnEmptyLazyStackRunsTheInsertionTransition() throws {
+        try onUIThread {
+            let clock = TestClock()
+            let rows = State(wrappedValue: [Int]())
+            let host = GTKRenderer.running(clock: clock) {
+                LazyVStack(spacing: 0) {
+                    ForEach(rows.wrappedValue) { number in
+                        Text("Row \(number)").frame(height: 40)
+                    }
+                }
+                .animation(.eased(200, .linear))
+                .frame(width: 240, height: 240)
+            }
+
+            for _ in 0..<8 { host.step() }
+            let lazy = try XCTUnwrap(host.views(GTKLazyView.self).first)
+            for number in 0..<2 {
+                rows.wrappedValue = [number]
+                for _ in 0..<8 { host.step() }
+                let row = try XCTUnwrap(lazy.mounted.values.first?.view)
+                XCTAssertEqual(row.drawnOpacity, 0, accuracy: 0.01)
+                clock.now += 100
+                for _ in 0..<8 { host.step() }
+                XCTAssertEqual(row.drawnOpacity, 0.5, accuracy: 0.01)
+                clock.now += 100
+                for _ in 0..<8 { host.step() }
+                XCTAssertEqual(row.drawnOpacity, 1, accuracy: 0.01)
+                rows.wrappedValue = []
+                for _ in 0..<8 { host.step() }
+            }
+
+        }
+    }
+
     func testDeletingBeforeTheViewportKeepsThePresentedAnchor() throws {
         try onUIThread {
             for kind in 0..<4 {
@@ -50,10 +84,12 @@ final class GTKLazyTests: XCTestCase {
                     rows.wrappedValue.removeAll { (removed * perRun..<((removed + 1) * perRun)).contains($0) }
                     for tick in stride(from: 0.0, through: 240.0, by: 40) {
                         clock.now = began + tick
-                        for _ in 0..<8 { host.step() }
-                        XCTAssertEqual((horizontal ? retained.placedFrame.x : retained.placedFrame.y)
+                        for _ in 0..<8 {
+                            host.step()
+                            XCTAssertEqual((horizontal ? retained.placedFrame.x : retained.placedFrame.y)
                                        - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y), relative, accuracy: 1,
                                        "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                        }
                     }
                 }
             }
@@ -105,7 +141,6 @@ final class GTKLazyTests: XCTestCase {
                     if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).drawnOpacity, 1, accuracy: 0.01) }
                     if let joining { XCTAssertEqual(joining.drawnOpacity, 0, accuracy: 0.01) }
                     let target = before + (operation == 0 || operation == 4 ? -40 : 40)
-                    XCTAssertNotEqual(before, target, "kind \(kind), operation \(operation) must move the retained row")
                     XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, before, accuracy: 1,
                                    "kind \(kind), operation \(operation) must start at the old position")
                     clock.now = began + 100

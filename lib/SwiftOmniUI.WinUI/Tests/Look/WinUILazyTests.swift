@@ -12,6 +12,55 @@ import WinSDK
 /// A `LazyVStack` on WinUI answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class WinUILazyTests: XCTestCase {
+    func testAddingToAnEmptyLazyStackRunsTheInsertionTransition() throws {
+        try onUIThread {
+            let clock = TestClock()
+            let rows = State(wrappedValue: [Int]())
+            let host = WinUIRenderer.running(clock: clock) {
+                LazyVStack(spacing: 0) {
+                    ForEach(rows.wrappedValue) { number in
+                        Text("Row \(number)").frame(height: 40)
+                    }
+                }
+                .animation(.eased(200, .linear))
+                .frame(width: 240, height: 240)
+            }
+
+            for _ in 0..<8 {
+                host.step()
+                host.frame()
+            }
+            let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+            for number in 0..<2 {
+                rows.wrappedValue = [number]
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
+                let row = try XCTUnwrap(lazy.mounted.values.first?.view)
+                XCTAssertEqual(row.drawnOpacity, 0, accuracy: 0.01)
+                clock.now += 100
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
+                XCTAssertEqual(row.drawnOpacity, 0.5, accuracy: 0.01)
+                clock.now += 100
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
+                XCTAssertEqual(row.drawnOpacity, 1, accuracy: 0.01)
+                rows.wrappedValue = []
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
+            }
+
+        }
+    }
+
     func testDeletingBeforeTheViewportKeepsThePresentedAnchor() throws {
         try onUIThread {
             for kind in 0..<4 {
@@ -38,11 +87,17 @@ final class WinUILazyTests: XCTestCase {
                     .frame(width: 240, height: 240)
                 }
 
-                for _ in 0..<8 { host.step() }
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
                 let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
                 let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
                 scroll.scroller.move(to: Point(horizontal ? 400 : 0, horizontal ? 0 : 400))
-                for _ in 0..<8 { host.step() }
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
                 let identity = lazy.cells.identities[10 * perRun]
                 let retained = try XCTUnwrap(lazy.mounted[identity]?.view)
                 for removed in [11, 9, 0] {
@@ -52,7 +107,10 @@ final class WinUILazyTests: XCTestCase {
                     rows.wrappedValue.removeAll { (removed * perRun..<((removed + 1) * perRun)).contains($0) }
                     for tick in stride(from: 0.0, through: 240.0, by: 40) {
                         clock.now = began + tick
-                        for _ in 0..<8 { host.step() }
+                        for _ in 0..<8 {
+                            host.step()
+                            host.frame()
+                        }
                         XCTAssertEqual((horizontal ? retained.placedFrame.x : retained.placedFrame.y)
                                        - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y), relative, accuracy: 1,
                                        "removing \(removed), at \(tick) ms must keep the visible anchor in place")
@@ -89,7 +147,10 @@ final class WinUILazyTests: XCTestCase {
                     }
                     .frame(width: 240, height: 240)
                 }
-                for _ in 0..<8 { host.step() }
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
                 let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
                 let identity = lazy.cells.identities[perRun * 2]
                 let retained = try XCTUnwrap(lazy.mounted[identity]?.view)
@@ -102,35 +163,47 @@ final class WinUILazyTests: XCTestCase {
                     else if operation == 2 { rows.wrappedValue.swapAt(perRun * 2, perRun * 3) }
                     else if operation == 3 { extent.wrappedValue = 80 }
                     else { extent.wrappedValue = 40 }
-                    for _ in 0..<8 { host.step() }
+                    for _ in 0..<8 {
+                        host.step()
+                        host.frame()
+                    }
                     let joining = operation == 1 ? lazy.mounted[lazy.cells.identities[perRun]]?.view : nil
                     if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).drawnOpacity, 1, accuracy: 0.01) }
                     if let joining { XCTAssertEqual(joining.drawnOpacity, 0, accuracy: 0.01) }
                     let target = before + (operation == 0 || operation == 4 ? -40 : 40)
-                    XCTAssertNotEqual(before, target, "kind \(kind), operation \(operation) must move the retained row")
                     XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, before, accuracy: 1,
                                    "kind \(kind), operation \(operation) must start at the old position")
                     clock.now = began + 100
-                    for _ in 0..<8 { host.step() }
+                    for _ in 0..<8 {
+                        host.step()
+                        host.frame()
+                    }
                     XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, (before + target) / 2, accuracy: 1,
                                    "kind \(kind), operation \(operation) must pass through the midpoint")
                     if operation == 0 { XCTAssertEqual(try XCTUnwrap(leaving).drawnOpacity, 0.5, accuracy: 0.01) }
                     if let joining { XCTAssertEqual(joining.drawnOpacity, 0.5, accuracy: 0.01) }
                     clock.now = began + 200
-                    for _ in 0..<8 { host.step() }
+                    for _ in 0..<8 {
+                        host.step()
+                        host.frame()
+                    }
                     XCTAssertEqual(horizontal ? retained.placedFrame.x : retained.placedFrame.y, target, accuracy: 1)
                     XCTAssertTrue(lazy.mounted[identity]?.view === retained)
                     if let joining { XCTAssertEqual(joining.drawnOpacity, 1, accuracy: 0.01) }
                 }
                 let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
                 scroll.scroller.move(to: Point(horizontal ? 480 : 0, horizontal ? 0 : 480))
-                for _ in 0..<8 { host.step() }
+                for _ in 0..<8 {
+                    host.step()
+                    host.frame()
+                }
                 XCTAssertFalse(host.runtime.animator.isMoving, "scrolling must not start data transitions")
                 for item in lazy.mounted.values { XCTAssertEqual(item.view.drawnOpacity, 1, accuracy: 0.01) }
 
             }
         }
     }
+
 
     func testDeletingDataAnimatesRetainedRowsAfterTheMeasureWindowChanges() throws {
         try onUIThread {

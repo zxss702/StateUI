@@ -48,7 +48,10 @@ extension GTKElement {
         chrome.showsBar = value(.hasNavigationBar)?.bool != false
         chrome.offersBack = value(.hasBackButton)?.bool != false
         (chrome.barBackground, chrome.barForeground) = element.barColors
-        chrome.appMenu = Self.appMenuEntries(of: element)
+        // The scene's commands stand once in a window, on the page the user sees - the arrangement's visible
+        // page - not on every bar an arrangement shows.
+        let arrangement = element.enclosing(type: .windowScene)?.children.first { NodeType.pageTypes.contains($0.type) }
+        chrome.appMenu = arrangement?.visiblePage === element ? Self.appMenuEntries(of: element) : []
 
         let actions = element.chromeActions
         chrome.leadingActions = actions.leading.map(Self.action)
