@@ -127,6 +127,10 @@ class AppKitLazyView: AppKitTravellingLayout, AppKitMeasurementCaching {
                     let corner = self.convert(self.bounds.origin, to: clip)
                     if self.axis == .vertical { target.y = corner.y + origin }
                     else { target.x = corner.x + origin }
+                    self.places.layoutMotion?.shift(mounts: self.held.values.map(\.mount),
+                        by: Point(self.axis == .horizontal ? self.cells.anchorShift : 0,
+                                  self.axis == .vertical ? self.cells.anchorShift : 0))
+                    self.cells.anchorShift = 0
                     self.anchorTarget = nil
                     clip.scroll(to: target)
                     scroll.reflectScrolledClipView(clip)
@@ -185,6 +189,10 @@ class AppKitLazyView: AppKitTravellingLayout, AppKitMeasurementCaching {
                     var target = clip.bounds.origin
                     if axis == .vertical { target.y = corner.y + origin }
                     else { target.x = corner.x + origin }
+                    places.layoutMotion?.shift(mounts: held.values.map(\.mount),
+                        by: Point(axis == .horizontal ? cells.anchorShift : 0,
+                                  axis == .vertical ? cells.anchorShift : 0))
+                    cells.anchorShift = 0
                     anchorTarget = nil
                     clip.scroll(to: target)
                     scroll.reflectScrolledClipView(clip)
@@ -289,12 +297,16 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
             invalidateMeasurements()
         }
         if let origin = cells.correctedOrigin() { anchorTarget = origin }
-        if cells.anchorShift != 0 {
+        // AppKit can lay the children out before the queued clip correction. Keep their
+        // presentation in the current clip's coordinates until that correction is committed.
+        let pendingShift = anchorTarget.map { $0 - (span?.lowerBound ?? $0) } ?? 0
+        let committedShift = cells.anchorShift - pendingShift
+        if committedShift != 0 {
             places.layoutMotion?.shift(mounts: held.values.map(\.mount),
-                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
-                                                 axis == .vertical ? cells.anchorShift : 0))
-            cells.anchorShift = 0
+                                       by: Point(axis == .horizontal ? committedShift : 0,
+                                                 axis == .vertical ? committedShift : 0))
         }
+        cells.anchorShift = pendingShift
         if cells.extents.revision != revision {
             geometryChanged = true
             invalidateMeasurements()
@@ -337,7 +349,10 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
             }
             var placed = item
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
-            self.place(placed, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
+            var presentation = direction.places(frame.placed, in: bounds.placed)
+            if axis == .vertical { presentation.y -= cells.anchorShift }
+            else { presentation.x -= cells.anchorShift }
+            self.place(placed, at: NSRect(placed: presentation))
         }
     }
 
@@ -452,12 +467,16 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
         }
         for (run, extent) in runExtents { cells.runs.measure(run, extent: extent) }
         if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
-        if cells.anchorShift != 0 {
+        // AppKit can lay the children out before the queued clip correction. Keep their
+        // presentation in the current clip's coordinates until that correction is committed.
+        let pendingShift = anchorTarget.map { $0 - (span?.lowerBound ?? $0) } ?? 0
+        let committedShift = cells.anchorShift - pendingShift
+        if committedShift != 0 {
             places.layoutMotion?.shift(mounts: held.values.map(\.mount),
-                                       by: Point(axis == .horizontal ? cells.anchorShift : 0,
-                                                 axis == .vertical ? cells.anchorShift : 0))
-            cells.anchorShift = 0
+                                       by: Point(axis == .horizontal ? committedShift : 0,
+                                                 axis == .vertical ? committedShift : 0))
         }
+        cells.anchorShift = pendingShift
         if cells.runs.revision != revision {
             geometryChanged = true
             invalidateMeasurements()
@@ -507,7 +526,10 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
             }
             var placed = item
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
-            self.place(placed, at: NSRect(placed: direction.places(frame.placed, in: bounds.placed)))
+            var presentation = direction.places(frame.placed, in: bounds.placed)
+            if axis == .vertical { presentation.y -= cells.anchorShift }
+            else { presentation.x -= cells.anchorShift }
+            self.place(placed, at: NSRect(placed: presentation))
         }
     }
 

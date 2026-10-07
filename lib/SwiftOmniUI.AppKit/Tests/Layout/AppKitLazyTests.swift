@@ -93,8 +93,9 @@ final class AppKitLazyTests: XCTestCase {
                     for _ in 0..<8 {
                         settle(host, turns: 1)
                         XCTAssertEqual((horizontal ? retained.frame.minX : retained.frame.minY)
-                                   - (horizontal ? scroll.contentView.bounds.minX : scroll.contentView.bounds.minY), relative, accuracy: 1,
-                                   "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                                       - (horizontal ? scroll.contentView.bounds.minX : scroll.contentView.bounds.minY),
+                                       relative, accuracy: 1,
+                                       "removing \(removed), at \(tick) ms must keep the visible anchor in place")
                     }
                 }
             }

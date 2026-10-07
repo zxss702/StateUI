@@ -87,8 +87,9 @@ final class GTKLazyTests: XCTestCase {
                         for _ in 0..<8 {
                             host.step()
                             XCTAssertEqual((horizontal ? retained.placedFrame.x : retained.placedFrame.y)
-                                       - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y), relative, accuracy: 1,
-                                       "removing \(removed), at \(tick) ms must keep the visible anchor in place")
+                                           - (horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y),
+                                           relative, accuracy: 1,
+                                           "removing \(removed), at \(tick) ms must keep the visible anchor in place")
                         }
                     }
                 }
