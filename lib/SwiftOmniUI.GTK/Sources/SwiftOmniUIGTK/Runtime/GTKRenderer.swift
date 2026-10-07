@@ -39,19 +39,30 @@ final class GTKRenderer {
         g_application_get_application_id(application.of(GApplication.self)).map { String(cString: $0) } ?? ""
     }
 
-    /// The window the first window element shows in; nil before it says it is there.
-    private(set) var window: GTKWindow?
+    /// The windows the tree holds, in the tree's order - a window gone from it closes, the last first, so a
+    /// window closes before the one it belongs to.
+    private let roster = WindowRoster<GTKWindowController>()
 
-    /// What the window shows, by the host layer's rule: its arrangement of pages, its overlay, and that it was made.
-    private let presentation = WindowPresentation()
+    /// The controller of the window in front - the window element activated last, else the first the tree holds.
+    private var frontController: GTKWindowController? {
+        let front = runtime.lifecycle.activatedLast(among: roster.windows.map(\.element))
+        return front.flatMap { roster.controller(of: $0) } ?? roster.controllers.first
+    }
 
-    /// A sheet for each page the window's modal stack presents, the last on top.
-    private(set) var sheets: [(element: MountedElement, sheet: GTKSheet)] = []
+    /// The window in front; nil before the tree says there is one. Where a question, a file's choosing and the
+    /// keyboard stand.
+    var window: GTKWindow? { frontController?.window }
 
-    /// The page the window shows the user, whose menus its main menu is.
-    var windowPage: MountedElement? { presentation.arrangement?.visiblePage }
+    /// A sheet for each page the front window's modal stack presents, the last on top.
+    var sheets: [(element: MountedElement, sheet: GTKSheet)] { frontController?.sheets ?? [] }
 
-    /// Whether the screen the window stands on has been told.
+    /// Every window the roster holds, in the tree's order - teardown takes them down together.
+    var windows: [GTKWindow] { roster.controllers.map(\.window) }
+
+    /// The page the window in front shows the user, whose menus its main menu is.
+    var windowPage: MountedElement? { frontController?.arrangement?.visiblePage }
+
+    /// Whether the screen the first window stands on has been told.
     private var reportedDisplay = false
 
     /// A runtime whose windows belong to `application`, on GLib's monotonic clock or on `clock`, with the animation
@@ -129,113 +140,54 @@ final class GTKRenderer {
         runtime.pump.turn()
     }
 
-    /// Shows the first window's arrangement of pages in a GTK window - a page by itself in a frame of its own - its
-    /// pages hearing that they show, and tells the window it was made, once, in its turn.
+    /// Shows every window element in a GTK window of its own, in the tree's order - a window the tree no longer
+    /// holds closes - and tells each, once, in its turn, that it was made.
     /// Design: docs/design/platforms/gtk/runtime.md#the-window
-    private func showWindow() {
-        guard let element = runtime.tree.root?.first(type: .windowScene) else { return }
-
-        let window = self.window ?? GTKWindow(application: application)
-        if self.window == nil {
-            self.window = window
-            frameClock.widget = window.widget
-        }
-        if !reportedDisplay, gtk_widget_get_realized(window.widget) != 0 {
+    private func showWindows() {
+        roster.update(
+            root: runtime.tree.root,
+            make: { element in
+                let controller = GTKWindowController(element, application: application)
+                controller.window.onClosedByUser = { [weak self, weak element] in
+                    guard let self, let element else { return }
+                    windowClosed(element)
+                }
+                return controller
+            },
+            close: { $0.close() })
+        if frameClock.widget == nil { frameClock.widget = roster.controllers.first?.window.widget }
+        if !reportedDisplay, let widget = roster.controllers.first?.window.widget,
+           gtk_widget_get_realized(widget) != 0 {
             reportedDisplay = true
-            GTKEnvironment.reportDisplay(to: runtime.core, window: window.widget)
+            GTKEnvironment.reportDisplay(to: runtime.core, window: widget)
         }
-        window.setSize(width: element.value(.width)?.number, height: element.value(.height)?.number)
-        window.setMinimumSize(width: element.value(.minimumWidth)?.number, height: element.value(.minimumHeight)?.number)
-        window.setResizable(element.value(.resizability)?.enumeration)
-
-        let changes = presentation.show(element, in: runtime.lifecycle)
-        if let (_, arrangement) = changes.arrangement {
-            if let arrangement, GTKElement.framedTypes.contains(arrangement.type) {
-                window.show(page: arrangement.gtk.view)
-            } else {
-                window.show(arrangement?.gtk.view)
-            }
-        }
-        if let overlay = changes.overlay { window.showOverlay(overlay?.gtk.view) }
-        if let pages = changes.sheets { showSheets(pages) }
-        refreshChrome()
-    }
-
-    /// Keeps a sheet for each page presented, in its order: a sheet gone closes, the last first, and one new is
-    /// shown over those before it.
-    /// Design: docs/design/platforms/gtk/pages.md#sheets
-    private func showSheets(_ pages: [MountedElement]) {
-        guard let window else { return }
-        let kept = sheets.filter { entry in
-            pages.contains { $0 === entry.element && $0.gtk.view === entry.sheet.page }
-        }
-        for entry in sheets.reversed() where !kept.contains(where: { $0.sheet === entry.sheet }) { entry.sheet.close() }
-        sheets = pages.compactMap { page in
-            if let entry = kept.first(where: { $0.element === page }) { return entry }
-            guard let view = page.gtk.view else { return nil }
-            let sheet = GTKSheet(page: view, framed: GTKElement.framedTypes.contains(page.type))
-            sheet.onClosedByUser = { [weak self] in self?.dismissTopSheet() }
-            sheet.present(over: window)
-            return (page, sheet)
+        for (element, controller) in roster.windows {
+            controller.present(element, in: runtime, windowOf: { [roster] in roster.controller(of: $0)?.window })
         }
     }
 
-    /// The user took the top sheet away - Escape, its close button: the modal stack is told how many remain.
-    private func dismissTopSheet() {
-        guard let element = runtime.tree.root?.first(type: .windowScene), !presentation.sheets.isEmpty
-        else { return }
-        runtime.goBack(.dismissSheet(remaining: presentation.sheets.count - 1), in: element)
+    /// The user asked a window closed - its close button, the desktop's: what that tells runs in order, each
+    /// rendered before the next.
+    private func windowClosed(_ element: MountedElement) {
+        runtime.userClosed(element)
     }
 
-    /// Writes every shown page's chrome on its header bar, and names the window after the page the user sees.
+    /// Writes every window's shown pages' chrome on their header bars, naming each after the page its user sees.
     /// Design: docs/design/platforms/gtk/pages.md#the-chrome
     func refreshChrome() {
-        guard let window, let element = runtime.tree.root?.first(type: .windowScene)?.gtk else { return }
-
-        let arrangement = presentation.arrangement?.gtk
-        if let arrangement, GTKElement.framedTypes.contains(arrangement.type) {
-            window.pageFrame?.show(arrangement.chrome)
-        }
-        arrangement?.composeChrome()
-        adaptSplitViews(in: window)
-        for (page, sheet) in sheets {
-            let chrome = page.gtk.chrome
-            sheet.frame?.show(chrome)
-            sheet.setTitle(page.visiblePage?.value(.title)?.string ?? chrome.title)
-            page.gtk.composeChrome()
-        }
-        let chrome = WindowChrome(window: element.element, arrangement: presentation.arrangement)
-        window.setTitle(chrome.title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
-        window.setBackground(chrome.windowBackground)
+        for controller in roster.controllers { controller.refreshChrome() }
     }
 
-    /// Collapses the window's split view where the window is narrow.
-    private func adaptSplitViews(in window: GTKWindow) {
-        guard let split = presentation.arrangement?.gtk, split.type == .navigationSplitView, let view = split.view as? GTKSplitView
-        else { return }
-
-        view.adapt(in: window.widget)
-    }
-
-    /// Goes the way back the window offers (`WindowPresentation.wayBack`), as the user does: a stack's top page
-    /// going in GTK first, the path then told; a sheet going through the host layer. Whether there was one.
+    /// Goes the way back the window in front offers, as the user does. Whether there was one.
     /// Design: docs/design/host/pages.md#the-way-back
     func goBack() -> Bool {
-        guard let element = runtime.tree.root?.first(type: .windowScene), let way = presentation.wayBack
-        else { return false }
-        switch way {
-        case .pop(let stack):
-            return (stack.gtk.view as? GTKNavigationView)?.popByUser() ?? false
-        case .dismissSheet:
-            runtime.goBack(way, in: element)
-            return true
-        }
+        frontController?.goBack(in: runtime) ?? false
     }
 }
 
 extension GTKRenderer: TurnPresenter {
     func presentRendered() {
-        showWindow()
+        showWindows()
     }
 
     func perform(_ call: HostActCall) {

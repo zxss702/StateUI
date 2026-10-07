@@ -14,6 +14,7 @@
 #include <cstring>
 
 #include <winrt/Windows.System.h>
+#include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Microsoft.UI.Input.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Microsoft.UI.Xaml.Input.h>
@@ -131,7 +132,10 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_window_make(int64_t number) {
             }));
         window.Closed(guarded("handling Closed", [number](IInspectable const &sender, xaml::WindowEventArgs const &) {
             releaseOwned(reinterpret_cast<HWND>(sender.as<xaml::Window>().AppWindow().Id().Value));
-            callbacks.windowClosed(number);
+            // windowClosed renders - and a render inside XAML's teardown of this very window touches what is
+            // dying, so the tree hears of the close once the event is through.
+            winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread().TryEnqueue(
+                guarded("handling Closed", [number] { callbacks.windowClosed(number); }));
         }));
         return detach(window);
     } catch (...) {

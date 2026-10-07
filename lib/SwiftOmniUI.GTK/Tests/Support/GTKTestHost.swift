@@ -138,7 +138,7 @@ extension GTKRenderer {
         GTKPictures.folder = GTKTestHost.pictures
         GTKKeptValues.folder = String(cString: g_get_tmp_dir()) + "/swiftomniui-gtk-tests"
         shared?.runtime.tree.root?.leave()
-        shared?.window?.close()
+        shared?.windows.forEach { $0.destroy() }
         GTKTestHost.window.show(nil)
 
         let renderer = GTKRenderer(

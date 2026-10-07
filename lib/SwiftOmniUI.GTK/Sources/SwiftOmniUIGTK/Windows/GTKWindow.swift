@@ -30,6 +30,18 @@ final class GTKWindow {
 
     private var presented = false
 
+    /// Whether the window's scene keeps it off screen; a hidden window does not present.
+    private var hidden = false
+
+    /// What the window does when the user asks it closed - its close button, the desktop's. The window stays
+    /// while there is one: the tree decides whether it goes. nil lets GTK take the window down itself.
+    var onClosedByUser: (() -> Void)?
+
+    /// The number the window's signals carry, one across the process.
+    private let number: Int64
+    private static var nextNumber: Int64 = 1
+    private static var open: [Int64: GTKWindow] = [:]
+
     /// The size and the smallest size last given.
     private var size: (width: Double?, height: Double?) = (nil, nil)
     private var minimumSize: (width: Double?, height: Double?) = (nil, nil)
@@ -46,9 +58,23 @@ final class GTKWindow {
         layers = gtk_overlay_new()!
         g_object_ref_sink(layers)
         adw_application_window_set_content(widget.of(AdwApplicationWindow.self), layers)
+        number = Self.nextNumber
+        Self.nextNumber += 1
+        Self.open[number] = self
+        connectAnswering(UnsafeMutableRawPointer(widget), "close-request", number: number) { _, data in
+            MainActor.assumeIsolated {
+                guard let onClosedByUser = GTKWindow.open[viewNumber(data)]?.onClosedByUser else { return 0 }
+                onClosedByUser()
+                return 1
+            }
+        }
     }
 
     isolated deinit {
+        Self.open.removeValue(forKey: number)
+        g_signal_handlers_disconnect_matched(
+            UnsafeMutableRawPointer(widget), SWIFTOMNIUI_SIGNAL_MATCH_DATA, 0, 0, nil, nil,
+            UnsafeMutableRawPointer(bitPattern: Int(number)))
         gtk_window_destroy(widget.of(GtkWindow.self))
         g_object_unref(layers)
         g_object_unref(widget)
@@ -118,9 +144,26 @@ final class GTKWindow {
         if let view { gtk_overlay_add_overlay(layers.opaque, view.widget) }
     }
 
+    /// The window this one belongs to - it stays over its owner and goes with it; nil for a window of its own.
+    func setOwner(_ owner: GTKWindow?) {
+        gtk_window_set_transient_for(widget.of(GtkWindow.self), owner?.widget.of(GtkWindow.self))
+    }
+
+    /// Whether the window stands on screen; a hidden window's first content does not present it, showing it again
+    /// presents it where it has something to show.
+    func setHidden(_ hidden: Bool) {
+        self.hidden = hidden
+        if presented {
+            gtk_widget_set_visible(widget, hidden ? 0 : 1)
+        } else if !hidden, gtk_overlay_get_child(layers.opaque) != nil {
+            presented = true
+            present()
+        }
+    }
+
     private func setContent(_ widget: GTKWidget?) {
         gtk_overlay_set_child(layers.opaque, widget)
-        guard widget != nil, !presented else { return }
+        guard widget != nil, !presented, !hidden else { return }
 
         presented = true
         present()
@@ -128,11 +171,18 @@ final class GTKWindow {
 
     /// Brings the window forward.
     func present() {
+        guard !hidden else { return }
         gtk_window_present(widget.of(GtkWindow.self))
     }
 
-    /// Closes the window.
+    /// Asks the window to close, as the user does: where `onClosedByUser` stands the window stays until the tree
+    /// says it goes, else GTK takes it down.
     func close() {
         gtk_window_close(widget.of(GtkWindow.self))
+    }
+
+    /// Takes the window down now - the tree has already let it go.
+    func destroy() {
+        gtk_window_destroy(widget.of(GtkWindow.self))
     }
 }
