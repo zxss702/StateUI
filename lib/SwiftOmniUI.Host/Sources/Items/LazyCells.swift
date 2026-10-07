@@ -70,14 +70,16 @@
         let now = element?.value(.items)?.strings ?? []
         let revision = element?.lazyContentRevision ?? 0
         guard now != identities || revision != contentRevision else { return false }
-        animatesChanges = animatesChanges || !identities.isEmpty
+        if contentRevision >= 0 {
+            animatesChanges = true
+            inserting.formUnion(Set(now).subtracting(identities))
+        }
         contentRevision = revision
-        if !identities.isEmpty { inserting.formUnion(Set(now).subtracting(identities)) }
         inserting.formIntersection(now)
         if now != identities { extents.keep(identities: Set(now)) }
         else { extents.reset() }
         identities = now
-        if now.isEmpty { anchor = nil }
+        if now.isEmpty { anchor = nil; anchorShift = 0 }
         positions = Dictionary(identities.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
         built = 0..<0
         window = nil
@@ -177,6 +179,7 @@
     /// Without a scroller there is no viewport to narrow by.
     public func tellAll() {
         guard let element, let runtime, built != 0..<identities.count else { return }
+        if !inserting.isEmpty { animatesChanges = true }
         built = 0..<identities.count
         requests += 1
         element.send(.realizedChanged, [.strings(identities)], in: runtime)
