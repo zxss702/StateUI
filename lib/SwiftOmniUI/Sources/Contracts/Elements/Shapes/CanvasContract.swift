@@ -19,6 +19,16 @@ public enum CanvasContract: ElementContract {
     /// What the canvas draws: its instructions, in order.
     public static let drawable = ElementProperty<Self, [DrawCommand]>("drawable", layer: .structure)
 
+    /// How much room a text takes, asked of the host's own text engine and
+    /// answered in the canvas's coordinates: the words, then the font
+    /// decomposed as `FontElementContract` declares it - its text style, its
+    /// size, its family, its weight, its letter shape, its attributes - and
+    /// the width it wraps at, nil measuring each paragraph one line. A
+    /// canvas's aim calls it - `canvas.measureText(...)`.
+    public static let measureText = ElementAct<
+        Self, (String, FontTextStyle?, Double?, Name?, Font.Weight?, FontDesign?, FontAttributes, Double?), Size
+    >("measureText")
+
     /// A finger went down, or a mouse button was pressed, at a point in the
     /// canvas.
     public static let pressed = ElementEvent<Self, Point>("pressed", layer: .native)
@@ -27,5 +37,5 @@ public enum CanvasContract: ElementContract {
     public static let released = ElementEvent<Self, Point>("released", layer: .native)
 
     /// The element's own members.
-    public static let members: [any ContractMember] = [dragged, drawable, pressed, released]
+    public static let members: [any ContractMember] = [dragged, drawable, measureText, pressed, released]
 }

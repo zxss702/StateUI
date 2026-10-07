@@ -246,6 +246,12 @@ public struct Node {
     /// element and its subtree, nearer writes winning. Never crosses.
     var environmentValues = EnvironmentValues()
 
+    /// What `.focusedValue` publishes while the focus is here. Never crosses.
+    var focusedValues = FocusedValues()
+
+    /// What `.focusedSceneValue` publishes scene-wide. Never crosses.
+    var sceneFocusedValues = FocusedValues()
+
     /// What this element holds for its life, where it asks for something - a page's
     /// session (ElementSession.swift). Never crosses.
     var session: ElementSession?

@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit |  | 29 ✅ · 3 – | custom `UIView` driven the same | no run of it on these sources |
 | Android Views |  |  | custom `ViewGroup` driven the same | no run of it on these sources |
 | WinUI 3 |  |  | custom `Panel` driven the same | no run of it on these sources |
-| GTK 4 |  | 20 ✅ | custom `GtkWidget` driven the same | no run of it on these sources |
+| GTK 4 |  | 20 ✅ · 3 – | custom `GtkWidget` driven the same | no run of it on these sources |
 | Web |  |  | custom element driven the same | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/LazyVStackContract.swift`.
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ |  |  | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; GTK 4: cannot read background of LazyVStack - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – |  |  | · |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of LazyVStack - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – | – |  |  | – |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ |  |  | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ |  |  | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,7 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ |  |  | · |  | GTK 4: cannot read what reaches LazyVStack - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ |  |  | · |  | GTK 4: cannot read isAccessibilityHidden of LazyVStack - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – |  |  | · |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of LazyVStack - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – | – |  |  | – |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ |  |  | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read layoutDirection of LazyVStack - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 |  |  | · |  | only through the host's own: read translationX of LazyVStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of LazyVStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of LazyVStack - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 |  |  | · |  | only through the host's own: read translationY of LazyVStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of LazyVStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of LazyVStack - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – |  |  | · |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of LazyVStack - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – | – |  |  | – |  | LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: LazyVStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ |  |  | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 

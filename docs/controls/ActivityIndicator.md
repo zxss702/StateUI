@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 26 ✅ · 3 – | `UIActivityIndicatorView` |  |
 | Android Views | ✅ | 51 ✅ · 1 ☑️ · 3 – | indeterminate `ProgressBar` |  |
 | WinUI 3 | ✅ | 50 ✅ · 3 – | `ProgressRing` |  |
-| GTK 4 | ✅ | 21 ✅ | `GtkSpinner` |  |
+| GTK 4 | ✅ | 21 ✅ · 3 – | `GtkSpinner` |  |
 | Web |  |  | indeterminate `<progress>` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/ActivityIndicatorContract.swift`.
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,7 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of ActivityIndicator - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | · |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | – |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of ActivityIndicator - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of ActivityIndicator: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of ActivityIndicator: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of ActivityIndicator - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of ActivityIndicator: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of ActivityIndicator: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of ActivityIndicator - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – | – | – | · |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ActivityIndicator - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – | – | – | – | – |  | ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ActivityIndicator takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

@@ -66,6 +66,8 @@ final class GTKActPerformer {
             reply(call, [])
         case .scrollToDescendant:
             scrollToDescendant(call, in: tree)
+        case .measureText:
+            measureText(call, in: tree)
         case .handlerFailed:
             GTKRenderer.log.error("a handler failed: \(call.arguments.first?.string ?? "")")
             reply(call, [])
@@ -260,6 +262,15 @@ final class GTKActPerformer {
         } catch {
             fail(call, error.reason)
         }
+    }
+
+    /// A canvas's `measureText`: its words in the font the act carries, measured by a Pango layout on the aimed
+    /// canvas - Pango being the engine GTK draws words with.
+    private func measureText(_ call: HostActCall, in tree: MountedTree) {
+        guard let view = aimed(call, in: tree) else { return }
+        guard let canvas = view as? GTKCanvasView else { return fail(call, "measureText is an act of a Canvas") }
+        guard let asked = HostTextMeasure(call) else { return fail(call, "measureText is asked malformed") }
+        reply(call, [canvas.measureText(asked.text, font: asked.font, maximumWidth: asked.maximumWidth).propValue])
     }
 
     /// The view the act is aimed at (`MountedTree.aimed`); nil, the act failed, where there is none.

@@ -52,6 +52,16 @@ struct SceneElement: Element {
         main.id = SceneElement.mainKey
         main.append(commands: sceneMenus(of: windows))
 
+        // The scene's own placement asks land on its main window - and are
+        // each group's default, where the group does not say its own.
+        if let size = windows.defaultSize {
+            main.write(WindowSceneContract.width, size.width)
+            main.write(WindowSceneContract.height, size.height)
+        }
+        if let position = windows.defaultPosition {
+            main.write(WindowSceneContract.defaultPosition, position)
+        }
+
         var children = [main]
 
         // Read here, so this scene is what builds again when a window opens in it.
@@ -73,11 +83,11 @@ struct SceneElement: Element {
             if let resizability = group.resizability {
                 window.write(WindowSceneContract.resizability, resizability)
             }
-            if let size = group.defaultSize {
+            if let size = group.defaultSize ?? windows.defaultSize {
                 window.write(WindowSceneContract.width, size.width)
                 window.write(WindowSceneContract.height, size.height)
             }
-            if let position = group.defaultPosition {
+            if let position = group.defaultPosition ?? windows.defaultPosition {
                 window.write(WindowSceneContract.defaultPosition, position)
             }
 
@@ -126,17 +136,22 @@ struct SceneElement: Element {
     /// What the tree knows a scene's main window by.
     static let mainKey = "main"
 
-    /// The scene the application wrote, under whatever it offered it.
+    /// The scene the application wrote, under whatever wrapped it.
     static func unwrapped(_ scene: any Scene) -> any Scene {
-        (scene as? OfferingScene).map { unwrapped($0.base) } ?? scene
+        if let offering = scene as? OfferingScene { return unwrapped(offering.base) }
+        if let placed = scene as? PlacedScene { return unwrapped(placed.base) }
+        return scene
     }
 
     /// What `.environment(_:)` offered the scene, outermost first - so the one
-    /// written last is nearest, the way it is on a view.
+    /// written last is nearest, the way it is on a view. A wrapper that edits
+    /// the scene's windows offers what the wrapped scene does.
     static func offered(by scene: any Scene) -> [(key: ObjectIdentifier, object: AnyObject)] {
-        guard let offering = scene as? OfferingScene else { return [] }
-
-        return offered(by: offering.base) + [(key: offering.key, object: offering.object)]
+        if let offering = scene as? OfferingScene {
+            return offered(by: offering.base) + [(key: offering.key, object: offering.object)]
+        }
+        if let placed = scene as? PlacedScene { return offered(by: placed.base) }
+        return []
     }
 }
 

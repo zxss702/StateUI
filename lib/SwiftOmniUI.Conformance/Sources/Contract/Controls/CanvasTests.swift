@@ -81,6 +81,36 @@
                 try s.settle { try s.color(of: canvas, at: Point(20, 20)) == .blue }
                 s.expect(try s.color(of: canvas, at: Point(20, 20)), .blue)
             },
+            ConformanceCase("aTextIsMeasuredByTheHostsOwnEngine", proves: [
+                Covered(CanvasContract.measureText),
+            ], needs: [Covered(ButtonContract.clicked)]) { s in
+                let canvas = Aim(Canvas.self)
+                let measured = Received<Size>()
+                s.start {
+                    VStack {
+                        Canvas { Draw.fillColor(.red); Draw.fillRectangle(x: 0, y: 0, width: 40, height: 40) }
+                            .aim(canvas).frame(width: 40).frame(height: 40).id("canvas")
+                        Button("Measure").onClicked {
+                            let wide = try await canvas.measureText(
+                                "alpha beta gamma delta", font: .system(size: 20))
+                            let wrapped = try await canvas.measureText(
+                                "alpha beta gamma delta", font: .system(size: 20),
+                                maximumWidth: wide.width / 2)
+                            measured.values.append(wide)
+                            measured.values.append(wrapped)
+                        }.id("measure")
+                    }
+                    .horizontalAlignment(.start)
+                    .verticalAlignment(.start)
+                }
+                try s.perform(.activate, on: s.element("measure"))
+                s.settle { measured.values.count == 2 }
+                guard let wide = measured.values.first, let wrapped = measured.values.last else { return }
+
+                s.expect(wide.width > 0 && wide.height > 0, true, "the words take room")
+                s.expect(wrapped.height > wide.height, true, "half the room takes a second line")
+                s.expect(wrapped.width <= wide.width / 2 + 2, true, "wrapped within the width asked")
+            },
             ConformanceCase("aPressIsHeardWhereItWent", proves: [
                 Covered(CanvasContract.pressed), Covered(CanvasContract.dragged), Covered(CanvasContract.released),
             ]) { s in

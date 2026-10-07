@@ -41,6 +41,75 @@ final class UIKitCanvasView: UIView {
         .zero
     }
 
+    /// The room `text` takes drawn in the font `look` names, measured by UIKit's own typesetter: wrapped at
+    /// `maximumWidth` where one is given, each paragraph one line else - the `measureText` act's answer.
+    func measureText(_ text: String, font look: TextLook, maximumWidth: Double?) -> Size {
+        let bound = CGSize(
+            width: maximumWidth ?? .greatestFiniteMagnitude,
+            height: .greatestFiniteMagnitude)
+        let measured = (text as NSString).boundingRect(
+            with: bound, options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: Self.font(for: look)], context: nil)
+        return Size(width: measured.width, height: measured.height)
+    }
+
+    /// The font `look` names, resolved the way UIKit's own text draws it: a text style's preferred font where the
+    /// look takes one - `size` over it where it also says one - else the family it names or the system font at its
+    /// size, its weight where one is set, its letter shape and its bold and italic over all.
+    private static func font(for look: TextLook) -> UIFont {
+        var font: UIFont
+        if let style = look.textStyle {
+            font = UIFont.preferredFont(forTextStyle: uiTextStyle(style))
+            if let size = look.size { font = font.withSize(size) }
+        } else {
+            let size = look.size ?? Double(UIFont.systemFontSize)
+            if let weight = look.weight, look.family == nil {
+                font = UIFont.systemFont(ofSize: size, weight: UIFont.Weight(rawValue: weight / 100))
+            } else {
+                font = look.family.flatMap { UIFont(name: $0, size: size) }
+                    ?? UIFont.systemFont(ofSize: size)
+            }
+        }
+        if let design = look.design,
+           let shaped = font.fontDescriptor.withDesign(uiFontDesign(design)) {
+            font = UIFont(descriptor: shaped, size: font.pointSize)
+        }
+        var traits = font.fontDescriptor.symbolicTraits
+        if look.attributes.contains(.bold) { traits.insert(.traitBold) }
+        if look.attributes.contains(.italic) { traits.insert(.traitItalic) }
+        if let descriptor = font.fontDescriptor.withSymbolicTraits(traits) {
+            font = UIFont(descriptor: descriptor, size: font.pointSize)
+        }
+        return font
+    }
+
+    /// A SwiftOmniUI text style as UIKit's own.
+    private static func uiTextStyle(_ style: FontTextStyle) -> UIFont.TextStyle {
+        switch style {
+        case .largeTitle: .largeTitle
+        case .title: .title1
+        case .title2: .title2
+        case .title3: .title3
+        case .headline: .headline
+        case .subheadline: .subheadline
+        case .body: .body
+        case .callout: .callout
+        case .footnote: .footnote
+        case .caption: .caption1
+        case .caption2: .caption2
+        }
+    }
+
+    /// A SwiftOmniUI font design as UIKit's own.
+    private static func uiFontDesign(_ design: FontDesign) -> UIFontDescriptor.SystemDesign {
+        switch design {
+        case .default: .default
+        case .serif: .serif
+        case .rounded: .rounded
+        case .monospaced: .monospaced
+        }
+    }
+
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         context.clip(to: bounds)

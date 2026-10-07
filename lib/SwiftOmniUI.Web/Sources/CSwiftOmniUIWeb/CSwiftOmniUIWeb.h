@@ -195,6 +195,14 @@ SWIFTOMNIUI_WEB(reduces_motion) int32_t swiftomniui_web_reduces_motion(void);
 SWIFTOMNIUI_WEB(draw_canvas) void swiftomniui_web_draw_canvas(
     int32_t element, const double *numbers, int32_t count, const char *words, int32_t length);
 
+/// The room `words` would take on `element`'s canvas, measured by the canvas's own `measureText` in the font the
+/// numbers name - `size` in points (0 for the canvas's own), `weight` on the 100-900 scale (0 for none),
+/// `attributes` bold 1 and italic 2 - under `family` where one is named, wrapped at `width` where it is not 0;
+/// written into `into`: width, then height.
+SWIFTOMNIUI_WEB(measure_text) void swiftomniui_web_measure_text(
+    int32_t element, const char *words, int32_t length, const char *family, int32_t familyLength,
+    double size, double weight, int32_t attributes, double width, double *into);
+
 /// One file to open, or several, of the extensions `accept` lists (".txt,.md"), any where it lists none; `listener`
 /// hears the answer once: event 1 kept, 0 broken, and `file_words` reads each file chosen - its number, then its
 /// name - or why it broke.

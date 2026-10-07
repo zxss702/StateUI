@@ -48,6 +48,12 @@ final class WebCanvasView: WebDOMView {
         redraw()
     }
 
+    /// The room `words` take drawn in the font `look` names, asked of the `<canvas>`'s own `measureText` -
+    /// wrapped at `width` where one is given: the `measureText` act's answer.
+    func measureText(_ words: String, font look: TextLook, maximumWidth width: Double?) -> Size {
+        WebRelay.measureText(on: surface.node, words, font: look, maximumWidth: width)
+    }
+
     private func redraw() {
         let stroke = WebCanvasStroke(instructions)
         WebRelay.drawCanvas(surface.node, stroke.numbers, words: stroke.words)

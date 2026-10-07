@@ -186,7 +186,8 @@ enum WinUIRealization {
         return HostDeclaration(
             realization: registry.realization, shared: registry.sharedNames,
             acts: (HostActs.performed + HostActs.files + [
-                AppContract.persistSceneValue, ListContract.scrollTo, ScrollViewContract.scrollToDescendant]
+                AppContract.persistSceneValue, CanvasContract.measureText, ListContract.scrollTo,
+                ScrollViewContract.scrollToDescendant]
             ).map(\.name))
     }
 

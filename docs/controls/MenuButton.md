@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit |  |  | `UIMenu` on a `UIButton` | no run of it on these sources |
 | Android Views |  |  | `PopupMenu` on a button | no run of it on these sources |
 | WinUI 3 |  |  | `DropDownButton` + `MenuFlyout` | no run of it on these sources |
-| GTK 4 |  | 19 ✅ | `GtkMenuButton` + `GMenu` | no run of it on these sources |
+| GTK 4 |  | 22 ✅ | `GtkMenuButton` + `GMenu` | no run of it on these sources |
 | Web |  |  | `<details>` / ARIA `button` + `menu` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Menus/MenuButtonContract.swift`.
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  |  |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – |  |  |  | · |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of MenuButton - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – |  |  |  | ✅ |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized |
 | `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,7 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read isAccessibilityHidden of MenuButton - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | · |  |  |  | ✅ |  | cannot read isEnabled of MenuButton - AppKit's driver has no path for it yet; UIKit: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – |  |  |  | · |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of MenuButton - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – |  |  |  | ✅ |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized |
 | `isVisible` | property | `Bool` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read layoutDirection of MenuButton - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationX of MenuButton: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationX of MenuButton - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationY of MenuButton: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationY of MenuButton - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – |  |  |  | · |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of MenuButton - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – |  |  |  | ✅ |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized |
 | `width` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 

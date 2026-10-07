@@ -135,4 +135,79 @@ final class SwiftUISurfaceTests: XCTestCase {
 
         XCTAssertEqual(group.defaultPosition, UnitPoint(x: 0.25, y: 0.75))
     }
+
+    // MARK: - WindowPlacement
+
+    /// A `WindowPlacement` pairs an anchor with a size - the presets naming
+    /// anchors, a `.zero` size asking nothing of it.
+    func testWindowPlacementPairsAnAnchorWithASize() {
+        let placement = WindowPlacement(position: .topLeading, size: Size(400, 300))
+
+        XCTAssertEqual(placement.position, .topLeading)
+        XCTAssertEqual(placement.size, Size(400, 300))
+        XCTAssertEqual(WindowPlacement.center, WindowPlacement(position: .center))
+        XCTAssertEqual(WindowPlacement.topLeading.position, .topLeading)
+        XCTAssertNil(WindowPlacement.topLeading.extent)
+    }
+
+    /// `.automatic` asks nothing - its place and size come out nil, and it
+    /// is not the centered placement it would otherwise read as.
+    func testAutomaticPlacementAsksNothing() {
+        XCTAssertNil(WindowPlacement.automatic.anchor)
+        XCTAssertNil(WindowPlacement.automatic.extent)
+        XCTAssertNotEqual(WindowPlacement.automatic, .center)
+    }
+
+    // MARK: - defaultPlacement
+
+    /// `.defaultPlacement` writes both halves of the ask on the group.
+    func testDefaultPlacementWritesAnchorAndSize() {
+        let group = WindowGroup(WindowType("main")) { MainWindow() }
+            .defaultPlacement(WindowPlacement(position: .topTrailing, size: Size(320, 480)))
+
+        XCTAssertEqual(group.defaultPosition, .topTrailing)
+        XCTAssertEqual(group.defaultSize?.width, 320)
+        XCTAssertEqual(group.defaultSize?.height, 480)
+    }
+
+    /// A placement with nothing to ask of the size places without sizing,
+    /// and `.automatic` takes earlier asks back.
+    func testDefaultPlacementLeavesUnsaidAlone() {
+        let placed = WindowGroup(WindowType("main")) { MainWindow() }
+            .defaultPlacement(.topLeading)
+
+        XCTAssertEqual(placed.defaultPosition, .topLeading)
+        XCTAssertNil(placed.defaultSize)
+
+        let automatic = WindowGroup(WindowType("main")) { MainWindow() }
+            .defaultSize(width: 200, height: 100)
+            .defaultPlacement(.automatic)
+
+        XCTAssertNil(automatic.defaultPosition)
+        XCTAssertNil(automatic.defaultSize)
+    }
+
+    // MARK: - A scene's placement
+
+    /// `.defaultPosition` and `.defaultSize` on `Windows` are the scene's
+    /// ask for its main window, and each group's default.
+    func testWindowsCarryTheScenesPlacement() {
+        let windows = Windows(main: { MainWindow() })
+            .defaultPosition(.topLeading)
+            .defaultSize(width: 640, height: 400)
+
+        XCTAssertEqual(windows.defaultPosition, .topLeading)
+        XCTAssertEqual(windows.defaultSize?.width, 640)
+        XCTAssertEqual(windows.defaultSize?.height, 400)
+    }
+
+    /// `.defaultPlacement` writes the same two asks on `Windows`.
+    func testWindowsDefaultPlacementWritesAnchorAndSize() {
+        let windows = Windows(main: { MainWindow() })
+            .defaultPlacement(WindowPlacement(position: .bottomTrailing, size: Size(480, 320)))
+
+        XCTAssertEqual(windows.defaultPosition, .bottomTrailing)
+        XCTAssertEqual(windows.defaultSize?.width, 480)
+        XCTAssertEqual(windows.defaultSize?.height, 320)
+    }
 }

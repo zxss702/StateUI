@@ -117,11 +117,28 @@ final class WinUIActToolkit: ActToolkit {
         return true
     }
 
-    /// An List's scroll to an item, or a ScrollView's to a child `.id()` names.
+    /// An List's scroll to an item, a ScrollView's to a child `.id()` names, or a Canvas's text measuring.
     func performOwn(_ call: HostActCall) -> Bool {
-        guard call.act == .scrollTo || call.act == .scrollToDescendant else { return false }
+        guard call.act == .scrollTo || call.act == .scrollToDescendant || call.act == .measureText
+        else { return false }
         let core = renderer.runtime.core
         do {
+            if call.act == .measureText {
+                let element = try renderer.runtime.tree.aimed(call)
+                guard let canvas = (element.native as? WinUIElement)?.view as? WinUICanvasView else {
+                    core.fail(call, "measureText is an act of a Canvas", log: { WinUIRenderer.log.error($0) })
+                    return true
+                }
+                guard let asked = HostTextMeasure(call) else {
+                    core.fail(call, "measureText is asked malformed", log: { WinUIRenderer.log.error($0) })
+                    return true
+                }
+                core.reply(
+                    call,
+                    [canvas.measureText(asked.text, font: asked.font, maximumWidth: asked.maximumWidth)
+                        .propValue])
+                return true
+            }
             let element = try renderer.runtime.tree.aimed(call)
             if call.act == .scrollToDescendant {
                 guard let scroller = (element.native as? WinUIElement)?.view as? WinUIScrollView else {

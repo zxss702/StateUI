@@ -52,8 +52,8 @@ enum GTKRegistrations {
         AppContract.chooseFiles,
         AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
         AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
-        AppContract.prompt, AppContract.utcOffset, ListContract.scrollTo,
-        ScrollViewContract.scrollToDescendant,
+        AppContract.prompt, AppContract.utcOffset, CanvasContract.measureText,
+        ListContract.scrollTo, ScrollViewContract.scrollToDescendant,
     ]
 
 }

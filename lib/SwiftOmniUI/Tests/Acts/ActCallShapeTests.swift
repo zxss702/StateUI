@@ -236,6 +236,30 @@ final class ActCallShapeTests: XCTestCase {
         }
     }
 
+    /// A canvas measures words for the caller: the view, then the words, then
+    /// the font decomposed as the font members declare it - a text style, or
+    /// a size and a family - the weight, the letter shape, the attributes -
+    /// and the width it wraps at. An absent part crosses as NOTHING, keeping
+    /// its place: the width no `maximumWidth` says is `.nothing`, never 0.
+    func testMeasuringTextCrossesWithItsArgumentsInPlace() async throws {
+        try await check("measureText", [
+            .string("surface"), .string("Chapter"),
+            .enumeration(FontTextStyle.title.rawValue), .nothing, .nothing,
+            .nothing, .nothing, .enumeration(FontAttributes.italic.rawValue), .number(240),
+        ]) {
+            _ = try await named("surface", Canvas.self).measureText(
+                "Chapter", font: .title.italic(), maximumWidth: 240)
+        }
+        try await check("measureText", [
+            .string("surface"), .string("body"),
+            .nothing, .number(13), .name("Courier"), .number(600),
+            .enumeration(FontDesign.monospaced.rawValue), .enumeration(FontAttributes.none.rawValue), .nothing,
+        ]) {
+            _ = try await named("surface", Canvas.self).measureText(
+                "body", font: .custom("Courier", size: 13).weight(.semibold).design(.monospaced))
+        }
+    }
+
     func testAskingTheTimeCrossesWithItsArgumentsInPlace() async throws {
         try await check("currentTime", []) {
             _ = try? await ClockTime.now()

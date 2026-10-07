@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit |  |  | custom `UIView` masked the same | no run of it on these sources |
 | Android Views |  |  | custom `ViewGroup` masked the same | no run of it on these sources |
 | WinUI 3 |  |  | `Opacity` over a masked `Panel` | no run of it on these sources |
-| GTK 4 |  | 20 ✅ | `GskMaskNode` over the content child | no run of it on these sources |
+| GTK 4 |  | 20 ✅ · 3 – | `GskMaskNode` over the content child | no run of it on these sources |
 | Web |  |  | CSS `mask-image` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/MaskedContract.swift`.
@@ -62,7 +62,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read background of Masked - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – |  |  |  | – |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: Masked takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -70,7 +70,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read what reaches Masked - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read isAccessibilityHidden of Masked - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – |  |  |  | – |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: Masked takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; GTK 4: cannot read layoutDirection of Masked - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -97,7 +97,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationX of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationX of Masked - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 |  |  |  | · |  | only through the host's own: read translationY of Masked: the host's own transform, checked against the layer it composed itself; UIKit: not realized; GTK 4: cannot read translationY of Masked - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – |  |  |  | · |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: cannot read the focus of Masked - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – |  |  |  | – |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: Masked takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; GTK 4: not realized |
 

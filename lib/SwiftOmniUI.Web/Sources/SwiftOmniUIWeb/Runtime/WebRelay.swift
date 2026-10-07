@@ -393,6 +393,21 @@ enum WebRelay {
         }
     }
 
+    /// The room `words` take on `element`'s `<canvas>` in the font `look` names, asked of the canvas's own
+    /// `measureText` - wrapped at `maximumWidth` where one is given.
+    static func measureText(on element: Int32, _ words: String, font look: TextLook, maximumWidth: Double?) -> Size {
+        let read = utf8(words) { words, length in
+            utf8(look.family ?? "") { family, familyLength in
+                numbers(2) {
+                    swiftomniui_web_measure_text(
+                        element, words, length, family, familyLength,
+                        look.size ?? 0, look.weight ?? 0, look.attributes.rawValue, maximumWidth ?? 0, $0)
+                }
+            }
+        }
+        return Size(width: read[0], height: read[1])
+    }
+
     /// The local time of day.
     static var localTime: (hour: Int, minute: Int, second: Int, millisecond: Int) {
         let read = numbers(4) { swiftomniui_web_local_time($0) }

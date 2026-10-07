@@ -85,6 +85,7 @@ final class WebActToolkit: ActToolkit {
         let owners: [Act: String] = [
             .scrollTo: "an List",
             .goBack: "a web view", .goForward: "a web view", .reload: "a web view", .evaluateJavaScript: "a web view",
+            .measureText: "a Canvas",
         ]
         guard let owner = owners[call.act] else { return false }
         let core = renderer.runtime.core
@@ -110,6 +111,15 @@ final class WebActToolkit: ActToolkit {
                     return true
                 }
                 core.reply(call, [ran.answer.propValue])
+                return true
+            case (.measureText, let canvas as WebCanvasView):
+                guard let asked = HostTextMeasure(call) else {
+                    core.fail(call, "measureText is asked malformed", log: log)
+                    return true
+                }
+                core.reply(
+                    call,
+                    [canvas.measureText(asked.text, font: asked.font, maximumWidth: asked.maximumWidth).propValue])
                 return true
             default:
                 core.fail(call, "\(call.act.name) is an act of \(owner)", log: log)

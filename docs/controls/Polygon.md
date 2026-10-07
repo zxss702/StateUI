@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 28 ✅ · 3 – | `UIView` drawing `UIBezierPath` |  |
 | Android Views | ✅ | 51 ✅ · 1 ☑️ · 3 – | `View` drawing `Path` |  |
 | WinUI 3 | ✅ | 60 ✅ · 3 – | `Microsoft.UI.Xaml.Shapes` |  |
-| GTK 4 | ✅ | 20 ✅ | `GskPath` in a snapshot |  |
+| GTK 4 | ✅ | 20 ✅ · 3 – | `GskPath` in a snapshot |  |
 | Web |  |  | inline SVG | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Shapes/PolygonContract.swift`.
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Polygon - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Polygon takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,7 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Polygon - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | · |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Polygon - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | – |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Polygon takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of Polygon - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of Polygon: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of Polygon: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of Polygon - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of Polygon: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of Polygon: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of Polygon - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – | – | – | · |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Polygon - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – | – | – | – | – |  | Polygon takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Polygon takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Polygon takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

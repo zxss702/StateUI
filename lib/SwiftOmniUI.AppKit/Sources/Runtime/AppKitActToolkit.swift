@@ -101,10 +101,11 @@ final class AppKitActToolkit: ActToolkit {
         return true
     }
 
-    /// An List's scroll to an item, a ScrollView's to a child `.id()` names, a map's slide to a region, and a web
-    /// view's steps and scripts.
+    /// An List's scroll to an item, a ScrollView's to a child `.id()` names, a map's slide to a region, a web
+    /// view's steps and scripts, and a canvas's text measure.
     func performOwn(_ call: HostActCall) -> Bool {
         if call.act == .chooseFiles { chooseFiles(call); return true }
+        if call.act == .measureText { return measureText(call) }
         if [.moveToRegion, .goBack, .goForward, .reload, .evaluateJavaScript].contains(call.act) {
             return performOnMapOrWeb(call)
         }
@@ -171,6 +172,28 @@ final class AppKitActToolkit: ActToolkit {
                 return true
             }
             core.reply(call, [])
+        } catch {
+            core.fail(call, error.reason, log: { AppKitRenderer.log.error($0) })
+        }
+        return true
+    }
+
+    /// A canvas's `measureText`: its words in the font the act carries, measured by AppKit's own typesetter.
+    private func measureText(_ call: HostActCall) -> Bool {
+        let core = CoreLink()
+        do {
+            let element = try renderer.runtime.tree.aimed(call)
+            guard let canvas = (element.native as? AppKitElement)?.view as? AppKitCanvasView else {
+                core.fail(call, "measureText is an act of a Canvas", log: { AppKitRenderer.log.error($0) })
+                return true
+            }
+            guard let asked = HostTextMeasure(call) else {
+                core.fail(call, "measureText is asked malformed", log: { AppKitRenderer.log.error($0) })
+                return true
+            }
+            core.reply(
+                call,
+                [canvas.measureText(asked.text, font: asked.font, maximumWidth: asked.maximumWidth).propValue])
         } catch {
             core.fail(call, error.reason, log: { AppKitRenderer.log.error($0) })
         }

@@ -423,6 +423,7 @@ extension NodeType {
     static let reload = WebViewContract.reload.token
     static let evaluateJavaScript = WebViewContract.evaluateJavaScript.token
     static let moveToRegion = MapContract.moveToRegion.token
+    static let measureText = CanvasContract.measureText.token
     static let hideOnScreenKeyboard = AppContract.hideOnScreenKeyboard.token
     static let chooseFiles = AppContract.chooseFiles.token
     static let alert = AppContract.alert.token

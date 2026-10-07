@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 29 ✅ · 3 – | `UICollectionView` |  |
 | Android Views | ✅ | 60 ✅ · 1 ☑️ | AndroidX `RecyclerView` |  |
 | WinUI 3 | ✅ | 59 ✅ | `List` |  |
-| GTK 4 | ✅ | 23 ✅ | `GtkListView` / `GtkGridView` |  |
+| GTK 4 | ✅ | 32 ✅ | `GtkListView` / `GtkGridView` |  |
 | Web |  |  | semantic list or grid | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Collections/ListContract.swift`.
@@ -39,16 +39,16 @@ Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Collections/ListContract
 | Member | Kind | Value | Layer | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web | Notes |
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `items` | property | `ItemsEntries` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `itemsLayout` | property | `ItemsLayout` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read where Text stands - GTK's driver has no path for it yet |
+| `itemsLayout` | property | `ItemsLayout` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `listStyle` | property | `ListStyleKind` | native |  |  |  |  |  |  |  |
-| `selectionMode` | property | `SelectionMode` | native | 🔌 | 🔌 | 🔌 | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; Android Views: only through the host's own: read selectionMode of List: the mode the relay keeps, which its cells tell TalkBack; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
-| `selectedItems` | property | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
-| `selectionChanged` | event | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; GTK 4: cannot read selectionMode of List - GTK's driver has no path for it yet |
-| `itemActivated` | event | `String` | adaptive | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: activate on an item of List: the collection's delegate told, no click; UIKit: only through the host's own: activate on an item of List: the collection's delegate told, no touch; GTK 4: cannot activate on Text - GTK's driver has no path for it yet |
+| `selectionMode` | property | `SelectionMode` | native | 🔌 | 🔌 | 🔌 | ✅ | ✅ |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch; Android Views: only through the host's own: read selectionMode of List: the mode the relay keeps, which its cells tell TalkBack |
+| `selectedItems` | property | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | ✅ |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch |
+| `selectionChanged` | event | `[String]` | native | 🔌 | 🔌 | ✅ | ✅ | ✅ |  | only through the host's own: choose on List: the collection's delegate told, no click; UIKit: only through the host's own: choose on List: the collection's delegate told, no touch |
+| `itemActivated` | event | `String` | adaptive | 🔌 | 🔌 | ✅ | ✅ | ✅ |  | only through the host's own: activate on an item of List: the collection's delegate told, no click; UIKit: only through the host's own: activate on an item of List: the collection's delegate told, no touch |
 | `endReachedWithin` | property | `Int` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `endReached` | event |  | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `realizedChanged` | event | `[String]` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `scrollTo` | act | `(String, ScrollAnchor) -> Void` |  | ✅ | ✅ | ✅ | ❌ | · |  | WinUI 3: threw no element has the id "80 of List"; GTK 4: cannot read where List stands - GTK's driver has no path for it yet |
+| `scrollTo` | act | `(String, ScrollAnchor) -> Void` |  | ✅ | ✅ | ✅ | ❌ | ✅ |  | WinUI 3: threw no element has the id "80 of List" |
 
 ## From [PropertyContainer](tiers/PropertyContainer.md)
 
@@ -74,7 +74,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | ✅ | – | ✅ | ✅ | ✅ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -82,7 +82,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of List - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | – | ✅ | ✅ | ✅ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of List - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -109,7 +109,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of List: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of List: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of List - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of List: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of List - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | – | ✅ | ✅ | · |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of List - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | – | ✅ | ✅ | ✅ |  | UIKit: List takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

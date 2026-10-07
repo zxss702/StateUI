@@ -92,7 +92,8 @@ final class UIKitActToolkit: ActToolkit {
     /// A web view's own acts: stepping back or forward, loading again, running a script - which answers once the
     /// page has run it; and an List's scroll to an item.
     func performOwn(_ call: HostActCall) -> Bool {
-        guard [.goBack, .goForward, .reload, .evaluateJavaScript, .scrollTo, .scrollToDescendant, .moveToRegion]
+        guard [.goBack, .goForward, .reload, .evaluateJavaScript, .scrollTo, .scrollToDescendant, .moveToRegion,
+               .measureText]
             .contains(call.act) else { return false }
         let core = CoreLink()
         let element: MountedElement
@@ -141,6 +142,20 @@ final class UIKitActToolkit: ActToolkit {
             let number = { call.arguments.value($0)?.number ?? 0 }
             map.show(MapRegion(latitude: number(1), longitude: number(2), radiusMeters: number(3)), sliding: true)
             core.reply(call, [])
+            return true
+        }
+        if call.act == .measureText {
+            guard let canvas = (element.native as? UIKitElement)?.view as? UIKitCanvasView else {
+                core.fail(call, "measureText is an act of a Canvas", log: { UIKitRenderer.log.error($0) })
+                return true
+            }
+            guard let asked = HostTextMeasure(call) else {
+                core.fail(call, "measureText is asked malformed", log: { UIKitRenderer.log.error($0) })
+                return true
+            }
+            core.reply(
+                call,
+                [canvas.measureText(asked.text, font: asked.font, maximumWidth: asked.maximumWidth).propValue])
             return true
         }
         guard let web = (element.native as? UIKitElement)?.view as? UIKitWebView else {

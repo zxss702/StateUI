@@ -72,6 +72,35 @@ final class CanvasTests: XCTestCase {
         ])
     }
 
+    /// A drawn text is the `drawText` record, the colour and size it wears
+    /// written ahead of it under a state saved for them - the same records
+    /// `Draw` writes, the `at` anchor standing its box on the point.
+    func testAGraphicsContextDrawsAText() {
+        var context = GraphicsContext()
+        context.draw(
+            Text("Hello"),
+            in: Rect(0, 0, 120, 40),
+            horizontalAlignment: .center, verticalAlignment: .center)
+        context.draw(
+            Text("!").foregroundStyle(.red).fontSize(20),
+            at: Point(x: 10, y: 20), anchor: .topLeading)
+        context.draw(Text("a") + Text("b"), at: Point(x: 60, y: 20))
+
+        XCTAssertEqual(context.commands, [
+            Draw.drawText(
+                "Hello", x: 0, y: 0, width: 120, height: 40,
+                horizontalAlignment: .center, verticalAlignment: .center),
+            Draw.saveState(),
+            Draw.foregroundStyle(.red),
+            Draw.fontSize(20),
+            Draw.drawText("!", x: 10, y: 20, width: 1_000_000, height: 1_000_000),
+            Draw.restoreState(),
+            Draw.drawText(
+                "ab", x: 60 - 500_000, y: 20 - 500_000, width: 1_000_000, height: 1_000_000,
+                horizontalAlignment: .center, verticalAlignment: .center),
+        ])
+    }
+
     /// The closure form measures its room first, then draws with the size it
     /// settled - a GeometryReader's report building the drawing.
     func testAClosuredCanvasDrawsFromItsSize() throws {

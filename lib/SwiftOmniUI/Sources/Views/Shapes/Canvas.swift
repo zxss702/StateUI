@@ -92,3 +92,39 @@ public struct Canvas: VisualElement, CanvasProperties{
         onEvent(CanvasContract.released, handler)
     }
 }
+
+extension Aim where Target == Canvas {
+    /// The room `text` takes drawn in `font`, asked of the host's own text
+    /// engine - the same one that draws a `Text`. `maximumWidth` wraps the
+    /// words as a `Text` in that much room does; nil measures each paragraph
+    /// one line, the answer the intrinsic width and one line's height a
+    /// paragraph.
+    ///
+    ///     @Aim(Canvas.self) private var surface
+    ///
+    ///     Canvas { ... }.aim(surface)
+    ///
+    ///     let size = try await surface.measureText("Hello", font: .system(size: 13))
+    ///
+    /// - Returns: The width and height, in the canvas's coordinates.
+    /// - Throws: `SwiftOmniUIError` when the aim is on no canvas or on two, or
+    ///   the host does not measure text.
+    public nonisolated(nonsending) func measureText(
+        _ text: String, font: Font = .default, maximumWidth: Double? = nil
+    ) async throws -> Size {
+        let textStyle: FontTextStyle?
+        let size: Double?
+        let family: Name?
+        switch font.basis {
+        case .textStyle(let style):
+            (textStyle, size, family) = (style, nil, nil)
+        case .system(let points):
+            (textStyle, size, family) = (nil, points, nil)
+        case .custom(let name, let points):
+            (textStyle, size, family) = (nil, points, Name(name))
+        }
+        return try await call(
+            CanvasContract.measureText,
+            text, textStyle, size, family, font.weight, font.design, font.attributes, maximumWidth)
+    }
+}

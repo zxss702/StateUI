@@ -25,6 +25,20 @@ final class AppKitCanvasView: AppKitHitTestView {
         needsDisplay = true
     }
 
+    /// The room `text` takes drawn in the font `look` names, measured by AppKit's own typesetter: wrapped at
+    /// `maximumWidth` where one is given, each paragraph one line else - the `measureText` act's answer.
+    func measureText(_ text: String, font look: TextLook, maximumWidth: Double?) -> Size {
+        let font = appKitFont(
+            family: look.family, size: look.size, attributes: look.attributes,
+            textStyle: look.textStyle, weight: look.weight, design: look.design,
+            fallback: NSFont.systemFont(ofSize: NSFont.systemFontSize))
+        let measured = (text as NSString).boundingRect(
+            with: NSSize(width: maximumWidth ?? .greatestFiniteMagnitude, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font])
+        return Size(width: measured.width, height: measured.height)
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         guard let context = NSGraphicsContext.current else { return }

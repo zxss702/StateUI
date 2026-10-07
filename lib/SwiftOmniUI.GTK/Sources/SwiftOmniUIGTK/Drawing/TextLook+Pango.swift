@@ -18,7 +18,12 @@ extension TextLook {
     func insert(into list: OpaquePointer, from start: UInt32 = 0, to end: UInt32 = UInt32.max) {
         var made: [UnsafeMutablePointer<PangoAttribute>] = []
         if let size, size > 0 { made.append(pango_attr_size_new_absolute(Int32((size * Double(PANGO_SCALE)).rounded()))) }
-        if attributes.contains(.bold) { made.append(pango_attr_weight_new(PANGO_WEIGHT_BOLD)) }
+        // A weight the look names, on Pango's own 1-1000 scale, else the attributes' bold.
+        if let weight, weight > 0 {
+            made.append(pango_attr_weight_new(PangoWeight(rawValue: UInt32(min(max(weight, 1), 1000)))))
+        } else if attributes.contains(.bold) {
+            made.append(pango_attr_weight_new(PANGO_WEIGHT_BOLD))
+        }
         if attributes.contains(.italic) { made.append(pango_attr_style_new(PANGO_STYLE_ITALIC)) }
         if let family, !family.isEmpty { made.append(pango_attr_family_new(family)) }
         if let color = rgbaColor {

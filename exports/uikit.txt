@@ -476,6 +476,7 @@ ZStack
   handlerFailed()
   hideOnScreenKeyboard()
   localizedString()
+  measureText()
   moveToRegion()
   persistValue()
   prompt()

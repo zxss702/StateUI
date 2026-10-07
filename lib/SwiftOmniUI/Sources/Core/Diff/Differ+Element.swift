@@ -234,10 +234,27 @@ extension Differ {
             break
         }
 
+        // A `.focusedValue` written on this element or above it puts the whole
+        // subtree in the publishing branch: any element there may be the one
+        // holding the keyboard focus, so each reports the platform's moves -
+        // which is how the store knows the chain.
+        let outsideFocusScope = inFocusedScope
+        inFocusedScope = inFocusedScope || !node.focusedValues.isEmpty
+        defer { inFocusedScope = outsideFocusScope }
+
         // A scene written as a node rather than a scene type - a test's own tree.
         if node.type == .scene, sceneRecord == nil, case .manual(let name) = id {
             sceneRecord = Scenes.shared.record(id: name)
         }
+
+        // A scene's `.focusedSceneValue` fold reads the authored node while
+        // the walk stands inside it - what the scene publishes is answered
+        // before the rendered element lands.
+        let enteredScene = node.type == .scene ? (sceneRecord?.id ?? manualName(of: id)) : nil
+        if let name = enteredScene {
+            sceneNodes.append((id: name, node: node))
+        }
+        defer { if enteredScene != nil { sceneNodes.removeLast() } }
 
         // The container's own content runs here, inside this element's read scope and
         // build frame: the reader of a state is the closure that read it.
@@ -336,6 +353,16 @@ extension Differ {
 
             if placeholder == nil {
                 placeholder = authored
+            }
+        }
+
+        // Inside a publishing branch any element may be the one holding the
+        // focus - it reports the platform's moves, which is how the store
+        // knows what the chain publishes now.
+        if inFocusedScope {
+            let store = focusStore
+            node.addHandler(.isFocusedChanged) {
+                store.focusChanged(id, within: EventBuffer.current.first?.bool ?? false)
             }
         }
 
@@ -653,6 +680,8 @@ extension Differ {
         result.preferenceValues = folded
         result.preferenceWatches = preferenceWatches
         result.textLayoutBox = node.textLayoutBox
+        result.focusedValues = node.focusedValues
+        result.sceneFocusedValues = node.sceneFocusedValues
 
         // What a host pulls mid-layout: the element's code objects by its id.
         if node.customLayout != nil || !node.layoutValues.isEmpty {
@@ -666,6 +695,13 @@ extension Differ {
         result.session = session
 
         return (result, patch)
+    }
+
+    /// An element id's author-given name, where it has one.
+    private func manualName(of id: ElementId) -> String? {
+        if case .manual(let name) = id { return name }
+
+        return nil
     }
 
     /// The frame a bare container's content runs under: the view the walk is in,
@@ -743,7 +779,9 @@ extension Differ {
             node.created.count == kept.created.count,
             node.destroying.count == kept.destroying.count,
             node.environments.count == kept.environments.count,
-            node.driven.count == kept.driven.count
+            node.driven.count == kept.driven.count,
+            node.focusedValues.same(as: kept.focusedValues),
+            node.sceneFocusedValues.same(as: kept.sceneFocusedValues)
         else { return false }
 
         for (fresh, old) in zip(node.watches, kept.watches)

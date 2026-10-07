@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 46 ✅ | `UISearchBar` |  |
 | Android Views | ✅ | 62 ✅ · 1 ☑️ | `SearchView` |  |
 | WinUI 3 | ✅ | 63 ✅ | `AutoSuggestBox` |  |
-| GTK 4 | ✅ | 25 ✅ | `GtkSearchEntry` |  |
+| GTK 4 | ✅ | 28 ✅ | `GtkSearchEntry` |  |
 | Web |  |  | `<input type=search>` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Text/SearchFieldContract.swift`.
@@ -65,7 +65,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -73,7 +73,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of SearchField - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: waits on SearchField.isReadOnly |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of SearchField - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -100,7 +100,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of SearchField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of SearchField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of SearchField - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of SearchField: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of SearchField: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of SearchField - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the focus of SearchField - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

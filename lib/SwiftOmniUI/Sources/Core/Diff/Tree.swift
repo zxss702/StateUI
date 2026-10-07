@@ -87,6 +87,15 @@ final class RenderedNode {
     /// What this element provided to its subtree, pushed again by the clean walk.
     var provided: [(key: ObjectIdentifier, object: AnyObject)]
 
+    /// The `.focusedValue` bag this element publishes while the focus stands
+    /// in its subtree - what the `FocusedValueStore`'s chain fold reads. Kept
+    /// so the clean walk folds the same tree.
+    var focusedValues = FocusedValues()
+
+    /// Its `.focusedSceneValue` writes, folded into its scene's answers the
+    /// same way.
+    var sceneFocusedValues = FocusedValues()
+
     /// The nearest provided object per type when the composed view here was built,
     /// which a carry compares.
     var seen: [ObjectIdentifier: ObjectIdentifier]

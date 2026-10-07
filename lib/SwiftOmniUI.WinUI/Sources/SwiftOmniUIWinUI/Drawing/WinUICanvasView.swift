@@ -36,6 +36,20 @@ final class WinUICanvasView: WinUIView {
         }
     }
 
+    /// The room `text` takes drawn in the font `look` names, measured by DirectWrite: wrapped at `maximumWidth`
+    /// where one is given, each paragraph one line else - the `measureText` act's answer.
+    func measureText(_ text: String, font look: TextLook, maximumWidth: Double?) -> Size {
+        var measured = (0.0, 0.0)
+        let made = withUnsafeMutablePointer(to: &measured) {
+            $0.withMemoryRebound(to: Double.self, capacity: 2) {
+                swiftomniui_winui_measure_text(
+                    text, look.family ?? "", look.size ?? 0, Int32(look.weight ?? 0),
+                    look.attributes.contains(.italic) ? 1 : 0, maximumWidth ?? 0, $0)
+            }
+        }
+        return made == 1 ? Size(width: measured.0, height: measured.1) : .zero
+    }
+
     /// A press on the canvas at `point`, in its phase: 0 pressed, 1 dragged, 2 released.
     func pressed(phase: Int32, at point: Point) {
         switch phase {

@@ -28,6 +28,14 @@ public struct Windows {
     /// scene and on its `Windows` collect them here.
     var commands: [any Commands] = []
 
+    /// The size the scene's windows open at, in device units; nil for the
+    /// platform's own.
+    var defaultSize: (width: Double, height: Double)? = nil
+
+    /// Where the scene's windows open on the screen, the anchor landing the
+    /// same way on window and work area; nil for the platform's own choice.
+    var defaultPosition: UnitPoint? = nil
+
     /// A main window, and the groups of windows the scene may open beside it.
     ///
     /// - Parameters:
@@ -63,6 +71,56 @@ public struct Windows {
         var copy = self
         copy.environments.append((key: ObjectIdentifier(Value.self), object: object))
         return copy
+    }
+
+    /// Where the scene's windows open: `position`'s fractions across and
+    /// down the screen's work area land the same fractions across and down
+    /// the window - `.center` centers it, `.topLeading` its top left corner
+    /// at the work area's.
+    ///
+    /// The scene's default: its main window opens there, and so does the
+    /// window of a group that does not say its own.
+    ///
+    ///     Windows { … } main: { MainWindow() }
+    ///         .defaultPosition(.center)
+    public func defaultPosition(_ position: UnitPoint) -> Windows {
+        var copy = self
+        copy.defaultPosition = position
+        return copy
+    }
+
+    /// Where the scene's windows open, the fractions outright.
+    public func defaultPosition(x: Double, y: Double) -> Windows {
+        defaultPosition(UnitPoint(x: x, y: y))
+    }
+
+    /// Where the scene's windows open and the size they open at, in one
+    /// ask - a placement's anchor, and its size where it is not `.zero`.
+    /// `.automatic` asks nothing at all.
+    public func defaultPlacement(_ placement: WindowPlacement) -> Windows {
+        var copy = self
+        copy.defaultPosition = placement.anchor
+        copy.defaultSize = placement.extent.map { (width: $0.width, height: $0.height) }
+        return copy
+    }
+
+    /// The size the scene's windows open at, in device units - the scene's
+    /// default, a group's own winning where it says one:
+    ///
+    ///     Windows { … } main: { MainWindow() }
+    ///         .defaultSize(width: 1280, height: 800)
+    ///
+    /// The platform's own size stands where none is asked for, and a size
+    /// the user later gives a window is its own.
+    public func defaultSize(width: Double, height: Double) -> Windows {
+        var copy = self
+        copy.defaultSize = (width: width, height: height)
+        return copy
+    }
+
+    /// The size the scene's windows open at, as one value.
+    public func defaultSize(_ size: Size) -> Windows {
+        defaultSize(width: size.width, height: size.height)
     }
 }
 

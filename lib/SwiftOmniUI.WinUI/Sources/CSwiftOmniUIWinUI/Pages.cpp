@@ -18,6 +18,28 @@ using namespace swiftomniui;
 namespace media = winrt::Microsoft::UI::Xaml::Media;
 
 namespace {
+    using winrt::Windows::System::VirtualKey;
+    using winrt::Windows::System::VirtualKeyModifiers;
+
+    /// The `key`+`modifiers` accelerator on every button in `element`'s template loses it. The window's own
+    /// accelerators already answer the shortcut, and a button's own one shows its tooltip on hover - which never
+    /// closes over an airspace island like a WebView, where pointer moves never reach XAML.
+    void unaccelerate(xaml::DependencyObject const &element, VirtualKey key, VirtualKeyModifiers modifiers) {
+        for (int32_t index = 0, count = media::VisualTreeHelper::GetChildrenCount(element); index < count; ++index) {
+            auto child = media::VisualTreeHelper::GetChild(element, index);
+            if (auto ui = child.try_as<xaml::UIElement>()) {
+                auto accelerators = ui.KeyboardAccelerators();
+                for (uint32_t at = 0; at < accelerators.Size();) {
+                    auto accelerator = accelerators.GetAt(at);
+                    if (accelerator.Key() == key && accelerator.Modifiers() == modifiers)
+                        accelerators.RemoveAt(at);
+                    else ++at;
+                }
+            }
+            unaccelerate(child, key, modifiers);
+        }
+    }
+
     /// The columns WinUI's TitleBar keeps at its edges for the window's own buttons, and the room those take in
     /// DIPs; null columns where the bar stands in no window yet.
     struct CaptionRoom {
@@ -111,7 +133,10 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_title_bar_make(int64_t view) {
         bar.LeftHeader(left);
         bar.Content(controls::ContentControl());
         bar.Loaded(guarded("handling Loaded", [](IInspectable const &sender, xaml::RoutedEventArgs const &) {
-            capCaptionRoom(sender.as<controls::TitleBar>());
+            auto titleBar = sender.as<controls::TitleBar>();
+            unaccelerate(titleBar, VirtualKey::Left, VirtualKeyModifiers::Menu);
+            unaccelerate(titleBar, VirtualKey::GoBack, VirtualKeyModifiers::None);
+            capCaptionRoom(titleBar);
         }));
         bar.SizeChanged(guarded("handling SizeChanged",
             [](IInspectable const &sender, xaml::SizeChangedEventArgs const &) {

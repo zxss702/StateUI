@@ -66,6 +66,28 @@ final class GTKCanvasView: GTKPanelView {
         0
     }
 
+    /// The room `text` takes drawn in the font `look` names, measured by a Pango layout of this widget's own -
+    /// the same attributes `insert` puts on the words a label wears - wrapped at `maximumWidth` where one is
+    /// given, each paragraph one line else. The `measureText` act's answer.
+    func measureText(_ text: String, font look: TextLook, maximumWidth: Double?) -> Size {
+        guard let layout = gtk_widget_create_pango_layout(widget, text) else { return .zero }
+        defer { g_object_unref(UnsafeMutableRawPointer(layout)) }
+
+        let attributes = pango_attr_list_new()!
+        look.insert(into: attributes)
+        pango_layout_set_attributes(layout, attributes)
+        pango_attr_list_unref(attributes)
+
+        if let maximumWidth, maximumWidth.isFinite {
+            pango_layout_set_width(layout, Int32((max(0, maximumWidth) * Double(PANGO_SCALE)).rounded()))
+            pango_layout_set_wrap(layout, PANGO_WRAP_WORD)
+        }
+
+        var measured = (width: Int32(0), height: Int32(0))
+        pango_layout_get_pixel_size(layout, &measured.width, &measured.height)
+        return Size(width: Double(measured.width), height: Double(measured.height))
+    }
+
     override func draw(_ snapshot: OpaquePointer, width: Double, height: Double) {
         var bounds = Self.rect(0, 0, width, height)
         gtk_snapshot_push_clip(snapshot, &bounds)

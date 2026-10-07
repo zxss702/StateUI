@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 30 ✅ · 3 – | custom `UIView` |  |
 | Android Views | ◐ | 51 ✅ · 1 ☑️ · 3 – | custom `ViewGroup` | cannot read what reaches ColorPicker - Android's driver has no path for it yet |
 | WinUI 3 | ✅ | 55 ✅ · 3 – | `Canvas` |  |
-| GTK 4 | ◐ | 20 ✅ | `GtkFixed` | cannot read what reaches ColorPicker - GTK's driver has no path for it yet |
+| GTK 4 | ◐ | 20 ✅ · 3 – | `GtkFixed` | cannot read what reaches ColorPicker - GTK's driver has no path for it yet |
 | Web |  |  | `position: absolute` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/ZStackContract.swift`.
@@ -62,7 +62,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | – | – | – | – | · |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ZStack - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ZStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -70,7 +70,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ | ✅ | · | ✅ | · |  | Android Views: cannot read what reaches ZStack - Android's driver has no path for it yet; GTK 4: cannot read what reaches ZStack - GTK's driver has no path for it yet |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of ZStack - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native |  |  |  |  | ✅ |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized |
-| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | · |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ZStack - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | – | – | – | – | – |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ZStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of ZStack - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -97,7 +97,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of ZStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of ZStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of ZStack - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of ZStack: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of ZStack: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of ZStack - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | – | – | – | – | · |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of ZStack - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | – | – | – | – | – |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ZStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

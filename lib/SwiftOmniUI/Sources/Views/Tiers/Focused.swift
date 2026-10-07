@@ -107,3 +107,82 @@ extension View {
         }
     }
 }
+
+extension View {
+    /// Publishes `value` under `keyPath` while this view or one below it
+    /// holds the keyboard focus - the SwiftUI `.focusedValue`:
+    ///
+    ///     Editor(document: document)
+    ///         .focusedValue(\.runAction) { document.run() }
+    ///
+    /// Every `@FocusedValue(\.runAction)` in the scene answers the nearest
+    /// publisher's value on the chain above the focused element, and follows
+    /// as the focus moves - so a command menu reads the focused pane's
+    /// actions rather than one fixed view's.
+    ///
+    /// The write is carried on the element's node and never crosses the
+    /// wire: what a host sees is the focus report it already sends, what a
+    /// reader sees is the value folded out of the rendered tree.
+    ///
+    /// - Parameters:
+    ///   - keyPath: the `FocusedValues` property to write.
+    ///   - value: what it publishes while the focus is here.
+    /// - Returns: the view, publishing.
+    public func focusedValue<Value>(
+        _ keyPath: WritableKeyPath<FocusedValues, Value?>, _ value: Value
+    ) -> ModifiedContent {
+        revised { $0.focusedValues[keyPath: keyPath] = value }
+    }
+
+    /// Publishes `value` under `keyPath` to the whole scene this view stands
+    /// in - the SwiftUI `View.focusedSceneValue`:
+    ///
+    ///     DocumentView(document: document)
+    ///         .focusedSceneValue(\.document, document)
+    ///
+    /// An `@FocusedSceneValue` anywhere in the scene reads it wherever it
+    /// stands, and an `@FocusedValue` answers it beneath the focus chain's
+    /// own writes.
+    ///
+    /// - Parameters:
+    ///   - keyPath: the `FocusedValues` property to write.
+    ///   - value: what it publishes to the scene.
+    /// - Returns: the view, publishing.
+    public func focusedSceneValue<Value>(
+        _ keyPath: WritableKeyPath<FocusedValues, Value?>, _ value: Value
+    ) -> ModifiedContent {
+        revised { $0.sceneFocusedValues[keyPath: keyPath] = value }
+    }
+}
+
+extension Scene {
+    /// Publishes `value` under `keyPath` to every view of this scene -
+    /// the SwiftUI `Scene.focusedSceneValue`:
+    ///
+    ///     WindowGroup { DocumentWindow() }
+    ///         .focusedSceneValue(\.document, document)
+    ///
+    /// The write rides to the scene's root as an environment offer - one bag
+    /// collects repeated calls, so `.focusedSceneValue(\.a, a)` beside
+    /// `.focusedSceneValue(\.b, b)` publishes both.
+    ///
+    /// - Parameters:
+    ///   - keyPath: the `FocusedValues` property to write.
+    ///   - value: what it publishes to the scene's views.
+    /// - Returns: the scene, publishing.
+    public func focusedSceneValue<Value>(
+        _ keyPath: WritableKeyPath<FocusedValues, Value?>, _ value: Value
+    ) -> Scene {
+        let key = ObjectIdentifier(FocusedSceneBag.self)
+
+        if let offering = self as? OfferingScene, offering.key == key,
+            let bag = offering.object as? FocusedSceneBag {
+            bag.values[keyPath: keyPath] = value
+            return offering
+        }
+
+        let bag = FocusedSceneBag()
+        bag.values[keyPath: keyPath] = value
+        return OfferingScene(base: self, key: key, object: bag)
+    }
+}

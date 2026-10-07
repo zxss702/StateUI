@@ -702,6 +702,13 @@ SwiftOmniUIObjectRef swiftomniui_winui_canvas_make(int64_t view);
 void swiftomniui_winui_canvas_draw(SwiftOmniUIObjectRef canvas, int32_t const *ints, int32_t intCount, double const *numbers,
                                int32_t numberCount, char const *words, int32_t const *lengths, int32_t wordCount);
 
+/// The room `text` takes drawn in the font named - `family` or the canvas's own where empty, `size` DIPs or the
+/// body's where not positive, `weight` on the 100-900 scale or regular where not positive, slanted where
+/// `italic` - wrapped at `width` DIPs where positive. Writes width and height into `out`; 0 where it could not
+/// be measured.
+int32_t swiftomniui_winui_measure_text(char const *text, char const *family, double size, int32_t weight,
+                                   int32_t italic, double width, double *out);
+
 /// A ColorBox: a Border filled with one colour, its corners rounded in DIPs - top left, top right, bottom right,
 /// bottom left.
 SwiftOmniUIObjectRef swiftomniui_winui_color_box_make(int64_t view);

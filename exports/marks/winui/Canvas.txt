@@ -3,5 +3,6 @@ Canvas: ✅
 Canvas.dragged: ✅
 Canvas.drawable: ✅
 Canvas.frameChanged: ✅
+Canvas.measureText: ✅
 Canvas.pressed: ✅
 Canvas.released: ✅

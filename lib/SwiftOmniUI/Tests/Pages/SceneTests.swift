@@ -240,6 +240,27 @@ private struct ListingApp: App {
     var body: some Scene { ListingScene() }
 }
 
+/// A session whose scene asks its windows' place and size - the fonts
+/// group naming a place of its own.
+private struct PlacedSession: Scene {
+    var windows: Windows {
+        Windows {
+            WindowGroup(.fonts) { PlainWindow() }
+                .defaultPosition(.bottomLeading)
+        } main: {
+            PlainWindow()
+        }
+    }
+}
+
+private struct PlacedApp: App {
+    var body: some Scene {
+        PlacedSession()
+            .defaultPosition(.center)
+            .defaultSize(width: 640, height: 400)
+    }
+}
+
 final class SceneTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -941,5 +962,25 @@ final class SceneTests: XCTestCase {
         XCTAssertFalse(
             closed.subtree.contains { !$0.props.isEmpty || $0.events != nil },
             "a window leaving is its scene's arrangement alone")
+    }
+
+    // MARK: - A scene's placement
+
+    /// A scene's `.defaultPosition` and `.defaultSize` land on its main
+    /// window as the tokens a host places and sizes it by - and stand as
+    /// the default for a group that does not say its own.
+    func testAScenesPlacementLandsOnItsWindows() {
+        twoScenes()
+        Scenes.shared.list[0].windows = [OpenedWindow(type: .fonts, serial: 1, value: nil, text: nil)]
+
+        let patch = Renders().render(tree(PlacedApp()))
+        let scene = ElementId.manual("1")
+        let main = ElementId.manual(SceneElement.mainKey)
+        let fonts = ElementId.manual("fonts 1")
+
+        XCTAssertEqual(patch.at(scene, main)?.props[.defaultPosition], .numbers([0.5, 0.5]))
+        XCTAssertEqual(patch.at(scene, main)?.props[.width], .number(640))
+        XCTAssertEqual(patch.at(scene, main)?.props[.height], .number(400))
+        XCTAssertEqual(patch.at(scene, fonts)?.props[.defaultPosition], .numbers([0, 1]))
     }
 }

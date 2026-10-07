@@ -144,6 +144,21 @@ public struct WindowGroup {
         defaultPosition(UnitPoint(x: x, y: y))
     }
 
+    /// Where the group's windows open and the size they open at, in one ask -
+    /// a placement's anchor, and its size where it is not `.zero`:
+    ///
+    ///     WindowGroup(.inspector) { Inspector() }
+    ///         .defaultPlacement(WindowPlacement(position: .topTrailing, size: Size(320, 480)))
+    ///
+    /// `.automatic` asks nothing at all, the platform's own place and size
+    /// standing.
+    public func defaultPlacement(_ placement: WindowPlacement) -> WindowGroup {
+        var copy = self
+        copy.defaultPosition = placement.anchor
+        copy.defaultSize = placement.extent.map { (width: $0.width, height: $0.height) }
+        return copy
+    }
+
     /// How the group's windows settle their size against their content -
     /// `.contentSize` has the window take the size its content asks for and
     /// no other:
@@ -170,5 +185,10 @@ public struct WindowGroup {
         var copy = self
         copy.defaultSize = (width: width, height: height)
         return copy
+    }
+
+    /// The size the group's windows open at, as one value.
+    public func defaultSize(_ size: Size) -> WindowGroup {
+        defaultSize(width: size.width, height: size.height)
     }
 }

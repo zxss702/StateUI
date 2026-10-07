@@ -285,6 +285,8 @@ extension Node {
             if node.type == .fragment {
                 node.environments = written.environments + node.environments
                 node.environmentValues = node.environmentValues.overlaid(with: written.environmentValues)
+                node.focusedValues = node.focusedValues.overlaid(with: written.focusedValues)
+                node.sceneFocusedValues = node.sceneFocusedValues.overlaid(with: written.sceneFocusedValues)
                 node.children = node.children.map { landing($0, written: written) }
 
                 // A body of one view is that view: it stands in the view's place.
@@ -292,6 +294,8 @@ extension Node {
                     var child = node.children[0]
                     child.environments = node.environments + child.environments
                     child.environmentValues = child.environmentValues.overlaid(with: node.environmentValues)
+                    child.focusedValues = child.focusedValues.overlaid(with: node.focusedValues)
+                    child.sceneFocusedValues = child.sceneFocusedValues.overlaid(with: node.sceneFocusedValues)
                     node = child
                 }
 
@@ -301,6 +305,8 @@ extension Node {
             node.props.merge(written.props) { _, wrote in wrote }
             node.environments = written.environments + node.environments
             node.environmentValues = node.environmentValues.overlaid(with: written.environmentValues)
+            node.focusedValues = node.focusedValues.overlaid(with: written.focusedValues)
+            node.sceneFocusedValues = node.sceneFocusedValues.overlaid(with: written.sceneFocusedValues)
             node.driven.merge(written.driven) { _, wrote in wrote }
             node.animation = AnimationPlan.merged(node.animation, under: written.animation)
 
@@ -456,6 +462,13 @@ extension Node {
         created += fragment.created
         destroying += fragment.destroying
         engines += fragment.engines
+
+        // Its published bags too: a fragment owns no element, so a
+        // `.focusedValue` written through it lands on the children it stands
+        // for.
+        focusedValues = focusedValues.overlaid(with: fragment.focusedValues)
+        sceneFocusedValues = sceneFocusedValues.overlaid(with: fragment.sceneFocusedValues)
+
         preferenceSeeds = fragment.preferenceSeeds + preferenceSeeds
         preferenceObservers += fragment.preferenceObservers
         preferenceTransforms += fragment.preferenceTransforms

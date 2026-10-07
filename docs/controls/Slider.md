@@ -29,7 +29,7 @@ See [the dictionary](README.md) for how a mark is given.
 | UIKit | ✅ | 30 ✅ · 3 – | `UISlider` |  |
 | Android Views | ✅ | 55 ✅ · 1 ☑️ · 3 – | `SeekBar` |  |
 | WinUI 3 | ✅ | 57 ✅ | `Slider` |  |
-| GTK 4 | ✅ | 24 ✅ · 2 – | `GtkScale` |  |
+| GTK 4 | ✅ | 27 ✅ · 2 – | `GtkScale` |  |
 | Web |  |  | `<input type=range>` | no host yet |
 
 Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Controls/SliderContract.swift`.
@@ -69,7 +69,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
-| `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | · |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Slider - GTK's driver has no path for it yet |
+| `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | ✅ |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `hint` | property | `String` | native |  |  |  |  |  |  |  |
@@ -77,7 +77,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `ignoresInput` | property | `Bool` | native | ✅ |  |  |  |  |  | UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `isAccessibilityHidden` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read isAccessibilityHidden of Slider - GTK's driver has no path for it yet |
 | `isEnabled` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
-| `isFocusedChanged` | event | `Bool` | native | ✅ | – | – | ✅ | · |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Slider - GTK's driver has no path for it yet |
+| `isFocusedChanged` | event | `Bool` | native | ✅ | – | – | ✅ | ✅ |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard |
 | `isVisible` | property | `Bool` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `layoutDirection` | property | `LayoutDirection` | native |  |  |  |  | · |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: cannot read layoutDirection of Slider - GTK's driver has no path for it yet |
 | `matchedGeometry` | property | `String` | native |  |  |  |  |  |  |  |
@@ -104,7 +104,7 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `transition` | property | `AnyTransition` | native |  |  |  |  |  |  |  |
 | `translationX` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationX of Slider: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationX of Slider: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationX of Slider - GTK's driver has no path for it yet |
 | `translationY` | property | `Double` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: read translationY of Slider: the host's own transform, checked against the layer it composed itself; UIKit: only through the host's own: read translationY of Slider: the host's own transform, checked against the layer it composed itself; GTK 4: cannot read translationY of Slider - GTK's driver has no path for it yet |
-| `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ | · |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: cannot read the focus of Slider - GTK's driver has no path for it yet |
+| `unfocus` | act | `() -> Void` |  | ✅ | – | – | ✅ | ✅ |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard |
 | `width` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `zIndex` | property | `Double` | native |  |  |  |  |  |  | not realized; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 

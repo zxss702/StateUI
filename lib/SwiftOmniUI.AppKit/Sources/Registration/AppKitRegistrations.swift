@@ -41,7 +41,8 @@ enum AppKitRegistrations {
     /// (`HostActPerformer`) answers exactly these and the application's own; every other act it refuses by name.
     static let acts: [any ContractMember] =
         HostActs.performed + [
-            AppContract.chooseFiles, AppContract.persistSceneValue, ListContract.scrollTo,
+            AppContract.chooseFiles, AppContract.persistSceneValue, CanvasContract.measureText,
+            ListContract.scrollTo,
             ScrollViewContract.scrollToDescendant, MapContract.moveToRegion] + webActs
 
     static func edgeInsets(_ value: EdgeInsets?) -> NSEdgeInsets {

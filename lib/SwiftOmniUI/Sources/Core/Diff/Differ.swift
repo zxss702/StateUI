@@ -62,6 +62,16 @@ final class Differ {
     /// `.environment(\.key, _)` wrote on the elements above.
     var envValues = EnvironmentValues()
 
+    /// Whether the walk stands inside a `.focusedValue` publisher - any
+    /// element there may be the one holding the keyboard focus, so each
+    /// reports the platform's moves to `focusStore`.
+    var inFocusedScope = false
+
+    /// The focused element and the values its chain publishes - what
+    /// `@FocusedValue` slots resolve from, offered through `scope` like the
+    /// standard environment objects (FocusedValueStore.swift).
+    let focusStore = FocusedValueStore()
+
     /// The composed views whose bodies the walk is inside, outermost first.
     var bodies: [String] = []
 
@@ -73,6 +83,15 @@ final class Differ {
     var sceneRecord: SceneRecord? {
         didSet { Scenes.shared.building = sceneRecord }
     }
+
+    /// The `.scene` nodes the walk is inside, innermost last - what a scene's
+    /// `.focusedSceneValue` fold reads while the scene is still being built.
+    var sceneNodes: [(id: String, node: Node)] = []
+
+    /// The tree this walk was given, where it was given one - what a
+    /// `.focusedSceneValue` read folds before the rendered tree lands.
+    /// Nil on the clean walk, which folds `lastRendered` instead.
+    var authoredRoot: Node?
 
     /// Reconciles the tree just built against the one the host holds. `describeAll`
     /// makes the patch complete while matching stays as it always is; a nil
@@ -90,6 +109,7 @@ final class Differ {
         self.styles = styles
         walkStamp += 1
         seedScope()
+        authoredRoot = tree
 
         // The root keeps whatever key it was given until the author states another.
         let id = tree.id.map(ElementId.manual) ?? rendered?.id ?? identity(for: tree)
@@ -101,6 +121,7 @@ final class Differ {
 
         let result = element(id: id, rendered: previous, node: tree)
         lastRendered = result.node
+        focusStore.stale()
         return result
     }
 
@@ -116,9 +137,11 @@ final class Differ {
         stylesMoved = false
         walkStamp += 1
         seedScope()
+        authoredRoot = nil
 
         let result = revisit(rendered)
         lastRendered = result.node
+        focusStore.stale()
         return result
     }
 
@@ -162,6 +185,12 @@ final class Differ {
         // What this element provided stays in scope while its children are walked.
         scope.append(contentsOf: rendered.provided)
         defer { scope.removeLast(rendered.provided.count) }
+
+        // A kept element's `.focusedValue` writes keep the subtree inside the
+        // publishing branch, the way `element` finds them on a fresh node.
+        let outsideFocusScope = inFocusedScope
+        inFocusedScope = inFocusedScope || !rendered.focusedValues.isEmpty
+        defer { inFocusedScope = outsideFocusScope }
 
         // What the host holds is the sequence the patches address - a
         // fragment mounts nothing of its own, so its children stand in this
@@ -298,6 +327,8 @@ final class Differ {
     private func seedScope() {
         scope.removeAll(keepingCapacity: true)
         scope.append(contentsOf: StandardEnvironment.scope)
+        focusStore.differ = self
+        scope.append((key: ObjectIdentifier(FocusedValueStore.self), object: focusStore))
     }
 
     // MARK: - Identity

@@ -101,7 +101,7 @@ enum WebRealization {
     /// steps and scripts.
     static let acts: [any ContractMember] = HostActs.performed + [
         ListContract.scrollTo, WebViewContract.goBack, WebViewContract.goForward, WebViewContract.reload,
-        WebViewContract.evaluateJavaScript,
+        WebViewContract.evaluateJavaScript, CanvasContract.measureText,
     ]
 
     @MainActor static var unmade: Set<String> {

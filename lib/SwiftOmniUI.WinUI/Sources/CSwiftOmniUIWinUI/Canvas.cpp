@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -589,6 +590,39 @@ extern "C" void swiftomniui_winui_canvas_draw(
         canvas(handle)->show(std::move(drawing));
     } catch (...) {
         report("handing a canvas its drawing");
+    }
+}
+
+extern "C" int32_t swiftomniui_winui_measure_text(
+    char const *utf8, char const *family, double size, int32_t weight, int32_t italic, double width, double *out
+) {
+    try {
+        prepare();
+        winrt::com_ptr<IDWriteTextFormat> format;
+        auto face = family && *family ? text(family) : winrt::hstring(devices.family);
+        if (FAILED(devices.words->CreateTextFormat(
+                face.c_str(), nullptr,
+                weight > 0 ? static_cast<DWRITE_FONT_WEIGHT>(std::min<int32_t>(weight, 999))
+                           : DWRITE_FONT_WEIGHT_NORMAL,
+                italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                size > 0 ? static_cast<float>(size) : 14.0f, devices.language, format.put())))
+            return 0;
+        auto words = text(utf8);
+        // The room the canvas gives it, or endless where none is asked; GetMetrics answers the laid-out extent.
+        winrt::com_ptr<IDWriteTextLayout> layout;
+        if (FAILED(devices.words->CreateTextLayout(
+                words.c_str(), static_cast<UINT32>(words.size()), format.get(),
+                width > 0 ? static_cast<float>(width) : std::numeric_limits<float>::max(),
+                std::numeric_limits<float>::max(), layout.put())))
+            return 0;
+        DWRITE_TEXT_METRICS metrics;
+        if (FAILED(layout->GetMetrics(&metrics))) return 0;
+        out[0] = metrics.width;
+        out[1] = metrics.height;
+        return 1;
+    } catch (...) {
+        report("measuring a canvas's text");
+        return 0;
     }
 }
 
