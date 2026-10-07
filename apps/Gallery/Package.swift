@@ -88,7 +88,7 @@ var dependencies: [Package.Dependency] = [
     // Declared like StateUI.JsonData declares it, so the graph holds one
     // package: an `@Model` the samples declare expands to JsonData's own
     // symbols, which a linker only reaches through a product named by them.
-    .package(path: "../../../JsonData"),
+    .package(url: "https://github.com/zxss702/JsonData.git", branch: "main"),
 ]
 
 var targets: [Target] = [

@@ -20,7 +20,7 @@ let package = Package(
         .package(name: "StateUIRoot", path: "../.."),
         // The checkout a machine holds: Packges/JsonData beside Packges/StateUI
         // locally, zxs20/JsonData beside zxs20/StateUI on Windows.
-        .package(path: "../../../JsonData"),
+        .package(url: "https://github.com/zxss702/JsonData.git", branch: "main"),
     ],
     targets: [
         .target(
