@@ -42,8 +42,9 @@ export interface Application {
     readonly bundleScript?: string;
 
     /**
-     * The SwiftOmniUI checkout its Package.swift names by path - the library it
-     * builds with, whose `.scripts` build and run its heads - where it names one.
+     * The SwiftOmniUI checkout its Package.swift names by path, or the one a URL
+     * dependency resolved into `.build/checkouts/` - the library it builds with,
+     * whose `.scripts` build and run its heads - where it has one.
      */
     readonly checkout?: string;
 }

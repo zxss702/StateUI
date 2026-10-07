@@ -19,6 +19,10 @@ export function isCheckout(directory: string): boolean {
  * first `.package(path:)` outside a comment that resolves to one. An
  * application in a checkout's apps/ names it `../..`, one in a project group
  * the release cloned into the group or the local checkout.
+ *
+ * Where the application depends on SwiftOmniUI by URL instead, `swift package
+ * resolve` has still cloned the whole repository - scripts and all - into
+ * `.build/checkouts/`, and the first checkout found there serves the same way.
  */
 export function checkoutNamedBy(directory: string): string | undefined {
     const manifest = path.join(directory, "Package.swift");
@@ -26,8 +30,18 @@ export function checkoutNamedBy(directory: string): string | undefined {
         return undefined;
     }
     const from = fs.realpathSync(directory);
-    return fs.readFileSync(manifest, "utf8").split(/\r?\n/)
+    const named = fs.readFileSync(manifest, "utf8").split(/\r?\n/)
         .filter((line) => line.includes(".package(") && !line.trimStart().startsWith("//"))
         .flatMap((line) => [...line.matchAll(/path: "([^"]+)"/g)].map((match) => path.resolve(from, match[1])))
+        .find(isCheckout);
+    if (named) {
+        return named;
+    }
+    const checkouts = path.join(directory, ".build", "checkouts");
+    if (!fs.existsSync(checkouts)) {
+        return undefined;
+    }
+    return fs.readdirSync(checkouts)
+        .map((entry) => path.join(checkouts, entry))
         .find(isCheckout);
 }

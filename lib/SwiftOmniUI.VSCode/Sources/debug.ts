@@ -210,7 +210,7 @@ export class SwiftOmniUIDebugConfigurationProvider implements vscode.DebugConfig
         const script = checkout && androidScript(checkout, "run-app.sh");
         if (!checkout || !script || !fs.existsSync(script)) {
             void vscode.window.showErrorMessage(
-                `SwiftOmniUI: an Android head runs through a SwiftOmniUI checkout's .scripts/Android/run-app.sh, and ${application.name}'s Package.swift names none by path.`);
+                `SwiftOmniUI: an Android head runs through a SwiftOmniUI checkout's .scripts/Android/run-app.sh, and ${application.name} has no SwiftOmniUI checkout - its Package.swift names none by path, and none is resolved under .build/checkouts.`);
             return undefined;
         }
 
@@ -256,7 +256,7 @@ export class SwiftOmniUIDebugConfigurationProvider implements vscode.DebugConfig
         const script = application.checkout && uiKitScript(application.checkout, "run-app.sh");
         if (!script || !fs.existsSync(script)) {
             void vscode.window.showErrorMessage(
-                `SwiftOmniUI: a UIKit head runs through a SwiftOmniUI checkout's .scripts/UIKit/run-app.sh, and ${application.name}'s Package.swift names none by path.`);
+                `SwiftOmniUI: a UIKit head runs through a SwiftOmniUI checkout's .scripts/UIKit/run-app.sh, and ${application.name} has no SwiftOmniUI checkout - its Package.swift names none by path, and none is resolved under .build/checkouts.`);
             return undefined;
         }
 
@@ -301,7 +301,7 @@ export class SwiftOmniUIDebugConfigurationProvider implements vscode.DebugConfig
         const script = application.checkout && winUIScript(application.checkout, "run-app.ps1");
         if (!script || !fs.existsSync(script)) {
             void vscode.window.showErrorMessage(
-                `SwiftOmniUI: a WinUI head is built by a SwiftOmniUI checkout's .scripts/WinUI/run-app.ps1, and ${application.name}'s Package.swift names none by path.`);
+                `SwiftOmniUI: a WinUI head is built by a SwiftOmniUI checkout's .scripts/WinUI/run-app.ps1, and ${application.name} has no SwiftOmniUI checkout - its Package.swift names none by path, and none is resolved under .build/checkouts.`);
             return undefined;
         }
 
@@ -341,7 +341,7 @@ export class SwiftOmniUIDebugConfigurationProvider implements vscode.DebugConfig
         const script = application.checkout && gtkScript(application.checkout, "run-app.sh");
         if (!script || !fs.existsSync(script)) {
             void vscode.window.showErrorMessage(
-                `SwiftOmniUI: a GTK head is built by a SwiftOmniUI checkout's .scripts/GTK/run-app.sh, and ${application.name}'s Package.swift names none by path.`);
+                `SwiftOmniUI: a GTK head is built by a SwiftOmniUI checkout's .scripts/GTK/run-app.sh, and ${application.name} has no SwiftOmniUI checkout - its Package.swift names none by path, and none is resolved under .build/checkouts.`);
             return undefined;
         }
 
@@ -381,7 +381,7 @@ export class SwiftOmniUIDebugConfigurationProvider implements vscode.DebugConfig
         const script = checkout && webScript(checkout, "run-app.sh");
         if (!checkout || !script || !fs.existsSync(script)) {
             void vscode.window.showErrorMessage(
-                `SwiftOmniUI: a Web head runs through a SwiftOmniUI checkout's .scripts/Web/run-app.sh, and ${application.name}'s Package.swift names none by path.`);
+                `SwiftOmniUI: a Web head runs through a SwiftOmniUI checkout's .scripts/Web/run-app.sh, and ${application.name} has no SwiftOmniUI checkout - its Package.swift names none by path, and none is resolved under .build/checkouts.`);
             return undefined;
         }
 
