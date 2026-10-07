@@ -37,6 +37,15 @@ extension MountedElement {
         }
     }
 
+    /// The page whose bar stands at the arrangement's leading edge: a split view's sidebar while it shows, the
+    /// visible page otherwise.
+    public var leadingPage: MountedElement? {
+        switch type {
+        case .navigationSplitView where sidebarIsVisible: children.first?.leadingPage
+        default: visiblePage
+        }
+    }
+
     /// The stack around the visible page, where the path has one.
     public var visibleNavigationStack: MountedElement? {
         switch type {
