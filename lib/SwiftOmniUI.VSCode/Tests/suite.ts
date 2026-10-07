@@ -91,7 +91,7 @@ export async function run(): Promise<void> {
         const head = path.join(gallery, "Platforms", "AppKit", "Host", "MetalCube3DView.swift");
         const uiKitHead = path.join(gallery, "Platforms", "UIKit", "Host", "MetalCube3DView.swift");
 
-        const api = await vscode.extensions.getExtension<SwiftOmniUIApi>("idexus.swiftomniui")!.activate();
+        const api = await vscode.extensions.getExtension<SwiftOmniUIApi>("zxss702.swiftomniui")!.activate();
         say(`activated, host ${api.host()}`);
 
         // 1-3 ask the language server as the hosts only macOS builds.
@@ -600,11 +600,11 @@ export async function run(): Promise<void> {
                 && groupNameProblem("-apps") !== undefined && groupNameProblem("") !== undefined);
             const listed = ["0.3.1", "0.4.0", "0.10.0", "0.4.1", "v1.0", "1.0.0-beta"]
                 .map((tag, at) => `${at}abc\trefs/tags/${tag}`).join("\n");
-            const clone = cloneCommand("https://github.com/idexus/StateUI.git", "0.4.0", "/Groups/Mine");
+            const clone = cloneCommand("https://github.com/zxss702/SwiftOmniUI.git", "0.4.0", "/Groups/Mine");
             check("the releases offered are the tags minimumRelease or newer, the newest first; one is cloned shallow into the group's SwiftOmniUI/",
                 releasesIn(listed, "0.4.0").join(" ") === "0.10.0 0.4.1 0.4.0"
                 && clone.command === "git" && clone.args.join(" ")
-                    === `-c advice.detachedHead=false clone --depth 1 --branch 0.4.0 https://github.com/idexus/StateUI.git ${path.join("/Groups/Mine", "SwiftOmniUI")}`);
+                    === `-c advice.detachedHead=false clone --depth 1 --branch 0.4.0 https://github.com/zxss702/SwiftOmniUI.git ${path.join("/Groups/Mine", "SwiftOmniUI")}`);
         }
         // 7a. A project group, made by the command itself with its questions answered: one building with this checkout,
         //     one with the newest release offered cloned into it. Each application names its SwiftOmniUI in its Package.swift, New
@@ -719,8 +719,8 @@ export async function run(): Promise<void> {
             // A release is offered from minimumRelease on - the first whose scripts build as this extension does.
             const minimum: string = JSON.parse(fs.readFileSync(path.join(root.uri.fsPath, "lib", "SwiftOmniUI.VSCode", "package.json"), "utf8"))
                 .contributes.configuration.properties["swiftomniui.minimumRelease"].default;
-            const every = await listReleases("https://github.com/idexus/StateUI.git", "0.0.0");
-            const offered = await listReleases("https://github.com/idexus/StateUI.git", minimum);
+            const every = await listReleases("https://github.com/zxss702/SwiftOmniUI.git", "0.0.0");
+            const offered = await listReleases("https://github.com/zxss702/SwiftOmniUI.git", minimum);
             check(`GitHub lists its releases, and none older than ${minimum} is offered - 0.4.0 builds differently`,
                 every.releases.includes("0.4.0") && !offered.releases.includes("0.4.0")
                 && offered.releases.every((each) => every.releases.includes(each)));

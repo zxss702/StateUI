@@ -1,6 +1,6 @@
 # SwiftOmniUI
 
-Build, run and debug [SwiftOmniUI](https://github.com/idexus/StateUI) applications
+Build, run and debug [SwiftOmniUI](https://github.com/zxss702/SwiftOmniUI) applications
 from VS Code: choose a host once, and the editor, **SwiftOmniUI: Debug** and
 **SwiftOmniUI: Release** all work as that host.
 
@@ -55,7 +55,7 @@ that SwiftOmniUI's `.scripts/`; the group copies none of them.
 command its `.gitignore` names:
 
 ```bash
-git clone --depth 1 --branch <release> https://github.com/idexus/StateUI.git SwiftOmniUI
+git clone --depth 1 --branch <release> https://github.com/zxss702/SwiftOmniUI.git SwiftOmniUI
 ```
 
 | Setting | What it holds |

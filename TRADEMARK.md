@@ -1,6 +1,7 @@
 # Trademark Policy
 
-**SwiftOmniUI** is a trademark of Paweł Krzywdziński.
+**SwiftOmniUI** is a trademark of Huaxia Xufu (Beijing) Technology Co., Ltd.
+(华夏旭府（北京）科技有限公司).
 
 The software in this repository is released under the
 [Apache License 2.0](LICENSE). That licence grants you rights in the **code**. It
@@ -31,11 +32,11 @@ way that suggests your project is this one, or is endorsed by it.**
 
 ## Prior and independent use
 
-"State" and "UI" are ordinary words, and other projects have used them -
-including together - independently of this one, some of them earlier. Nothing
-here is a claim against them. This document describes how to refer to **this**
-project, and asks only that you do not present your own work as if it were this
-one.
+"UI" is an ordinary word, and other projects have used it - some of them
+earlier. Nothing here is a claim against them. This document describes how to
+refer to **this** project, and asks only that you do not present your own work
+as if it were this one. SwiftOmniUI derives from upstream StateUI; that
+project's own name and marks remain its author's.
 
 ## Forks
 

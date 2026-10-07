@@ -29,6 +29,16 @@ Remove obsolete API, examples, and tests when the contract deliberately drops
 the capability. Do not preserve aliases unless compatibility is an explicit
 requirement.
 
+## The public API is a SwiftUI subset
+
+Anything SwiftUI has a model for keeps SwiftUI's name and semantics:
+`App`, `NavigationSplitView`, `List`, `.fileImporter`, `.onAppear`. Where a
+platform-neutral application needs what SwiftUI does not model, the addition
+extends the same conceptual model - `application.persistentKeys` through
+`@Environment(\.application)` is the shape of it. Vocabulary with no SwiftUI
+equivalent - `ItemsView`, `SplitView`, `Dialogs.openFiles` - lands internal or
+`@_spi(Host)`, never as the public name.
+
 ## Keep the core platform-neutral
 
 Code under `lib/SwiftOmniUI/Sources` and `lib/SwiftOmniUI.Host/Sources` does not

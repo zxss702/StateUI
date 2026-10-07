@@ -1,11 +1,11 @@
-[![Core macOS](https://github.com/idexus/StateUI/actions/workflows/build-mac.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/build-mac.yml?query=branch%3Amain)
-[![Core Linux](https://github.com/idexus/StateUI/actions/workflows/build-linux.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/build-linux.yml?query=branch%3Amain)
-[![Core Windows](https://github.com/idexus/StateUI/actions/workflows/build-windows.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/build-windows.yml?query=branch%3Amain)\
-[![AppKit](https://github.com/idexus/StateUI/actions/workflows/appkit.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/appkit.yml?query=branch%3Amain)
-[![UIKit](https://github.com/idexus/StateUI/actions/workflows/uikit.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/uikit.yml?query=branch%3Amain)
-[![Android](https://github.com/idexus/StateUI/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/android.yml?query=branch%3Amain)
-[![WinUI](https://github.com/idexus/StateUI/actions/workflows/winui.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/winui.yml?query=branch%3Amain)
-[![GTK](https://github.com/idexus/StateUI/actions/workflows/gtk.yml/badge.svg?branch=main)](https://github.com/idexus/StateUI/actions/workflows/gtk.yml?query=branch%3Amain)
+[![Core macOS](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-mac.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-mac.yml?query=branch%3Amain)
+[![Core Linux](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-linux.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-linux.yml?query=branch%3Amain)
+[![Core Windows](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-windows.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/build-windows.yml?query=branch%3Amain)\
+[![AppKit](https://github.com/zxss702/SwiftOmniUI/actions/workflows/appkit.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/appkit.yml?query=branch%3Amain)
+[![UIKit](https://github.com/zxss702/SwiftOmniUI/actions/workflows/uikit.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/uikit.yml?query=branch%3Amain)
+[![Android](https://github.com/zxss702/SwiftOmniUI/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/android.yml?query=branch%3Amain)
+[![WinUI](https://github.com/zxss702/SwiftOmniUI/actions/workflows/winui.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/winui.yml?query=branch%3Amain)
+[![GTK](https://github.com/zxss702/SwiftOmniUI/actions/workflows/gtk.yml/badge.svg?branch=main)](https://github.com/zxss702/SwiftOmniUI/actions/workflows/gtk.yml?query=branch%3Amain)
 # SwiftOmniUI
 
  **Native interfaces, written in Swift.**
@@ -13,16 +13,29 @@
 identity, state, diffing, and motion; a thin host applies sparse patches to
 controls from its platform toolkit.
 
-Every host is Swift, in the application's own process, and all five native
-hosts are active on the same host contract: AppKit, UIKit, Android Views,
-WinUI 3 and GTK 4 with libadwaita. What each realizes, element by element
-and member by member, is the [platform contract](docs/platform-contract.md),
-rendered from each host's own test run. Web DOM/CSS comes after the native
-contract is settled.
+Every host is Swift, in the application's own process, and all six hosts are
+active on the same host contract: AppKit, UIKit, Android Views, WinUI 3, GTK 4
+with libadwaita, and Web (DOM/CSS over WebAssembly). What each realizes,
+element by element and member by member, is the
+[platform contract](docs/platform-contract.md), rendered from each host's own
+test run.
 
 | AppKit | UIKit | Android Views | WinUI 3 | GTK 4 | Web |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ☑️ | ☑️ | ☑️ | ☑️ | ☑️ | — |
+| ☑️ | ☑️ | ☑️ | ☑️ | ☑️ | ☑️ |
+
+The public Swift API is a **SwiftUI-compatible subset**: anything SwiftUI has
+a model for keeps SwiftUI's name and semantics. Where a platform-neutral
+application needs what SwiftUI does not model - window sessions, environment
+keys such as `application.persistentKeys`, host registration - the addition
+extends the same conceptual model rather than inventing a dialect, and
+vocabulary that has no SwiftUI equivalent stays internal or `@_spi(Host)`.
+SwiftOmniUI is proposed by
+[Huaxia Xufu (Beijing) Technology Co., Ltd.](https://github.com/zxss702/SwiftOmniUI)
+(华夏旭府（北京）科技有限公司), and is derived from upstream
+[StateUI](https://github.com/idexus/StateUI) by Paweł Krzywdziński and
+contributors; upstream work comes in as reviewed cherry-picks, never a
+wholesale merge.
 
 ## In Action
 
@@ -47,7 +60,7 @@ and spin are described from SwiftOmniUI. The edge is handed over as a state, so
 dragging the slider rebuilds nothing:
 
 <video src="https://github.com/user-attachments/assets/05ef0718-b3b5-4f67-8c66-7a9c9b1d2ba2" controls muted loop width="960" height="540" poster="docs/assets/appkit-poster.png">
-  <a href="https://github.com/idexus/StateUI/blob/main/docs/assets/appkit.mp4"><img src="docs/assets/appkit-poster.png" alt="The Gallery's Metal sample on the AppKit host" width="960" height="540"></a>
+  <a href="docs/assets/appkit.mp4"><img src="docs/assets/appkit-poster.png" alt="The Gallery's Metal sample on the AppKit host" width="960" height="540"></a>
 </video>
 
 ## In Code
@@ -59,7 +72,7 @@ struct CounterPage: View {
     var body: some View {
         VStack {
             Text("Tapped \(count) times")
-            Button("Tap me").onClicked { count += 1 }
+            Button("Tap me") { count += 1 }
         }
     }
 }
@@ -169,3 +182,6 @@ host with every verdict held.
 SwiftOmniUI is licensed under the Apache License 2.0. See [LICENSE](LICENSE) and
 [NOTICE](NOTICE). Use of the SwiftOmniUI name and mark is described in
 [TRADEMARK.md](TRADEMARK.md).
+
+SwiftOmniUI is proposed by Huaxia Xufu (Beijing) Technology Co., Ltd.
+(华夏旭府（北京）科技有限公司).

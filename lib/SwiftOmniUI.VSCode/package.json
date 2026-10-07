@@ -3,12 +3,12 @@
   "displayName": "SwiftOmniUI",
   "description": "Build, run and debug SwiftOmniUI applications on AppKit, UIKit, Android, WinUI, GTK and the Web.",
   "version": "0.5.1",
-  "publisher": "idexus",
+  "publisher": "zxss702",
   "license": "Apache-2.0",
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/idexus/StateUI.git"
+    "url": "https://github.com/zxss702/SwiftOmniUI.git"
   },
   "engines": {
     "vscode": "^1.90.0"

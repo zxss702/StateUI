@@ -56,14 +56,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
         with:
-          path-to-document: https://github.com/idexus/StateUI/blob/main/CLA.md
+          path-to-document: https://github.com/zxss702/SwiftOmniUI/blob/main/CLA.md
           # The `v1` matches the Version at the top of CLA.md. A change to the
           # CLA's TERMS bumps both - a new version there, a new file here - and
           # the empty new file is what makes the bot ask everyone again.
           path-to-signatures: signatures/v1/cla.json
           branch: cla-signatures
           # The owner's own commits need no signature, and neither do bots.
-          allowlist: idexus,dependabot[bot],github-actions[bot]
+          allowlist: zxss702,dependabot[bot],github-actions[bot]
           # THE CONVERSATION STAYS OPEN. The default locks a pull request once
           # the CLA is satisfied, so that a contributor cannot delete the
           # comment they signed in - but the RECORD is the commit in
