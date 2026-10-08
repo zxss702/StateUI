@@ -54,6 +54,15 @@ $global:LASTEXITCODE = 0
 
 Initialize-SwiftOmniUIProjection
 $env:SWIFTOMNIUI_HOST = 'winui'
+
+# SwiftTerm's build-info plugin asks git, and Foundation's process spawn dies in
+# sessions that cannot raise CFSocket's wakeup pair (VS Code tasks, SSH). Answer
+# for it: set values in the caller's environment to give real ones.
+if (-not $env:SWIFTTERM_BUILD_BRANCH) { $env:SWIFTTERM_BUILD_BRANCH = 'main' }
+if (-not $env:SWIFTTERM_BUILD_TAG) { $env:SWIFTTERM_BUILD_TAG = 'none' }
+if (-not $env:SWIFTTERM_BUILD_COMMIT) { $env:SWIFTTERM_BUILD_COMMIT = 'unknown' }
+if (-not $env:SWIFTTERM_BUILD_DIRTY) { $env:SWIFTTERM_BUILD_DIRTY = '0' }
+
 Write-Host "building ${name}WinUI, $Configuration, $Architecture - SwiftPM reads the packages first, printing nothing"
 Write-SwiftOmniUIEditorBuilds
 swift build --package-path $application -c $Configuration --product "${name}WinUI" --scratch-path $scratch @arch
@@ -64,13 +73,28 @@ $executable = Join-Path $bin "${name}WinUI.exe"
 Set-SwiftOmniUISelfContained -Directory $bin -Executables $executable -Architecture $Architecture
 
 # The application's pictures stand beside it, where its WinUI host reads them.
+# They live at Resources\Images, or - a library holding its own assets - Sources\<target>\Assets\Images.
 $images = Join-Path $application 'Resources\Images'
+if (-not (Test-Path $images)) {
+    $candidate = Get-ChildItem -Path (Join-Path $application 'Sources') -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object { Join-Path $_.FullName 'Assets\Images' } |
+        Where-Object { Test-Path $_ } |
+        Select-Object -First 1
+    if ($candidate) { $images = $candidate }
+}
 if (Test-Path $images) {
     Copy-Item -Path (Join-Path $images '*') -Destination (New-Item -ItemType Directory -Force (Join-Path $bin 'Images')) -Recurse -Force
 }
 
 # Bundle resources - the directories and loose files `Bundle.main` answers for.
 $bundleResources = Join-Path $application 'Resources\Bundle'
+if (-not (Test-Path $bundleResources)) {
+    $candidate = Get-ChildItem -Path (Join-Path $application 'Sources') -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object { Join-Path $_.FullName 'Assets\Bundle' } |
+        Where-Object { Test-Path $_ } |
+        Select-Object -First 1
+    if ($candidate) { $bundleResources = $candidate }
+}
 if (Test-Path $bundleResources) {
     Copy-Item -Path (Join-Path $bundleResources '*') -Destination $bin -Recurse -Force
 }

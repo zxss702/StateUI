@@ -49,13 +49,26 @@ SWIFTOMNIUI_HOST=gtk swift build \
   --product "$product"
 
 # The application's pictures stand in Images beside the executable, where the host reads them.
-if [[ -d "$app_dir/Resources/Images" ]]; then
+# They live at Resources/Images, or - a library holding its own assets - Sources/<target>/Assets/Images.
+images_dir="$app_dir/Resources/Images"
+if [[ ! -d "$images_dir" ]]; then
+  for candidate in "$app_dir"/Sources/*/Assets/Images; do
+    [[ -d "$candidate" ]] && images_dir="$candidate" && break
+  done
+fi
+if [[ -d "$images_dir" ]]; then
   mkdir -p "$scratch/$configuration/Images"
-  cp -R "$app_dir/Resources/Images/." "$scratch/$configuration/Images/"
+  cp -R "$images_dir/." "$scratch/$configuration/Images/"
 fi
 # Bundle resources - the directories and loose files `Bundle.main` answers for.
-if [[ -d "$app_dir/Resources/Bundle" ]]; then
-  cp -R "$app_dir/Resources/Bundle/." "$scratch/$configuration/"
+bundle_dir="$app_dir/Resources/Bundle"
+if [[ ! -d "$bundle_dir" ]]; then
+  for candidate in "$app_dir"/Sources/*/Assets/Bundle; do
+    [[ -d "$candidate" ]] && bundle_dir="$candidate" && break
+  done
+fi
+if [[ -d "$bundle_dir" ]]; then
+  cp -R "$bundle_dir/." "$scratch/$configuration/"
 fi
 # The desktop shows a window with the icon of the entry named by its application's ID: both are installed for
 # the user, the entry starting this build.
