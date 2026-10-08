@@ -228,6 +228,22 @@ extension Differ {
                 pushed += node.environments.count
                 envValues = envValues.overlaid(with: node.environmentValues)
                 scope.append(contentsOf: node.environments)
+
+                // An expansion can land on a node holding a session of its own -
+                // the way a composed view's `NavigationStack` surfaces its
+                // `links` only once the placeholder expanded to it. The check
+                // above ran on the placeholder, so the session is handed now,
+                // ahead of this element's own materialize: the object the same
+                // element was rendered with, or the request's first make.
+                if let request = node.session {
+                    let same = rendered?.type == node.type
+                    let object = (same ? rendered?.session : nil) ?? request.make()
+                    request.object = object
+                    session = session ?? object
+                    scope.append((key: request.type, object: object))
+                    pushed += 1
+                }
+
                 continue
             }
 
