@@ -29,7 +29,7 @@
     }
 
     /// Whether a handler raised now waits: a message applies, or the user's transaction runs.
-    public var isHeld: Bool { intake.isApplying || transactions > 0 }
+    private var isHeld: Bool { intake.isApplying || transactions > 0 }
 
     /// Whether the user's transaction runs.
     public var inTransaction: Bool { transactions > 0 }
@@ -42,8 +42,7 @@
             return false
         }
 
-        _ = core.dispatch(handler, payload: payload)
-        return true
+        return core.dispatch(handler, payload: payload)
     }
 
     /// Queues a page's, a window's or a scene's phase, with `payload`: it runs in its turn, and is rendered before
