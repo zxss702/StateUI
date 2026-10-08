@@ -280,10 +280,10 @@ void swiftomniui_winui_window_set_anchor(SwiftOmniUIObjectRef window, double con
 /// greatest height, 0 for none.
 void swiftomniui_winui_window_set_limits(SwiftOmniUIObjectRef window, double const *limits);
 
-/// What the window is: whether the user may maximize and minimize it, whether its backdrop is translucent (acrylic)
-/// or of the desktop's tint (Mica), and whether it floats over the application's other windows.
-void swiftomniui_winui_window_set_traits(SwiftOmniUIObjectRef window, bool maximizable, bool minimizable, bool translucent,
-                                     bool floats);
+/// What the window is: whether the user may maximize, minimize and resize it, whether its backdrop is translucent
+/// (acrylic) or of the desktop's tint (Mica), and whether it floats over the application's other windows.
+void swiftomniui_winui_window_set_traits(SwiftOmniUIObjectRef window, bool maximizable, bool minimizable, bool resizable,
+                                     bool translucent, bool floats);
 
 /// What a test reads of a window, into 13 values: x, y, width, height, the four limits in the order they are set,
 /// maximizable, minimizable, translucent, floating and shown as 1 or 0.

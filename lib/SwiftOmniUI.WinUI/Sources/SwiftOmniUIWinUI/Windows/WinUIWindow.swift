@@ -83,10 +83,12 @@ final class WinUIWindow {
     }
 
     /// Makes the window what `traits` says: a button it leaves unsaid is WinUI's own, which lets the user press it.
+    /// `.contentSize` stands it as a fixed-size window does - the caption keeps only the button that closes it.
     func apply(_ traits: WindowTraits) {
+        let sizedByContent = traits.resizability == WindowResizability.contentSize.rawValue
         swiftomniui_winui_window_set_traits(
-            handle, traits.isMaximizable ?? true, traits.isMinimizable ?? true, traits.isTranslucent,
-            traits.floatsOnTop)
+            handle, traits.isMaximizable ?? !sizedByContent, traits.isMinimizable ?? !sizedByContent,
+            !sizedByContent, traits.isTranslucent, traits.floatsOnTop)
     }
 
     /// Shows `view` as the window's content - the first one activates the window, unless its scene hides it.

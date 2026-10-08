@@ -338,13 +338,14 @@ extern "C" void swiftomniui_winui_window_set_limits(SwiftOmniUIObjectRef handle,
 }
 
 extern "C" void swiftomniui_winui_window_set_traits(
-    SwiftOmniUIObjectRef handle, bool maximizable, bool minimizable, bool translucent, bool floats
+    SwiftOmniUIObjectRef handle, bool maximizable, bool minimizable, bool resizable, bool translucent, bool floats
 ) {
     try {
         auto window = borrow<xaml::Window>(handle);
         if (auto presenter = window.AppWindow().Presenter().try_as<windowing::OverlappedPresenter>()) {
             presenter.IsMaximizable(maximizable);
             presenter.IsMinimizable(minimizable);
+            presenter.IsResizable(resizable);
             presenter.IsAlwaysOnTop(floats);
         }
         // The backdrop is made again only where it turns.
