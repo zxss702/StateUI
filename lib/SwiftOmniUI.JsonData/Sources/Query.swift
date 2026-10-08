@@ -19,6 +19,20 @@ import SwiftOmniUI
 /// `Sendable` though what the UI thread reads never leaves it.
 private struct OnMain<T>: @unchecked Sendable {
     let value: T
+
+    init(_ value: T) {
+        self.value = value
+    }
+}
+
+/// A key path as `SortDescriptor` spells it: Foundation's initializer asks the
+/// path itself conform `Sendable`, which `KeyPath` never does - a key path is
+/// immutable, so the cast only writes the conformance onto the type. A
+/// class-bound existential is one pointer, the bitcast is representation-safe.
+private func sendable<Root, Value>(
+    _ keyPath: KeyPath<Root, Value>
+) -> any KeyPath<Root, Value> & Sendable {
+    unsafeBitCast(keyPath, to: (KeyPath<Root, Value> & Sendable).self)
 }
 
 /// The rows a `Query` holds: what was last fetched, refetched when the store
@@ -112,12 +126,12 @@ public struct Query<Element: PersistentModel> {
     }
 
     /// The rows ordered by one key.
-    public init<Value: Comparable & Sendable>(
-        sort keyPath: KeyPath<Element, Value> & Sendable,
+    public init<Value: Comparable>(
+        sort keyPath: KeyPath<Element, Value>,
         order: SortOrder = .forward
     ) {
         _result = State(wrappedValue: QueryResult(
-            descriptor: FetchDescriptor(sortBy: [SortDescriptor(keyPath, order: order)])))
+            descriptor: FetchDescriptor(sortBy: [SortDescriptor(sendable(keyPath), order: order)])))
     }
 
     /// A descriptor of your own - the full SwiftData spelling:
@@ -138,16 +152,16 @@ public struct Query<Element: PersistentModel> {
 
     /// The rows `filter` matches, ordered by one key - SwiftData's
     /// `Query(filter:sort:order:animation:)`.
-    public init<Value: Comparable & Sendable>(
+    public init<Value: Comparable>(
         filter: Foundation.Predicate<Element>,
-        sort keyPath: KeyPath<Element, Value> & Sendable,
+        sort keyPath: KeyPath<Element, Value>,
         order: SortOrder = .forward,
         animation: Animation? = nil
     ) {
         self.init(
             FetchDescriptor(
                 predicate: filter,
-                sortBy: [SortDescriptor(keyPath, order: order)]),
+                sortBy: [SortDescriptor(sendable(keyPath), order: order)]),
             animation: animation)
     }
 
@@ -167,9 +181,9 @@ public struct Query<Element: PersistentModel> {
 
     /// The rows `filter` matches, ordered by one key - SwiftData's
     /// `Query(filter:sort:order:animation:)`.
-    public init<Value: Comparable & Sendable>(
+    public init<Value: Comparable>(
         filter: JsonDataCore.Predicate<Element>,
-        sort keyPath: KeyPath<Element, Value> & Sendable,
+        sort keyPath: KeyPath<Element, Value>,
         order: SortOrder = .forward,
         animation: Animation? = nil
     ) {
@@ -211,7 +225,7 @@ public struct Query<Element: PersistentModel> {
         let context = _context, result = _result
         return MainActor.assumeIsolated {
             result.wrappedValue.attach(to: context.wrappedValue)
-            return OnMain(value: result.wrappedValue.items)
+            return OnMain(result.wrappedValue.items)
         }.value
     }
 }
