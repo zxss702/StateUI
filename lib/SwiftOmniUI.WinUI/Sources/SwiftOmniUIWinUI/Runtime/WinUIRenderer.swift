@@ -13,7 +13,7 @@ final class WinUIRenderer {
     static var shared: WinUIRenderer?
 
     /// What the host says for whoever reads its log: standard error, or wherever a test listens.
-    static var log = HostLog(host: "WinUI")
+    static let log = HostLog(host: "WinUI")
 
     let frameClock: WinUIFrameClock
 
