@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 // Where the library says an application handed it something it cannot use.
 // Design: docs/design/core/diagnostics.md#complaints
 
