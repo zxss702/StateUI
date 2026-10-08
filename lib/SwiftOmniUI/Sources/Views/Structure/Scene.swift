@@ -46,21 +46,34 @@ extension Scene {
         OfferingScene(base: self, key: ObjectIdentifier(Value.self), object: object)
     }
 
+    /// Writes an environment value into every window of every session of
+    /// this scene, resolved by key path the way `.environment(_:_:)` on a
+    /// view is.
+    public func environment<Value>(
+        _ keyPath: WritableKeyPath<EnvironmentValues, Value>, _ value: Value
+    ) -> some Scene {
+        PlacedScene(base: self) { $0.environment(keyPath, value) }
+    }
+
     /// Where the scene's windows open: `position`'s fractions across and
     /// down the screen's work area land the same fractions across and down
     /// the window - `.center` centers it, `.topLeading` its top left corner
     /// at the work area's.
     ///
     /// The scene's default: its main window opens there, and so does the
-    /// window of a group that does not say its own.
+    /// window of a group that does not say its own. Written on a `Window` or
+    /// a `WindowScene` the ask is that window's own.
     ///
     ///     var body: some Scene { EditorScene().defaultPosition(.center) }
     public func defaultPosition(_ position: UnitPoint) -> some Scene {
-        PlacedScene(base: self) { $0.defaultPosition(position) }
+        if let scene = self as? WindowScene {
+            return AnyScene(base: ModifiedWindowScene(base: scene) { $0.position = position })
+        }
+        return AnyScene(base: PlacedScene(base: self) { $0.defaultPosition(position) })
     }
 
     /// Where the scene's windows open, the fractions outright.
-    public func defaultPosition(x: Double, y: Double) -> some Scene {
+    public func defaultPosition(x: Double, y: Double) -> Scene {
         defaultPosition(UnitPoint(x: x, y: y))
     }
 
@@ -70,20 +83,65 @@ extension Scene {
     ///
     ///     var body: some Scene { EditorScene().defaultPlacement(.topLeading) }
     public func defaultPlacement(_ placement: WindowPlacement) -> some Scene {
-        PlacedScene(base: self) { $0.defaultPlacement(placement) }
+        if let scene = self as? WindowScene {
+            return AnyScene(base: ModifiedWindowScene(base: scene) {
+                $0.position = placement.anchor
+                $0.size = placement.extent.map { (width: $0.width, height: $0.height) }
+            })
+        }
+        return AnyScene(base: PlacedScene(base: self) { $0.defaultPlacement(placement) })
+    }
+
+    /// Where the scene's main window opens, as the closure asks it: the
+    /// SwiftUI `windowIdealPlacement` spelling, whose closure is handed the
+    /// window's content and a placement context. SwiftOmniUI resolves the
+    /// placement once as the scene builds - the content and context it hands
+    /// stand empty - so a closure answering where the window should sit, as
+    /// `WindowPlacement(.center)` does, lands the same on every platform.
+    ///
+    ///     var body: some Scene {
+    ///         Window("欢迎页", id: "welcome") { WelcomePage() }
+    ///             .windowIdealPlacement { content, context in WindowPlacement(.center) }
+    ///     }
+    public func windowIdealPlacement(
+        _ makePlacement: @escaping (WindowLayoutRoot, WindowPlacementContext) -> WindowPlacement
+    ) -> some Scene {
+        defaultPlacement(makePlacement(WindowLayoutRoot(), WindowPlacementContext()))
     }
 
     /// The size the scene's windows open at, in device units - the scene's
-    /// default, a group's own winning where it says one:
+    /// default, a group's own winning where it says one. Written on a
+    /// `Window` or a `WindowScene` the ask is that window's own:
     ///
     ///     var body: some Scene { Window { MainPage() }.defaultSize(width: 800, height: 600) }
     public func defaultSize(width: Double, height: Double) -> some Scene {
-        PlacedScene(base: self) { $0.defaultSize(width: width, height: height) }
+        if let scene = self as? WindowScene {
+            return AnyScene(base: ModifiedWindowScene(base: scene) {
+                $0.size = (width: width, height: height)
+            })
+        }
+        return AnyScene(base: PlacedScene(base: self) { $0.defaultSize(width: width, height: height) })
     }
 
     /// The size the scene's windows open at, as one value.
-    public func defaultSize(_ size: Size) -> some Scene {
+    public func defaultSize(_ size: Size) -> Scene {
         defaultSize(width: size.width, height: size.height)
+    }
+
+    /// How the scene's windows settle their size against their content -
+    /// `.contentSize` has each take the size its content asks for and no
+    /// other:
+    ///
+    ///     var body: some Scene { Window { MainPage() }.windowResizability(.contentSize) }
+    ///
+    /// Written on a `Window` or a `WindowScene` the ask is that window's
+    /// own; written on any other scene it is the default every window of it
+    /// falls back on.
+    public func windowResizability(_ resizability: WindowResizability) -> some Scene {
+        if let scene = self as? WindowScene {
+            return AnyScene(base: ModifiedWindowScene(base: scene) { $0.resizability = resizability })
+        }
+        return AnyScene(base: PlacedScene(base: self) { $0.windowResizability(resizability) })
     }
 }
 
@@ -113,4 +171,14 @@ struct PlacedScene: Scene {
     let edit: (Windows) -> Windows
 
     var windows: Windows { edit(base.windows) }
+}
+
+/// A scene as one concrete value: what a modifier answering a window's own
+/// `WindowScene` or a scene of any other shape returns as `some Scene` - the
+/// opaque result needs one underlying type, and this boxes either.
+struct AnyScene: Scene {
+    /// The scene, whatever it was.
+    let base: any Scene
+
+    var windows: Windows { base.windows }
 }

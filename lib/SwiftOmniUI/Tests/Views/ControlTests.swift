@@ -298,6 +298,9 @@ final class ControlTests: XCTestCase {
                     Text("Another")
                 }
                 .horizontalAlignment(.center)
+                // The `maximumWidth` a cell asks with fills its column - the
+                // prop the file reads it by, carried here on the grid.
+                .frame(maxWidth: .infinity)
                 .node.built)
         let case20c =           ControlCase("LazyHGrid", source: "LazyVGrid.swift",
                 LazyHGrid(
@@ -311,6 +314,7 @@ final class ControlTests: XCTestCase {
                     Text("Another")
                 }
                 .verticalAlignment(.fill)
+                .frame(maxHeight: .infinity)
                 .node.built)
         let case20d =           ControlCase("LazyVStack", source: "LazyStacks.swift",
                 LazyVStack(alignment: .leading, spacing: 12) {
@@ -318,6 +322,7 @@ final class ControlTests: XCTestCase {
                     Text("Another")
                 }
                 .horizontalAlignment(.center)
+                .frame(maxWidth: .infinity)
                 .node.built)
         let case20e =           ControlCase("LazyHStack", source: "LazyStacks.swift",
                 LazyHStack(alignment: .top, spacing: 6) {
@@ -325,6 +330,7 @@ final class ControlTests: XCTestCase {
                     Text("Another")
                 }
                 .verticalAlignment(.fill)
+                .frame(maxHeight: .infinity)
                 .node.built)
         let case21 =             ControlCase("VStack", source: "StackLayouts.swift",
                 VStack(alignment: .leading, spacing: 12) {
@@ -359,7 +365,10 @@ final class ControlTests: XCTestCase {
                 // The offset is ONE POINT - both axes on one state - written
                 // by the host on its own frames and walked by it on a write.
                 .scrollOffset(offset.projectedValue)
-                .onScrollStopped {})
+                .onScrollStopped {}
+                // The axes form, last: it is the view-level spelling, which
+                // answers a ModifiedContent rather than the control's own.
+                .scrollBounceBehavior(.basedOnSize, axes: .horizontal))
         // The collection as its view writes it: every entry's identity, the
         // layout, the choice, and what choosing, opening and scrolling to the
         // end raise. A composed view, so the case is its body built.
@@ -686,6 +695,8 @@ final class ControlTests: XCTestCase {
         let ns = Namespace().wrappedValue
         let elv3 = elv2                .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isSelected)
+                .compositingGroup()
+                .drawingGroup()
                 .matchedGeometryEffect(id: "shared", in: ns)
                 .matchedGeometryEffect(id: "follower", in: ns, isSource: false)
                 .symbolEffect(.bounce, value: 1)
@@ -982,6 +993,10 @@ final class ControlTests: XCTestCase {
             "scrollDisabled", "scrollBounceBehavior", "scrollClipDisabled",
             "scrollContentBackground", "scrollTargetLayout", "scrollTargetBehavior",
             "defaultScrollAnchor",
+            // Container spellings that write through to the texts inside,
+            // whose driven halves are the members' own twins.
+            "fontDesign", "fontWeight", "foregroundColor", "kerning",
+            "lineLimit", "lineSpacing", "multilineTextAlignment", "tracking",
             // Page chrome, lifted to the page and window records - no driven
             // half crosses that way.
             "navigationBarBackButtonHidden", "navigationDocument", "navigationSubtitle",

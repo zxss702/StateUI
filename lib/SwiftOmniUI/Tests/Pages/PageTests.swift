@@ -105,6 +105,16 @@ private struct EveryPropertyWindow: WindowScene {
     }
 }
 
+/// What the window asks of its own beside its session's properties - title,
+/// size, place, resizability, and the name `openWindow(id:)` finds it by.
+extension EveryPropertyWindow: WindowSceneAsks {
+    var windowID: String? { "everything" }
+    var windowTitle: String? { "Everything" }
+    var windowResizability: WindowResizability? { .contentSize }
+    var windowSize: (width: Double, height: Double)? { (width: 1200, height: 800) }
+    var windowPosition: UnitPoint? { .center }
+}
+
 /// A page that dresses its whole session as it arrives, and again - every
 /// property to another value - on a press. So the write that matters is made
 /// once the page is standing, and what the next message carries is what the
@@ -687,6 +697,8 @@ final class PageTests: XCTestCase {
             "isTranslucent": .bool(true), "maximumHeight": .number(1200), "maximumWidth": .number(1600),
             "minimumHeight": .number(400), "minimumWidth": .number(600), "title": .string("Everything"),
             "width": .number(1200), "x": .number(10), "y": .number(20),
+            "resizability": .enumeration(WindowResizability.contentSize.rawValue),
+            "defaultPosition": .numbers([0.5, 0.5]),
         ])
         XCTAssertEqual(window.eventNames, HostPatch.windowEvents)
         XCTAssertEqual(window.children.map(\.type), [.page])

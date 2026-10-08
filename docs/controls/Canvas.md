@@ -23,12 +23,12 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (95) | Realization | Notes |
+| Host | Created | Members (97) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 27 ✅ · 1 ☑️ · 3 – | custom `NSView` drawing |  |
 | UIKit | ✅ | 26 ✅ · 3 – | `UIView` `draw(_:)` |  |
 | Android Views | ✅ | 53 ✅ · 1 ☑️ · 3 – | `View` `onDraw(Canvas)` |  |
-| WinUI 3 | ✅ | 52 ✅ · 3 – | Direct2D in a `SurfaceImageSource` |  |
+| WinUI 3 | ✅ | 53 ✅ · 3 – | Direct2D in a `SurfaceImageSource` |  |
 | GTK 4 | ✅ | 21 ✅ · 3 – | `GtkDrawingArea` |  |
 | Web |  |  | `<canvas>` | no host yet |
 
@@ -40,7 +40,7 @@ Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Shapes/CanvasContract.sw
 | --- | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | --- |
 | `onDragged` (`dragged`) | event | `Point` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pressDown on Canvas: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pressDown on Canvas: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pressDown on Canvas - GTK's driver has no path for it yet |
 | `drawable` | property | `[DrawCommand]` | structure | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read the colour of Canvas - GTK's driver has no path for it yet |
-| `measureText` | act | `(String, FontTextStyle?, Double?, Name?, Weight?, FontDesign?, FontAttributes, Double?) -> Size` |  | ✅ | ✅ |  |  | ✅ |  |  |
+| `measureText` | act | `(String, FontTextStyle?, Double?, Name?, Weight?, FontDesign?, FontAttributes, Double?) -> Size` |  | ✅ | ✅ |  | ✅ | ✅ |  |  |
 | `onPressed` (`pressed`) | event | `Point` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pressDown on Canvas: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pressDown on Canvas: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pressDown on Canvas - GTK's driver has no path for it yet |
 | `onReleased` (`released`) | event | `Point` | native | 🔌 | 🔌 | ✅ | ✅ | · |  | only through the host's own: pressDown on Canvas: handed to the host's recognizer or handler, no NSEvent sent; UIKit: only through the host's own: pressDown on Canvas: the view's listening handed the recognizer's states, no touch sent; GTK 4: cannot pressDown on Canvas - GTK's driver has no path for it yet |
 
@@ -68,6 +68,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | Canvas takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Canvas takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Canvas takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Canvas takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Canvas takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/// The builder an `App`'s `body` is written with: one scene, or an `if`
-/// choosing between two.
-///
-///     var body: some Scene { Window { MainPage() } }
+/// The builder an `App`'s `body` is written with: the scenes of the body, or
+/// an `if` choosing between two.
 ///
 ///     var body: some Scene {
-///         if restored { EditorScene() } else { OnboardingScene() }
+///         Window("欢迎页", id: "welcome") { WelcomePage() }
+///         WindowGroup(for: URL.self) { $url in EditorWindow(url: url) }
 ///     }
 ///
-/// An application's body is one scene - the windows beside its main one are a
-/// scene's own `Windows`, not more entries here.
+/// SwiftUI reads each entry a scene of its own; SwiftOmniUI builds one scene
+/// of them - the first to declare a main window supplies it, and every
+/// scene's groups, commands and environments stand beside it.
 @resultBuilder
 public enum SceneBuilder {
     /// A scene passes through as itself.
@@ -22,6 +22,27 @@ public enum SceneBuilder {
     /// The one scene the body is.
     public static func buildBlock<Content: Scene>(_ scene: Content) -> Content {
         scene
+    }
+
+    /// The scenes of a body of two.
+    public static func buildBlock<First: Scene, Second: Scene>(
+        _ first: First, _ second: Second
+    ) -> TupleScene {
+        TupleScene(scenes: [first, second])
+    }
+
+    /// The scenes of a body of three.
+    public static func buildBlock<First: Scene, Second: Scene, Third: Scene>(
+        _ first: First, _ second: Second, _ third: Third
+    ) -> TupleScene {
+        TupleScene(scenes: [first, second, third])
+    }
+
+    /// The scenes of a body of four.
+    public static func buildBlock<First: Scene, Second: Scene, Third: Scene, Fourth: Scene>(
+        _ first: First, _ second: Second, _ third: Third, _ fourth: Fourth
+    ) -> TupleScene {
+        TupleScene(scenes: [first, second, third, fourth])
     }
 
     /// An `if` branch's scene.
@@ -43,4 +64,56 @@ public struct ConditionalScene: Scene {
 
     /// The windows of whichever scene was chosen.
     public var windows: Windows { wrapped.windows }
+}
+
+/// The several scenes an app's `body` declares, as one: the first scene's
+/// main window is the scene's own, and every scene's groups - so its kinds
+/// of window - answer `openWindow` together.
+///
+/// Scene-level asks - `defaultSize`, `commands`, the environments offered -
+/// merge the same way: the first scene to ask a thing stands.
+public struct TupleScene: Scene {
+    /// The scenes, in the order the body wrote them.
+    let scenes: [any Scene]
+
+    /// The windows of every scene together.
+    public var windows: Windows {
+        var groups: [WindowGroup] = []
+        var main: WindowScene?
+        var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
+        var environmentEdits: [(inout EnvironmentValues) -> Void] = []
+        var commands: [any Commands] = []
+        var defaultSize: (width: Double, height: Double)? = nil
+        var defaultPosition: UnitPoint? = nil
+        var resizability: WindowResizability? = nil
+
+        for scene in scenes {
+            // An object's `.environment` wrapper hands its object down as the
+            // merge goes by it.
+            var scene = scene
+            while let offered = scene as? OfferingScene {
+                environments.append((key: offered.key, object: offered.object))
+                scene = offered.base
+            }
+
+            let windows = scene.windows
+            if main == nil { main = windows.main }
+            groups += windows.groups
+            environments += windows.environments
+            environmentEdits += windows.environmentEdits
+            commands += windows.commands
+            defaultSize = defaultSize ?? windows.defaultSize
+            defaultPosition = defaultPosition ?? windows.defaultPosition
+            resizability = resizability ?? windows.resizability
+        }
+
+        var merged = Windows(groups: groups, main: main)
+        merged.environments = environments
+        merged.environmentEdits = environmentEdits
+        merged.commands = commands
+        merged.defaultSize = defaultSize
+        merged.defaultPosition = defaultPosition
+        merged.resizability = resizability
+        return merged
+    }
 }

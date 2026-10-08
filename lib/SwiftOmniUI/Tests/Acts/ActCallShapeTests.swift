@@ -337,6 +337,23 @@ final class ActCallShapeTests: XCTestCase {
         }
     }
 
+    /// The folder panel: whether it takes several is its one argument.
+    func testChoosingFoldersCrossesWithItsArgumentsInPlace() async throws {
+        try await check("openFolders", [.bool(false)]) {
+            _ = try await Dialogs.openFolder()
+        }
+        try await check("openFolders", [.bool(true)]) {
+            _ = try await Dialogs.openFolders()
+        }
+    }
+
+    /// Words for the clipboard: the text alone, and nothing to answer.
+    func testCopyingTextCrossesWithItsArgumentsInPlace() async throws {
+        try await check("copyText", [.string("note")]) {
+            try await Pasteboard.copy("note")
+        }
+    }
+
     /// A file read or launched crosses as where it stands, then its name.
     func testAChosenFileCrossesAsWhereItStandsAndItsName() async throws {
         let file = ChosenFile(address: "C:\\Reports\\Report.html", name: "Report.html")

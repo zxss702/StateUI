@@ -75,6 +75,14 @@ public struct WindowPlacement: Equatable, Sendable {
     /// The window's bottom right corner at the work area's.
     public static let bottomTrailing = WindowPlacement(position: .bottomTrailing)
 
+    /// A placement by its anchor alone: `.center` centers the window, the
+    /// size the platform's own.
+    ///
+    ///     WindowPlacement(.center)
+    public init(_ position: UnitPoint) {
+        self.init(position: position)
+    }
+
     /// The position it asks, nil where it asks nothing of the place - what a
     /// window's `defaultPosition` becomes.
     var anchor: UnitPoint? { isAutomatic ? nil : position }
@@ -82,4 +90,23 @@ public struct WindowPlacement: Equatable, Sendable {
     /// The size it asks, nil for `.zero` or where it asks nothing - what a
     /// window's `defaultSize` becomes.
     var extent: Size? { !isAutomatic && size != .zero ? size : nil }
+}
+
+/// The content a window's placement is asked about - on SwiftUI the view
+/// filling the window. A `windowIdealPlacement` closure is answered with
+/// one of these so the same spelling compiles under SwiftOmniUI, where the
+/// placement resolves once at scene build and the root view is not
+/// consulted.
+public struct WindowLayoutRoot: Sendable {
+    /// The one content root a placement is asked about.
+    public init() {}
+}
+
+/// The displays and windows a `windowIdealPlacement` closure may account
+/// for. SwiftOmniUI's own resolution happens before any window stands, so
+/// the context a closure is handed is empty; closures reading it ask the
+/// placement questions this model does not pose.
+public struct WindowPlacementContext: Sendable {
+    /// The context at scene build: no displays, no windows beside.
+    public init() {}
 }

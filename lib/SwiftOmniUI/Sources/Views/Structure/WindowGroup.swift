@@ -192,3 +192,41 @@ public struct WindowGroup {
         defaultSize(width: size.width, height: size.height)
     }
 }
+
+/// The SwiftUI spellings: `WindowGroup(for:)` with a view built off the
+/// value's binding, and a group standing alone where a scene is asked for.
+extension WindowGroup {
+    /// A group that opens one window per value - a document per document -
+    /// the windows' kind being the value's own type, as SwiftUI resolves it:
+    ///
+    ///     WindowGroup(for: URL.self) { $folder in EditorWindow(folder: folder) }
+    ///
+    /// The content is handed a binding to the window's value - `nil` until
+    /// the window stands for one, and a write retargets the window, as
+    /// `init(_:for:window:)` hands it.
+    ///
+    /// - Parameters:
+    ///   - value: the type of value one window stands for - anything
+    ///     `Codable` and `Hashable`, so the platform can write it down.
+    ///   - content: the window's page for one value.
+    public init<Value: Codable & Hashable & SendableMetatype, Content: View>(
+        for value: Value.Type,
+        @ViewBuilder content: @escaping (Binding<Value?>) -> Content
+    ) {
+        self.init(WindowType(String(reflecting: Value.self)), for: value) { binding in
+            Window {
+                content(Binding(
+                    get: { binding.wrappedValue },
+                    set: { if let value = $0 { binding.wrappedValue = value } }))
+            }
+        }
+    }
+}
+
+/// A `WindowGroup` written where a scene is asked for: an app body built of
+/// groups alone opens none until `openWindow` asks, and one written beside
+/// windows stands among them.
+extension WindowGroup: Scene {
+    /// The scene of this group: its windows open as `openWindow` asks.
+    public var windows: Windows { Windows { self } }
+}

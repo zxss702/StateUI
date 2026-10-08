@@ -216,6 +216,7 @@ extension View {
         onHover(perform)
     }
 
+    /// `onHover(perform:)` under the trailing-closure spelling.
     public func onHover(_ perform: @escaping (Bool) -> Void) -> ModifiedContent {
         onPointerEntered { perform(true) }
             .onPointerExited { perform(false) }

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (92) | Realization | Notes |
+| Host | Created | Members (94) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  | 24 ✅ · 1 ☑️ · 3 – | `AppKitMenuButtonView` (label + `NSMenu`) | no run of it on these sources |
 | UIKit |  |  | `UIMenu` on a `UIButton` | no run of it on these sources |
@@ -65,6 +65,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  |  |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – |  |  |  | ✅ |  | MenuButton takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized |
 | `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (115) | Realization | Notes |
+| Host | Created | Members (117) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 37 ✅ · 1 ☑️ · 3 – | `NSTextField` label; `NSAttributedString` runs |  |
 | UIKit | ✅ | 39 ✅ · 3 – | `UILabel`; `NSAttributedString` runs |  |
@@ -69,6 +69,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ | ✅ | ✅ | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; GTK 4: cannot read background of Text - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | Text takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Text takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Text takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Text takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Text takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (98) | Realization | Notes |
+| Host | Created | Members (100) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 34 ✅ · 1 ☑️ | `NSSlider` |  |
 | UIKit | ✅ | 30 ✅ · 3 – | `UISlider` |  |
@@ -69,6 +69,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | ✅ |  | UIKit: Slider takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Slider takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

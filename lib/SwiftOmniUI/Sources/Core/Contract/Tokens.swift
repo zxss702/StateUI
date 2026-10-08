@@ -140,6 +140,7 @@ extension NodeType {
     static let image = SpanContract.image.token
     static let iconPosition = ButtonContract.iconPosition.token
     static let iconSpacing = ButtonContract.iconSpacing.token
+    static let compositingGroup = VisualElementContract.compositingGroup.token
     static let cornerRadius = ColorPickerContract.cornerRadius.token
     static let controlSize = ControlSizeElementContract.controlSize.token
     static let count = PositionIndicatorContract.count.token
@@ -149,6 +150,7 @@ extension NodeType {
     static let date = DatePickerContract.date.token
     static let dragText = ViewContract.dragText.token
     static let drawable = CanvasContract.drawable.token
+    static let drawingGroup = VisualElementContract.drawingGroup.token
     static let fill = ShapeContract.fill.token
     static let fillRule = PolygonContract.fillRule.token
     static let flex = ViewContract.flex.token
@@ -188,6 +190,7 @@ extension NodeType {
     static let clipsContent = LayoutContract.clipsContent.token
     static let defaultScrollAnchor = ScrollViewContract.defaultScrollAnchor.token
     static let isScrollDisabled = ScrollViewContract.isScrollDisabled.token
+    static let scrollBounceAxes = ScrollViewContract.scrollBounceAxes.token
     static let scrollBounceBehavior = ScrollViewContract.scrollBounceBehavior.token
     static let scrollContentBackground = ScrollContentElementContract.scrollContentBackground.token
     static let scrollTargetBehavior = ScrollViewContract.scrollTargetBehavior.token

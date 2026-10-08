@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (104) | Realization | Notes |
+| Host | Created | Members (106) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 32 ✅ · 3 – | custom `NSView` |  |
 | UIKit | ✅ | 34 ✅ · 3 – | composed by SwiftOmniUI |  |
@@ -68,6 +68,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of Grid - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | Grid takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Grid takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Grid takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Grid takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Grid takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

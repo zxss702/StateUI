@@ -212,20 +212,49 @@ extension ShapeStyle where Self == Color {
     /// Clear - no colour at all.
     public static var clear: Color { Color.clear }
 
+    /// Black, as a shape style - `.background(.black)`.
     public static var black: Color { Color.black }
+
+    /// White, as a shape style.
     public static var white: Color { Color.white }
+
+    /// Gray, as a shape style.
     public static var gray: Color { Color.gray }
+
+    /// Red, as a shape style.
     public static var red: Color { Color.red }
+
+    /// Orange, as a shape style.
     public static var orange: Color { Color.orange }
+
+    /// Yellow, as a shape style.
     public static var yellow: Color { Color.yellow }
+
+    /// Green, as a shape style.
     public static var green: Color { Color.green }
+
+    /// Mint, as a shape style.
     public static var mint: Color { Color.mint }
+
+    /// Teal, as a shape style.
     public static var teal: Color { Color.teal }
+
+    /// Cyan, as a shape style.
     public static var cyan: Color { Color.cyan }
+
+    /// Blue, as a shape style.
     public static var blue: Color { Color.blue }
+
+    /// Indigo, as a shape style.
     public static var indigo: Color { Color.indigo }
+
+    /// Purple, as a shape style.
     public static var purple: Color { Color.purple }
+
+    /// Pink, as a shape style.
     public static var pink: Color { Color.pink }
+
+    /// Brown, as a shape style.
     public static var brown: Color { Color.brown }
 }
 

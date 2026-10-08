@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (94) | Realization | Notes |
+| Host | Created | Members (96) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 27 ✅ · 1 ☑️ · 3 – | `NSImageView` |  |
 | UIKit | ✅ | 26 ✅ · 3 – | `UIImageView` |  |
@@ -66,6 +66,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | Image takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Image takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Image takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: Image takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: Image takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

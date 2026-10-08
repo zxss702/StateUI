@@ -91,8 +91,16 @@ public protocol WindowScene: Element, Scene {
 
 extension WindowScene {
     /// A window alone is a scene of one window:
-    /// `var body: some Scene { MainWindow() }`.
-    public var windows: Windows { Windows(main: { self }) }
+    /// `var body: some Scene { MainWindow() }`. A window named for
+    /// `openWindow(id:)` is also the group that name reopens once the user
+    /// has closed it.
+    public var windows: Windows {
+        var groups: [WindowGroup] = []
+        if let asks = self as? WindowSceneAsks, let id = asks.windowID {
+            groups.append(WindowGroup(WindowType(id)) { self })
+        }
+        return Windows(groups: groups, main: self)
+    }
 
     /// The window as a node: its page, and what hangs off it - its title bar
     /// and the pages presented over it.
@@ -126,6 +134,24 @@ extension WindowScene {
                 contract: WindowSceneContract.self,
                 children: [Node.page(page)] + session.slots + (overlay.map { [$0] } ?? []))
             node.props = session.props
+
+            // What the window asks of its own - its title, size, place, how it
+            // resizes - over anything the session already wrote.
+            if let asks = self as? WindowSceneAsks {
+                if let title = asks.windowTitle {
+                    node.write(WindowSceneContract.title, title)
+                }
+                if let resizability = asks.windowResizability {
+                    node.write(WindowSceneContract.resizability, resizability)
+                }
+                if let size = asks.windowSize {
+                    node.write(WindowSceneContract.width, size.width)
+                    node.write(WindowSceneContract.height, size.height)
+                }
+                if let position = asks.windowPosition {
+                    node.write(WindowSceneContract.defaultPosition, position)
+                }
+            }
 
             // One handler per lifecycle report, never iterated from a collection.
             // Design: docs/design/views/pages.md#lifecycle-reports-one-by-one

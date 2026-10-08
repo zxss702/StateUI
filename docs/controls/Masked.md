@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (99) | Realization | Notes |
+| Host | Created | Members (101) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  | 28 ✅ · 3 – | custom `NSView` drawn through the mask child's alpha | no run of it on these sources |
 | UIKit |  |  | custom `UIView` masked the same | no run of it on these sources |
@@ -62,6 +62,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ |  |  |  | · |  | UIKit: not realized; GTK 4: cannot read background of Masked - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – |  |  |  | – |  | Masked takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: not realized; GTK 4: Masked takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ |  |  |  | ✅ |  | UIKit: not realized |
 | `height` | property | `Double` | native | ✅ |  |  |  | ✅ |  | UIKit: not realized |

@@ -87,6 +87,21 @@ extension View {
     }
 }
 
+extension Scene {
+    /// Hands `container`'s main context to every window of the scene, as a
+    /// scene-level `.modelContainer` does in SwiftUI - the `\.modelContext`
+    /// value and the `ModelContext` object the windows' views resolve.
+    ///
+    ///     var body: some Scene {
+    ///         Window("设置", id: "setting") { SettingsWindow() }
+    ///             .modelContainer(appModelContainer)
+    ///     }
+    public func modelContainer(_ container: ModelContainer) -> Scene {
+        environment(\.modelContext, container.contextOnMain)
+            .environment(container.contextOnMain)
+    }
+}
+
 /// The view that owns a `.modelContainer(for:inMemory:)` container, so the
 /// container is made once and kept while the view stands.
 private struct ModelContainerHost<Content: View>: View {

@@ -18,11 +18,16 @@ public struct Windows {
     /// The kinds of window the scene may open beside its main one.
     let groups: [WindowGroup]
 
-    /// The main window.
-    let main: WindowScene
+    /// The main window, or nil where the scene is only groups - its windows
+    /// open as `openWindow` asks, none of its own.
+    let main: WindowScene?
 
     /// What `.environment(_:)` offered every window of the scene.
     var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
+
+    /// What `.environment(_:_:)` wrote every window of the scene, applied to
+    /// each window's environment values as it builds.
+    var environmentEdits: [(inout EnvironmentValues) -> Void] = []
 
     /// The commands every window of the scene offers - `.commands` on the
     /// scene and on its `Windows` collect them here.
@@ -35,6 +40,10 @@ public struct Windows {
     /// Where the scene's windows open on the screen, the anchor landing the
     /// same way on window and work area; nil for the platform's own choice.
     var defaultPosition: UnitPoint? = nil
+
+    /// How the scene's windows settle their size against their content; nil
+    /// for the platform's ordinary sizing.
+    var resizability: WindowResizability? = nil
 
     /// A main window, and the groups of windows the scene may open beside it.
     ///
@@ -58,6 +67,22 @@ public struct Windows {
         self.init({}, main: main)
     }
 
+    /// The groups of windows the scene may open, and no main window - what a
+    /// `WindowGroup` alone in a scene's body declares.
+    ///
+    /// - Parameter groups: one `WindowGroup` per kind of window.
+    public init(@WindowGroupBuilder _ groups: () -> [WindowGroup]) {
+        self.groups = groups()
+        main = nil
+    }
+
+    /// Groups and a main window already built - what merging several scenes
+    /// into one writes.
+    init(groups: [WindowGroup], main: WindowScene?) {
+        self.groups = groups
+        self.main = main
+    }
+
     /// Offers an object to every window of the scene, resolved by type the way
     /// `.environment` on a view is - how a session's windows share one context:
     ///
@@ -70,6 +95,31 @@ public struct Windows {
     public func environment<Value: AnyObject>(_ object: Value) -> Windows {
         var copy = self
         copy.environments.append((key: ObjectIdentifier(Value.self), object: object))
+        return copy
+    }
+
+    /// Writes an environment value into every window of the scene, resolved
+    /// by key path the way `.environment(_:_:)` on a view is.
+    public func environment<Value>(
+        _ keyPath: WritableKeyPath<EnvironmentValues, Value>, _ value: Value
+    ) -> Windows {
+        var copy = self
+        copy.environmentEdits.append { $0[keyPath: keyPath] = value }
+        return copy
+    }
+
+    /// How the scene's windows settle their size against their content -
+    /// `.contentSize` has each take the size its content asks for and no
+    /// other:
+    ///
+    ///     Windows { … } main: { MainWindow() }
+    ///         .windowResizability(.contentSize)
+    ///
+    /// The scene's default: its main window settles so, and so does the
+    /// window of a group that does not say its own.
+    public func windowResizability(_ resizability: WindowResizability) -> Windows {
+        var copy = self
+        copy.resizability = resizability
         return copy
     }
 

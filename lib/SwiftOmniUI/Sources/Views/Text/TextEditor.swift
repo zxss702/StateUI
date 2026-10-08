@@ -53,6 +53,7 @@ public struct TextEditor: InputView, TextElement, FontElement, TextAlignmentElem
         self.init(text)
     }
 
+    /// The same two-way editor, under the bare label - `TextEditor($text)`.
     public init(_ text: Binding<String>) {
         self = TextEditor().text(text)
     }

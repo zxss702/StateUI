@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (105) | Realization | Notes |
+| Host | Created | Members (107) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit |  | 27 ✅ · 1 ☑️ · 3 – | custom `NSView` realizing the window it sees through the scroller | no run of it on these sources |
 | UIKit |  | 29 ✅ · 3 – | custom `UIView` driven the same | no run of it on these sources |
@@ -68,6 +68,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ |  |  | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; GTK 4: cannot read background of LazyHGrid - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – |  |  | – |  | LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: LazyHGrid takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ |  |  | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ |  |  | ✅ |  |  |

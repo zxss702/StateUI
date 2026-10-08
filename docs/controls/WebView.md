@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (101) | Realization | Notes |
+| Host | Created | Members (103) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 39 ✅ · 1 ☑️ | `WKWebView` |  |
 | UIKit | ✅ | 34 ✅ | `WKWebView` |  |
@@ -74,6 +74,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  | ✅ |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | ✅ | ✅ | – |  | ✅ |  | Android Views: WebView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: not realized |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ |  | ✅ |  | WinUI 3: not realized |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ |  | ✅ |  | WinUI 3: not realized |

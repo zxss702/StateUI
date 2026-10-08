@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (99) | Realization | Notes |
+| Host | Created | Members (101) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 28 ✅ · 3 – | custom `NSView` |  |
 | UIKit | ✅ | 30 ✅ · 3 – | custom `UIView` |  |
@@ -62,6 +62,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ✅ | ✅ | ✅ | ✅ | · |  | GTK 4: cannot read background of ZStack - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | – |  | ZStack takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ZStack takes no keyboard focus here: it refuses it, and nothing is heard; GTK 4: ZStack takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

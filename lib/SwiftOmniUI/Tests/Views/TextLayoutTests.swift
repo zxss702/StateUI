@@ -139,7 +139,7 @@ final class TextLayoutTests: XCTestCase {
         box.attributes[ObjectIdentifier(MappingsAttribute.self)] = MappingsAttribute(mappings: [0: 4])
         box.fill(report())
 
-        let layout = Text.Layout(box: box)
+        let layout = Text.Layout(box: box, anchorBox: AnchorBox())
         XCTAssertEqual(Array(layout).count, 1)
 
         let line = layout[0]
@@ -148,7 +148,7 @@ final class TextLayoutTests: XCTestCase {
 
         let run = line[0]
         XCTAssertEqual(run.typographicBounds.rect, Rect(0, 2, 60, 12))
-        XCTAssertEqual(run.layoutDirection, .leftToRight)
+        XCTAssertEqual(run.layoutDirection, LayoutDirection.leftToRight)
         XCTAssertEqual(run.count, 2)
         XCTAssertEqual(run[0].typographicBounds.rect, Rect(0, 2, 30, 12))
         XCTAssertEqual(run[1].typographicBounds.rect, Rect(30, 2, 60, 12))
@@ -162,19 +162,19 @@ final class TextLayoutTests: XCTestCase {
         let box = TextLayoutBox()
         box.fill(report())
 
-        XCTAssertNil(Text.Layout(box: box)[0][0][MappingsAttribute.self])
+        XCTAssertNil(Text.Layout(box: box, anchorBox: AnchorBox())[0][0][MappingsAttribute.self])
     }
 
     /// A laid-out run's generation is what two folded layouts compare by:
     /// same report, same answer; a new report, a moved one.
     func testALayoutAgreesOnlyWithItsOwnGeneration() {
         let box = TextLayoutBox()
-        let before = Text.Layout(box: box)
+        let before = Text.Layout(box: box, anchorBox: AnchorBox())
         box.fill(report())
-        let after = Text.Layout(box: box)
+        let after = Text.Layout(box: box, anchorBox: AnchorBox())
 
         XCTAssertNotEqual(before, after)
-        XCTAssertEqual(after, Text.Layout(box: box),
+        XCTAssertEqual(after, Text.Layout(box: box, anchorBox: AnchorBox()),
                        "two folds of one report answer the same layout")
     }
 

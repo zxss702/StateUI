@@ -182,6 +182,7 @@ final class ContractTests: XCTestCase {
             LocalizedStringKey("Save"), LocalizedStringKey("\(3) files"),
             AxisAlignment(rawValue: 1)!, TextAlignment.center, LineBreak(rawValue: 1)!, TextCase(rawValue: 1)!,
             InputPurpose(rawValue: 1)!, ReturnKey(rawValue: 1)!, Axis(rawValue: 1)!,
+            Axis.Set.vertical, Axis.Set.all,
             PinType(rawValue: 1)!, ContentMode(rawValue: 1)!, LayoutDirection(rawValue: 1)!,
             HeadingLevel(rawValue: 1)!, ScrollIndicatorVisibility(rawValue: 1)!,
             LineCap(rawValue: 1)!, LineJoin(rawValue: 1)!,

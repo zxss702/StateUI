@@ -24,6 +24,8 @@ How each of them realizes these members is on its own page.
 | `background` | property | `Background` | native |
 | `blur` | property | `Double` | native |
 | `contentTransition` | property | `String` | native |
+| `compositingGroup` | property | `Bool` | native |
+| `drawingGroup` | property | `Bool` | native |
 | `focus` | act | `() -> Bool` |  |
 | `frame` | property | `Rect` | structure |
 | `height` | property | `Double` | native |

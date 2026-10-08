@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (121) | Realization | Notes |
+| Host | Created | Members (123) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 42 ✅ · 1 ☑️ | `NSButton` |  |
 | UIKit | ✅ | 41 ✅ · 3 – | `UIButton` |  |
@@ -75,6 +75,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ | · | ✅ | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; Android Views: cannot read a background of no one colour - Android's driver has no path for it yet; GTK 4: cannot read background of Button - GTK's driver has no path for it yet |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | ✅ | – | – | ✅ | ✅ |  | UIKit: Button takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: Button takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

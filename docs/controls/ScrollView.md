@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (112) | Realization | Notes |
+| Host | Created | Members (115) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 33 ✅ · 2 ☑️ · 3 – | `NSScrollView` |  |
 | UIKit | ✅ | 33 ✅ · 3 – | `UIScrollView` |  |
@@ -42,6 +42,7 @@ Declared in `lib/SwiftOmniUI/Sources/Contracts/Elements/Layouts/ScrollViewContra
 | `horizontalScrollIndicators` | property | `ScrollIndicatorVisibility` | adaptive | ✅ | · | ✅ | ✅ | ✅ |  | UIKit: cannot read horizontalScrollIndicators of ScrollView - UIKit shows a scroll indicator only while the user scrolls: always and as UIKit decides show alike |
 | `isScrollDisabled` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `orientation` | property | `Axis` | native | ✅ | ✅ | ◐ | ✅ | ✅ |  | Android Views: cannot scroll on ScrollView - Android's driver has no path for it yet |
+| `scrollBounceAxes` | property | `Set` | native |  |  |  |  |  |  |  |
 | `scrollBounceBehavior` | property | `ScrollBounceBehavior` | native |  |  |  |  |  |  |  |
 | `scrollOffset` | property | `Point` | structure | ✅ | ✅ | · | ✅ | ✅ |  | Android Views: cannot read scrollOffset of ScrollView - Android's driver has no path for it yet |
 | `onScrollStopped` (`scrollStopped`) | event |  | native | 🔌 | ✅ | · | ✅ | ✅ |  | only through the host's own: scroll on ScrollView: the host's movement moved, not the clip view; Android Views: cannot scroll on ScrollView - Android's driver has no path for it yet |
@@ -75,6 +76,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ | ✅ | ✅ | ✅ | · |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; GTK 4: cannot read background of ScrollView - SwiftOmniUI draws a layout's box on GTK's snapshot, which holds none of its background; its drawing proves it |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – | – | – | ✅ |  | ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard; WinUI 3: ScrollView takes no keyboard focus here: it refuses it, and nothing is heard |
 | `frame` | property | `Rect` | structure | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |
 | `height` | property | `Double` | native | ✅ | ✅ | ✅ | ✅ | ✅ |  |  |

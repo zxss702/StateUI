@@ -23,7 +23,7 @@ Inherits: [PropertyContainer](tiers/PropertyContainer.md) · [VisualElement](tie
 
 See [the dictionary](README.md) for how a mark is given.
 
-| Host | Created | Members (98) | Realization | Notes |
+| Host | Created | Members (100) | Realization | Notes |
 | --- | :---: | --- | --- | --- |
 | AppKit | ✅ | 32 ✅ · 1 ☑️ · 3 – | `MKMapView` / `MKAnnotation` |  |
 | UIKit | ✅ | 31 ✅ · 3 – | `MKMapView` / `MKAnnotation` |  |
@@ -71,6 +71,8 @@ What every drawn element has: its size and its bounds, how it is shown and turne
 | `background` | property | `Background` | native | ☑️ |  |  |  |  |  | AppKit paints a colour on this view; a brush is drawn only by a layout.; UIKit: not realized; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `blur` | property | `Double` | native |  |  |  |  |  |  |  |
 | `contentTransition` | property | `String` | native |  |  |  |  |  |  |  |
+| `compositingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
+| `drawingGroup` | property | `Bool` | native |  |  |  |  |  |  |  |
 | `focus` | act | `() -> Bool` |  | – | – |  |  |  |  | Map takes no keyboard focus here: it refuses it, and nothing is heard; UIKit: Map takes no keyboard focus here: it refuses it, and nothing is heard; Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `frame` | property | `Rect` | structure | ✅ | ✅ |  |  |  |  | Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |
 | `height` | property | `Double` | native | ✅ | ✅ |  |  |  |  | Android Views: not realized; WinUI 3: not realized; GTK 4: not realized |

@@ -15,6 +15,8 @@
 #include <thread>
 #include <vector>
 
+#include <shobjidl.h>
+
 #include <winrt/Microsoft.UI.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Microsoft.Windows.Storage.Pickers.h>
@@ -187,20 +189,49 @@ namespace {
         }));
     }
 
-    /// Hands over the folders a dialog for several chose.
-    void chosenFolders(IAsyncOperation<IVectorView<pickers::PickFolderResult>> const &picking, int64_t ticket) {
-        picking.Completed(guarded("a folder dialog answering",
-                                  [ticket](IAsyncOperation<IVectorView<pickers::PickFolderResult>> const &picked,
-                                             AsyncStatus status) {
+    /// The shell's own dialog, asked for several folders - the App SDK's folder
+    /// picker takes one alone. Runs on its own thread so the answer still comes
+    /// back by ticket; a cancel hands over empty.
+    void chosenFolders(HWND window, int64_t ticket) {
+        std::thread([window, ticket] {
+            CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
             Chosen chosen;
-            try {
-                if (status != AsyncStatus::Completed) chosen.failure = failure(picked);
-                else for (auto const &result : picked.GetResults()) chosen.paths.push_back(winrt::to_string(result.Path()));
-            } catch (...) {
-                chosen.failure = "the file dialog failed: 0x" + std::to_string(report("taking a file dialog's answer"));
+            winrt::com_ptr<IFileOpenDialog> dialog;
+            HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_PPV_ARGS(dialog.put()));
+            if (SUCCEEDED(hr)) {
+                DWORD options = 0;
+                dialog->GetOptions(&options);
+                dialog->SetOptions(options | FOS_PICKFOLDERS | FOS_ALLOWMULTISELECT);
+                if (!testFolder.empty()) {
+                    winrt::com_ptr<IShellItem> start;
+                    if (SUCCEEDED(SHCreateItemFromParsingName(testFolder.c_str(), nullptr, IID_PPV_ARGS(start.put()))))
+                        dialog->SetDefaultFolder(start.get());
+                }
+                hr = dialog->Show(window);
+                if (SUCCEEDED(hr)) {
+                    winrt::com_ptr<IShellItemArray> items;
+                    if (SUCCEEDED(dialog->GetResults(items.put()))) {
+                        DWORD count = 0;
+                        items->GetCount(&count);
+                        for (DWORD index = 0; index < count; ++index) {
+                            winrt::com_ptr<IShellItem> item;
+                            PWSTR path = nullptr;
+                            if (SUCCEEDED(items->GetItemAt(index, item.put()))
+                                && SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH, &path)) && path) {
+                                chosen.paths.push_back(winrt::to_string(path));
+                                CoTaskMemFree(path);
+                            }
+                        }
+                    }
+                } else if (hr != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+                    chosen.failure = "the folder dialog failed: " + winrt::to_string(winrt::hresult_error(hr).message());
+                }
+            } else {
+                chosen.failure = "the folder dialog could not be shown: " + winrt::to_string(winrt::hresult_error(hr).message());
             }
+            CoUninitialize();
             handOver(ticket, std::move(chosen));
-        }));
+        }).detach();
     }
 
     /// Tells the host, on the UI thread, whether what was launched under `ticket` was taken.
@@ -227,10 +258,8 @@ extern "C" void swiftomniui_winui_show_file_dialog(SwiftOmniUIObjectRef handle, 
             return chosenOne(picker.PickSaveFileAsync(), ticket, asked);
         }
         if (asked->kind == 3 || asked->kind == 4) {
+            if (asked->kind == 4) return chosenFolders(reinterpret_cast<HWND>(window.Value), ticket);
             pickers::FolderPicker picker(window);
-            if (!testFolder.empty()) picker.SuggestedFolder(testFolder);
-            picker.FileTypeFilter().Append(L"*");
-            if (asked->kind == 4) return chosenFolders(picker.PickMultipleFoldersAsync(), ticket);
             return chosenFolder(picker.PickSingleFolderAsync(), ticket);
         }
         pickers::FileOpenPicker picker(window);
