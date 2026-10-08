@@ -69,6 +69,12 @@ if (Test-Path $images) {
     Copy-Item -Path (Join-Path $images '*') -Destination (New-Item -ItemType Directory -Force (Join-Path $bin 'Images')) -Recurse -Force
 }
 
+# Bundle resources - the directories and loose files `Bundle.main` answers for.
+$bundleResources = Join-Path $application 'Resources\Bundle'
+if (Test-Path $bundleResources) {
+    Copy-Item -Path (Join-Path $bundleResources '*') -Destination $bin -Recurse -Force
+}
+
 if ($BuildOnly) {
     Write-Host "built $executable"
     exit 0

@@ -53,6 +53,10 @@ if [[ -d "$app_dir/Resources/Images" ]]; then
   mkdir -p "$scratch/$configuration/Images"
   cp -R "$app_dir/Resources/Images/." "$scratch/$configuration/Images/"
 fi
+# Bundle resources - the directories and loose files `Bundle.main` answers for.
+if [[ -d "$app_dir/Resources/Bundle" ]]; then
+  cp -R "$app_dir/Resources/Bundle/." "$scratch/$configuration/"
+fi
 # The desktop shows a window with the icon of the entry named by its application's ID: both are installed for
 # the user, the entry starting this build.
 application_id="$(sed -n 's/.*applicationID: "\([^"]*\)".*/\1/p' "$app_dir/Platforms/GTK/main.swift" | head -1)"
