@@ -19,7 +19,7 @@
 /// a group or menu the entries are views: a `Button` stands as a menu item,
 /// its caption and icon read off its label, its `.keyboardShortcut` shown
 /// beside it; a `Divider` a separator; a `Menu` a submenu.
-public protocol Commands {
+@preconcurrency @MainActor public protocol Commands {
     /// What this commands value is made of, read each time it is built. A
     /// content that is itself an entry - a `CommandGroup`, a `CommandMenu` -
     /// has no body and declares none; its `Body` is `Never`.
@@ -37,7 +37,7 @@ extension Commands where Body == Never {
 /// A commands entry - a leaf producing menu nodes directly: a group, a menu,
 /// a composition's entries. What `commandNodes` recognizes a leaf by, where
 /// `body` is `Never`.
-protocol CommandsEntry {
+@MainActor protocol CommandsEntry {
     /// The menu nodes this entry stands for.
     var commandNodes: [Node] { get }
 }
@@ -97,40 +97,47 @@ public enum CommandsBuilder {
     /// The statements' menus, in the order they are written, each keyed by
     /// its statement's number whatever the others produce.
     public static func buildBlock(_ components: (any Commands)...) -> TupleCommands {
-        TupleCommands(nodes: components.enumerated().flatMap { at($0.offset, $0.element) })
+        let components = Carry(components)
+        return onMain {
+            TupleCommands(nodes: components.value.enumerated().flatMap { at($0.offset, $0.element) })
+        }
     }
 
     /// Nothing written: empty commands.
     public static func buildBlock() -> TupleCommands {
-        TupleCommands(nodes: [])
+        onMain { TupleCommands(nodes: []) }
     }
 
     /// An `if` without an `else`; what it builds is keyed apart from the
     /// statement after it.
     public static func buildOptional(_ component: TupleCommands?) -> TupleCommands {
-        component?.tagged("some") ?? TupleCommands(nodes: [])
+        let component = Carry(component)
+        return onMain { component.value?.tagged("some") ?? TupleCommands(nodes: []) }
     }
 
     /// The `if` branch of an if/else.
     public static func buildEither(first component: TupleCommands) -> TupleCommands {
-        component.tagged("if")
+        let component = Carry(component)
+        return onMain { component.value.tagged("if") }
     }
 
     /// The `else` branch. Its menus are keyed apart from the `if` branch's,
     /// so switching branches replaces the menus rather than editing them.
     public static func buildEither(second component: TupleCommands) -> TupleCommands {
-        component.tagged("else")
+        let component = Carry(component)
+        return onMain { component.value.tagged("else") }
     }
 
     /// A `for` statement's turns, each keyed by its turn number.
     public static func buildArray(_ components: [TupleCommands]) -> TupleCommands {
-        TupleCommands(nodes: components.enumerated().flatMap { turn in
+        let components = Carry(components)
+        return onMain { TupleCommands(nodes: components.value.enumerated().flatMap { turn in
             turn.element.nodes.map { node in
                 var node = node
                 node.key = node.key.map { "\(turn.offset).\($0)" } ?? String(turn.offset)
                 return node
             }
-        })
+        }) }
     }
 
     /// A `TupleCommands` where the call already produced one.
@@ -145,13 +152,15 @@ public enum CommandsBuilder {
 
     /// What an `if #available(…)` block builds, keyed like every other branch.
     public static func buildLimitedAvailability(_ component: TupleCommands) -> TupleCommands {
-        component.tagged("available")
+        let component = Carry(component)
+        return onMain { component.value.tagged("available") }
     }
 
     /// The menus written under one statement, keyed by the statement's
     /// number - several, where one statement stands for more than one menu.
     private static func at(_ index: Int, _ content: any Commands) -> [Node] {
-        let nodes = content.commandNodes
+        // Builders run where the body that wrote them stood - the UI thread.
+        let nodes = MainActor.assumeIsolated { Carry(content.commandNodes) }.value
         return nodes.enumerated().map { offset, child in
             var child = child
             let segment = nodes.count > 1 ? "\(index).\(offset)" : String(index)

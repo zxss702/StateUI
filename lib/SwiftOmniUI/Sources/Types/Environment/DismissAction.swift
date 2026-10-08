@@ -12,15 +12,15 @@
 /// a dismissed root has nowhere to go.
 public struct DismissAction: Sendable {
     /// The closer the nearest presentation wired for itself.
-    private let act: @Sendable () -> Void
+    private let act: @Sendable @MainActor () -> Void
 
     /// An action that does its work when called.
-    init(_ act: @escaping @Sendable () -> Void) {
+    init(_ act: @escaping @Sendable @MainActor () -> Void) {
         self.act = act
     }
 
     /// Runs the dismissal.
-    public func callAsFunction() {
+    @MainActor public func callAsFunction() {
         act()
     }
 }

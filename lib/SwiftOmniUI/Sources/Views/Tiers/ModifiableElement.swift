@@ -3,7 +3,7 @@
 
 /// Anything carrying property values in the tree, and so able to hear
 /// events - which a `Style`, carrying values only, never can.
-public protocol ModifiableElement: PropertyContainer, Element where Modified: Element {}
+@preconcurrency @MainActor public protocol ModifiableElement: PropertyContainer, Element where Modified: Element {}
 
 extension ModifiableElement {
     /// Hears one of this element's events that carries nothing.

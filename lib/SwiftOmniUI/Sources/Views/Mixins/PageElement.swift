@@ -20,7 +20,7 @@
 ///     }
 ///
 /// A page the author writes says the same through its `PageSession`.
-public protocol PageElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol PageElement: PropertyContainer {}
 
 extension PageElement {
     /// What the page is called: a tab's caption, and the window's title where

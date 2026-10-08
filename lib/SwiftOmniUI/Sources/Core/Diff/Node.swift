@@ -430,7 +430,7 @@ public struct Node {
 
 /// Anything that describes itself as a UI tree. A view is a value; SwiftOmniUI reads
 /// `node` whenever it needs the element's description.
-public protocol Element {
+@preconcurrency @MainActor public protocol Element {
     /// This view as a node, read afresh on every render.
     var node: Node { get }
 }

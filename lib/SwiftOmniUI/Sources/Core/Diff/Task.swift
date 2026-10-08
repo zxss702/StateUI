@@ -22,7 +22,7 @@ extension View {
     ///   - work: what to run; cancelled as the view leaves.
     public func task(
         priority: TaskPriority = .userInitiated,
-        _ work: @escaping @Sendable () async -> Void
+        @_inheritActorContext _ work: sending @escaping @isolated(any) () async -> Void
     ) -> ModifiedContent {
         let box = TaskBox()
         return onAppear {
@@ -49,7 +49,7 @@ extension View {
     public func task<ID: Equatable>(
         id: ID,
         priority: TaskPriority = .userInitiated,
-        _ work: @escaping @Sendable () async -> Void
+        @_inheritActorContext _ work: sending @escaping @isolated(any) () async -> Void
     ) -> ModifiedContent {
         let box = TaskBox()
         return onAppear {

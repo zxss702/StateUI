@@ -4,7 +4,7 @@
 /// The colour and letter spacing of a control's text, without the text
 /// itself - worn by the pickers too, which format a value rather than show a
 /// text of their own. A control that says something wears `TextElement`.
-public protocol TextStyleElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol TextStyleElement: PropertyContainer {}
 
 extension TextStyleElement {
     /// The colour of the text; a `Color(light:dark:)` follows the system color scheme.

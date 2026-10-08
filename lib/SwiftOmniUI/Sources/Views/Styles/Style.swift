@@ -37,7 +37,7 @@ public struct StyleBag<Target: StyleTarget, Context> {
     /// The states written so far, in writing order.
     var states: [DeclaredState] = []
 
-    init(key: String?) {
+    @MainActor init(key: String?) {
         node = Node(type: Target().node.type)
         self.key = key
     }
@@ -62,12 +62,12 @@ extension StyleBag: PropertyContainer {
 
 extension StyleBag where Context == StyleBase {
     /// A style every control of the type gets.
-    public init() {
+    @MainActor public init() {
         self.init(key: nil)
     }
 
     /// A style asked for by name - `.style("Headline")` on a control.
-    public init(_ key: String) {
+    @MainActor public init(_ key: String) {
         self.init(key: key)
     }
 
@@ -93,9 +93,9 @@ extension StyleBag where Context == StyleBase {
     ///   - state: which state these setters describe. What is offered after
     ///     the dot is the states this target actually enters.
     ///   - setters: the property values in force while the control is there.
-    @_spi(Host) public func visualState(
+    @_spi(Host) @MainActor public func visualState(
         _ state: VisualState<Target>,
-        _ setters: (StyleBag<Target, StyleState>) -> StyleBag<Target, StyleState>
+        _ setters: @MainActor (StyleBag<Target, StyleState>) -> StyleBag<Target, StyleState>
     ) -> Self {
         var copy = self
         let values = setters(StyleBag<Target, StyleState>(key: nil)).node.props

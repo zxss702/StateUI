@@ -16,7 +16,7 @@
 ///
 /// A style answers for the brush it stands for, so every place a brush can go
 /// a style can.
-public protocol ShapeStyle {
+@preconcurrency @MainActor public protocol ShapeStyle {
     /// The brush the style stands for - how every style crosses.
     var brush: Brush { get }
 }

@@ -6,7 +6,7 @@
 /// ticked box, the filled part of a bar, a spinner.
 ///
 /// A host with no way to tint a control draws the platform's own accent.
-public protocol TintElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol TintElement: PropertyContainer {}
 
 extension TintElement {
     /// The colour the control is accented in.

@@ -3,7 +3,7 @@
 
 /// A line under the text, through it, or both - worn by `Text` and
 /// `TextSpan`.
-public protocol DecorableTextElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol DecorableTextElement: PropertyContainer {}
 
 extension DecorableTextElement {
     /// A line under the text, through it, or both.

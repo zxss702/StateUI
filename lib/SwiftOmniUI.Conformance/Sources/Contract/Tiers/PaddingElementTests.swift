@@ -52,7 +52,7 @@
 }
 
 /// A layout of each kind holding a view within its padding.
-enum Padded {
+@MainActor enum Padded {
     /// A layout of `element`'s kind holding `content`, `padding` in.
     static func layout(_ element: String, padding: EdgeInsets, _ content: () -> any View) -> any View {
         let held = content()

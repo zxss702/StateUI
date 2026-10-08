@@ -110,7 +110,7 @@
 }
 
 /// A layout of each kind holding a view, as a layout's cases need it.
-enum Holding {
+@MainActor enum Holding {
     /// A layout of `element`'s kind holding `content`, clipping and letting input through as said, as large as
     /// said where it is and then at its room's corner.
     static func layout(

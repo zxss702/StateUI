@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// What builds the view of one entry of an List, whatever its items' type.
-protocol ItemsViews: AnyObject {
+protocol ItemsViews: AnyObject, Sendable {
     /// The view of the entry of `identity`; nil where the list shows none.
-    func view(for identity: String) -> (any View)?
+    @MainActor func view(for identity: String) -> (any View)?
 }
 
 /// What one build of an List holds: its groups, every identity they show
@@ -12,7 +12,7 @@ protocol ItemsViews: AnyObject {
 /// makes; the same one while only the host's cells change, so an entry built
 /// from it is carried whole.
 /// Design: docs/design/views/items.md#a-source-a-build
-final class ItemsSource<Items: RandomAccessCollection, Id: Hashable>: ItemsViews {
+@MainActor final class ItemsSource<Items: RandomAccessCollection, Id: Hashable>: ItemsViews, @unchecked Sendable {
     /// Where an identity stands.
     private enum Place {
         case header

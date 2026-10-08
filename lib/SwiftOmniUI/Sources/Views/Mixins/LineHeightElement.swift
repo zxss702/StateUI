@@ -3,7 +3,7 @@
 
 /// The height of a text line, relative to the font's own - worn by `Text`
 /// and `TextSpan`.
-public protocol LineHeightElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol LineHeightElement: PropertyContainer {}
 
 extension LineHeightElement {
     /// The height of a line, as a MULTIPLE of the font's own - 1.5 for half

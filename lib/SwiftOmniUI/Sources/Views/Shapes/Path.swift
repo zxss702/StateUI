@@ -107,7 +107,7 @@ public struct Path: Shape, PathProperties {
 
     /// The outline as it stands, in the syntax the initializer takes - what a
     /// `GraphicsContext` call draws.
-    var svg: String {
+    nonisolated var svg: String {
         node.props[PathContract.data.token]?.string ?? ""
     }
 
@@ -564,11 +564,11 @@ public struct Path: Shape, PathProperties {
 
 extension Path: CustomStringConvertible {
     /// The outline as it stands - the same string `init(_:)` takes.
-    public var description: String { svg }
+    nonisolated public var description: String { svg }
 }
 
 /// `Path`'s own properties, shared by the control and its `Style<Path>`.
-public protocol PathProperties: PropertyContainer {}
+@preconcurrency @MainActor public protocol PathProperties: PropertyContainer {}
 
 extension PathProperties {
     /// The outline, in SVG path syntax - `"M 0,40 L 20,0 L 40,40 Z"`.

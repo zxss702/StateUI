@@ -49,7 +49,7 @@ public struct LayoutProperties: Sendable {
 ///
 /// A layout is used where a stack is: `FlowLayout { subviews }` builds a
 /// container arranged by it.
-public protocol Layout {
+public protocol Layout: Sendable {
     /// Whatever the layout keeps between its measure and place passes.
     associatedtype Cache
 

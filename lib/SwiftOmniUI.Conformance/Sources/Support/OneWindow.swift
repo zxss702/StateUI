@@ -6,10 +6,10 @@
 /// The window of a `OneWindowApplication`, its page built again each time the window is.
 public struct OneWindow: WindowScene {
     /// The page the window shows.
-    public let content: @Sendable () -> any Page
+    public let content: @Sendable @MainActor () -> any Page
 
     /// A window showing `content`.
-    public init(content: @escaping @Sendable () -> any Page) {
+    public init(content: @escaping @Sendable @MainActor () -> any Page) {
         self.content = content
     }
 

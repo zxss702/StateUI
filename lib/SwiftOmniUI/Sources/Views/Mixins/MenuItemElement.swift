@@ -11,7 +11,7 @@
 ///         .icon("trash.png")
 ///         .isDestructive(true)
 ///         .onClicked { delete() }
-public protocol MenuItemElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol MenuItemElement: PropertyContainer {}
 
 extension MenuItemElement {
     /// What the item says. Usually given in the initializer instead.

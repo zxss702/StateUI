@@ -8,7 +8,7 @@
 ///         .stroke(.cornflowerBlue)
 ///         .strokeWidth(1)
 ///         .shape(.roundedRectangle(8))
-public protocol BorderElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol BorderElement: PropertyContainer {}
 
 extension BorderElement {
     /// The shape the background and the outline follow, and - with `clipsContent` - what the element holds.

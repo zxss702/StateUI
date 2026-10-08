@@ -72,7 +72,7 @@
 }
 
 /// A page of each kind wearing the tier - a page of its own, or an arrangement - carrying one of the tier's members.
-enum Presented {
+@MainActor enum Presented {
     /// A page of `element`'s kind whose `member` is `value`, `beside` its words.
     static func page<Value: HostRepresentable & Sendable & Equatable>(
         _ element: String, _ member: ElementProperty<PageElementContract, Value>, _ value: Value, beside: [any View]

@@ -3,7 +3,7 @@
 
 /// A control whose text is a property: everything `TextStyleElement` has,
 /// plus the text itself.
-public protocol TextElement: TextStyleElement {}
+@preconcurrency @MainActor public protocol TextElement: TextStyleElement {}
 
 extension TextElement {
     /// What the control says. Usually given in the initializer instead -

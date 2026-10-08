@@ -20,7 +20,7 @@
 }
 
 /// The words a specimen shows, where it shows words of its own.
-enum Words {
+@MainActor enum Words {
     /// What `element`'s specimen wears to show words: its text where it has one, its choices where it chooses.
     static func on(_ element: String) -> [any Worn] {
         switch element {

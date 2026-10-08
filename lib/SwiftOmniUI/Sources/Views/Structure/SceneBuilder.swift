@@ -28,31 +28,42 @@ public enum SceneBuilder {
     public static func buildBlock<First: Scene, Second: Scene>(
         _ first: First, _ second: Second
     ) -> TupleScene {
-        TupleScene(scenes: [first, second])
+        let pair = (Carry(first), Carry(second))
+        return MainActor.assumeIsolated {
+            Carry(TupleScene(scenes: [pair.0.value, pair.1.value]))
+        }.value
     }
 
     /// The scenes of a body of three.
     public static func buildBlock<First: Scene, Second: Scene, Third: Scene>(
         _ first: First, _ second: Second, _ third: Third
     ) -> TupleScene {
-        TupleScene(scenes: [first, second, third])
+        let trio = (Carry(first), Carry(second), Carry(third))
+        return MainActor.assumeIsolated {
+            Carry(TupleScene(scenes: [trio.0.value, trio.1.value, trio.2.value]))
+        }.value
     }
 
     /// The scenes of a body of four.
     public static func buildBlock<First: Scene, Second: Scene, Third: Scene, Fourth: Scene>(
         _ first: First, _ second: Second, _ third: Third, _ fourth: Fourth
     ) -> TupleScene {
-        TupleScene(scenes: [first, second, third, fourth])
+        let all = (Carry(first), Carry(second), Carry(third), Carry(fourth))
+        return MainActor.assumeIsolated {
+            Carry(TupleScene(scenes: [all.0.value, all.1.value, all.2.value, all.3.value]))
+        }.value
     }
 
     /// An `if` branch's scene.
     public static func buildEither<Content: Scene>(first scene: Content) -> ConditionalScene {
-        ConditionalScene(wrapped: scene)
+        let carried = Carry(scene)
+        return MainActor.assumeIsolated { Carry(ConditionalScene(wrapped: carried.value)) }.value
     }
 
     /// An `else` branch's scene.
     public static func buildEither<Content: Scene>(second scene: Content) -> ConditionalScene {
-        ConditionalScene(wrapped: scene)
+        let carried = Carry(scene)
+        return MainActor.assumeIsolated { Carry(ConditionalScene(wrapped: carried.value)) }.value
     }
 }
 

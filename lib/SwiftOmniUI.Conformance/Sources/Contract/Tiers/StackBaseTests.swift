@@ -47,7 +47,7 @@
 }
 
 /// A stack of each kind holding views, as a stack's cases need it.
-enum Stacked {
+@MainActor enum Stacked {
     /// A stack of `element`'s kind, its children `spacing` apart.
     static func stack(_ element: String, spacing: Double, _ children: () -> [any View]) -> any View {
         let held: [Element] = children().map { $0 }

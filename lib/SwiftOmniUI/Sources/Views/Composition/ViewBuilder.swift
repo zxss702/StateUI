@@ -29,20 +29,23 @@ public enum ViewBuilder {
     /// A view whose concrete type was given up, written as a statement.
     @_disfavoredOverload
     public static func buildExpression(_ expression: any View) -> AnyView {
-        AnyView(expression)
+        let expression = Carry(expression)
+        return onMain { AnyView(expression.value) }
     }
 
     /// One element written as a statement.
     @_disfavoredOverload
     public static func buildExpression(_ expression: Element) -> TupleView {
-        TupleView([expression])
+        let expression = Carry(expression)
+        return onMain { TupleView([expression.value]) }
     }
 
     /// Several, from something that already produced a list - a `ForEach`'s
     /// items, or a hand-built element array.
     @_disfavoredOverload
     public static func buildExpression(_ expression: [Element]) -> TupleView {
-        TupleView(expression)
+        let expression = Carry(expression)
+        return onMain { TupleView(expression.value) }
     }
 
     /// A single statement, handed back as itself - SwiftUI keeps a lone
@@ -55,53 +58,63 @@ public enum ViewBuilder {
     /// The statements of the closure, in the order they are written, each
     /// keyed by its statement's number whatever the others produce.
     public static func buildBlock(_ components: (any View)...) -> TupleView {
-        TupleView(components.enumerated().flatMap { at($0.offset, $0.element) })
+        let components = Carry(components)
+        return onMain {
+            TupleView(components.value.enumerated().flatMap { at($0.offset, $0.element) })
+        }
     }
 
     /// Nothing written: an empty group.
     public static func buildBlock() -> TupleView {
-        TupleView([])
+        onMain { TupleView([]) }
     }
 
     /// An `if` without an `else`; what it builds is keyed apart from the
     /// statement after it.
     public static func buildOptional(_ component: TupleView?) -> TupleView {
-        component?.tagged("some") ?? TupleView([])
+        let component = Carry(component)
+        return onMain { component.value?.tagged("some") ?? TupleView([]) }
     }
 
     /// The same, its body having built a lone view rather than a tuple.
     public static func buildOptional<Content: View>(_ component: Content?) -> TupleView {
-        component.map { tagged("some", $0) } ?? TupleView([])
+        let component = Carry(component)
+        return onMain { component.value.map { tagged("some", $0) } ?? TupleView([]) }
     }
 
     /// The `if` branch of an if/else.
     public static func buildEither(first component: TupleView) -> TupleView {
-        component.tagged("if")
+        let component = Carry(component)
+        return onMain { component.value.tagged("if") }
     }
 
     /// The same, the branch having built a lone view rather than a tuple.
     public static func buildEither<Content: View>(first component: Content) -> TupleView {
-        tagged("if", component)
+        let component = Carry(component)
+        return onMain { tagged("if", component.value) }
     }
 
     /// The `else` branch. Its views are keyed apart from the `if` branch's, so
     /// switching branches replaces the control rather than editing it.
     public static func buildEither(second component: TupleView) -> TupleView {
-        component.tagged("else")
+        let component = Carry(component)
+        return onMain { component.value.tagged("else") }
     }
 
     /// The same, the branch having built a lone view rather than a tuple.
     public static func buildEither<Content: View>(second component: Content) -> TupleView {
-        tagged("else", component)
+        let component = Carry(component)
+        return onMain { tagged("else", component.value) }
     }
 
     /// A `for` statement's turns, each keyed by its turn number.
     public static func buildArray(_ components: [TupleView]) -> TupleView {
-        TupleView(components.enumerated().flatMap { turn in
+        let components = Carry(components)
+        return onMain { TupleView(components.value.enumerated().flatMap { turn in
             let segment = String(turn.offset)
             return turn.element.lazyElements?.map { TupleView.keyed(segment, $0) }
                 ?? turn.element.node.asChildren.map { Keyed(segment: segment, raw: $0) }
-        })
+        }) }
     }
 
     /// A `TupleView` where the call already produced one.
@@ -117,17 +130,19 @@ public enum ViewBuilder {
 
     /// What an `if #available(…)` block builds, keyed like every other branch.
     public static func buildLimitedAvailability(_ component: TupleView) -> TupleView {
-        component.tagged("available")
+        let component = Carry(component)
+        return onMain { component.value.tagged("available") }
     }
 
     /// The same, its body having built a lone view rather than a tuple.
     public static func buildLimitedAvailability<Content: View>(_ component: Content) -> TupleView {
-        tagged("available", component)
+        let component = Carry(component)
+        return onMain { tagged("available", component.value) }
     }
 
     /// Any view under `segment`'s path - what the conditional builders write
     /// for a branch that produced a lone view.
-    private static func tagged(_ segment: String, _ view: any View) -> TupleView {
+    @MainActor private static func tagged(_ segment: String, _ view: any View) -> TupleView {
         if let tuple = view as? TupleView { return tuple.tagged(segment) }
         if let rows = view as? any LazyRows {
             return TupleView([LazyKeyed(segment: segment, rows: rows)])
@@ -142,6 +157,11 @@ public enum ViewBuilder {
     /// way, so the row sources inside stay whole under theirs.
     /// Design: docs/design/views/builders.md#several-views-from-one-statement
     private static func at(_ index: Int, _ view: any View) -> [Element] {
+        // Builders run where the body that wrote them stood - the UI thread.
+        return MainActor.assumeIsolated { Carry(slice(index, view)) }.value
+    }
+
+    @MainActor private static func slice(_ index: Int, _ view: any View) -> [Element] {
         let segment = String(index)
         if let rows = view as? any LazyRows {
             return [LazyKeyed(segment: segment, rows: rows)]

@@ -12,7 +12,7 @@
 /// `Rectangle` and `Ellipse` answer for themselves; `RoundedRectangle`,
 /// `Capsule` and `Circle` are views of their own too, so the same word names
 /// what is drawn and what it cuts to.
-public protocol ClipShape {
+@preconcurrency @MainActor public protocol ClipShape {
     /// The outline the shape stands for.
     var outline: ContainerShape { get }
 }

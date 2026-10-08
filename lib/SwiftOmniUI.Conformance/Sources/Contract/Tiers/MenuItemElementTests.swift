@@ -44,7 +44,7 @@
 }
 
 /// Two items of one kind - one in reach, one out of it - each on the page where an application puts it.
-enum Chosen {
+@MainActor enum Chosen {
     /// A page with an item of `element`'s kind in reach and one out of it, each named and heard as `item` says.
     static func page(
         _ element: String, _ item: @escaping @Sendable (Bool) -> (String, @Sendable () -> Void)

@@ -9,7 +9,7 @@
 /// bar, an arrangement as the page, a title bar over its window. What a tier's cases dress, so a case written once
 /// covers its member on every element wearing the tier.
 /// Design: docs/design/host/conformance.md#a-tiers-cases
-@_spi(Host) public enum Specimens {
+@_spi(Host) @MainActor public enum Specimens {
     /// The control a specimen stands for, by its node type's name, dressed; nil for an element that stands
     /// nowhere in a stack.
     public static func make(_ element: String, _ dressing: Dressing) -> (any View)? {

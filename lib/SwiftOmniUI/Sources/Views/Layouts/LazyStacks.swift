@@ -190,7 +190,7 @@ struct LazyHStackElement: StackBase {
 /// names every row without building any, and its rows are made one at a
 /// time, only for the identities the host asks for. Anything else is read
 /// eagerly, and the laziness is in mounting alone.
-final class LazyChildren {
+@MainActor final class LazyChildren {
     /// One flat piece of a lazy container's content.
     private enum Segment {
         /// Rows named and built on asking - a `ForEach`, possibly under

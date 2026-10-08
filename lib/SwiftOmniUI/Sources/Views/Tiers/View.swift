@@ -4,7 +4,7 @@
 /// The properties every positioned view has: the value half of a control's
 /// contract, shared by the control and its `Style`, including where it sits in
 /// a Grid or a ZStack.
-public protocol ViewProperties: VisualElementProperties {}
+@preconcurrency @MainActor public protocol ViewProperties: VisualElementProperties {}
 
 /// A piece of interface: a control, a layout, or a view composed of other
 /// views.
@@ -33,7 +33,7 @@ public protocol ViewProperties: VisualElementProperties {}
 ///     Header("Settings")
 ///         .padding(0, 8)
 ///         .gridRow(1)
-public protocol View: Element, Page {
+@preconcurrency @MainActor public protocol View: Element, Page {
     /// What this view is made of, read each time the view is built. A view
     /// that draws itself has no body - `Never` says so.
     associatedtype Body: View = Never

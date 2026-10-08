@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// `Canvas`'s own properties, shared by the control and its `Style<Canvas>`.
-public protocol CanvasProperties: PropertyContainer {}
+@preconcurrency @MainActor public protocol CanvasProperties: PropertyContainer {}
 
 extension CanvasProperties {
     /// What to draw, written as the canvas calls that make the drawing.

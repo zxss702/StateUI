@@ -5,7 +5,7 @@
 /// looks the same whichever page shows; what one page asks of the bar - to be
 /// hidden, or to carry a view instead of its title - is written on its
 /// `PageSession`.
-public protocol BarElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol BarElement: PropertyContainer {}
 
 extension BarElement {
     /// What the bar is painted, in one flat colour.

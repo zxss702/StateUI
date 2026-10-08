@@ -63,7 +63,7 @@ extension Window: WindowSceneAsks {
 ///
 /// A scene's `windows` reads these off the scene itself, so a modifier's
 /// wrapper keeps answering for the window it wraps.
-protocol WindowSceneAsks {
+@MainActor protocol WindowSceneAsks {
     /// The name `openWindow(id:)` reopens the window by.
     var windowID: String? { get }
 

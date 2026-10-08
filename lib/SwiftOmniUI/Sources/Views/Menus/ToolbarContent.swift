@@ -20,7 +20,7 @@
 ///     }
 ///
 /// and it stands in `.toolbar { … }` the way the items themselves do.
-public protocol ToolbarContent {
+@preconcurrency @MainActor public protocol ToolbarContent {
     /// What this toolbar content is made of, read each time it is built. A
     /// content that is itself an entry - a `ToolbarItem`, a `ToolbarSpacer` -
     /// has no body and declares none; its `Body` is `Never`.
@@ -38,7 +38,7 @@ extension ToolbarContent where Body == Never {
 /// A toolbar entry - a leaf producing toolbar nodes directly: an item, a
 /// spacer, a group's items, a block's entries. What `toolbarNodes` recognizes
 /// a leaf by, where `body` is `Never`.
-protocol ToolbarEntry {
+@MainActor protocol ToolbarEntry {
     /// The toolbar nodes this entry stands for.
     var toolbarNodes: [Node] { get }
 }
@@ -109,40 +109,47 @@ public enum ToolbarContentBuilder {
     /// The statements' entries, in the order they are written, each keyed by
     /// its statement's number whatever the others produce.
     public static func buildBlock(_ components: (any ToolbarContent)...) -> TupleToolbarContent {
-        TupleToolbarContent(nodes: components.enumerated().flatMap { at($0.offset, $0.element) })
+        let components = Carry(components)
+        return onMain {
+            TupleToolbarContent(nodes: components.value.enumerated().flatMap { at($0.offset, $0.element) })
+        }
     }
 
     /// Nothing written: an empty group.
     public static func buildBlock() -> TupleToolbarContent {
-        TupleToolbarContent(nodes: [])
+        onMain { TupleToolbarContent(nodes: []) }
     }
 
     /// An `if` without an `else`; what it builds is keyed apart from the
     /// statement after it.
     public static func buildOptional(_ component: TupleToolbarContent?) -> TupleToolbarContent {
-        component?.tagged("some") ?? TupleToolbarContent(nodes: [])
+        let component = Carry(component)
+        return onMain { component.value?.tagged("some") ?? TupleToolbarContent(nodes: []) }
     }
 
     /// The `if` branch of an if/else.
     public static func buildEither(first component: TupleToolbarContent) -> TupleToolbarContent {
-        component.tagged("if")
+        let component = Carry(component)
+        return onMain { component.value.tagged("if") }
     }
 
     /// The `else` branch. Its entries are keyed apart from the `if` branch's,
     /// so switching branches replaces the entries rather than editing them.
     public static func buildEither(second component: TupleToolbarContent) -> TupleToolbarContent {
-        component.tagged("else")
+        let component = Carry(component)
+        return onMain { component.value.tagged("else") }
     }
 
     /// A `for` statement's turns, each keyed by its turn number.
     public static func buildArray(_ components: [TupleToolbarContent]) -> TupleToolbarContent {
-        TupleToolbarContent(nodes: components.enumerated().flatMap { turn in
+        let components = Carry(components)
+        return onMain { TupleToolbarContent(nodes: components.value.enumerated().flatMap { turn in
             turn.element.nodes.map { node in
                 var node = node
                 node.key = node.key.map { "\(turn.offset).\($0)" } ?? String(turn.offset)
                 return node
             }
-        })
+        }) }
     }
 
     /// A `TupleToolbarContent` where the call already produced one.
@@ -158,13 +165,15 @@ public enum ToolbarContentBuilder {
 
     /// What an `if #available(…)` block builds, keyed like every other branch.
     public static func buildLimitedAvailability(_ component: TupleToolbarContent) -> TupleToolbarContent {
-        component.tagged("available")
+        let component = Carry(component)
+        return onMain { component.value.tagged("available") }
     }
 
     /// The entries written under one statement, keyed by the statement's
     /// number - several, where one statement stands for more than one entry.
     private static func at(_ index: Int, _ content: any ToolbarContent) -> [Node] {
-        let nodes = content.toolbarNodes
+        // Builders run where the body that wrote them stood - the UI thread.
+        let nodes = MainActor.assumeIsolated { Carry(content.toolbarNodes) }.value
         return nodes.enumerated().map { offset, child in
             var child = child
             let segment = nodes.count > 1 ? "\(index).\(offset)" : String(index)

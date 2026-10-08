@@ -3,7 +3,7 @@
 
 /// Where a control's text sits inside the control - not where the control
 /// sits in its parent, which is `horizontalAlignment` and `verticalAlignment`.
-public protocol TextAlignmentElement: VisualElementProperties {}
+@preconcurrency @MainActor public protocol TextAlignmentElement: VisualElementProperties {}
 
 extension TextAlignmentElement {
     /// Where the text sits within the control's own width.

@@ -9,15 +9,15 @@
 /// action a `NavigationLink` runs where one is tapped.
 struct PushPageAction: Sendable {
     /// The pusher the nearest stack wired for itself.
-    private let act: @Sendable (Node) -> Void
+    private let act: @Sendable @MainActor (Node) -> Void
 
     /// An action that pushes `page` when called.
-    init(_ act: @escaping @Sendable (Node) -> Void) {
+    init(_ act: @escaping @Sendable @MainActor (Node) -> Void) {
         self.act = act
     }
 
     /// Pushes the page.
-    func callAsFunction(_ page: Node) {
+    @MainActor func callAsFunction(_ page: Node) {
         act(page)
     }
 }
@@ -40,7 +40,7 @@ extension EnvironmentValues {
 
 /// The pages `NavigationLink`s pushed onto one `NavigationStack`, kept in
 /// the stack element's session so they live as long as the element does.
-final class NavigationLinks: @unchecked Sendable {
+@MainActor final class NavigationLinks: @unchecked Sendable {
     /// The pushed pages, bottom to top, each a page node wearing its key.
     private(set) var pushed: [Node] = []
 
@@ -56,8 +56,8 @@ final class NavigationLinks: @unchecked Sendable {
 
         let id = page.id
         page.environmentValues[keyPath: \.dismiss] = DismissAction { [weak self] in
-            guard let self, let at = pushed.firstIndex(where: { $0.id == id }) else { return }
-            pop(to: at)
+            guard let self, let at = self.pushed.firstIndex(where: { $0.id == id }) else { return }
+            self.pop(to: at)
         }
         pushed.append(page)
         Renderer.shared.stateChanged(self)

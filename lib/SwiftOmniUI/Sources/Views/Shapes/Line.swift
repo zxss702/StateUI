@@ -25,7 +25,7 @@ public struct Line: Shape, LineProperties {
 }
 
 /// `Line`'s own properties, shared by the control and its `Style<Line>`.
-public protocol LineProperties: PropertyContainer {}
+@preconcurrency @MainActor public protocol LineProperties: PropertyContainer {}
 
 extension LineProperties {
     /// Where it starts, across.

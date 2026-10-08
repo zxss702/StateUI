@@ -28,7 +28,7 @@
 /// Write it in `init`: the kept state's keys are read as the application
 /// registers, before the first view is built. The standard environment - the
 /// device, the display, the locale - is known there already.
-public protocol App {
+@preconcurrency @MainActor public protocol App {
     /// What each session of the application is: its main window, the windows
     /// it opens beside it, and the state they share. See `Scene`.
     ///
@@ -211,7 +211,7 @@ extension Node {
 /// container showing it through the same session, `page.hasNavigationBar =
 /// false`; the bar's look belongs to the arrangement drawing it. An
 /// arrangement is told its title and icon by modifier, from `PageElement`.
-public protocol Page: Element {}
+@preconcurrency @MainActor public protocol Page: Element {}
 
 /// An arrangement: a page this library declares, shown as it is.
 protocol PageArrangement: Page {}

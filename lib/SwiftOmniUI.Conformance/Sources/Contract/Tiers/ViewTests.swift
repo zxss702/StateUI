@@ -422,7 +422,7 @@
     }
 
     /// Where a pointer is, as a case says it: whole points, or nowhere.
-    static func at(_ point: Point?) -> String {
+    nonisolated static func at(_ point: Point?) -> String {
         point.map { "\(Int($0.x)),\(Int($0.y))" } ?? "nowhere"
     }
 

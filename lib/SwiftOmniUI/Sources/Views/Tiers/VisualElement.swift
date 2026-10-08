@@ -3,11 +3,11 @@
 
 /// A control backed by a node, and drawn - the tier every self-rendering view
 /// conforms through.
-public protocol VisualElement: ModifiableElement, ViewProperties, View {}
+@preconcurrency @MainActor public protocol VisualElement: ModifiableElement, ViewProperties, View {}
 
 /// The properties every drawn control has: the value half of
 /// `VisualElement`, shared by the control and its `Style`.
-public protocol VisualElementProperties: PropertyContainer {}
+@preconcurrency @MainActor public protocol VisualElementProperties: PropertyContainer {}
 
 extension VisualElement {
     /// Who this control is among its siblings: its key across renders.

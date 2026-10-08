@@ -213,11 +213,16 @@ extension WindowGroup {
         for value: Value.Type,
         @ViewBuilder content: @escaping (Binding<Value?>) -> Content
     ) {
+        let content = Carry(content)
         self.init(WindowType(String(reflecting: Value.self)), for: value) { binding in
-            Window {
-                content(Binding(
-                    get: { binding.wrappedValue },
-                    set: { if let value = $0 { binding.wrappedValue = value } }))
+            // The window's scene conformance is main-actor bound; the group's
+            // `make` always runs on the UI thread, where the window stands.
+            MainActor.assumeIsolated {
+                Window {
+                    content.value(Binding(
+                        get: { binding.wrappedValue },
+                        set: { if let value = $0 { binding.wrappedValue = value } }))
+                }
             }
         }
     }

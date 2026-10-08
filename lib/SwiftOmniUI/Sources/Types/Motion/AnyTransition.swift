@@ -153,7 +153,7 @@ extension AnyTransition {
     /// - Parameters:
     ///   - active: The modifier whose look the element crosses from and to.
     ///   - identity: The modifier whose look the element rests at.
-    public static func modifier<M: ViewModifier>(active: M, identity: M) -> AnyTransition {
+    @MainActor public static func modifier<M: ViewModifier>(active: M, identity: M) -> AnyTransition {
         let activeProps = props(of: active)
         let identityProps = props(of: identity)
 
@@ -194,7 +194,7 @@ extension AnyTransition {
     /// The properties `modifier` leaves on a view it is applied to - how it
     /// differs read flat. The probe is a `Rectangle`: an element with a node
     /// of its own for the modifier to write on, found again by its type.
-    private static func props<M: ViewModifier>(of modifier: M) -> [Prop: PropValue] {
+    @MainActor private static func props<M: ViewModifier>(of modifier: M) -> [Prop: PropValue] {
         var node = modifier.body(content: _ViewModifier_Content(view: AnyView(Rectangle()))).node
         node.materialize()
         return props(of: node, as: Rectangle().node.type)

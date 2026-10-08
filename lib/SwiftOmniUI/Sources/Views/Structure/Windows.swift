@@ -78,7 +78,7 @@ public struct Windows {
 
     /// Groups and a main window already built - what merging several scenes
     /// into one writes.
-    init(groups: [WindowGroup], main: WindowScene?) {
+    @MainActor init(groups: [WindowGroup], main: WindowScene?) {
         self.groups = groups
         self.main = main
     }

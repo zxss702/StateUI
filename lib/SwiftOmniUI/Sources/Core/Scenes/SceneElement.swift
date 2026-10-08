@@ -143,7 +143,7 @@ struct SceneElement: Element {
     }
 
     /// What the tree knows a scene's main window by.
-    static let mainKey = "main"
+    nonisolated static let mainKey = "main"
 
     /// The scene the application wrote, under whatever wrapped it.
     static func unwrapped(_ scene: any Scene) -> any Scene {

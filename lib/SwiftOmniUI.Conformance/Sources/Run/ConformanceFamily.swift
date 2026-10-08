@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// Cases of one kind - toggles, values, fields - which a host's suite runs as one test.
-@_spi(Host) public protocol ConformanceFamily: SendableMetatype {
+@_spi(Host) @MainActor public protocol ConformanceFamily: SendableMetatype {
     /// The family's name, as its cases are reported under it.
     static var name: String { get }
 

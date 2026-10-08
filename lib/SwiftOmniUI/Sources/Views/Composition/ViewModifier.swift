@@ -15,7 +15,7 @@
 ///     }
 ///
 ///     Text("Ready").modifier(Blurred())
-public protocol ViewModifier {
+@preconcurrency @MainActor public protocol ViewModifier {
     /// What `body(content:)` builds in the content's place.
     associatedtype Body: View
 

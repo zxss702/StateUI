@@ -16,7 +16,7 @@
 ///                 .onChanged { value in offset = value.translation }
 ///                 .onEnded { _ in offset = .zero }
 ///         )
-public protocol Gesture {}
+@preconcurrency @MainActor public protocol Gesture {}
 
 /// A dragging motion - a press that has moved.
 ///

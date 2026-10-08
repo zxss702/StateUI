@@ -58,7 +58,7 @@ extension NSViewRepresentable {
     /// The element this representable leaves in the tree. It is built wherever
     /// the differ builds - the representable's callbacks are the main actor's,
     /// its description is nobody's.
-    nonisolated public var node: Node {
+    public var node: Node {
         RepresentableAnchor(content: self).node
     }
 

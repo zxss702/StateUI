@@ -4,7 +4,7 @@
 /// The space a control keeps inside itself, around its content: worn by
 /// every layout, and by the controls that pad their content - Text, Button
 /// and ScrollView among them.
-public protocol PaddingElement: VisualElementProperties {}
+@preconcurrency @MainActor public protocol PaddingElement: VisualElementProperties {}
 
 extension PaddingElement {
     /// The space kept inside the view, between its edge and its content.

@@ -3,7 +3,7 @@
 
 /// `Polyline`'s own properties, shared by the control and its
 /// `Style<Polyline>`.
-public protocol PolylineProperties: PropertyContainer {}
+@preconcurrency @MainActor public protocol PolylineProperties: PropertyContainer {}
 
 extension PolylineProperties {
     /// The points, in order, left open - the last is not joined back to the

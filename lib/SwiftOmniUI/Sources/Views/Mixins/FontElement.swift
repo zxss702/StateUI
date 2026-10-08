@@ -3,7 +3,7 @@
 
 /// How the text of a control is set in type - its size, its family, its
 /// weight.
-public protocol FontElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol FontElement: PropertyContainer {}
 
 extension FontElement {
     /// How big the text is, in device units.

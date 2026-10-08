@@ -3,7 +3,7 @@
 
 /// How `Image` and `Button` fit their picture. The picture itself goes in
 /// their initializer, or in a button's `.icon(_:)`.
-public protocol ImageElement: PropertyContainer {}
+@preconcurrency @MainActor public protocol ImageElement: PropertyContainer {}
 
 extension ImageElement {
     /// How the picture fills the space - the choice between showing all of it

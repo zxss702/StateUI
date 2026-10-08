@@ -28,7 +28,7 @@
 /// to the `App` and reaches a scene through `.environment(_:)`.
 /// Opening and closing its windows is its `SceneSession`'s, in the
 /// environment of every view in it.
-public protocol Scene {
+@preconcurrency @MainActor public protocol Scene {
     /// The scene's windows: its main one, and the groups it may open beside
     /// it. Read again when a state it read changes.
     var windows: Windows { get }
