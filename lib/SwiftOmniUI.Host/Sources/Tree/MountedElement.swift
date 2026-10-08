@@ -562,8 +562,10 @@ import CRT
         if type == .scrollView {
             values.scrollAxes = value(.orientation)?.enumeration.flatMap(Axis.init(rawValue:)) ?? .vertical
         }
-        values.horizontal = value(.horizontalAlignment)?.enumeration ?? 3
-        values.vertical = value(.verticalAlignment)?.enumeration ?? 3
+        values.horizontal = value(.horizontalAlignment)?.enumeration
+            ?? value(.horizontalAlignmentDefault)?.enumeration ?? 3
+        values.vertical = value(.verticalAlignment)?.enumeration
+            ?? value(.verticalAlignmentDefault)?.enumeration ?? 3
         values.width = stated(.width)
         values.height = stated(.height)
         values.minimumWidth = stated(.minimumWidth)

@@ -44,12 +44,12 @@ public struct Polyline: Shape, PolylineProperties {
     /// A polyline with no points yet - what a `Style<Polyline>` is written
     /// against.
     public init() {
-        node = Node(contract: PolylineContract.self)
+        node = Node(shape: PolylineContract.self)
     }
 
     /// The points, in order.
     public init(_ points: [Point]) {
-        node = Node(contract: PolylineContract.self)
+        node = Node(shape: PolylineContract.self)
         node.write(PolylineContract.points, points)
     }
 

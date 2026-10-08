@@ -20,6 +20,6 @@ public struct Ellipse: Shape {
 
     /// An ellipse - which is also what a `Style<Ellipse>` is written against.
     public init() {
-        node = Node(contract: EllipseContract.self)
+        node = Node(shape: EllipseContract.self)
     }
 }

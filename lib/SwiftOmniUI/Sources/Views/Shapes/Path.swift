@@ -32,12 +32,12 @@ public struct Path: Shape, PathProperties {
 
     /// A path with no outline yet - what a `Style<Path>` is written against.
     public init() {
-        node = Node(contract: PathContract.self)
+        node = Node(shape: PathContract.self)
     }
 
     /// The outline, in SVG path syntax.
     public init(_ data: String) {
-        node = Node(contract: PathContract.self)
+        node = Node(shape: PathContract.self)
         node.write(PathContract.data, data)
     }
 

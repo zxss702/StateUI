@@ -25,7 +25,7 @@ public struct UnevenRoundedRectangle: Shape {
         cornerRadii = RectangleCornerRadii(
             topLeading: topLeadingRadius, topTrailing: topTrailingRadius,
             bottomLeading: bottomLeadingRadius, bottomTrailing: bottomTrailingRadius)
-        node = Node(contract: RectangleContract.self)
+        node = Node(shape: RectangleContract.self)
         node.props[RectangleContract.cornerRadius.token] = CornerRadius.corners(
             topLeft: topLeadingRadius, topRight: topTrailingRadius,
             bottomLeft: bottomLeadingRadius, bottomRight: bottomTrailingRadius

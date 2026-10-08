@@ -4,6 +4,20 @@
 // The shapes a `.clipShape` cuts by, and the views that draw them.
 // Design: docs/design/types/vocabularies.md#written-out-and-appended
 
+extension Node {
+    /// A shape's node - one that fills the room a layout gives it.
+    ///
+    /// A shape has no size of its own, so the room is all there is: a stack's
+    /// `alignment` or another layer's places it without it ever standing at
+    /// a natural size of nothing. Stated sizes still win - `Circle().frame(24)`
+    /// is 24 across wherever it stands.
+    init<Declaration: ElementContract>(shape contract: Declaration.Type) {
+        self.init(contract: contract)
+        write(ViewContract.horizontalAlignment, .fill)
+        write(ViewContract.verticalAlignment, .fill)
+    }
+}
+
 /// What a `.clipShape` cuts by - the outline a shape stands for:
 ///
 ///     Image("avatar.png")
@@ -61,7 +75,7 @@ public struct RoundedRectangle: Shape, ClipShape {
     /// A rectangle whose corners round by `cornerRadius` device units.
     public init(cornerRadius: Double) {
         self.cornerRadius = cornerRadius
-        node = Node(contract: RectangleContract.self)
+        node = Node(shape: RectangleContract.self)
         node.props[RectangleContract.cornerRadius.token] = CornerRadius.uniform(cornerRadius).propValue
     }
 

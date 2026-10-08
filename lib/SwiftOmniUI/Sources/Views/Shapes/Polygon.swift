@@ -40,12 +40,12 @@ public struct Polygon: Shape, PolygonProperties {
     /// A polygon with no points yet - what a `Style<Polygon>` is written
     /// against.
     public init() {
-        node = Node(contract: PolygonContract.self)
+        node = Node(shape: PolygonContract.self)
     }
 
     /// The corners, in order.
     public init(_ points: [Point]) {
-        node = Node(contract: PolygonContract.self)
+        node = Node(shape: PolygonContract.self)
         node.write(PolygonContract.points, points)
     }
 }

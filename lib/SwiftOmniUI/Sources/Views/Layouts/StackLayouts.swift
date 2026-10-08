@@ -153,17 +153,21 @@ public struct HStack: StackBase {
 extension [Node] {
     /// A stack's `alignment:` handed to each child that did not name its own.
     /// Baselines are a per-child choice; a stack-level `.center` and friends
-    /// are what this writes.
+    /// are what this writes. The value lands under the `...Default` tokens so
+    /// an expanded child's own alignment - a shape's `.fill` among them -
+    /// always outranks it.
     mutating func alignChildren(horizontal axis: AxisAlignment) {
-        for index in indices where self[index].props[.horizontalAlignment] == nil {
-            self[index].props[.horizontalAlignment] = axis.propValue
+        for index in indices where self[index].props[.horizontalAlignment] == nil
+            && self[index].props[.horizontalAlignmentDefault] == nil {
+            self[index].props[.horizontalAlignmentDefault] = axis.propValue
         }
     }
 
     /// The same, down the other axis.
     mutating func alignChildren(vertical axis: AxisAlignment) {
-        for index in indices where self[index].props[.verticalAlignment] == nil {
-            self[index].props[.verticalAlignment] = axis.propValue
+        for index in indices where self[index].props[.verticalAlignment] == nil
+            && self[index].props[.verticalAlignmentDefault] == nil {
+            self[index].props[.verticalAlignmentDefault] = axis.propValue
         }
     }
 }

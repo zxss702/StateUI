@@ -21,7 +21,7 @@ public struct Rectangle: Shape, RectangleProperties {
     /// A rectangle with nothing set - which is also what a `Style<Rectangle>` is
     /// written against.
     public init() {
-        node = Node(contract: RectangleContract.self)
+        node = Node(shape: RectangleContract.self)
     }
 }
 

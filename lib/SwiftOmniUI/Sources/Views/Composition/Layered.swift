@@ -92,9 +92,22 @@ public struct Layered<Base: View, Content: View>: View {
     /// `layer` over `base`; under it where false.
     let over: Bool
 
-    /// The two as a ZStack.
+    /// The two as a ZStack - `alignment` the layer's alone: the base keeps the
+    /// room it fills where `.overlay(alignment: .bottom)` stands its layer at
+    /// the bottom without dragging the base along. The default tokens carry
+    /// it, so a layer naming its own alignment - a shape's `.fill` among
+    /// them - keeps it through expansion.
     public var body: some View {
-        ZStack(alignment: alignment) {
+        var layer = layer.node
+        if layer.props[.horizontalAlignment] == nil
+            && layer.props[.horizontalAlignmentDefault] == nil {
+            layer.props[.horizontalAlignmentDefault] = alignment.horizontal.axis.propValue
+        }
+        if layer.props[.verticalAlignment] == nil
+            && layer.props[.verticalAlignmentDefault] == nil {
+            layer.props[.verticalAlignmentDefault] = alignment.vertical.axis.propValue
+        }
+        return ZStack {
             if over {
                 base
                 layer

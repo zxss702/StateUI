@@ -20,7 +20,7 @@ public struct Line: Shape, LineProperties {
 
     /// A line with nothing set - what a `Style<Line>` is written against.
     public init() {
-        node = Node(contract: LineContract.self)
+        node = Node(shape: LineContract.self)
     }
 }
 

@@ -44,12 +44,12 @@ public struct Canvas: VisualElement, CanvasProperties{
 
     /// An empty canvas - what a `Style<Canvas>` is written against.
     public init() {
-        node = Node(contract: CanvasContract.self)
+        node = Node(shape: CanvasContract.self)
     }
 
     /// A canvas showing what the closure draws.
     public init(@DrawingBuilder _ drawing: () -> [DrawCommand]) {
-        node = Node(contract: CanvasContract.self)
+        node = Node(shape: CanvasContract.self)
         node.write(CanvasContract.drawable, drawing())
     }
 
