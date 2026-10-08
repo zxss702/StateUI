@@ -42,10 +42,15 @@ final class GTKWindowController {
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         if let hidden = changes.hidden { window.setHidden(hidden) }
         if let (_, arrangement) = changes.arrangement {
-            if let arrangement, GTKElement.framedTypes.contains(arrangement.type) {
-                window.show(page: arrangement.gtk.view)
+            if let arrangement {
+                let shown = Self.shownArrangement(arrangement)
+                if GTKElement.framedTypes.contains(shown.type) {
+                    window.show(page: shown.gtk.view)
+                } else {
+                    window.show(shown.gtk.view)
+                }
             } else {
-                window.show(arrangement?.gtk.view)
+                window.show(nil)
             }
         }
         if let overlay = changes.overlay { window.showOverlay(overlay?.gtk.view) }
@@ -65,13 +70,14 @@ final class GTKWindowController {
     /// Design: docs/design/platforms/gtk/pages.md#sheets
     private func showSheets(_ pages: [MountedElement], in runtime: HostRuntime) {
         let kept = sheets.filter { entry in
-            pages.contains { $0 === entry.element && $0.gtk.view === entry.sheet.page }
+            pages.contains { $0 === entry.element && Self.shownArrangement($0).gtk.view === entry.sheet.page }
         }
         for entry in sheets.reversed() where !kept.contains(where: { $0.sheet === entry.sheet }) { entry.sheet.close() }
         sheets = pages.compactMap { page in
             if let entry = kept.first(where: { $0.element === page }) { return entry }
-            guard let view = page.gtk.view else { return nil }
-            let sheet = GTKSheet(page: view, framed: GTKElement.framedTypes.contains(page.type))
+            let shown = Self.shownArrangement(page)
+            guard let view = shown.gtk.view else { return nil }
+            let sheet = GTKSheet(page: view, framed: GTKElement.framedTypes.contains(shown.type))
             sheet.onClosedByUser = { [weak self, weak runtime] in
                 guard let runtime else { return }
                 self?.dismissTopSheet(in: runtime)
@@ -92,21 +98,36 @@ final class GTKWindowController {
     func refreshChrome() {
         guard let element else { return }
 
-        let arrangement = presentation.arrangement?.gtk
-        if let arrangement, GTKElement.framedTypes.contains(arrangement.type) {
-            window.pageFrame?.show(arrangement.chrome)
+        if let arrangement = presentation.arrangement {
+            let shown = Self.shownArrangement(arrangement)
+            if GTKElement.framedTypes.contains(shown.type) {
+                window.pageFrame?.show(shown.gtk.chrome)
+            }
+            shown.gtk.composeChrome()
         }
-        arrangement?.composeChrome()
         adaptSplitViews()
         for (page, sheet) in sheets {
-            let chrome = page.gtk.chrome
+            let shown = Self.shownArrangement(page)
+            let chrome = shown.gtk.chrome
             sheet.frame?.show(chrome)
-            sheet.setTitle(page.visiblePage?.value(.title)?.string ?? chrome.title)
-            page.gtk.composeChrome()
+            sheet.setTitle(shown.visiblePage?.value(.title)?.string ?? chrome.title)
+            shown.gtk.composeChrome()
         }
         let chrome = WindowChrome(window: element, arrangement: presentation.arrangement)
         window.setTitle(chrome.title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
         window.setBackground(chrome.windowBackground)
+    }
+
+    /// The element the window's bar belongs to: a page that wraps only an
+    /// arrangement stands in no frame of its own - the arrangement inside it
+    /// carries the bars, or the frame around it does.
+    private static func shownArrangement(_ element: MountedElement) -> MountedElement {
+        var shown = element
+        while shown.type == .page, shown.arrangedChildren.count == 1,
+              let inner = shown.arrangedChildren.first, NodeType.pageTypes.contains(inner.type) {
+            shown = inner
+        }
+        return shown
     }
 
     /// Collapses the window's split view where the window is narrow.
