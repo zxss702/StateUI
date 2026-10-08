@@ -11,10 +11,10 @@ extension MountedElement {
         native.presentsView ? self : children.lazy.compactMap(\.presentingElement).first
     }
 
-    /// The children a layout places: all of them, but a page's slots, which furnish its chrome and stand in none of
-    /// its room.
+    /// The children a layout places: all of them, but the slots, which furnish the chrome and the menus wherever
+    /// they are written and stand in no one's room.
     public var arrangedChildren: [MountedElement] {
-        type == .page ? children.filter { !NodeType.slotTypes.contains($0.type) } : children
+        children.filter { !NodeType.slotTypes.contains($0.type) }
     }
 
     /// What stands in this element's `slot` - a page's title view, a title bar's content: the first element under

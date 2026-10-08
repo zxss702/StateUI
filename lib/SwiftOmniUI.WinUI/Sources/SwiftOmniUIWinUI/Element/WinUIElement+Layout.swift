@@ -34,8 +34,9 @@ extension WinUIElement {
         let arranged = element.arrangedChildren.map(\.winUI)
 
         if let menu = view as? WinUIMenuButtonView {
-            menu.setFace(arranged.first { $0.type != .contextMenu }?.view)
-            menu.show(WinUIMenu(arranged.first { $0.type == .contextMenu }))
+            // The menu is a slot's - the layout never places it, so it is read among the element's own children.
+            menu.setFace(arranged.first?.view)
+            menu.show(WinUIMenu(element.children.first { $0.type == .contextMenu }?.winUI))
             return
         }
         if let split = view as? WinUISplitView {
