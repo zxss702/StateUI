@@ -45,9 +45,9 @@ final class GTKWindowController {
             if let arrangement {
                 let shown = Self.shownArrangement(arrangement)
                 if GTKElement.framedTypes.contains(shown.type) {
-                    window.show(page: shown.gtk.view)
+                    window.show(page: arrangement.gtk.view)
                 } else {
-                    window.show(shown.gtk.view)
+                    window.show(arrangement.gtk.view)
                 }
             } else {
                 window.show(nil)
@@ -70,13 +70,13 @@ final class GTKWindowController {
     /// Design: docs/design/platforms/gtk/pages.md#sheets
     private func showSheets(_ pages: [MountedElement], in runtime: HostRuntime) {
         let kept = sheets.filter { entry in
-            pages.contains { $0 === entry.element && Self.shownArrangement($0).gtk.view === entry.sheet.page }
+            pages.contains { $0 === entry.element && $0.gtk.view === entry.sheet.page }
         }
         for entry in sheets.reversed() where !kept.contains(where: { $0.sheet === entry.sheet }) { entry.sheet.close() }
         sheets = pages.compactMap { page in
             if let entry = kept.first(where: { $0.element === page }) { return entry }
             let shown = Self.shownArrangement(page)
-            guard let view = shown.gtk.view else { return nil }
+            guard let view = page.gtk.view else { return nil }
             let sheet = GTKSheet(page: view, framed: GTKElement.framedTypes.contains(shown.type))
             sheet.onClosedByUser = { [weak self, weak runtime] in
                 guard let runtime else { return }
