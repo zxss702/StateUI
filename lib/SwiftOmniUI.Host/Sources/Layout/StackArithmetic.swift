@@ -91,7 +91,16 @@
                              slot: item.values.vertical)
             }.max() ?? 0)
         }
-        var offset = axis == .vertical ? content.y : content.x
+        // The row or column stands centered in the room the children do not
+        // take - the way SwiftUI's stacks stand, the flexible children's
+        // shares already counted in `extents`.
+        var taken = spacing * Double(max(items.filter(\.isShown).count - 1, 0))
+        for (item, along) in zip(items, extents) where item.isShown {
+            let margin = item.values.margin
+            taken += along + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)
+        }
+        let leftover = (axis == .vertical ? content.height : content.width) - taken
+        var offset = (axis == .vertical ? content.y : content.x) + max(0, leftover) / 2
 
         return zip(items, zip(naturals, extents)).map { item, pair in
             let (natural, along) = pair
