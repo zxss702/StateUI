@@ -32,6 +32,10 @@ final class QueryResult<Element: PersistentModel> {
     /// What the query asks for.
     let descriptor: FetchDescriptor<Element>
 
+    /// The animation `Query(..., animation:)` carried - kept for when a
+    /// host learns to animate row changes.
+    let animation: Animation?
+
     /// The context the query follows, once the environment answers.
     private(set) weak var context: ModelContext?
 
@@ -40,8 +44,9 @@ final class QueryResult<Element: PersistentModel> {
     /// `nonisolated` so `deinit` can release it wherever the object dies.
     nonisolated(unsafe) private var observation: Any?
 
-    nonisolated init(descriptor: FetchDescriptor<Element>) {
+    nonisolated init(descriptor: FetchDescriptor<Element>, animation: Animation? = nil) {
         self.descriptor = descriptor
+        self.animation = animation
     }
 
     /// Binds the context the environment resolved; idempotent for one context.
@@ -80,6 +85,11 @@ final class QueryResult<Element: PersistentModel> {
     }
 }
 
+/// The `filter:` a `Query` takes: Foundation's `Predicate` where SwiftData
+/// stands, `JsonDataCore.Predicate` elsewhere - `#Predicate` spells into
+/// whichever is in scope, so the filter source is platform-neutral. The
+/// two `QueryPredicate` spellings below keep each platform's public
+/// signature in its own vocabulary.
 /// A view's handle on the model layer's rows:
 ///
 ///     @Query private var records: [Record]
@@ -110,17 +120,88 @@ public struct Query<Element: PersistentModel> {
             descriptor: FetchDescriptor(sortBy: [SortDescriptor(keyPath, order: order)])))
     }
 
+    /// A descriptor of your own - the full SwiftData spelling:
+    ///
+    ///     _events = Query(descriptor, animation: .snappy)
+    ///
+    /// `animation` is kept on the result for when the host learns to animate
+    /// row changes; today the store's change simply refetches.
+    public init(_ descriptor: FetchDescriptor<Element>, animation: Animation? = nil) {
+        _result = State(wrappedValue: QueryResult(descriptor: descriptor, animation: animation))
+    }
+
+    /// The rows `filter` matches.
+    #if canImport(SwiftData)
+    public init(filter: Foundation.Predicate<Element>, animation: Animation? = nil) {
+        self.init(FetchDescriptor(predicate: filter), animation: animation)
+    }
+
+    /// The rows `filter` matches, ordered by one key - SwiftData's
+    /// `Query(filter:sort:order:animation:)`.
+    public init<Value: Comparable & Sendable>(
+        filter: Foundation.Predicate<Element>,
+        sort keyPath: KeyPath<Element, Value> & Sendable,
+        order: SortOrder = .forward,
+        animation: Animation? = nil
+    ) {
+        self.init(
+            FetchDescriptor(
+                predicate: filter,
+                sortBy: [SortDescriptor(keyPath, order: order)]),
+            animation: animation)
+    }
+
+    /// The rows `filter` matches, ordered by descriptors - SwiftData's
+    /// `Query(filter:sort:animation:)` with a sort list.
+    public init(
+        filter: Foundation.Predicate<Element>,
+        sort descriptors: [SortDescriptor<Element>],
+        animation: Animation? = nil
+    ) {
+        self.init(FetchDescriptor(predicate: filter, sortBy: descriptors), animation: animation)
+    }
+    #else
+    public init(filter: JsonDataCore.Predicate<Element>, animation: Animation? = nil) {
+        self.init(FetchDescriptor(predicate: filter), animation: animation)
+    }
+
+    /// The rows `filter` matches, ordered by one key - SwiftData's
+    /// `Query(filter:sort:order:animation:)`.
+    public init<Value: Comparable & Sendable>(
+        filter: JsonDataCore.Predicate<Element>,
+        sort keyPath: KeyPath<Element, Value> & Sendable,
+        order: SortOrder = .forward,
+        animation: Animation? = nil
+    ) {
+        self.init(
+            FetchDescriptor(
+                predicate: filter,
+                sortBy: [SortDescriptor(keyPath, order: order)]),
+            animation: animation)
+    }
+
+    /// The rows `filter` matches, ordered by descriptors - SwiftData's
+    /// `Query(filter:sort:animation:)` with a sort list.
+    public init(
+        filter: JsonDataCore.Predicate<Element>,
+        sort descriptors: [JsonDataCore.SortDescriptor<Element>],
+        animation: Animation? = nil
+    ) {
+        self.init(FetchDescriptor(predicate: filter, sortBy: descriptors), animation: animation)
+    }
+    #endif
+
     /// The rows ordered by descriptors. Qualified off SwiftData's platforms:
     /// Foundation's own `SortDescriptor` otherwise shadows the model layer's.
     #if canImport(SwiftData)
-    public init(sort descriptors: [SortDescriptor<Element>]) {
+    public init(sort descriptors: [SortDescriptor<Element>], animation: Animation? = nil) {
         _result = State(wrappedValue: QueryResult(
-            descriptor: FetchDescriptor(sortBy: descriptors)))
+            descriptor: FetchDescriptor(sortBy: descriptors), animation: animation))
     }
     #else
-    public init(sort descriptors: [JsonDataCore.SortDescriptor<Element>]) {
+    public init(sort descriptors: [JsonDataCore.SortDescriptor<Element>], animation: Animation? = nil) {
         _result = State(wrappedValue: QueryResult(
-            descriptor: FetchDescriptor(sortBy: descriptors)))
+            descriptor: FetchDescriptor(sortBy: descriptors), animation: animation))
     }
     #endif
 

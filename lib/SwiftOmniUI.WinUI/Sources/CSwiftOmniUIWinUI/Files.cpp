@@ -172,6 +172,37 @@ namespace {
         }));
     }
 
+    /// Hands over the folder a dialog chose; several folders take the same path, their paths in order.
+    void chosenFolder(IAsyncOperation<pickers::PickFolderResult> const &picking, int64_t ticket) {
+        picking.Completed(guarded("a folder dialog answering",
+                                  [ticket](IAsyncOperation<pickers::PickFolderResult> const &picked, AsyncStatus status) {
+            Chosen chosen;
+            try {
+                if (status != AsyncStatus::Completed) chosen.failure = failure(picked);
+                else if (auto result = picked.GetResults()) chosen.paths.push_back(winrt::to_string(result.Path()));
+            } catch (...) {
+                chosen.failure = "the file dialog failed: 0x" + std::to_string(report("taking a file dialog's answer"));
+            }
+            handOver(ticket, std::move(chosen));
+        }));
+    }
+
+    /// Hands over the folders a dialog for several chose.
+    void chosenFolders(IAsyncOperation<IVectorView<pickers::PickFolderResult>> const &picking, int64_t ticket) {
+        picking.Completed(guarded("a folder dialog answering",
+                                  [ticket](IAsyncOperation<IVectorView<pickers::PickFolderResult>> const &picked,
+                                             AsyncStatus status) {
+            Chosen chosen;
+            try {
+                if (status != AsyncStatus::Completed) chosen.failure = failure(picked);
+                else for (auto const &result : picked.GetResults()) chosen.paths.push_back(winrt::to_string(result.Path()));
+            } catch (...) {
+                chosen.failure = "the file dialog failed: 0x" + std::to_string(report("taking a file dialog's answer"));
+            }
+            handOver(ticket, std::move(chosen));
+        }));
+    }
+
     /// Tells the host, on the UI thread, whether what was launched under `ticket` was taken.
     void launchAnswer(int64_t ticket, bool taken) {
         runOnUIThread([ticket, taken] { callbacks.launchAnswered(ticket, taken); });
@@ -194,6 +225,13 @@ extern "C" void swiftomniui_winui_show_file_dialog(SwiftOmniUIObjectRef handle, 
             if (!asked->types.empty() && !asked->types.front().second.empty())
                 picker.DefaultFileExtension(asked->types.front().second.front());
             return chosenOne(picker.PickSaveFileAsync(), ticket, asked);
+        }
+        if (asked->kind == 3 || asked->kind == 4) {
+            pickers::FolderPicker picker(window);
+            if (!testFolder.empty()) picker.SuggestedFolder(testFolder);
+            picker.FileTypeFilter().Append(L"*");
+            if (asked->kind == 4) return chosenFolders(picker.PickMultipleFoldersAsync(), ticket);
+            return chosenFolder(picker.PickSingleFolderAsync(), ticket);
         }
         pickers::FileOpenPicker picker(window);
         for (auto const &[caption, extensions] : asked->types) {

@@ -27,6 +27,15 @@ extension Ellipse: ClipShape {
     public var outline: ContainerShape { .ellipse }
 }
 
+extension UnevenRoundedRectangle: ClipShape {
+    /// A rectangle rounded at each corner by its own radius.
+    public var outline: ContainerShape {
+        .unevenRoundedRectangle(.corners(
+            topLeft: cornerRadii.topLeading, topRight: cornerRadii.topTrailing,
+            bottomLeft: cornerRadii.bottomLeading, bottomRight: cornerRadii.bottomTrailing))
+    }
+}
+
 /// How a rounded corner runs its bend - the plain quarter-circle, or the
 /// continuous curve Apple's platforms draw their own with.
 public enum RoundedCornerStyle: Sendable {
@@ -202,6 +211,15 @@ struct OutlinedFill: View {
         var node = switch outline {
         case .rectangle: Rectangle().node
         case .roundedRectangle(let radius): RoundedRectangle(cornerRadius: radius).node
+        case .unevenRoundedRectangle(let cornerRadius):
+            switch cornerRadius {
+            case .uniform(let radius): RoundedRectangle(cornerRadius: radius).node
+            case .corners(let topLeft, let topRight, let bottomLeft, let bottomRight):
+                UnevenRoundedRectangle(
+                    topLeadingRadius: topLeft, bottomLeadingRadius: bottomLeft,
+                    bottomTrailingRadius: bottomRight, topTrailingRadius: topRight,
+                    style: .continuous).node
+            }
         case .ellipse: Ellipse().node
         case .capsule: Capsule().node
         case .circle: Circle().node

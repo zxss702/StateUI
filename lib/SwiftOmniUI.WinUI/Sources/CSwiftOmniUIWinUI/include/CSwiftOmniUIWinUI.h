@@ -915,6 +915,9 @@ bool swiftomniui_winui_utc_offset(char const *zone, int32_t year, int32_t month,
 /// Says `utf8` to a screen reader, from `element`, cutting off what it was saying.
 void swiftomniui_winui_announce(SwiftOmniUIObjectRef element, char const *utf8);
 
+/// Puts `utf8` on the clipboard, replacing what it held.
+void swiftomniui_winui_copy_text(char const *utf8);
+
 /// Puts the keyboard's focus on `element`, or the first control in it that takes it, answering whether one did;
 /// or takes it off whatever holds it inside `element`, answering whether anything did.
 bool swiftomniui_winui_focus(SwiftOmniUIObjectRef element, bool focus);

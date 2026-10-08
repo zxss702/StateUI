@@ -11,7 +11,7 @@
 ///
 /// Only the weight and the slant: the family is `.fontFamily` and the size
 /// `.fontSize`, each its own modifier as it is its own property.
-public struct FontAttributes: OptionSet, Sendable {
+public struct FontAttributes: OptionSet, Sendable, Hashable {
     /// The flag bits.
     public let rawValue: Int32
 

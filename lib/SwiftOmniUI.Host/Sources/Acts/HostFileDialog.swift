@@ -13,6 +13,10 @@
         case open
         /// As many files to open as the user chooses.
         case openSeveral
+        /// One folder to open.
+        case folder
+        /// As many folders to open as the user chooses.
+        case folders
         /// A place to save.
         case save
     }
@@ -37,6 +41,11 @@
         case .openFiles:
             kind = arguments.value(1)?.bool == true ? .openSeveral : .open
             types = kinds(0)
+            name = ""
+            contents = []
+        case .openFolders:
+            kind = arguments.value(0)?.bool == true ? .folders : .folder
+            types = []
             name = ""
             contents = []
         case .saveFile:

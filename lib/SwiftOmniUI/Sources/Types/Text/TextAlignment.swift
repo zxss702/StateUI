@@ -22,3 +22,11 @@ public enum TextAlignment: Int32, Sendable {
 
 extension TextAlignment: HostRepresentable {}
 extension TextAlignment: StateChoice {}
+
+extension TextAlignment {
+    /// `start`, spelled the SwiftUI way.
+    public static var leading: TextAlignment { .start }
+
+    /// `end`, spelled the SwiftUI way.
+    public static var trailing: TextAlignment { .end }
+}

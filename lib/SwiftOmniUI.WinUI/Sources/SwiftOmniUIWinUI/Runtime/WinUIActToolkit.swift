@@ -87,6 +87,10 @@ final class WinUIActToolkit: ActToolkit {
         if let content = renderer.userWindow?.content { swiftomniui_winui_announce(content.handle, words) }
     }
 
+    func copyText(_ text: String) {
+        swiftomniui_winui_copy_text(text)
+    }
+
     func hideOnScreenKeyboard() -> Bool {
         renderer.userWindow?.content.map { swiftomniui_winui_hide_keyboard($0.handle) } ?? false
     }

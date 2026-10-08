@@ -59,9 +59,12 @@
         case .alert, .confirm, .chooseAction, .prompt:
             guard let question = HostQuestion(call) else { return fail(call, "the act asks nothing") }
             ask(call, .question(question))
-        case .openFiles, .saveFile, .readFile, .launchFile, .launchLink:
+        case .openFiles, .openFolders, .saveFile, .readFile, .launchFile, .launchLink:
             guard let files else { return fail(call, notPerformed(call)) }
             perform(call, files: files)
+        case .copyText:
+            toolkit.copyText(call.arguments.first?.string ?? "")
+            reply(call, [])
         case .announce:
             toolkit.announce(call.arguments.first?.string ?? "")
             reply(call, [])

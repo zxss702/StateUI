@@ -15,9 +15,9 @@
 /// different colours - `Color(light:dark:)` is one value that goes wherever a
 /// colour goes. Held as four 8-bit channels, so two spellings of one colour
 /// are equal.
-public struct Color: Equatable, Sendable, HostRepresentable {
+public struct Color: Hashable, Sendable, HostRepresentable {
     /// The four sRGB channels of one colour, 0-255 each.
-    struct Rgba: Equatable, Sendable {
+    struct Rgba: Hashable, Sendable {
         let red: UInt8
         let green: UInt8
         let blue: UInt8
@@ -98,6 +98,11 @@ public struct Color: Equatable, Sendable, HostRepresentable {
             green: Color.channel(green),
             blue: Color.channel(blue),
             alpha: Color.channel(alpha)))
+    }
+
+    /// A grey, the SwiftUI spelling - `Color(white: 0.5)` is a medium grey.
+    public init(white: Double, opacity: Double = 1) {
+        self.init(red: white, green: white, blue: white, alpha: opacity)
     }
 
     /// Four bytes under the colour kind, or both halves as a themed pair.
@@ -207,6 +212,9 @@ public struct Color: Equatable, Sendable, HostRepresentable {
 extension Color {
     /// Nothing at all, #00FFFFFF.
     public static let transparent = Color("#00FFFFFF")
+
+    /// SwiftUI's spelling for `transparent`.
+    public static let clear = Color.transparent
 
     /// Black, #000000.
     public static let black = Color("#000000")

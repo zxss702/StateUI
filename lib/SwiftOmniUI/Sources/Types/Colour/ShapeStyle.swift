@@ -204,6 +204,29 @@ extension ShapeStyle where Self == Color {
 
     /// The app's accent colour.
     public static var accentColor: Color { Color.accentColor }
+
+    /// The window's own fill - SwiftUI's `.background` style, bridged to the
+    /// light/dark pair `Color.background` already speaks.
+    public static var background: Color { Color.background }
+
+    /// Clear - no colour at all.
+    public static var clear: Color { Color.clear }
+
+    public static var black: Color { Color.black }
+    public static var white: Color { Color.white }
+    public static var gray: Color { Color.gray }
+    public static var red: Color { Color.red }
+    public static var orange: Color { Color.orange }
+    public static var yellow: Color { Color.yellow }
+    public static var green: Color { Color.green }
+    public static var mint: Color { Color.mint }
+    public static var teal: Color { Color.teal }
+    public static var cyan: Color { Color.cyan }
+    public static var blue: Color { Color.blue }
+    public static var indigo: Color { Color.indigo }
+    public static var purple: Color { Color.purple }
+    public static var pink: Color { Color.pink }
+    public static var brown: Color { Color.brown }
 }
 
 extension Color: ShapeStyle {

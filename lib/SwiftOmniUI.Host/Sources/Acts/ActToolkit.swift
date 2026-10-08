@@ -27,6 +27,9 @@
     /// Tells the screen reader `words`, now.
     func announce(_ words: String)
 
+    /// Puts `text` on the clipboard. A host with no clipboard writes nothing.
+    func copyText(_ text: String)
+
     /// Takes the on-screen keyboard down; whether one was up.
     func hideOnScreenKeyboard() -> Bool
 
@@ -48,6 +51,11 @@
 
     /// Writes `message` to the host's log.
     func log(_ message: String)
+}
+
+extension ActToolkit {
+    /// The default: a host without a clipboard writes nothing.
+    public func copyText(_ text: String) {}
 }
 
 /// Where a host's answers to acts go: the core, which hands each to the caller waiting on it.

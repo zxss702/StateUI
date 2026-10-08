@@ -21,9 +21,25 @@ extension ContainerShape {
             bounds.size.height = side
         }
         let (roomWidth, roomHeight) = (Double(bounds.size.width), Double(bounds.size.height))
+        if case .unevenRoundedRectangle(let cornerRadius) = self {
+            let radii: (Double, Double, Double, Double)
+            switch cornerRadius {
+            case .uniform(let radius): radii = (radius, radius, radius, radius)
+            case .corners(let tl, let tr, let bl, let br): radii = (tl, tr, bl, br)
+            }
+            let bound = min(roomWidth, roomHeight) / 2
+            func corner(_ radius: Double) -> graphene_size_t {
+                let fitted = min(radius, bound)
+                return graphene_size_t(width: Float(fitted), height: Float(fitted))
+            }
+            // GSK's order: top left, top right, bottom right, bottom left.
+            return GTKOutline.rounded(
+                bounds, corners: [corner(radii.0), corner(radii.1), corner(radii.3), corner(radii.2)])
+        }
         let fitted: (width: Double, height: Double) = switch self {
         case .rectangle: (0, 0)
         case .roundedRectangle(let radius): BoxArithmetic.fitted(radius, width: roomWidth, height: roomHeight)
+        case .unevenRoundedRectangle: (0, 0)
         case .ellipse, .circle: (roomWidth / 2, roomHeight / 2)
         case .capsule: (min(roomWidth, roomHeight) / 2, min(roomWidth, roomHeight) / 2)
         }

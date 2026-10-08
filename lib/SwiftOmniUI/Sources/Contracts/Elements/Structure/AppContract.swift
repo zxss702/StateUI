@@ -95,6 +95,18 @@ public enum AppContract: ElementContract, ApplicationTier {
     /// See `Dialogs.openFile(types:)`.
     public static let openFiles = ElementAct<Self, ([FileType], Bool), [ChosenFile]>("openFiles")
 
+    /// Writes text onto the clipboard - what `Pasteboard.copy` asks.
+    ///
+    /// See `Pasteboard.copy(_:)`.
+    public static let copyText = ElementAct<Self, String, Void>("copyText")
+
+    /// Asks the user for folders to open in the dialog over the showing page -
+    /// whether it takes several - answering the folders chosen, none where it
+    /// was cancelled.
+    ///
+    /// See `Dialogs.openFolder()`.
+    public static let openFolders = ElementAct<Self, Bool, [ChosenFile]>("openFolders")
+
     /// A scene key's new value, on its way to the platform's record of that
     /// scene: the scene, the key, the value.
     public static let persistSceneValue = ElementAct<Self, (Name, Name, PropValue), Void>("persistSceneValue")
@@ -139,8 +151,8 @@ public enum AppContract: ElementContract, ApplicationTier {
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        alert, announce, chooseAction, chooseFiles, confirm, currentTime, currentTimeZone, handlerFailed,
-        hideOnScreenKeyboard, launchFile, launchLink, localizedString, openFiles, persistSceneValue,
+        alert, announce, chooseAction, chooseFiles, confirm, copyText, currentTime, currentTimeZone, handlerFailed,
+        hideOnScreenKeyboard, launchFile, launchLink, localizedString, openFiles, openFolders, persistSceneValue,
         persistValue, prompt, readFile, saveFile, urlOpened, utcOffset,
     ]
 }

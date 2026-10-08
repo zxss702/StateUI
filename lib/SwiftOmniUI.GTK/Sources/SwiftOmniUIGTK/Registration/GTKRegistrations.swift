@@ -49,7 +49,7 @@ enum GTKRegistrations {
     static let acts: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
         AppContract.alert, AppContract.announce, AppContract.chooseAction,
-        AppContract.chooseFiles,
+        AppContract.chooseFiles, AppContract.copyText, AppContract.openFolders,
         AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
         AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.persistValue,
         AppContract.prompt, AppContract.utcOffset, CanvasContract.measureText,

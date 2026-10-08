@@ -36,14 +36,14 @@ public struct List<Items: RandomAccessCollection, Id: Hashable>: View {
     private var aimed: Aim<ListContract>?
 
     /// A list of `items`, each its own identity, each looking as `content` says.
-    public init(_ items: Items, content: @escaping (Items.Element) -> any View)
+    public init(_ items: Items, @ViewBuilder content: @escaping (Items.Element) -> any View)
     where Items.Element: Hashable, Id == Items.Element {
         source = ItemsSource(groups: [ItemsGroup(items, content: content)], grouped: false)
     }
 
     /// A list of `items`, each named by the property `id`, each looking as
     /// `content` says.
-    public init(_ items: Items, id: KeyPath<Items.Element, Id>, content: @escaping (Items.Element) -> any View) {
+    public init(_ items: Items, id: KeyPath<Items.Element, Id>, @ViewBuilder content: @escaping (Items.Element) -> any View) {
         source = ItemsSource(groups: [ItemsGroup(items, id: id, content: content)], grouped: false)
     }
 

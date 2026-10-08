@@ -44,3 +44,4 @@ extension Axis {
 
 extension Axis: HostRepresentable {}
 extension Axis: StateChoice {}
+extension Axis.Set: HostRepresentable {}

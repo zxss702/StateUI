@@ -48,6 +48,7 @@ public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View
     ///     }
     ///
     /// A range works: its numbers are the items.
+    @_disfavoredOverload
     public init(
         _ items: Items,
         @ViewBuilder content: @escaping (Items.Element) -> Content
@@ -78,6 +79,21 @@ public struct ForEach<Items: RandomAccessCollection, Id: Hashable, Content: View
         self.items = items
         self.identity = id
         self.content = content
+    }
+}
+
+extension ForEach where Items.Element: Identifiable, Items.Element.ID == Id {
+    /// One view per item, each wearing its own `id` - the `Identifiable`
+    /// spelling:
+    ///
+    ///     ForEach(files) { file in
+    ///         Text(file.name)
+    ///     }
+    public init(
+        _ items: Items,
+        @ViewBuilder content: @escaping (Items.Element) -> Content
+    ) {
+        self.init(items, id: \.id, content: content)
     }
 }
 

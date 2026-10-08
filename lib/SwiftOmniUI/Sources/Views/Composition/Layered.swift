@@ -8,6 +8,14 @@
 extension View {
     /// A view drawn over this one, both aligned in the larger of the two.
     ///
+    /// The same, the layer handed in already built - SwiftUI's
+    /// `overlay(_:)` spelling.
+    public func overlay<Content: View>(
+        _ content: Content
+    ) -> Layered<Self, Content> {
+        Layered(base: self, layer: content, alignment: .center, over: true)
+    }
+
     ///     Text("Draft")
     ///         .overlay { Rectangle().cornerRadius(4).stroke(.gray) }
     public func overlay<Content: View>(
@@ -22,6 +30,14 @@ extension View {
         @ViewBuilder content: () -> Content
     ) -> Layered<Self, Content> {
         Layered(base: self, layer: content(), alignment: alignment, over: true)
+    }
+
+    /// A view drawn behind this one, handed in already built - SwiftUI's
+    /// `background(_:)` spelling.
+    public func background<Content: View>(
+        _ content: Content
+    ) -> Layered<Self, Content> {
+        Layered(base: self, layer: content, alignment: .center, over: false)
     }
 
     /// A view drawn behind this one, both aligned in the larger of the two.

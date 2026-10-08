@@ -13,6 +13,14 @@ extension ContainerShape {
         switch self {
         case .rectangle: (SwiftOmniUIOutlineRectangle, 0)
         case .roundedRectangle(let radius): (SwiftOmniUIOutlineRounded, radius)
+        case .unevenRoundedRectangle(let cornerRadius):
+            // A WinUI clip is a RectangleGeometry - uniform radii only; the
+            // largest corner stands in until a Composition path lands.
+            switch cornerRadius {
+            case .uniform(let radius): (SwiftOmniUIOutlineRounded, radius)
+            case .corners(let tl, let tr, let bl, let br):
+                (SwiftOmniUIOutlineRounded, max(tl, tr, bl, br))
+            }
         case .ellipse: (SwiftOmniUIOutlineEllipse, 0)
         case .capsule: (SwiftOmniUIOutlineCapsule, 0)
         case .circle: (SwiftOmniUIOutlineCircle, 0)

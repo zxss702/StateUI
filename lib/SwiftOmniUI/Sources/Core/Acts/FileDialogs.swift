@@ -33,6 +33,27 @@ extension Dialogs {
         try await stateUICall(AppContract.openFiles, types, true)
     }
 
+    /// Asks the user for a folder to open.
+    ///
+    ///     if let folder = try await Dialogs.openFolder() {
+    ///         watch(folder.address)
+    ///     }
+    ///
+    /// - Returns: the folder chosen, or nil where the dialog was cancelled.
+    /// - Throws: `SwiftOmniUIError` when there is no page on screen to show it.
+    public static nonisolated(nonsending) func openFolder() async throws -> ChosenFile? {
+        try await stateUICall(AppContract.openFolders, false).first
+    }
+
+    /// Asks the user for folders to open, as many as they choose.
+    ///
+    /// - Returns: the folders chosen, in the dialog's order; none where it was
+    ///   cancelled.
+    /// - Throws: `SwiftOmniUIError` when there is no page on screen to show it.
+    public static nonisolated(nonsending) func openFolders() async throws -> [ChosenFile] {
+        try await stateUICall(AppContract.openFolders, true)
+    }
+
     /// Asks the user where to save `contents`, and writes them there.
     ///
     ///     let page = FileType("HTML page", extensions: ["html"])

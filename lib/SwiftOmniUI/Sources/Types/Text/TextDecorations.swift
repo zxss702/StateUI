@@ -7,7 +7,7 @@
 /// The lines drawn through or under text.
 ///
 ///     Text("$40").textDecorations(.strikethrough)
-public struct TextDecorations: OptionSet, Sendable {
+public struct TextDecorations: OptionSet, Sendable, Hashable {
     /// The flag bits.
     public let rawValue: Int32
 

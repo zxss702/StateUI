@@ -210,6 +210,12 @@ extension View {
     ///
     /// A pointer is a mouse, a trackpad or a pen; on a touch-only device it
     /// never runs.
+    /// `onHover(_:)` under SwiftUI's `perform:` label.
+    @_disfavoredOverload
+    public func onHover(perform: @escaping (Bool) -> Void) -> ModifiedContent {
+        onHover(perform)
+    }
+
     public func onHover(_ perform: @escaping (Bool) -> Void) -> ModifiedContent {
         onPointerEntered { perform(true) }
             .onPointerExited { perform(false) }

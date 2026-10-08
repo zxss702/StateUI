@@ -438,7 +438,9 @@ extension NodeType {
     static let persistValue = AppContract.persistValue.token
     static let persistSceneValue = AppContract.persistSceneValue.token
     static let handlerFailed = AppContract.handlerFailed.token
+    static let copyText = AppContract.copyText.token
     static let openFiles = AppContract.openFiles.token
+    static let openFolders = AppContract.openFolders.token
     static let saveFile = AppContract.saveFile.token
     static let readFile = AppContract.readFile.token
     static let launchFile = AppContract.launchFile.token

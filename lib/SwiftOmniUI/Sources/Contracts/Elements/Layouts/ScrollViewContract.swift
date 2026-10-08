@@ -36,6 +36,10 @@ public enum ScrollViewContract: ElementContract {
     public static let scrollBounceBehavior = ElementProperty<Self, ScrollBounceBehavior>(
         "scrollBounceBehavior", layer: .native)
 
+    /// Which axes `scrollBounceBehavior` applies to - `.all` when unsaid.
+    public static let scrollBounceAxes = ElementProperty<Self, Axis.Set>(
+        "scrollBounceAxes", layer: .native)
+
     /// How it settles when the hand leaves it - on a target's edge, or a page
     /// at a time.
     public static let scrollTargetBehavior = ElementProperty<Self, ScrollTargetBehavior>(
@@ -66,8 +70,8 @@ public enum ScrollViewContract: ElementContract {
 
     /// The element's own members.
     public static let members: [any ContractMember] = [
-        defaultScrollAnchor, horizontalScrollIndicators, isScrollDisabled, orientation, scrollBounceBehavior,
-        scrollOffset, scrollStopped, scrollTargetBehavior, scrollToDescendant, scrollXChanged,
-        scrollYChanged, verticalScrollIndicators,
+        defaultScrollAnchor, horizontalScrollIndicators, isScrollDisabled, orientation, scrollBounceAxes,
+        scrollBounceBehavior, scrollOffset, scrollStopped, scrollTargetBehavior, scrollToDescendant,
+        scrollXChanged, scrollYChanged, verticalScrollIndicators,
     ]
 }

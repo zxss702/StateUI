@@ -73,10 +73,22 @@ extension Text {
         /// answer the old one is not.
         let version: Int
 
+        /// Where the text's top left corner stands, resolved against a
+        /// `GeometryProxy` like any anchor - what `LayoutProxy.origin`
+        /// answers in SwiftUI:
+        ///
+        ///     for layout in layouts {
+        ///         let origin = geometry[layout.origin]
+        ///     }
+        public let origin: Anchor<Point>
+
         /// A layout reading `box`, at its generation now.
-        init(box: TextLayoutBox) {
+        init(box: TextLayoutBox, anchorBox: AnchorBox) {
             self.box = box
             version = box.version
+            origin = Anchor<Point>(box: anchorBox) { frame, reader in
+                Point(frame.x - reader.x, frame.y - reader.y)
+            }
         }
 
         /// One line of the laid-out text.

@@ -24,6 +24,7 @@ extension TextProperties {
         setValue(TextContract.lineLimit, value)
     }
 
+
     /// Whether the user can drag a range out of the text and copy it.
     ///
     ///     Text(output).textSelection(.enabled)
@@ -78,10 +79,22 @@ public struct Text: VisualElement, TextElement, FontElement, TextAlignmentElemen
         var node = Node(contract: TextContract.self)
         let box = TextLayoutBox()
         node.textLayoutBox = box
+        // The text's own frame, watched like an `anchorPreference`'s box, is
+        // what `Layout.origin` reads - a laid-out text knows where it stands.
+        let anchorBox = AnchorBox()
+        node.addHandler(.frameChanged) {
+            guard let numbers = MemberValues.carried(
+                EventBuffer.current, by: "frameChanged", as: [Double].self),
+                let report = FrameReport(numbers)
+            else { return }
+            anchorBox.frame = report.global
+        }
         // The offer is asked at fold: a text the walk carries answers for the
         // report the host last handed in, not the one its render saw.
         node.preferenceSeeds.append(PreferenceSeed(
-            box: PreferenceKeyBox(LayoutKey.self), lazy: { [box] in [Layout(box: box)] }))
+            box: PreferenceKeyBox(LayoutKey.self), lazy: { [box, anchorBox] in
+                [Layout(box: box, anchorBox: anchorBox)]
+            }))
         node.addHandler(TextContract.textLayoutChanged.token) {
             guard let report = MemberValues.carried(
                 EventBuffer.current, by: TextContract.textLayoutChanged.name,

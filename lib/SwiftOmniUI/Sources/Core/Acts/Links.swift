@@ -5,9 +5,8 @@
 // Design: docs/design/core/acts.md#launching
 
 /// Addresses the system opens in the application it gives them, asked of the
-/// host. The SwiftUI surface for this is `\.openURL`; this is the host's own
-/// way back an answer.
-@_spi(Host) public enum Links {
+/// host - the act form of `\.openURL`, for code that holds no view.
+public enum Links {
     /// Opens an address in the application the system gives it - a web page in
     /// the browser, a mail address in the mail application.
     ///
@@ -17,7 +16,7 @@
     /// - Returns: whether an application took it; false where none opens its
     ///   scheme.
     @discardableResult
-    @_spi(Host) public static nonisolated(nonsending) func launch(_ address: String) async throws -> Bool {
+    public static nonisolated(nonsending) func launch(_ address: String) async throws -> Bool {
         try await stateUICall(AppContract.launchLink, address)
     }
 }

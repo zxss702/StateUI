@@ -34,6 +34,12 @@ public struct Transaction: Equatable, Sendable {
 
     /// An empty transaction: nothing named.
     public init() {}
+
+    /// A transaction carrying `animation` - SwiftUI's
+    /// `Transaction(animation: .snappy)`.
+    public init(animation: Animation) {
+        self.animation = animation
+    }
 }
 
 /// The transaction the writes on this thread run under, while a `withAnimation`

@@ -48,6 +48,11 @@ public struct TextEditor: InputView, TextElement, FontElement, TextAlignmentElem
     }
 
     /// Two-way: shows what the binding holds, and writes back what is typed.
+    /// `init(_:)` under SwiftUI's `text:` label.
+    public init(text: Binding<String>) {
+        self.init(text)
+    }
+
     public init(_ text: Binding<String>) {
         self = TextEditor().text(text)
     }

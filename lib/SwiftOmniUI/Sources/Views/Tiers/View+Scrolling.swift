@@ -22,6 +22,24 @@ extension View {
         revised { $0.writeInherited(ScrollViewContract.scrollBounceBehavior, behavior) }
     }
 
+    /// Whether a scroll view inside springs back past its content's end,
+    /// along the named axes - the full SwiftUI spelling:
+    ///
+    ///     ScrollView(.horizontal) { … }.scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+    ///
+    /// - Parameters:
+    ///   - behavior: `.automatic`, `.always`, or `.basedOnSize`.
+    ///   - axes: which ways the spring answers - both when unsaid.
+    public func scrollBounceBehavior(
+        _ behavior: ScrollBounceBehavior,
+        axes: Axis.Set = [.vertical, .horizontal]
+    ) -> ModifiedContent {
+        revised {
+            $0.writeInherited(ScrollViewContract.scrollBounceBehavior, behavior)
+            $0.writeInherited(ScrollViewContract.scrollBounceAxes, axes)
+        }
+    }
+
     /// Whether a scroll view inside cuts its content at its own edges -
     /// `true` lets a shadow or a bleed draw outside them:
     ///
@@ -60,6 +78,29 @@ extension View {
     /// - Parameter behavior: `.viewAligned(anchor:)` or `.paging`.
     public func scrollTargetBehavior(_ behavior: ScrollTargetBehavior) -> ModifiedContent {
         revised { $0.writeInherited(ScrollViewContract.scrollTargetBehavior, behavior) }
+    }
+
+    /// Whether the bars of a scroll view inside are drawn - the SwiftUI
+    /// spelling, reaching every scroller below:
+    ///
+    ///     List { … }.scrollIndicators(.hidden)
+    ///
+    /// - Parameters:
+    ///   - visibility: `.visible`, `.hidden`, or `.automatic`.
+    ///   - axes: `.vertical`, `.horizontal`, or both when unsaid.
+    @_disfavoredOverload
+    public func scrollIndicators(
+        _ visibility: ScrollIndicatorVisibility,
+        axes: Axis.Set = .all
+    ) -> ModifiedContent {
+        revised {
+            if axes.contains(.vertical) {
+                $0.writeInherited(ScrollViewContract.verticalScrollIndicators, visibility)
+            }
+            if axes.contains(.horizontal) {
+                $0.writeInherited(ScrollViewContract.horizontalScrollIndicators, visibility)
+            }
+        }
     }
 
     /// Where a scroll view inside rests before anything is written - a chat

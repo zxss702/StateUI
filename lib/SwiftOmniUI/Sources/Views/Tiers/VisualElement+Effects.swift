@@ -119,3 +119,52 @@ extension VisualElement {
         setting(VisualElementContract.blendMode, mode)
     }
 }
+
+extension View {
+    /// The matched-geometry identity of this view's rendered element - the
+    /// view-level spelling for calls on a chain already standing as `some
+    /// View`:
+    ///
+    ///     content
+    ///         .matchedGeometryEffect(id: "pill", in: selection)
+    ///
+    /// - Parameters:
+    ///   - id: the identity, inside `namespace`.
+    ///   - namespace: the space the id means something in.
+    ///   - properties: which parts of the geometry travel; `.frame` is the
+    ///     default and the only part the host layer moves today.
+    ///   - anchor: where geometry anchors while the two frames differ in size.
+    ///   - isSource: whether the element offers its frame to a match.
+    public func matchedGeometryEffect(
+        id: some Hashable,
+        in namespace: Namespace.ID,
+        properties: MatchedGeometryProperties = .frame,
+        anchor: UnitPoint = .center,
+        isSource: Bool = true
+    ) -> ModifiedContent {
+        revised {
+            $0.write(VisualElementContract.matchedGeometry, "ns\(namespace.serial):\(id)")
+            if !isSource {
+                $0.write(VisualElementContract.matchedGeometrySource, false)
+            }
+        }
+    }
+
+    /// Flattens the view's content into a single drawing before effects
+    /// apply - an opacity written on a compositing group moves the whole
+    /// drawing together rather than each part alone:
+    ///
+    ///     label.compositingGroup().opacity(0.5)
+    public func compositingGroup() -> ModifiedContent {
+        setting(VisualElementContract.compositingGroup, true)
+    }
+
+    /// Draws the view offscreen first, the rendered bitmap then drawn where
+    /// the view stands - the platform's own rasterizer standing in for the
+    /// Metal path SwiftUI takes:
+    ///
+    ///     graph.drawingGroup()
+    public func drawingGroup() -> ModifiedContent {
+        setting(VisualElementContract.drawingGroup, true)
+    }
+}

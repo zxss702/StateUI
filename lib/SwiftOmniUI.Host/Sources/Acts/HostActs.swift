@@ -12,7 +12,7 @@
     public static let performed: [any ContractMember] = [
         VisualElementContract.focus, VisualElementContract.unfocus,
         AppContract.alert, AppContract.announce, AppContract.chooseAction,
-        AppContract.confirm, AppContract.currentTime, AppContract.currentTimeZone,
+        AppContract.confirm, AppContract.copyText, AppContract.currentTime, AppContract.currentTimeZone,
         AppContract.handlerFailed, AppContract.hideOnScreenKeyboard, AppContract.localizedString,
         AppContract.persistValue, AppContract.prompt, AppContract.utcOffset,
     ]
@@ -20,7 +20,7 @@
     /// The acts a host with a `FileToolkit` performs: the files the user opens and saves, read, and what the system
     /// launches.
     public static let files: [any ContractMember] = [
-        AppContract.openFiles, AppContract.saveFile, AppContract.readFile,
+        AppContract.openFiles, AppContract.openFolders, AppContract.saveFile, AppContract.readFile,
         AppContract.launchFile, AppContract.launchLink,
     ]
 

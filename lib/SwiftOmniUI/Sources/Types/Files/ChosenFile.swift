@@ -18,7 +18,7 @@ public struct ChosenFile: Equatable, Hashable, Sendable, HostRepresentable {
     public let name: String
 
     /// Where the platform keeps the file: a path, a document's address, a handle.
-    @_spi(Host) public let address: String
+    public let address: String
 
     /// The file at `address`, shown as `name`.
     @_spi(Host) public init(address: String, name: String) {

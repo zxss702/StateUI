@@ -13,6 +13,39 @@
 import Foundation
 @_spi(Host) import SwiftOmniUI
 
+/// Extra run styling for `AttributedString`s built where Foundation's
+/// Apple attribute scopes do not exist - the portable spelling of what a
+/// markdown string's `inlinePresentationIntent` says on Apple's platforms.
+/// `Text(_:)` applies it to the run's span exactly as it does the intent.
+public struct TextRunStyle: Hashable, Sendable {
+    /// Bold, italic, or both.
+    public var fontAttributes: FontAttributes
+    /// Underline, strikethrough, or both.
+    public var decorations: TextDecorations
+    /// The letter shape - `.monospaced` for inline code.
+    public var design: FontDesign?
+    /// The run's colour.
+    public var foreground: Color?
+
+    public init(
+        fontAttributes: FontAttributes = [],
+        decorations: TextDecorations = [],
+        design: FontDesign? = nil,
+        foreground: Color? = nil
+    ) {
+        self.fontAttributes = fontAttributes
+        self.decorations = decorations
+        self.design = design
+        self.foreground = foreground
+    }
+}
+
+/// The `AttributedString` key a `TextRunStyle` travels by.
+public enum TextRunStyleAttributeKey: AttributedStringKey {
+    public typealias Value = TextRunStyle
+    public static let name = "SwiftOmniUI.TextRunStyle"
+}
+
 #if canImport(AppKit)
 import AppKit
 typealias PlatformColor = NSColor
@@ -77,6 +110,17 @@ extension TextSpan {
             span = span.strikethrough()
         }
         #endif
+
+        // The portable channel - read on every platform, written where the
+        // Apple scopes above cannot be.
+        if let style = run.attributes[TextRunStyleAttributeKey.self] {
+            if style.fontAttributes.contains(.bold) { span = span.bold() }
+            if style.fontAttributes.contains(.italic) { span = span.italic() }
+            if style.decorations.contains(.underline) { span = span.underline() }
+            if style.decorations.contains(.strikethrough) { span = span.strikethrough() }
+            if let design = style.design { span = span.fontDesign(design) }
+            if let color = style.foreground { span = span.foregroundStyle(color) }
+        }
 
         return span
     }

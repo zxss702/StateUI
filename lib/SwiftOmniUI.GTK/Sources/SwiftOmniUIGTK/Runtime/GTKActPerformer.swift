@@ -42,6 +42,12 @@ final class GTKActPerformer {
             if showsNow { asked.show() }
         case .chooseFiles:
             chooseFiles(call, window: window)
+        case .openFolders:
+            openFolders(call, window: window)
+        case .copyText:
+            let text = call.arguments.first?.string ?? ""
+            text.withCString { gdk_clipboard_set_text(gdk_display_get_clipboard(gdk_display_get_default()), $0) }
+            reply(call, [])
         case .announce:
             if let window, Self.reachesAScreenReader(window.widget) {
                 gtk_accessible_announce(
@@ -115,6 +121,75 @@ final class GTKActPerformer {
             gtk_file_dialog_open_multiple(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
         } else {
             gtk_file_dialog_open(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+        }
+    }
+
+    /// The platform's folder dialog for `openFolders` - the picked folders
+    /// answer it as `ChosenFile`s, an empty list a cancel; a `FolderChoice`
+    /// keeps the dialog and the call until GTK is heard.
+    private func openFolders(_ call: HostActCall, window: GTKWindow?) {
+        guard let window else { return fail(call, "there is no window to ask in") }
+
+        let dialog = gtk_file_dialog_new()!
+        let multiple = call.arguments.value(0)?.bool ?? false
+        let choice = FolderChoice(call: call, dialog: dialog, multiple: multiple, core: core)
+        let data = Unmanaged.passRetained(choice).toOpaque()
+        let ready: GAsyncReadyCallback = { _, result, data in
+            guard let data, let result else { return }
+            let choice = Unmanaged<GTKActPerformer.FolderChoice>.fromOpaque(data).takeRetainedValue()
+            MainActor.assumeIsolated { choice.finish(result) }
+        }
+        if multiple {
+            gtk_file_dialog_select_multiple_folders(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+        } else {
+            gtk_file_dialog_select_folder(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+        }
+    }
+
+    /// An `openFolders` act waiting on its dialog: the dialog keeps living
+    /// under it, and its `finish` answers the call with the folders GTK
+    /// heard - or an empty list, which is how a cancel reads.
+    final class FolderChoice {
+        let call: HostActCall
+        let dialog: OpaquePointer
+        let multiple: Bool
+        let core: CoreLink
+
+        init(call: HostActCall, dialog: OpaquePointer, multiple: Bool, core: CoreLink) {
+            self.call = call
+            self.dialog = dialog
+            self.multiple = multiple
+            self.core = core
+        }
+
+        deinit { g_object_unref(UnsafeMutableRawPointer(dialog)) }
+
+        /// The answer: every picked folder as a `ChosenFile`, an empty list
+        /// for a cancel.
+        func finish(_ result: OpaquePointer) {
+            var error: UnsafeMutablePointer<GError>?
+            var folders: [ChosenFile] = []
+            func take(_ file: OpaquePointer) {
+                guard let path = g_file_get_path(file) else { return }
+                let address = String(cString: path)
+                g_free(path)
+                folders.append(ChosenFile(address: address, name: String(address.split(separator: "/").last ?? "")))
+            }
+            if multiple {
+                if let files = gtk_file_dialog_select_multiple_folders_finish(dialog, result, &error) {
+                    for index in 0 ..< g_list_model_get_n_items(files) {
+                        guard let file = g_list_model_get_item(files, index) else { continue }
+                        take(OpaquePointer(file))
+                        g_object_unref(UnsafeMutableRawPointer(file))
+                    }
+                    g_object_unref(UnsafeMutableRawPointer(files))
+                }
+            } else if let file = gtk_file_dialog_select_folder_finish(dialog, result, &error) {
+                take(file)
+                g_object_unref(UnsafeMutableRawPointer(file))
+            }
+            if let error { g_error_free(error) }
+            core.reply(call, [folders.propValue])
         }
     }
 

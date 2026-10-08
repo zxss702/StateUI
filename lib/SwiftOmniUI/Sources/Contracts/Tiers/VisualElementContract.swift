@@ -162,6 +162,17 @@ public enum VisualElementContract: Contract {
     /// `.blendMode` writes it.
     public static let blendMode = ElementProperty<Self, BlendMode>("blendMode", layer: .native)
 
+    /// Whether the element's content is flattened into a single drawing
+    /// before effects apply - `.compositingGroup` writes it.
+    public static let compositingGroup = ElementProperty<Self, Bool>(
+        "compositingGroup", layer: .native)
+
+    /// Whether the element draws offscreen first - `.drawingGroup` writes
+    /// it, the platform's own rasterizer standing in for Metal where there
+    /// is none.
+    public static let drawingGroup = ElementProperty<Self, Bool>(
+        "drawingGroup", layer: .native)
+
     /// How the element looks as it is inserted and as it is removed.
     public static let transition = ElementProperty<Self, AnyTransition>(
         "transition", layer: .native)
@@ -207,7 +218,7 @@ public enum VisualElementContract: Contract {
         blendMode,
         accessibilityChildBehavior, accessibilityHeadingLevel, accessibilityHint, accessibilityLabel,
         accessibilityTraits, automationExcludedWithChildren, background, blur, contentTransition,
-        focus, frame, height, hint, hintKey,
+        compositingGroup, drawingGroup, focus, frame, height, hint, hintKey,
         ignoresInput,
         isAccessibilityHidden, isEnabled, isFocusedChanged, isVisible, layoutDirection,
         matchedGeometry, matchedGeometrySource, maximumHeight, maximumWidth, minimumHeight,

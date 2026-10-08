@@ -41,6 +41,11 @@ public final class State<Value>: @unchecked Sendable {
         self.init(making: initialValue)
     }
 
+    /// `State(initialValue:)` - SwiftUI's other spelling of the same state.
+    public convenience init(initialValue: @autoclosure @escaping () -> Value) {
+        self.init(making: initialValue)
+    }
+
     /// What `@State private var counter = 0` calls. The expression runs when the
     /// value is first wanted.
     public convenience init(wrappedValue: @autoclosure @escaping () -> Value) {

@@ -45,6 +45,13 @@ public enum ViewBuilder {
         TupleView(expression)
     }
 
+    /// A single statement, handed back as itself - SwiftUI keeps a lone
+    /// view unwrapped, so `init { EmptyView() }` still infers `EmptyView`
+    /// rather than a tuple holding one.
+    public static func buildBlock<Content: View>(_ content: Content) -> Content {
+        content
+    }
+
     /// The statements of the closure, in the order they are written, each
     /// keyed by its statement's number whatever the others produce.
     public static func buildBlock(_ components: (any View)...) -> TupleView {
@@ -62,15 +69,30 @@ public enum ViewBuilder {
         component?.tagged("some") ?? TupleView([])
     }
 
+    /// The same, its body having built a lone view rather than a tuple.
+    public static func buildOptional<Content: View>(_ component: Content?) -> TupleView {
+        component.map { tagged("some", $0) } ?? TupleView([])
+    }
+
     /// The `if` branch of an if/else.
     public static func buildEither(first component: TupleView) -> TupleView {
         component.tagged("if")
+    }
+
+    /// The same, the branch having built a lone view rather than a tuple.
+    public static func buildEither<Content: View>(first component: Content) -> TupleView {
+        tagged("if", component)
     }
 
     /// The `else` branch. Its views are keyed apart from the `if` branch's, so
     /// switching branches replaces the control rather than editing it.
     public static func buildEither(second component: TupleView) -> TupleView {
         component.tagged("else")
+    }
+
+    /// The same, the branch having built a lone view rather than a tuple.
+    public static func buildEither<Content: View>(second component: Content) -> TupleView {
+        tagged("else", component)
     }
 
     /// A `for` statement's turns, each keyed by its turn number.
@@ -96,6 +118,21 @@ public enum ViewBuilder {
     /// What an `if #available(…)` block builds, keyed like every other branch.
     public static func buildLimitedAvailability(_ component: TupleView) -> TupleView {
         component.tagged("available")
+    }
+
+    /// The same, its body having built a lone view rather than a tuple.
+    public static func buildLimitedAvailability<Content: View>(_ component: Content) -> TupleView {
+        tagged("available", component)
+    }
+
+    /// Any view under `segment`'s path - what the conditional builders write
+    /// for a branch that produced a lone view.
+    private static func tagged(_ segment: String, _ view: any View) -> TupleView {
+        if let tuple = view as? TupleView { return tuple.tagged(segment) }
+        if let rows = view as? any LazyRows {
+            return TupleView([LazyKeyed(segment: segment, rows: rows)])
+        }
+        return TupleView(view.node.asChildren.map { Keyed(segment: segment, raw: $0) })
     }
 
     /// The views written under one statement, keyed by the statement's number.

@@ -15,6 +15,7 @@
 #include <cstring>
 #include <string>
 
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Globalization.h>
 #include <winrt/Microsoft.UI.Xaml.Automation.Peers.h>
 #include <winrt/Microsoft.UI.Xaml.Input.h>
@@ -142,6 +143,17 @@ extern "C" void swiftomniui_winui_announce(SwiftOmniUIObjectRef handle, char con
         }
     } catch (...) {
         report("announcing");
+    }
+}
+
+extern "C" void swiftomniui_winui_copy_text(char const *utf8) {
+    try {
+        using namespace winrt::Windows::ApplicationModel::DataTransfer;
+        DataPackage package;
+        package.SetText(text(utf8));
+        Clipboard::SetContent(package);
+    } catch (...) {
+        report("copying text");
     }
 }
 

@@ -13,6 +13,10 @@ public enum ContainerShape: Equatable, Sendable, HostRepresentable {
     /// Rounded corners, by this many device units.
     case roundedRectangle(Double)
 
+    /// Corners rounded each by their own radius - what an
+    /// `UnevenRoundedRectangle` cuts by.
+    case unevenRoundedRectangle(CornerRadius)
+
     /// An oval filling the element's bounds.
     case ellipse
 
@@ -31,6 +35,7 @@ public enum ContainerShape: Equatable, Sendable, HostRepresentable {
         case ellipse = 2
         case capsule = 3
         case circle = 4
+        case unevenRoundedRectangle = 5
     }
 
     /// The kind, then what that kind is made of.
@@ -40,6 +45,9 @@ public enum ContainerShape: Equatable, Sendable, HostRepresentable {
             return .values([.enumeration(Kind.rectangle.rawValue)])
         case .roundedRectangle(let radius):
             return .values([.enumeration(Kind.roundedRectangle.rawValue), .number(radius)])
+        case .unevenRoundedRectangle(let cornerRadius):
+            return .values([
+                .enumeration(Kind.unevenRoundedRectangle.rawValue), cornerRadius.propValue])
         case .ellipse:
             return .values([.enumeration(Kind.ellipse.rawValue)])
         case .capsule:
@@ -62,6 +70,9 @@ public enum ContainerShape: Equatable, Sendable, HostRepresentable {
         case (.roundedRectangle, 2):
             guard case .number(let radius) = parts[1] else { return nil }
             self = .roundedRectangle(radius)
+        case (.unevenRoundedRectangle, 2):
+            guard let cornerRadius = CornerRadius(propValue: parts[1]) else { return nil }
+            self = .unevenRoundedRectangle(cornerRadius)
         case (.ellipse, 1):
             self = .ellipse
         case (.capsule, 1):

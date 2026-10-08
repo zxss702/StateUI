@@ -39,6 +39,8 @@ final class WinUIFileToolkit: FileToolkit {
         case .open: 0
         case .openSeveral: 1
         case .save: 2
+        case .folder: 3
+        case .folders: 4
         }
         let captions = dialog.types.map(\.caption)
         let counts = dialog.types.map { Int32($0.extensions.count) }

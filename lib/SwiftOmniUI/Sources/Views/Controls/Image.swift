@@ -50,6 +50,13 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
         self.init(ImageSource(light: light, dark: dark))
     }
 
+    /// A picture in the app's images, by name - SwiftUI's `Image(_:)`:
+    ///
+    ///     Image("logo.png")
+    public init(_ name: String) {
+        self.init(ImageSource(name))
+    }
+
     /// A symbol from the platform's own set, by its cross-platform name -
     /// `Image(systemName: "star")` draws SF Symbols on Apple's platforms, the
     /// Fluent icon of the name on Windows, the toolkit's theme icon elsewhere.

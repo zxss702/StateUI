@@ -32,6 +32,17 @@
         case 2: return .ellipse
         case 3: return .capsule
         case 4: return .circle
+        case 5:
+            guard parts.count > 1 else { return .rectangle }
+            if let radius = parts[1].number {
+                return .unevenRoundedRectangle(.uniform(max(0, radius)))
+            }
+            if let radii = parts[1].numbers, radii.count == 4 {
+                return .unevenRoundedRectangle(.corners(
+                    topLeft: max(0, radii[0]), topRight: max(0, radii[1]),
+                    bottomLeft: max(0, radii[2]), bottomRight: max(0, radii[3])))
+            }
+            return .rectangle
         default: return .rectangle
         }
     }
