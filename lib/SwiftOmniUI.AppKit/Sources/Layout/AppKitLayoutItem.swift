@@ -93,7 +93,9 @@ struct AppKitLayoutItem: LayoutChild {
             }
             measured = view.fittingSize
         }
-        let sized = values.sized(LayoutSize(width: Double(measured.width), height: Double(measured.height)))
+        let sized = values.sized(
+            LayoutSize(width: Double(measured.width), height: Double(measured.height)),
+            offered: available.map { Double($0) })
         return NSSize(width: sized.width, height: sized.height)
     }
 

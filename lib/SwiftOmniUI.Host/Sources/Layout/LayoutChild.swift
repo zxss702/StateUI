@@ -98,11 +98,16 @@
     }
 
     /// A child's size from what it measured: a stated width or height before the measured one, each within its
-    /// bounds.
-    public func sized(_ measured: LayoutSize) -> LayoutSize {
+    /// bounds. A bound without a stated size makes the child take what it is offered up to the bound - the way a
+    /// SwiftUI `frame(maxWidth:)` fills its proposal - the measured size answering where nothing was offered.
+    public func sized(_ measured: LayoutSize, offered width: Double? = nil) -> LayoutSize {
         LayoutSize(
-            width: boundedWidth(width ?? (scrollAxes == .horizontal || scrollAxes == .both ? 0 : measured.width)),
-            height: boundedHeight(height ?? (scrollAxes == .vertical || scrollAxes == .both ? 0 : measured.height)))
+            width: boundedWidth(extent(self.width, measured: measured.width, offered: width,
+                                       bound: (minimumWidth != nil || maximumWidth != nil),
+                                       scrolled: scrollAxes == .horizontal || scrollAxes == .both)),
+            height: boundedHeight(extent(self.height, measured: measured.height, offered: nil,
+                                         bound: (minimumHeight != nil || maximumHeight != nil),
+                                         scrolled: scrollAxes == .vertical || scrollAxes == .both)))
     }
 
     /// `proposed`, held within the child's least and most width and the room `available`.
@@ -113,6 +118,18 @@
     /// `proposed`, held within the child's least and most height and the room `available`.
     public func boundedHeight(_ proposed: Double, available: Double? = nil) -> Double {
         Extent.bounded(proposed, minimum: minimumHeight, maximum: maximumHeight, available: available)
+    }
+
+    /// One axis of `sized`: a stated size wins, a scroller reports nothing
+    /// along its axis, a bound child's measured size stands only where the
+    /// offer was unbounded.
+    private func extent(
+        _ stated: Double?, measured: Double, offered: Double?, bound: Bool, scrolled: Bool
+    ) -> Double {
+        if let stated { return stated }
+        if scrolled { return 0 }
+        guard bound, let offered, offered.isFinite else { return measured }
+        return offered
     }
 }
 
@@ -174,7 +191,9 @@ extension LayoutChild {
         return result
     }
 
-    /// A child's extent in its slot: a stated size wins; else a filling child takes the slot, any other its natural size.
+    /// A child's extent in its slot: a stated size wins; then a bound child takes the slot within its bounds - a
+    /// `frame(maxWidth:)` fills up to the bound, the child's own size only centring its content - a filling child
+    /// takes the slot, any other its natural size.
     public static func of(
         option: Int32,
         stated: Double?,
@@ -183,7 +202,15 @@ extension LayoutChild {
         minimum: Double? = nil,
         maximum: Double? = nil
     ) -> Double {
-        bounded(stated ?? (option == 3 ? available : natural), minimum: minimum, maximum: maximum, available: available)
+        if let stated {
+            return bounded(stated, minimum: minimum, maximum: maximum, available: available)
+        }
+
+        if (minimum != nil || maximum != nil) && available.isFinite {
+            return bounded(available, minimum: minimum, maximum: maximum)
+        }
+
+        return bounded(option == 3 ? available : natural, minimum: minimum, maximum: maximum, available: available)
     }
 
     /// Where a child of `extent` starts in its slot; a filling child that stops short stands in the middle.

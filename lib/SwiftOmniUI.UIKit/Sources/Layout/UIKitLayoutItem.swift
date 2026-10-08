@@ -39,9 +39,9 @@ struct UIKitLayoutItem: LayoutChild {
     /// as UIKit fits it.
     func size(offered width: Double?) -> LayoutSize {
         let offer = values.offer(width)
-        if let layout = view as? UIKitLayoutView { return values.sized(layout.measuredSize(width: offer)) }
+        if let layout = view as? UIKitLayoutView { return values.sized(layout.measuredSize(width: offer), offered: width) }
         let fitted = view.sizeThatFits(CGSize(width: offer ?? .greatestFiniteMagnitude, height: .greatestFiniteMagnitude))
-        return values.sized(LayoutSize(width: fitted.width, height: fitted.height))
+        return values.sized(LayoutSize(width: fitted.width, height: fitted.height), offered: width)
     }
 
     func arranges(like other: UIKitLayoutItem) -> Bool {

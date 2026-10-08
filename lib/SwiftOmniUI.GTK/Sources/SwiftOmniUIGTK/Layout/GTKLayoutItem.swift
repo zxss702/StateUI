@@ -29,7 +29,7 @@ struct GTKLayoutItem: LayoutChild {
 
     /// The view's size for the width offered it, margin taken out (`LayoutValues.offer`, `sized`).
     func size(offered width: Double?) -> LayoutSize {
-        values.sized(view.measure(width: values.offer(width), height: nil))
+        values.sized(view.measure(width: values.offer(width), height: nil), offered: width)
     }
 
     func arranges(like other: GTKLayoutItem) -> Bool {

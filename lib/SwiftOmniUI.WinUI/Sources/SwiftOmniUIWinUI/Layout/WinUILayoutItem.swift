@@ -41,7 +41,7 @@ struct WinUILayoutItem: LayoutChild {
             measured = view.measure(width: offer, height: nil)
         }
 
-        return values.sized(measured)
+        return values.sized(measured, offered: width)
     }
 
     /// Whether a parent would place this item as it places `other`.

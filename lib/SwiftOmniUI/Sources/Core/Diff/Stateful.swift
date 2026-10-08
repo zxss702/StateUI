@@ -6,6 +6,35 @@
 // storage before it builds the body.
 // Design: docs/design/core/identity-and-diffing.md#state-survives-a-rebuild
 
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(CRT)
+import CRT
+#endif
+
+/// Temporary expansion diagnostics - `print` reaches no stderr on a Windows GUI
+/// process, so this writes file descriptor 2 like HostLog does, plus the file
+/// `SWIFTOMNIUI_LOG` names, which is where the patch lines actually land.
+private func expandLog(_ text: String) {
+    var text = text
+    text.withUTF8 { bytes in
+        #if os(Windows)
+        _ = _write(2, bytes.baseAddress, UInt32(bytes.count))
+        #else
+        _ = write(2, bytes.baseAddress, bytes.count)
+        #endif
+    }
+    if let path = expandLogFile, let stream = fopen(path, "a") {
+        text.withUTF8 { bytes in bytes.baseAddress.map { _ = fwrite($0, 1, bytes.count, stream) } }
+        fclose(stream)
+    }
+}
+
+/// The path `SWIFTOMNIUI_LOG` names, read once - mirrors HostLog.logFile.
+private let expandLogFile: String? = getenv("SWIFTOMNIUI_LOG").map { String(cString: $0) }
+
 /// What the differ needs of any state box without knowing its value's type.
 protocol StateBox: AnyObject {
     /// Takes over `other`'s storage when it is a box of the same value type.
@@ -279,6 +308,9 @@ extension Node {
         /// root - or onto each of them, when the body is a fragment of several.
         func expand(over written: Node) -> Node {
             var node = build()
+            if viewType.contains("InsetView") || viewType.contains("PageEntrance") {
+                expandLog("EXPAND \(viewType) built=\(node.type.name) props=\(node.props.keys.map(\.name).sorted()) created=\(node.created.count)\n")
+            }
 
             // A fragment keeps no element of its own to write on: what the author
             // wrote on the view lands on each child the body splices in.
@@ -287,18 +319,26 @@ extension Node {
                 node.environmentValues = node.environmentValues.overlaid(with: written.environmentValues)
                 node.focusedValues = node.focusedValues.overlaid(with: written.focusedValues)
                 node.sceneFocusedValues = node.sceneFocusedValues.overlaid(with: written.sceneFocusedValues)
-                node.children = node.children.map { landing($0, written: written) }
 
-                // A body of one view is that view: it stands in the view's place.
+                // A body of one view is that view: it stands in the view's
+                // place, taking what the body's root itself carried - a
+                // `.verticalAlignment` written on a TupleView - onto the one
+                // child, under what the placeholder wrote. A fragment of
+                // several stays a fragment: the differ lands its writes on
+                // the children when it splices them in.
                 if node.children.count == 1 {
                     var child = node.children[0]
+                    child.absorbFragmentWrites(of: node, environments: false)
+                    child = landing(child, written: written)
                     child.environments = node.environments + child.environments
                     child.environmentValues = child.environmentValues.overlaid(with: node.environmentValues)
                     child.focusedValues = child.focusedValues.overlaid(with: node.focusedValues)
                     child.sceneFocusedValues = child.sceneFocusedValues.overlaid(with: node.sceneFocusedValues)
                     node = child
+                    return node
                 }
 
+                node.children = node.children.map { landing($0, written: written) }
                 return node
             }
 
@@ -329,6 +369,9 @@ extension Node {
 
             node.id = written.id ?? node.id
             node.key = written.key ?? node.key
+            if viewType.contains("InsetView") || viewType.contains("PageEntrance") {
+                expandLog("EXPAND \(viewType) out=\(node.type.name) props=\(node.props.keys.map(\.name).sorted())\n")
+            }
             return node
         }
 

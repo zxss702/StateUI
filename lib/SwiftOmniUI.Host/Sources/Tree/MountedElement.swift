@@ -125,6 +125,15 @@ import CRT
                 "PATCH \(patch.type.name) id=\(patch.id) replace=\(patch.replace) "
                     + "children=\(kids) props=\(patch.properties.keys.map(\.name).sorted().joined(separator: ",")) "
                     + "cleared=\(patch.clearedProperties.map(\.name).sorted().joined(separator: ","))\n")
+            if let opacity = patch.properties[Prop("opacity")] {
+                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) opacity=\(opacity)\n")
+            }
+            if let valign = patch.properties[Prop("verticalAlignment")] {
+                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) verticalAlignment=\(valign)\n")
+            }
+            if let valign = patch.properties[Prop("verticalAlignmentDefault")] {
+                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) verticalAlignmentDefault=\(valign)\n")
+            }
         }
         guard let tree else { return }
         // A patch re-described a departing element: its removal turns around.

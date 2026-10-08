@@ -36,6 +36,24 @@ public struct _ViewModifier_Content<Modifier: ViewModifier>: View {
     public var node: Node { view.node }
 }
 
+/// What `modifier(_:)` makes: a view standing in for the modifier's
+/// composition, built by the differ rather than where `modifier(_:)` is
+/// called. The modifier stays a stored property, so the same walk that keeps
+/// a view's `@State` across a rebuild keeps a modifier's - and a write to it
+/// rebuilds the composition the way SwiftUI promises. Composing eagerly
+/// instead would leave such state ownerless, its writes reaching nothing.
+public struct _ViewModifier_Applied<Content: View, M: ViewModifier>: View {
+    /// The view the modifier was written on.
+    let content: Content
+
+    /// The modifier whose `body(content:)` composes here.
+    let modifier: M
+
+    public var body: some View {
+        modifier.body(content: _ViewModifier_Content<M>(view: AnyView(content)))
+    }
+}
+
 extension View {
     /// Applies `modifier` to this view: whatever its `body` composes from this
     /// view stands in its place.
@@ -44,6 +62,6 @@ extension View {
     ///
     /// - Parameter modifier: The bundle of changes to apply.
     @ViewBuilder public func modifier<M: ViewModifier>(_ modifier: M) -> some View {
-        modifier.body(content: _ViewModifier_Content(view: AnyView(self)))
+        _ViewModifier_Applied(content: self, modifier: modifier)
     }
 }
