@@ -22,6 +22,22 @@ final class WinUIPickerView: WinUIView {
     /// Whose the list's opening and closing are.
     private var showing = WinUIShowing()
 
+    private var closedSizes: [(width: Double?, height: Double?, size: LayoutSize)] = []
+
+    override func measure(width: Double?, height: Double?) -> LayoutSize {
+        let width = width.map { Double(Float($0)) }, height = height.map { Double(Float($0)) }
+        if isOpen, let measured = closedSizes.last(where: { $0.width == width && $0.height == height }) {
+            return measured.size
+        }
+        let size = super.measure(width: width, height: height)
+        if !isOpen, WinUIView.arranging == 0 {
+            closedSizes.removeAll { $0.width == width && $0.height == height }
+            if closedSizes.count == 8 { closedSizes.removeFirst() }
+            closedSizes.append((width, height, size))
+        }
+        return size
+    }
+
     init() {
         super.init { number in swiftomniui_winui_picker_make(number) }
     }
@@ -71,7 +87,10 @@ final class WinUIPickerView: WinUIView {
 
     /// The list opened or closed: the user's, reported; the program's, not.
     override func presented(_ open: Bool) {
-        invalidateChoiceMeasurements()
+        if !open {
+            closedSizes.removeAll(keepingCapacity: true)
+            invalidateChoiceMeasurements()
+        }
         guard showing.heard(open: open) else { return }
         if open { onOpened?() } else { onClosed?() }
     }
@@ -87,6 +106,7 @@ final class WinUIPickerView: WinUIView {
 
     override func detach() {
         super.detach()
+        closedSizes.removeAll(keepingCapacity: true)
         onChosen = nil
         onOpened = nil
         onClosed = nil
