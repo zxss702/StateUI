@@ -119,7 +119,8 @@ extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, dou
 
 extern "C" void swiftomniui_winui_scroller_anchor(SwiftOmniUIObjectRef element, bool enabled) {
     try {
-        as<xaml::UIElement>(element).CanBeScrollAnchor(enabled);
+        auto view = as<xaml::UIElement>(element);
+        if (view.CanBeScrollAnchor() != enabled) view.CanBeScrollAnchor(enabled);
     } catch (...) { report("registering a scroll anchor"); }
 }
 

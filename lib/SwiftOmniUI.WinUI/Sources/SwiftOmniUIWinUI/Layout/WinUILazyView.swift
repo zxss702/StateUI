@@ -68,6 +68,9 @@ class WinUILazyView: WinUITravellingLayout {
             cells.runs.reset()
         }
         for (identity, previous) in mounted {
+            if now[identity]?.view !== previous.view {
+                swiftomniui_winui_scroller_anchor(previous.view.handle, false)
+            }
             if now[identity]?.view !== previous.view || now[identity]?.values != previous.values {
                 measured.removeValue(forKey: identity)
                 measuredLayoutRevisions.removeValue(forKey: identity)
