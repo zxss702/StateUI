@@ -9,7 +9,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class HostRealizationTests: XCTestCase {
+@MainActor final class HostRealizationTests: XCTestCase {
     /// A view type as far as a registry can tell.
     private final class Plain {}
 

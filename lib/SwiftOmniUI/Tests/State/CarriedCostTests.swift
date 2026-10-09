@@ -44,7 +44,7 @@ private struct Blank: View {
     }
 }
 
-final class CarriedCostTests: XCTestCase {
+@MainActor final class CarriedCostTests: XCTestCase {
     private struct Page: Element {
         let chosen: Int
         let shown: Int

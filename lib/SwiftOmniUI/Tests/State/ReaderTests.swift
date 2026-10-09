@@ -62,7 +62,7 @@ private struct Direct: View {
     }
 }
 
-final class ReaderTests: XCTestCase {
+@MainActor final class ReaderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

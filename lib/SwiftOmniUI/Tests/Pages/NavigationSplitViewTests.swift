@@ -57,7 +57,7 @@ private func flyout(
     }
 }
 
-final class NavigationSplitViewTests: XCTestCase {
+@MainActor final class NavigationSplitViewTests: XCTestCase {
     // MARK: - What goes out
 
     /// Two children, each wearing the identity of its half - so a patch about

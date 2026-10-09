@@ -85,7 +85,7 @@ private final class Builds {
     var count = 0
 }
 
-final class CarriedStateTests: XCTestCase {
+@MainActor final class CarriedStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

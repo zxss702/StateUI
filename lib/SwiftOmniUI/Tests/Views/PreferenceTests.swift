@@ -80,7 +80,7 @@ private struct Ear: View {
     }
 }
 
-final class PreferenceTests: XCTestCase {
+@MainActor final class PreferenceTests: XCTestCase {
     /// The changed-storages set a revisit asks for, as the renderer names it.
     private var changed: Set<ObjectIdentifier> {
         Renderer.shared.pendingChanges

@@ -80,7 +80,7 @@ private struct PlainApp: App {
     var body: some Scene { KeepingWindow() }
 }
 
-final class PersistenceTests: XCTestCase {
+@MainActor final class PersistenceTests: XCTestCase {
     override func setUp() {
         super.setUp()
 

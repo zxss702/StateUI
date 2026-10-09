@@ -17,7 +17,7 @@ import XCTest
 
 @_spi(Host) @testable import SwiftOmniUI
 
-final class ClosedVocabularyTests: XCTestCase {
+@MainActor final class ClosedVocabularyTests: XCTestCase {
     /// No closed vocabulary may ride its spelling.
     ///
     /// `enum LineBreak: String` is what hands a host `tailTruncation` to

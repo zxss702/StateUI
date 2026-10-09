@@ -11,7 +11,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class BuilderTests: XCTestCase {
+@MainActor final class BuilderTests: XCTestCase {
     // MARK: - Reading a patch
 
     /// The first patch describing an element of this type, at any depth.

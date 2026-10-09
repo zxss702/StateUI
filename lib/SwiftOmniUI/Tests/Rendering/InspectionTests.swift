@@ -100,7 +100,7 @@ private struct InspectedApp: App {
     var body: some Scene { Inspected() }
 }
 
-final class InspectionTests: XCTestCase {
+@MainActor final class InspectionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

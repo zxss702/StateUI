@@ -21,7 +21,7 @@ private struct Card: View {
     }
 }
 
-final class ContextMenuTests: XCTestCase {
+@MainActor final class ContextMenuTests: XCTestCase {
     private func menu(_ view: some View) -> Node? {
         view.node.built.children.first { $0.type == "ContextMenu" }
     }

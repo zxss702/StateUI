@@ -12,7 +12,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class RegistryTests: XCTestCase {
+@MainActor final class RegistryTests: XCTestCase {
     /// A platform view, as far as a registry can tell: what every view it
     /// makes descends from.
     private class PlatformView {}

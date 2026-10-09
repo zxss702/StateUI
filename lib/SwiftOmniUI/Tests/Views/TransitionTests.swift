@@ -7,7 +7,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class TransitionTests: XCTestCase {
+@MainActor final class TransitionTests: XCTestCase {
     private func transition(_ view: some View) -> AnyTransition? {
         view.node.built.props["transition"].flatMap(AnyTransition.init(propValue:))
     }

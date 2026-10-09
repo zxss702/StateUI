@@ -135,7 +135,7 @@ private struct FlagWindow: WindowScene {
     var page: any Page { FlagHome(shown: shown) }
 }
 
-final class ModalStackTests: XCTestCase {
+@MainActor final class ModalStackTests: XCTestCase {
     // MARK: - What goes out
 
     /// A window with nothing presented still says so: the list is there and it

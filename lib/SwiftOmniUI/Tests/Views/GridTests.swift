@@ -5,7 +5,7 @@ import XCTest
 @testable import SwiftOmniUI
 
 /// A `LazyVGrid`'s columns, and a `Grid`'s `GridRow`s, as the nodes the differ sees.
-final class GridTests: XCTestCase {
+@MainActor final class GridTests: XCTestCase {
     /// A lazy grid is a `LazyVGrid` node carrying its column items, the names
     /// of every cell it holds, and its spacing - the row gap and the first
     /// column's own gap. Its children wait for the host to ask.

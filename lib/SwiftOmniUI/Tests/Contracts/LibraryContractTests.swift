@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class LibraryContractTests: XCTestCase {
+@MainActor final class LibraryContractTests: XCTestCase {
     /// One library member, with the contract it is declared in.
     private struct Declared {
         let contract: String

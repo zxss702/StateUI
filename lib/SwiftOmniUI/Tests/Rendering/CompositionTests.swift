@@ -31,7 +31,7 @@ import XCTest
 
 @_spi(Host) @testable import SwiftOmniUI
 
-final class CompositionTests: XCTestCase {
+@MainActor final class CompositionTests: XCTestCase {
     /// What every composed view is checked for: nothing a caller may leave out
     /// is reachable through its initializer.
     ///

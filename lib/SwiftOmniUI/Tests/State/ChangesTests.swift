@@ -26,7 +26,7 @@ private final class Log: @unchecked Sendable {
     var lines: [String] = []
 }
 
-final class ChangesTests: XCTestCase {
+@MainActor final class ChangesTests: XCTestCase {
     // MARK: - When it fires
 
     func testAChangedValueRunsTheHandler() {

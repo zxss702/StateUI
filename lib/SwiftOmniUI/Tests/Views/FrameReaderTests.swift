@@ -9,7 +9,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class FrameReaderTests: XCTestCase {
+@MainActor final class FrameReaderTests: XCTestCase {
     /// What the last handler run was given, shared with the assert the way a
     /// state box would be.
     private final class Heard: @unchecked Sendable {

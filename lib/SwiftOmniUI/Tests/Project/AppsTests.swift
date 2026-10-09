@@ -21,7 +21,7 @@
 import Foundation
 import XCTest
 
-final class AppsTests: XCTestCase {
+@MainActor final class AppsTests: XCTestCase {
     /// `apps/HelloWorld`, what a new application is made from.
     private var helloWorld: URL {
         SourceTree.repository.appendingPathComponent("apps/HelloWorld")

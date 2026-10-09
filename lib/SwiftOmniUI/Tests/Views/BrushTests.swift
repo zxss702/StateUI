@@ -9,7 +9,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class BrushTests: XCTestCase {
+@MainActor final class BrushTests: XCTestCase {
     /// One colour, and no geometry to speak of.
     func testASolidBrushIsItsKindAndItsColour() {
         XCTAssertEqual(

@@ -43,7 +43,7 @@ private func tabs(
     .selection(selection.projectedValue)
 }
 
-final class TabViewTests: XCTestCase {
+@MainActor final class TabViewTests: XCTestCase {
     // MARK: - What goes out
 
     /// The tabs ARE the children, in order, each identified by its own value -

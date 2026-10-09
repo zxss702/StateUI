@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class ActCallTests: XCTestCase {
+@MainActor final class ActCallTests: XCTestCase {
     // MARK: - The name
 
     /// An act is never called a command. The queue and its take,

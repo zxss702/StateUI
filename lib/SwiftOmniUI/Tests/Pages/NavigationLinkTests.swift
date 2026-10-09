@@ -63,7 +63,7 @@ private extension HostPatch {
     }
 }
 
-final class NavigationLinkTests: XCTestCase {
+@MainActor final class NavigationLinkTests: XCTestCase {
     // MARK: - What goes out
 
     /// A link is its label and a push is its press: it draws no chrome of

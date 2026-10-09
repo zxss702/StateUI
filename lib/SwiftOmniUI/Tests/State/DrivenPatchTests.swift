@@ -12,7 +12,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class DrivenPatchTests: XCTestCase {
+@MainActor final class DrivenPatchTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

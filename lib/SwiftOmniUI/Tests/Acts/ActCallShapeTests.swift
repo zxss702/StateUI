@@ -14,7 +14,7 @@ import Foundation
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class ActCallShapeTests: XCTestCase {
+@MainActor final class ActCallShapeTests: XCTestCase {
     private typealias Act<Value> = nonisolated(nonsending) () async throws -> Value
 
     /// Empties the shared queue, so a test starts from nothing.

@@ -69,7 +69,7 @@ private func findEvent(_ patch: HostPatch, _ event: String) -> Int? {
     return nil
 }
 
-final class TextLayoutTests: XCTestCase {
+@MainActor final class TextLayoutTests: XCTestCase {
     func testTextOriginReportsDoNotBecomeBusinessGeometryReads() throws {
         let renders = Renders()
         let heard = Received<[Text.Layout]>()

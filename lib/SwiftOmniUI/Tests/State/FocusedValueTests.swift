@@ -85,7 +85,7 @@ extension Node {
     }
 }
 
-final class FocusedValueTests: XCTestCase {
+@MainActor final class FocusedValueTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

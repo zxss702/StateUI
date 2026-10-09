@@ -16,7 +16,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class PlacedRunTests: XCTestCase {
+@MainActor final class PlacedRunTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

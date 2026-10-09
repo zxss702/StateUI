@@ -52,7 +52,7 @@ private struct ControlCase {
     }
 }
 
-final class ControlTests: XCTestCase {
+@MainActor final class ControlTests: XCTestCase {
     /// A turn, a sizing, a lean and a move, STATED rather than computed: a
     /// chain like `.rotate(15).scaleEffect(x: 1.5).skew(10, 5)` puts a libm result in
     /// the patch, and the host's maths library is not part of this library's

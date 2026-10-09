@@ -6,7 +6,7 @@ import XCTest
 
 /// Every document's links lead somewhere: a page moved or renamed is a link broken in each page that names it, and
 /// nothing else reads those links.
-final class DocumentLinksTests: XCTestCase {
+@MainActor final class DocumentLinksTests: XCTestCase {
     /// Each relative link in every Markdown document of the repository names a file or a folder that exists.
     func testEveryLinkInADocumentLeadsToAFile() throws {
         let root = SourceTree.repository

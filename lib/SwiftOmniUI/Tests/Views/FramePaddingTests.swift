@@ -8,7 +8,7 @@ private struct PaddedFrameLabel: View {
     var body: some View { Text("card").padding(16) }
 }
 
-final class FramePaddingTests: XCTestCase {
+@MainActor final class FramePaddingTests: XCTestCase {
     func testAFramePreservesItsComposedContentsAndLaterFont() {
         let patch = Renders().render(PaddedFrameLabel().frame(width: 256, height: 256).font(.system(size: 24)).node)
         XCTAssertEqual(patch.props["width"], .number(256))

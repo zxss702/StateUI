@@ -64,7 +64,7 @@ private struct AppShaped {
     @Environment var app: ApplicationSession
 }
 
-final class HostEnvironmentTests: XCTestCase {
+@MainActor final class HostEnvironmentTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

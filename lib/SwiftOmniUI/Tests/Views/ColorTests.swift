@@ -11,7 +11,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class ColorTests: XCTestCase {
+@MainActor final class ColorTests: XCTestCase {
     // MARK: - Reading hex
 
     /// The four lengths hex is read in, and the shorthand doubling each digit.

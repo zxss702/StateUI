@@ -36,10 +36,11 @@ private struct SettingsPanel: View {
     }
 }
 
-final class BindableTests: XCTestCase {
+@MainActor final class BindableTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        settled()
+        _ = Renderer.shared.renderHost(baseline: 0)
+        XCTAssertFalse(Renderer.shared.needsRender)
     }
 
     /// `$model.prop` is a binding into the model: it reads the property, and a

@@ -13,7 +13,7 @@
 import Foundation
 import XCTest
 
-final class VsCodeTests: XCTestCase {
+@MainActor final class VsCodeTests: XCTestCase {
     /// The repository's `.vscode`.
     private var directory: URL {
         SourceTree.repository.appendingPathComponent(".vscode")

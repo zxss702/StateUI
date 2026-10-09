@@ -17,7 +17,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class JourneyTests: XCTestCase {
+@MainActor final class JourneyTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

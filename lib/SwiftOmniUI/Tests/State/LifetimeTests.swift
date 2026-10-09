@@ -45,7 +45,7 @@ private struct Drafting: View {
     }
 }
 
-final class LifetimeTests: XCTestCase {
+@MainActor final class LifetimeTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

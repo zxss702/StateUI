@@ -48,7 +48,7 @@ private struct LazyPage: View {
     var body: some View { build() }
 }
 
-final class LazyStackTests: XCTestCase {
+@MainActor final class LazyStackTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

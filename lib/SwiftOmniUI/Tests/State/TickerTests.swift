@@ -13,7 +13,7 @@ import Foundation
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class TickerTests: XCTestCase {
+@MainActor final class TickerTests: XCTestCase {
     /// Takes turns of the UI thread - the host's job, here done by hand -
     /// until `done` answers true or `seconds` have passed. Answers whether it
     /// happened.

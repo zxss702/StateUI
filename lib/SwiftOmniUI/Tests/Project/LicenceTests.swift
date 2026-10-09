@@ -4,7 +4,7 @@
 import Foundation
 import XCTest
 
-final class LicenceTests: XCTestCase {
+@MainActor final class LicenceTests: XCTestCase {
     /// Every Swift, Java, Gradle script, TypeScript, C and C++ source under
     /// `lib/` starts with the two SPDX lines.
     ///

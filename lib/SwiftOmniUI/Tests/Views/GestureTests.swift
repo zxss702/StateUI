@@ -12,7 +12,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class GestureTests: XCTestCase {
+@MainActor final class GestureTests: XCTestCase {
     func testAGestureArrivesAlreadyTyped() {
         let renders = Renders()
         var swipes: [SwipeDirection] = []

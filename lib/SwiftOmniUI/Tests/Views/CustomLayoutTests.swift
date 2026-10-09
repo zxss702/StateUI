@@ -19,7 +19,7 @@ import XCTest
     }
 
     /// A layout that records each pass it is asked to run.
-    private final class SpyLayout: Layout {
+    private final class SpyLayout: Layout, @unchecked Sendable {
         typealias Cache = Int
 
         /// The times `makeCache` ran.

@@ -16,7 +16,7 @@ import XCTest
 /// The verdicts are read where they are rendered, so they are held here: a
 /// line that is no verdict, and a verdict on what no contract of its element
 /// declares, fail.
-final class ControlDictionaryTests: XCTestCase {
+@MainActor final class ControlDictionaryTests: XCTestCase {
     private static let folder = SourceTree.repository.appendingPathComponent("docs/controls")
 
     private static let hint = "Run the host's suite with SWIFTOMNIUI_UPDATE_EXPORTS=1, or change the contract, then run "

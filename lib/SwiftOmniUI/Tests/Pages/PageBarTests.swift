@@ -62,7 +62,7 @@ private struct BarredPage: View {
     }
 }
 
-final class PageBarTests: XCTestCase {
+@MainActor final class PageBarTests: XCTestCase {
     /// What the page's first message carries - its `.onAppear` run, and what
     /// it wrote walked in.
     private static func arrived() -> HostPatch {

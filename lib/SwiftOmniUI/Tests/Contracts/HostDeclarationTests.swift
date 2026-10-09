@@ -11,7 +11,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class HostDeclarationTests: XCTestCase {
+@MainActor final class HostDeclarationTests: XCTestCase {
 
     /// A declaration written as text reads back whole, shared machinery and
     /// acts included.

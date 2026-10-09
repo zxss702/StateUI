@@ -6,7 +6,7 @@ import XCTest
 
 /// The SwiftUI drawing surface: a `Path` written point by point, the calls a
 /// `GraphicsContext` gathers, and the closure form of `Canvas`.
-final class CanvasTests: XCTestCase {
+@MainActor final class CanvasTests: XCTestCase {
     /// A path written point by point reads back as the SVG the string form takes.
     func testAPathWrittenByStatementsReadsAsSVG() {
         var path = Path()

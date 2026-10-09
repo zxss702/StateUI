@@ -6,7 +6,7 @@ import XCTest
 
 /// `Path`'s imperative face: every statement writes SVG the wire parser reads
 /// back, and the arcs' ends land where the angles put them.
-final class PathTests: XCTestCase {
+@MainActor final class PathTests: XCTestCase {
     /// Lines and quadratic curves write the commands they name.
     func testLinesAndQuadCurvesParseBack() throws {
         var path = Path()

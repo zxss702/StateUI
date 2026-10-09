@@ -6,7 +6,7 @@ import XCTest
 
 /// The code says what a declaration is; `docs/design/` says why.
 /// Design: docs/design/README.md#the-golden-rule
-final class DesignNotesTests: XCTestCase {
+@MainActor final class DesignNotesTests: XCTestCase {
     /// The directories that keep the golden rule, relative to the repository.
     private static let held = [
         "lib/SwiftOmniUI.Host/Sources", "lib/SwiftOmniUI/Sources/Types", "lib/SwiftOmniUI/Sources/Contracts",

@@ -4,7 +4,7 @@
 import Foundation
 import XCTest
 
-final class NativeProjectTests: XCTestCase {
+@MainActor final class NativeProjectTests: XCTestCase {
     /// Every application is one Swift package shared by one head per host: the
     /// AppKit executable in `Platforms/AppKit` and the Android head in
     /// `Platforms/Android`, both compiling the same `Sources/`.

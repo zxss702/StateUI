@@ -36,7 +36,7 @@ private struct Home: View {
     var body: some View { ModifiedContent(node: label("home")) }
 }
 
-final class StyleTests: XCTestCase {
+@MainActor final class StyleTests: XCTestCase {
     // MARK: - What a style is
 
     /// The target type is not written twice. It comes from the target's own

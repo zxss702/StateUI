@@ -70,7 +70,7 @@ private func stack(_ path: Binding<[Route]>) -> NavigationStack {
     }
 }
 
-final class NavigationStackTests: XCTestCase {
+@MainActor final class NavigationStackTests: XCTestCase {
     // MARK: - What goes out
 
     /// The stack IS the children: the root, then the path, in order. Nothing

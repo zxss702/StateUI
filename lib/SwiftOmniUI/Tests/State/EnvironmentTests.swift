@@ -113,7 +113,7 @@ private struct Holder: View {
     }
 }
 
-final class EnvironmentTests: XCTestCase {
+@MainActor final class EnvironmentTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

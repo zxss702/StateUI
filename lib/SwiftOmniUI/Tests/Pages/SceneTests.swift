@@ -261,7 +261,7 @@ private struct PlacedApp: App {
     }
 }
 
-final class SceneTests: XCTestCase {
+@MainActor final class SceneTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Scenes.shared.reset()

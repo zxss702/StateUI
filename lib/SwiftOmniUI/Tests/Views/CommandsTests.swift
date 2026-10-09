@@ -65,7 +65,7 @@ private struct StudioApp: App {
     var body: some Scene { Studio() }
 }
 
-final class CommandsTests: XCTestCase {
+@MainActor final class CommandsTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Scenes.shared.reset()

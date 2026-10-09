@@ -119,10 +119,11 @@ private struct Reader: View {
     }
 }
 
-final class ModelStateTests: XCTestCase {
+@MainActor final class ModelStateTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        settled()
+        _ = Renderer.shared.renderHost(baseline: 0)
+        XCTAssertFalse(Renderer.shared.needsRender)
     }
 
     func testWritingAModelsStateAsksForAnotherRender() {

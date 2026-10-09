@@ -136,7 +136,7 @@ private struct Shown: View {
     }
 }
 
-final class StateTests: XCTestCase {
+@MainActor final class StateTests: XCTestCase {
     func testAdoptingABoxSharesItsStorageBothWays() {
         let old = State(1)
         let fresh = State(0)

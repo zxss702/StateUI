@@ -6,7 +6,7 @@ import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
 /// State more than one thread touches stands behind a `Lock` - Lock.swift.
-final class LockTests: XCTestCase {
+@MainActor final class LockTests: XCTestCase {
     /// Eight threads, ten thousand holds each, one count: nothing is lost.
     func testEveryHoldCountsWhileManyThreadsHoldTheLock() {
         final class Counter: @unchecked Sendable {

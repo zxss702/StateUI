@@ -13,7 +13,7 @@ private struct MainWindow: WindowScene {
     var page: any Page { ModifiedContent(node: label("main")) }
 }
 
-final class SwiftUISurfaceTests: XCTestCase {
+@MainActor final class SwiftUISurfaceTests: XCTestCase {
     // MARK: - Font.default
 
     /// `Font.default` reads as ordinary body text, as SwiftUI's does.

@@ -37,7 +37,7 @@ private struct Twice: View {
     }
 }
 
-final class ConversionTests: XCTestCase {
+@MainActor final class ConversionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

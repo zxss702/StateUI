@@ -19,7 +19,7 @@ private final class Built {
     var counts: [Int: Int] = [:]
 }
 
-final class ListTests: XCTestCase {
+@MainActor final class ListTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

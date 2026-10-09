@@ -41,7 +41,7 @@ private func desktop() -> WindowSession {
     return session
 }
 
-final class WindowTests: XCTestCase {
+@MainActor final class WindowTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

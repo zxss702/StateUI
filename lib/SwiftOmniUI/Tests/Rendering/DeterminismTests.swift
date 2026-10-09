@@ -124,7 +124,7 @@ struct SessionMessage {
     let patch: HostPatch
 }
 
-final class DeterminismTests: XCTestCase {
+@MainActor final class DeterminismTests: XCTestCase {
     // MARK: - One session, twice
 
     /// A whole session's worth of renders, from a fresh differ - the same six

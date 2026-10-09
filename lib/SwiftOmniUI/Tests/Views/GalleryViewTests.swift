@@ -19,7 +19,7 @@ private final class Built {
     var count = 0
 }
 
-final class GalleryViewTests: XCTestCase {
+@MainActor final class GalleryViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

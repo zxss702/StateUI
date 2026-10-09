@@ -11,7 +11,7 @@ import XCTest
 /// hold the rule that makes that safe: the expression is run when the value is
 /// first WANTED, which for a box that adopts its predecessor's storage - every
 /// render after the first - is never.
-final class StateCostTests: XCTestCase {
+@MainActor final class StateCostTests: XCTestCase {
     /// How many times the initial value has been worked out.
     nonisolated(unsafe) static var made = 0
 

@@ -9,7 +9,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class AimTests: XCTestCase {
+@MainActor final class AimTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

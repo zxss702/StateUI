@@ -203,7 +203,7 @@ private struct Tabbed: View {
     }
 }
 
-final class InvalidationTests: XCTestCase {
+@MainActor final class InvalidationTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

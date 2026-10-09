@@ -11,7 +11,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class ClipShapeTests: XCTestCase {
+@MainActor final class ClipShapeTests: XCTestCase {
     /// The layout the view was wrapped in: the clip and the hit outline stand
     /// on a `ZStack`, so the whole room the view was given is what they name.
     private func wrapper(of content: ModifiedContent) -> Node {

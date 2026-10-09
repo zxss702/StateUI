@@ -81,7 +81,7 @@ private struct Nested: View {
     }
 }
 
-final class BuildsTests: XCTestCase {
+@MainActor final class BuildsTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Renderer.shared.clearInvalidation()

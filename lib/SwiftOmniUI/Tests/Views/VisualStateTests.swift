@@ -7,7 +7,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class VisualStateTests: XCTestCase {
+@MainActor final class VisualStateTests: XCTestCase {
     private let green = Color("#008000").propValue
     private let gray = Color("#808080").propValue
     private let blue = Color("#0000FF").propValue

@@ -31,7 +31,7 @@ private struct Composed: ToolbarContent {
     }
 }
 
-final class ToolbarContentTests: XCTestCase {
+@MainActor final class ToolbarContentTests: XCTestCase {
     private func slot(_ view: some View) -> Node? {
         view.node.built.children.first { $0.type == "ToolbarItems" }
     }

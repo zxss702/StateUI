@@ -33,7 +33,7 @@ private struct Shows: View {
     }
 }
 
-final class UIThreadTests: XCTestCase {
+@MainActor final class UIThreadTests: XCTestCase {
     // MARK: - The waker
 
     /// A handler may await something that is NOT a host act - `Task.sleep`,

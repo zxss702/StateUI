@@ -108,7 +108,7 @@ private struct Reading: View {
 ///     counter.wrappedValue = 1
 ///     XCTAssertTrue(Renderer.shared.needsRender)
 ///     _ = reader
-func reading(_ read: @escaping () -> Void) -> Renders {
+@MainActor func reading(_ read: @escaping () -> Void) -> Renders {
     let renders = Renders()
     renders.render(Reading(read: read).node)
     return renders

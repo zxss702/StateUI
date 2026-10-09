@@ -19,7 +19,7 @@ import Foundation
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class DocumentationTests: XCTestCase {
+@MainActor final class DocumentationTests: XCTestCase {
     /// Names every public declaration with no `///` above it.
     ///
     /// Public, because that is the surface an application writes against. What is

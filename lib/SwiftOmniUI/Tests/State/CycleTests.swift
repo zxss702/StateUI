@@ -278,7 +278,7 @@ private final class Doorbell: @unchecked Sendable {
     }
 }
 
-final class CycleTests: XCTestCase {
+@MainActor final class CycleTests: XCTestCase {
     private var board: CycleBoard { Renderer.shared.board(for: .display) }
 
     /// A cycle at an instant, for arithmetic that needs one and nothing else.

@@ -10,7 +10,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class PopoverTests: XCTestCase {
+@MainActor final class PopoverTests: XCTestCase {
     @State private var shown = true
 
     private func popover(_ view: some View) -> Node? {

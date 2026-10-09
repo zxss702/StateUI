@@ -10,7 +10,7 @@
 import XCTest
 @_spi(Host) @testable import SwiftOmniUI
 
-final class LocalizedStringKeyTests: XCTestCase {
+@MainActor final class LocalizedStringKeyTests: XCTestCase {
     /// A plain literal is a key of itself and nothing else.
     func testALiteralIsItsOwnPattern() {
         let key: LocalizedStringKey = "Save"

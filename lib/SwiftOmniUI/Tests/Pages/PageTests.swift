@@ -176,7 +176,7 @@ private struct Renaming: View {
     }
 }
 
-final class PageTests: XCTestCase {
+@MainActor final class PageTests: XCTestCase {
     // MARK: - A view shown as a page
 
     /// The page holds its session while the same view stands on it: the parent
