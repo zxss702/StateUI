@@ -125,6 +125,7 @@ class WinUILayoutView: WinUIView {
     func invalidateMeasurements() {
         forgetMeasurements()
         invalidateMeasure()
+        ((self as? WinUIScrollDocument)?.scrollView ?? placingLayout)?.invalidateMeasurements()
     }
 
     /// Forgets the sizes this layout keeps.

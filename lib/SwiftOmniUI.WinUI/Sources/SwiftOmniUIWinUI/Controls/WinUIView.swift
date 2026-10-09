@@ -211,12 +211,7 @@ class WinUIView {
                         for proposal in proposals {
                             _ = self.measure(width: proposal.width, height: proposal.height)
                         }
-                        var ancestor = self.placingLayout
-                        while let layout = ancestor {
-                            layout.forgetMeasurements()
-                            layout.invalidateMeasure()
-                            ancestor = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
-                        }
+                        self.placingLayout?.invalidateMeasurements()
                     }
                 }
             }
@@ -256,12 +251,6 @@ class WinUIView {
                         guard let self, let layout = self as? WinUILayoutView, let width = layout.standsAt else { return }
                         layout.invalidateMeasurements()
                         _ = self.measure(width: width, height: nil)
-                        var ancestor = self.placingLayout
-                        while let parent = ancestor {
-                            parent.forgetMeasurements()
-                            parent.invalidateMeasure()
-                            ancestor = (parent as? WinUIScrollDocument)?.scrollView ?? parent.placingLayout
-                        }
                     }
                 }
                 layout.standsAt = place.width

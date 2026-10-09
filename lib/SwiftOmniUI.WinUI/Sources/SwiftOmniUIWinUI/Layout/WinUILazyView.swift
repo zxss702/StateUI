@@ -26,7 +26,6 @@ class WinUILazyView: WinUITravellingLayout {
 
     /// The scroller whose window the run answers, and the ear it hears it by.
     private weak var watching: WinUIScrollView?
-    private var ear: WinUIScrollEar?
 
     /// Natural sizes survive scrolling; content invalidation or a changed
     /// cross-axis proposal clears only the measurements that can be stale.
@@ -41,8 +40,8 @@ class WinUILazyView: WinUITravellingLayout {
 
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
-    /// WinUI's clipped viewport in this panel's coordinates and the native origin when it was reported.
-    private var effectiveViewport: (rect: Rect, origin: Point)?
+    /// WinUI's effective viewport is the compositor's window in this panel's coordinates.
+    private var effectiveViewport: Rect?
     private var lastTargetViewport: Rect?
     #if DEBUG
     static var measureTimes: [Double] = []
@@ -106,33 +105,16 @@ class WinUILazyView: WinUITravellingLayout {
         return nil
     }
 
-    /// Realization follows the native input offset, including the next view reported before composition.
+    /// Only the compositor's effective viewport selects the realized window.
     private var viewport: Rect? {
-        guard let scroll = clip else { return nil }
-        var values = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &values)
-        // ViewChanging reports the next native offset before ViewChanged publishes it.
-        if let next = scroll.scroller.nextOffset {
-            let now = scroll.scroller.standing.offset
-            values[0] += next.x - now.x
-            values[1] += next.y - now.y
-        }
-        guard let clipped = effectiveViewport else {
-            return Rect(x: values[0], y: values[1], width: values[2], height: values[3])
-        }
-        return Rect(x: clipped.rect.x + values[0] - clipped.origin.x,
-                    y: clipped.rect.y + values[1] - clipped.origin.y,
-                    width: clipped.rect.width, height: clipped.rect.height)
+        effectiveViewport
     }
 
     /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
     func viewportChanged(_ rect: Rect, effective: Bool = true) {
         guard let scroll = clip else { return }
-        if effective {
-            var values = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &values)
-            effectiveViewport = (rect, Point(x: values[0], y: values[1]))
-        }
+        if effective { effectiveViewport = rect }
+        guard let target = viewport else { return }
         #if DEBUG
         let before = cells.built
         defer {
@@ -141,7 +123,6 @@ class WinUILazyView: WinUITravellingLayout {
             }
         }
         #endif
-        guard let target = viewport else { return }
         let grid = self is WinUILazyGridView
         let revision = grid ? cells.runs.revision : cells.extents.revision
         guard lastTargetViewport != target || cells.window?.span != (span ?? 0..<0)
@@ -165,12 +146,6 @@ class WinUILazyView: WinUITravellingLayout {
         // These panels report zero DesiredSize to their native parents. Marking this panel alone
         // can leave the placing chain's cached arithmetic intact and skip its realization entirely.
         invalidateMeasurements()
-        var parent = placingLayout
-        while let layout = parent {
-            layout.forgetMeasurements()
-            layout.invalidateMeasure()
-            parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
-        }
         tellWindow(span ?? 0..<0)
     }
 
@@ -200,15 +175,6 @@ class WinUILazyView: WinUITravellingLayout {
                 self.geometryChanged = false
                 self.invalidateMeasurements()
                 self.measuredRevision = self.measurements.revision
-                // SwiftOmniUI panels report zero DesiredSize to their native parents. Native invalidation
-                // alone therefore cannot tell a cached scroll document that the estimated extent grew
-                // or shrank. Invalidate the actual placing chain, including the internal document.
-                var parent = self.placingLayout
-                while let layout = parent {
-                    layout.forgetMeasurements()
-                    layout.invalidateMeasure()
-                    parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
-                }
             }
             // No clip to narrow by means all of it stands in view - a lazy
             // container outside any scroller builds every child.
@@ -230,16 +196,9 @@ class WinUILazyView: WinUITravellingLayout {
     private func watchClip() {
         let scroll = clip
         guard scroll !== watching else { return }
-        ear?.owner = nil
         watching = scroll
         effectiveViewport = nil
         lastTargetViewport = nil
-        let ear = WinUIScrollEar(owner: self) { [weak self] in
-            guard let self, let viewport = self.viewport else { return }
-            self.viewportChanged(viewport, effective: false)
-        }
-        self.ear = ear
-        scroll?.scroller.ears.append(ear)
     }
 
     /// Every pass re-asks the window: a place in the air lands in the one it
@@ -272,8 +231,6 @@ class WinUILazyView: WinUITravellingLayout {
         swiftomniui_winui_panel_watch_viewport(handle, false)
         effectiveViewport = nil
         lastTargetViewport = nil
-        ear?.owner = nil
-        ear = nil
         watching = nil
     }
 }
@@ -397,14 +354,8 @@ final class WinUILazyStackView: WinUILazyView {
                 WinUIDoorbell.afterPass { [weak self] in
                     guard let self else { return }
                     self.preparing = false
-                    self.invalidateMeasure()
+                    self.invalidateMeasurements()
                     _ = self.measure(width: self.standsAt ?? bounds.width, height: nil)
-                    var parent = self.placingLayout
-                    while let layout = parent {
-                        layout.forgetMeasurements()
-                        layout.invalidateMeasure()
-                        parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
-                    }
                 }
             }
             return
@@ -615,14 +566,8 @@ final class WinUILazyGridView: WinUILazyView {
                 WinUIDoorbell.afterPass { [weak self] in
                     guard let self else { return }
                     self.preparingRoom = nil
-                    self.invalidateMeasure()
+                    self.invalidateMeasurements()
                     _ = self.measure(width: self.standsAt ?? bounds.width, height: nil)
-                    var parent = self.placingLayout
-                    while let layout = parent {
-                        layout.forgetMeasurements()
-                        layout.invalidateMeasure()
-                        parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
-                    }
                 }
             }
             return
