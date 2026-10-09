@@ -41,12 +41,13 @@ class WinUILazyView: WinUITravellingLayout {
 
     /// A window change under way asks the run again once, not per notice.
     private var retellQueued = false
-    /// Physical clipping within the native scroll viewport, independent of its requested offset.
-    private var effectiveViewport: Rect?
+    /// WinUI's clipped viewport in this panel's coordinates and the native origin when it was reported.
+    private var effectiveViewport: (rect: Rect, origin: Point)?
     private var lastTargetViewport: Rect?
     #if DEBUG
     static var measureTimes: [Double] = []
     static var arrangeTimes: [Double] = []
+    static var scrollTimes: [Double] = []
     #endif
 
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
@@ -119,11 +120,9 @@ class WinUILazyView: WinUITravellingLayout {
         guard let clipped = effectiveViewport else {
             return Rect(x: values[0], y: values[1], width: values[2], height: values[3])
         }
-        let x = max(0, clipped.x), y = max(0, clipped.y)
-        let right = min(values[2], clipped.x + clipped.width)
-        let bottom = min(values[3], clipped.y + clipped.height)
-        return Rect(x: values[0] + x, y: values[1] + y,
-                    width: max(0, right - x), height: max(0, bottom - y))
+        return Rect(x: clipped.rect.x + values[0] - clipped.origin.x,
+                    y: clipped.rect.y + values[1] - clipped.origin.y,
+                    width: clipped.rect.width, height: clipped.rect.height)
     }
 
     /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
@@ -132,8 +131,7 @@ class WinUILazyView: WinUITravellingLayout {
         if effective {
             var values = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &values)
-            effectiveViewport = Rect(x: rect.x + values[4], y: rect.y + values[5],
-                                     width: rect.width, height: rect.height)
+            effectiveViewport = (rect, Point(x: values[0], y: values[1]))
         }
         guard let target = viewport else { return }
         let grid = self is WinUILazyGridView
