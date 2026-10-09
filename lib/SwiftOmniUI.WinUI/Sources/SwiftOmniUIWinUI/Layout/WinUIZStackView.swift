@@ -35,7 +35,17 @@ final class WinUIZStackView: WinUITravellingLayout {
     }
 
     override func contentSize(width: Double?) -> LayoutSize {
-        ZStackArithmetic.size(of: items, padding: padding, width: width)
+        let size = ZStackArithmetic.size(of: items, padding: padding, width: width)
+        if WinUIView.arranging == 0 {
+            let room = Rect(x: 0, y: 0, width: size.width, height: size.height)
+            let places = ZStackArithmetic.places(of: items, in: room, padding: padding, direction: direction)
+            for (item, place) in zip(items, places) {
+                if let place, item.view is WinUILayoutView {
+                    _ = item.view.measure(width: place.width, height: nil)
+                }
+            }
+        }
+        return size
     }
 
     override func arrange(in bounds: Rect) {

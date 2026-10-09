@@ -35,8 +35,14 @@ struct WinUILayoutItem: LayoutChild {
         // Design: docs/design/platforms/winui/layout.md#measured-every-pass
         let measured: LayoutSize
         if let layout = view as? WinUILayoutView {
-            if WinUIView.arranging == 0 { _ = view.measure(width: layout.standsAt ?? offer, height: nil) }
             measured = layout.naturalSize(width: offer)
+            if WinUIView.arranging == 0 {
+                let expands = values.flex != nil || values.expandingAxes == .horizontal || values.expandingAxes == .both
+                let allocated = Extent.of(option: expands ? 3 : values.horizontal, stated: values.width,
+                                          natural: measured.width, available: width ?? measured.width,
+                                          minimum: values.minimumWidth, maximum: values.maximumWidth)
+                _ = view.measure(width: allocated, height: nil)
+            }
         } else {
             measured = view.measure(width: offer, height: nil)
         }
