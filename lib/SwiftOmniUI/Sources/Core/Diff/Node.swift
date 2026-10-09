@@ -264,6 +264,14 @@ public struct Node {
     /// The element's properties, by token.
     var props: [Prop: PropValue]
 
+    /// Inherited members retained for content built after its parent was written.
+    struct InheritedMember: Equatable {
+        let owner: ObjectIdentifier
+        let value: PropValue
+    }
+    var inheritedMembers: [Prop: InheritedMember] = [:]
+    var hasExplicitFontBasis = false
+
     /// Nested nodes: the slot children modifiers append. A container's own content
     /// waits in its producer until the differ describes the element.
     public var children: [Node]
@@ -281,10 +289,15 @@ public struct Node {
 
     /// Runs the producer, if pending, filing its nodes ahead of the slots. Idempotent.
     mutating func materialize() {
-        guard let make = producer else { return }
-
-        producer = nil
-        children = make() + children
+        if let make = producer {
+            producer = nil
+            children = make() + children
+        }
+        for (property, member) in inheritedMembers {
+            for index in children.indices {
+                children[index].inherit(property, member: member)
+            }
+        }
     }
 
     /// The visual states it declares, its style's merged in by the differ; and what

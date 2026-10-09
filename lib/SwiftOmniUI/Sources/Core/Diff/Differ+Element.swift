@@ -790,6 +790,8 @@ extension Differ {
     /// Design: docs/design/core/identity-and-diffing.md#what-the-parent-wrote
     private func sameWriting(_ node: Node, as kept: Node) -> Bool {
         guard node.props == kept.props,
+            node.inheritedMembers == kept.inheritedMembers,
+            node.hasExplicitFontBasis == kept.hasExplicitFontBasis,
             node.animation == kept.animation,
             node.children.isEmpty, kept.children.isEmpty,
             node.engines.isEmpty, kept.engines.isEmpty,

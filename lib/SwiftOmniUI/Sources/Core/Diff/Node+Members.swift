@@ -50,6 +50,22 @@ extension Node {
         modifyContent(for: Owner.self) { $0.props.write(property, value) }
     }
 
+    /// A control member is direct; a container passes it to later content.
+    mutating func writeOrInherit<Owner: Contract, Value: HostRepresentable>(
+        _ property: ElementProperty<Owner, Value>, _ value: Value
+    ) {
+        modifyContent(for: Owner.self) { node in
+            let owner = ObjectIdentifier(Owner.self)
+            if LibraryContracts.byType[node.type]?.worn.contains(where: {
+                ObjectIdentifier($0) == owner
+            }) == true {
+                node.props.write(property, value)
+            } else {
+                node.writeInherited(property, value)
+            }
+        }
+    }
+
     /// Writes one member's value into this node, or leaves the member
     /// undescribed where there is none - a setting a modifier takes as
     /// optional, whose absence the host reads as its own default.
@@ -69,14 +85,32 @@ extension Node {
         _ property: ElementProperty<Owner, Value>,
         _ value: Value
     ) {
-        materialize()
-        let owner = ObjectIdentifier(Owner.self)
-        if LibraryContracts.byType[type]?.worn.contains(where: { ObjectIdentifier($0) == owner }) == true,
-            props[property.token] == nil {
-            write(property, value)
+        inherit(property.token, member: InheritedMember(
+            owner: ObjectIdentifier(Owner.self), value: value.propValue))
+    }
+
+    mutating func inherit(_ property: Prop, member: InheritedMember) {
+        var member = member
+        let mergesAttributes = property == .fontAttributes && member.owner == ObjectIdentifier(FontElementContract.self)
+        if mergesAttributes {
+            let incoming = FontAttributes(propValue: member.value) ?? .none
+            let pending = inheritedMembers[property].flatMap { FontAttributes(propValue: $0.value) } ?? .none
+            let own = props[property].flatMap(FontAttributes.init(propValue:)) ?? .none
+            member = InheritedMember(owner: member.owner, value: own.union(pending).union(incoming).propValue)
+        }
+        if hasExplicitFontBasis, member.owner == ObjectIdentifier(FontElementContract.self),
+           property == .fontSize || property == .fontTextStyle || property == .fontFamily {
+            return
+        }
+        guard inheritedMembers[property] == nil || (mergesAttributes && inheritedMembers[property] != member) else { return }
+        inheritedMembers[property] = member
+        if LibraryContracts.byType[type]?.worn.contains(where: {
+            ObjectIdentifier($0) == member.owner
+        }) == true, props[property] == nil || mergesAttributes {
+            props[property] = member.value
         }
         for index in children.indices {
-            children[index].writeInherited(property, value)
+            children[index].inherit(property, member: member)
         }
     }
 }

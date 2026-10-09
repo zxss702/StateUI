@@ -279,6 +279,10 @@ extension Node {
         /// root - or onto each of them, when the body is a fragment of several.
         func expand(over written: Node) -> Node {
             var node = build()
+            for (property, member) in written.inheritedMembers {
+                node.inherit(property, member: member)
+            }
+            node.hasExplicitFontBasis = node.hasExplicitFontBasis || written.hasExplicitFontBasis
 
             // A fragment keeps no element of its own to write on: what the author
             // wrote on the view lands on each child the body splices in.
@@ -458,6 +462,7 @@ extension Node {
     /// the fragment's scopes onto the child too; false where the differ has
     /// them in scope already.
     mutating func absorbFragmentWrites(of fragment: Node, environments: Bool = true) {
+        hasExplicitFontBasis = hasExplicitFontBasis || fragment.hasExplicitFontBasis
         props.merge(fragment.props) { _, wrote in wrote }
         driven.merge(fragment.driven) { _, wrote in wrote }
         animation = AnimationPlan.merged(animation, under: fragment.animation)

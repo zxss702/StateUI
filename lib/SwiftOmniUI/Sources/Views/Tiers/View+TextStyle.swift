@@ -35,6 +35,7 @@ extension View {
             if font.attributes != .none {
                 node.writeInherited(FontElementContract.fontAttributes, font.attributes)
             }
+            node.hasExplicitFontBasis = true
         }
     }
 

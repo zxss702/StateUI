@@ -33,25 +33,33 @@ extension FontElement {
     public func font(_ font: Font) -> Modified {
         modified { frame in
             frame.modifyContent(for: FontElementContract.self) { node in
+                if LibraryContracts.byType[node.type]?.worn.contains(where: {
+                    ObjectIdentifier($0) == ObjectIdentifier(FontElementContract.self)
+                }) == true {
+                    node.props[.fontSize] = nil
+                    node.props[.fontTextStyle] = nil
+                    node.props[.fontFamily] = nil
+                }
                 if let weight = font.weight {
-                    node.write(FontElementContract.fontWeight, weight)
+                    node.writeOrInherit(FontElementContract.fontWeight, weight)
                 }
                 if let design = font.design {
-                    node.write(FontElementContract.fontDesign, design)
+                    node.writeOrInherit(FontElementContract.fontDesign, design)
                 }
                 switch font.basis {
                 case .textStyle(let style):
-                    node.write(FontElementContract.fontTextStyle, style)
+                    node.writeOrInherit(FontElementContract.fontTextStyle, style)
                 case .system(let size):
-                    node.write(FontElementContract.fontSize, size)
+                    node.writeOrInherit(FontElementContract.fontSize, size)
                 case .custom(let family, let size):
-                    node.write(FontElementContract.fontFamily, Name(family))
-                    node.write(FontElementContract.fontSize, size)
+                    node.writeOrInherit(FontElementContract.fontFamily, Name(family))
+                    node.writeOrInherit(FontElementContract.fontSize, size)
                 }
                 if font.attributes != .none {
                     let worn = node.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none
-                    node.write(FontElementContract.fontAttributes, worn.union(font.attributes))
+                    node.writeOrInherit(FontElementContract.fontAttributes, worn.union(font.attributes))
                 }
+                node.hasExplicitFontBasis = true
             }
         }
     }
@@ -60,14 +68,14 @@ extension FontElement {
     ///
     ///     Text("Total").fontWeight(.semibold)
     public func fontWeight(_ weight: Font.Weight) -> Modified {
-        setValue(FontElementContract.fontWeight, weight)
+        modified { $0.writeOrInherit(FontElementContract.fontWeight, weight) }
     }
 
     /// The letter shape of the system font - the SwiftUI spelling:
     ///
     ///     Text("Code").fontDesign(.monospaced)
     public func fontDesign(_ design: FontDesign) -> Modified {
-        setValue(FontElementContract.fontDesign, design)
+        modified { $0.writeOrInherit(FontElementContract.fontDesign, design) }
     }
 
     /// One of the platform's named text styles - what `.font(.title)` and the
@@ -82,12 +90,14 @@ extension FontElement {
     /// Bold text - the SwiftUI spelling of `.fontAttributes(.bold)`, added to
     /// whatever attributes the text already wears.
     public func bold() -> Modified {
-        fontAttributes((node.controlContent.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none).union(.bold))
+        let worn = node.controlContent.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none
+        return modified { $0.writeOrInherit(FontElementContract.fontAttributes, worn.union(.bold)) }
     }
 
     /// Italic text - `.fontAttributes(.italic)` added to what is worn.
     public func italic() -> Modified {
-        fontAttributes((node.controlContent.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none).union(.italic))
+        let worn = node.controlContent.props[.fontAttributes].flatMap(FontAttributes.init(propValue:)) ?? .none
+        return modified { $0.writeOrInherit(FontElementContract.fontAttributes, worn.union(.italic)) }
     }
 }
 
