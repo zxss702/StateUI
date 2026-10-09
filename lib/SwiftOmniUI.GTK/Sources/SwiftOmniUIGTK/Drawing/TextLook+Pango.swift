@@ -13,7 +13,7 @@ extension TextLook {
     var symbolPointSize: Double {
         if let size, size > 0 { return size }
         guard let textStyle else { return 16 }
-        let roles = ["title-1", "title-2", "title-3", "title-4", "heading", "body", "body", "body", "caption", "caption", "caption"]
+        let roles = ["title-1", "title-2", "title-3", "title-4", "heading", "caption", "body", "body", "caption", "caption", "caption"]
         let probe = GTKLabelView()
         // The font description below is borrowed from this widget's context.
         defer { withExtendedLifetime(probe) {} }
@@ -32,16 +32,19 @@ extension TextLook {
     var rgbaBackground: GdkRGBA? { GTKBrush(background).firstColor }
 
     /// Puts the look on the words from byte `start` to byte `end` of `list`.
+    @MainActor
     func insert(into list: OpaquePointer, from start: UInt32 = 0, to end: UInt32 = UInt32.max) {
         var made: [UnsafeMutablePointer<PangoAttribute>] = []
+        let size = size ?? textStyle.map { _ in symbolPointSize }
         if let size, size > 0 { made.append(pango_attr_size_new_absolute(Int32((size * Double(PANGO_SCALE)).rounded()))) }
         // A weight the look names, on Pango's own 1-1000 scale, else the attributes' bold.
         if let weight, weight > 0 {
             made.append(pango_attr_weight_new(PangoWeight(rawValue: UInt32(min(max(weight, 1), 1000)))))
-        } else if attributes.contains(.bold) {
+        } else if attributes.contains(.bold) || textStyle == .headline {
             made.append(pango_attr_weight_new(PANGO_WEIGHT_BOLD))
         }
         if attributes.contains(.italic) { made.append(pango_attr_style_new(PANGO_STYLE_ITALIC)) }
+        let family = family ?? (design == .monospaced ? "monospace" : design == .serif ? "serif" : nil)
         if let family, !family.isEmpty { made.append(pango_attr_family_new(family)) }
         if let color = rgbaColor {
             let (red, green, blue, alpha) = Self.channels(color)

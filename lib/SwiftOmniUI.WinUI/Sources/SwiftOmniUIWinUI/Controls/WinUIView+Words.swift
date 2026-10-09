@@ -10,10 +10,12 @@ import CSwiftOmniUIWinUI
 /// Design: docs/design/platforms/winui/controls.md#words
 extension WinUIView {
     /// The font: its size in DIPs, its weight and slant, and its family; nil and empty for the platform's.
-    func setFont(size: Double?, attributes: FontAttributes?, family: String?) {
+    func setFont(size: Double?, attributes: FontAttributes?, family: String?,
+                 textStyle: FontTextStyle? = nil, weight: Double? = nil) {
         let attributes = attributes ?? []
         swiftomniui_winui_set_font(
-            handle, size ?? 0, attributes.contains(.bold), attributes.contains(.italic), family ?? "")
+            handle, size ?? 0, attributes.contains(.bold), attributes.contains(.italic), family ?? "",
+            textStyle?.rawValue ?? -1, weight ?? 0)
     }
 
     /// The words' colour; nil puts back the platform's.

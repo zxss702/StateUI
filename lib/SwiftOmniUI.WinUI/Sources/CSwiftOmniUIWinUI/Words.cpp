@@ -8,6 +8,7 @@
 
 #include "Relay.h"
 
+#include <algorithm>
 #include <string>
 
 #include <winrt/Windows.UI.h>
@@ -43,13 +44,27 @@ namespace {
     }
 }
 
-extern "C" void swiftomniui_winui_set_font(SwiftOmniUIObjectRef handle, double size, bool bold, bool italic, char const *family) {
+extern "C" void swiftomniui_winui_set_font(SwiftOmniUIObjectRef handle, double size, bool bold, bool italic,
+                                         char const *family, int32_t textStyle, double requestedWeight) {
     try {
-        auto weight = bold ? winrt::Microsoft::UI::Text::FontWeights::Bold() : winrt::Microsoft::UI::Text::FontWeights::Normal();
+        controls::TextBlock font;
+        if (textStyle >= 0 && textStyle < 11) {
+            wchar_t const *styles[] = {L"TitleLargeTextBlockStyle", L"TitleTextBlockStyle", L"SubtitleTextBlockStyle",
+                L"BodyLargeTextBlockStyle", L"BodyStrongTextBlockStyle", L"CaptionTextBlockStyle", L"BodyTextBlockStyle",
+                L"BodyTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle"};
+            if (auto application = xaml::Application::Current()) {
+                auto resource = application.Resources().TryLookup(winrt::box_value(styles[textStyle]));
+                if (auto styled = resource.try_as<xaml::Style>()) font.Style(styled);
+            }
+        }
+        auto weight = requestedWeight > 0 ? winrt::Windows::UI::Text::FontWeight{
+            static_cast<uint16_t>(std::clamp(requestedWeight, 1.0, 1000.0))}
+            : bold ? winrt::Microsoft::UI::Text::FontWeights::Bold() : font.FontWeight();
         auto style = italic ? winrt::Windows::UI::Text::FontStyle::Italic : winrt::Windows::UI::Text::FontStyle::Normal;
         auto named = family && *family ? media::FontFamily(text(family)) : media::FontFamily{nullptr};
         auto apply = [&](auto const &element, auto sizeProperty, auto familyProperty) {
             if (size > 0) element.FontSize(size);
+            else if (textStyle >= 0) element.FontSize(font.FontSize());
             else element.ClearValue(sizeProperty);
             element.FontWeight(weight);
             element.FontStyle(style);

@@ -54,6 +54,9 @@ extension GTKRegistrations {
                 shown.size = look.size
                 shown.attributes = look.attributes
                 shown.family = look.family
+                shown.textStyle = look.textStyle
+                shown.weight = look.weight
+                shown.design = look.design
                 shown.color = look.color
             }
         }

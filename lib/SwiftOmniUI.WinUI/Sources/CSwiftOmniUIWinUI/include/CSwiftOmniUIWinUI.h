@@ -384,7 +384,8 @@ void swiftomniui_winui_panel_set_children(SwiftOmniUIObjectRef panel, SwiftOmniU
 /// How words look on a text block or any control showing them: the font - a size of 0 or less and an empty
 /// family are the platform's - the colour as 0xAARRGGBB, `has` false putting back the platform's, and the room
 /// around them in DIPs.
-void swiftomniui_winui_set_font(SwiftOmniUIObjectRef element, double size, bool bold, bool italic, char const *family);
+void swiftomniui_winui_set_font(SwiftOmniUIObjectRef element, double size, bool bold, bool italic, char const *family,
+                               int32_t textStyle, double weight);
 void swiftomniui_winui_set_foreground(SwiftOmniUIObjectRef element, bool has, uint32_t argb);
 void swiftomniui_winui_set_padding(SwiftOmniUIObjectRef element, double left, double top, double right, double bottom);
 

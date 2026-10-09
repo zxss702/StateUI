@@ -46,9 +46,10 @@ extension WinUIRegistrations {
         if let words = TextMembers.words(values) { (view as? WinUIWordsView)?.setText(words) }
         if let look = TextMembers.look(values) {
             if let text = view as? WinUITextView {
-                text.setTextFont(size: look.size, attributes: look.attributes, family: look.family)
+                text.setTextFont(look)
             } else {
-                view.setFont(size: look.size, attributes: look.attributes, family: look.family)
+                view.setFont(size: look.size, attributes: look.attributes, family: look.family,
+                             textStyle: look.textStyle, weight: look.weight)
             }
             view.setForeground(look.color)
         }

@@ -232,7 +232,7 @@ extern "C" bool swiftomniui_winui_image_set_symbol(
         controls::TextBlock font;
         if (textStyle >= 0 && textStyle < 11) {
             wchar_t const *styles[] = {L"TitleLargeTextBlockStyle", L"TitleTextBlockStyle", L"SubtitleTextBlockStyle",
-                L"BodyLargeTextBlockStyle", L"BodyStrongTextBlockStyle", L"BodyTextBlockStyle", L"BodyTextBlockStyle",
+                L"BodyLargeTextBlockStyle", L"BodyStrongTextBlockStyle", L"CaptionTextBlockStyle", L"BodyTextBlockStyle",
                 L"BodyTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle"};
             if (auto application = xaml::Application::Current()) {
                 auto resource = application.Resources().TryLookup(winrt::box_value(styles[textStyle]));

@@ -40,8 +40,22 @@ class WinUITextView: WinUIView {
 
     /// The font, remembering its size for the spacing measured against it.
     func setTextFont(size: Double?, attributes: FontAttributes?, family: String?) {
-        setFont(size: size, attributes: attributes, family: family)
-        look.size = size.flatMap { $0 > 0 ? $0 : nil }
+        var font = TextLook()
+        font.size = size
+        font.attributes = attributes ?? .none
+        font.family = family
+        setTextFont(font)
+    }
+
+    func setTextFont(_ font: TextLook) {
+        setFont(size: font.size, attributes: font.attributes, family: font.family,
+                textStyle: font.textStyle, weight: font.weight)
+        look.size = wordsStyle.size
+        look.attributes = font.attributes
+        look.family = font.family
+        look.textStyle = font.textStyle
+        look.weight = font.weight
+        look.design = font.design
         writeSpacing()
     }
 
