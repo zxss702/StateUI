@@ -250,7 +250,7 @@ struct ContentButton: View {
                 let title = label.title.node.props[.text]?.string ?? ""
                 var button = Button(icon: source).onClicked(action)
                 button.node.children = [label.icon.node]
-                return button.hint(title)
+                return button.help(title)
             }
             if let image = label as? Image, let source = image.imageSource {
                 var button = Button(icon: source).onClicked(action)
