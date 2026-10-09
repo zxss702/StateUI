@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// `.safeAreaInset(edge:) {}` reserves an edge for a bar and carries that
-// reservation into the content's reported safe area.
+// `.safeAreaInset(edge:) {}` reserves an edge by laying the bar beside the
+// content. Geometry reports that content's reduced bounds, without another inset.
 // Design: docs/design/views/modifiers.md#composed-modifiers
 
 extension View {
@@ -58,8 +58,6 @@ private struct SafeAreaInsetContent<Base: View, Bar: View>: View {
     let bar: Bar
     let edge: Edge
     let spacing: Double
-    @State private var extent = 0.0
-    @Environment(\.contentSafeAreaInsets) private var inherited
 
     init(base: Base, bar: Bar, edge: Edge, spacing: Double) {
         self.base = base
@@ -71,43 +69,21 @@ private struct SafeAreaInsetContent<Base: View, Bar: View>: View {
     var body: some View {
         let edge = edge, spacing = spacing
         let vertical = edge == .top || edge == .bottom
-        let held = $extent
-        let measured = bar.onFrameChanged { frame in
-            let next = max(0, (vertical ? frame.height : frame.width) + spacing)
-            if held.wrappedValue != next { held.wrappedValue = next }
-        }
-        var insets = inherited
-        switch edge {
-        case .top: insets.top += extent
-        case .bottom: insets.bottom += extent
-        case .leading: insets.left += extent
-        case .trailing: insets.right += extent
-        }
-        let content = base.environment(\.contentSafeAreaInsets, insets)
+        let inset = bar
+        let content = base
         if vertical {
             var stack = VStack()
             stack.node.write(StackBaseContract.spacing, spacing)
             stack.node.producer = {
-                edge == .top ? [measured.node, content.node] : [content.node, measured.node]
+                edge == .top ? [inset.node, content.node] : [content.node, inset.node]
             }
             return AnyView(stack)
         }
         var stack = HStack()
         stack.node.write(StackBaseContract.spacing, spacing)
         stack.node.producer = {
-            edge == .leading ? [measured.node, content.node] : [content.node, measured.node]
+                edge == .leading ? [inset.node, content.node] : [content.node, inset.node]
         }
         return AnyView(stack)
-    }
-}
-
-private struct ContentSafeAreaInsetsKey: EnvironmentKey {
-    static let defaultValue = EdgeInsets(0)
-}
-
-extension EnvironmentValues {
-    var contentSafeAreaInsets: EdgeInsets {
-        get { self[ContentSafeAreaInsetsKey.self] }
-        set { self[ContentSafeAreaInsetsKey.self] = newValue }
     }
 }
