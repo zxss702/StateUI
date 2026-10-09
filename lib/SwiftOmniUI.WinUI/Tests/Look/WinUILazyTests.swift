@@ -826,10 +826,21 @@ final class WinUILazyTests: XCTestCase {
                 for _ in 0..<12 { host.step() }
                 let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
                 let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                var previousOffset = horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y
                 for target in [801.0, 4_001.0, 241.0, 0.0] {
+                    let forward = target > previousOffset
+                    var intermediate: Set<Int> = []
                     swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                    horizontal ? target : 0, horizontal ? 0 : target, true)
-                    for _ in 0..<80 { host.step() }
+                    for _ in 0..<80 {
+                        host.step()
+                        let offset = horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y
+                        XCTAssertGreaterThanOrEqual((offset - previousOffset) * (forward ? 1 : -1), -1,
+                                                    "native scrolling must not jump backwards, kind \(kind)")
+                        if abs(offset - target) > 1 { intermediate.insert(Int(offset)) }
+                        previousOffset = offset
+                    }
+                    XCTAssertGreaterThan(intermediate.count, 3, "native scrolling must display intermediate positions")
                     var native = [0.0, 0.0, 0.0, 0.0]
                     swiftomniui_winui_scroller_offset(scroll.scroller.handle, &native)
                     let offset = native[horizontal ? 0 : 1]
