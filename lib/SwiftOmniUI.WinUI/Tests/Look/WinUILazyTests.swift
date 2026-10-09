@@ -171,6 +171,13 @@ final class WinUILazyTests: XCTestCase {
                         for proposal: Double? in [nil, 0, 72, canonical, nil, 72, canonical] {
                             _ = lazy.naturalSize(width: proposal)
                         }
+                        let revision = lazy.measurementRevision
+                        _ = lazy.measure(width: canonical, height: .infinity)
+                        _ = lazy.measure(width: 72, height: .infinity)
+                        lazy.arrange(width: canonical, height: lazy.laidOutFrame.height)
+                        WinUIDoorbell.turn()
+                        XCTAssertEqual(lazy.measurementRevision, revision,
+                                       "speculative native measurement must not invalidate committed geometry")
                     } else {
                         host.layOut()
                         for _ in 0..<8 { host.step() }

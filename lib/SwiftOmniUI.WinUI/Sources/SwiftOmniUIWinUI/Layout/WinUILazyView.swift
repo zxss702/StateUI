@@ -82,7 +82,7 @@ class WinUILazyView: WinUITravellingLayout {
         }
         setChildren(items.map(\.item.view))
         invalidateMeasurements()
-        measuredRevision = measurements.revision
+        measuredRevision = measurementRevision
     }
 
     /// The nearest scroller clipping this run on its own axis, found up the
@@ -120,7 +120,7 @@ class WinUILazyView: WinUITravellingLayout {
         let previous = lastTargetViewport
         lastTargetViewport = target
         if !geometryChanged, !cells.animatesChanges,
-           measuredRevision == measurements.revision, cells.window?.revision == revision,
+           measuredRevision == measurementRevision, cells.window?.revision == revision,
            (axis == .vertical ? previous?.width == target.width : previous?.height == target.height), let span {
             let perRun = cells.window?.perRun ?? 1
             let wanted = grid
@@ -164,7 +164,7 @@ class WinUILazyView: WinUITravellingLayout {
             if self.geometryChanged {
                 self.geometryChanged = false
                 self.invalidateMeasurements()
-                self.measuredRevision = self.measurements.revision
+                self.measuredRevision = self.measurementRevision
             }
             // No clip to narrow by means all of it stands in view - a lazy
             // container outside any scroller builds every child.
@@ -296,7 +296,7 @@ final class WinUILazyStackView: WinUILazyView {
             if prepared.count == 8, prepared[across] == nil, let oldest = prepared.keys.first {
                 prepared.removeValue(forKey: oldest)
             }
-            prepared[across] = (sizes, extents, acrossSize, measurements.revision)
+            prepared[across] = (sizes, extents, acrossSize, measurementRevision)
         }
         let total = extents.total(in: cells.identities)
         return axis == .vertical
@@ -309,7 +309,7 @@ final class WinUILazyStackView: WinUILazyView {
         let size = super.measure(width: width, height: height)
         let proposal = axis == .vertical ? max(0, width - padding.left - padding.right) : nil
         if WinUIView.arranging == 0, let standsAt, Double(Float(standsAt)) == width,
-           let ready = prepared[proposal], ready.revision == measurements.revision {
+           let ready = prepared[proposal], ready.revision == measurementRevision {
             let revision = cells.extents.revision
             measured = ready.measured
             cells.extents = ready.extents
@@ -319,7 +319,7 @@ final class WinUILazyStackView: WinUILazyView {
             commitAnchor()
             if cells.extents.revision != revision || cells.total != measuredExtent { geometryChanged = true }
             measuredExtent = cells.total
-            measuredRevision = measurements.revision
+            measuredRevision = measurementRevision
         }
         return size
     }
@@ -330,7 +330,7 @@ final class WinUILazyStackView: WinUILazyView {
             ? bounds.width - padding.left - padding.right
             : bounds.height - padding.top - padding.bottom)
         let proposal = axis == .vertical ? across : nil
-        if let ready = prepared[proposal], ready.revision == measurements.revision {
+        if let ready = prepared[proposal], ready.revision == measurementRevision {
             let revision = cells.extents.revision
             measured = ready.measured
             cells.extents = ready.extents
@@ -341,7 +341,7 @@ final class WinUILazyStackView: WinUILazyView {
             let total = cells.total
             if cells.extents.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
-            measuredRevision = measurements.revision
+            measuredRevision = measurementRevision
         } else {
             if !preparing {
                 preparing = true
@@ -509,7 +509,7 @@ final class WinUILazyGridView: WinUILazyView {
             if prepared.count == 8, prepared[room] == nil, let oldest = prepared.keys.first {
                 prepared.removeValue(forKey: oldest)
             }
-            prepared[room] = (widths, sizes, runs, measurements.revision)
+            prepared[room] = (widths, sizes, runs, measurementRevision)
         }
         let count = (cells.identities.count + max(1, proposed.count) - 1) / max(1, proposed.count)
         let total = runs.total(count: count)
@@ -524,7 +524,7 @@ final class WinUILazyGridView: WinUILazyView {
         let size = super.measure(width: width, height: height)
         let room = axis == .vertical ? max(0, width - padding.left - padding.right) : acrossRoom
         if WinUIView.arranging == 0, let standsAt, Double(Float(standsAt)) == width,
-           let ready = prepared[room], ready.revision == measurements.revision {
+           let ready = prepared[room], ready.revision == measurementRevision {
             let revision = cells.runs.revision
             if columns != ready.columns { geometryChanged = true }
             columns = ready.columns
@@ -534,7 +534,7 @@ final class WinUILazyGridView: WinUILazyView {
             let total = cells.runs.total(count: runCount)
             if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
-            measuredRevision = measurements.revision
+            measuredRevision = measurementRevision
         }
         return size
     }
@@ -543,7 +543,7 @@ final class WinUILazyGridView: WinUILazyView {
         acrossRoom = max(0, axis == .vertical
             ? bounds.width - padding.left - padding.right
             : bounds.height - padding.top - padding.bottom)
-        if let ready = prepared[acrossRoom], ready.revision == measurements.revision {
+        if let ready = prepared[acrossRoom], ready.revision == measurementRevision {
             let revision = cells.runs.revision
             if columns != ready.columns { geometryChanged = true }
             columns = ready.columns
@@ -553,7 +553,7 @@ final class WinUILazyGridView: WinUILazyView {
             let total = cells.runs.total(count: runCount)
             if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
-            measuredRevision = measurements.revision
+            measuredRevision = measurementRevision
         } else {
             if preparingRoom != acrossRoom {
                 preparingRoom = acrossRoom
