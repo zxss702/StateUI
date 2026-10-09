@@ -32,6 +32,7 @@ final class WinUIMenuButtonView: WinUIView {
 
     /// Whether the trigger draws the platform's frameless look - `.borderlessButton`'s.
     func setBorderless(_ borderless: Bool) {
+        if isToolbarControl { return swiftomniui_winui_toolbar_button_set_look(handle) }
         swiftomniui_winui_menu_button_set_borderless(handle, borderless ? 1 : 0)
     }
 

@@ -202,6 +202,28 @@ extern "C" void swiftomniui_winui_set_caption(SwiftOmniUIObjectRef handle, char 
     }
 }
 
+extern "C" void swiftomniui_winui_toolbar_button_set_look(SwiftOmniUIObjectRef handle) {
+    try {
+        auto button = borrow<controls::Control>(handle);
+        auto resources = button.Resources();
+        auto transparent = clearGround();
+        auto theme = xaml::Application::Current().Resources();
+        auto pointed = theme.Lookup(winrt::box_value(L"SubtleFillColorSecondaryBrush")).as<xaml::Media::Brush>();
+        auto pressed = theme.Lookup(winrt::box_value(L"SubtleFillColorTertiaryBrush")).as<xaml::Media::Brush>();
+        button.Background(transparent);
+        button.BorderThickness({0, 0, 0, 0});
+        button.CornerRadius({4, 4, 4, 4});
+        keepToggleKeys(resources, L"Background", transparent, pointed, pressed);
+        keepToggleKeys(resources, L"BorderBrush", transparent, transparent, transparent);
+        struct State { wchar_t const *suffix; xaml::Media::Brush fill; };
+        for (auto const &state : {State{L"", transparent}, State{L"PointerOver", pointed},
+                                  State{L"Pressed", pressed}, State{L"Disabled", transparent}}) {
+            resources.Insert(winrt::box_value(winrt::hstring(std::wstring(L"ButtonBackground") + state.suffix)), state.fill);
+            resources.Insert(winrt::box_value(winrt::hstring(std::wstring(L"ButtonBorderBrush") + state.suffix)), transparent);
+        }
+    } catch (...) { report("styling a toolbar button"); }
+}
+
 extern "C" void swiftomniui_winui_button_set_style(SwiftOmniUIObjectRef handle, int kind) {
     try {
         auto button = borrow<primitives::ToggleButton>(handle);

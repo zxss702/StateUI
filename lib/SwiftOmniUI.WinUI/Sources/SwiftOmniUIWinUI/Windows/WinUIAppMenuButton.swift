@@ -15,6 +15,7 @@ final class WinUIAppMenuButton: WinUIView {
 
     init() {
         super.init { number in swiftomniui_winui_app_menu_make(number) }
+        swiftomniui_winui_toolbar_button_set_look(handle)
     }
 
     /// The entries the press opens, the flyout written again only where what it draws changed.

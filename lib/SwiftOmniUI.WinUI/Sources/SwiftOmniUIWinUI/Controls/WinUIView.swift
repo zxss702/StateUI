@@ -18,6 +18,9 @@ class WinUIView {
     /// The layout that places this view, which a place written between passes asks to arrange again.
     weak var placingLayout: WinUILayoutView?
 
+    /// Toolbar controls share the title bar's transparent trigger appearance.
+    var isToolbarControl = false
+
     /// How deep the layout passes under way stand: a place written inside one lands at once.
     static var arranging = 0
 

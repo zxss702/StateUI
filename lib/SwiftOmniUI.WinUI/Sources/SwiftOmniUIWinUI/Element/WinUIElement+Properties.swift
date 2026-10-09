@@ -76,6 +76,16 @@ extension WinUIElement {
             return
         }
 
+        var ancestor = element.parent
+        view.isToolbarControl = false
+        while let each = ancestor {
+            if each.type == .toolbarItems || each.type == .titleView {
+                view.isToolbarControl = true
+                break
+            }
+            ancestor = each.parent
+        }
+
         let taken = WinUIRegistrations.registry.apply(
             changed, to: view, of: type,
             reading: { [element] in element.value($0) },

@@ -252,9 +252,6 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_app_menu_make(int64_t view) {
         controls::Button button;
         controls::SymbolIcon icon{controls::Symbol::GlobalNavigationButton};
         button.Content(icon);
-        auto resources = xaml::Application::Current().Resources();
-        auto name = winrt::box_value(L"TextButtonStyle");
-        if (resources.HasKey(name)) button.Style(resources.Lookup(name).as<xaml::Style>());
         return detach(button);
     } catch (...) {
         report("making an app menu button");

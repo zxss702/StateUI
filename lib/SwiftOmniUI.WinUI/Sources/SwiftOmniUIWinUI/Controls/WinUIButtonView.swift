@@ -44,7 +44,11 @@ final class WinUIButtonView: WinUIView {
         }
         let (fill, outline) = (WinUIBrush(background), WinUIBrush(stroke))
         let width = BoxArithmetic.outlineWidth(stroke: stroke, width: strokeWidth)
-        paint("look", followsSize: fill.followsSize || outline.followsSize) { [handle] size in
+        paint("look", followsSize: fill.followsSize || outline.followsSize) { [weak self, handle] size in
+            if self?.isToolbarControl == true {
+                swiftomniui_winui_toolbar_button_set_look(handle)
+                return
+            }
             fill.withRelayBrush(over: size) { fill in
                 outline.withRelayBrush(over: size) { outline in
                     swiftomniui_winui_button_set_look(
@@ -56,6 +60,7 @@ final class WinUIButtonView: WinUIView {
 
     /// The logical style, mapped to the theme style WinUI names for it.
     func setStyle(_ style: ButtonStyleKind?) {
+        if isToolbarControl { return swiftomniui_winui_toolbar_button_set_look(handle) }
         swiftomniui_winui_button_set_style(handle, (style ?? .automatic).rawValue)
     }
 
