@@ -245,7 +245,9 @@ final class GTKLazyTests: XCTestCase {
                 XCTAssertEqual(scroll.scroller.standing.reach.y + scroll.frame.height, total, accuracy: 1)
                 scroll.scroller.move(to: scroll.scroller.standing.reach)
                 for _ in 0..<30 { host.step() }
-                let last = try XCTUnwrap(host.views(GTKLabelView.self).first { $0.text == "Cell 499" })
+                XCTAssertTrue(host.views(GTKLabelView.self).contains { $0.text == "Cell 499" })
+                let identity = try XCTUnwrap(grid.cells.identities.last)
+                let last = try XCTUnwrap(grid.mounted[identity]?.view)
                 var bottom = graphene_point_t(x: Float(last.frame.width / 2), y: Float(last.frame.height))
                 var inGrid = graphene_point_t()
                 XCTAssertNotEqual(gtk_widget_compute_point(last.widget, grid.widget, &bottom, &inGrid), 0)
