@@ -20,7 +20,7 @@ extension MountedElement {
 
     /// The arrangement this page's content composes to, found down its arranged
     /// children. Slots stay with their owner; a found arrangement keeps its own.
-    var contentArrangement: MountedElement? {
+    public var contentArrangement: MountedElement? {
         func arrangement(in element: MountedElement) -> MountedElement? {
             if NodeType.pageTypes.contains(element.type) { return element }
             return element.currentChildren.lazy.compactMap(arrangement).first

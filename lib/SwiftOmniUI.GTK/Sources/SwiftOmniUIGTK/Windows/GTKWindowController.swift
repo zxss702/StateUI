@@ -126,8 +126,7 @@ final class GTKWindowController {
     /// carries the bars, or the frame around it does.
     private static func shownArrangement(_ element: MountedElement) -> MountedElement {
         var shown = element
-        while shown.type == .page, shown.currentChildren.count == 1,
-              let inner = shown.currentChildren.first, NodeType.pageTypes.contains(inner.type) {
+        while shown.type == .page, let inner = shown.contentArrangement {
             shown = inner
         }
         return shown
