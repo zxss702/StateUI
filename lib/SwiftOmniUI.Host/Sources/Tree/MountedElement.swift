@@ -98,9 +98,6 @@ import CRT
     private var created = false
     private var described = false
 
-    /// `SWIFTOMNIUI_PATCH=1` writes every patch applied to standard error - what the host heard, per element.
-    private static let patchLog = getenv("SWIFTOMNIUI_PATCH").map { String(cString: $0) == "1" } ?? false
-
     init(_ patch: HostPatch, tree: MountedTree, parent: MountedElement?) {
         id = patch.id
         type = patch.type
@@ -115,28 +112,6 @@ import CRT
 
     /// Applies a patch of this element.
     public func apply(_ patch: HostPatch) {
-        if Self.patchLog {
-            let kids: String = switch patch.children {
-            case .unchanged: "unchanged"
-            case .arranged(let list):
-                "arranged[" + list.map { "\($0.id):\($0.type.name)\($0.replace ? "!" : "")" }.joined(separator: ",") + "]"
-            case .changed(let list):
-                "changed[" + list.map { "\($0.id):\($0.type.name)\($0.replace ? "!" : "")" }.joined(separator: ",") + "]"
-            }
-            HostLog.writeStandardError(
-                "PATCH \(patch.type.name) id=\(patch.id) replace=\(patch.replace) "
-                    + "children=\(kids) props=\(patch.properties.keys.map(\.name).sorted().joined(separator: ",")) "
-                    + "cleared=\(patch.clearedProperties.map(\.name).sorted().joined(separator: ","))\n")
-            if let opacity = patch.properties[Prop("opacity")] {
-                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) opacity=\(opacity)\n")
-            }
-            if let valign = patch.properties[Prop("verticalAlignment")] {
-                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) verticalAlignment=\(valign)\n")
-            }
-            if let valign = patch.properties[Prop("verticalAlignmentDefault")] {
-                HostLog.writeStandardError("PATCH-VALUE \(patch.type.name) id=\(patch.id) verticalAlignmentDefault=\(valign)\n")
-            }
-        }
         guard let tree else { return }
         // A patch re-described a departing element: its removal turns around.
         if isDeparting { revive() }

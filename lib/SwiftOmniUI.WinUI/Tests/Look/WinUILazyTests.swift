@@ -577,14 +577,6 @@ final class WinUILazyTests: XCTestCase {
                         let tracks = Int((width + 10) / 106)
                         XCTAssertEqual(grid.cells.window?.perRun, tracks, "turn \(turn)")
                         XCTAssertGreaterThan(grid.mounted.count, tracks)
-                        #if DEBUG
-                        if turn == 0 {
-                            print("LAZY GRID own=\(grid.placedFrame) actual=\(grid.laidOutFrame) revision=\(grid.measurements.revision) measured=\(grid.measuredRevision)")
-                            for (identity, item) in grid.mounted.prefix(2) {
-                                print("LAZY CELL \(identity) placed=\(item.view.placedFrame) actual=\(item.view.laidOutFrame) desired=\(item.view.desiredSize) measured=\(String(describing: grid.measured[identity]))")
-                            }
-                        }
-                        #endif
                         for item in grid.mounted.values {
                             XCTAssertGreaterThanOrEqual(item.view.laidOutFrame.width, 96,
                                                        "turn \(turn): cells must not collapse to their text width")
@@ -705,9 +697,6 @@ final class WinUILazyTests: XCTestCase {
                     XCTAssertTrue(SetWindowPos(hwnd, HWND(bitPattern: -1), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)))
                     defer { _ = SetWindowPos(hwnd, HWND(bitPattern: -2), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)) }
                     let initial = try XCTUnwrap(lazy.mounted[lazy.cells.identities[0]])
-                    #if DEBUG
-                    print("LAZY SAMPLE count=\(count) complex=\(complex) kind=\(kind) frame=\(initial.view.laidOutFrame) pixels=\(initial.view.pixels(at: [(1, 1), (77, 1), (1, 20), (77, 20)]).map { String($0, radix: 16) })")
-                    #endif
                     let frame = scroll.scroller.laidOutFrame
                     let cross = horizontal
                         ? initial.view.origin.y - scroll.scroller.origin.y + 1
@@ -863,10 +852,6 @@ final class WinUILazyTests: XCTestCase {
                 XCTAssertTrue(ClientToScreen(hwnd, &screenPoint))
                 for target in [801.0, 4_001.0, 241.0, 0.0] {
                     let forward = target > previousOffset
-                    #if DEBUG
-                    var turns: [Double] = []
-                    let started = WinUIFrameClock.monotonic()
-                    #endif
                     let probe = WinUILazyScreenProbe(window: hwnd, points: [screenPoint])
                     let raw = Unmanaged.passRetained(probe).toOpaque()
                     let created = CreateThread(nil, 0, WinUILazyScreenProbe.entry, raw, 0, nil)
@@ -882,13 +867,7 @@ final class WinUILazyTests: XCTestCase {
                     swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                    horizontal ? target : 0, horizontal ? 0 : target, true)
                     for _ in 0..<80 {
-                        #if DEBUG
-                        let before = WinUIFrameClock.monotonic()
-                        #endif
                         host.step()
-                        #if DEBUG
-                        turns.append(WinUIFrameClock.monotonic() - before)
-                        #endif
                         let offset = horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y
                         XCTAssertGreaterThanOrEqual((offset - previousOffset) * (forward ? 1 : -1), -1,
                                                     "native scrolling must not jump backwards, kind \(kind)")
@@ -897,9 +876,6 @@ final class WinUILazyTests: XCTestCase {
                     probe.lock.lock()
                     let pixels = probe.samples.map(\.pixel)
                     probe.lock.unlock()
-                    #if DEBUG
-                    print("LAZY NATIVE kind=\(kind) target=\(target) duration=\(WinUIFrameClock.monotonic() - started) turns=\(turns.sorted().suffix(6)) colors=\(Set(pixels).count)")
-                    #endif
                     XCTAssertGreaterThan(Set(pixels).count, 3,
                                          "native scrolling must paint intermediate rows: kind \(kind), target \(target), samples \(pixels.count)")
                     XCTAssertFalse(pixels.contains(0x00FFFFFF),
@@ -946,14 +922,6 @@ final class WinUILazyTests: XCTestCase {
                     var point = POINT(x: LONG((expected.x - 32) * scale), y: LONG(expected.y * scale))
                     XCTAssertTrue(ClientToScreen(hwnd, &point))
                     let hit = try XCTUnwrap(WindowFromPoint(point))
-                    #if DEBUG
-                    if GetAncestor(hit, UINT(GA_ROOT)) != hwnd {
-                        var rectangle = RECT(), title = [WCHAR](repeating: 0, count: 512)
-                        _ = GetWindowRect(hwnd, &rectangle)
-                        _ = GetWindowTextW(GetAncestor(hit, UINT(GA_ROOT)), &title, Int32(title.count))
-                        print("LAZY SCREEN kind=\(kind) target=\(target) point=\(point) rect=\(rectangle) scale=\(scale) foreign=\(String(decoding: title.prefix { $0 != 0 }, as: UTF16.self))")
-                    }
-                    #endif
                     XCTAssertEqual(GetAncestor(hit, UINT(GA_ROOT)), hwnd)
                     let pixel = GetPixel(dc, point.x, point.y)
                     XCTAssertNotEqual(pixel, 0xFFFFFFFF)
@@ -1094,9 +1062,6 @@ final class WinUILazyTests: XCTestCase {
                     }
                 }
                 let end = scroll.scroller.standing
-                #if DEBUG
-                print("LAZY END phase=\(phase) native=\(end) document=\(scroll.scroller.laidOutFrame) lazy=\(lazy.laidOutFrame) total=\(lazy.cells.total) estimate=\(lazy.cells.extents.estimate) across=\(String(describing: lazy.measuredAcross)) revision=\(lazy.measurementRevision) window=\(String(describing: lazy.cells.window)) built=\(lazy.cells.built)")
-                #endif
                 XCTAssertEqual(end.offset.y, end.reach.y, accuracy: 1, "deletion must not leave a stale end anchor")
                 XCTAssertEqual(end.reach.y + scroll.scroller.laidOutFrame.height, lazy.cells.total, accuracy: 1,
                                "deletion and shrinking must resize the native document, not just the lazy children")
