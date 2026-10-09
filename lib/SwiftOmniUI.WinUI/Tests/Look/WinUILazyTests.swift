@@ -854,6 +854,9 @@ final class WinUILazyTests: XCTestCase {
                         .columns(.fixed(16), .fixed(64))
                         .columnSpacing(0)
                         .frame(width: 80, height: 40)
+                        .background(Color(red: 40 + row % 16 * 12,
+                                          green: 40 + row / 16 % 16 * 12,
+                                          blue: 40 + row / 256 % 16 * 12))
                     }
                     return ScrollView(horizontal ? .horizontal : .vertical) {
                         if kind == 0 {
@@ -875,10 +878,34 @@ final class WinUILazyTests: XCTestCase {
                 for _ in 0..<12 { host.step() }
                 let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
                 let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                let title = "SOUILazyNativeOffsets-\(kind)"
+                try XCTUnwrap(host.window).setTitle(title)
+                let name = Array(title.utf16) + [0]
+                let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
+                _ = SetForegroundWindow(hwnd)
+                XCTAssertTrue(SetWindowPos(hwnd, HWND(bitPattern: -1), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)))
+                defer { _ = SetWindowPos(hwnd, HWND(bitPattern: -2), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)) }
                 var previousOffset = horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y
+                let first = try XCTUnwrap(lazy.mounted[lazy.cells.identities[0]]?.view)
+                let sampleX = horizontal ? scroll.scroller.origin.x + 240 : first.origin.x + 8
+                let sampleY = horizontal ? first.origin.y + 1 : scroll.scroller.origin.y + 120
+                let sampleScale = Double(GetDpiForWindow(hwnd)) / 96
+                var screenPoint = POINT(x: LONG(sampleX * sampleScale), y: LONG(sampleY * sampleScale))
+                XCTAssertTrue(ClientToScreen(hwnd, &screenPoint))
                 for target in [801.0, 4_001.0, 241.0, 0.0] {
                     let forward = target > previousOffset
-                    var intermediate: Set<Int> = []
+                    let probe = WinUILazyScreenProbe(window: hwnd, points: [screenPoint])
+                    let raw = Unmanaged.passRetained(probe).toOpaque()
+                    let created = CreateThread(nil, 0, WinUILazyScreenProbe.entry, raw, 0, nil)
+                    if created == nil { Unmanaged<WinUILazyScreenProbe>.fromOpaque(raw).release() }
+                    let thread = try XCTUnwrap(created)
+                    defer {
+                        probe.lock.lock()
+                        probe.stopped = true
+                        probe.lock.unlock()
+                        _ = WaitForSingleObject(thread, 2_000)
+                        _ = CloseHandle(thread)
+                    }
                     swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                    horizontal ? target : 0, horizontal ? 0 : target, true)
                     for _ in 0..<80 {
@@ -886,10 +913,13 @@ final class WinUILazyTests: XCTestCase {
                         let offset = horizontal ? scroll.scroller.standing.offset.x : scroll.scroller.standing.offset.y
                         XCTAssertGreaterThanOrEqual((offset - previousOffset) * (forward ? 1 : -1), -1,
                                                     "native scrolling must not jump backwards, kind \(kind)")
-                        if abs(offset - target) > 1 { intermediate.insert(Int(offset)) }
                         previousOffset = offset
                     }
-                    XCTAssertGreaterThan(intermediate.count, 3, "native scrolling must display intermediate positions")
+                    probe.lock.lock()
+                    let pixels = probe.samples.map(\.pixel)
+                    probe.lock.unlock()
+                    XCTAssertGreaterThan(Set(pixels).count, 3, "native scrolling must paint intermediate rows")
+                    XCTAssertFalse(pixels.contains(0x00FFFFFF), "native animation exposed an unpainted row")
                     var native = [0.0, 0.0, 0.0, 0.0]
                     swiftomniui_winui_scroller_offset(scroll.scroller.handle, &native)
                     let offset = native[horizontal ? 0 : 1]
@@ -926,14 +956,6 @@ final class WinUILazyTests: XCTestCase {
                     XCTAssertTrue(swiftomniui_winui_reaches(button.handle,
                                                          expected.x + 8 - actual.x, expected.y - actual.y),
                                   "the correct row must be reachable at its independent viewport point")
-                    let window = try XCTUnwrap(host.window)
-                    let title = "SOUILazyNativeOffsets-\(kind)"
-                    window.setTitle(title)
-                    let name = Array(title.utf16) + [0]
-                    let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
-                    _ = SetForegroundWindow(hwnd)
-                    XCTAssertTrue(SetWindowPos(hwnd, HWND(bitPattern: -1), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)))
-                    defer { _ = SetWindowPos(hwnd, HWND(bitPattern: -2), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)) }
                     let dc = try XCTUnwrap(GetDC(nil))
                     defer { _ = ReleaseDC(nil, dc) }
                     let scale = Double(GetDpiForWindow(hwnd)) / 96
