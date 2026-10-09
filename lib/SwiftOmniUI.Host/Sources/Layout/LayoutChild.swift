@@ -24,6 +24,9 @@
 /// What a layout reads of one child: its margin, alignments, stated sizes and place in a grid or a ZStack.
 /// Design: docs/design/host/layout.md#the-layout-arithmetic
 @_spi(Host) public struct LayoutValues: Equatable, Sendable {
+    /// Automatic gaps follow the child's exposed edges, independently of its size.
+    public var spacing = LayoutSpacing()
+
     /// The space kept around the child, outside it.
     public var margin = EdgeInsets(0)
 

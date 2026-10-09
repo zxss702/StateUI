@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: Apache-2.0
+
+@_spi(Host) import SwiftOmniUI
+
+extension MountedElement {
+    /// The preferred gaps at the edges this element exposes to its parent.
+    public var layoutSpacing: LayoutSpacing {
+        if type == .text { return .text(size: spacingFontSize) }
+        if type == .checkBox || type == .switch || type == .radioButton { return .toggle }
+        return LayoutSpacing()
+    }
+
+    private var spacingFontSize: Double {
+        if let size = textLook.size { return size }
+        switch textLook.textStyle ?? .body {
+        case .largeTitle: return 26
+        case .title: return 22
+        case .title2: return 17
+        case .title3: return 15
+        case .headline, .body: return 13
+        case .subheadline, .callout: return 12
+        case .footnote: return 11
+        case .caption, .caption2: return 10
+        }
+    }
+}

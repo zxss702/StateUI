@@ -568,6 +568,7 @@ import CRT
     /// Design: docs/design/host/layout.md#the-layout-arithmetic
     public var layoutValues: LayoutValues {
         var values = LayoutValues()
+        values.spacing = layoutSpacing
         if let sides = value(.padding)?.numbers, sides.count >= 4 {
             values.margin = insets(.padding)
         }
