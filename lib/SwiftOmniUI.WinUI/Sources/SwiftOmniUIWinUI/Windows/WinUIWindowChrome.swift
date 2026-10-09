@@ -16,6 +16,7 @@ struct WinUIWindowChrome {
     var leading: WinUIView?
     var center: WinUIView?
     var trailing: WinUIView?
+    var leadingActions: [WinUIToolbarAction] = []
     var actions: [WinUIToolbarAction] = []
     var overflow: [WinUIToolbarAction] = []
     var background: HostValue?

@@ -136,9 +136,8 @@ final class WinUIWindowController {
         chrome.leading = composed.leading?.winUI.view
         chrome.center = composed.center?.winUI.view
         chrome.trailing = composed.trailing?.winUI.view
-        // The leading group opens the CommandBar's primary commands: its own leading edge has no
-        // second bar for them.
-        chrome.actions = composed.leadingActions.map(Self.action) + composed.primaryActions.map(Self.action)
+        chrome.leadingActions = composed.leadingActions.map(Self.action)
+        chrome.actions = composed.primaryActions.map(Self.action)
         chrome.overflow = composed.overflowActions.map(Self.action)
         chrome.background = composed.toolbarBackground?.enumeration == Visibility.hidden.rawValue
             ? Color.clear.propValue : composed.background

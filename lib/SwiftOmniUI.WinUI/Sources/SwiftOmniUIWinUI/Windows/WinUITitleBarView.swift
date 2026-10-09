@@ -41,9 +41,9 @@ final class WinUITitleBarView: WinUIView {
                 background != nil, background ?? 0, foreground != nil, foreground ?? 0, light.map { $0 ? 1 : 2 } ?? 0)
         }
 
-        let actions = chrome.actions + chrome.overflow
-        let overflows = chrome.actions.map { _ in false } + chrome.overflow.map { _ in true }
-        if actions.count != drawn.count || overflows != drawnOverflow
+        let actions = chrome.leadingActions + chrome.actions + chrome.overflow
+        let overflows = (chrome.leadingActions + chrome.actions).map { _ in false } + chrome.overflow.map { _ in true }
+        if actions.count != drawn.count || overflows != drawnOverflow || chrome.leadingActions.count != previous.leadingActions.count
             || !zip(actions, drawn).allSatisfy({ $0.draws(like: $1) }) {
             WinUIStrings.withCStrings(actions.map(\.title)) { titles in
                 WinUIStrings.withCStrings(actions.map { $0.identifier ?? "" }) { identifiers in
@@ -51,7 +51,7 @@ final class WinUITitleBarView: WinUIView {
                         swiftomniui_winui_title_bar_set_actions(
                             handle, titles, identifiers, icons, overflows, actions.map(\.isEnabled),
                             actions.map(\.view?.handle), actions.map { $0.spacer.map { Int32($0.rawValue) + 1 } ?? 0 },
-                            Int32(actions.count))
+                            Int32(actions.count), Int32(chrome.leadingActions.count))
                     }
                 }
             }

@@ -90,10 +90,10 @@ final class GTKPageFrame {
         if chrome.barBackground != self.chrome.barBackground || chrome.barForeground != self.chrome.barForeground {
             paintBar(background: chrome.barBackground, foreground: chrome.barForeground)
         }
-        showActions(leading: chrome.leadingActions, chrome.actions, overflow: chrome.overflow)
         showAppMenu(chrome.appMenu)
         showMainMenu(chrome.mainMenu)
         showSidebarButton(chrome.sidebar)
+        showActions(leading: chrome.leadingActions, chrome.actions, overflow: chrome.overflow)
         self.chrome = chrome
     }
 

@@ -132,6 +132,10 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_title_bar_make(int64_t view) {
         left.Spacing(4);
         left.Children().Append(controls::ContentControl());
         left.Children().Append(controls::ContentControl());
+        controls::CommandBar leadingActions;
+        leadingActions.Background(media::SolidColorBrush(winrt::Windows::UI::Color{0, 0, 0, 0}));
+        leadingActions.VerticalAlignment(xaml::VerticalAlignment::Center);
+        left.Children().Append(leadingActions);
         bar.LeftHeader(left);
         bar.Content(controls::ContentControl());
         bar.Loaded(guarded("handling Loaded", [](IInspectable const &sender, xaml::RoutedEventArgs const &) {
@@ -208,16 +212,20 @@ extern "C" int32_t swiftomniui_winui_title_bar_words(SwiftOmniUIObjectRef handle
 extern "C" void swiftomniui_winui_title_bar_set_actions(
     SwiftOmniUIObjectRef handle, char const *const *texts, char const *const *identifiers, char const *const *icons,
     bool const *overflows, bool const *enabled, SwiftOmniUIObjectRef const *contents, int32_t const *kinds,
-    int32_t count
+    int32_t count, int32_t leadingCount
 ) {
     try {
         auto bar = borrow<controls::TitleBar>(handle);
         auto view = winrt::unbox_value<int64_t>(bar.Tag());
         auto actions = rightHeader(bar).Children().GetAt(0).as<controls::CommandBar>();
+        auto leading = leftHeader(bar).Children().GetAt(2).as<controls::CommandBar>();
+        leading.PrimaryCommands().Clear();
+        leading.SecondaryCommands().Clear();
         actions.PrimaryCommands().Clear();
         actions.SecondaryCommands().Clear();
         for (int32_t index = 0; index < count; ++index) {
-            auto commands = overflows[index] ? actions.SecondaryCommands() : actions.PrimaryCommands();
+            auto commands = index < leadingCount ? leading.PrimaryCommands()
+                : overflows[index] ? actions.SecondaryCommands() : actions.PrimaryCommands();
             // A spacer: the platform's gap between entries, or all the room a flexible one takes - both a
             // separator here, a CommandBar having no stretchable room of its own.
             if (kinds[index] != 0) {

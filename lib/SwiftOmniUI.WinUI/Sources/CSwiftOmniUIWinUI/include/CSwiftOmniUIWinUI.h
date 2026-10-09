@@ -834,7 +834,8 @@ void swiftomniui_winui_title_bar_set(SwiftOmniUIObjectRef bar, char const *title
 void swiftomniui_winui_title_bar_set_actions(SwiftOmniUIObjectRef bar, char const *const *texts,
                                          char const *const *identifiers, char const *const *icons,
                                          bool const *overflows, bool const *enabled,
-                                         SwiftOmniUIObjectRef const *contents, int32_t const *kinds, int32_t count);
+                                         SwiftOmniUIObjectRef const *contents, int32_t const *kinds,
+                                         int32_t count, int32_t leadingCount);
 
 /// What a test reads: whether a title bar's words stand light (1), dark (2), or as the theme has them (0).
 int32_t swiftomniui_winui_title_bar_words(SwiftOmniUIObjectRef bar);
