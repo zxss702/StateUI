@@ -79,7 +79,7 @@ final class AppKitDriver: HostDriver {
     /// encoded it.
     private var restorable: [KeptWindow] = []
 
-    func start(clock: TestClock?, reducesMotion: Bool, _ page: @escaping @Sendable () -> any Page) -> MountedTree {
+    func start(clock: TestClock?, reducesMotion: Bool, _ page: @escaping @MainActor @Sendable () -> any Page) -> MountedTree {
         forgetWhatIsKept()
         return run(clock: clock, reducesMotion: reducesMotion) { OneWindowApplication(page: page) }
     }
