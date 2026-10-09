@@ -34,11 +34,9 @@ final class GTKWindowController {
     /// Shows what the element asks for now, the window it belongs to found by `windowOf`.
     func present(_ element: MountedElement, in runtime: HostRuntime, windowOf: (MountedElement) -> GTKWindow?) {
         self.element = element
-        window.setSize(width: element.value(.width)?.number, height: element.value(.height)?.number)
-        window.setMinimumSize(width: element.value(.minimumWidth)?.number, height: element.value(.minimumHeight)?.number)
-        window.setResizable(element.value(.resizability)?.enumeration)
 
         let changes = presentation.show(element, in: runtime.lifecycle)
+        GTKRenderer.log.note("PRESENT arrangement=\(presentation.arrangement.map { "\($0.type):\($0.id)" } ?? "nil") hidden=\(String(describing: changes.hidden)) view=\(presentation.arrangement?.gtk.view != nil)")
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         if let hidden = changes.hidden { window.setHidden(hidden) }
         if let (_, arrangement) = changes.arrangement {
@@ -56,6 +54,13 @@ final class GTKWindowController {
         if let overlay = changes.overlay { window.showOverlay(overlay?.gtk.view) }
         if let pages = changes.sheets { showSheets(pages, in: runtime) }
         refreshChrome()
+        let sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
+            guard let item = node.gtk.layoutItem else { return nil }
+            return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
+        }
+        window.apply(sizing)
+        window.setSize(width: element.value(.width)?.number, height: element.value(.height)?.number)
+        window.presentContent()
     }
 
     /// Takes the window down - the tree no longer holds it: its sheets first, then the window.
@@ -114,7 +119,7 @@ final class GTKWindowController {
             shown.gtk.composeChrome()
         }
         let chrome = WindowChrome(window: element, arrangement: presentation.arrangement)
-        window.setTitle(chrome.title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string)
+        window.setTitle(chrome.title ?? element.value(.title)?.string)
         window.setBackground(chrome.windowBackground)
     }
 
@@ -146,7 +151,7 @@ final class GTKWindowController {
         guard let element, let way = presentation.wayBack else { return false }
         switch way {
         case .pop(let stack):
-            return (stack.gtk.view as? GTKNavigationView)?.popByUser() ?? false
+            return stack.gtk.goBack()
         case .dismissSheet:
             runtime.goBack(way, in: element)
             return true

@@ -166,6 +166,7 @@ final class GTKRenderer {
             GTKEnvironment.reportDisplay(to: runtime.core, window: widget)
         }
         for (element, controller) in roster.windows {
+            GTKRenderer.log.note("WINDOW \(element.type) children=\(element.children.map { "\($0.type)" }.joined(separator: ","))")
             controller.present(element, in: runtime, windowOf: { [roster] in roster.controller(of: $0)?.window })
         }
     }

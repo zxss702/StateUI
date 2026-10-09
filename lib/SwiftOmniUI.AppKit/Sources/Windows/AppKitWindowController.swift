@@ -24,9 +24,6 @@ final class AppKitWindowController: NSWindowController {
     /// What the window shows, by the host layer's rule.
     let presentation = WindowPresentation()
 
-    /// The bounds the element asks, applied again on every presentation: they count the chrome, which can grow.
-    private var bounds: WindowBounds?
-
     /// What the element says the window is.
     private(set) var traits: WindowTraits?
 
@@ -185,26 +182,6 @@ final class AppKitWindowController: NSWindowController {
             value: element.value(.windowValue)?.string,
             kept: isMain ? record.kept : [:])
 
-        if let frame = changes.frame { request(frame, of: window) }
-        let asked = WindowFrame(of: element)
-        if !presented, asked.x == nil, asked.y == nil {
-            if let anchor = element.value(.defaultPosition)?.numbers, anchor.count == 2,
-               let area = window.screen?.visibleFrame {
-                // The anchor on the window lands the anchor on the work area;
-                // Cocoa counts y up, the point down.
-                window.setFrameOrigin(NSPoint(
-                    x: area.minX + (area.width - window.frame.width) * anchor[0],
-                    y: area.minY + (area.height - window.frame.height) * (1 - anchor[1])))
-            } else {
-                window.center()
-                if cascade > 0 {
-                    window.setFrameOrigin(NSPoint(
-                        x: window.frame.origin.x + CGFloat(cascade * 24),
-                        y: window.frame.origin.y - CGFloat(cascade * 24)))
-                }
-            }
-        }
-
         let arrangement = presentation.arrangement
         content.set(
             page: arrangement?.appKit.presentableViews.first,
@@ -217,11 +194,11 @@ final class AppKitWindowController: NSWindowController {
         }
         synchronizeModals(presentation.sheets.map(\.appKit))
 
-        if let bounds = changes.bounds { self.bounds = bounds }
-        if let bounds { bound(bounds, window) }
         if let traits = changes.traits { apply(traits, window) }
         if let hidden = changes.hidden { setHidden(hidden, window) }
         refreshVisiblePageChrome()
+        boundContent(element, window, requested: changes.frame)
+        place(element, window, cascade: cascade)
         host?.nativeWindowAvailable(window)
 
         guard !presented else {
@@ -231,6 +208,24 @@ final class AppKitWindowController: NSWindowController {
 
         presented = true
         if presentsWindow, !hiddenByScene { window.makeKeyAndOrderFront(nil) }
+    }
+
+    private func place(_ element: MountedElement, _ window: NSWindow, cascade: Int) {
+        let asked = WindowFrame(of: element)
+        guard !presented, asked.x == nil, asked.y == nil else { return }
+        if let anchor = element.value(.defaultPosition)?.numbers, anchor.count == 2,
+           let area = window.screen?.visibleFrame {
+            window.setFrameOrigin(NSPoint(
+                x: area.minX + (area.width - window.frame.width) * anchor[0],
+                y: area.minY + (area.height - window.frame.height) * (1 - anchor[1])))
+        } else {
+            window.center()
+            if cascade > 0 {
+                window.setFrameOrigin(NSPoint(
+                    x: window.frame.origin.x + CGFloat(cascade * 24),
+                    y: window.frame.origin.y - CGFloat(cascade * 24)))
+            }
+        }
     }
 
     /// Stands the window where the tree asks, each request alone: a size is the content area the title bar and
@@ -251,6 +246,20 @@ final class AppKitWindowController: NSWindowController {
         if let x = frame.x { topLeft.x = CGFloat(x) }
         if let y = frame.y, let screen = window.screen ?? NSScreen.main { topLeft.y = screen.visibleFrame.maxY - y }
         window.setFrameTopLeftPoint(topLeft)
+    }
+
+    private func boundContent(_ element: MountedElement, _ window: NSWindow, requested: WindowFrame?) {
+        let sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
+            guard let item = node.appKit.layoutItem else { return nil }
+            return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
+        }
+        bound(sizing.bounds, window)
+        if sizing.isResizable { window.styleMask.insert(.resizable) }
+        else { window.styleMask.remove(.resizable) }
+        if let requested { request(requested, of: window) }
+        let size = window.contentLayoutRect.size
+        let frame = sizing.constrain(LayoutSize(width: Double(size.width), height: Double(size.height)))
+        if !frame.isEmpty { request(frame, of: window) }
     }
 
     /// Bounds the content area as the tree asks; AppKit bounds the whole content view, which reaches under the title
@@ -283,21 +292,6 @@ final class AppKitWindowController: NSWindowController {
         content.isTranslucent = isTranslucent
         window.level = traits.floatsOnTop ? .floating : .normal
 
-        switch traits.resizability {
-        case WindowResizability.contentSize.rawValue:
-            let fitting = content.fittingSize
-            window.contentMinSize = fitting
-            window.contentMaxSize = fitting
-            window.styleMask.remove(.resizable)
-        case WindowResizability.contentMinSize.rawValue:
-            window.contentMinSize = content.fittingSize
-        default:
-            if !window.styleMask.contains(.resizable) {
-                window.styleMask.insert(.resizable)
-                window.contentMaxSize = NSSize(
-                    width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-            }
-        }
     }
 
     /// Takes the window off the screen while its scene hides it, and back once it does not.

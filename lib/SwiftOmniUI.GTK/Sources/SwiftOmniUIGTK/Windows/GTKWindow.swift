@@ -29,6 +29,9 @@ final class GTKWindow {
     private(set) var overlay: GTKView?
 
     private var presented = false
+    private var contentReady = false
+    private var contentSizing: WindowContentSizing?
+    private var constrainingSize = false
 
     /// Whether the window's scene keeps it off screen; a hidden window does not present.
     private var hidden = false
@@ -64,6 +67,11 @@ final class GTKWindow {
         number = Self.nextNumber
         Self.nextNumber += 1
         Self.open[number] = self
+        for property in ["default-width", "default-height"] {
+            connectNotify(UnsafeMutableRawPointer(widget), property, number: number) { _, _, data in
+                MainActor.assumeIsolated { GTKWindow.open[viewNumber(data)]?.constrainSize() }
+            }
+        }
         connectAnswering(UnsafeMutableRawPointer(widget), "close-request", number: number) { _, data in
             MainActor.assumeIsolated {
                 guard let onClosedByUser = GTKWindow.open[viewNumber(data)]?.onClosedByUser else { return 0 }
@@ -119,7 +127,8 @@ final class GTKWindow {
         var current: (width: Int32, height: Int32) = (0, 0)
         gtk_window_get_default_size(widget.of(GtkWindow.self), &current.width, &current.height)
         gtk_window_set_default_size(
-            widget.of(GtkWindow.self), width.map { Int32($0) } ?? current.width, height.map { Int32($0) } ?? current.height)
+            widget.of(GtkWindow.self), width.map { Int32($0) } ?? current.width,
+            height.map { Int32(($0 + chromeHeight()).rounded(.up)) } ?? current.height)
     }
 
     /// How small the user may make the window; GNOME's smallest where the element says none.
@@ -127,6 +136,44 @@ final class GTKWindow {
         guard width != minimumSize.width || height != minimumSize.height else { return }
         minimumSize = (width, height)
         gtk_widget_set_size_request(widget, Int32(width ?? 360), Int32(height ?? 294))
+    }
+
+    /// Refreshes content constraints without rewriting the declared default size.
+    func apply(_ sizing: WindowContentSizing) {
+        var sizing = sizing
+        let chrome = chromeHeight()
+        sizing.bounds.minimumHeight = sizing.bounds.minimumHeight.map { $0 + chrome }
+        sizing.bounds.maximumHeight = sizing.bounds.maximumHeight.map { $0 + chrome }
+        contentSizing = sizing
+        gtk_widget_set_size_request(widget,
+            Int32((sizing.bounds.minimumWidth ?? 360).rounded(.up)),
+            Int32((sizing.bounds.minimumHeight ?? 294).rounded(.up)))
+        gtk_window_set_resizable(widget.of(GtkWindow.self), sizing.isResizable ? 1 : 0)
+        constrainSize()
+    }
+
+    private func chromeHeight() -> Double {
+        guard let pageFrame, let content else { return 0 }
+        var least: Int32 = 0
+        var width: Int32 = 0
+        var height: Int32 = 0
+        gtk_widget_measure(pageFrame.widget, GTK_ORIENTATION_HORIZONTAL, -1, &least, &width, nil, nil)
+        gtk_widget_measure(pageFrame.widget, GTK_ORIENTATION_VERTICAL, width, &least, &height, nil, nil)
+        return max(0, Double(height) - content.measure(width: Double(width), height: nil).height)
+    }
+
+    private func constrainSize() {
+        guard !constrainingSize, let contentSizing else { return }
+        var width: Int32 = 0
+        var height: Int32 = 0
+        gtk_window_get_default_size(widget.of(GtkWindow.self), &width, &height)
+        let frame = contentSizing.constrain(LayoutSize(width: Double(width), height: Double(height)))
+        let nextWidth = frame.width.map { Int32($0.rounded(.up)) } ?? width
+        let nextHeight = frame.height.map { Int32($0.rounded(.up)) } ?? height
+        guard nextWidth != width || nextHeight != height else { return }
+        constrainingSize = true
+        defer { constrainingSize = false }
+        gtk_window_set_default_size(widget.of(GtkWindow.self), nextWidth, nextHeight)
     }
 
     /// Shows `view` as the window's content, as it stands: an arrangement whose pages carry their header bars.
@@ -165,7 +212,7 @@ final class GTKWindow {
         self.hidden = hidden
         if presented {
             gtk_widget_set_visible(widget, hidden ? 0 : 1)
-        } else if !hidden, gtk_overlay_get_child(layers.opaque) != nil {
+        } else if contentReady, !hidden, gtk_overlay_get_child(layers.opaque) != nil {
             presented = true
             present()
         }
@@ -173,14 +220,25 @@ final class GTKWindow {
 
     private func setContent(_ widget: GTKWidget?) {
         gtk_overlay_set_child(layers.opaque, widget)
-        guard widget != nil, !presented, !hidden else { return }
+        GTKRenderer.log.note("SETCONTENT widget=\(widget != nil) ready=\(contentReady) presented=\(presented) hidden=\(hidden)")
+        guard widget != nil, contentReady, !presented, !hidden else { return }
 
+        presented = true
+        present()
+    }
+
+    /// Presents only after the content's constraints and size have been applied.
+    func presentContent() {
+        contentReady = true
+        GTKRenderer.log.note("PRESENT-CONTENT presented=\(presented) hidden=\(hidden) child=\(gtk_overlay_get_child(layers.opaque) != nil)")
+        guard !presented, !hidden, gtk_overlay_get_child(layers.opaque) != nil else { return }
         presented = true
         present()
     }
 
     /// Brings the window forward.
     func present() {
+        GTKRenderer.log.note("PRESENT-WINDOW hidden=\(hidden)")
         guard !hidden else { return }
         gtk_window_present(widget.of(GtkWindow.self))
     }

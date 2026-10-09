@@ -19,6 +19,17 @@
     /// The greatest height, where said.
     public var maximumHeight: Double?
 
+    /// A range with an open end wherever no constraint is stated.
+    public init(
+        minimumWidth: Double? = nil, minimumHeight: Double? = nil,
+        maximumWidth: Double? = nil, maximumHeight: Double? = nil
+    ) {
+        self.minimumWidth = minimumWidth
+        self.minimumHeight = minimumHeight
+        self.maximumWidth = maximumWidth.map { max($0, minimumWidth ?? 0) }
+        self.maximumHeight = maximumHeight.map { max($0, minimumHeight ?? 0) }
+    }
+
     /// What `window` allows now: each a finite size not negative, a greatest smaller than the least being the least.
     @MainActor public init(of window: MountedElement) {
         minimumWidth = WindowFrame.extent(.minimumWidth, of: window)

@@ -17,6 +17,7 @@ final class WinUIWindowController {
 
     /// What the window shows, by the host layer's rule.
     private let presentation = WindowPresentation()
+    private var traits: WindowTraits?
 
     /// The sheets the window shows, one for each page its modal stack presents, the last on top.
     private var sheets: [(element: MountedElement, sheet: WinUISheetView)] = []
@@ -33,23 +34,36 @@ final class WinUIWindowController {
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         stand(changes)
+        if let (_, arrangement) = changes.arrangement { window.show(arrangement?.winUI.view, present: false) }
+        showSheets(presentation.sheets)
+        if let overlay = changes.overlay { window.showOverlay(overlay?.winUI.view) }
+        refreshChrome(in: runtime)
+        boundContent(element, requested: changes.frame)
         let asked = WindowFrame(of: element)
         if asked.x == nil, asked.y == nil, let anchor = element.value(.defaultPosition)?.numbers {
             window.place(anchor)
         }
-        if let (_, arrangement) = changes.arrangement { window.show(arrangement?.winUI.view) }
-        showSheets(presentation.sheets)
-        if let overlay = changes.overlay { window.showOverlay(overlay?.winUI.view) }
+        window.presentContent()
     }
 
     /// Stands the window as the element asks: the place, the size, the bounds and the traits the tree changed, and
     /// whether its scene hides it.
     /// Design: docs/design/platforms/winui/runtime.md#a-windows-frame
     private func stand(_ changes: WindowPresentation.Changes) {
-        if let frame = changes.frame { window.request(frame) }
-        if let bounds = changes.bounds { window.bound(bounds) }
-        if let traits = changes.traits { window.apply(traits) }
+        if let traits = changes.traits { self.traits = traits }
         if let hidden = changes.hidden { window.setHidden(hidden) }
+    }
+
+    private func boundContent(_ element: MountedElement, requested: WindowFrame?) {
+        let sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
+            guard let item = node.winUI.layoutItem else { return nil }
+            return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
+        }
+        if let traits { window.apply(traits, isResizable: sizing.isResizable) }
+        window.boundContent(sizing.bounds)
+        if let requested { window.requestContent(requested) }
+        let frame = sizing.constrain(window.contentSize)
+        if !frame.isEmpty { window.requestContent(frame) }
     }
 
     /// Keeps a sheet for each page shown as one, in its order, each under its page's title.

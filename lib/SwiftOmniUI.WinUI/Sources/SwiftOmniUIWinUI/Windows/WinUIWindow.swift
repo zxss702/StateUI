@@ -82,21 +82,53 @@ final class WinUIWindow {
         swiftomniui_winui_window_set_limits(handle, limits.map { $0 ?? 0 })
     }
 
+    private var clientSize: LayoutSize {
+        var values = [Double](repeating: 0, count: 13)
+        swiftomniui_winui_window_frame(handle, &values)
+        return LayoutSize(width: values[2], height: values[3])
+    }
+
+    private var chromeHeight: Double {
+        let bars: [WinUIView] = [titleBar] + (menuBarStands ? [menuBar] : []) + (tabsStandInWindow ? [tabRow] : [])
+        return bars.reduce(0) { $0 + $1.measure(width: clientSize.width, height: nil).height }
+    }
+
+    var contentSize: LayoutSize {
+        let size = clientSize
+        return LayoutSize(width: size.width, height: max(0, size.height - chromeHeight))
+    }
+
+    func boundContent(_ bounds: WindowBounds) {
+        var bounds = bounds
+        let chrome = chromeHeight
+        bounds.minimumHeight = bounds.minimumHeight.map { $0 + chrome }
+        bounds.maximumHeight = bounds.maximumHeight.map { $0 + chrome }
+        bound(bounds)
+    }
+
+    func requestContent(_ frame: WindowFrame) {
+        var frame = frame
+        frame.height = frame.height.map { $0 + chromeHeight }
+        request(frame)
+    }
+
     /// Makes the window what `traits` says: a button it leaves unsaid is WinUI's own, which lets the user press it.
     /// `.contentSize` stands it as a fixed-size window does - the caption keeps only the button that closes it.
-    func apply(_ traits: WindowTraits) {
-        let sizedByContent = traits.resizability == WindowResizability.contentSize.rawValue
+    func apply(_ traits: WindowTraits, isResizable: Bool? = nil) {
+        let sizedByContent = isResizable.map { !$0 } ?? (traits.resizability == WindowResizability.contentSize.rawValue)
         swiftomniui_winui_window_set_traits(
             handle, traits.isMaximizable ?? !sizedByContent, traits.isMinimizable ?? !sizedByContent,
             !sizedByContent, traits.isTranslucent, traits.floatsOnTop)
     }
 
     /// Shows `view` as the window's content - the first one activates the window, unless its scene hides it.
-    func show(_ view: WinUIView?) {
+    func show(_ view: WinUIView?, present: Bool = true) {
         content = view
         swiftomniui_winui_window_set_content(handle, view?.handle)
-        activateFirstTime()
+        if present { activateFirstTime() }
     }
+
+    func presentContent() { activateFirstTime() }
 
     /// Hides the window as its scene goes behind another, or shows it again without activating it; one never shown
     /// is activated as it is first shown.

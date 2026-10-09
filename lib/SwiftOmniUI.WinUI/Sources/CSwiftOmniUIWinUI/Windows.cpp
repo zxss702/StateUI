@@ -324,14 +324,16 @@ extern "C" void swiftomniui_winui_window_set_limits(SwiftOmniUIObjectRef handle,
         auto presenter = window.AppWindow().Presenter().try_as<windowing::OverlappedPresenter>();
         if (!presenter) return;
         auto pixels = scale(window);
-        auto size = [&](double dips) -> winrt::Windows::Foundation::IReference<int32_t> {
+        auto outer = window.AppWindow().Size();
+        auto client = window.AppWindow().ClientSize();
+        auto size = [&](double dips, int32_t border) -> winrt::Windows::Foundation::IReference<int32_t> {
             if (dips <= 0) return nullptr;
-            return static_cast<int32_t>(std::lround(dips * pixels));
+            return static_cast<int32_t>(std::lround(dips * pixels)) + border;
         };
-        presenter.PreferredMinimumWidth(size(limits[0]));
-        presenter.PreferredMinimumHeight(size(limits[1]));
-        presenter.PreferredMaximumWidth(size(limits[2]));
-        presenter.PreferredMaximumHeight(size(limits[3]));
+        presenter.PreferredMinimumWidth(size(limits[0], outer.Width - client.Width));
+        presenter.PreferredMinimumHeight(size(limits[1], outer.Height - client.Height));
+        presenter.PreferredMaximumWidth(size(limits[2], outer.Width - client.Width));
+        presenter.PreferredMaximumHeight(size(limits[3], outer.Height - client.Height));
     } catch (...) {
         report("bounding a window");
     }
@@ -371,13 +373,14 @@ extern "C" void swiftomniui_winui_window_frame(SwiftOmniUIObjectRef handle, doub
         values[2] = size.Width / pixels;
         values[3] = size.Height / pixels;
         auto presenter = app.Presenter().try_as<windowing::OverlappedPresenter>();
-        auto dips = [&](winrt::Windows::Foundation::IReference<int32_t> const &value) {
-            return value ? value.Value() / pixels : 0.0;
+        auto outer = app.Size();
+        auto dips = [&](winrt::Windows::Foundation::IReference<int32_t> const &value, int32_t border) {
+            return value ? std::max(0, value.Value() - border) / pixels : 0.0;
         };
-        values[4] = presenter ? dips(presenter.PreferredMinimumWidth()) : 0;
-        values[5] = presenter ? dips(presenter.PreferredMinimumHeight()) : 0;
-        values[6] = presenter ? dips(presenter.PreferredMaximumWidth()) : 0;
-        values[7] = presenter ? dips(presenter.PreferredMaximumHeight()) : 0;
+        values[4] = presenter ? dips(presenter.PreferredMinimumWidth(), outer.Width - size.Width) : 0;
+        values[5] = presenter ? dips(presenter.PreferredMinimumHeight(), outer.Height - size.Height) : 0;
+        values[6] = presenter ? dips(presenter.PreferredMaximumWidth(), outer.Width - size.Width) : 0;
+        values[7] = presenter ? dips(presenter.PreferredMaximumHeight(), outer.Height - size.Height) : 0;
         values[8] = presenter && presenter.IsMaximizable() ? 1 : 0;
         values[9] = presenter && presenter.IsMinimizable() ? 1 : 0;
         values[10] = window.SystemBackdrop().try_as<xaml::Media::DesktopAcrylicBackdrop>() ? 1 : 0;
