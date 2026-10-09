@@ -21,6 +21,21 @@ extension MountedElement {
         currentChildren.filter { $0.standsShown && $0.bool(.isLayoutDecoration) != true }
     }
 
+    private var containerSpacing: LayoutSpacing {
+        let children = spacingChildren
+        guard let first = children.first, let last = children.last else { return .zero }
+        let vertical = type == .vStack || type == .lazyVStack
+        let horizontal = type == .hStack || type == .lazyHStack || type == .gridRow
+        var result = LayoutSpacing.zero
+        let cross: Edge.Set = vertical ? .horizontal : horizontal ? .vertical : .all
+        for child in children { result.formUnion(child.layoutSpacing, edges: cross) }
+        if vertical || horizontal {
+            result.formUnion(first.layoutSpacing, edges: vertical ? .top : .leading)
+            result.formUnion(last.layoutSpacing, edges: vertical ? .bottom : .trailing)
+        }
+        return result
+    }
+
     private var spacingFontSize: Double {
         if let size = textLook.size { return size }
         switch textLook.textStyle ?? .body {

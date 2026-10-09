@@ -52,12 +52,14 @@ class WinUILazyView: WinUITravellingLayout {
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
         self.cells = cells
+        cells.extents.axis = axis
         super.init()
         swiftomniui_winui_panel_watch_viewport(handle, true)
     }
 
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: WinUILayoutItem)]) {
+        cells.updateSpacing()
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
         guard now.keys != mounted.keys || now.contains(where: {
             mounted[$0.key]?.view !== $0.value.view || mounted[$0.key]?.values != $0.value.values
@@ -248,8 +250,8 @@ final class WinUILazyStackView: WinUILazyView {
     private var preparing = false
 
     /// The room between two children.
-    var spacing = 0.0 {
-        didSet { if spacing != oldValue { cells.extents.spacing = spacing; invalidateMeasurements() } }
+    var spacing: Double? {
+        didSet { cells.extents.spacing = spacing; if spacing != oldValue { invalidateMeasurements() } }
     }
 
     /// The room inside the stack's own edge.
@@ -296,7 +298,7 @@ final class WinUILazyStackView: WinUILazyView {
                 let extent = axis == .vertical
                     ? size.height + margin.top + margin.bottom
                     : size.width + margin.left + margin.right
-                extents.measure(identity, extent: extent)
+                extents.measure(identity, extent: extent, preference: item.values.spacing)
             }
             acrossSize = mounted.compactMap { identity, item -> Double? in
                 guard !item.departing, let size = sizes[identity]?.size else { return nil }

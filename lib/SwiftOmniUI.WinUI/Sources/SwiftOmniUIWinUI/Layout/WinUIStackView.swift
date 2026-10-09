@@ -11,7 +11,7 @@ final class WinUIStackView: WinUITravellingLayout {
     let axis: StackArithmetic.Axis
 
     /// The room between two children, in DIPs.
-    var spacing = 0.0 {
+    var spacing: Double? {
         didSet { if spacing != oldValue { invalidateMeasurements() } }
     }
 

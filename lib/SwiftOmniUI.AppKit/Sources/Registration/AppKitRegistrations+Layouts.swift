@@ -14,21 +14,21 @@ extension AppKitRegistrations {
     static func layouts(_ registry: Registry<NSView>) {
         registry.add(VStackContract.self, create: { _ in AppKitStackView(axis: .vertical) }) { stack in
             stack.applies(Self.stackMembers) { view, values in
-                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
         }
 
         registry.add(HStackContract.self, create: { _ in AppKitStackView(axis: .horizontal) }) { stack in
             stack.applies(Self.stackMembers) { view, values in
-                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
         }
 
         registry.add(LazyVStackContract.self, madeByHost: AppKitLazyStackView.self) { lazy in
             lazy.applies(Self.stackMembers + [LazyVStackContract.items]) { view, values in
-                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
             lazy.raises(LazyVStackContract.realizedChanged)
@@ -36,7 +36,7 @@ extension AppKitRegistrations {
 
         registry.add(LazyHStackContract.self, madeByHost: AppKitLazyStackView.self) { lazy in
             lazy.applies(Self.stackMembers + [LazyHStackContract.items]) { view, values in
-                view.spacing = CGFloat(values[StackBaseContract.spacing] ?? 0)
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = Self.edgeInsets(values[PaddingElementContract.contentPadding])
             }
             lazy.raises(LazyHStackContract.realizedChanged)

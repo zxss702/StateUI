@@ -45,6 +45,7 @@ class AppKitLazyView: AppKitTravellingLayout, AppKitMeasurementCaching {
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
         self.cells = cells
+        cells.extents.axis = axis
         super.init(frame: .zero)
     }
 
@@ -57,6 +58,7 @@ class AppKitLazyView: AppKitTravellingLayout, AppKitMeasurementCaching {
 
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: AppKitLayoutItem)]) {
+        cells.updateSpacing()
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
         guard now.keys != held.keys || now.contains(where: {
             held[$0.key]?.view !== $0.value.view || held[$0.key]?.values != $0.value.values
@@ -225,8 +227,8 @@ class AppKitLazyView: AppKitTravellingLayout, AppKitMeasurementCaching {
 
 /// A lazy stack: one child a place.
 final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring {
-    var spacing: CGFloat = 0 {
-        didSet { if spacing != oldValue { cells.extents.spacing = Double(spacing); invalidateMeasurements() } }
+    var spacing: Double? {
+        didSet { cells.extents.spacing = spacing; if spacing != oldValue { invalidateMeasurements() } }
     }
     var padding = NSEdgeInsets() {
         didSet {
@@ -286,7 +288,7 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
-            cells.extents.measure(identity, extent: extent)
+            cells.extents.measure(identity, extent: extent, preference: item.values.spacing)
         }
         let cross = held.compactMap { identity, item -> Double? in
             guard !item.departing, let size = measured[identity]?.size else { return nil }

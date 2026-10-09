@@ -43,11 +43,13 @@ class GTKLazyView: GTKTravellingLayout {
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
         self.cells = cells
+        cells.extents.axis = axis
         super.init()
     }
 
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: GTKLayoutItem)]) {
+        cells.updateSpacing()
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
         guard now.keys != mounted.keys || now.contains(where: {
             mounted[$0.key]?.view !== $0.value.view || mounted[$0.key]?.values != $0.value.values
@@ -205,8 +207,8 @@ class GTKLazyView: GTKTravellingLayout {
 /// A lazy stack: one child a place.
 final class GTKLazyStackView: GTKLazyView {
     /// The room between two children.
-    var spacing = 0.0 {
-        didSet { if spacing != oldValue { cells.extents.spacing = spacing; invalidateMeasurements() } }
+    var spacing: Double? {
+        didSet { cells.extents.spacing = spacing; if spacing != oldValue { invalidateMeasurements() } }
     }
 
     /// The room inside the stack's own edge.
@@ -259,7 +261,7 @@ final class GTKLazyStackView: GTKLazyView {
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
-            cells.extents.measure(identity, extent: extent)
+            cells.extents.measure(identity, extent: extent, preference: item.values.spacing)
         }
         let cross = mounted.compactMap { identity, item -> Double? in
             guard !item.departing, let size = measured[identity]?.size else { return nil }

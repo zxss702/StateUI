@@ -46,7 +46,7 @@ extension WinUIRegistrations {
 
         registry.add(LazyVStackContract.self, madeByHost: WinUILazyStackView.self) { lazy in
             lazy.applies(stackMembers + [LazyVStackContract.items]) { view, values in
-                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
@@ -56,7 +56,7 @@ extension WinUIRegistrations {
 
         registry.add(LazyHStackContract.self, madeByHost: WinUILazyStackView.self) { lazy in
             lazy.applies(stackMembers + [LazyHStackContract.items]) { view, values in
-                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
@@ -166,7 +166,7 @@ extension WinUIRegistrations {
     ]
 
     private static func applyStack<Realized: ElementContract>(_ view: WinUIStackView, _ values: ElementValues<Realized>) {
-        view.spacing = values[StackBaseContract.spacing] ?? 0
+        view.spacing = values[StackBaseContract.spacing]
         view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
     }
 }

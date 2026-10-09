@@ -95,6 +95,14 @@
         positions[identity]
     }
 
+    /// Populate stack gaps before hosts ask for the initial document size.
+    public func updateSpacing() {
+        guard element?.type == .lazyVStack || element?.type == .lazyHStack else { return }
+        for (place, item) in mounted {
+            extents.setPreference(item.layoutSpacing, for: identities[place])
+        }
+    }
+
     /// The mounted subtree of `identity`, where there is one.
     public func item(_ identity: String) -> MountedElement? {
         element?.children.first {
@@ -198,9 +206,14 @@
 /// The host invalidates measurements when the source or its cross-axis size changes.
 @_spi(Host) public struct LazyExtents: Sendable {
     /// The spacing between adjacent children or runs.
-    public var spacing: Double = 0 {
+    public var spacing: Double? = 0 {
         didSet { if spacing != oldValue { revision += 1; prefix = [] } }
     }
+    /// The axis whose opposing edge preferences determine automatic gaps.
+    public var axis: StackArithmetic.Axis = .vertical {
+        didSet { if axis != oldValue { revision += 1; prefix = [] } }
+    }
+    private var preferences: [String: LayoutSpacing] = [:]
     /// Space before the first and after the last child or run.
     public var padding: (head: Double, tail: Double) = (0, 0) {
         didSet { if padding != oldValue { revision += 1; prefix = [] } }
@@ -217,7 +230,8 @@
     public init() {}
 
     /// A complete child measurement. Zero is a valid size.
-    public mutating func measure(_ identity: String, extent: Double) {
+    public mutating func measure(_ identity: String, extent: Double, preference: LayoutSpacing? = nil) {
+        if let preference { setPreference(preference, for: identity) }
         guard extent.isFinite, extent >= 0, measured[identity] != extent else { return }
         let previous = measured[identity] ?? estimate
         sum += extent - (measured[identity] ?? 0)
@@ -230,9 +244,18 @@
         estimate = next
     }
 
+    /// Edge preferences are known as soon as the subtree mounts, before native measurement.
+    public mutating func setPreference(_ preference: LayoutSpacing, for identity: String) {
+        guard preferences[identity] != preference else { return }
+        preferences[identity] = preference
+        revision += 1
+        prefix = []
+    }
+
     /// Reordering invalidates positions even when every identity survives.
     public mutating func keep(identities: Set<String>) {
         measured = measured.filter { identities.contains($0.key) }
+        preferences = preferences.filter { identities.contains($0.key) }
         sum = measured.values.reduce(0, +)
         estimate = measured.isEmpty ? 44 : sum / Double(measured.count)
         revision += 1
@@ -253,13 +276,22 @@
         measured[identity] ?? estimate
     }
 
+    /// No gap follows the last item. Unbuilt neighbours use ordinary edge preferences.
+    private func gap(after place: Int, in identities: [String]) -> Double {
+        guard place + 1 < identities.count else { return 0 }
+        if let spacing { return spacing }
+        let first = preferences[identities[place]] ?? LayoutSpacing()
+        let second = preferences[identities[place + 1]] ?? LayoutSpacing()
+        return first.distance(to: second, along: axis)
+    }
+
     /// The prefix is rebuilt once per geometry change, never once per child.
     public mutating func offset(of place: Int, in identities: [String]) -> Double {
         if prefix.count != identities.count + 1 {
             prefix = [padding.head]
             prefix.reserveCapacity(identities.count + 1)
             for index in 0..<identities.count {
-                prefix.append(prefix[index] + extent(of: identities[index]) + spacing)
+                prefix.append(prefix[index] + extent(of: identities[index]) + gap(after: index, in: identities))
             }
         }
         return prefix[max(0, min(place, identities.count))]
@@ -268,7 +300,7 @@
     /// Estimated length of the entire data source, including both paddings.
     public mutating func total(in identities: [String]) -> Double {
         guard identities.count > 0 else { return padding.head + padding.tail }
-        return offset(of: identities.count, in: identities) + padding.tail - spacing
+        return offset(of: identities.count, in: identities) + padding.tail
     }
 
     /// Only actual intersections count as visible; spacing is not a child.
@@ -279,7 +311,7 @@
         var lower = 0, upper = identities.count
         while lower < upper {
             let middle = lower + (upper - lower) / 2
-            if prefix[middle + 1] - spacing <= lo { lower = middle + 1 }
+            if prefix[middle + 1] - gap(after: middle, in: identities) <= lo { lower = middle + 1 }
             else { upper = middle }
         }
         let first = lower

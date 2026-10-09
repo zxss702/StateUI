@@ -15,13 +15,28 @@
         case vertical
     }
 
+    /// The gap before each child; hidden children never interrupt adjacency.
+    @MainActor
+    public static func gaps<Child: LayoutChild>(
+        of items: [Child], axis: Axis, spacing: Double?
+    ) -> [Double] {
+        var previous: LayoutSpacing?
+        return items.map { item in
+            guard item.isShown else { return 0 }
+            let preference = item.values.spacing
+            defer { previous = preference }
+            guard let previous else { return 0 }
+            return spacing ?? previous.distance(to: preference, along: axis)
+        }
+    }
+
     /// The room a stack's shown children take, each measured once for the width offered.
     @MainActor
     public static func size<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, width offered: Double?
+        of items: [Child], axis: Axis, spacing: Double?, padding: EdgeInsets, width offered: Double?
     ) -> LayoutSize {
         let visible = items.filter(\.isShown)
-        let gaps = spacing * Double(max(visible.count - 1, 0))
+        let gaps = Self.gaps(of: visible, axis: axis, spacing: spacing).reduce(0, +)
         var along = 0.0
         var across = 0.0
 
@@ -59,7 +74,7 @@
     /// are turned about the middle of `bounds`.
     @MainActor
     public static func places<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect,
+        of items: [Child], axis: Axis, spacing: Double?, padding: EdgeInsets, in bounds: Rect,
         direction: LayoutDirection
     ) -> [Rect?] {
         leftToRight(of: items, axis: axis, spacing: spacing, padding: padding, in: bounds)
@@ -69,7 +84,7 @@
     /// The places as a layout written left to right has them.
     @MainActor
     private static func leftToRight<Child: LayoutChild>(
-        of items: [Child], axis: Axis, spacing: Double, padding: EdgeInsets, in bounds: Rect
+        of items: [Child], axis: Axis, spacing: Double?, padding: EdgeInsets, in bounds: Rect
     ) -> [Rect?] {
         let content = bounds.inset(padding)
         let naturals = items.map { item -> LayoutSize in
@@ -94,17 +109,22 @@
         // The row or column stands centered in the room the children do not
         // take - the way SwiftUI's stacks stand, the flexible children's
         // shares already counted in `extents`.
-        var taken = spacing * Double(max(items.filter(\.isShown).count - 1, 0))
+        let gaps = Self.gaps(of: items, axis: axis, spacing: spacing)
+        var taken = gaps.reduce(0, +)
         for (item, along) in zip(items, extents) where item.isShown {
             let margin = item.values.margin
             taken += along + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)
         }
         let leftover = (axis == .vertical ? content.height : content.width) - taken
         var offset = (axis == .vertical ? content.y : content.x) + max(0, leftover) / 2
+        var index = 0
 
         return zip(items, zip(naturals, extents)).map { item, pair in
             let (natural, along) = pair
+            let gap = gaps[index]
+            index += 1
             guard item.isShown else { return nil }
+            offset += gap
             let values = item.values
             let margin = values.margin
 
@@ -122,7 +142,7 @@
                     guide: values.horizontalGuide?.slot == values.horizontal
                         ? values.horizontalGuide?.offset : nil)
                 let place = Rect(x: x, y: offset, width: width, height: along)
-                offset += along + margin.bottom + spacing
+                offset += along + margin.bottom
                 return place
 
             case .horizontal:
@@ -144,7 +164,7 @@
                             ? values.verticalGuide?.offset : nil)
                 }
                 let place = Rect(x: offset, y: y, width: along, height: height)
-                offset += along + margin.right + spacing
+                offset += along + margin.right
                 return place
             }
         }
@@ -155,7 +175,7 @@
     /// runs short.
     @MainActor
     private static func alongs<Child: LayoutChild>(
-        _ items: [Child], naturals: [LayoutSize], axis: Axis, spacing: Double, in content: Rect
+        _ items: [Child], naturals: [LayoutSize], axis: Axis, spacing: Double?, in content: Rect
     ) -> [Double] {
         var extents = zip(items, naturals).map { item, natural -> Double in
             guard item.isShown else { return 0 }
@@ -167,7 +187,7 @@
                 ? item.values.boundedHeight(max(minimum, base))
                 : item.values.boundedWidth(max(minimum, base))
         }
-        var taken = spacing * Double(max(items.filter(\.isShown).count - 1, 0))
+        var taken = gaps(of: items, axis: axis, spacing: spacing).reduce(0, +)
         for (item, extent) in zip(items, extents) where item.isShown {
             let margin = item.values.margin
             taken += extent + (axis == .vertical ? margin.top + margin.bottom : margin.left + margin.right)

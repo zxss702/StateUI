@@ -11,7 +11,7 @@ final class GTKStackView: GTKTravellingLayout {
     let axis: StackArithmetic.Axis
 
     /// The room between two children.
-    var spacing = 0.0 {
+    var spacing: Double? {
         didSet { if spacing != oldValue { invalidateMeasurements() } }
     }
 

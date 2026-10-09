@@ -15,10 +15,14 @@
     public init() {}
 
     mutating func formUnion(_ other: Self, edges: Edge.Set = .all) {
-        if edges.contains(.top) { top += other.top.filter { !top.contains($0) } }
-        if edges.contains(.bottom) { bottom += other.bottom.filter { !bottom.contains($0) } }
-        if edges.contains(.leading) { leading += other.leading.filter { !leading.contains($0) } }
-        if edges.contains(.trailing) { trailing += other.trailing.filter { !trailing.contains($0) } }
+        if edges.contains(.top) { top = Self.merged(top, other.top) }
+        if edges.contains(.bottom) { bottom = Self.merged(bottom, other.bottom) }
+        if edges.contains(.leading) { leading = Self.merged(leading, other.leading) }
+        if edges.contains(.trailing) { trailing = Self.merged(trailing, other.trailing) }
+    }
+
+    private static func merged(_ first: [Preference], _ second: [Preference]) -> [Preference] {
+        first + second.filter { !first.contains($0) }
     }
 
     mutating func pad(_ insets: EdgeInsets) {

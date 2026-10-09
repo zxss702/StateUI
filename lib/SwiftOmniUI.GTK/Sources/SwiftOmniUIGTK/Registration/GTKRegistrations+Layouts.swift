@@ -54,7 +54,7 @@ extension GTKRegistrations {
 
         registry.add(LazyVStackContract.self, madeByHost: GTKLazyStackView.self) { lazy in
             lazy.applies(stackMembers + [LazyVStackContract.items]) { view, values in
-                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
@@ -66,7 +66,7 @@ extension GTKRegistrations {
 
         registry.add(LazyHStackContract.self, madeByHost: GTKLazyStackView.self) { lazy in
             lazy.applies(stackMembers + [LazyHStackContract.items]) { view, values in
-                view.spacing = values[StackBaseContract.spacing] ?? 0
+                view.spacing = values[StackBaseContract.spacing]
                 view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
             }
             lazy.applies(boxMembers) { view, values in applyBox(view, values) }
@@ -189,7 +189,7 @@ extension GTKRegistrations {
     ]
 
     private static func applyStack<Realized: ElementContract>(_ view: GTKStackView, _ values: ElementValues<Realized>) {
-        view.spacing = values[StackBaseContract.spacing] ?? 0
+        view.spacing = values[StackBaseContract.spacing]
         view.padding = values[PaddingElementContract.contentPadding] ?? EdgeInsets(0)
     }
 }
