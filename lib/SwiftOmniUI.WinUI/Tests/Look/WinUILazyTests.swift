@@ -460,10 +460,13 @@ final class WinUILazyTests: XCTestCase {
 
     func testComposedViewportsKeepExactWindowsAndPaintIncomingCells() throws {
         try onUIThread {
-            for count in [1_000, 10_000] {
+            for (count, complex) in [(1_000, false), (10_000, false), (1_000, true)] {
                 for kind in 0..<4 {
-                    let host = WinUIRenderer.running { ExactLazyPage(kind: kind, count: count) }
+                    let host = WinUIRenderer.running { ExactLazyPage(kind: kind, count: count, complex: complex) }
                     for _ in 0..<12 { host.step() }
+                    #if DEBUG
+                    swiftomniui_winui_hold_frames(true)
+                    #endif
                     let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
                     let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
                     let horizontal = kind % 2 == 1
@@ -473,12 +476,12 @@ final class WinUILazyTests: XCTestCase {
                     var animatedPhases: Set<Int> = []
                     var paintedSamples = 0
                     var lastSpan = lazy.span
-                    for step in 0..<180 {
+                    for step in 0..<192 {
                         if step < 36 {
                             let run = step < 12 ? step * 3 : step < 24 ? (36 - step) * 3 : (step - 24) * 11
                             let offset = Double(run) * extent + (step.isMultiple(of: 2) ? 1 : 0)
                             scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
-                        } else if (step - 36).isMultiple(of: 48) {
+                        } else if step < 180, (step - 36).isMultiple(of: 48) {
                             let offset = [800.0, 4_000.0, 0][(step - 36) / 48]
                             swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                        horizontal ? offset : 0, horizontal ? 0 : offset, true)
@@ -486,7 +489,7 @@ final class WinUILazyTests: XCTestCase {
                         host.step()
                         let span = try XCTUnwrap(lazy.span)
                         if span != lastSpan {
-                            if step >= 36 {
+                            if step >= 36, step < 180 {
                                 let phase = (step - 36) / 48
                                 let destination = [800.0, 4_000.0, 0][phase]
                                 if abs(span.lowerBound - destination) > 1 { animatedPhases.insert(phase) }
@@ -505,13 +508,15 @@ final class WinUILazyTests: XCTestCase {
                             if let kept = previous[identity] { XCTAssertTrue(kept === item.view) }
                         }
                         previous = lazy.mounted.mapValues(\.view)
-                        if step.isMultiple(of: 6) {
+                        for leading in [true, false] where step.isMultiple(of: 6) {
                             let frame = scroll.scroller.laidOutFrame
-                            let incoming = try XCTUnwrap(lazy.mounted[lazy.cells.identities[(last - 1) * perRun]])
+                            let visible = leading ? first : last - 1
+                            let incoming = try XCTUnwrap(lazy.mounted[lazy.cells.identities[visible * perRun]])
                             let cross = horizontal
                                 ? incoming.view.origin.y - scroll.scroller.origin.y + incoming.view.laidOutFrame.height - 3
                                 : incoming.view.origin.x - scroll.scroller.origin.x + incoming.view.laidOutFrame.width - 3
-                            let sample = horizontal ? (frame.width - 3, cross) : (cross, frame.height - 3)
+                            let along = leading ? 3 : (horizontal ? frame.width : frame.height) - 3
+                            let sample = horizontal ? (along, cross) : (cross, along)
                             // Read the displayed desktop synchronously as well: RenderTargetBitmap pumps
                             // messages while capturing and an animated viewport may move during that wait.
                             var screenPixel: DWORD = 0xFFFFFFFF
@@ -527,9 +532,10 @@ final class WinUILazyTests: XCTestCase {
                                     screenPixel = GetPixel(dc, point.x, point.y)
                                 }
                             }
+                            print("LAZY-SAMPLE", WinUIFrameClock.monotonic(), lazy.number, "count", count, "kind", kind, "complex", complex, "step", step, "leading", leading, "pixel", String(screenPixel, radix: 16), "span", span, "offset", scroll.scroller.standing.offset, "incoming", incoming.view.laidOutFrame)
                             if screenPixel != 0xFFFFFFFF {
                                 paintedSamples += 1
-                                let diagnostic = "screen=\(String(screenPixel, radix: 16)) count=\(count) kind=\(kind) step=\(step) sample=\(sample) span=\(span) offset=\(scroll.scroller.standing.offset) built=\(lazy.cells.built)"
+                                let diagnostic = "screen=\(String(screenPixel, radix: 16)) count=\(count) kind=\(kind) complex=\(complex) step=\(step) leading=\(leading) sample=\(sample) span=\(span) offset=\(scroll.scroller.standing.offset) built=\(lazy.cells.built)"
                                 XCTAssertGreaterThan(screenPixel & 255, 160, "incoming cell was not painted: \(diagnostic)")
                                 XCTAssertLessThan((screenPixel >> 8) & 255, 100, "scrolling exposed a white gap: \(diagnostic)")
                             }
@@ -765,24 +771,73 @@ private struct LazyRowsPage: View {
 private struct ExactLazyPage: View {
     let kind: Int
     var count = 1_000
+    var complex = false
 
     var body: some View {
-        ScrollView(kind % 2 == 1 ? .horizontal : .vertical) {
+        let overlay = VStack {
+            HStack {
+                Text("Left")
+                Text("Right")
+            }
+            HStack {
+                Text("Top")
+                Text("Bottom")
+            }
+        }
+        .font(.system(size: 8))
+        .frame(width: 40, height: 20)
+        return ScrollView(kind % 2 == 1 ? .horizontal : .vertical) {
             if kind == 0 {
                 LazyVStack(spacing: 0) {
-                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                    ForEach(0..<count) { number in
+                        if complex {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                                .overlay(overlay)
+                                .frame(width: 80, height: 40)
+                                .id("tile-\(number)")
+                        } else {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                        }
+                    }
                 }
             } else if kind == 1 {
                 LazyHStack(spacing: 0) {
-                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                    ForEach(0..<count) { number in
+                        if complex {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                                .overlay(overlay)
+                                .frame(width: 80, height: 40)
+                                .id("tile-\(number)")
+                        } else {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                        }
+                    }
                 }
             } else if kind == 2 {
                 LazyVGrid(columns: Array(repeating: GridItem(.fixed(80)), count: 4), spacing: 0) {
-                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                    ForEach(0..<count) { number in
+                        if complex {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                                .overlay(overlay)
+                                .frame(width: 80, height: 40)
+                                .id("tile-\(number)")
+                        } else {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                        }
+                    }
                 }
             } else {
                 LazyHGrid(rows: Array(repeating: GridItem(.fixed(40)), count: 4), spacing: 0) {
-                    ForEach(0..<count) { Text("Row \($0)").frame(width: 80, height: 40).background(Color("#D03020")) }
+                    ForEach(0..<count) { number in
+                        if complex {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                                .overlay(overlay)
+                                .frame(width: 80, height: 40)
+                                .id("tile-\(number)")
+                        } else {
+                            Text("Row \(number)").frame(width: 80, height: 40).background(Color("#D03020"))
+                        }
+                    }
                 }
             }
         }

@@ -108,16 +108,17 @@ final class WinUIConformanceTests: XCTestCase {
     /// the ten thousand a process holds; a family past that runs in more parts.
     /// Design: docs/design/platforms/winui/conformance.md#a-process-a-test
     private func conform(_ family: any ConformanceFamily.Type, part: Conformance.Part = .whole) {
-        let file = part == .whole ? family.name : "\(family.name)-\(part.number)"
-        guard !WinUIExports.skips(family.name, at: "marks/winui/\(file).txt") else { return }
+        let familyName = onUIThread { family.name }
+        let file = part == .whole ? familyName : "\(familyName)-\(part.number)"
+        guard !WinUIExports.skips(familyName, at: "marks/winui/\(file).txt") else { return }
         let verdicts = onUIThread {
             Conformance.run(
                 family, part: part, on: WinUIDriver(), report: { XCTFail($0.message, file: $0.file, line: $0.line) })
         }
         XCTAssertNoThrow(try WinUIExports.hold(
-            HostVerdict.text(verdicts, revision: WinUIExports.revision(of: family.name)),
+            HostVerdict.text(verdicts, revision: WinUIExports.revision(of: familyName)),
             at: "marks/winui/\(file).txt"))
         XCTAssertLessThan(GetGuiResources(GetCurrentProcess(), DWORD(GR_GDIOBJECTS)), 6_000,
-                          "\(family.name) shows too many windows for one process: run it in more parts")
+                          "\(familyName) shows too many windows for one process: run it in more parts")
     }
 }

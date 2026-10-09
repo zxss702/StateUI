@@ -57,7 +57,7 @@ extension WinUIRenderer {
     /// A host showing `page` in a window of its own, laid out in `room`, on `clock` where one is given.
     static func running(
         clock: TestClock? = nil, reducesMotion: Bool = false, room: LayoutSize = WinUITestHost.room,
-        _ page: @escaping @Sendable () -> any Page
+        _ page: @escaping @Sendable @MainActor () -> any Page
     ) -> WinUIRenderer {
         running(
             clock: clock, reducesMotion: reducesMotion, room: room,
@@ -69,7 +69,7 @@ extension WinUIRenderer {
     /// is given.
     static func running(
         clock: TestClock? = nil, reducesMotion: Bool = false, room: LayoutSize = WinUITestHost.room,
-        application: @escaping @Sendable () -> any App
+        application: @escaping @Sendable @MainActor () -> any App
     ) -> WinUIRenderer {
         stateUIUseApp(application())
         let renderer = replacing(clock: clock, reducesMotion: reducesMotion)

@@ -58,7 +58,7 @@ final class WinUIDriver: HostDriver {
 
     var register: HostRegister { WinUIRealization.register }
 
-    func start(clock: TestClock?, reducesMotion: Bool, _ page: @escaping @Sendable () -> any Page) -> MountedTree {
+    func start(clock: TestClock?, reducesMotion: Bool, _ page: @escaping @Sendable @MainActor () -> any Page) -> MountedTree {
         written.listen()
         Self.emptyStore()
         let renderer = WinUIRenderer.running(clock: clock, reducesMotion: reducesMotion, page)

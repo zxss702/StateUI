@@ -10,7 +10,7 @@ import CSwiftOmniUIWinUI
 /// The facts the WinUI driver reads besides a member: a menu as WinUI holds it, the keyboard, where a press lands,
 /// the dialog showing, what the screen reader was told, what is drawn, the log, and what is kept.
 extension WinUIDriver {
-    func start(clock: TestClock?, application: @escaping @Sendable () -> any App) throws -> MountedTree {
+    func start(clock: TestClock?, application: @escaping @Sendable @MainActor () -> any App) throws -> MountedTree {
         written.listen()
         let renderer = WinUIRenderer.running(clock: clock, application: application)
         self.renderer = renderer
