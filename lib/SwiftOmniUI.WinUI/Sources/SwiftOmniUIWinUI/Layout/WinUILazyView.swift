@@ -121,7 +121,7 @@ class WinUILazyView: WinUITravellingLayout {
         lastTargetViewport = target
         if !geometryChanged, !cells.animatesChanges,
            measuredRevision == measurements.revision, cells.window?.revision == revision,
-           previous?.width == target.width, previous?.height == target.height, let span {
+           (axis == .vertical ? previous?.width == target.width : previous?.height == target.height), let span {
             let perRun = cells.window?.perRun ?? 1
             let wanted = grid
                 ? cells.runs.places(in: span, overscan: 0, count: (cells.identities.count + perRun - 1) / perRun)
