@@ -150,7 +150,7 @@ final class WinUIMeasurementTests: XCTestCase {
                 .frame(width: width.wrappedValue)
                 .horizontalAlignment(.start)
             }
-            let label = try XCTUnwrap(host.view(id: .manual("animated-label")) as? WinUILabelView)
+            let label = try XCTUnwrap(host.views(WinUILabelView.self).first { $0.text == words.wrappedValue })
             let heading = try XCTUnwrap(host.view(id: .manual("summary")) as? WinUILabelView)
             let capsule = try XCTUnwrap(host.view(id: .manual("capsule")))
             let probe = WinUILabelView()
