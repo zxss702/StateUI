@@ -137,6 +137,16 @@
         let revision = grid ? runs.revision : extents.revision
         guard window?.span != span || window?.revision != revision || window?.perRun != perRun else { return }
         let moved = window?.revision == revision && window?.span != span
+        #if DEBUG
+        if identities.count > 900, identities.count < 1_003 {
+            let total = grid ? runs.total(count: (identities.count + perRun - 1) / perRun) : self.total
+            if span.upperBound > total - 1_200 || anchor?.trailing == true {
+                print("LAZY-TAIL-SHOW", element?.mount ?? 0, "span", span, "total", total,
+                      "window", window as Any, "revision", revision, "moved", moved,
+                      "held", anchor as Any)
+            }
+        }
+        #endif
         if moved { inserting.removeAll() }
         window = (span, revision, perRun)
         searches += 1
@@ -153,6 +163,12 @@
                 : extents.total(in: identities)
             anchor = (identities[place], place, span.lowerBound - origin, span.lowerBound,
                       span.upperBound - span.lowerBound, span.lowerBound > 0 && abs(span.upperBound - total) < 1)
+            #if DEBUG
+            if identities.count > 900, identities.count < 1_003, span.upperBound > total - 1_200 {
+                print("LAZY-TAIL-ANCHOR", element?.mount ?? 0, "span", span, "total", total,
+                      "new", anchor as Any)
+            }
+            #endif
         }
         guard let element, let runtime else { return }
         let lower = min(identities.count, max(0, wanted.lowerBound - 1) * perRun)
@@ -178,6 +194,12 @@
             ? runs.total(count: (identities.count + perRun - 1) / perRun)
             : extents.total(in: identities)
         let origin = max(0, held.trailing ? total - held.viewport : start + held.inset)
+        #if DEBUG
+        if identities.count > 900, identities.count < 1_003, held.trailing || origin > total - 1_200 {
+            print("LAZY-TAIL-CORRECT", element?.mount ?? 0, "held", held, "place", place,
+                  "start", start, "origin", origin, "total", total, "shift", origin - held.origin)
+        }
+        #endif
         anchorShift += origin - held.origin
         anchor = (identities[place], place, held.inset, origin, held.viewport, held.trailing)
         return abs(origin - held.origin) > 0.0001 ? origin : nil

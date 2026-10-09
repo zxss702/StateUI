@@ -44,13 +44,7 @@ final class WinUIFrameClock: FrameClock {
     /// A frame WinUI composes: the frame's work at this moment, on a clock WinUI's frames drive.
     func frame() {
         guard held, ticksWithWinUI else { return }
-        #if DEBUG
-        print("LAZY-RENDERING-BEGIN", Self.monotonic())
-        #endif
         onFrame?(now())
-        #if DEBUG
-        print("LAZY-RENDERING-END", Self.monotonic())
-        #endif
     }
 
     /// Milliseconds on the performance counter.
