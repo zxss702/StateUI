@@ -572,17 +572,25 @@ import CRT
             values.margin = insets(.padding)
         }
         values.flex = stated(.flex)
+        values.isFrameContent = bool(.isFrameContent) ?? false
+        values.isLayoutDecoration = bool(.isLayoutDecoration) ?? false
         switch type {
         case .scrollView:
             values.scrollAxes = value(.orientation)?.enumeration.flatMap(Axis.init(rawValue:)) ?? .vertical
+            values.expandingAxes = values.scrollAxes == .vertical ? .both : values.scrollAxes
         case .webView:
             values.scrollAxes = .both
+        case .page, .navigationStack, .tabView, .navigationSplitView:
+            // An arrangement is a viewport: it takes the room it is given and
+            // lays out its own pages and bars inside it.
+            values.expandingAxes = .both
         case .hStack, .vStack, .zStack, .grid, .gridRow, .lazyHStack, .lazyVStack,
              .lazyHGrid, .lazyVGrid, .customLayout, .masked:
             var horizontal = false, vertical = false
             var expandsAcross = false, expandsDown = false
             for child in currentChildren {
                 let childValues = child.layoutValues
+                guard !childValues.isLayoutDecoration else { continue }
                 let axes = childValues.scrollAxes
                 let expands = childValues.expandingAxes
                 expandsAcross = expandsAcross || expands == .horizontal || expands == .both
@@ -590,8 +598,8 @@ import CRT
                 expandsDown = expandsDown || expands == .vertical || expands == .both
                     || (childValues.flex != nil && childValues.height == nil
                         && type != .hStack && type != .lazyHStack && type != .gridRow)
-                horizontal = horizontal || axes == .horizontal || axes == .both
-                vertical = vertical || axes == .vertical || axes == .both
+                horizontal = horizontal || (childValues.width == nil && (axes == .horizontal || axes == .both))
+                vertical = vertical || (childValues.height == nil && (axes == .vertical || axes == .both))
             }
             values.scrollAxes = horizontal && vertical ? .both : horizontal ? .horizontal
                 : vertical ? .vertical : .neither

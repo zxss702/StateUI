@@ -38,6 +38,12 @@
     /// Axes on which this child or its content accepts the remaining proposal.
     public var expandingAxes = Axis.neither
 
+    /// The sole child of a frame, measured with the frame's proposal.
+    public var isFrameContent = false
+
+    /// A background or overlay draws in the base's room without sizing it.
+    public var isLayoutDecoration = false
+
     /// Across its slot: 0 start, 1 centre, 2 end, 3 fill.
     public var horizontal: Int32 = 3
 

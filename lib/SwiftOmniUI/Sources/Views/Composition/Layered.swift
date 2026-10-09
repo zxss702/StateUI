@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // `.overlay {}` and `.background {}` - a view layered over or under another,
-// composed as the ZStack the same thing is written out as.
+// composed as a ZStack whose base alone determines its size.
 // Design: docs/design/views/modifiers.md#composed-modifiers
 
 extension View {
-    /// A view drawn over this one, both aligned in the larger of the two.
+    /// A view drawn over this one, aligned in this view's bounds.
     ///
     /// The same, the layer handed in already built - SwiftUI's
     /// `overlay(_:)` spelling.
@@ -40,7 +40,7 @@ extension View {
         Layered(base: self, layer: content, alignment: .center, over: false)
     }
 
-    /// A view drawn behind this one, both aligned in the larger of the two.
+    /// A view drawn behind this one, aligned in this view's bounds.
     ///
     ///     Text("New")
     ///         .background { Rectangle().cornerRadius(4).fill(.whiteSmoke) }
@@ -99,6 +99,7 @@ public struct Layered<Base: View, Content: View>: View {
     /// them - keeps it through expansion.
     public var body: some View {
         var layer = layer.node
+        layer.props[.isLayoutDecoration] = true.propValue
         if layer.props[.horizontalAlignment] == nil
             && layer.props[.horizontalAlignmentDefault] == nil {
             layer.props[.horizontalAlignmentDefault] = alignment.horizontal.axis.propValue

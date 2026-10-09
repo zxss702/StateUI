@@ -112,8 +112,9 @@
             case .vertical:
                 offset += margin.top
                 let available = max(0, content.width - margin.left - margin.right)
+                let expands = values.expandingAxes == .horizontal || values.expandingAxes == .both
                 let width = Extent.of(
-                    option: values.horizontal, stated: values.width, natural: natural.width,
+                    option: expands ? 3 : values.horizontal, stated: values.width, natural: natural.width,
                     available: available, minimum: values.minimumWidth, maximum: values.maximumWidth)
                 let x = Extent.start(
                     option: values.horizontal, extent: width, start: content.x + margin.left,
@@ -127,8 +128,9 @@
             case .horizontal:
                 offset += margin.left
                 let available = max(0, content.height - margin.top - margin.bottom)
+                let expands = values.expandingAxes == .vertical || values.expandingAxes == .both
                 let height = Extent.of(
-                    option: values.vertical, stated: values.height, natural: natural.height,
+                    option: expands ? 3 : values.vertical, stated: values.height, natural: natural.height,
                     available: available, minimum: values.minimumHeight, maximum: values.maximumHeight)
                 let y: Double
                 if values.vertical == 4 || values.vertical == 5 {

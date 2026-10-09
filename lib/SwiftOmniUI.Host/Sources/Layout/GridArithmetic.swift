@@ -16,6 +16,9 @@
         rowSpacing: Double, columnSpacing: Double, padding: EdgeInsets, width offered: Double? = nil,
         flow: [GridItem] = []
     ) -> LayoutSize {
+        if items.count == 1, let item = items.first, item.values.isFrameContent {
+            return SingleChildArithmetic.size(of: item, padding: padding, width: offered)
+        }
         let flowing = !flow.isEmpty
         let flowColumns = flowing ? resolvedFlow(flow, width: offered, spacing: columnSpacing) : []
         let columnCount = flowing ? max(flowColumns.count, 1)
@@ -34,7 +37,9 @@
         let width = padding.left + padding.right + columnSizes.reduce(0, +)
             + columnSpacing * Double(max(columnCount - 1, 0))
 
-        if let offered, width > offered {
+        let expandsAcross = items.contains { $0.isShown && !$0.values.isLayoutDecoration
+            && ($0.values.flex != nil || $0.values.expandingAxes == .horizontal || $0.values.expandingAxes == .both) }
+        if let offered, offered.isFinite, width > offered || expandsAcross {
             columnSizes = trackSizes(
                 items, definitions: columnDefinitions, count: columnCount,
                 available: max(0, offered - padding.left - padding.right), spacing: columnSpacing,

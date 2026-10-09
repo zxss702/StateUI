@@ -228,6 +228,27 @@ final class LayoutArithmeticTests: XCTestCase {
         XCTAssertEqual(size.width, 320, "its natural width is still its words on one line")
     }
 
+    @MainActor
+    func testAnExpandingGridMeasuresRowsAtItsOfferedColumns() {
+        let cases: [(Axis, Double?, Double)] = [
+            (.neither, nil, 64.9), (.horizontal, nil, 920),
+            (.both, nil, 920), (.neither, 0, 920)]
+        for (axis, flex, proposal) in cases {
+            let offers = Offers()
+            var child = Child(width: 64.9, height: 32.45)
+            child.values.expandingAxes = axis
+            child.values.flex = flex
+            child.scalesToWidth = true
+            child.offers = offers
+            let size = GridArithmetic.size(
+                of: [child], rows: [.auto], columns: [.fill], rowSpacing: 0,
+                columnSpacing: 0, padding: EdgeInsets(0), width: 920)
+            XCTAssertEqual(offers.widths.last!, proposal)
+            XCTAssertEqual(size.width, 64.9, accuracy: 0.01, "the natural width remains independent of expansion")
+            XCTAssertEqual(size.height, proposal / 2, accuracy: 0.01, "row height follows the column's actual proposal")
+        }
+    }
+
     /// A ZStack stands each child in its area - the room within the padding, a rectangle in points, or one
     /// in fractions of the room - by the child's own alignments; a hidden one has no place.
     @MainActor
@@ -410,6 +431,7 @@ private struct Child: LayoutChild {
     let natural: LayoutSize
     let isShown: Bool
     var wraps = false
+    var scalesToWidth = false
 
     /// Where the widths it is offered are written; nil keeps none.
     var offers: Offers?
@@ -421,6 +443,9 @@ private struct Child: LayoutChild {
 
     func size(offered width: Double?) -> LayoutSize {
         offers?.widths.append(width)
+        if scalesToWidth, let width, width.isFinite {
+            return LayoutSize(width: width, height: width * natural.height / natural.width)
+        }
         if wraps, let width, width > 0, width < natural.width {
             return LayoutSize(width: width, height: natural.height * (natural.width / width).rounded(.up))
         }

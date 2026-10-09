@@ -167,6 +167,8 @@ extension NodeType {
     static let fontDesign = FontElementContract.fontDesign.token
     static let format = DatePickerContract.format.token
     static let frame = VisualElementContract.frame.token
+    static let isFrameContent = Prop("isFrameContent")
+    static let isLayoutDecoration = Prop("isLayoutDecoration")
     static let flowColumns = GridContract.flowColumns.token
     static let flowRows = LazyHGridContract.flowRows.token
     static let gridColumn = ViewContract.gridColumn.token

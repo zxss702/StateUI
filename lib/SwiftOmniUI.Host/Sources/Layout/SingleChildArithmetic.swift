@@ -39,11 +39,13 @@
         let availableWidth = max(0, content.width - margin.left - margin.right)
         let availableHeight = max(0, content.height - margin.top - margin.bottom)
         let natural = placesByNaturalSize(values) ? item.size(offered: availableWidth) : .zero
+        let expandsAcross = values.flex != nil || values.expandingAxes == .horizontal || values.expandingAxes == .both
+        let expandsDown = values.flex != nil || values.expandingAxes == .vertical || values.expandingAxes == .both
         let width = Extent.of(
-            option: values.horizontal, stated: values.width, natural: natural.width,
+            option: expandsAcross ? 3 : values.horizontal, stated: values.width, natural: natural.width,
             available: availableWidth, minimum: values.minimumWidth, maximum: values.maximumWidth)
         let height = Extent.of(
-            option: values.vertical, stated: values.height, natural: natural.height,
+            option: expandsDown ? 3 : values.vertical, stated: values.height, natural: natural.height,
             available: availableHeight, minimum: values.minimumHeight, maximum: values.maximumHeight)
 
         return Rect(

@@ -15,7 +15,7 @@
         var width = 0.0
         var height = 0.0
 
-        for item in items where item.isShown {
+        for item in items where item.isShown && !item.values.isLayoutDecoration {
             let needs = room(for: item, width: inner)
             width = max(width, needs.width)
             height = max(height, needs.height)

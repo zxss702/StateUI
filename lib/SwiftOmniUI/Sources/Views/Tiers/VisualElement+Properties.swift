@@ -28,6 +28,7 @@ extension Node {
         content.layoutValues = [:]
         content.props[.horizontalAlignmentDefault] = alignment.horizontal.axis.propValue
         content.props[.verticalAlignmentDefault] = alignment.vertical.axis.propValue
+        content.props[.isFrameContent] = true.propValue
         if fillsAcross { content.props[.horizontalAlignment] = AxisAlignment.fill.propValue }
         if fillsDown { content.props[.verticalAlignment] = AxisAlignment.fill.propValue }
         children = [content]
