@@ -702,6 +702,8 @@ final class WinUILazyTests: XCTestCase {
                     let name = Array(title.utf16) + [0]
                     let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
                     _ = SetForegroundWindow(hwnd)
+                    XCTAssertTrue(SetWindowPos(hwnd, HWND(bitPattern: -1), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)))
+                    defer { _ = SetWindowPos(hwnd, HWND(bitPattern: -2), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)) }
                     let initial = try XCTUnwrap(lazy.mounted[lazy.cells.identities[0]])
                     let frame = scroll.scroller.laidOutFrame
                     let cross = horizontal
@@ -896,6 +898,8 @@ final class WinUILazyTests: XCTestCase {
                     let name = Array(title.utf16) + [0]
                     let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
                     _ = SetForegroundWindow(hwnd)
+                    XCTAssertTrue(SetWindowPos(hwnd, HWND(bitPattern: -1), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)))
+                    defer { _ = SetWindowPos(hwnd, HWND(bitPattern: -2), 0, 0, 0, 0, UINT(SWP_NOMOVE | SWP_NOSIZE)) }
                     let dc = try XCTUnwrap(GetDC(nil))
                     defer { _ = ReleaseDC(nil, dc) }
                     let scale = Double(GetDpiForWindow(hwnd)) / 96
