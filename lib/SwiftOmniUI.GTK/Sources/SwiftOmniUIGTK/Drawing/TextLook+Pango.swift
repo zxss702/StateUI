@@ -8,6 +8,23 @@ import CSwiftOmniUIGTK
 /// A look as the Pango attributes GTK draws words with.
 /// Design: docs/design/platforms/gtk/controls.md#words
 extension TextLook {
+    /// Symbols use the requested font height, or the theme's named text size.
+    @MainActor
+    var symbolPointSize: Double {
+        if let size, size > 0 { return size }
+        guard let textStyle else { return 16 }
+        let roles = ["title-1", "title-2", "title-3", "title-4", "heading", "body", "body", "body", "caption", "caption", "caption"]
+        let probe = GTKLabelView()
+        // The font description below is borrowed from this widget's context.
+        defer { withExtendedLifetime(probe) {} }
+        gtk_widget_add_css_class(probe.widget, roles[Int(textStyle.rawValue)])
+        guard let description = pango_context_get_font_description(gtk_widget_get_pango_context(probe.widget))
+        else { return 16 }
+        let points = Double(pango_font_description_get_size(description)) / Double(PANGO_SCALE)
+        let pixels = pango_font_description_get_size_is_absolute(description) != 0 ? points : points * 96 / 72
+        return pixels > 0 ? pixels : 16
+    }
+
     /// The words' colour as GTK draws it; nil for GTK's own.
     var rgbaColor: GdkRGBA? { color.flatMap(GTKBrush.rgba) }
 

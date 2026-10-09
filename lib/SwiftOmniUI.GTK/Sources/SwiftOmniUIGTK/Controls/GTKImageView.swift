@@ -15,7 +15,7 @@ final class GTKImageView: GTKPanelView {
     private(set) var found = false
 
     /// How the picture fills its room.
-    private var aspect = ContentMode.fit
+    private var aspect = ContentMode.center
 
     /// The file read, its own size in logical pixels, and whether it is an SVG, drawn at the size it shows at.
     private var path: String?
@@ -33,10 +33,13 @@ final class GTKImageView: GTKPanelView {
     /// Shows the picture `source` names, filling its room as `aspect` says. A source naming a symbol shows the
     /// icon theme's icon for it - the platform's own symbols - or the missing-image icon where the name is
     /// unknown.
-    func apply(source: ImageSource?, aspect: ContentMode) {
+    func apply(source: ImageSource?, aspect: ContentMode, resizable: Bool = false, font: TextLook = TextLook()) {
         file = source?.file ?? ""
-        self.aspect = aspect
-        path = if let symbol = source?.symbol { GTKSymbols.path(of: symbol) } else { GTKPictures.path(of: file) }
+        self.aspect = resizable ? aspect : .center
+        let symbolSize = source?.symbol == nil ? 16 : font.symbolPointSize
+        path = if let symbol = source?.symbol {
+            GTKSymbols.path(of: symbol, size: Int32(symbolSize.rounded(.up)))
+        } else { GTKPictures.path(of: file) }
         found = path != nil
         if !found, let name = source?.symbol ?? (file.isEmpty ? nil : file) {
             GTKRenderer.log.error("no picture or symbol for \(name)")
@@ -46,6 +49,7 @@ final class GTKImageView: GTKPanelView {
         var height: Int32 = 0
         if let path { _ = gdk_pixbuf_get_file_info(path, &width, &height) }
         size = LayoutSize(width: Double(max(width, 0)), height: Double(max(height, 0)))
+        if source?.symbol != nil, size.height > 0 { size = PictureArithmetic.glyph(size, height: symbolSize) }
         isVector = path?.lowercased().hasSuffix(".svg") == true
         replaceTexture(with: nil)
         drawn = nil
@@ -102,14 +106,10 @@ final class GTKImageView: GTKPanelView {
         guard let texture else { return }
 
         let place = place(in: LayoutSize(width: width, height: height))
-        var room = graphene_rect_t(
-            origin: graphene_point_t(x: 0, y: 0), size: graphene_size_t(width: Float(width), height: Float(height)))
         var bounds = graphene_rect_t(
             origin: graphene_point_t(x: Float(place.x), y: Float(place.y)),
             size: graphene_size_t(width: Float(place.width), height: Float(place.height)))
-        gtk_snapshot_push_clip(snapshot, &room)
         gtk_snapshot_append_texture(snapshot, texture, &bounds)
-        gtk_snapshot_pop(snapshot)
     }
 
     private func replaceTexture(with texture: OpaquePointer?) {

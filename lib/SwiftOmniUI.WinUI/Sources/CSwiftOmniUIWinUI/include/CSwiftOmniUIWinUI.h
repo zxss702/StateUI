@@ -988,11 +988,15 @@ bool swiftomniui_winui_image_set(SwiftOmniUIObjectRef image, char const *const *
 /// A symbol in place of the picture: `glyph` is the Segoe Fluent Icons glyph the symbol is shown as, in UTF-8 -
 /// the Fluent font is the platform's own symbol set, which is why the glyph and not a name crosses. Answers false
 /// for a missing element or an empty glyph.
-bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef image, char const *glyph, int32_t aspect);
+bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef image, char const *glyph, int32_t aspect,
+                                       double fontSize, double fontWeight, int32_t textStyle, double *size);
 
 /// The size of the bitmap `image` shows, in DIPs; zero until it is read, and for an SVG. Once it is read, the
 /// layout holding the image is asked to measure again.
 void swiftomniui_winui_image_size(SwiftOmniUIObjectRef image, double *size);
+
+/// Places the picture or symbol at its rendered size, centred in the image's layout frame.
+void swiftomniui_winui_image_place(SwiftOmniUIObjectRef image, double width, double height);
 
 /// Draws an SVG `image` shows at `width` by `height` DIPs, at the display's scale; nothing for a bitmap.
 void swiftomniui_winui_image_draw(SwiftOmniUIObjectRef image, double width, double height);

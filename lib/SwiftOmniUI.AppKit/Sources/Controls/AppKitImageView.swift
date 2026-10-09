@@ -14,7 +14,7 @@ import AppKit
 final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     private let imageView = NSImageView()
 
-    private(set) var aspect: ContentMode = .fit
+    private(set) var aspect: ContentMode = .center
 
     var image: NSImage? { imageView.image }
     var animationPlaying: Bool { imageView.animates }
@@ -24,7 +24,6 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
-        layer?.masksToBounds = true
         imageView.imageAlignment = .alignCenter
         addSubview(imageView)
     }
@@ -65,18 +64,30 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
     ///   - source: the picture's file or symbol, or none to show nothing.
     ///   - aspect: how it fills the room it is given.
     ///   - animationPlaying: whether an animated picture runs.
-    func apply(source: ImageSource?, aspect: ContentMode, animationPlaying: Bool, template: Bool = false) {
+    func apply(source: ImageSource?, aspect: ContentMode, animationPlaying: Bool, template: Bool = false,
+               resizable: Bool = false, font: TextLook = TextLook()) {
         apply(
             image: source.flatMap { source in
                 if let symbol = source.symbol {
-                    return NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
-                        ?? NSImage(systemSymbolName: "questionmark.square", accessibilityDescription: nil)
+                    return symbolImage(symbol, font: font)
                 }
                 return source.isEmpty ? nil : picture?(source.file)
             },
-            aspect: aspect,
+            aspect: resizable ? aspect : .center,
             animationPlaying: animationPlaying,
             template: template)
+    }
+
+    private func symbolImage(_ name: String, font: TextLook) -> NSImage? {
+        guard let image = NSImage(systemSymbolName: name, accessibilityDescription: nil)
+            ?? NSImage(systemSymbolName: "questionmark.square", accessibilityDescription: nil) else { return nil }
+        let resolved = appKitFont(family: font.family, size: font.size, attributes: font.attributes,
+                                 textStyle: font.textStyle, weight: nil, design: font.design,
+                                 fallback: .systemFont(ofSize: 16))
+        let weights: [NSFont.Weight] = [.ultraLight, .thin, .light, .regular, .medium, .semibold, .bold, .heavy, .black]
+        let weight = font.weight.map { weights[min(max(Int(($0 / 100).rounded()) - 1, 0), 8)] }
+            ?? (NSFontManager.shared.traits(of: resolved).contains(.boldFontMask) ? .bold : .regular)
+        return image.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: resolved.pointSize, weight: weight))
     }
 
     override var intrinsicContentSize: NSSize {
@@ -98,6 +109,10 @@ final class AppKitImageView: AppKitHitTestView, AppKitPictureResolving {
         case .stretch:
             imageView.imageScaling = .scaleAxesIndependently
         case .center:
+            let size = imageView.image?.size ?? .zero
+            imageView.frame = NSRect(placed: PictureArithmetic.place(
+                LayoutSize(width: Double(size.width), height: Double(size.height)),
+                in: LayoutSize(width: Double(bounds.width), height: Double(bounds.height)), aspect: .center))
             imageView.imageScaling = .scaleNone
         }
     }

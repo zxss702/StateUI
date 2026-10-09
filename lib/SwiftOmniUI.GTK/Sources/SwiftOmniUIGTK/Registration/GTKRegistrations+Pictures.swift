@@ -8,8 +8,12 @@ extension GTKRegistrations {
     /// An Image: its picture and how it fills its room. A ColorPicker: its colour and its corners.
     static func pictures(_ registry: Registry<GTKView>) {
         registry.add(ImageContract.self, create: { _ in GTKImageView() }) { image in
-            image.applies([ImageContract.source, ImageElementContract.aspect]) { view, values in
-                view.apply(source: values[ImageContract.source], aspect: values[ImageElementContract.aspect] ?? .fit)
+            image.applies([
+                ImageContract.source, ImageElementContract.aspect, ImageContract.isResizable,
+                FontElementContract.fontSize, FontElementContract.fontTextStyle,
+            ]) { view, values in
+                view.apply(source: values[ImageContract.source], aspect: values[ImageElementContract.aspect] ?? .stretch,
+                           resizable: values[ImageContract.isResizable] ?? false, font: TextMembers.look(of: values))
             }
         }
         registry.add(ColorPickerContract.self, create: { _ in GTKColorBoxView() }) { box in

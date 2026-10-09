@@ -17,13 +17,18 @@ extension AppKitRegistrations {
         registry.add(ImageContract.self, create: { _ in AppKitImageView() }) { image in
             image.applies([
                 ImageContract.source, ImageElementContract.aspect, ImageContract.isAnimating,
-                ImageContract.renderingMode,
+                ImageContract.renderingMode, ImageContract.isResizable,
+                FontElementContract.fontSize, FontElementContract.fontTextStyle,
+                FontElementContract.fontWeight, FontElementContract.fontAttributes,
+                FontElementContract.fontFamily, FontElementContract.fontDesign,
             ]) { view, values in
                 view.apply(
                     source: values[ImageContract.source],
-                    aspect: values[ImageElementContract.aspect] ?? .fit,
+                    aspect: values[ImageElementContract.aspect] ?? .stretch,
                     animationPlaying: values[ImageContract.isAnimating] ?? false,
-                    template: values[ImageContract.renderingMode] == .template)
+                    template: values[ImageContract.renderingMode] == .template,
+                    resizable: values[ImageContract.isResizable] ?? false,
+                    font: TextMembers.look(of: values))
             }
         }
     }

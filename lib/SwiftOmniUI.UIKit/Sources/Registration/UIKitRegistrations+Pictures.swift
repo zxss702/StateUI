@@ -11,8 +11,10 @@ extension UIKitRegistrations {
     /// with its corners rounded.
     static func pictures(_ registry: Registry<UIView>) {
         registry.add(ImageContract.self, create: { _ in UIKitImageView() }) { image in
-            image.applies([ImageContract.source, ImageElementContract.aspect]) { view, values in
-                view.apply(source: values[ImageContract.source], aspect: values[ImageElementContract.aspect] ?? .fit)
+            image.applies([ImageContract.source, ImageElementContract.aspect, ImageContract.isResizable]) { view, values in
+                let aspect = values[ImageContract.isResizable] == true
+                    ? values[ImageElementContract.aspect] ?? .stretch : .center
+                view.apply(source: values[ImageContract.source], aspect: aspect)
             }
         }
         registry.add(ColorPickerContract.self, create: { _ in UIKitColorBoxView() }) { box in

@@ -14,7 +14,8 @@ extension ImageProperties {
 /// A picture from the application's resources.
 ///
 ///     Image("tab_list.png")
-///         .aspect(.fit)
+///         .resizable()
+///         .scaledToFit()
 ///         .frame(height: 20)
 ///
 /// The name is a file among the application's image resources, and artwork
@@ -29,7 +30,7 @@ extension ImageProperties {
 ///     Image(light: "tab_list.png", dark: "tab_list_dark.png")
 ///
 /// and the picture follows the system color scheme.
-public struct Image: VisualElement, ImageElement, ImageProperties{
+public struct Image: VisualElement, ImageElement, ImageProperties, FontElement {
     /// The node this control describes.
     public var node: Node
 
@@ -67,10 +68,9 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
         self.init(.symbol(systemName))
     }
 
-    /// The picture stretched to the frame it is given, proportions aside -
-    /// `.aspect(.stretch)` spelled SwiftUI's way.
+    /// Allows the picture to resize to its frame, stretching unless a scaling strategy is specified.
     public func resizable() -> Modified {
-        setValue(ImageElementContract.aspect, ContentMode.stretch)
+        setValue(ImageContract.isResizable, true)
     }
 
     /// The picture scaled to fit the frame it is given, its own proportions
@@ -80,7 +80,7 @@ public struct Image: VisualElement, ImageElement, ImageProperties{
     }
 
     /// The picture scaled to fill the frame it is given, its own proportions
-    /// kept and the overflow clipped - `.aspect(.fill)` spelled SwiftUI's way.
+    /// kept. Add `.clipped()` to clip the overflow.
     public func scaledToFill() -> Modified {
         setValue(ImageElementContract.aspect, ContentMode.fill)
     }

@@ -15,7 +15,7 @@ final class WinUIImageView: WinUIView {
     private(set) var found = false
 
     /// How the picture fills its room.
-    private var aspect = ContentMode.fit
+    private var aspect = ContentMode.center
 
     /// The size an SVG declares, in DIPs; nil for a bitmap, whose size WinUI knows once it has read it.
     private var declared: LayoutSize?
@@ -33,13 +33,15 @@ final class WinUIImageView: WinUIView {
     /// Shows the picture `source` names, filling its room as `aspect` says. Its layout is told itself: WinUI hears
     /// nothing from a picture that asks it for no room. A source naming a symbol shows it as a Segoe Fluent Icons
     /// glyph - the platform's own symbol set, where the name is the glyph.
-    func apply(source: ImageSource?, aspect: ContentMode) {
+    func apply(source: ImageSource?, aspect: ContentMode, resizable: Bool = false, font: TextLook = TextLook()) {
         symbol = source?.symbol != nil
         file = source?.file ?? ""
+        let aspect = resizable ? aspect : .center
         self.aspect = aspect
         var size = [0.0, 0.0]
         if let name = source?.symbol {
-            found = swiftomniui_winui_image_set_symbol(handle, name, aspect.rawValue)
+            found = swiftomniui_winui_image_set_symbol(handle, name, aspect.rawValue, font.size ?? 0,
+                font.weight ?? (font.attributes.contains(.bold) ? 700 : 0), font.textStyle?.rawValue ?? -1, &size)
             if !found { WinUIRenderer.log.error("no symbol \(name) the platform knows") }
         } else {
             let files = PictureArithmetic.files(for: file)
@@ -60,8 +62,8 @@ final class WinUIImageView: WinUIView {
     /// Design: docs/design/platforms/winui/controls.md#pictures
     override func measure(width: Double?, height: Double?) -> LayoutSize {
         _ = super.measure(width: 0, height: 0)
-        if symbol { return LayoutSize(width: 16, height: 16) }
         if let declared { return declared }
+        if symbol { return LayoutSize(width: 16, height: 16) }
         var size = [0.0, 0.0]
         swiftomniui_winui_image_size(handle, &size)
         return LayoutSize(width: size[0], height: size[1])
@@ -81,6 +83,8 @@ final class WinUIImageView: WinUIView {
         let shown = PictureArithmetic.place(declared, in: LayoutSize(width: room.width, height: room.height), aspect: aspect)
         let size = LayoutSize(width: shown.width, height: shown.height)
         guard size.width > 0, size.height > 0 else { return }
+        swiftomniui_winui_image_place(handle, size.width, size.height)
+        guard !symbol else { return }
         if let drawn, drawn.width >= size.width, drawn.height >= size.height { return }
 
         drawn = size

@@ -20,6 +20,7 @@
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.UI.Text.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 using namespace swiftomniui;
@@ -205,7 +206,7 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_image_make(void) {
         icon.FontFamily(xaml::Media::FontFamily(L"Segoe Fluent Icons"));
         icon.FontSize(16);
         box.Child(icon);
-        box.Stretch(xaml::Media::Stretch::Uniform);
+        box.Stretch(xaml::Media::Stretch::None);
         box.Visibility(xaml::Visibility::Collapsed);
         grid.Children().Append(box);
         return detach(grid);
@@ -215,7 +216,11 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_image_make(void) {
     }
 }
 
-extern "C" bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef handle, char const *glyph, int32_t aspect) {
+extern "C" bool swiftomniui_winui_image_set_symbol(
+    SwiftOmniUIObjectRef handle, char const *glyph, int32_t aspect, double fontSize, double fontWeight,
+    int32_t textStyle, double *size
+) {
+    size[0] = size[1] = 0;
     try {
         if (!glyph || !*glyph) return false;
         auto grid = imageGrid(handle);
@@ -223,8 +228,29 @@ extern "C" bool swiftomniui_winui_image_set_symbol(SwiftOmniUIObjectRef handle, 
         auto box = symbolBox(grid);
         image.Source(nullptr);
         image.Visibility(xaml::Visibility::Collapsed);
-        box.Child().as<controls::FontIcon>().Glyph(winrt::to_hstring(glyph));
-        box.Stretch(aspect == 2 ? xaml::Media::Stretch::Fill : xaml::Media::Stretch::Uniform);
+        auto icon = box.Child().as<controls::FontIcon>();
+        controls::TextBlock font;
+        if (textStyle >= 0 && textStyle < 11) {
+            wchar_t const *styles[] = {L"TitleLargeTextBlockStyle", L"TitleTextBlockStyle", L"SubtitleTextBlockStyle",
+                L"BodyLargeTextBlockStyle", L"BodyStrongTextBlockStyle", L"BodyTextBlockStyle", L"BodyTextBlockStyle",
+                L"BodyTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle", L"CaptionTextBlockStyle"};
+            if (auto application = xaml::Application::Current()) {
+                auto resource = application.Resources().TryLookup(winrt::box_value(styles[textStyle]));
+                if (auto style = resource.try_as<xaml::Style>()) font.Style(style);
+            }
+        }
+        icon.FontSize(fontSize > 0 ? fontSize : textStyle >= 0 ? font.FontSize() : 16);
+        icon.FontWeight(fontWeight > 0 ? winrt::Windows::UI::Text::FontWeight{
+            static_cast<uint16_t>(std::clamp(fontWeight, 1.0, 1000.0))} : font.FontWeight());
+        icon.Glyph(winrt::to_hstring(glyph));
+        size[0] = size[1] = icon.FontSize();
+        auto centred = aspect == 3;
+        box.Stretch(aspect == 2 ? xaml::Media::Stretch::Fill
+                    : centred ? xaml::Media::Stretch::None : xaml::Media::Stretch::Uniform);
+        box.HorizontalAlignment(centred ? xaml::HorizontalAlignment::Center : xaml::HorizontalAlignment::Stretch);
+        box.VerticalAlignment(centred ? xaml::VerticalAlignment::Center : xaml::VerticalAlignment::Stretch);
+        box.ClearValue(xaml::FrameworkElement::WidthProperty());
+        box.ClearValue(xaml::FrameworkElement::HeightProperty());
         box.Visibility(xaml::Visibility::Visible);
         return true;
     } catch (...) {
@@ -244,8 +270,7 @@ extern "C" bool swiftomniui_winui_image_set(
         image.Visibility(xaml::Visibility::Visible);
         // SwiftOmniUI's Aspect: fit, fill, stretch, centre - at the picture's own size, in the middle of the room.
         auto centred = aspect == 3;
-        image.Stretch(aspect == 1 ? xaml::Media::Stretch::UniformToFill
-                      : aspect == 2 ? xaml::Media::Stretch::Fill
+        image.Stretch(aspect == 2 ? xaml::Media::Stretch::Fill
                       : centred ? xaml::Media::Stretch::None : xaml::Media::Stretch::Uniform);
         image.HorizontalAlignment(centred ? xaml::HorizontalAlignment::Center : xaml::HorizontalAlignment::Stretch);
         image.VerticalAlignment(centred ? xaml::VerticalAlignment::Center : xaml::VerticalAlignment::Stretch);
@@ -303,6 +328,21 @@ extern "C" void swiftomniui_winui_image_size(SwiftOmniUIObjectRef handle, double
         size[1] = bitmap.PixelHeight();
     } catch (...) {
         report("reading a picture's size");
+    }
+}
+
+extern "C" void swiftomniui_winui_image_place(SwiftOmniUIObjectRef handle, double width, double height) {
+    try {
+        auto grid = imageGrid(handle);
+        auto box = symbolBox(grid);
+        auto child = box.Visibility() == xaml::Visibility::Visible
+            ? box.as<xaml::FrameworkElement>() : imageChild(grid).as<xaml::FrameworkElement>();
+        child.Width(width);
+        child.Height(height);
+        child.HorizontalAlignment(xaml::HorizontalAlignment::Center);
+        child.VerticalAlignment(xaml::VerticalAlignment::Center);
+    } catch (...) {
+        report("placing a picture");
     }
 }
 
