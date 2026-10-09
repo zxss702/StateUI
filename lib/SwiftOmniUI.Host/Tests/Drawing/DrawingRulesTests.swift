@@ -65,7 +65,7 @@ final class DrawingRulesTests: XCTestCase {
         XCTAssertEqual(BoxArithmetic.clockwise(.corners(topLeft: 1, topRight: 2, bottomLeft: 3, bottomRight: -4)),
                        [1, 2, 0, 3])
         XCTAssertEqual(BoxArithmetic.clockwise(nil), [0, 0, 0, 0])
-        XCTAssertTrue(BoxArithmetic.fitted(30, width: 100, height: 20) == (30, 10))
+        XCTAssertTrue(BoxArithmetic.fitted(30, width: 100, height: 20) == (10, 10))
     }
 
     /// An outline is a rectangle where the tree asks none, a rounded one's radius never below nothing; it is drawn

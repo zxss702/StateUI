@@ -18,9 +18,10 @@
         return radii.map { $0.isFinite ? max(0, $0) : 0 }
     }
 
-    /// A corner's radius in a room `width` by `height`: no more than half the side it rounds.
+    /// A corner's circular radius in a room `width` by `height`: no more than half its shorter side.
     public static func fitted(_ radius: Double, width: Double, height: Double) -> (width: Double, height: Double) {
-        (min(radius, width / 2), min(radius, height / 2))
+        let fitted = min(radius, width / 2, height / 2)
+        return (fitted, fitted)
     }
 
     /// The outline the tree's `value` asks for: a rectangle where it asks none, a rounded one's radius never below
