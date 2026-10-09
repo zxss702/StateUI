@@ -57,9 +57,14 @@ final class GTKPageFrame {
         menuBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6)!
         adw_header_bar_pack_end(header.opaque, menuBox)
         adw_toolbar_view_add_top_bar(widget.opaque, header)
-        if let previous = gtk_widget_get_parent(page.widget),
-           g_type_check_instance_is_a(previous.of(GTypeInstance.self), adw_toolbar_view_get_type()) != 0 {
-            adw_toolbar_view_set_content(previous.opaque, nil)
+        var previous = gtk_widget_get_parent(page.widget)
+        while let parent = previous {
+            if g_type_check_instance_is_a(parent.of(GTypeInstance.self), adw_toolbar_view_get_type()) != 0,
+               adw_toolbar_view_get_content(parent.opaque) == page.widget {
+                adw_toolbar_view_set_content(parent.opaque, nil)
+                break
+            }
+            previous = gtk_widget_get_parent(parent)
         }
         adw_toolbar_view_set_content(widget.opaque, page.widget)
     }

@@ -204,6 +204,8 @@ final class GTKWindow {
     /// Shows `view` as the window's content, as it stands: an arrangement whose pages carry their header bars.
     func show(_ view: GTKView?) {
         guard view !== content || pageFrame != nil else { return }
+        setContent(nil)
+        if let pageFrame { adw_toolbar_view_set_content(pageFrame.widget.opaque, nil) }
         content = view
         pageFrame = nil
         setContent(view?.widget)
@@ -212,6 +214,8 @@ final class GTKWindow {
     /// Shows `page` in a frame of its own, whose header bar is the window's title bar.
     func show(page: GTKView?) {
         guard page !== content || pageFrame == nil else { return }
+        setContent(nil)
+        if let pageFrame { adw_toolbar_view_set_content(pageFrame.widget.opaque, nil) }
         content = page
         pageFrame = page.map { GTKPageFrame(page: $0) }
         setContent(pageFrame?.widget)
