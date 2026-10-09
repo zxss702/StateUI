@@ -7,6 +7,13 @@
 // same names for a composed view, whose result is opaque.
 
 extension Node {
+    /// Padding owns its room, so later backgrounds and clips include it.
+    mutating func wrapPadding() {
+        wrapPaddedFrame()
+        children[0].props[.horizontalAlignmentDefault] = AxisAlignment.fill.propValue
+        children[0].props[.verticalAlignmentDefault] = AxisAlignment.fill.propValue
+    }
+
     /// A frame encloses the preceding view, keeping its own size and alignment.
     mutating func wrapPaddedFrame(alignment: Alignment = .center) {
         var content = self

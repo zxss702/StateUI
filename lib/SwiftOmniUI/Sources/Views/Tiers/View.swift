@@ -206,15 +206,22 @@ extension View {
 }
 
 extension ViewProperties {
-    /// The space kept outside the view, between it and its neighbours.
-    /// `contentPadding` is the space inside.
+    /// Adds space around the preceding view. Each view call encloses its
+    /// earlier modifiers, so a later background includes this space.
     ///
     ///     Text("Total").padding(16)                        // all four sides
     ///     Text("Total").padding(EdgeInsets(16, 0, 0, 0))   // the left edge only
     ///     Text("Total").padding(.horizontal, 16)           // left and right
     ///     Text("Total").padding()                          // the library's default
     public func padding(_ value: EdgeInsets) -> Modified {
-        setValue(ViewContract.padding, value)
+        modified { node in
+            if Self.self is any View.Type {
+                node.wrapPadding()
+                node.props[.contentPadding] = value.propValue
+            } else {
+                node.write(ViewContract.padding, value)
+            }
+        }
     }
 
     /// The same space on the edges named, `nil` for the library's default.
@@ -254,7 +261,14 @@ extension ViewProperties {
     /// `padding` from a state, `$x`: the host animates the property to each
     /// new value, and no view is rebuilt for it. This library's own.
     @_spi(Host) public func padding(_ state: Binding<EdgeInsets>) -> Modified {
-        journey(ViewContract.padding, by: state)
+        modified { node in
+            if Self.self is any View.Type {
+                node.wrapPadding()
+                node.driveJourney(.contentPadding, by: state)
+            } else {
+                node.driveJourney(ViewContract.padding, by: state)
+            }
+        }
     }
 
     /// The same space on all four sides, from a state, `$x`. This library's own.
@@ -378,8 +392,8 @@ extension View {
         hearing(event, handler)
     }
 
-    /// The space kept outside the view, between it and its neighbours.
-    /// `contentPadding` is the space inside.
+    /// Adds space around the preceding view. Each call encloses its earlier
+    /// modifiers, so a later background includes this space.
     ///
     ///     Text("Total").padding(16)                        // all four sides
     ///     Text("Total").padding(EdgeInsets(16, 0, 0, 0))   // the left edge only
@@ -387,7 +401,10 @@ extension View {
     ///     Text("Total").padding()                          // the library's default
     @_disfavoredOverload
     public func padding(_ value: EdgeInsets) -> ModifiedContent {
-        setting(ViewContract.padding, value)
+        revised { node in
+            node.wrapPadding()
+            node.props[.contentPadding] = value.propValue
+        }
     }
 
     /// The same space on the edges named, `nil` for the library's default.
@@ -428,7 +445,8 @@ extension View {
     @_disfavoredOverload
     @_spi(Host) public func padding(_ state: Binding<EdgeInsets>) -> ModifiedContent {
         revised { node in
-            node.driveJourney(ViewContract.padding, by: state)
+            node.wrapPadding()
+            node.driveJourney(.contentPadding, by: state)
         }
     }
 
