@@ -279,6 +279,13 @@ extension Node {
         /// root - or onto each of them, when the body is a fragment of several.
         func expand(over written: Node) -> Node {
             var node = build()
+            if node.type == .fragment, node.children.count > 1, written.lazyIdentity != nil,
+               let stack = written.props[.lazyRowStack]?.numbers, stack.count == 2 {
+                let children = node.asChildren
+                node.type = stack[0] == 1 ? .hStack : .vStack
+                node.children = children
+                node.write(StackBaseContract.spacing, stack[1])
+            }
             for (property, member) in written.inheritedMembers {
                 node.inherit(property, member: member)
             }

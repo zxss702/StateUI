@@ -170,6 +170,7 @@ extension NodeType {
     static let isFrameContent = Prop("isFrameContent")
     static let isLayoutDecoration = Prop("isLayoutDecoration")
     static let isGeometryReader = Prop("isGeometryReader")
+    static let lazyRowStack = Prop("lazyRowStack")
     static let safeAreaInsetEdge = Prop("safeAreaInsetEdge")
     static let flowColumns = GridContract.flowColumns.token
     static let flowRows = LazyHGridContract.flowRows.token

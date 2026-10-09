@@ -287,6 +287,8 @@ struct LazyHStackElement: StackBase {
 
         let positions = positions
         let owned = owned
+        let rowStack: PropValue? = node.type == .lazyVStack || node.type == .lazyHStack
+            ? .numbers([node.type == .lazyHStack ? 1 : 0, node.props[.spacing]?.number ?? 0]) : nil
         node.lazyWindow = realized.lender.map(ObjectIdentifier.init)
         node.producer = {
             realized.wrappedValue.filter { positions[$0] != nil }
@@ -312,6 +314,7 @@ struct LazyHStackElement: StackBase {
                 } else {
                     prepare(&child, owner.place)
                 }
+                if child.type != .fragment { child.props[.lazyRowStack] = rowStack }
                 // A fragment is retained by the differ even though only
                 // its children mount. Its identity must survive window shifts too.
                 if child.id == nil { child.id = identity }
