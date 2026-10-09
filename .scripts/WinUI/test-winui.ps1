@@ -54,7 +54,7 @@ swift build --package-path $testing --build-tests @scratch
 if ($LASTEXITCODE) { throw 'the WinUI host tests did not build' }
 Write-Host 'laying the Windows App SDK beside the test runner'
 $bin = (swift build --package-path $testing @scratch --show-bin-path).Trim()
-Set-SwiftOmniUISelfContained -Directory $bin -Executables (Join-Path $bin 'SwiftOmniUIRootTests-test-runner.exe')
+Set-SwiftOmniUISelfContained -Directory $bin -Executables (Join-Path $bin 'SwiftOmniUIWinUITests-test-runner.exe')
 
 # A variable's name is its parameter's whatever the case, so the arguments have one of their own.
 $apart = @('--parallel', '--num-workers', '1')

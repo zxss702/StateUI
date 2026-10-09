@@ -32,7 +32,7 @@ scratch="$package/.build/web-tests"
 
 SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --build-tests
 products="$(SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --show-bin-path)"
-program="$products/SwiftOmniUIRootTests-test-runner.wasm"
+program="$products/SwiftOmniUIWebTests-test-runner.wasm"
 relay="$checkout/lib/SwiftOmniUI.Web/JavaScript/swiftomniui-web.js"
 conformance="SwiftOmniUIWebTests.WebConformanceTests"
 # The classes whose tests need a browser's own page: the host's own, and the conformance suite.

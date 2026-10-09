@@ -57,7 +57,7 @@ The name is the one the desktop knows the application by. GTK keeps one
 instance of it: launched again, the running application brings its window
 forward.
 
-`SWIFTOMNIUI_GTK=1` is what makes a build a GTK one: the application's manifest
+`SWIFTOMNIUI_HOST=gtk` is what makes a build a GTK one: the application's manifest
 reads it, declares the `Platforms/GTK` target, the executable it makes and the
 `SwiftOmniUIGTK` dependency, and defines the `GTK` compilation condition for every
 module of the application. Swift written for this host alone stands under

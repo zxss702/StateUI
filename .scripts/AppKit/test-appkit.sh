@@ -13,4 +13,8 @@ set -euo pipefail
 
 repository_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export SWIFTOMNIUI_HOST=appkit
-exec swift test --package-path "$repository_dir" --filter SwiftOmniUIAppKitTests "$@"
+filter=(--filter SwiftOmniUIAppKitTests)
+for argument in "$@"; do
+  [[ "$argument" != --filter && "$argument" != --filter=* ]] || filter=()
+done
+exec swift test --package-path "$repository_dir" "${filter[@]}" "$@"

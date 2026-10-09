@@ -337,6 +337,10 @@ final class NativeProjectTests: XCTestCase {
         XCTAssertFalse(manifest.contains("ThroughTheRoot"), "internal forwarding targets remain")
         XCTAssertFalse(manifest.contains(#".product(name: "SwiftOmniUI""#), "core must be a direct target dependency")
         XCTAssertFalse(manifest.contains("JsonDataDynamic"), "JsonData must use its ordinary product")
+        XCTAssertFalse(manifest.contains(".package(name:"), "SOUI must not depend on internal path packages")
+        let libraryFiles = try SourceTree.files(under: SourceTree.repository.appendingPathComponent("lib"),
+            entering: { SourceTree.entersSources($0) && !$0.hasSuffix("node_modules") })
+        XCTAssertFalse(libraryFiles.contains { $0.hasSuffix("Package.swift") }, "only the root library manifest remains")
         XCTAssertFalse(FileManager.default.fileExists(atPath: package.appendingPathComponent("Package.swift").path))
 
         let sources = package.appendingPathComponent("Sources")
@@ -638,7 +642,7 @@ final class NativeProjectTests: XCTestCase {
     /// one.
     ///
     /// An application declares that target, the product it makes and the
-    /// SwiftOmniUIAppKit dependency only when `SWIFTOMNIUI_HOST` is set, so that
+    /// SwiftOmniUIHead dependency for AppKit only when `SWIFTOMNIUI_HOST=appkit` is set, so that
     /// `swift test` compiles no part of one host's half. A build that leaves
     /// the variable out asks for a product the manifest never declared, and a
     /// page that leaves it out hands a reader a command that cannot work.

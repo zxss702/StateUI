@@ -48,7 +48,8 @@ the package and its targets, what crosses between them, and where each part of t
 
 The root manifest declares these modules as targets with direct dependencies.
 Consumers select ordinary library products; SOUI has no internal dynamic-library
-boundary. Application dynamic dependencies remain part of the final link graph. Code in the platform's own language - Java
+boundary. Application dynamic dependencies remain part of the final link graph.
+Code in the platform's own language - Java
 through JNI, C++/WinRT behind a C ABI - relays calls beneath the host and holds
 no SwiftOmniUI logic.
 

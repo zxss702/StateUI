@@ -61,7 +61,7 @@ swiftomniui_app_register()
 SwiftOmniUIWinUI.run()
 ```
 
-`SWIFTOMNIUI_WINUI=1` is what makes a build a WinUI one: the application's
+`SWIFTOMNIUI_HOST=winui` is what makes a build a WinUI one: the application's
 manifest reads it, declares the `Platforms/WinUI` target, the executable it
 makes and the `SwiftOmniUIWinUI` dependency, and defines the `WINUI` compilation
 condition for every module of the application. The executable links as a

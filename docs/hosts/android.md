@@ -67,7 +67,7 @@ needs no Java of its own. Its `build.gradle.kts` depends on AndroidX's
 keeps their Java beside the head, in `Java/`, and may extend the activity,
 declaring its own class in the manifest instead.
 
-`SWIFTOMNIUI_ANDROID=1` is what makes a build an Android Views one: the
+`SWIFTOMNIUI_HOST=android` is what makes a build an Android Views one: the
 application's manifest reads it, declares the `Platforms/Android/Swift` target,
 the library it makes and the `SwiftOmniUIAndroid` dependency, and defines the
 `ANDROID` compilation condition for every module of the application. Swift
