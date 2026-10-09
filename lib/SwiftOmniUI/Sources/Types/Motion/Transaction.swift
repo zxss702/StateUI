@@ -26,6 +26,9 @@ import Glibc
 ///         expanded.toggle()
 ///     }
 public struct Transaction: Equatable, Sendable {
+    /// Native geometry feedback settles layout without starting another size or place journey.
+    var isGeometryFeedback = false
+
     /// The animation the change runs under, or none where the write named none.
     public var animation: Animation?
 

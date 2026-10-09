@@ -159,11 +159,15 @@ public struct GeometryReader: View {
         .flex(0)
         .hearing(ViewContract.namedFramesChanged) { frames in
             guard frames != self.named else { return }
-            self.named = frames
+            var transaction = Transaction()
+            transaction.isGeometryFeedback = true
+            withTransaction(transaction) { self.named = frames }
         }
         .hearing(ViewContract.frameChanged) { numbers in
             guard let report = FrameReport(numbers), report != self.report else { return }
-            self.report = report
+            var transaction = Transaction()
+            transaction.isGeometryFeedback = true
+            withTransaction(transaction) { self.report = report }
         }
     }
 }

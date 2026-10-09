@@ -446,6 +446,7 @@ extension Differ {
         // write wins, then an armed gate, then what the element resolves.
         let animating = { (values: AnimationValues) -> Animation in
             if transacting?.disablesAnimations == true { return .none }
+            if transacting?.isGeometryFeedback == true, !values.isDisjoint(with: .size) { return .none }
 
             let resolved = (plan?.animation(for: values, armed: armed) ?? .inherited)
                 .resolved(against: standing)
@@ -488,6 +489,7 @@ extension Differ {
 
             // A measured layout's children take their sizes at once.
             if node.childSizesArrive { lanes.subtract([.width, .height]) }
+            if transacting?.isGeometryFeedback == true { lanes = [] }
 
             let stood = describeAll ? AnimationLanes.all : (previous?.lanes ?? .all)
 
