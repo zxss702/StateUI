@@ -45,6 +45,10 @@ final class WinUISplitView: WinUILayoutView {
         didSet { configure() }
     }
 
+    var detailWidthBounds: [Double]? {
+        didSet { if detailWidthBounds != oldValue { configure(); invalidateMeasurements() } }
+    }
+
     /// The pane's open length from a width triple: the ideal, or the minimum.
     private static func paneLength(_ bounds: [Double]?) -> Double {
         guard let bounds else { return 0 }
@@ -157,7 +161,7 @@ final class WinUISplitView: WinUILayoutView {
     /// Measures WinUI's navigation view at the size it was last arranged at, the one its pages are laid out in.
     /// Design: docs/design/platforms/winui/pages.md#a-native-arrangement
     override func measure(width: Double, height: Double) -> LayoutSize {
-        let size = arranged ?? LayoutSize(width: width.isFinite ? width : 0, height: height.isFinite ? height : 0)
+        let size = arranged ?? LayoutSize(width: width, height: height)
         asked = sidebar.measure(width: size.width, height: size.height)
         return super.measure(width: width, height: height)
     }
@@ -182,7 +186,7 @@ final class WinUISplitView: WinUILayoutView {
 
     private func configure() {
         ProgramWrite.perform {
-            if pages.count > 2 {
+            if pages.count > 2, detailWidthBounds?.last != 0 {
                 middle.set(
                     sidebar: pages[1].view, detail: pages[2].view, row: detailRow,
                     open: isContentPresented, paneLength: Self.paneLength(contentPaneLength))
@@ -190,6 +194,7 @@ final class WinUISplitView: WinUILayoutView {
                     sidebar: pages.first?.view, detail: middle, row: nil,
                     open: isPresented, paneLength: Self.paneLength(sidebarPaneLength))
             } else {
+                middle.set(sidebar: nil, detail: nil, row: nil, open: false)
                 sidebar.set(
                     sidebar: pages.first?.view, detail: pages.dropFirst().first?.view, row: detailRow,
                     open: isPresented, paneLength: Self.paneLength(sidebarPaneLength))

@@ -42,6 +42,8 @@ final class GTKSplitView: GTKLayoutView {
     private let middle = GTKWidgetView { adw_overlay_split_view_new() }
 
     private var panes: [GTKView] = []
+    var detailWidthBounds: [Double]?
+    private var arrangedDetailWidth: [Double]?
     private var adapted = false
     private var adaptation = SidebarAdaptation()
 
@@ -68,20 +70,23 @@ final class GTKSplitView: GTKLayoutView {
 
     /// Whether a content column stands between the sidebar and the detail.
     var hasContentColumn: Bool { panes.count > 2 }
+    var showsDetailColumn: Bool { hasContentColumn && detailWidthBounds?.last != 0 }
 
     /// The sidebar and the pages beside it, each framed where it is a page -
     /// a third pane stands in the middle split as its sidebar.
     @discardableResult
     override func setItems(_ items: [GTKLayoutItem]) -> Bool {
         let views = items.map(\.view)
-        guard views.count != panes.count || !zip(views, panes).allSatisfy({ $0 === $1 }) else { return false }
+        guard views.count != panes.count || !zip(views, panes).allSatisfy({ $0 === $1 })
+            || detailWidthBounds != arrangedDetailWidth else { return false }
 
+        arrangedDetailWidth = detailWidthBounds
         panes = views
         for view in views { view.placingLayout = nil }
         sidebarFrame = frame(views.first, framed: framedPanes.first == true, keeping: sidebarFrame)
         adw_overlay_split_view_set_sidebar(native, sidebarFrame?.widget ?? views.first?.widget)
 
-        if views.count > 2 {
+        if views.count > 2, detailWidthBounds?.last != 0 {
             middle.placingLayout = nil
             contentFrame = frame(views[1], framed: framedPanes.count > 1 && framedPanes[1], keeping: contentFrame)
             detailFrame = frame(views[2], framed: framedPanes.count > 2 && framedPanes[2], keeping: detailFrame)
@@ -89,6 +94,9 @@ final class GTKSplitView: GTKLayoutView {
             adw_overlay_split_view_set_content(middle.widget.opaque, detailFrame?.widget ?? views[2].widget)
             adw_overlay_split_view_set_content(native, middle.widget)
         } else {
+            adw_overlay_split_view_set_content(native, nil)
+            adw_overlay_split_view_set_sidebar(middle.widget.opaque, nil)
+            adw_overlay_split_view_set_content(middle.widget.opaque, nil)
             contentFrame = nil
             detailFrame = frame(views.dropFirst().first, framed: framedPanes.dropFirst().first == true, keeping: detailFrame)
             adw_overlay_split_view_set_content(native, detailFrame?.widget ?? views.dropFirst().first?.widget)

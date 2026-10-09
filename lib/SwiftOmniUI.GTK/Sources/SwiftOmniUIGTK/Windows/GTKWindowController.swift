@@ -134,7 +134,7 @@ final class GTKWindowController {
 
     /// Collapses the window's split view where the window is narrow.
     private func adaptSplitViews() {
-        guard let split = presentation.arrangement?.gtk, split.type == .navigationSplitView,
+        guard let split = presentation.arrangement?.visibleSplitView?.gtk,
               let view = split.view as? GTKSplitView
         else { return }
 

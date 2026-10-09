@@ -54,7 +54,11 @@ extension GTKElement {
             guard let badge = child.element.visiblePage?.pageValue(.badge)?.string, !badge.isEmpty else { return title }
             return title.isEmpty ? badge : "\(title) (\(badge))"
         }
-        (view as? GTKSplitView)?.framedPanes = arranged.map { Self.framedTypes.contains($0.type) }
+        (view as? GTKSplitView)?.framedPanes = arranged.map {
+            Self.framedTypes.contains($0.type) && !($0.type == .page && $0.element.contentArrangement != nil)
+        }
+        (view as? GTKSplitView)?.detailWidthBounds = arranged.count > 2
+            ? arranged.last?.element.pageValue(.preferredColumnWidth)?.numbers : nil
         (view as? GTKSplitView)?.sidebarWidthBounds = arranged.first?.element.pageValue(.preferredColumnWidth)?.numbers
         (view as? GTKSplitView)?.contentWidthBounds = arranged.count > 2
             ? arranged[1].element.pageValue(.preferredColumnWidth)?.numbers

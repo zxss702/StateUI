@@ -7,6 +7,17 @@
 /// detail and, while it shows, its sidebar.
 /// Design: docs/design/host/pages.md#the-page-path
 extension MountedElement {
+    /// The split on the active page path, including one wrapped in a page or stack.
+    public var visibleSplitView: MountedElement? {
+        switch type {
+        case .navigationSplitView: self
+        case .page: contentArrangement?.visibleSplitView
+        case .navigationStack: currentChildren.last?.visibleSplitView
+        case .tabView: selectedTab?.visibleSplitView
+        default: nil
+        }
+    }
+
     /// The page the user sees in this arrangement: a stack's top, the chosen tab, a split view's detail.
     public var visiblePage: MountedElement? {
         switch type {

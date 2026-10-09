@@ -93,7 +93,7 @@
         (background, foreground) = (page ?? window).barColors
         menuBar = page?.children.first { $0.type == .menuBar }
         commands = window.children.first { $0.type == .menuBar }
-        sidebarToggle = arrangement?.type == .navigationSplitView ? arrangement : nil
+        sidebarToggle = arrangement?.visibleSplitView
     }
 
     /// Whether the chrome shows what an element of `type` moves on a frame: a window's frame, a title bar's own
@@ -102,5 +102,5 @@
         followed.contains(type)
     }
 
-    private static let followed: Set<NodeType> = [.windowScene, .titleBar, .navigationStack, .tabView]
+    private static let followed: Set<NodeType> = [.windowScene, .titleBar, .navigationStack, .tabView, .navigationSplitView]
 }

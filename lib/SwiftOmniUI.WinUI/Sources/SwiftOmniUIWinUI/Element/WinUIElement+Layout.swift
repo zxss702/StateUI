@@ -46,6 +46,8 @@ extension WinUIElement {
             return
         }
         if let split = view as? WinUISplitView {
+            split.detailWidthBounds = arranged.count > 2
+                ? arranged.last?.element.pageValue(.preferredColumnWidth)?.numbers : nil
             split.sidebarPaneLength = arranged.first?.element.pageValue(.preferredColumnWidth)?.numbers
             split.contentPaneLength = arranged.count > 2
                 ? arranged[1].element.pageValue(.preferredColumnWidth)?.numbers

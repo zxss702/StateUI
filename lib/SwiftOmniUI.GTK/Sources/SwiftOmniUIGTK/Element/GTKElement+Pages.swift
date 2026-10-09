@@ -99,6 +99,8 @@ extension GTKElement {
     /// `sidebar` shows a split view's sidebar from the header bar of the page the user sees in its detail.
     func composeChrome(showingSidebar sidebar: (shows: Bool, toggle: () -> Void)? = nil) {
         switch type {
+        case .page:
+            element.contentArrangement?.gtk.composeChrome(showingSidebar: sidebar)
         case .navigationStack:
             guard let navigation = view as? GTKNavigationView else { return }
             let pages = element.stackedChildren.map(\.gtk)
@@ -120,11 +122,12 @@ extension GTKElement {
                 split.sidebarFrame?.show(sidebar.chrome)
                 sidebar.composeChrome()
             }
-            if children.count > 2, let content = children.dropFirst().first {
+            if split.showsDetailColumn, let content = children.dropFirst().first {
                 split.contentFrame?.show(content.chrome)
                 content.composeChrome()
             }
-            if let detail = children.last, children.count > 1 {
+            let detail = split.showsDetailColumn ? children.last : children.dropFirst().first
+            if let detail {
                 if let frame = split.detailFrame {
                     var chrome = detail.chrome
                     chrome.sidebar = showing
