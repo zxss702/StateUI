@@ -202,7 +202,7 @@ extern "C" void swiftomniui_winui_menu_button_set_indicator(SwiftOmniUIObjectRef
 extern "C" void swiftomniui_winui_menu_button_set_borderless(SwiftOmniUIObjectRef handle, int32_t borderless) {
     try {
         auto button = borrow<controls::Button>(handle);
-        auto transparent = xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent());
+        auto transparent = xaml::Media::SolidColorBrush(winrt::Windows::UI::Color{0, 0, 0, 0});
         for (auto key : {L"ButtonBackgroundPointerOver", L"ButtonBackgroundPressed", L"ButtonBackgroundDisabled",
                         L"ButtonBorderBrushPointerOver", L"ButtonBorderBrushPressed", L"ButtonBorderBrushDisabled"}) {
             auto name = winrt::box_value(key);
