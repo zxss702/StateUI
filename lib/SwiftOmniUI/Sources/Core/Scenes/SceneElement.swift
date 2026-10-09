@@ -51,20 +51,20 @@ struct SceneElement: Element {
         var children: [Node] = []
 
         if let windowScene = windows.main {
+            let own = windowScene as? WindowSceneAsks
             var main = windowScene.node(session: record.windowSession(SceneElement.mainKey))
             main.id = SceneElement.mainKey
             main.append(commands: sceneMenus(of: windows))
 
-            // The scene's own asks land on its main window - and are each
-            // group's default, where the group does not say its own.
-            if let size = windows.defaultSize {
+            // The window's own asks win over its scene's defaults.
+            if let size = own?.windowSize ?? windows.defaultSize {
                 main.write(WindowSceneContract.width, size.width)
                 main.write(WindowSceneContract.height, size.height)
             }
-            if let position = windows.defaultPosition {
+            if let position = own?.windowPosition ?? windows.defaultPosition {
                 main.write(WindowSceneContract.defaultPosition, position)
             }
-            if let resizability = windows.resizability {
+            if let resizability = own?.windowResizability ?? windows.resizability {
                 main.write(WindowSceneContract.resizability, resizability)
             }
             for edit in windows.environmentEdits { edit(&main.environmentValues) }
@@ -78,7 +78,9 @@ struct SceneElement: Element {
                 continue
             }
 
-            var window = group.make(opened, record).node(session: record.windowSession(opened.key))
+            let windowScene = group.make(opened, record)
+            let own = windowScene as? WindowSceneAsks
+            var window = windowScene.node(session: record.windowSession(opened.key))
             window.id = opened.key
             window.append(commands: sceneMenus(of: windows) + group.commands.flatMap { $0.commandNodes })
 
@@ -88,15 +90,15 @@ struct SceneElement: Element {
             window.describe(WindowSceneContract.windowValue, opened.text)
             window.write(WindowSceneContract.hidesWhenInactive, group.hides)
             window.write(WindowSceneContract.floatsOnTop, group.floats)
-            if let resizability = group.resizability ?? windows.resizability {
+            if let resizability = own?.windowResizability ?? group.resizability ?? windows.resizability {
                 window.write(WindowSceneContract.resizability, resizability)
             }
             for edit in windows.environmentEdits { edit(&window.environmentValues) }
-            if let size = group.defaultSize ?? windows.defaultSize {
+            if let size = own?.windowSize ?? group.defaultSize ?? windows.defaultSize {
                 window.write(WindowSceneContract.width, size.width)
                 window.write(WindowSceneContract.height, size.height)
             }
-            if let position = group.defaultPosition ?? windows.defaultPosition {
+            if let position = own?.windowPosition ?? group.defaultPosition ?? windows.defaultPosition {
                 window.write(WindowSceneContract.defaultPosition, position)
             }
 

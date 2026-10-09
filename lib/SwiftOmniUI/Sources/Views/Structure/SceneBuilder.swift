@@ -81,8 +81,8 @@ public struct ConditionalScene: Scene {
 /// main window is the scene's own, and every scene's groups - so its kinds
 /// of window - answer `openWindow` together.
 ///
-/// Scene-level asks - `defaultSize`, `commands`, the environments offered -
-/// merge the same way: the first scene to ask a thing stands.
+/// Window defaults stay with the scene that declared them; commands and
+/// offered environments collect across the scenes.
 public struct TupleScene: Scene {
     /// The scenes, in the order the body wrote them.
     let scenes: [any Scene]
@@ -94,9 +94,6 @@ public struct TupleScene: Scene {
         var environments: [(key: ObjectIdentifier, object: AnyObject)] = []
         var environmentEdits: [(inout EnvironmentValues) -> Void] = []
         var commands: [any Commands] = []
-        var defaultSize: (width: Double, height: Double)? = nil
-        var defaultPosition: UnitPoint? = nil
-        var resizability: WindowResizability? = nil
 
         for scene in scenes {
             // An object's `.environment` wrapper hands its object down as the
@@ -108,23 +105,33 @@ public struct TupleScene: Scene {
             }
 
             let windows = scene.windows
-            if main == nil { main = windows.main }
-            groups += windows.groups
+            if main == nil, let window = windows.main {
+                main = window
+                if windows.defaultSize != nil || windows.defaultPosition != nil || windows.resizability != nil {
+                    let own = window as? WindowSceneAsks
+                    main = ModifiedWindowScene(base: window) {
+                        $0.size = own?.windowSize ?? windows.defaultSize
+                        $0.position = own?.windowPosition ?? windows.defaultPosition
+                        $0.resizability = own?.windowResizability ?? windows.resizability
+                    }
+                }
+            }
+            groups += windows.groups.map { group in
+                var group = group
+                group.defaultSize = group.defaultSize ?? windows.defaultSize
+                group.defaultPosition = group.defaultPosition ?? windows.defaultPosition
+                group.resizability = group.resizability ?? windows.resizability
+                return group
+            }
             environments += windows.environments
             environmentEdits += windows.environmentEdits
             commands += windows.commands
-            defaultSize = defaultSize ?? windows.defaultSize
-            defaultPosition = defaultPosition ?? windows.defaultPosition
-            resizability = resizability ?? windows.resizability
         }
 
         var merged = Windows(groups: groups, main: main)
         merged.environments = environments
         merged.environmentEdits = environmentEdits
         merged.commands = commands
-        merged.defaultSize = defaultSize
-        merged.defaultPosition = defaultPosition
-        merged.resizability = resizability
         return merged
     }
 }
