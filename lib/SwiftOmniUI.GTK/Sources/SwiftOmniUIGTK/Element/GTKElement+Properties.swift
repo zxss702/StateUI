@@ -114,10 +114,10 @@ extension GTKElement {
                 break
             }
             (each.view as? GTKLayoutView)?.forgetMeasurements()
+            each.view?.invalidateMeasure()
             element = each.parent
         }
 
-        (view ?? parent?.nearestView)?.invalidateMeasure()
     }
 
     /// Hears the scroller's movement on the display's frames: where it went, and that it came to rest.
