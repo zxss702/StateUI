@@ -129,5 +129,5 @@ public func withTransaction<R, V>(_ keyPath: WritableKeyPath<Transaction, V>, _ 
 ///   - body: the work to do.
 /// - Returns: what `body` answered.
 public func withAnimation<Result>(_ animation: Animation? = .default, _ body: () throws -> Result) rethrows -> Result {
-    try withTransaction(\.animation, animation, body)
+    try withTransaction(\.animation, animation ?? Animation.none, body)
 }
