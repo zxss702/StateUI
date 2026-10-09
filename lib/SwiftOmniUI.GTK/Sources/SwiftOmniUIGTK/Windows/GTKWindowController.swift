@@ -36,7 +36,6 @@ final class GTKWindowController {
         self.element = element
 
         let changes = presentation.show(element, in: runtime.lifecycle)
-        GTKRenderer.log.note("PRESENT arrangement=\(presentation.arrangement.map { "\($0.type):\($0.id)" } ?? "nil") hidden=\(String(describing: changes.hidden)) view=\(presentation.arrangement?.gtk.view != nil)")
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         if let hidden = changes.hidden { window.setHidden(hidden) }
         if let (_, arrangement) = changes.arrangement {

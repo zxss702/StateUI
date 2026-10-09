@@ -36,11 +36,10 @@ extension GTKElement {
 
         if let menu = view as? GTKMenuButtonView {
             // The menu is a slot's - the layout never places it, so it is read among the element's own children.
+            let entries = element.children.first { $0.type == .contextMenu }
+                .map { MenuEntry.entries(of: $0) } ?? []
             menu.setFace(arranged.first?.view?.widget)
-            menu.setEntries(
-                element.children.first { $0.type == .contextMenu }
-                    .map { MenuEntry.entries(of: $0) } ?? [],
-                clicked: { entry in entry.gtk.send(.clicked, []) })
+            menu.setEntries(entries)
             return
         }
         (view as? GTKNavigationView)?.titles = arranged.map { child in

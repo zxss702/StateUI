@@ -243,6 +243,11 @@ extension Node {
             page(around: content, session: request.held(as: PageSession.self))
         }
 
+        // The destinations `.navigationDestination` registered on the
+        // content ride on the page: the stack holding it reads them off its
+        // root before the placeholder is built.
+        node.itemDestination = content.itemDestination
+        node.destinations.merge(content.destinations) { own, _ in own }
         node.session = request
         return node
     }

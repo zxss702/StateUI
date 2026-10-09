@@ -220,7 +220,6 @@ final class GTKWindow {
 
     private func setContent(_ widget: GTKWidget?) {
         gtk_overlay_set_child(layers.opaque, widget)
-        GTKRenderer.log.note("SETCONTENT widget=\(widget != nil) ready=\(contentReady) presented=\(presented) hidden=\(hidden)")
         guard widget != nil, contentReady, !presented, !hidden else { return }
 
         presented = true
@@ -230,7 +229,6 @@ final class GTKWindow {
     /// Presents only after the content's constraints and size have been applied.
     func presentContent() {
         contentReady = true
-        GTKRenderer.log.note("PRESENT-CONTENT presented=\(presented) hidden=\(hidden) child=\(gtk_overlay_get_child(layers.opaque) != nil)")
         guard !presented, !hidden, gtk_overlay_get_child(layers.opaque) != nil else { return }
         presented = true
         present()
@@ -238,7 +236,6 @@ final class GTKWindow {
 
     /// Brings the window forward.
     func present() {
-        GTKRenderer.log.note("PRESENT-WINDOW hidden=\(hidden)")
         guard !hidden else { return }
         gtk_window_present(widget.of(GtkWindow.self))
     }

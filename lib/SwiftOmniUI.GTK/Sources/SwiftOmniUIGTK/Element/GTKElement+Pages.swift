@@ -55,7 +55,6 @@ extension GTKElement {
         chrome.appMenu = arrangement?.leadingPage === page ? Self.appMenuEntries(of: page) : []
 
         let actions = page.chromeActions
-        GTKRenderer.log.note("CHROME page=\(page.id) title=\(page.pageValue(.title)?.string ?? "nil") actions=\(actions.primary.count) leading=\(actions.leading.count) overflow=\(actions.overflow.count)")
         chrome.leadingActions = actions.leading.map(Self.action)
         chrome.actions = actions.primary.map(Self.action)
         chrome.overflow = actions.overflow.map(Self.action)

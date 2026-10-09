@@ -117,7 +117,7 @@ final class GTKPageFrame {
             $0.title == $1.title && $0.isEnabled == $1.isEnabled && $0.entries.count == $1.entries.count
         }
         guard !same else { return }
-        appMenuButton?.setEntries(entries) { entry in entry.gtk.send(.clicked, []) }
+        appMenuButton?.setEntries(entries)
         appMenuDrawn = entries
     }
 

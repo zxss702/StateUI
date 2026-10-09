@@ -3,6 +3,7 @@
 
 // The navigation stack: what is on the native stack is an array the author
 // holds, and a back gesture the user completes shortens it.
+
 // Design: docs/design/views/pages.md#the-stack-is-the-state
 
 /// A page holding a native stack of pages, with a bar and a back affordance.
@@ -86,11 +87,17 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
         node.session = links
         node.producer = {
             let store = Self.links(in: links)
-            var children: [Node] = [Self.identified(Node.page(root()), as: Self.rootIdentity)]
+            let (root, declared) = DeclaredDestinations.collect {
+                Self.identified(Node.page(root()), as: Self.rootIdentity)
+            }
+            var children: [Node] = [root]
 
             for (depth, route) in path.wrappedValue.enumerated() {
+                let page = declared.typed[ObjectIdentifier(Swift.type(of: route))]
+                    .map { DestinationPage(node: $0(route)) as any Page }
+                    ?? destination(route)
                 var pushed = Self.identified(
-                    Node.page(destination(route)), as: Self.identity(depth: depth, route: route))
+                    Node.page(page), as: Self.identity(depth: depth, route: route))
 
                 // `\.dismiss` inside a pushed page backs the stack out of it.
                 pushed.environmentValues[keyPath: \.dismiss] = DismissAction { [path] in
@@ -148,10 +155,12 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
         node.session = links
         node.producer = {
             let store = Self.links(in: links)
-            let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
+            let (rootNode, declared) = DeclaredDestinations.collect {
+                Self.identified(Node.page(root()), as: Self.rootIdentity)
+            }
             var children: [Node] = [rootNode]
 
-            let destinations = Self.destinations(on: rootNode)
+            let destinations = Self.destinations(on: rootNode, plus: declared)
             for (depth, route) in path.wrappedValue.enumerated() {
                 let made = destinations[ObjectIdentifier(Swift.type(of: route))]?(route)
                     ?? EmptyView().node
@@ -165,11 +174,11 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
             }
 
             itemOnStack = false
-            if let pushed = Self.itemDestinationPage(from: rootNode) {
+            if let pushed = Self.itemDestinationPage(from: rootNode, declared: declared.item) {
                 children.append(pushed)
                 itemOnStack = true
             }
-            itemDismiss = rootNode.itemDestination?.dismiss
+            itemDismiss = declared.item?.dismiss ?? rootNode.itemDestination?.dismiss
                 ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
 
             children.append(contentsOf: store.pushed)
@@ -210,15 +219,17 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
         node.session = links
         node.producer = {
             let store = Self.links(in: links)
-            let rootNode = Self.identified(Node.page(root()), as: Self.rootIdentity)
+            let (rootNode, declared) = DeclaredDestinations.collect {
+                Self.identified(Node.page(root()), as: Self.rootIdentity)
+            }
             var children: [Node] = [rootNode]
 
             itemOnStack = false
-            if let pushed = Self.itemDestinationPage(from: rootNode) {
+            if let pushed = Self.itemDestinationPage(from: rootNode, declared: declared.item) {
                 children.append(pushed)
                 itemOnStack = true
             }
-            itemDismiss = rootNode.itemDestination?.dismiss
+            itemDismiss = declared.item?.dismiss ?? rootNode.itemDestination?.dismiss
                 ?? rootNode.children.compactMap(\.itemDestination?.dismiss).first
 
             children.append(contentsOf: store.pushed)
@@ -257,8 +268,11 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
 
     /// The destinations `.navigationDestination` registered on the page - its
     /// own, or its content's where the modifier wrapped it inside.
-    private static func destinations(on rootNode: Node) -> [ObjectIdentifier: (Any) -> Node] {
-        var found = rootNode.destinations
+    private static func destinations(
+        on rootNode: Node, plus declared: DeclaredDestinations
+    ) -> [ObjectIdentifier: (Any) -> Node] {
+        var found = declared.typed
+        found.merge(rootNode.destinations) { own, _ in own }
         for child in rootNode.children {
             found.merge(child.destinations) { own, _ in own }
         }
@@ -267,8 +281,8 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
 
     /// The page an item-driven `.navigationDestination` on `rootNode`
     /// presents, or nil while its item is nil.
-    private static func itemDestinationPage(from rootNode: Node) -> Node? {
-        let itemDestination = rootNode.itemDestination
+    private static func itemDestinationPage(from rootNode: Node, declared: Node.ItemDestination?) -> Node? {
+        let itemDestination = declared ?? rootNode.itemDestination
             ?? rootNode.children.compactMap(\.itemDestination).first
         guard let made = itemDestination?.make() else { return nil }
 
@@ -279,6 +293,27 @@ public struct NavigationStack: VisualElement, BarElement, PageElement, PageArran
             dismissItem?()
         }
         return pushed
+    }
+
+    /// The destinations `.navigationDestination` declared while a view
+    /// expression was evaluated - collected around a stack's `root()` call,
+    /// so a registration wrapped by `.alert` or another composed view still
+    /// reaches the stack whose content carries it.
+    struct DeclaredDestinations {
+        var typed: [ObjectIdentifier: (Any) -> Node] = [:]
+        var item: Node.ItemDestination?
+
+        /// The collection active while a stack describes its root; nil at
+        /// any other time, so a declaration finds its nearest stack.
+        nonisolated(unsafe) static var collecting: DeclaredDestinations?
+
+        /// Runs `describe` with collection on and hands back what it heard.
+        static func collect<T>(_ describe: () -> T) -> (T, DeclaredDestinations) {
+            let outside = collecting
+            collecting = DeclaredDestinations()
+            defer { collecting = outside }
+            return (describe(), collecting ?? DeclaredDestinations())
+        }
     }
 
     /// The root page's key, which no route's can equal: a route's carries its depth.
@@ -336,6 +371,8 @@ extension View {
             $0.destinations[ObjectIdentifier(type)] = { value in
                 destination(value as! D).node
             }
+            NavigationStack.DeclaredDestinations.collecting?.typed[ObjectIdentifier(type)] =
+                $0.destinations[ObjectIdentifier(type)]
         }
     }
 
@@ -357,6 +394,7 @@ extension View {
             $0.itemDestination = Node.ItemDestination(
                 make: { item.wrappedValue.map { destination($0).node } },
                 dismiss: { item.wrappedValue = nil })
+            NavigationStack.DeclaredDestinations.collecting?.item = $0.itemDestination
         }
     }
 }
