@@ -6,6 +6,19 @@
 /// Which element's view shows an element, and what stands in a slot, the same on every host.
 /// Design: docs/design/host/pages.md#slots
 extension MountedElement {
+    /// A divider drawn in content rather than interpreted by a menu.
+    public var isLayoutDivider: Bool {
+        type == .divider && parent?.enclosing(type: .menu) == nil
+            && parent?.enclosing(type: .menuBar) == nil && parent?.enclosing(type: .contextMenu) == nil
+    }
+
+    /// The minor axis of the containing stack; horizontal outside a stack.
+    public var dividerAxis: Axis {
+        var container = parent
+        while let held = container, held.type == .grid { container = held.parent }
+        return container?.type == .hStack || container?.type == .lazyHStack ? .vertical : .horizontal
+    }
+
     /// The element whose view shows this one: itself where it presents a view, else the first under it that does.
     public var presentingElement: MountedElement? {
         native.presentsView ? self : children.lazy.compactMap(\.presentingElement).first

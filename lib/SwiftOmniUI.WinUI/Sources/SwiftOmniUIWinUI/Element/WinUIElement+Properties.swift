@@ -18,6 +18,12 @@ extension WinUIElement {
     }
 
     func makeView() -> WinUIView? {
+        if element.isLayoutDivider {
+            let line = WinUIPathView()
+            line.paint(fill: WinUIBrush(Color.gray.opacity(0.3).propValue), stroke: .none,
+                       width: 0, outline: 0, dashes: [], dashOffset: 0, cap: .flat, join: .miter, miter: 10)
+            return line
+        }
         if type == .list, let host {
             return WinUIItemsView(cells: ItemsCells(element, in: host.runtime), reducesMotion: { [weak host] in
                 host?.runtime.reducesMotion() ?? false

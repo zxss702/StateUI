@@ -8,6 +8,12 @@ import CSwiftOmniUIGTK
 /// The widget: made, and given the element's properties.
 extension GTKElement {
     func makeView() -> GTKView? {
+        if element.isLayoutDivider {
+            let axis = element.dividerAxis
+            return GTKView { _ in
+                gtk_separator_new(axis == .vertical ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL)
+            }
+        }
         if type == .list, let host { return GTKItemsView(cells: ItemsCells(element, in: host.runtime)) }
         if type == .lazyVStack || type == .lazyHStack, let host {
             return GTKLazyStackView(

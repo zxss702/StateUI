@@ -9,6 +9,11 @@ import AppKit
 /// The native view: made, and given the element's properties.
 extension AppKitElement {
     func makeView() -> NSView? {
+        if element.isLayoutDivider {
+            let line = NSBox()
+            line.boxType = .separator
+            return line
+        }
         // A child its parent's view draws - a map's marker - has no view of its own.
         if element.isDrawnByParent(in: AppKitRegistrations.registry) { return nil }
         if let registered = AppKitRegistrations.registry.makeView(

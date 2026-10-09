@@ -614,6 +614,11 @@ import CRT
             ?? value(.verticalAlignmentDefault)?.enumeration ?? 3
         values.width = stated(.width)
         values.height = stated(.height)
+        if isLayoutDivider {
+            values.expandingAxes = dividerAxis
+            if dividerAxis == .vertical { values.width = values.width ?? 1 }
+            else { values.height = values.height ?? 1 }
+        }
         // A bound covers the padding written before it - the view `.frame(min:)`
         // wraps in SwiftUI holds the padding inside - so the margin stands
         // inside the bound, the way the offered room already does.
