@@ -227,6 +227,7 @@ extern "C" void swiftomniui_winui_title_bar_set_actions(
             // A view the item carries stands in the button's place.
             if (contents[index]) {
                 controls::AppBarElementContainer container;
+                container.VerticalContentAlignment(xaml::VerticalAlignment::Center);
                 container.Content(borrow<xaml::UIElement>(contents[index]));
                 commands.Append(container);
                 continue;
