@@ -77,6 +77,7 @@ class WinUILazyView: WinUITravellingLayout {
                 rowMeasurements.removeValue(forKey: identity)
             }
         }
+        if !cells.inserting.isDisjoint(with: now.keys) { cells.animatesChanges = true }
         mounted = now
         for item in items {
             item.item.view.placingLayout = self
