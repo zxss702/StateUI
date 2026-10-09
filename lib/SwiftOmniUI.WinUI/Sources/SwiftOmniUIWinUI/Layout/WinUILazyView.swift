@@ -113,6 +113,7 @@ class WinUILazyView: WinUITravellingLayout {
     /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
     func viewportChanged(_ rect: Rect, effective: Bool = true) {
         guard let scroll = clip else { return }
+        watchClip()
         if effective { effectiveViewport = rect }
         guard let target = viewport else { return }
         #if DEBUG
@@ -192,6 +193,14 @@ class WinUILazyView: WinUITravellingLayout {
     /// The places standing in `span`, as the kind's runs count them.
     func tellWindow(_ span: Range<Double>) {}
 
+    /// Adopt the anchor's coordinates when committed measurements change the document.
+    /// The ScrollViewer owns the physical scroll adjustment through its native anchor.
+    func commitAnchor(perRun: Int = 1, grid: Bool = false) {
+        guard let origin = cells.correctedOrigin(perRun: perRun, grid: grid) else { return }
+        if axis == .vertical { effectiveViewport?.y = origin }
+        else { effectiveViewport?.x = origin }
+    }
+
     /// Recomputes the places when the scroller's window moved.
     private func watchClip() {
         let scroll = clip
@@ -218,10 +227,6 @@ class WinUILazyView: WinUITravellingLayout {
     /// Measuring again, the window is re-asked: a new pass is a new chance
     /// for the places the run holds.
     override func measure(width: Double, height: Double) -> LayoutSize {
-        if WinUIView.arranging == 0 {
-            watchClip()
-            if watching != nil { tellWindow(span ?? 0..<0) }
-        }
         retell()
         return super.measure(width: width, height: height)
     }
@@ -322,7 +327,7 @@ final class WinUILazyStackView: WinUILazyView {
             if naturalAcross != ready.naturalAcross { geometryChanged = true }
             naturalAcross = ready.naturalAcross
             measuredAcross = proposal
-            _ = cells.correctedOrigin()
+            commitAnchor()
             if cells.extents.revision != revision || cells.total != measuredExtent { geometryChanged = true }
             measuredExtent = cells.total
             measuredRevision = measurements.revision
@@ -343,7 +348,7 @@ final class WinUILazyStackView: WinUILazyView {
             if naturalAcross != ready.naturalAcross { geometryChanged = true }
             naturalAcross = ready.naturalAcross
             measuredAcross = proposal
-            _ = cells.correctedOrigin()
+            commitAnchor()
             let total = cells.total
             if cells.extents.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
@@ -536,7 +541,7 @@ final class WinUILazyGridView: WinUILazyView {
             columns = ready.columns
             measured = ready.measured
             cells.runs = ready.runs
-            _ = cells.correctedOrigin(perRun: perRun, grid: true)
+            commitAnchor(perRun: perRun, grid: true)
             let total = cells.runs.total(count: runCount)
             if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
@@ -555,7 +560,7 @@ final class WinUILazyGridView: WinUILazyView {
             columns = ready.columns
             measured = ready.measured
             cells.runs = ready.runs
-            _ = cells.correctedOrigin(perRun: perRun, grid: true)
+            commitAnchor(perRun: perRun, grid: true)
             let total = cells.runs.total(count: runCount)
             if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
