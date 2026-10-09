@@ -115,7 +115,7 @@ extension XCTestCase {
 extension GTKRenderer {
     /// A host showing `page` in a window of its own, laid out, on `clock` where one is given.
     static func running(
-        clock: TestClock? = nil, reducesMotion: Bool = false, _ page: @escaping @Sendable () -> any Page
+        clock: TestClock? = nil, reducesMotion: Bool = false, _ page: @escaping @MainActor @Sendable () -> any Page
     ) -> GTKRenderer {
         stateUIUseApp(OneWindowApplication(page: page))
         let renderer = replacing(clock: clock, reducesMotion: reducesMotion)
@@ -135,7 +135,7 @@ extension GTKRenderer {
 
     /// A host in place of the one before it, which leaves; its window closes.
     private static func replacing(clock: TestClock?, reducesMotion: Bool) -> GTKRenderer {
-        GTKPictures.folder = GTKTestHost.pictures
+        GTKPictures.folders = [GTKTestHost.pictures]
         GTKKeptValues.folder = String(cString: g_get_tmp_dir()) + "/swiftomniui-gtk-tests"
         shared?.runtime.tree.root?.leave()
         shared?.windows.forEach { $0.destroy() }
