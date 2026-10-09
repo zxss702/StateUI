@@ -161,11 +161,11 @@
     }
 
     /// The column sizes a `flow` resolves to at `width`: stated items as they stand, an
-    /// `.adaptive` one as many `.flexible` copies of it as the room fits. A nil `width`
+    /// `.adaptive` one as many `.flexible` copies of it as the room fits. An unbounded `width`
     /// stands each adaptive for one column.
     public static func resolvedFlow(_ flow: [GridItem], width: Double?, spacing: Double) -> [GridItem.Size] {
         var columns: [GridItem.Size] = []
-        var rest = width
+        var rest = width.flatMap { $0.isFinite ? $0 : nil }
 
         for item in flow {
             guard case .adaptive(let minimum, let maximum) = item.size else {
