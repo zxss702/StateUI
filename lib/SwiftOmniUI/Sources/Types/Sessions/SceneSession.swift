@@ -27,7 +27,7 @@ public final class SceneSession {
     public var windows: [WindowSession] {
         guard let record = try? standing() else { return [] }
 
-        return [record.windowSession(SceneElement.mainKey)]
+        return (record.mainIsOpen ? [record.windowSession(SceneElement.mainKey)] : [])
             + record.windows.map { record.windowSession($0.key) }
     }
 

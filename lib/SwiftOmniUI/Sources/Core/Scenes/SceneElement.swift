@@ -47,13 +47,15 @@ struct SceneElement: Element {
         }
 
         record.declared = declared
+        record.mainWindowType = (windows.main as? WindowSceneAsks)?.windowID.map(WindowType.init)
 
         var children: [Node] = []
 
-        if let windowScene = windows.main {
+        if let windowScene = windows.main, record.mainIsOpen {
             let own = windowScene as? WindowSceneAsks
             var main = windowScene.node(session: record.windowSession(SceneElement.mainKey))
             main.id = SceneElement.mainKey
+            if let type = record.mainWindowType { main.write(WindowSceneContract.windowType, type) }
             main.append(commands: sceneMenus(of: windows))
 
             // The window's own asks win over its scene's defaults.

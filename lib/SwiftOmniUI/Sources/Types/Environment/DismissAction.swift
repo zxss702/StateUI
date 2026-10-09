@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// What dismisses the presentation a view stands in: a sheet's or popover's
-/// own closer, a pushed navigation page's way back down the stack.
+/// own closer, a pushed navigation page's way back down the stack, or the
+/// window holding a root view.
 ///
 ///     @Environment(\.dismiss) private var dismiss
 ///
 ///     Button("Done") { dismiss() }
 ///
-/// Where nothing presented holds the view the call does nothing but say so -
-/// a dismissed root has nowhere to go.
+/// Where no presentation or window holds the view, the call does nothing but say so.
 public struct DismissAction: Sendable {
     /// The closer the nearest presentation wired for itself.
     private let act: @Sendable @MainActor () -> Void

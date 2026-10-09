@@ -10,6 +10,10 @@ final class SceneRecord: @unchecked Sendable {
     /// What it has open beside its main window, in the order they opened.
     @State var windows: [OpenedWindow] = []
 
+    /// A named primary Window can close independently and reopen by its ID.
+    @State var mainIsOpen = true
+    var mainWindowType: WindowType?
+
     /// Its session - what a view in the scene resolves as `SceneSession`.
     let session: SceneSession
 
@@ -54,6 +58,7 @@ final class SceneRecord: @unchecked Sendable {
         try check(type, takes: nil)
 
         guard Scenes.opensWindows else { throw WindowError.unsupported }
+        if type == mainWindowType { mainIsOpen = true; return }
         guard !windows.contains(where: { $0.type == type }) else { throw WindowError.alreadyOpen }
 
         windows.append(OpenedWindow(type: type, serial: nextSerial(), value: nil, text: nil))
@@ -81,6 +86,7 @@ final class SceneRecord: @unchecked Sendable {
         try check(type, takes: valueType)
 
         guard Scenes.opensWindows else { throw WindowError.unsupported }
+        if type == mainWindowType, value == nil { mainIsOpen = true; return }
         guard !windows.contains(where: { $0.type == type && $0.value == value }) else {
             throw WindowError.alreadyOpen
         }
@@ -91,6 +97,12 @@ final class SceneRecord: @unchecked Sendable {
     /// Closes the window of a group that opens one.
     func close(_ type: WindowType) throws {
         try check(type, takes: nil)
+
+        if type == mainWindowType {
+            guard mainIsOpen else { throw WindowError.notOpen }
+            mainIsOpen = false
+            return
+        }
 
         guard let index = windows.firstIndex(where: { $0.type == type }) else {
             throw WindowError.notOpen
@@ -114,6 +126,11 @@ final class SceneRecord: @unchecked Sendable {
 
     /// Closes one of its windows by its key - what that window's session asks for.
     func closeWindow(key: String) throws {
+        if key == SceneElement.mainKey, mainWindowType != nil {
+            guard mainIsOpen else { throw WindowError.notOpen }
+            mainIsOpen = false
+            return
+        }
         guard windows.contains(where: { $0.key == key }) else { throw WindowError.notOpen }
 
         closed(key: key)
@@ -130,7 +147,9 @@ final class SceneRecord: @unchecked Sendable {
     /// The user closed one of its windows; a report about one already gone changes
     /// nothing.
     func closed(key: String) {
+        if key == SceneElement.mainKey, mainWindowType != nil { mainIsOpen = false }
         windows.removeAll { $0.key == key }
+        if !mainIsOpen, windows.isEmpty { Scenes.shared.ended(self) }
     }
 
     /// The system restored one of its windows: back it goes where the scene still
@@ -140,6 +159,7 @@ final class SceneRecord: @unchecked Sendable {
         let type = WindowType(name)
 
         guard let shape = declared[type] else { return }
+        if type == mainWindowType, text == nil { mainIsOpen = true; return }
 
         guard let text else {
             guard shape.valueType == nil, !windows.contains(where: { $0.type == type }) else { return }

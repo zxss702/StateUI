@@ -134,6 +134,7 @@ extension WindowScene {
                 contract: WindowSceneContract.self,
                 children: [Node.page(page)] + session.slots + (overlay.map { [$0] } ?? []))
             node.props = session.props
+            node.environmentValues[keyPath: \.dismiss] = session.dismissal
 
             // What the window asks of its own - its title, size, place, how it
             // resizes - over anything the session already wrote.

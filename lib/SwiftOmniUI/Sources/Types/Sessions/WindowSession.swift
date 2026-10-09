@@ -159,8 +159,8 @@ public final class WindowSession {
         self.init(key: "", record: nil)
     }
 
-    /// Closes the window - and where it is its scene's main window, the scene
-    /// with every window of it.
+    /// Closes the window. A named Window closes independently; an unnamed
+    /// main window closes its scene with every window of it.
     ///
     /// - Throws: `WindowError.noScene` for a window of no open scene - one
     ///   whose scene has ended included, whoever still holds it -
@@ -172,10 +172,23 @@ public final class WindowSession {
             throw WindowError.noScene
         }
 
-        if key == SceneElement.mainKey {
+        if key == SceneElement.mainKey, record.mainWindowType == nil {
             try Scenes.shared.close(record)
         } else {
             try record.closeWindow(key: key)
+        }
+    }
+
+    var dismissal: DismissAction {
+        DismissAction { [record, key] in
+            guard let record else { return }
+            do {
+                if key == SceneElement.mainKey, record.mainWindowType == nil {
+                    try Scenes.shared.close(record)
+                } else {
+                    try record.closeWindow(key: key)
+                }
+            } catch { complain("Could not dismiss window: \(error).") }
         }
     }
 
