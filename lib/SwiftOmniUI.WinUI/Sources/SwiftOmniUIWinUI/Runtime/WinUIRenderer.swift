@@ -184,6 +184,10 @@ extension WinUIRenderer: TurnPresenter {
     func presentRendered() {
         showWindows()
         refreshWindowChrome()
+        for controller in windows {
+            if let content = controller.window.content { swiftomniui_winui_update_layout(content.handle) }
+        }
+        runtime.frames.commitLayout()
         if let text = scenes.changed(root: runtime.tree.root) { WinUIPersistence.writeScenes(text) }
     }
 

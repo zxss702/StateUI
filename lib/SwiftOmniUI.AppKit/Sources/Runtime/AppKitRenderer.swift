@@ -224,6 +224,8 @@ extension AppKitRenderer: TurnPresenter {
         let offered = offersAwaitingClaim
         offersAwaitingClaim = []
         synchronizeWindows()
+        for controller in windowControllers { controller.window?.contentView?.layoutSubtreeIfNeeded() }
+        runtime.frames.commitLayout()
         for identifier in offered { declineRestorationIfUnclaimed(identifier) }
         offerRestoredWindows()
     }

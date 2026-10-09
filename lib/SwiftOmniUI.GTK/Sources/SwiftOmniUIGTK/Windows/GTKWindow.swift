@@ -32,6 +32,8 @@ final class GTKWindow {
     private var contentReady = false
     private var contentSizing: WindowContentSizing?
     private var constrainingSize = false
+    private var layoutClock: OpaquePointer?
+    private var layoutSignal: gulong = 0
 
     /// Whether the window's scene keeps it off screen; a hidden window does not present.
     private var hidden = false
@@ -67,6 +69,12 @@ final class GTKWindow {
         number = Self.nextNumber
         Self.nextNumber += 1
         Self.open[number] = self
+        connectSignal(UnsafeMutableRawPointer(widget), "realize", number: number) { _, data in
+            MainActor.assumeIsolated { GTKWindow.open[viewNumber(data)]?.followLayout(true) }
+        }
+        connectSignal(UnsafeMutableRawPointer(widget), "unrealize", number: number) { _, data in
+            MainActor.assumeIsolated { GTKWindow.open[viewNumber(data)]?.followLayout(false) }
+        }
         for property in ["default-width", "default-height"] {
             connectNotify(UnsafeMutableRawPointer(widget), property, number: number) { _, _, data in
                 MainActor.assumeIsolated { GTKWindow.open[viewNumber(data)]?.constrainSize() }
@@ -89,6 +97,7 @@ final class GTKWindow {
     }
 
     isolated deinit {
+        followLayout(false)
         Self.open.removeValue(forKey: number)
         g_signal_handlers_disconnect_matched(
             UnsafeMutableRawPointer(widget), SWIFTOMNIUI_SIGNAL_MATCH_DATA, 0, 0, nil, nil,
@@ -96,6 +105,22 @@ final class GTKWindow {
         gtk_window_destroy(widget.of(GtkWindow.self))
         g_object_unref(layers)
         g_object_unref(widget)
+    }
+
+    /// Reads settled allocations after GTK's layout handlers, while another layout can precede paint.
+    private func followLayout(_ follows: Bool) {
+        if let layoutClock {
+            g_signal_handler_disconnect(UnsafeMutableRawPointer(layoutClock), layoutSignal)
+            g_object_unref(UnsafeMutableRawPointer(layoutClock))
+        }
+        layoutClock = follows ? gtk_widget_get_frame_clock(widget) : nil
+        guard let layoutClock else { return }
+        g_object_ref(UnsafeMutableRawPointer(layoutClock))
+        let callback: GTKSignalHandler = { _, _ in
+            MainActor.assumeIsolated { GTKRenderer.shared?.runtime.frames.commitLayout() }
+        }
+        layoutSignal = g_signal_connect_data(UnsafeMutableRawPointer(layoutClock), "layout",
+            unsafeBitCast(callback, to: GCallback.self), nil, nil, G_CONNECT_AFTER)
     }
 
     /// The window's name, to the desktop - its switcher, its dock; nil for none.

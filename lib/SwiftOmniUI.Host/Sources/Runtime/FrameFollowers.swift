@@ -54,7 +54,7 @@
         if reads { laidOut() }
     }
 
-    /// Something was laid out or moved: whoever reads a frame says it on the display's next frame.
+    /// A layout moved: report it when the host finishes layout, or on the next display frame.
     public func laidOut() {
         guard !reporters.isEmpty, !moved else { return }
         moved = true
@@ -64,6 +64,24 @@
     /// Whether a scroller moves or has something to say, or a frame read may have moved.
     public var wantsFrames: Bool {
         moved || scrollers.values.contains { $0.scroller?.wantsFrames == true }
+    }
+
+    private func reportFrames() {
+        guard moved else { return }
+        moved = false
+        for order in reporters.keys.sorted() {
+            guard let reporter = reporters[order]?.reporter else {
+                reporters[order] = nil
+                continue
+            }
+            reporter.reportFrame()
+        }
+    }
+
+    /// Reports a completed native layout before it is painted, without advancing scrollers.
+    public func commitLayout() {
+        guard moved else { return }
+        runtime.performUserTransaction { reportFrames() }
     }
 
     /// Lets every moving scroller say what the frame at `now` saw it do, then every reporter say where it stands,
@@ -80,15 +98,7 @@
                 if !scroller.wantsFrames { scrollers[order] = nil }
             }
 
-            guard moved else { return }
-            moved = false
-            for order in reporters.keys.sorted() {
-                guard let reporter = reporters[order]?.reporter else {
-                    reporters[order] = nil
-                    continue
-                }
-                reporter.reportFrame()
-            }
+            reportFrames()
         }
     }
 }
