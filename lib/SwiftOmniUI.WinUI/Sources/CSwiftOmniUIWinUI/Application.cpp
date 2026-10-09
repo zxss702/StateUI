@@ -7,6 +7,10 @@
 
 #include "Relay.h"
 
+// A debug tree update needs the same 8 MiB stack budget as the other desktop
+// hosts. Keep this on the startup object so every consuming EXE receives it.
+#pragma comment(linker, "/STACK:8388608")
+
 #include <chrono>
 #include <io.h>
 

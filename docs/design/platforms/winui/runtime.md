@@ -35,6 +35,12 @@ drain SwiftOmniUI's UI executor on that thread: the drain is what makes the thre
 `MainActor`'s, and every native call after it asserts that isolation rather
 than assuming a thread.
 
+The relay's startup object requests an 8 MiB executable stack with
+`/STACK:8388608`. Windows otherwise reserves only 1 MiB: debug tree
+reconciliation can exhaust that budget at ordinary view nesting depths.
+The request travels with the object linked into the consuming executable;
+DLLs cannot configure the executable's main-thread stack.
+
 ## A windowed application
 
 The head links as a windowed application (`/SUBSYSTEM:WINDOWS`, its entry
