@@ -91,8 +91,8 @@ final class LazyStackTests: XCTestCase {
             let shown = try lazy(type, in: realize(Array(ids.prefix(2)), in: renders, lazy: grid))
             let words = shown.subtree.filter { $0.type == .text }
             XCTAssertEqual(words.count, 2)
-            for word in words {
-                XCTAssertEqual(word.props[horizontal ? .verticalAlignment : .horizontalAlignment], .enumeration(3))
+            for item in shown.children {
+                XCTAssertEqual(item.props[horizontal ? .verticalAlignment : .horizontalAlignment], .enumeration(3))
             }
         }
     }
