@@ -88,30 +88,36 @@ final class WinUIWindow {
         return LayoutSize(width: values[2], height: values[3])
     }
 
-    private var chromeHeight: Double {
+    var chromeHeight: Double {
         let width = clientSize.width
+        let measuredCaption = titleBar.measure(width: width, height: nil).height
         let caption = max(swiftomniui_winui_window_title_bar_height(handle),
-                          titleBar.measure(width: width, height: nil).height)
+                          measuredCaption)
         let bars: [WinUIView] = (menuBarStands ? [menuBar] : []) + (tabsStandInWindow ? [tabRow] : [])
         return bars.reduce(caption) { $0 + $1.measure(width: width, height: nil).height }
     }
 
     var contentSize: LayoutSize {
+        contentSize(chromeHeight: chromeHeight)
+    }
+
+    func contentSize(chromeHeight: Double) -> LayoutSize {
         let size = clientSize
         return LayoutSize(width: size.width, height: max(0, size.height - chromeHeight))
     }
 
-    func boundContent(_ bounds: WindowBounds) {
+    func boundContent(_ bounds: WindowBounds, chromeHeight: Double? = nil) {
         var bounds = bounds
-        let chrome = chromeHeight
+        let chrome = chromeHeight ?? self.chromeHeight
         bounds.minimumHeight = bounds.minimumHeight.map { $0 + chrome }
         bounds.maximumHeight = bounds.maximumHeight.map { $0 + chrome }
         bound(bounds)
     }
 
-    func requestContent(_ frame: WindowFrame) {
+    func requestContent(_ frame: WindowFrame, chromeHeight: Double? = nil) {
         var frame = frame
-        frame.height = frame.height.map { $0 + chromeHeight }
+        let chrome = chromeHeight ?? self.chromeHeight
+        frame.height = frame.height.map { $0 + chrome }
         request(frame)
     }
 

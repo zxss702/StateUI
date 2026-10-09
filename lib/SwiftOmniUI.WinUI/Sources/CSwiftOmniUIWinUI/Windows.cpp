@@ -201,6 +201,7 @@ extern "C" void swiftomniui_winui_window_set_chrome(
             window.AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
             takeTheWayBack(grid, winrt::unbox_value<int64_t>(bar.Tag()));
         }
+        if (titleBar) as<controls::TitleBar>(titleBar).ApplyTemplate();
     } catch (...) {
         report("dressing a window");
     }

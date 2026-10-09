@@ -60,10 +60,11 @@ final class WinUIWindowController {
             return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
         }
         if let traits { window.apply(traits, isResizable: sizing.isResizable) }
-        window.boundContent(sizing.bounds)
-        if let requested { window.requestContent(requested) }
-        let frame = sizing.constrain(window.contentSize)
-        if !frame.isEmpty { window.requestContent(frame) }
+        let chromeHeight = window.chromeHeight
+        window.boundContent(sizing.bounds, chromeHeight: chromeHeight)
+        if let requested { window.requestContent(requested, chromeHeight: chromeHeight) }
+        let frame = sizing.constrain(window.contentSize(chromeHeight: chromeHeight))
+        if !frame.isEmpty { window.requestContent(frame, chromeHeight: chromeHeight) }
     }
 
     /// Keeps a sheet for each page shown as one, in its order, each under its page's title.
