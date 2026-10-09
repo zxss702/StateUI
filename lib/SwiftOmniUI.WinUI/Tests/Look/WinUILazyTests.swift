@@ -1168,14 +1168,14 @@ private struct LazyRowsPage: View {
     var body: some View {
         if scrolls {
             ScrollView {
-                LazyVStack {
+                LazyVStack(spacing: 0) {
                     ForEach(0..<count) { row in
                         Text("Row \(row)").frame(height: 40)
                     }
                 }
             }
         } else {
-            LazyVStack {
+            LazyVStack(spacing: 0) {
                 ForEach(0..<count) { row in
                     Text("Row \(row)").frame(height: 40)
                 }

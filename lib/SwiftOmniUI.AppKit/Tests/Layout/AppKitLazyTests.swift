@@ -583,7 +583,7 @@ final class AppKitLazyTests: XCTestCase {
                                 ForEach(0..<200) { Text("Tile \($0)").frame(width: 80) }
                             }
                         } else {
-                            LazyHStack {
+                            LazyHStack(spacing: 0) {
                                 ForEach(0..<200) { Text("Tile \($0)").frame(width: 80, height: 56) }
                             }
                         }
@@ -1042,7 +1042,7 @@ private struct LazyRowsPage: View {
 
     /// The rows themselves.
     private var rows: some View {
-        LazyVStack {
+        LazyVStack(spacing: 0) {
             ForEach(0..<count) { row in
                 let _ = built.rows.insert(row)
                 Text("Row \(row)")
