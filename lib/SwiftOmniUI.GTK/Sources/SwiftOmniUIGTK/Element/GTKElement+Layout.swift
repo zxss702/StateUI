@@ -34,6 +34,11 @@ extension GTKElement {
         }
         let arranged = (type == .navigationStack ? element.stackedChildren : element.arrangedChildren).map(\.gtk)
 
+        if let button = view as? GTKButtonView, let face = arranged.first?.view {
+            gtk_button_set_child(button.widget.of(GtkButton.self), face.widget)
+            return
+        }
+
         if let menu = view as? GTKMenuButtonView {
             // The menu is a slot's - the layout never places it, so it is read among the element's own children.
             let entries = element.children.first { $0.type == .contextMenu }

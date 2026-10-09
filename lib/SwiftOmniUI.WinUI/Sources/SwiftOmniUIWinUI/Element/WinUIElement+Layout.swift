@@ -3,6 +3,7 @@
 
 @_spi(Host) import SwiftOmniUI
 @_spi(Host) import SwiftOmniUIHost
+import CSwiftOmniUIWinUI
 
 /// Children placed: the layout item each child gives its parent.
 extension WinUIElement {
@@ -32,6 +33,11 @@ extension WinUIElement {
             return arrangeRuns(of: label)
         }
         let arranged = (type == .navigationStack ? element.stackedChildren : element.arrangedChildren).map(\.winUI)
+
+        if let button = view as? WinUIButtonView, let face = arranged.first?.view {
+            swiftomniui_winui_button_set_face(button.handle, face.handle)
+            return
+        }
 
         if let menu = view as? WinUIMenuButtonView {
             // The menu is a slot's - the layout never places it, so it is read among the element's own children.

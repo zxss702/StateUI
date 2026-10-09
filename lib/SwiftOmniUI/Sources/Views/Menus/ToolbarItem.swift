@@ -112,7 +112,7 @@ public struct ToolbarItem: Element, MenuItemElement {
     ) {
         node = Node(contract: ToolbarItemContract.self)
         node.write(ToolbarItemContract.placement, placement)
-        let views = content().node.asChildren
+        let views = content().environment(\.isToolbarContent, true).labelStyle(.iconOnly).node.asChildren
         node.children = views.count > 1 ? [Node(contract: HStackContract.self, children: views)] : views
     }
 

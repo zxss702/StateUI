@@ -224,7 +224,19 @@ extension ButtonRole: StateChoice {}
 
 /// What `Button(action:label:)` builds: the label, tapped - no caption, no
 /// border of the platform's own, which a content button does not wear.
+struct ToolbarContentKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var isToolbarContent: Bool {
+        get { self[ToolbarContentKey.self] }
+        set { self[ToolbarContentKey.self] = newValue }
+    }
+}
+
 struct ContentButton: View {
+    @Environment(\.isToolbarContent) private var isToolbarContent
     /// What a press runs.
     let action: EventHandler
 
@@ -232,8 +244,21 @@ struct ContentButton: View {
     let label: any View
 
     /// The label, answering a tap.
-    var body: some View {
-        label.onTapGesture(action)
+    var body: any View {
+        if isToolbarContent {
+            if let label = label as? Label, let source = (label.icon as? Image)?.imageSource {
+                let title = label.title.node.props[.text]?.string ?? ""
+                var button = Button(icon: source).onClicked(action)
+                button.node.children = [label.icon.node]
+                return button.hint(title)
+            }
+            if let image = label as? Image, let source = image.imageSource {
+                var button = Button(icon: source).onClicked(action)
+                button.node.children = [image.node]
+                return button
+            }
+        }
+        return label.onTapGesture(action)
     }
 }
 

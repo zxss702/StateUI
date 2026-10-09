@@ -236,7 +236,7 @@ public struct ToolbarItemGroup<Content: View>: ToolbarContent, ToolbarEntry {
         placement: ToolbarItemPlacement = .automatic,
         @ViewBuilder content: () -> Content
     ) {
-        nodes = content().node.asChildren.map { view in
+        nodes = content().environment(\.isToolbarContent, true).labelStyle(.iconOnly).node.asChildren.map { view in
             var item = Node(contract: ToolbarItemContract.self, children: [view])
             item.write(ToolbarItemContract.placement, placement)
             item.key = view.key

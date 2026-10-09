@@ -454,6 +454,7 @@ void swiftomniui_winui_button_set_look(SwiftOmniUIObjectRef button, SwiftOmniUIB
 
 /// A button's logical style kind: 2 accents it, 3 and 4 make it text, the rest the platform's own look.
 void swiftomniui_winui_button_set_style(SwiftOmniUIObjectRef button, int kind);
+void swiftomniui_winui_button_set_face(SwiftOmniUIObjectRef button, SwiftOmniUIObjectRef content);
 
 /// Toolbar triggers: transparent at rest, with the system's subtle hover and pressed fills.
 void swiftomniui_winui_toolbar_button_set_look(SwiftOmniUIObjectRef button);
