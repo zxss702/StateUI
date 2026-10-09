@@ -22,16 +22,16 @@ extension MountedElement {
     }
 
     private var containerSpacing: LayoutSpacing {
-        let children = spacingChildren
-        guard let first = children.first, let last = children.last else { return .zero }
+        let preferences = spacingChildren.map(\.layoutSpacing)
+        guard let first = preferences.first, let last = preferences.last else { return .zero }
         let vertical = type == .vStack || type == .lazyVStack
         let horizontal = type == .hStack || type == .lazyHStack || type == .gridRow
         var result = LayoutSpacing.zero
         let cross: Edge.Set = vertical ? .horizontal : horizontal ? .vertical : .all
-        for child in children { result.formUnion(child.layoutSpacing, edges: cross) }
+        for preference in preferences { result.formUnion(preference, edges: cross) }
         if vertical || horizontal {
-            result.formUnion(first.layoutSpacing, edges: vertical ? .top : .leading)
-            result.formUnion(last.layoutSpacing, edges: vertical ? .bottom : .trailing)
+            result.formUnion(first, edges: vertical ? .top : .leading)
+            result.formUnion(last, edges: vertical ? .bottom : .trailing)
         }
         return result
     }

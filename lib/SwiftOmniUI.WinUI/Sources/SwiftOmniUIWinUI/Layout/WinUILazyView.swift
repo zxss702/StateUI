@@ -298,7 +298,7 @@ final class WinUILazyStackView: WinUILazyView {
                 let extent = axis == .vertical
                     ? size.height + margin.top + margin.bottom
                     : size.width + margin.left + margin.right
-                extents.measure(identity, extent: extent, preference: item.values.spacing)
+                extents.measure(identity, extent: extent, preference: item.spacing)
             }
             acrossSize = mounted.compactMap { identity, item -> Double? in
                 guard !item.departing, let size = sizes[identity]?.size else { return nil }

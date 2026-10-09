@@ -45,6 +45,7 @@ final class AppKitScrollView: NSScrollView, AppKitWidthConstrainedMeasuring {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+        stackWrapper.spacing = 0
         drawsBackground = false
         borderType = .noBorder
         // Design: docs/design/platforms/appkit/views.md#scroll-bars

@@ -23,7 +23,7 @@
         var previous: LayoutSpacing?
         return items.map { item in
             guard item.isShown else { return 0 }
-            let preference = item.values.spacing
+            let preference = item.spacing
             defer { previous = preference }
             guard let previous else { return 0 }
             return spacing ?? previous.distance(to: preference, along: axis)

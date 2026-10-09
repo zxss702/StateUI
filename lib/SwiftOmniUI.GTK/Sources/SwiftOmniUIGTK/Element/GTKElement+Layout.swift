@@ -85,6 +85,7 @@ extension GTKElement {
         guard let view else { return children.lazy.compactMap(\.layoutItem).first }
 
         var item = GTKLayoutItem(view: view, values: element.layoutValues, isShown: isShown)
+        item.element = element
         item.mount = element.mount
         item.codeId = element.id
         item.departing = element.isDeparting

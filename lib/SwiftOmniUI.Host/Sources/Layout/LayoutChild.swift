@@ -167,6 +167,9 @@
     /// What the layout reads of the child.
     var values: LayoutValues { get }
 
+    /// Current edge preferences, including changes since the last arrangement.
+    var spacing: LayoutSpacing { get }
+
     /// Whether the child is shown; a hidden child takes no room.
     var isShown: Bool { get }
 
@@ -183,6 +186,9 @@
 }
 
 extension LayoutChild {
+    /// Static layout inputs keep their preferences in the values snapshot.
+    public var spacing: LayoutSpacing { values.spacing }
+
     /// No baseline: a child that keeps silent about one aligns by its edges.
     public var firstBaseline: Double? { nil }
 

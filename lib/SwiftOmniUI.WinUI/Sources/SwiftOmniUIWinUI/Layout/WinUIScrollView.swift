@@ -44,6 +44,7 @@ final class WinUIScrollView: WinUILayoutView {
 
     override init() {
         super.init()
+        wrapper.spacing = 0
         movement.onFramesWanted = { [weak self] in self?.onFramesWanted?() }
         scroller.onScrolled = { [weak self] standing in
             guard let self else { return }

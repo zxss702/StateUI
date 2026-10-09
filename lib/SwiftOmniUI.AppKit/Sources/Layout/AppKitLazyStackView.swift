@@ -288,7 +288,7 @@ final class AppKitLazyStackView: AppKitLazyView, AppKitWidthConstrainedMeasuring
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
-            cells.extents.measure(identity, extent: extent, preference: item.values.spacing)
+            cells.extents.measure(identity, extent: extent, preference: item.spacing)
         }
         let cross = held.compactMap { identity, item -> Double? in
             guard !item.departing, let size = measured[identity]?.size else { return nil }

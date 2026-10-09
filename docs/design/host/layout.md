@@ -88,6 +88,14 @@ wrapped text is measured at the width it will have; a horizontal stack offers
 none, because the width is what the children decide. A hidden child takes no
 room and no spacing.
 
+An explicit spacing, including zero, is used directly. A nil spacing follows
+the opposing edge preferences of each adjacent visible pair. Desktop hosts
+share approximate defaults: ordinary views 8pt, vertical Toggles 6pt, body
+Text pairs 0pt, Text-to-control 8.2pt and control-to-Text 4.7pt. Text preferences
+scale with font size; padding changes the exposed edge, while frames and
+nested stacks forward their content's preferences. Lazy stacks include the
+same gaps in their cached offsets, total extent and viewport searches.
+
 ## Grids
 
 A grid has as many rows and columns as it defines, or as its children reach,

@@ -40,6 +40,7 @@ final class GTKScrollView: GTKLayoutView {
 
     override init() {
         super.init()
+        wrapper.spacing = 0
         movement.onFramesWanted = { [weak self] in self?.onFramesWanted?() }
         scroller.onScrolled = { [weak self] standing in self?.scrolled(to: standing) }
         scroller.onHeld = { [weak self] holding in self?.scrollerHeld(holding) }

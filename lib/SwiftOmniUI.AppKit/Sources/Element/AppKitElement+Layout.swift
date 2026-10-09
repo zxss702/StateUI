@@ -108,6 +108,7 @@ extension AppKitElement {
         guard let view = presentableViews.first else { return nil }
         var item = AppKitLayoutItem(view: view)
         item.values = element.layoutValues
+        item.element = element
         item.codeId = element.id
         item.drawing = presentableDrawing
         item.mount = mount
