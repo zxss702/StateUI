@@ -65,6 +65,7 @@
                 result.minimumHeight = down
                 heightSaid = true
             }
+            if widthSaid && heightSaid { break }
             let children = current.arrangedChildren.filter { $0.standsShown && !$0.isDeparting }
             let occupying = children.filter {
                 guard let size = measure($0, nil) else { return false }
