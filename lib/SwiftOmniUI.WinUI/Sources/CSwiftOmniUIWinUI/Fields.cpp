@@ -71,12 +71,22 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_field_make(int64_t view) {
 extern "C" void swiftomniui_winui_field_set_style(SwiftOmniUIObjectRef handle, int kind) {
     try {
         auto box = boxOf(handle);
+        auto transparent = media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent());
+        for (auto key : {L"TextControlBackgroundPointerOver", L"TextControlBackgroundFocused",
+                        L"TextControlBackgroundDisabled", L"TextControlBorderBrushPointerOver",
+                        L"TextControlBorderBrushFocused", L"TextControlBorderBrushDisabled"}) {
+            auto name = winrt::box_value(key);
+            if (kind == 1) box.Resources().Insert(name, transparent);
+            else if (box.Resources().HasKey(name)) box.Resources().Remove(name);
+        }
         // The kind is logical: plain takes the chrome away, square is the same
         // box unrounded, and everything else is the platform's own field.
         if (kind == 1) {
+            box.Padding({0, 0, 0, 0});
             box.BorderThickness({0, 0, 0, 0});
             box.Background(xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent()));
         } else {
+            box.ClearValue(controls::Control::PaddingProperty());
             box.ClearValue(controls::Control::BorderThicknessProperty());
             box.ClearValue(controls::Control::BackgroundProperty());
         }
