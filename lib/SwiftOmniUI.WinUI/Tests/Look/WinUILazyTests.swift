@@ -59,6 +59,9 @@ final class WinUILazyTests: XCTestCase {
                     let offset = scroll.scroller.nextOffset ?? scroll.scroller.standing.offset
                     let along = (horizontal ? offset.x : offset.y) + (phase.isMultiple(of: 2) ? 24 : -24)
                     let target = Point(horizontal ? along : 0, horizontal ? 0 : along)
+                    #if DEBUG
+                    print("LAZY INPUT kind=\(kind) phase=\(phase) id=\(identity) original=\(original) afterGeometry=\(horizontal ? row.origin.x : row.origin.y) placed=\(row.placedFrame) native=\(scroll.scroller.standing.offset) next=\(String(describing: scroll.scroller.nextOffset)) target=\(target)")
+                    #endif
                     scroll.scroller.move(to: target)
                     for _ in 0..<12 { host.step() }
                     let standing = scroll.scroller.standing.offset
@@ -92,14 +95,15 @@ final class WinUILazyTests: XCTestCase {
                     let retained = lazy.mounted.mapValues(\.view)
                     let measured = lazy.cells.measurements
                     let requests = lazy.cells.requests
-                    var times: [Double] = []
+                    #if DEBUG
+                    WinUILazyView.measureTimes = []
+                    WinUILazyView.arrangeTimes = []
+                    #endif
                     for step in 1...16 {
                         let offset = start + Double(step)
                         scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
-                        let began = DispatchTime.now().uptimeNanoseconds
                         host.step()
                         host.layOut()
-                        times.append(Double(DispatchTime.now().uptimeNanoseconds - began) / 1_000_000)
                         XCTAssertEqual(lazy.cells.built, built)
                     }
                     XCTAssertEqual(lazy.cells.measurements, measured, "unchanged window: count \(count), kind \(kind)")
@@ -112,10 +116,19 @@ final class WinUILazyTests: XCTestCase {
                     let next = extent * 21 + 5
                     scroll.scroller.move(to: Point(horizontal ? next : 0, horizontal ? 0 : next))
                     for _ in 0..<6 { host.step() }
-                    XCTAssertEqual(lazy.cells.measurements - beforeBoundary, perRun,
-                                   "only incoming rows: count \(count), kind \(kind)")
-                    times.sort()
-                    print("LAZY BENCH count=\(count) kind=\(kind) sameWindowMeasures=\(lazy.cells.measurements - beforeBoundary) p50PumpAndLayoutMs=\(times[times.count / 2]) p95PumpAndLayoutMs=\(times[Int(Double(times.count - 1) * 0.95)])")
+                    let incoming = lazy.mounted.keys.filter { retained[$0] == nil }
+                    XCTAssertEqual(incoming.count, perRun)
+                    let proposals = incoming.reduce(0) { $0 + (lazy.rowMeasurements[$1]?.count ?? 0) }
+                    XCTAssertEqual(lazy.cells.measurements - beforeBoundary, proposals,
+                                   "measure each incoming row once per proposal: count \(count), kind \(kind)")
+                    #if DEBUG
+                    for (stage, samples) in [("measure", WinUILazyView.measureTimes), ("arrange", WinUILazyView.arrangeTimes)] {
+                        let sorted = samples.sorted()
+                        if !sorted.isEmpty {
+                            print("LAZY COST count=\(count) kind=\(kind) stage=\(stage) calls=\(sorted.count) p50Ms=\(sorted[sorted.count / 2]) p95Ms=\(sorted[Int(Double(sorted.count - 1) * 0.95)]) maxMs=\(sorted.last!)")
+                        }
+                    }
+                    #endif
                     let idle = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
                     for _ in 0..<20 { host.step() }
                     XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], idle)
