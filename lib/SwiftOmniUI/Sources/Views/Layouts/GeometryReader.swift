@@ -127,6 +127,7 @@ public struct GeometryProxy: Sendable {
 public struct GeometryReader: View {
     /// The last report the layout settled on - zero until the first one.
     @State private var report = FrameReport.zero
+    @Environment(\.contentSafeAreaInsets) private var contentInsets
 
     /// The named spaces the last report travelled with.
     @State private var named: [NamedSpaceFrame] = []
@@ -145,11 +146,18 @@ public struct GeometryReader: View {
 
     /// The content, in a Grid that fills the offered space and writes each
     /// report into the state this body reads.
-        public var body: some View { AnyView(content) }
+    public var body: some View { AnyView(content) }
 
-        private var content: any View {
+    private var content: any View {
         var report = report
         report.named = named
+        if contentInsets != EdgeInsets(0) {
+            let native = report.safeAreaInsets
+            let left = native.left + contentInsets.left, top = native.top + contentInsets.top
+            let right = native.right + contentInsets.right, bottom = native.bottom + contentInsets.bottom
+            report.safeAreaRect = Rect(report.global.x + left, report.global.y + top,
+                max(0, report.frame.width - left - right), max(0, report.frame.height - top - bottom))
+        }
 
         return Grid {
             build(GeometryProxy(report: report))
@@ -176,7 +184,7 @@ struct FrameReport: Equatable, Sendable {
     let global: Rect
 
     /// The window's safe area, in the window's coordinates.
-    let safeAreaRect: Rect
+    var safeAreaRect: Rect
 
     /// The named spaces enclosing the view, innermost first, each in window
     /// coordinates; carried by `namedFramesChanged`, which travels with a
