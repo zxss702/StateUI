@@ -89,8 +89,11 @@ final class WinUIWindow {
     }
 
     private var chromeHeight: Double {
-        let bars: [WinUIView] = [titleBar] + (menuBarStands ? [menuBar] : []) + (tabsStandInWindow ? [tabRow] : [])
-        return bars.reduce(0) { $0 + $1.measure(width: clientSize.width, height: nil).height }
+        let width = clientSize.width
+        let caption = max(swiftomniui_winui_window_title_bar_height(handle),
+                          titleBar.measure(width: width, height: nil).height)
+        let bars: [WinUIView] = (menuBarStands ? [menuBar] : []) + (tabsStandInWindow ? [tabRow] : [])
+        return bars.reduce(caption) { $0 + $1.measure(width: width, height: nil).height }
     }
 
     var contentSize: LayoutSize {

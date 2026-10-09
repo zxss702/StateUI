@@ -192,8 +192,8 @@ namespace {
     /// The shell's own dialog, asked for several folders - the App SDK's folder
     /// picker takes one alone. Runs on its own thread so the answer still comes
     /// back by ticket; a cancel hands over empty.
-    void chosenFolders(HWND window, int64_t ticket) {
-        std::thread([window, ticket] {
+    void chosenFolders(HWND window, int64_t ticket, bool multiple = true) {
+        std::thread([window, ticket, multiple] {
             CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
             Chosen chosen;
             winrt::com_ptr<IFileOpenDialog> dialog;
@@ -201,7 +201,7 @@ namespace {
             if (SUCCEEDED(hr)) {
                 DWORD options = 0;
                 dialog->GetOptions(&options);
-                dialog->SetOptions(options | FOS_PICKFOLDERS | FOS_ALLOWMULTISELECT);
+                dialog->SetOptions(options | FOS_PICKFOLDERS | (multiple ? FOS_ALLOWMULTISELECT : 0));
                 if (!testFolder.empty()) {
                     winrt::com_ptr<IShellItem> start;
                     if (SUCCEEDED(SHCreateItemFromParsingName(testFolder.c_str(), nullptr, IID_PPV_ARGS(start.put()))))
@@ -242,8 +242,9 @@ namespace {
 
 extern "C" void swiftomniui_winui_show_file_dialog(SwiftOmniUIObjectRef handle, int64_t ticket, SwiftOmniUIFileDialog const *dialog) {
     try {
-        auto window = borrow<xaml::Window>(handle).AppWindow().Id();
+        auto window = handle ? borrow<xaml::Window>(handle).AppWindow().Id() : winrt::Microsoft::UI::WindowId{};
         auto asked = std::make_shared<Request>(request(*dialog));
+        if (!handle && asked->kind == 3) return chosenFolders(nullptr, ticket, false);
         if (asked->kind == 2) {
             pickers::FileSavePicker picker(window);
             if (!asked->name.empty()) picker.SuggestedFileName(asked->name);

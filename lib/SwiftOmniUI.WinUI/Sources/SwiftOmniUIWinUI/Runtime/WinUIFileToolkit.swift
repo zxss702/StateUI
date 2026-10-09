@@ -32,7 +32,8 @@ final class WinUIFileToolkit: FileToolkit {
     }
 
     func show(_ dialog: HostFileDialog, answered: @escaping (Result<[ChosenFile], ActFailure>) -> Void) -> Bool {
-        guard let window = renderer.userWindow else { return false }
+        let window = renderer.userWindow
+        guard window != nil || dialog.kind == .folder || dialog.kind == .folders else { return false }
         let ticket = Self.ticket()
         dialogs[ticket] = answered
         let kind: Int32 = switch dialog.kind {
@@ -57,7 +58,7 @@ final class WinUIFileToolkit: FileToolkit {
                                 extensionCounts: counts.baseAddress, extensions: extensions.baseAddress,
                                 name: strings.last ?? nil, contents: contents.baseAddress,
                                 length: Int64(contents.count))
-                            swiftomniui_winui_show_file_dialog(window.handle, ticket, &relayed)
+                            swiftomniui_winui_show_file_dialog(window?.handle, ticket, &relayed)
                         }
                     }
                 }

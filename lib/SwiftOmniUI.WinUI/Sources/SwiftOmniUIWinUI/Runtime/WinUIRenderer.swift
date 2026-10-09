@@ -13,7 +13,7 @@ final class WinUIRenderer {
     static var shared: WinUIRenderer?
 
     /// What the host says for whoever reads its log: standard error, or wherever a test listens.
-    static let log = HostLog(host: "WinUI")
+    static var log = HostLog(host: "WinUI")
 
     let frameClock: WinUIFrameClock
 
@@ -149,8 +149,11 @@ final class WinUIRenderer {
     /// holds closes - and tells each, once, in its turn, that it was made.
     /// Design: docs/design/platforms/winui/runtime.md#the-window
     private func showWindows() {
+        let hasScenes = runtime.tree.root?.children.isEmpty == false
+        if hasScenes { swiftomniui_winui_keep_scene_alive(true) }
         let first = roster.update(
             root: runtime.tree.root, make: { WinUIWindowController($0) }, close: { $0.window.close() })
+        if !hasScenes { swiftomniui_winui_keep_scene_alive(false) }
         if first, let window {
             // The screen is known once there is a window; what reads it renders in the turn after this one.
             WinUIEnvironment.reportDisplay(to: runtime.core, window: window)

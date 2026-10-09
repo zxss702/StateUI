@@ -27,6 +27,7 @@ namespace swiftomniui {
         winrt::Microsoft::UI::Dispatching::DispatcherQueue queue{nullptr};
         winrt::event_token rendering{};
         bool holding = false;
+        bool ownsMessageLoop = false;
 
         namespace lifecycle = winrt::Microsoft::Windows::AppLifecycle;
         namespace activation = winrt::Windows::ApplicationModel::Activation;
@@ -68,6 +69,7 @@ namespace swiftomniui {
 
             void OnLaunched(xaml::LaunchActivatedEventArgs const &) {
                 if (embedded) return;
+                ownsMessageLoop = true;
                 Resources().MergedDictionaries().Append(controls::XamlControlsResources());
                 queue = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
                 callbacks.launched();
@@ -212,6 +214,17 @@ extern "C" void swiftomniui_winui_post_turn(void) {
         if (queue) queue.TryEnqueue(guarded("handling TryEnqueue", [] { callbacks.turn(); }));
     } catch (...) {
         report("posting a turn");
+    }
+}
+
+extern "C" void swiftomniui_winui_keep_scene_alive(bool alive) {
+    if (!ownsMessageLoop) return;
+    try {
+        auto application = xaml::Application::Current();
+        if (alive) application.DispatcherShutdownMode(xaml::DispatcherShutdownMode::OnExplicitShutdown);
+        else application.Exit();
+    } catch (...) {
+        report("updating the application's scene lifetime");
     }
 }
 

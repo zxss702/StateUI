@@ -223,7 +223,7 @@ typedef enum {
     SwiftOmniUIFactsDisplay,
 } SwiftOmniUIFacts;
 
-/// Starts the Windows App SDK and WinUI on this thread and runs its loop until the last window closes.
+/// Starts the Windows App SDK and WinUI on this thread and runs its loop until the last scene ends.
 int32_t swiftomniui_winui_run(SwiftOmniUIWinUICallbacks const *callbacks);
 
 /// Makes this thread hold WinUI elements with no loop of WinUI's running - a test process's thread.
@@ -234,6 +234,9 @@ void swiftomniui_winui_pump(double seconds);
 
 /// Posts one turn to the UI thread's queue; any thread.
 void swiftomniui_winui_post_turn(void);
+
+/// Keeps the application's loop alive while a scene exists, including one temporarily without windows.
+void swiftomniui_winui_keep_scene_alive(bool alive);
 
 /// Subscribes to CompositionTarget.Rendering, or lets go of it.
 void swiftomniui_winui_hold_frames(bool hold);
@@ -279,6 +282,9 @@ void swiftomniui_winui_window_set_anchor(SwiftOmniUIObjectRef window, double con
 /// The least and the greatest size of the window's content in DIPs: least width, least height, greatest width,
 /// greatest height, 0 for none.
 void swiftomniui_winui_window_set_limits(SwiftOmniUIObjectRef window, double const *limits);
+
+/// The system title bar's height in DIPs, including before XAML finishes loading its template.
+double swiftomniui_winui_window_title_bar_height(SwiftOmniUIObjectRef window);
 
 /// What the window is: whether the user may maximize, minimize and resize it, whether its backdrop is translucent
 /// (acrylic) or of the desktop's tint (Mica), and whether it floats over the application's other windows.

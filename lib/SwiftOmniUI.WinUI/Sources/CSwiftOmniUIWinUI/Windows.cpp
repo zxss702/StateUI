@@ -360,6 +360,16 @@ extern "C" void swiftomniui_winui_window_set_traits(
     }
 }
 
+extern "C" double swiftomniui_winui_window_title_bar_height(SwiftOmniUIObjectRef handle) {
+    try {
+        auto window = borrow<xaml::Window>(handle);
+        return window.AppWindow().TitleBar().Height() / scale(window);
+    } catch (...) {
+        report("reading the title bar height");
+        return 0;
+    }
+}
+
 extern "C" void swiftomniui_winui_window_frame(SwiftOmniUIObjectRef handle, double *values) {
     try {
         auto window = borrow<xaml::Window>(handle);
