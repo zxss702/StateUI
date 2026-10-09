@@ -133,6 +133,14 @@ class WinUILazyView: WinUITravellingLayout {
             swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &values)
             effectiveViewport = (rect, Point(x: values[0], y: values[1]))
         }
+        #if DEBUG
+        let before = cells.built
+        defer {
+            if cells.built != before {
+                print("LAZY WINDOW axis=\(axis) effective=\(effective) target=\(target) native=\(scroll.scroller.standing.offset) next=\(String(describing: scroll.scroller.nextOffset)) before=\(before) after=\(cells.built)")
+            }
+        }
+        #endif
         guard let target = viewport else { return }
         let grid = self is WinUILazyGridView
         let revision = grid ? cells.runs.revision : cells.extents.revision

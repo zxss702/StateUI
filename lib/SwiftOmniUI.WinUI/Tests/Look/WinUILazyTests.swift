@@ -719,6 +719,39 @@ final class WinUILazyTests: XCTestCase {
                         return POINT(x: corner.x + LONG((origin.x + sample.0) * scale),
                                      y: corner.y + LONG((origin.y + sample.1) * scale))
                     }
+                    #if DEBUG
+                    if count == 1_000, !complex, kind == 0 {
+                        var bounds = RECT()
+                        _ = GetClientRect(hwnd, &bounds)
+                        let width = bounds.right, height = bounds.bottom
+                        let dc = GetDC(nil)!
+                        let memory = CreateCompatibleDC(dc)!
+                        let bitmap = CreateCompatibleBitmap(dc, width, height)!
+                        let previous = SelectObject(memory, bitmap)
+                        _ = BitBlt(memory, 0, 0, width, height, dc, corner.x, corner.y, DWORD(SRCCOPY))
+                        _ = SelectObject(memory, previous)
+                        var info = BITMAPINFO()
+                        info.bmiHeader.biSize = DWORD(MemoryLayout<BITMAPINFOHEADER>.size)
+                        info.bmiHeader.biWidth = width
+                        info.bmiHeader.biHeight = -height
+                        info.bmiHeader.biPlanes = 1
+                        info.bmiHeader.biBitCount = 32
+                        var bytes = [UInt8](repeating: 0, count: Int(width * height * 4))
+                        _ = bytes.withUnsafeMutableBytes { GetDIBits(dc, bitmap, 0, UINT(height), $0.baseAddress, &info, UINT(DIB_RGB_COLORS)) }
+                        var header = BITMAPFILEHEADER()
+                        header.bfType = 0x4D42
+                        header.bfOffBits = DWORD(MemoryLayout<BITMAPFILEHEADER>.size + MemoryLayout<BITMAPINFOHEADER>.size)
+                        header.bfSize = header.bfOffBits + DWORD(bytes.count)
+                        var image = withUnsafeBytes(of: &header) { Data($0) }
+                        withUnsafeBytes(of: &info.bmiHeader) { image.append(contentsOf: $0) }
+                        image.append(contentsOf: bytes)
+                        try image.write(to: URL(fileURLWithPath: "C:/Users/zxs20/SwiftOmniUI/artifacts/lazy-pixel-baseline.bmp"))
+                        print("LAZY SCREEN origin=\(origin) scale=\(scale) frame=\(frame) points=\(points) client=\(width)x\(height)")
+                        _ = DeleteObject(bitmap)
+                        _ = DeleteDC(memory)
+                        _ = ReleaseDC(nil, dc)
+                    }
+                    #endif
                     let probe = WinUILazyScreenProbe(window: hwnd, points: points)
                     let rawProbe = Unmanaged.passRetained(probe).toOpaque()
                     let created = CreateThread(nil, 0, WinUILazyScreenProbe.entry, rawProbe, 0, nil)

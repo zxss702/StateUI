@@ -97,6 +97,9 @@ enum WinUICallbacks {
                     defer { WinUILazyView.scrollTimes.append(WinUIFrameClock.monotonic() - began) }
                     #endif
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
+                    #if DEBUG
+                    print("LAZY CHANGING next=\(Point(x: x, y: y)) published=\(scroller.standing.offset)")
+                    #endif
                     scroller.nextOffset = Point(x: x, y: y)
                     scroller.ears.removeAll { $0.owner == nil }
                     for ear in scroller.ears { ear.moved() }
@@ -105,6 +108,9 @@ enum WinUICallbacks {
             scrolled: { view, x, y in
                 MainActor.assumeIsolated {
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
+                    #if DEBUG
+                    print("LAZY CHANGED published=\(Point(x: x, y: y)) previousNext=\(String(describing: scroller.nextOffset))")
+                    #endif
                     scroller.nextOffset = nil
                     scroller.ears.removeAll { $0.owner == nil }
                     for ear in scroller.ears { ear.moved() }
