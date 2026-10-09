@@ -11,9 +11,9 @@ extension MountedElement {
     public var visiblePage: MountedElement? {
         switch type {
         case .page: contentArrangement?.visiblePage ?? self
-        case .navigationStack: children.last?.visiblePage
+        case .navigationStack: currentChildren.last?.visiblePage
         case .tabView: selectedTab?.visiblePage
-        case .navigationSplitView: children.dropFirst().first?.visiblePage
+        case .navigationSplitView: currentChildren.dropFirst().first?.visiblePage
         default: nil
         }
     }
@@ -23,9 +23,9 @@ extension MountedElement {
     var contentArrangement: MountedElement? {
         func arrangement(in element: MountedElement) -> MountedElement? {
             if NodeType.pageTypes.contains(element.type) { return element }
-            return element.arrangedChildren.lazy.compactMap(arrangement).first
+            return element.currentChildren.lazy.compactMap(arrangement).first
         }
-        return arrangedChildren.lazy.compactMap(arrangement).first
+        return currentChildren.lazy.compactMap(arrangement).first
     }
 
     /// The page whose title names the window while this arrangement shows: the visible page, but tabs on a stack are
@@ -35,14 +35,14 @@ extension MountedElement {
     public var titledPage: MountedElement? {
         switch type {
         case .page: return contentArrangement?.titledPage ?? self
-        case .navigationStack: return children.last?.titledPage
-        case .navigationSplitView: return children.dropFirst().first?.titledPage
+        case .navigationStack: return currentChildren.last?.titledPage
+        case .navigationSplitView: return currentChildren.dropFirst().first?.titledPage
         case .tabView:
             if let tab = selectedTab, tab.type != .page { return tab.titledPage }
             guard let stack = parent, stack.type == .navigationStack else { return selectedTab }
             if value(.title) != nil { return self }
-            let place = stack.children.firstIndex { $0 === self } ?? 0
-            return place > 0 ? stack.children[place - 1].titledPage : selectedTab
+            let place = stack.currentChildren.firstIndex { $0 === self } ?? 0
+            return place > 0 ? stack.currentChildren[place - 1].titledPage : selectedTab
         default: return nil
         }
     }
@@ -51,7 +51,7 @@ extension MountedElement {
     /// visible page otherwise.
     public var leadingPage: MountedElement? {
         switch type {
-        case .navigationSplitView where sidebarIsVisible: children.first?.leadingPage
+        case .navigationSplitView where sidebarIsVisible: currentChildren.first?.leadingPage
         default: visiblePage
         }
     }
@@ -61,7 +61,7 @@ extension MountedElement {
     public func pageValue(_ prop: Prop) -> HostValue? {
         if let found = value(prop) { return found }
         guard type == .page else { return nil }
-        return arrangedChildren.lazy.compactMap { child in
+        return currentChildren.lazy.compactMap { child in
             NodeType.pageTypes.contains(child.type) ? nil : child.contentValue(prop)
         }.first
     }
@@ -69,7 +69,7 @@ extension MountedElement {
     /// This element's `prop`, else the nearest one below it; slots and nested arrangements stand in no page's path.
     private func contentValue(_ prop: Prop) -> HostValue? {
         if let found = value(prop) { return found }
-        return arrangedChildren.lazy.compactMap { child in
+        return currentChildren.lazy.compactMap { child in
             NodeType.pageTypes.contains(child.type) ? nil : child.contentValue(prop)
         }.first
     }
@@ -80,7 +80,7 @@ extension MountedElement {
         case .page: contentArrangement?.visibleNavigationStack
         case .navigationStack: self
         case .tabView: selectedTab?.visibleNavigationStack
-        case .navigationSplitView: children.dropFirst().first?.visibleNavigationStack
+        case .navigationSplitView: currentChildren.dropFirst().first?.visibleNavigationStack
         default: nil
         }
     }
@@ -95,15 +95,15 @@ extension MountedElement {
 
     /// The stack's items as a host shows them: a top page's own stack joins it, its pushed pages above.
     public var stackedChildren: [MountedElement] {
-        let shown = arrangedChildren
+        let shown = currentChildren
         guard type == .navigationStack else { return shown }
         if mergesIntoPageStack { return Array(shown.prefix(1)) }
         guard let top = shown.last,
               let nested = top.contentArrangement, nested.type == .navigationStack,
-              nested.children.count > 1
+              nested.currentChildren.count > 1
         else { return shown }
 
-        return Array(shown.dropLast()) + [top] + nested.children.dropFirst()
+        return Array(shown.dropLast()) + [top] + nested.currentChildren.dropFirst()
     }
 
     /// The page whose chrome this page shows: itself, or the visible page of a stack merged through it.
@@ -124,8 +124,8 @@ extension MountedElement {
         switch type {
         case .page: contentArrangement?.visibleTabbedView
         case .tabView: self
-        case .navigationStack: children.last?.visibleTabbedView
-        case .navigationSplitView: children.dropFirst().first?.visibleTabbedView
+        case .navigationStack: currentChildren.last?.visibleTabbedView
+        case .navigationSplitView: currentChildren.dropFirst().first?.visibleTabbedView
         default: nil
         }
     }
@@ -135,16 +135,17 @@ extension MountedElement {
     public var shownChildren: [MountedElement] {
         switch type {
         case .page: contentArrangement.map { [$0] } ?? []
-        case .navigationStack: children.last.map { [$0] } ?? []
+        case .navigationStack: currentChildren.last.map { [$0] } ?? []
         case .tabView: selectedTab.map { [$0] } ?? []
         case .navigationSplitView:
-            Array(children.dropFirst().prefix(1)) + (sidebarIsVisible ? Array(children.prefix(1)) : [])
+            Array(currentChildren.dropFirst().prefix(1)) + (sidebarIsVisible ? Array(currentChildren.prefix(1)) : [])
         default: []
         }
     }
 
     /// The tab a tabbed view shows: the one the user chose, else the one the tree says, within the tabs.
     public var selectedTab: MountedElement? {
+        let children = currentChildren
         guard !children.isEmpty else { return nil }
 
         let chosen = native.chosenTab ?? Int(value(.currentPage)?.number ?? 0)
@@ -161,7 +162,7 @@ extension MountedElement {
     public var visibleBackStack: MountedElement? {
         var stack = visiblePage?.parent?.enclosing(type: .navigationStack)
         while let candidate = stack {
-            guard candidate.children.count > 1 else {
+            guard candidate.currentChildren.count > 1 else {
                 stack = candidate.parent?.enclosing(type: .navigationStack)
                 continue
             }

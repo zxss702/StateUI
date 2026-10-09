@@ -47,10 +47,10 @@ extension MountedElement {
     /// The toolbar entries under `element` - its `toolbarItems` slots'
     /// children, in tree order, not reaching into a nested arrangement's own.
     private func gatherToolbarItems(under element: MountedElement, into items: inout [MountedElement]) {
-        for child in element.children {
+        for child in element.children where !child.isDeparting {
             if child.type == .toolbarItems {
                 items.append(contentsOf: child.children.filter {
-                    $0.type == .toolbarItem || $0.type == .toolbarSpacer
+                    !$0.isDeparting && ($0.type == .toolbarItem || $0.type == .toolbarSpacer)
                 })
             } else if !NodeType.pageTypes.contains(child.type) {
                 gatherToolbarItems(under: child, into: &items)

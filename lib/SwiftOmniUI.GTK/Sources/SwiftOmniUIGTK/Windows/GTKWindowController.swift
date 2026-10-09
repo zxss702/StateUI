@@ -38,17 +38,16 @@ final class GTKWindowController {
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
         if let hidden = changes.hidden { window.setHidden(hidden) }
-        if let (_, arrangement) = changes.arrangement {
-            if let arrangement {
-                let shown = Self.shownArrangement(arrangement)
-                if GTKElement.framedTypes.contains(shown.type) {
-                    window.show(page: arrangement.gtk.view)
-                } else {
-                    window.show(arrangement.gtk.view)
-                }
+        let arrangement = presentation.arrangement
+        if let arrangement {
+            let shown = Self.shownArrangement(arrangement)
+            if GTKElement.framedTypes.contains(shown.type) {
+                window.show(page: arrangement.gtk.view)
             } else {
-                window.show(nil)
+                window.show(arrangement.gtk.view)
             }
+        } else {
+            window.show(nil)
         }
         if let overlay = changes.overlay { window.showOverlay(overlay?.gtk.view) }
         if let pages = changes.sheets { showSheets(pages, in: runtime) }
@@ -127,8 +126,8 @@ final class GTKWindowController {
     /// carries the bars, or the frame around it does.
     private static func shownArrangement(_ element: MountedElement) -> MountedElement {
         var shown = element
-        while shown.type == .page, shown.arrangedChildren.count == 1,
-              let inner = shown.arrangedChildren.first, NodeType.pageTypes.contains(inner.type) {
+        while shown.type == .page, shown.currentChildren.count == 1,
+              let inner = shown.currentChildren.first, NodeType.pageTypes.contains(inner.type) {
             shown = inner
         }
         return shown

@@ -17,6 +17,11 @@ extension MountedElement {
         children.filter { !NodeType.slotTypes.contains($0.type) }
     }
 
+    /// Current content, excluding branches retained only for their removal transition.
+    public var currentChildren: [MountedElement] {
+        arrangedChildren.filter { !$0.isDeparting }
+    }
+
     /// What stands in this element's `slot` - a page's title view, a title bar's content: the first element under
     /// the slot with a view; nil where none.
     public func slotContent(_ slot: NodeType) -> MountedElement? {

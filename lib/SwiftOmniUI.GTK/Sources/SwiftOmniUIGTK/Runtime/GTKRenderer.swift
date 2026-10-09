@@ -64,6 +64,7 @@ final class GTKRenderer {
 
     /// Whether the screen the first window stands on has been told.
     private var reportedDisplay = false
+    private var holdsWithoutWindows = false
 
     /// A runtime whose windows belong to `application`, on GLib's monotonic clock or on `clock`, with the animation
     /// `reducesMotion` allows.
@@ -144,6 +145,12 @@ final class GTKRenderer {
     /// holds closes - and tells each, once, in its turn, that it was made.
     /// Design: docs/design/platforms/gtk/runtime.md#the-window
     private func showWindows() {
+        let needsHold = runtime.tree.root?.windows.isEmpty == true
+            && runtime.tree.root?.children.isEmpty == false
+        if needsHold, !holdsWithoutWindows {
+            g_application_hold(application.of(GApplication.self))
+            holdsWithoutWindows = true
+        }
         roster.update(
             root: runtime.tree.root,
             make: { element in
@@ -159,6 +166,10 @@ final class GTKRenderer {
                 return controller
             },
             close: { $0.close() })
+        if !needsHold, holdsWithoutWindows {
+            g_application_release(application.of(GApplication.self))
+            holdsWithoutWindows = false
+        }
         if frameClock.widget == nil { frameClock.widget = roster.controllers.first?.window.widget }
         if !reportedDisplay, let widget = roster.controllers.first?.window.widget,
            gtk_widget_get_realized(widget) != 0 {
@@ -209,7 +220,8 @@ extension GTKRenderer: FramePresenter {
     }
 
     func present(states: [Int32: HostStateValue], properties: [UInt64: Set<Prop>]) {
-        runtime.tree.present(states: states, properties: properties)
+        let impact = runtime.tree.present(states: states, properties: properties)
+        if impact.windowChrome { showWindows() }
     }
 
     func renderIfNeeded() {

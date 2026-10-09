@@ -65,6 +65,9 @@
     /// removal `move` measures its slide by; nil where the host cannot say.
     var departingRoom: Rect? { get }
 
+    /// A removal transition started or reversed; the retained view changes its input eligibility.
+    func departureChanged()
+
     /// The tab the user chose on a tabbed view, which the tree may not say yet; nil where none.
     var chosenTab: Int? { get }
 
@@ -75,6 +78,8 @@
 @_spi(Host) extension NativeElement {
     /// A host that cannot say where a departing view stood.
     public var departingRoom: Rect? { nil }
+
+    public func departureChanged() {}
 
     /// No tab chosen apart from the tree.
     public var chosenTab: Int? { nil }
@@ -117,6 +122,8 @@
 
     /// Called when a property animation starts, so the frame clock is held while it runs.
     public var onAnimation: () -> Void = {}
+
+    var arrangementChanged = false
 
     /// What the runtime writes out for its log: the running tally and the inspected passes.
     public private(set) var diagnostics: DiagnosticText
@@ -203,7 +210,10 @@
     /// Design: docs/design/host/patches.md#program-write
     @discardableResult
     public func present(states: [Int32: HostStateValue], properties: [UInt64: Set<Prop>]) -> FrameImpact {
-        ProgramWrite.perform { root?.applyFrame(states: states, properties: properties) ?? .none }
+        let impact = ProgramWrite.perform { root?.applyFrame(states: states, properties: properties) ?? .none }
+        guard arrangementChanged else { return impact }
+        arrangementChanged = false
+        return impact.union(FrameImpact(arrangement: true, windowChrome: true))
     }
 
     /// Starts, retargets or cuts short the animation of `property` on the element `mount`.

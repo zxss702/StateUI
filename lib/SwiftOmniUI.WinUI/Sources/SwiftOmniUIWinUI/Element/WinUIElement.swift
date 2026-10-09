@@ -72,6 +72,10 @@ final class WinUIElement: NativeElement {
         applyProperties(changed: changed)
     }
 
+    func departureChanged() {
+        view?.setIgnoresInput(element.isDeparting || element.value(.ignoresInput)?.bool == true)
+    }
+
     func leave() {
         if let view { host?.runtime.frames.follow(self, order: view.number, reads: false) }
         view?.detach()

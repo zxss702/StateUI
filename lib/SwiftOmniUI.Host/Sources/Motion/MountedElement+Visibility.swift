@@ -122,11 +122,12 @@ extension MountedElement {
         else { return false }
 
         isDeparting = true
+        native.departureChanged()
         departureSerial += 1
         let serial = departureSerial
         var pending = components.count
         for (property, target) in components {
-            _ = tree.receiveProperty(
+            let started = tree.receiveProperty(
                 mount: mount, property: property,
                 standing: value(property) ?? resting(of: property),
                 target: target, animation: law) { [weak self] in
@@ -141,6 +142,12 @@ extension MountedElement {
                     self.leave()
                     closed()
                 }
+            if !started { pending -= 1 }
+        }
+        if pending == 0 {
+            isDeparting = false
+            native.departureChanged()
+            return false
         }
         return true
     }
@@ -152,6 +159,7 @@ extension MountedElement {
         isDeparting = false
 
         guard let tree else { return }
+        native.departureChanged()
         let law = transition.animation ?? tree.layoutMotion.law(of: animation) ?? .standard
         for (property, _) in phaseValues(transition.removal, room: nil) {
             _ = tree.receiveProperty(

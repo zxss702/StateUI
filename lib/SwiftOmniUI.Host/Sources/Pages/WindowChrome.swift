@@ -83,7 +83,8 @@
         toolbarBackground = arrangement?.titledPage?.pageValue(.toolbarBackground)
             ?? arrangement?.value(.toolbarBackground)
         back = arrangement?.visibleBackStack.map { stack in
-            (stack, stack.children[stack.children.count - 2].value(.backButtonTitle)?.string ?? "Back")
+            let pages = stack.currentChildren
+            return (stack, pages[pages.count - 2].value(.backButtonTitle)?.string ?? "Back")
         }
         if let page { (leadingActions, primaryActions, overflowActions) = page.chromeActions }
         leading = titleBar?.slotContent(.leadingContent)

@@ -66,18 +66,18 @@
         let previousVisible = sheets.last ?? arrangement
         let hadSheets = !sheets.isEmpty
 
-        let arrangement = window.children.first { NodeType.pageTypes.contains($0.type) }
+        let arrangement = window.currentChildren.first { NodeType.pageTypes.contains($0.type) }
         if arrangement !== self.arrangement {
             changes.arrangement = (self.arrangement, arrangement)
             self.arrangement = arrangement
         }
-        let sheets = window.children.first { $0.type == .modalStack }?.children
+        let sheets = window.currentChildren.first { $0.type == .modalStack }?.currentChildren
             .filter { NodeType.pageTypes.contains($0.type) } ?? []
         if !sheets.elementsEqual(self.sheets, by: ===) {
             changes.sheets = sheets
             self.sheets = sheets
         }
-        let overlay = window.children.first { $0.type == .overlay }
+        let overlay = window.children.first { $0.type == .overlay && !$0.isDeparting }
         if overlay !== self.overlay {
             changes.overlay = .some(overlay)
             self.overlay = overlay

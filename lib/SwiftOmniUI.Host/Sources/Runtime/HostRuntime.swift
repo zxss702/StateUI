@@ -199,8 +199,8 @@
     public func goBack(_ way: WayBack, in window: MountedElement) {
         switch way {
         case .pop(let stack):
-            guard stack.children.count > 1, let handler = stack.handler(.popped) else { return }
-            dispatch(handler, payload: [.number(Double(stack.children.count - 2))])
+            guard stack.currentChildren.count > 1, let handler = stack.handler(.popped) else { return }
+            dispatch(handler, payload: [.number(Double(stack.currentChildren.count - 2))])
         case .dismissSheet(let remaining):
             guard let handler = window.handler(.modalPopped) else { return }
             dispatch(handler, payload: [.number(Double(remaining))])

@@ -178,9 +178,9 @@ extension GTKElement {
     /// it is now.
     private func userPopped(remaining: Int) {
         guard type == .navigationStack else { return }
-        let ownCount = element.arrangedChildren.count
-        if remaining >= ownCount, let nested = element.arrangedChildren.last?.visibleNavigationStack,
-           nested !== element, nested.children.count > 1, let handler = nested.handler(.popped) {
+        let ownCount = element.currentChildren.count
+        if remaining >= ownCount, let nested = element.currentChildren.last?.visibleNavigationStack,
+           nested !== element, nested.currentChildren.count > 1, let handler = nested.handler(.popped) {
             host?.runtime.dispatch(handler, payload: [.number(Double(remaining - ownCount))])
             return
         }
