@@ -125,8 +125,7 @@ class WinUILazyView: WinUITravellingLayout {
                     width: max(0, right - x), height: max(0, bottom - y))
     }
 
-    /// A viewport notification requests layout. The visual tree changes inside Measure, where XAML can
-    /// measure and arrange the complete new window before composing it, never midway through a notification.
+    /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
     func viewportChanged(_ rect: Rect, effective: Bool = true) {
         guard let scroll = clip else { return }
         if effective {
@@ -165,6 +164,7 @@ class WinUILazyView: WinUITravellingLayout {
             layout.invalidateMeasure()
             parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
         }
+        tellWindow(span ?? 0..<0)
     }
 
     /// The window the run shows, clipped to its document extent.
