@@ -44,7 +44,15 @@ extension PropertyContainer {
         _ property: ElementProperty<Owner, Value>,
         _ value: Value
     ) -> Modified {
-        setValue(property.token, value.propValue)
+        modified { $0.write(property, value) }
+    }
+
+    func modifyingContent<Owner: Contract>(
+        _ owner: Owner.Type, _ change: (ModifiedContent) -> ModifiedContent
+    ) -> Modified {
+        modified { node in
+            node.modifyContent(for: owner) { $0 = change(ModifiedContent(node: $0)).node }
+        }
     }
 }
 

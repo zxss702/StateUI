@@ -38,7 +38,7 @@ extension VisualElement {
     ///
     /// - Parameter aim: the aim the control answers to.
     public func aim(_ aim: Aim<Self>) -> Modified {
-        modified { $0.aim = aim.box }
+        modified { $0.modifyControl { $0.aim = aim.box } }
     }
 
     /// The keyed style from the application's style sheet that this view wears.
@@ -46,7 +46,9 @@ extension VisualElement {
     ///     Text("Welcome").style("Headline")
     ///
     /// A style without a key applies to every control of its type by itself.
-    public func style(_ key: String) -> Modified { setValue(VisualElementContract.style, Name(key)) }
+    public func style(_ key: String) -> Modified {
+        modified { $0.modifyControl { $0.write(VisualElementContract.style, Name(key)) } }
+    }
 }
 
 extension View {

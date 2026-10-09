@@ -9,8 +9,28 @@ import Foundation
 import XCTest
 
 final class WinUIImageViewTests: XCTestCase {
-    /// A picture read after its layouts were measured tells every layout above it, which grows around it.
-    func testAPictureReadLateResizesTheLayoutsAboveIt() throws {
+    /// A new file is decoded before apply returns, without pumping the UI queue or relying on its metadata.
+    func testABitmapIsDecodedBeforeApplyReturns() throws {
+        try onUIThread {
+            let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try FileManager.default.copyItem(atPath: WinUITestHost.pictures + "/test_dot.png", toPath: folder.path + "/dot.png")
+            swiftomniui_winui_set_pictures(folder.path)
+            defer {
+                swiftomniui_winui_set_pictures(WinUITestHost.pictures)
+                try? FileManager.default.removeItem(at: folder)
+            }
+            let image = WinUIImageView()
+            image.apply(source: ImageSource("dot.png"), aspect: .fit)
+            var size = [0.0, 0.0]
+            swiftomniui_winui_image_size(image.handle, &size)
+            XCTAssertEqual(size, [6, 4])
+            XCTAssertEqual(image.measure(width: nil, height: nil), LayoutSize(width: 6, height: 4))
+        }
+    }
+
+    /// A decoded bitmap gives its ancestors their final size at the first layout.
+    func testABitmapSizesItsAncestorsAtTheFirstLayout() throws {
         try onUIThread {
             let host = WinUIRenderer.running {
                 VStack { HStack { Image("test_dot.png") } }
@@ -18,8 +38,8 @@ final class WinUIImageViewTests: XCTestCase {
                     .verticalAlignment(.start)
             }
             let row = try XCTUnwrap(host.views(WinUIStackView.self).last)
-            host.settle { row.frame.width == 6 }
-
+            XCTAssertTrue(row.frame == (0, 0, 6, 4), "\(row.frame)")
+            host.step()
             XCTAssertTrue(row.frame == (0, 0, 6, 4), "\(row.frame)")
         }
     }

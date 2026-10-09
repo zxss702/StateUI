@@ -20,6 +20,26 @@ final class AppKitFrameTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func testPaddingBeforeAFixedFrameStaysInsideIt() {
+        let inside = Received<[Double]>()
+        let outside = Received<[Double]>()
+        let renderer = AppKitRenderer.running {
+            VStack {
+                Text("inside").padding(16).frame(width: 256, height: 256)
+                    .background { Rectangle().fill(.gray) }
+                    .onEvent(ViewContract.frameChanged) { inside.values.append($0) }
+                Text("outside").frame(width: 256, height: 256).padding(16)
+                    .background { Rectangle().fill(.gray) }
+                    .onEvent(ViewContract.frameChanged) { outside.values.append($0) }
+            }.horizontalAlignment(.start).verticalAlignment(.start)
+        }
+        defer { renderer.closeForTesting() }
+        settle(renderer) { !inside.values.isEmpty && !outside.values.isEmpty }
+        XCTAssertEqual(inside.values.first.map { Array($0[2..<4]) }, [256, 256])
+        XCTAssertEqual(outside.values.first.map { Array($0[2..<4]) }, [288, 288])
+    }
+
     /// A view says nothing of where it stands before a layout places it: the first report its handler hears is
     /// where it is laid out.
     @MainActor

@@ -268,6 +268,9 @@ public struct Node {
     /// waits in its producer until the differ describes the element.
     public var children: [Node]
 
+    /// A fixed frame owns view modifiers while its content keeps control members.
+    var isFrameWrapper = false
+
     /// The container's content, run when the differ describes this element; nil once
     /// run.
     /// Design: docs/design/core/identity-and-diffing.md#containers-run-their-own-content

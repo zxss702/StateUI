@@ -21,7 +21,7 @@ extension ModifiableElement {
         _ event: ElementEvent<Owner, Void>,
         _ handler: @escaping EventHandler
     ) -> Modified {
-        addHandler(event.token) {
+        addHandler(event) {
             guard MemberValues.carried(EventBuffer.current, by: event.name) != nil else { return }
 
             try await handler()
@@ -46,7 +46,7 @@ extension ModifiableElement {
         _ event: ElementEvent<Owner, Value>,
         _ handler: @escaping ValueEventHandler<Value>
     ) -> Modified {
-        addHandler(event.token) {
+        addHandler(event) {
             guard let value = MemberValues.carried(EventBuffer.current, by: event.name, as: Value.self)
             else { return }
 
@@ -67,7 +67,7 @@ extension ModifiableElement {
         _ event: ElementEvent<Owner, (First, Second)>,
         _ handler: @escaping ValueEventHandler<First, Second>
     ) -> Modified {
-        addHandler(event.token) {
+        addHandler(event) {
             guard let (first, second) = MemberValues.carried(
                 EventBuffer.current, by: event.name, as: First.self, Second.self)
             else { return }
@@ -89,7 +89,7 @@ extension ModifiableElement {
         _ event: ElementEvent<Owner, (First, Second, Third)>,
         _ handler: @escaping ValueEventHandler<First, Second, Third>
     ) -> Modified {
-        addHandler(event.token) {
+        addHandler(event) {
             guard let (first, second, third) = MemberValues.carried(
                 EventBuffer.current, by: event.name, as: First.self, Second.self, Third.self)
             else { return }
@@ -107,13 +107,22 @@ extension ModifiableElement {
         _ event: ElementEvent<Owner, (First, Second, Third, Fourth, Fifth)>,
         _ handler: @escaping ValueEventHandler<First, Second, Third, Fourth, Fifth>
     ) -> Modified {
-        addHandler(event.token) {
+        addHandler(event) {
             guard let (first, second, third, fourth, fifth) = MemberValues.carried(
                 EventBuffer.current, by: event.name,
                 as: First.self, Second.self, Third.self, Fourth.self, Fifth.self)
             else { return }
 
             try await handler(first, second, third, fourth, fifth)
+        }
+    }
+
+    /// Keeps a typed event on its control inside a frame wrapper.
+    func addHandler<Owner: Contract, Payload>(
+        _ event: ElementEvent<Owner, Payload>, _ handler: @escaping EventHandler
+    ) -> Modified {
+        modified { node in
+            node.modifyContent(for: Owner.self) { $0.addHandler(event.token, handler) }
         }
     }
 

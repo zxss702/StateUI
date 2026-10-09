@@ -6,6 +6,59 @@
 // through a chain, and the `@_disfavoredOverload` twins on `View` answer the
 // same names for a composed view, whose result is opaque.
 
+extension Node {
+    /// A fixed frame encloses earlier padding and a composed view's content.
+    mutating func wrapPaddedFrame() {
+        guard props[.padding] != nil || driven[.padding] != nil || stateful != nil else { return }
+        var content = self
+        self = Node(contract: GridContract.self)
+        isFrameWrapper = true
+        for property: Prop in [.gridRow, .gridColumn, .gridRowSpan, .gridColumnSpan, .area,
+            .flex, .layoutPriority, .horizontalGuide, .verticalGuide,
+            .horizontalAlignment, .verticalAlignment, .horizontalAlignmentDefault, .verticalAlignmentDefault] {
+            props[property] = content.props.removeValue(forKey: property)
+            driven[property] = content.driven.removeValue(forKey: property)
+        }
+        id = content.id
+        key = content.key
+        content.id = nil
+        content.key = nil
+        layoutValues = content.layoutValues
+        content.layoutValues = [:]
+        children = [content]
+    }
+}
+
+extension VisualElementProperties where Self: View {
+    @_spi(Host) public func frame(width: Binding<Double>) -> Modified {
+        modified { node in
+            node.wrapPaddedFrame()
+            node.driveJourney(VisualElementContract.width, by: width)
+        }
+    }
+
+    @_spi(Host) public func frame(height: Binding<Double>) -> Modified {
+        modified { node in
+            node.wrapPaddedFrame()
+            node.driveJourney(VisualElementContract.height, by: height)
+        }
+    }
+
+    public func frame(width: Double? = nil, height: Double? = nil, alignment: Alignment = .center) -> Modified {
+        modified { node in
+            if width != nil || height != nil { node.wrapPaddedFrame() }
+            if let width { node.write(VisualElementContract.width, width) }
+            if let height { node.write(VisualElementContract.height, height) }
+            node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
+            node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
+            if alignment != .center {
+                node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
+                node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
+            }
+        }
+    }
+}
+
 extension VisualElementProperties {
     /// Whether the view responds to the user. Disabling a container disables
     /// everything in it.
@@ -500,6 +553,7 @@ extension View {
         alignment: Alignment = .center
     ) -> ModifiedContent {
         revised { node in
+            if width != nil || height != nil { node.wrapPaddedFrame() }
             if let width { node.write(VisualElementContract.width, width) }
             if let height { node.write(VisualElementContract.height, height) }
             node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
@@ -654,13 +708,19 @@ extension View {
     /// `width` from a state, `$x`.
     @_disfavoredOverload
     @_spi(Host) public func frame(width: Binding<Double>) -> ModifiedContent {
-        revised { $0.driveJourney(VisualElementContract.width, by: width) }
+        revised { node in
+            node.wrapPaddedFrame()
+            node.driveJourney(VisualElementContract.width, by: width)
+        }
     }
 
     /// `height` from a state, `$x`.
     @_disfavoredOverload
     @_spi(Host) public func frame(height: Binding<Double>) -> ModifiedContent {
-        revised { $0.driveJourney(VisualElementContract.height, by: height) }
+        revised { node in
+            node.wrapPaddedFrame()
+            node.driveJourney(VisualElementContract.height, by: height)
+        }
     }
 
     /// `minimumWidth` from a state, `$x`.

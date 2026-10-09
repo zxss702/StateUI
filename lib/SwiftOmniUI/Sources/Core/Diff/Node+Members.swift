@@ -23,13 +23,31 @@ extension [Prop: PropValue] {
 }
 
 extension Node {
+    var controlContent: Node { isFrameWrapper ? children[0].controlContent : self }
+
+    mutating func modifyControl(_ change: (inout Node) -> Void) {
+        if isFrameWrapper { children[0].modifyControl(change) }
+        else { change(&self) }
+    }
+
+    mutating func modifyContent<Owner: Contract>(for owner: Owner.Type, _ change: (inout Node) -> Void) {
+        let type = ObjectIdentifier(owner)
+        if isFrameWrapper && type != ObjectIdentifier(ViewContract.self)
+            && type != ObjectIdentifier(VisualElementContract.self)
+            && type != ObjectIdentifier(PropertyContainerContract.self) {
+            children[0].modifyContent(for: owner, change)
+        } else {
+            change(&self)
+        }
+    }
+
     /// Writes one member's value into this node - what a modifier setting
     /// several members at once writes through, where `setValue` cannot chain.
     mutating func write<Owner: Contract, Value: HostRepresentable>(
         _ property: ElementProperty<Owner, Value>,
         _ value: Value
     ) {
-        props.write(property, value)
+        modifyContent(for: Owner.self) { $0.props.write(property, value) }
     }
 
     /// Writes one member's value into this node, or leaves the member

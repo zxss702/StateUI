@@ -17,11 +17,9 @@
 
 #include <shcore.h>
 #include <shlwapi.h>
-#include <wincodec.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 using namespace swiftomniui;
@@ -44,24 +42,17 @@ namespace {
         return attributes != INVALID_FILE_ATTRIBUTES && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
     }
 
-    winrt::Windows::Foundation::Uri address(std::wstring path) {
-        for (auto &character : path) if (character == L'\\') character = L'/';
-        return winrt::Windows::Foundation::Uri(L"file:///" + path);
-    }
-
-    /// A bitmap's own size, read synchronously so the layout holds the room
-    /// the picture will take: a BitmapImage answers it only once decoded.
-    void bitmapSize(std::wstring const &path, double *size) {
-        winrt::com_ptr<IWICImagingFactory> factory;
-        if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-                                    IID_PPV_ARGS(factory.put())))) return;
-        winrt::com_ptr<IWICBitmapDecoder> decoder;
-        if (FAILED(factory->CreateDecoderFromFilename(path.c_str(), nullptr, GENERIC_READ,
-                                                      WICDecodeMetadataCacheOnLoad, decoder.put()))) return;
-        winrt::com_ptr<IWICBitmapFrameDecode> frame;
-        if (FAILED(decoder->GetFrame(0, frame.put()))) return;
-        UINT width = 0, height = 0;
-        if (SUCCEEDED(frame->GetSize(&width, &height))) { size[0] = width; size[1] = height; }
+    /// A local bitmap decoded before it is attached to the visible tree.
+    imaging::BitmapImage bitmapSource(std::wstring const &path) {
+        winrt::com_ptr<IStream> file;
+        winrt::check_hresult(SHCreateStreamOnFileEx(path.c_str(), STGM_READ | STGM_SHARE_DENY_NONE,
+                                                  FILE_ATTRIBUTE_NORMAL, FALSE, nullptr, file.put()));
+        winrt::Windows::Storage::Streams::IRandomAccessStream stream{nullptr};
+        winrt::check_hresult(CreateRandomAccessStreamOverStream(
+            file.get(), BSOS_DEFAULT, winrt::guid_of<decltype(stream)>(), winrt::put_abi(stream)));
+        imaging::BitmapImage source;
+        source.SetSource(stream);
+        return source;
     }
 
     /// Where attribute `name`'s value begins in an SVG's opening tag; npos for none.
@@ -176,7 +167,7 @@ xaml::Media::ImageSource swiftomniui::pictureSource(std::wstring const &file) {
     auto path = pictures() + file;
     auto dot = file.find_last_of(L'.');
     if (dot != std::wstring::npos && file.substr(dot) == L".svg") return drawing(contents(path));
-    return imaging::BitmapImage(address(path));
+    return bitmapSource(path);
 }
 
 extern "C" void swiftomniui_winui_set_pictures(char const *utf8) {
@@ -275,39 +266,12 @@ extern "C" bool swiftomniui_winui_image_set(
         auto dot = file.find_last_of(L'.');
         auto extension = dot == std::wstring::npos ? std::wstring() : file.substr(dot);
         if (extension != L".svg") {
-            // A bitmap's size is known once it is read; the layout holding it measures it again then.
-            imaging::BitmapImage bitmap(address(path));
-            bitmap.ImageOpened(guarded("handling ImageOpened",
-                [held = winrt::make_weak(image)](auto const &, xaml::RoutedEventArgs const &) {
-                auto image = held.get();
-                if (!image) return;
-                auto queue = image.DispatcherQueue();
-                (queue ? queue : winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread())
-                    .TryEnqueue(guarded("handling the enqueued measure", [held] {
-                        auto image = held.get();
-                        if (!image) return;
-                        // The layout holding the picture measures it again: the path above it is marked and a pass
-                        // asked for outright from the tree's head - a marked measure alone waits on a render a
-                        // window may never take, and an element's own UpdateLayout lays out its subtree alone.
-                        auto top = image.as<xaml::UIElement>();
-                        for (xaml::DependencyObject at = image;;) {
-                            at = xaml::Media::VisualTreeHelper::GetParent(at);
-                            auto element = at.try_as<xaml::UIElement>();
-                            if (!element) break;
-                            top = element;
-                        }
-                        for (xaml::DependencyObject at = xaml::Media::VisualTreeHelper::GetParent(image); at;
-                             at = xaml::Media::VisualTreeHelper::GetParent(at))
-                            if (auto layout = at.try_as<xaml::UIElement>()) layout.InvalidateMeasure();
-                        if (top) top.UpdateLayout();
-                    }));
-            }));
-            bitmap.ImageFailed(guarded("handling ImageFailed",
-                [](auto const &, xaml::ExceptionRoutedEventArgs const &) {
-                report("reading a picture");
-            }));
+            // Decode before the first layout: both pixels and their size are ready when the source is attached.
+            image.Source(nullptr);
+            auto bitmap = bitmapSource(path);
+            size[0] = bitmap.PixelWidth();
+            size[1] = bitmap.PixelHeight();
             image.Source(bitmap);
-            bitmapSize(path, size);
             return true;
         }
 

@@ -22,7 +22,9 @@ extension PropertyContainer {
         mode: StateMode,
         kind: StateKind
     ) -> Modified {
-        setValue(property.token, on: state, mode: mode, kind: kind)
+        modifyingContent(Owner.self) { holder in
+            holder.setValue(property.token, on: state, mode: mode, kind: kind)
+        }
     }
 
     /// The same, for a value the host can animate - a number, a colour, a
@@ -46,7 +48,9 @@ extension PropertyContainer {
         mode: StateMode,
         kind: StateKind
     ) -> Modified {
-        setValue(property.token, on: state, mode: mode, kind: kind)
+        modifyingContent(Owner.self) { holder in
+            holder.setValue(property.token, on: state, mode: mode, kind: kind)
+        }
     }
 
     /// Writes the number of a carried state onto a property - how a drag is
@@ -184,7 +188,9 @@ extension PropertyContainer {
         _ property: ElementProperty<Owner, Value>,
         by state: Binding<Value>
     ) -> Modified {
-        journey(property.token, by: state)
+        modifyingContent(Owner.self) { holder in
+            holder.journey(property.token, by: state)
+        }
     }
 
     /// `plain(_:by:mode:)` over a member of the type its contract declares.
@@ -193,7 +199,9 @@ extension PropertyContainer {
         by state: Binding<Value>,
         mode: StateMode = .out
     ) -> Modified {
-        plain(property.token, by: state, mode: mode)
+        modifyingContent(Owner.self) { holder in
+            holder.plain(property.token, by: state, mode: mode)
+        }
     }
 
     /// `words(_:by:mode:)` over a text member.
@@ -202,6 +210,8 @@ extension PropertyContainer {
         by state: Binding<String>,
         mode: StateMode = .out
     ) -> Modified {
-        words(property.token, by: state, mode: mode)
+        modifyingContent(Owner.self) { holder in
+            holder.words(property.token, by: state, mode: mode)
+        }
     }
 }
