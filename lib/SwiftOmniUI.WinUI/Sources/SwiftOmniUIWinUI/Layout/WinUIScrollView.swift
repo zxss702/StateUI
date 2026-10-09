@@ -95,8 +95,11 @@ final class WinUIScrollView: WinUILayoutView {
         bounce: ScrollBounceBehavior, bounceAxes: Axis.Set
     ) {
         let mode: Int32 = bounce == .basedOnSize ? 2 : 1
-        modes = (vertical: bounceAxes.contains(.vertical) ? mode : 1,
-                 horizontal: bounceAxes.contains(.horizontal) ? mode : 1)
+        modes = (
+            vertical: orientation == .horizontal || orientation == .neither ? 0
+                : (bounceAxes.contains(.vertical) ? mode : 1),
+            horizontal: orientation == .vertical || orientation == .neither ? 0
+                : (bounceAxes.contains(.horizontal) ? mode : 1))
         if orientation != self.orientation || verticalBar != bars.vertical || horizontalBar != bars.horizontal {
             self.orientation = orientation
             bars = (verticalBar, horizontalBar)
