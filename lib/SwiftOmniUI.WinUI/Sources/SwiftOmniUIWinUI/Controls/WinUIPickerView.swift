@@ -64,13 +64,25 @@ final class WinUIPickerView: WinUIView {
     }
 
     override func chose(_ index: Int) {
+        guard !ProgramWrite.isWriting, written.choices.indices.contains(index) else { return }
         onChosen?(index)
+        invalidateChoiceMeasurements()
     }
 
     /// The list opened or closed: the user's, reported; the program's, not.
     override func presented(_ open: Bool) {
+        invalidateChoiceMeasurements()
         guard showing.heard(open: open) else { return }
         if open { onOpened?() } else { onClosed?() }
+    }
+
+    private func invalidateChoiceMeasurements() {
+        invalidateMeasure()
+        var ancestor = placingLayout
+        while let layout = ancestor {
+            layout.invalidateMeasurements()
+            ancestor = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
+        }
     }
 
     override func detach() {
