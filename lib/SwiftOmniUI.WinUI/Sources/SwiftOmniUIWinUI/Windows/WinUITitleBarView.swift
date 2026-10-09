@@ -33,9 +33,13 @@ final class WinUITitleBarView: WinUIView {
         let foreground = chrome.foreground?.argb
         // Words on a bar the tree paints: light on a dark one, dark on a light one (`BandWords`).
         let light = chrome.background.flatMap(BandWords.light(on:))
-        swiftomniui_winui_title_bar_set(
-            handle, chrome.title, chrome.back != nil, chrome.sidebarToggle != nil,
-            background != nil, background ?? 0, foreground != nil, foreground ?? 0, light.map { $0 ? 1 : 2 } ?? 0)
+        if previous.title != chrome.title || (previous.back == nil) != (chrome.back == nil)
+            || (previous.sidebarToggle == nil) != (chrome.sidebarToggle == nil)
+            || previous.background != chrome.background || previous.foreground != chrome.foreground {
+            swiftomniui_winui_title_bar_set(
+                handle, chrome.title, chrome.back != nil, chrome.sidebarToggle != nil,
+                background != nil, background ?? 0, foreground != nil, foreground ?? 0, light.map { $0 ? 1 : 2 } ?? 0)
+        }
 
         let actions = chrome.actions + chrome.overflow
         let overflows = chrome.actions.map { _ in false } + chrome.overflow.map { _ in true }

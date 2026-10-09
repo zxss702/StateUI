@@ -186,7 +186,6 @@ extension WinUIRenderer: TurnPresenter {
         let began = WinUIFrameClock.monotonic()
         #endif
         showWindows()
-        refreshWindowChrome()
         #if DEBUG
         let chromeDone = WinUIFrameClock.monotonic()
         #endif
