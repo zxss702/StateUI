@@ -93,14 +93,19 @@ class WinUILazyView: WinUITravellingLayout {
         return nil
     }
 
-    /// EffectiveViewport follows the compositor's actual scroll position, including touch inertia.
-    /// Native offsets are only a bootstrap before XAML delivers the first effective viewport; switching
-    /// between these two timelines after that can recycle children that are still on screen.
+    /// Realization follows the input offset; the document's displayed offset is committed after arrangement.
+    /// Reading the compensated effective viewport here would keep asking for the previous displayed window.
     private var viewport: Rect? {
         guard let scroll = clip else { return nil }
-        if let effectiveViewport { return effectiveViewport }
         var values = [0.0, 0.0, 0.0, 0.0]
         swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &values)
+        // The document displays the last arranged offset. The next realization must follow input,
+        // independently of that compensated visual transform, or the viewport would feed back on itself.
+        if let next = scroll.scroller.nextOffset {
+            let now = scroll.scroller.standing.offset
+            values[0] += next.x - now.x
+            values[1] += next.y - now.y
+        }
         return Rect(x: values[0], y: values[1], width: values[2], height: values[3])
     }
 
@@ -194,8 +199,8 @@ class WinUILazyView: WinUITravellingLayout {
         watching = scroll
         effectiveViewport = nil
         let ear = WinUIScrollEar(owner: self) { [weak self] in
-            guard let self, self.effectiveViewport == nil else { return }
-            self.invalidateMeasure()
+            guard let self, let viewport = self.viewport else { return }
+            self.viewportChanged(viewport)
         }
         self.ear = ear
         scroll?.scroller.ears.append(ear)

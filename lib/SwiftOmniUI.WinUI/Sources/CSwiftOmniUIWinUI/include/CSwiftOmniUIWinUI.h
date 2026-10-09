@@ -737,6 +737,7 @@ void swiftomniui_winui_scroller_modes(SwiftOmniUIObjectRef scroller, int32_t ver
 /// Moves the scroller's view to `x`, `y` DIPs at once; the scroller keeps it within what it can reach, and says where
 /// it stands through `scrolled` once it has moved.
 void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef scroller, double x, double y, bool animated);
+void swiftomniui_winui_scroller_commit(SwiftOmniUIObjectRef content, double x, double y, bool virtualized);
 
 /// Where the scroller's view would stand for `descendant` where the anchors say, in DIPs, read into `place`: the
 /// fraction of each across the child and the room, `NAN` for "only where it is not wholly in view". `found` says

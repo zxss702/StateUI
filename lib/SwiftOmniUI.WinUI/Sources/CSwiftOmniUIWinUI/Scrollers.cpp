@@ -90,6 +90,39 @@ extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, dou
     }
 }
 
+extern "C" void swiftomniui_winui_scroller_commit(SwiftOmniUIObjectRef content, double x, double y, bool virtualized) {
+    try {
+        auto element = as<xaml::UIElement>(content);
+        auto visual = xaml::Hosting::ElementCompositionPreview::GetElementVisual(element);
+        auto properties = visual.Properties();
+        winrt::Windows::Foundation::Numerics::float3 committed;
+        auto status = properties.TryGetVector3(L"RealizedScrollOffset", committed);
+        float active = 0;
+        properties.TryGetScalar(L"RealizedScrolling", active);
+        if (!virtualized) {
+            if (status == winrt::Microsoft::UI::Composition::CompositionGetValueStatus::Succeeded) {
+                visual.StopAnimation(L"Translation");
+                properties.InsertVector3(L"Translation", {0, 0, 0});
+                properties.InsertScalar(L"RealizedScrolling", 0);
+            }
+            return;
+        }
+        properties.InsertVector3(L"RealizedScrollOffset", {static_cast<float>(x), static_cast<float>(y), 0});
+        if (active != 1) {
+            xaml::Hosting::ElementCompositionPreview::SetIsTranslationEnabled(element, true);
+            // XAML owns the primary visual's offset and manipulation matrix. Translation is a separate
+            // prepend visual: cancel independent scrolling and apply only the offset arranged this pass.
+            auto expression = visual.Compositor().CreateExpressionAnimation(
+                L"Vector3(-Native.Offset.X - Native.TransformMatrix._41, "
+                L"-Native.Offset.Y - Native.TransformMatrix._42, 0) - Realized.RealizedScrollOffset");
+            expression.SetReferenceParameter(L"Native", visual);
+            expression.SetReferenceParameter(L"Realized", properties);
+            visual.StartAnimation(L"Translation", expression);
+            properties.InsertScalar(L"RealizedScrolling", 1);
+        }
+    } catch (...) { report("committing a virtualized scroller"); }
+}
+
 extern "C" void swiftomniui_winui_scroller_place_for(
     SwiftOmniUIObjectRef handle, SwiftOmniUIObjectRef descendant, double anchorX, double anchorY,
     int32_t *found, double *place)

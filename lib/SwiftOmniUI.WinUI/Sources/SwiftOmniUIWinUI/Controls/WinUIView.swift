@@ -253,7 +253,8 @@ class WinUIView {
             // pass ends - measuring an element while WinUI arranges marks it for another pass, for ever.
             // Design: docs/design/platforms/winui/layout.md#measured-every-pass
             if let layout = self as? WinUILayoutView, placingLayout != nil {
-                if layout.standsAt != place.width {
+                if layout.standsAt != place.width,
+                   !measuredSizes.contains(where: { $0.width == Double(Float(place.width)) && $0.height == nil }) {
                     #if DEBUG
                     print("LAZY-WIDTH-QUEUE", WinUIFrameClock.monotonic(), number, String(describing: type(of: self)), place)
                     #endif
