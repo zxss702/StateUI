@@ -121,7 +121,7 @@ public struct GeometryProxy: Sendable {
 ///     }
 ///
 /// The closure runs again whenever the frame settles somewhere new; before the
-/// first layout it reads a zero size. Several views stack on top of each
+/// first layout it reads a zero size; native hosts settle that report before painting. Several views stack on top of each
 /// other, as in a `Grid`. To report a frame rather than build from it, write
 /// `.onFrameChanged` on the view.
 public struct GeometryReader: View {
@@ -151,9 +151,11 @@ public struct GeometryReader: View {
         var report = report
         report.named = named
 
-        return Grid {
+        var container = Grid {
             build(GeometryProxy(report: report))
         }
+        container.node.props[.isGeometryReader] = true.propValue
+        return container
         .flex(0)
         .hearing(ViewContract.namedFramesChanged) { frames in
             guard frames != self.named else { return }

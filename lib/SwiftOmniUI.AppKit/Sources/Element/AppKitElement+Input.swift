@@ -197,7 +197,10 @@ extension AppKitElement: FrameReporter {
                       let content = ancestorView.window?.contentView else { return nil }
                 return topLeftFrame(ancestorView.convert(ancestorView.bounds, to: content), in: content).placed
             }
-            element.reportFrame(numbers, named: named, in: host.runtime)
+            element.reportFrame(numbers, named: named, in: host.runtime,
+                contentInsets: element.contentSafeAreaInsets {
+                    ($0.native as? AppKitElement)?.view?.frame.placed
+                })
         }
     }
 

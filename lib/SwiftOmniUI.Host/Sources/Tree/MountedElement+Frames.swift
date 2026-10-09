@@ -6,6 +6,29 @@
 /// Where an element stands, said to the tree that reads it, the same on every host.
 /// Design: docs/design/host/runtime.md#where-a-view-stands
 extension MountedElement {
+    /// Insets reserved above this reader, measured in the same native layout as its frame.
+    public func contentSafeAreaInsets(frameOf: (MountedElement) -> Rect?) -> EdgeInsets {
+        guard value(.isGeometryReader)?.bool == true else { return EdgeInsets(0) }
+        var insets = EdgeInsets(0), child = self
+        while let parent = child.parent {
+            defer { child = parent }
+            guard let edge = parent.value(.safeAreaInsetEdge).flatMap(Edge.init(propValue:)) else { continue }
+            let leading = edge == .top || edge == .leading
+            let children = parent.currentChildren
+            guard children.count == 2, children[leading ? 1 : 0] === child,
+                  let frame = frameOf(children[leading ? 0 : 1]) else { continue }
+            let extent = (edge == .top || edge == .bottom ? frame.height : frame.width)
+                + (parent.value(.spacing)?.number ?? 0)
+            switch edge {
+            case .top: insets.top += extent
+            case .bottom: insets.bottom += extent
+            case .leading: insets.left += extent
+            case .trailing: insets.right += extent
+            }
+        }
+        return insets
+    }
+
     /// Whether this element receives its position, including Text's passive
     /// origin report. Only business geometry reads set `framesRead`.
     public var readsOwnFrame: Bool {
@@ -16,8 +39,20 @@ extension MountedElement {
     /// Says where the element stands - `numbers`, a frame report's ten, and the named spaces enclosing it -
     /// where that changed since it last said: its place in its parent onto the state its frame drives, the
     /// named spaces ahead of the numbers so one pass hears them together, and the whole report to its handler.
-    public func reportFrame(_ numbers: [Double], named: [NamedSpaceFrame], in runtime: HostRuntime) {
+    public func reportFrame(_ numbers: [Double], named: [NamedSpaceFrame], in runtime: HostRuntime,
+                            contentInsets: EdgeInsets = EdgeInsets(0)) {
         guard readsOwnFrame else { return }
+        var numbers = numbers
+        if value(.isGeometryReader)?.bool == true, contentInsets != EdgeInsets(0), numbers.count == 10 {
+            let top = max(0, numbers[7] - numbers[5]) + contentInsets.top
+            let left = max(0, numbers[6] - numbers[4]) + contentInsets.left
+            let bottom = max(0, numbers[5] + numbers[3] - numbers[7] - numbers[9]) + contentInsets.bottom
+            let right = max(0, numbers[4] + numbers[2] - numbers[6] - numbers[8]) + contentInsets.right
+            numbers[6] = numbers[4] + left
+            numbers[7] = numbers[5] + top
+            numbers[8] = max(0, numbers[2] - left - right)
+            numbers[9] = max(0, numbers[3] - top - bottom)
+        }
         if named != reportedNamedFrames {
             reportedNamedFrames = named
             if let handler = handler(.namedFramesChanged) {

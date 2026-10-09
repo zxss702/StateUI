@@ -169,6 +169,8 @@ extension NodeType {
     static let frame = VisualElementContract.frame.token
     static let isFrameContent = Prop("isFrameContent")
     static let isLayoutDecoration = Prop("isLayoutDecoration")
+    static let isGeometryReader = Prop("isGeometryReader")
+    static let safeAreaInsetEdge = Prop("safeAreaInsetEdge")
     static let flowColumns = GridContract.flowColumns.token
     static let flowRows = LazyHGridContract.flowRows.token
     static let gridColumn = ViewContract.gridColumn.token

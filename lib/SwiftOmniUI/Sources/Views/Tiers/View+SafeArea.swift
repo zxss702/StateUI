@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // `.safeAreaInset(edge:) {}` reserves an edge by laying the bar beside the
-// content. Geometry reports that content's reduced bounds, without another inset.
+// content. The host also reports the reservation in the content's safe area.
 // Design: docs/design/views/modifiers.md#composed-modifiers
 
 extension View {
@@ -74,6 +74,7 @@ private struct SafeAreaInsetContent<Base: View, Bar: View>: View {
         if vertical {
             var stack = VStack()
             stack.node.write(StackBaseContract.spacing, spacing)
+            stack.node.props[.safeAreaInsetEdge] = edge.propValue
             stack.node.producer = {
                 edge == .top ? [inset.node, content.node] : [content.node, inset.node]
             }
@@ -81,8 +82,9 @@ private struct SafeAreaInsetContent<Base: View, Bar: View>: View {
         }
         var stack = HStack()
         stack.node.write(StackBaseContract.spacing, spacing)
+        stack.node.props[.safeAreaInsetEdge] = edge.propValue
         stack.node.producer = {
-                edge == .leading ? [inset.node, content.node] : [content.node, inset.node]
+            edge == .leading ? [inset.node, content.node] : [content.node, inset.node]
         }
         return AnyView(stack)
     }
