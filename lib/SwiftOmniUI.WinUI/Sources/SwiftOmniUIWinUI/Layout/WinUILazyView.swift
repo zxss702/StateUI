@@ -31,10 +31,11 @@ class WinUILazyView: WinUITravellingLayout {
     /// Natural sizes survive scrolling; content invalidation or a changed
     /// cross-axis proposal clears only the measurements that can be stale.
     var measured: [String: (proposal: Double?, size: LayoutSize)] = [:]
+    /// Only actual placements adopt the child layout revisions measured with these sizes.
+    var measuredLayoutRevisions: [String: (view: Int64, revision: Int)] = [:]
     var measuredRevision = -1
     var measuredAcross: Double?
     var naturalAcross = 44.0
-    var anchorTarget: Double?
     var geometryChanged = false
     var measuredExtent = 0.0
 
@@ -43,6 +44,9 @@ class WinUILazyView: WinUITravellingLayout {
     /// Physical clipping within the native scroll viewport, independent of its requested offset.
     private var effectiveViewport: Rect?
     private var lastTargetViewport: Rect?
+    #if DEBUG
+    private static var traced = 0
+    #endif
 
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
@@ -66,10 +70,14 @@ class WinUILazyView: WinUITravellingLayout {
         for (identity, previous) in mounted {
             if now[identity]?.view !== previous.view || now[identity]?.values != previous.values {
                 measured.removeValue(forKey: identity)
+                measuredLayoutRevisions.removeValue(forKey: identity)
             }
         }
         mounted = now
-        for item in items { item.item.view.placingLayout = self }
+        for item in items {
+            item.item.view.placingLayout = self
+            swiftomniui_winui_scroller_anchor(item.item.view.handle, !item.item.departing)
+        }
         setChildren(items.map(\.item.view))
         invalidateMeasurements()
         measuredRevision = measurements.revision
@@ -125,8 +133,42 @@ class WinUILazyView: WinUITravellingLayout {
             effectiveViewport = Rect(x: rect.x + values[4], y: rect.y + values[5],
                                      width: rect.width, height: rect.height)
         }
-        guard let target = viewport, lastTargetViewport != target else { return }
+        guard let target = viewport else { return }
+        #if DEBUG
+        if Self.traced < 100 {
+            Self.traced += 1
+            print("LAZY VIEWPORT view=\(number) axis=\(axis) target=\(target) span=\(String(describing: span)) built=\(cells.built) revision=\(measurements.revision)")
+        }
+        #endif
+        let grid = self is WinUILazyGridView
+        let revision = grid ? cells.runs.revision : cells.extents.revision
+        guard lastTargetViewport != target || cells.window?.span != (span ?? 0..<0)
+            || cells.window?.revision != revision else { return }
+        let previous = lastTargetViewport
         lastTargetViewport = target
+        if !geometryChanged, !cells.animatesChanges,
+           measuredRevision == measurements.revision, cells.window?.revision == revision,
+           previous?.width == target.width, previous?.height == target.height, let span {
+            let perRun = cells.window?.perRun ?? 1
+            let wanted = grid
+                ? cells.runs.places(in: span, overscan: 0, count: (cells.identities.count + perRun - 1) / perRun)
+                : cells.places(in: span, overscan: 0)
+            let lower = min(cells.identities.count, max(0, wanted.lowerBound - 1) * perRun)
+            let upper = min(cells.identities.count, (wanted.upperBound + 1) * perRun)
+            if !wanted.isEmpty, (lower..<upper) == cells.built {
+                cells.show(span, perRun: perRun, grid: grid)
+                // The document arranges all lazy siblings together before advancing its visual offset.
+                // Its arithmetic remains valid while every mounted identity and cross proposal is unchanged.
+                var parent = placingLayout
+                while let layout = parent {
+                    if let document = layout as? WinUIScrollDocument, document.scrollView === scroll {
+                        document.invalidateArrange()
+                        return
+                    }
+                    parent = (layout as? WinUIScrollDocument)?.scrollView?.placingLayout ?? layout.placingLayout
+                }
+            }
+        }
         // These panels report zero DesiredSize to their native parents. Marking this panel alone
         // can leave the placing chain's cached arithmetic intact and skip its realization entirely.
         invalidateMeasurements()
@@ -180,28 +222,9 @@ class WinUILazyView: WinUITravellingLayout {
                 self.cells.tellAll()
                 return
             }
-            if let origin = self.anchorTarget, let scroll = self.watching {
-                // Convert the lazy-local origin to document coordinates. Both values below come from
-                // the same native offset; an effective viewport may already describe a later frame.
-                var native = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-                swiftomniui_winui_scroller_viewport(scroll.scroller.handle, self.handle, &native)
-                var target = scroll.scroller.standing.offset
-                if self.axis == .vertical { target.y += origin - native[1] }
-                else { target.x += origin - native[0] }
-                #if DEBUG
-                if self.cells.identities.count > 900, self.cells.identities.count < 1003,
-                   target.y > scroll.scroller.standing.reach.y - 1200 {
-                    print("TAIL-MOVE", self.number, "origin", origin, "native", native,
-                          "standing", scroll.scroller.standing, "target", target,
-                          "span", self.span as Any, "window", self.cells.window as Any)
-                }
-                #endif
-                self.anchorTarget = nil
-                scroll.scroller.move(to: target)
-            }
             let revision = self is WinUILazyGridView ? self.cells.runs.revision : self.cells.extents.revision
             if self.cells.window?.span != (self.span ?? 0..<0) || self.cells.window?.revision != revision {
-                self.invalidateMeasure()
+                if let viewport = self.viewport { self.viewportChanged(viewport, effective: false) }
             }
         }
     }
@@ -242,6 +265,9 @@ class WinUILazyView: WinUITravellingLayout {
     /// Measuring again, the window is re-asked: a new pass is a new chance
     /// for the places the run holds.
     override func measure(width: Double, height: Double) -> LayoutSize {
+        #if DEBUG
+        if Self.traced < 100 { Self.traced += 1; print("LAZY MEASURE view=\(number) axis=\(axis) width=\(width) arranging=\(WinUIView.arranging) span=\(String(describing: span)) built=\(cells.built)") }
+        #endif
         if WinUIView.arranging == 0 {
             watchClip()
             if watching != nil { tellWindow(span ?? 0..<0) }
@@ -265,13 +291,8 @@ class WinUILazyView: WinUITravellingLayout {
 final class WinUILazyStackView: WinUILazyView {
     /// Each proposal is measured separately; arrangement adopts only its actual allocation.
     private var prepared: [Double?: (measured: [String: (proposal: Double?, size: LayoutSize)],
-        extents: LazyExtents, naturalAcross: Double, revision: Int)] = [:]
+        layoutRevisions: [String: (view: Int64, revision: Int)], extents: LazyExtents, naturalAcross: Double, revision: Int)] = [:]
     private var preparing = false
-
-    override func invalidateMeasurements() {
-        prepared.removeAll(keepingCapacity: true)
-        super.invalidateMeasurements()
-    }
 
     /// The room between two children.
     var spacing = 0.0 {
@@ -291,6 +312,7 @@ final class WinUILazyStackView: WinUILazyView {
 
     /// Measure prepares the proposal without changing the extents or anchor currently displayed.
     override func contentSize(width: Double?) -> LayoutSize {
+        let width = width.map { Double(Float($0)) }
         let across = axis == .vertical
             ? width.map { max(0, $0 - padding.left - padding.right) } : nil
         var extents = cells.extents
@@ -300,13 +322,28 @@ final class WinUILazyStackView: WinUILazyView {
                 extents.reset()
             }
             var sizes: [String: (proposal: Double?, size: LayoutSize)] = [:]
+            var layoutRevisions: [String: (view: Int64, revision: Int)] = [:]
+            let knownSizes = prepared[across]?.measured ?? measured
+            let knownRevisions = prepared[across]?.layoutRevisions ?? measuredLayoutRevisions
             for (identity, item) in mounted {
                 guard !item.departing, cells.position(of: identity) != nil else { continue }
                 let margin = item.values.margin
-                let proposal = across.map { max(0, $0 - margin.left - margin.right) }
-                let size = item.size(offered: proposal)
+                let proposal = across.map { Double(Float(max(0, $0 - margin.left - margin.right))) }
+                let layout = item.view as? WinUILayoutView
+                let size: LayoutSize
+                if let cached = knownSizes[identity], cached.proposal == proposal,
+                   let layout, knownRevisions[identity]?.view == layout.number,
+                   knownRevisions[identity]?.revision == layout.measurementRevision {
+                    size = cached.size
+                } else {
+                    #if DEBUG
+                    if cells.measurements < 130 { print("LAZY MISS view=\(number) id=\(identity) proposal=\(String(describing: proposal)) cached=\(String(describing: knownSizes[identity]?.proposal)) rev=\(String(describing: knownRevisions[identity])) actual=\(String(describing: layout?.measurementRevision))") }
+                    #endif
+                    size = item.size(offered: proposal)
+                    cells.measurements += 1
+                }
+                if let layout { layoutRevisions[identity] = (layout.number, layout.measurementRevision) }
                 sizes[identity] = (proposal, size)
-                cells.measurements += 1
                 let extent = axis == .vertical
                     ? size.height + margin.top + margin.bottom
                     : size.width + margin.left + margin.right
@@ -321,12 +358,33 @@ final class WinUILazyStackView: WinUILazyView {
             if prepared.count == 8, prepared[across] == nil, let oldest = prepared.keys.first {
                 prepared.removeValue(forKey: oldest)
             }
-            prepared[across] = (sizes, extents, acrossSize, measurements.revision)
+            prepared[across] = (sizes, layoutRevisions, extents, acrossSize, measurements.revision)
         }
         let total = extents.total(in: cells.identities)
         return axis == .vertical
             ? LayoutSize(width: width ?? acrossSize + padding.left + padding.right, height: total)
             : LayoutSize(width: total, height: acrossSize + padding.top + padding.bottom)
+    }
+
+    /// Commit an actual native measurement before XAML applies its new scroll extent.
+    override func measure(width: Double, height: Double) -> LayoutSize {
+        let size = super.measure(width: width, height: height)
+        let proposal = axis == .vertical ? max(0, width - padding.left - padding.right) : nil
+        if WinUIView.arranging == 0, let standsAt, Double(Float(standsAt)) == width,
+           let ready = prepared[proposal], ready.revision == measurements.revision {
+            let revision = cells.extents.revision
+            measured = ready.measured
+            measuredLayoutRevisions = ready.layoutRevisions
+            cells.extents = ready.extents
+            if naturalAcross != ready.naturalAcross { geometryChanged = true }
+            naturalAcross = ready.naturalAcross
+            measuredAcross = proposal
+            _ = cells.correctedOrigin()
+            if cells.extents.revision != revision || cells.total != measuredExtent { geometryChanged = true }
+            measuredExtent = cells.total
+            measuredRevision = measurements.revision
+        }
+        return size
     }
 
     /// Place only measurements completed before this arrangement. Native subtrees are never measured here.
@@ -338,10 +396,12 @@ final class WinUILazyStackView: WinUILazyView {
         if let ready = prepared[proposal], ready.revision == measurements.revision {
             let revision = cells.extents.revision
             measured = ready.measured
+            measuredLayoutRevisions = ready.layoutRevisions
             cells.extents = ready.extents
+            if naturalAcross != ready.naturalAcross { geometryChanged = true }
             naturalAcross = ready.naturalAcross
             measuredAcross = proposal
-            if let origin = cells.correctedOrigin() { anchorTarget = origin }
+            _ = cells.correctedOrigin()
             let total = cells.total
             if cells.extents.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
@@ -467,13 +527,9 @@ final class WinUILazyGridView: WinUILazyView {
     /// Proposals prepare geometry without replacing the tracks currently displayed.
     /// Arrange adopts the result for its actual allocation, including when the size cache answered it.
     private var prepared: [Double: (columns: [Double],
-        measured: [String: (proposal: Double?, size: LayoutSize)], runs: LazyRunExtents, revision: Int)] = [:]
+        measured: [String: (proposal: Double?, size: LayoutSize)], layoutRevisions: [String: (view: Int64, revision: Int)],
+        runs: LazyRunExtents, revision: Int)] = [:]
     private var preparingRoom: Double?
-
-    override func invalidateMeasurements() {
-        prepared.removeAll(keepingCapacity: true)
-        super.invalidateMeasurements()
-    }
 
     /// The cells a run holds.
     private var perRun: Int { max(1, columns.count) }
@@ -483,6 +539,7 @@ final class WinUILazyGridView: WinUILazyView {
 
     /// Measure prepares each proposal independently; only an actual allocation changes the displayed runs.
     override func contentSize(width: Double?) -> LayoutSize {
+        let width = width.map { Double(Float($0)) }
         let room = max(0, axis == .vertical
             ? ((width ?? standsAt).map { $0 - padding.left - padding.right } ?? acrossRoom)
             : acrossRoom)
@@ -492,16 +549,31 @@ final class WinUILazyGridView: WinUILazyView {
         if WinUIView.arranging == 0 {
             if widths != columns { runs.reset() }
             var sizes: [String: (proposal: Double?, size: LayoutSize)] = [:]
+            var layoutRevisions: [String: (view: Int64, revision: Int)] = [:]
+            let knownSizes = prepared[room]?.measured ?? measured
+            let knownRevisions = prepared[room]?.layoutRevisions ?? measuredLayoutRevisions
             var runExtents: [Int: Double] = [:]
             for (identity, item) in mounted {
                 guard !item.departing, let place = cells.position(of: identity), !widths.isEmpty else { continue }
                 let run = place / widths.count, track = place % widths.count
                 let margin = item.values.margin
                 let proposal: Double? = axis == .vertical
-                    ? max(0, widths[track] - margin.left - margin.right) : nil
-                let size = item.size(offered: proposal)
+                    ? Double(Float(max(0, widths[track] - margin.left - margin.right))) : nil
+                let layout = item.view as? WinUILayoutView
+                let size: LayoutSize
+                if let cached = knownSizes[identity], cached.proposal == proposal,
+                   let layout, knownRevisions[identity]?.view == layout.number,
+                   knownRevisions[identity]?.revision == layout.measurementRevision {
+                    size = cached.size
+                } else {
+                    #if DEBUG
+                    if cells.measurements < 130 { print("LAZY GRID MISS view=\(number) id=\(identity) proposal=\(String(describing: proposal)) cached=\(String(describing: knownSizes[identity]?.proposal)) rev=\(String(describing: knownRevisions[identity])) actual=\(String(describing: layout?.measurementRevision))") }
+                    #endif
+                    size = item.size(offered: proposal)
+                    cells.measurements += 1
+                }
+                if let layout { layoutRevisions[identity] = (layout.number, layout.measurementRevision) }
                 sizes[identity] = (proposal, size)
-                cells.measurements += 1
                 let extent = axis == .vertical
                     ? size.height + margin.top + margin.bottom
                     : size.width + margin.left + margin.right
@@ -511,7 +583,7 @@ final class WinUILazyGridView: WinUILazyView {
             if prepared.count == 8, prepared[room] == nil, let oldest = prepared.keys.first {
                 prepared.removeValue(forKey: oldest)
             }
-            prepared[room] = (widths, sizes, runs, measurements.revision)
+            prepared[room] = (widths, sizes, layoutRevisions, runs, measurements.revision)
         }
         let count = (cells.identities.count + max(1, proposed.count) - 1) / max(1, proposed.count)
         let total = runs.total(count: count)
@@ -519,6 +591,27 @@ final class WinUILazyGridView: WinUILazyView {
             ? LayoutSize(width: width ?? 0, height: total)
             : LayoutSize(width: total, height: widths.reduce(0, +)
                 + Double(max(widths.count - 1, 0)) * trackSpacing + padding.top + padding.bottom)
+    }
+
+    /// Native extents and window arithmetic adopt the same actual measurement before clamping.
+    override func measure(width: Double, height: Double) -> LayoutSize {
+        let size = super.measure(width: width, height: height)
+        let room = axis == .vertical ? max(0, width - padding.left - padding.right) : acrossRoom
+        if WinUIView.arranging == 0, let standsAt, Double(Float(standsAt)) == width,
+           let ready = prepared[room], ready.revision == measurements.revision {
+            let revision = cells.runs.revision
+            if columns != ready.columns { geometryChanged = true }
+            columns = ready.columns
+            measured = ready.measured
+            measuredLayoutRevisions = ready.layoutRevisions
+            cells.runs = ready.runs
+            _ = cells.correctedOrigin(perRun: perRun, grid: true)
+            let total = cells.runs.total(count: runCount)
+            if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
+            measuredExtent = total
+            measuredRevision = measurements.revision
+        }
+        return size
     }
 
     override func arrange(in bounds: Rect) {
@@ -530,8 +623,9 @@ final class WinUILazyGridView: WinUILazyView {
             if columns != ready.columns { geometryChanged = true }
             columns = ready.columns
             measured = ready.measured
+            measuredLayoutRevisions = ready.layoutRevisions
             cells.runs = ready.runs
-            if let origin = cells.correctedOrigin(perRun: perRun, grid: true) { anchorTarget = origin }
+            _ = cells.correctedOrigin(perRun: perRun, grid: true)
             let total = cells.runs.total(count: runCount)
             if cells.runs.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total

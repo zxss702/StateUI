@@ -24,15 +24,7 @@ final class WinUIScrollDocument: WinUILayoutView {
     }
 
     override func contentSize(width: Double?) -> LayoutSize {
-        let size = ScrollArithmetic.contentSize(
-            of: items.first, padding: padding, orientation: orientation, width: width)
-        #if DEBUG
-        if let scrollView, scrollView.scroller.standing.offset.y > 50000 {
-            print("TAIL-DOC-MEASURE", number, "width", width as Any, "size", size,
-                  "standing", scrollView.scroller.standing, "arranging", WinUIView.arranging)
-        }
-        #endif
-        return size
+        ScrollArithmetic.contentSize(of: items.first, padding: padding, orientation: orientation, width: width)
     }
 
     /// Its own size is the document's: never smaller than the viewport, which the scroller sees to.
@@ -42,12 +34,6 @@ final class WinUIScrollDocument: WinUILayoutView {
         let arranged = ScrollArithmetic.arrange(
             item, padding: padding, orientation: orientation,
             in: LayoutSize(width: bounds.width, height: bounds.height))
-        #if DEBUG
-        if let scrollView, scrollView.scroller.standing.offset.y > 50000 {
-            print("TAIL-DOC-ARRANGE", number, "bounds", bounds, "place", arranged.place,
-                  "standing", scrollView.scroller.standing)
-        }
-        #endif
         item.view.layout(arranged.place)
         if let scrollView {
             let virtualized = scrollView.scroller.ears.contains { $0.owner is WinUILazyView }

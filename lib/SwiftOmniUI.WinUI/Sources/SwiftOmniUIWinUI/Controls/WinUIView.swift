@@ -50,6 +50,8 @@ class WinUIView {
     /// both an unconstrained size and a wrapped size before arranging either one.
     private var measuredSizes: [(width: Double?, height: Double?, size: LayoutSize)] = []
     private var pendingMeasures: [(width: Double?, height: Double?)] = []
+    /// Changes when properties or a native size change invalidate this view, not on a repeated Measure query.
+    var measurementRevision = 0
 
     private static let live = LiveViews<WinUIView>()
 
@@ -166,6 +168,7 @@ class WinUIView {
 
     /// Asks WinUI to measure this element again, and every panel above it.
     func invalidateMeasure() {
+        measurementRevision &+= 1
         measuredSizes.removeAll(keepingCapacity: true)
         swiftomniui_winui_invalidate_measure(handle)
     }
@@ -247,7 +250,8 @@ class WinUIView {
             // pass ends - measuring an element while WinUI arranges marks it for another pass, for ever.
             // Design: docs/design/platforms/winui/layout.md#measured-every-pass
             if let layout = self as? WinUILayoutView, placingLayout != nil {
-                if layout.standsAt != place.width {
+                if layout.standsAt != place.width,
+                   !measuredSizes.contains(where: { $0.width == Double(Float(place.width)) && $0.height == nil }) {
                     WinUIDoorbell.afterPass { [weak self] in
                         guard let self, let layout = self as? WinUILayoutView, let width = layout.standsAt else { return }
                         layout.invalidateMeasurements()

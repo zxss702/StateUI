@@ -170,6 +170,7 @@ class WinUILayoutView: WinUIView {
         guard let placingLayout, Self.measuring == 1, let measured, measured.offered == offered, measured.size != size
         else { return }
 
+        measurementRevision &+= 1
         placingLayout.invalidateMeasurements()
     }
 
