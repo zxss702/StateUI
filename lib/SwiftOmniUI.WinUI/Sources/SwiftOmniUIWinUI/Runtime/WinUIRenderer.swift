@@ -45,9 +45,9 @@ final class WinUIRenderer {
     /// The windows the tree holds, each with its controller, in the tree's order.
     private let roster = WindowRoster<WinUIWindowController>()
 
-    /// A controller for each window element the tree holds, in the tree's order.
+    /// A controller for each window element the tree holds that is still open, in the tree's order.
     var windows: [WinUIWindowController] {
-        roster.controllers
+        roster.controllers.filter { !$0.window.isClosed }
     }
 
     /// The first window - the scene's main one; nil before there is one.
@@ -159,7 +159,7 @@ final class WinUIRenderer {
             WinUIEnvironment.reportDisplay(to: runtime.core, window: window)
             runtime.pump.turn()
         }
-        for (element, controller) in roster.windows {
+        for (element, controller) in roster.windows where !controller.window.isClosed {
             controller.present(element, in: runtime, windowOf: { [roster] in roster.controller(of: $0)?.window })
         }
     }
@@ -182,12 +182,22 @@ final class WinUIRenderer {
 
 extension WinUIRenderer: TurnPresenter {
     func presentRendered() {
+        #if DEBUG
+        let began = WinUIFrameClock.monotonic()
+        #endif
         showWindows()
         refreshWindowChrome()
+        #if DEBUG
+        let chromeDone = WinUIFrameClock.monotonic()
+        #endif
         for controller in windows {
             if let content = controller.window.content { swiftomniui_winui_update_layout(content.handle) }
         }
         runtime.frames.commitLayout()
+        #if DEBUG
+        let layoutDone = WinUIFrameClock.monotonic()
+        if layoutDone - began > 5 { print("LAZY PRESENT chrome=\(chromeDone - began) layout=\(layoutDone - chromeDone)") }
+        #endif
         if let text = scenes.changed(root: runtime.tree.root) { WinUIPersistence.writeScenes(text) }
     }
 
