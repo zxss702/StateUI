@@ -45,7 +45,8 @@ class WinUILazyView: WinUITravellingLayout {
     private var effectiveViewport: Rect?
     private var lastTargetViewport: Rect?
     #if DEBUG
-    private static var traced = 0
+    static var measureTimes: [Double] = []
+    static var arrangeTimes: [Double] = []
     #endif
 
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
@@ -135,12 +136,6 @@ class WinUILazyView: WinUITravellingLayout {
                                      width: rect.width, height: rect.height)
         }
         guard let target = viewport else { return }
-        #if DEBUG
-        if Self.traced < 100 {
-            Self.traced += 1
-            print("LAZY VIEWPORT view=\(number) axis=\(axis) target=\(target) span=\(String(describing: span)) built=\(cells.built) revision=\(measurements.revision)")
-        }
-        #endif
         let grid = self is WinUILazyGridView
         let revision = grid ? cells.runs.revision : cells.extents.revision
         guard lastTargetViewport != target || cells.window?.span != (span ?? 0..<0)
@@ -257,9 +252,6 @@ class WinUILazyView: WinUITravellingLayout {
     /// Measuring again, the window is re-asked: a new pass is a new chance
     /// for the places the run holds.
     override func measure(width: Double, height: Double) -> LayoutSize {
-        #if DEBUG
-        if Self.traced < 100 { Self.traced += 1; print("LAZY MEASURE view=\(number) axis=\(axis) width=\(width) arranging=\(WinUIView.arranging) span=\(String(describing: span)) built=\(cells.built)") }
-        #endif
         if WinUIView.arranging == 0 {
             watchClip()
             if watching != nil { tellWindow(span ?? 0..<0) }

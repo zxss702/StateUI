@@ -43,6 +43,12 @@ enum WinUICallbacks {
                 nonisolated(unsafe) let size = size
                 MainActor.assumeIsolated {
                     guard let layout = WinUIView.find(view) as? WinUILayoutView, let size else { return }
+                    #if DEBUG
+                    let began = WinUIFrameClock.monotonic()
+                    defer {
+                        if layout is WinUILazyView { WinUILazyView.measureTimes.append(WinUIFrameClock.monotonic() - began) }
+                    }
+                    #endif
                     let measured = layout.measure(width: width, height: height)
                     size[0] = measured.width
                     size[1] = measured.height
@@ -50,6 +56,14 @@ enum WinUICallbacks {
             },
             arrange: { view, width, height in
                 MainActor.assumeIsolated {
+                    #if DEBUG
+                    let began = WinUIFrameClock.monotonic()
+                    defer {
+                        if WinUIView.find(view) is WinUILazyView {
+                            WinUILazyView.arrangeTimes.append(WinUIFrameClock.monotonic() - began)
+                        }
+                    }
+                    #endif
                     (WinUIView.find(view) as? WinUILayoutView)?.arrange(width: width, height: height)
                     WinUIRenderer.shared?.runtime.frames.laidOut()
                 }
