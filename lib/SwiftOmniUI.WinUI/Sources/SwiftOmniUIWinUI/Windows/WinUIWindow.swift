@@ -89,6 +89,9 @@ final class WinUIWindow {
     }
 
     var chromeHeight: Double {
+        // Resolve the attached title bar's template and visual states before turning its height into
+        // window limits; a later navigation must not correct an initial, unsettled caption measure.
+        swiftomniui_winui_update_layout(titleBar.handle)
         let width = clientSize.width
         let measuredCaption = titleBar.measure(width: width, height: nil).height
         let caption = max(swiftomniui_winui_window_title_bar_height(handle),
