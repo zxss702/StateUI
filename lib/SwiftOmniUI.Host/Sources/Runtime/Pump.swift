@@ -116,13 +116,7 @@
 
     /// Applies the core's render; a drifted one is asked for whole, once.
     private func render() {
-        #if DEBUG
-        let began = now()
-        #endif
         let rendered = core.render(baseline: intake.baseline)
-        #if DEBUG
-        let coreDone = now()
-        #endif
 
         if !intake.take(rendered.root, generation: rendered.generation, apply: {
             tree.apply($0, complete: rendered.complete)
@@ -134,15 +128,7 @@
             })
         }
 
-        #if DEBUG
-        let intakeDone = now()
-        #endif
         displayCycle.presentStateChannels()
         presenter?.presentRendered()
-        #if DEBUG
-        if now() - began > 5 {
-            print("LAZY TURN core=\(coreDone - began) native=\(intakeDone - coreDone) present=\(now() - intakeDone)")
-        }
-        #endif
     }
 }

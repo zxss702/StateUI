@@ -182,21 +182,11 @@ final class WinUIRenderer {
 
 extension WinUIRenderer: TurnPresenter {
     func presentRendered() {
-        #if DEBUG
-        let began = WinUIFrameClock.monotonic()
-        #endif
         showWindows()
-        #if DEBUG
-        let chromeDone = WinUIFrameClock.monotonic()
-        #endif
         for controller in windows {
             if let content = controller.window.content { swiftomniui_winui_update_layout(content.handle) }
         }
         runtime.frames.commitLayout()
-        #if DEBUG
-        let layoutDone = WinUIFrameClock.monotonic()
-        if layoutDone - began > 5 { print("LAZY PRESENT chrome=\(chromeDone - began) layout=\(layoutDone - chromeDone)") }
-        #endif
         if let text = scenes.changed(root: runtime.tree.root) { WinUIPersistence.writeScenes(text) }
     }
 

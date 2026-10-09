@@ -43,12 +43,6 @@ enum WinUICallbacks {
                 nonisolated(unsafe) let size = size
                 MainActor.assumeIsolated {
                     guard let layout = WinUIView.find(view) as? WinUILayoutView, let size else { return }
-                    #if DEBUG
-                    let began = WinUIFrameClock.monotonic()
-                    defer {
-                        if layout is WinUILazyView { WinUILazyView.measureTimes.append(WinUIFrameClock.monotonic() - began) }
-                    }
-                    #endif
                     let measured = layout.measure(width: width, height: height)
                     size[0] = measured.width
                     size[1] = measured.height
@@ -56,24 +50,12 @@ enum WinUICallbacks {
             },
             arrange: { view, width, height in
                 MainActor.assumeIsolated {
-                    #if DEBUG
-                    let began = WinUIFrameClock.monotonic()
-                    defer {
-                        if WinUIView.find(view) is WinUILazyView {
-                            WinUILazyView.arrangeTimes.append(WinUIFrameClock.monotonic() - began)
-                        }
-                    }
-                    #endif
                     (WinUIView.find(view) as? WinUILayoutView)?.arrange(width: width, height: height)
                     WinUIRenderer.shared?.runtime.frames.laidOut()
                 }
             },
             viewportChanged: { view, x, y, width, height in
                 MainActor.assumeIsolated {
-                    #if DEBUG
-                    let began = WinUIFrameClock.monotonic()
-                    defer { WinUILazyView.scrollTimes.append(WinUIFrameClock.monotonic() - began) }
-                    #endif
                     (WinUIView.find(view) as? WinUILazyView)?.viewportChanged(
                         Rect(x: x, y: y, width: width, height: height))
                 }
@@ -97,9 +79,6 @@ enum WinUICallbacks {
             scrolling: { view, x, y in
                 MainActor.assumeIsolated {
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
-                    #if DEBUG
-                    print("LAZY CHANGING next=\(Point(x: x, y: y)) published=\(scroller.standing.offset)")
-                    #endif
                     scroller.nextOffset = Point(x: x, y: y)
                     scroller.ears.removeAll { $0.owner == nil }
                     for ear in scroller.ears { ear.moved() }
@@ -108,9 +87,6 @@ enum WinUICallbacks {
             scrolled: { view, x, y in
                 MainActor.assumeIsolated {
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
-                    #if DEBUG
-                    print("LAZY CHANGED published=\(Point(x: x, y: y)) previousNext=\(String(describing: scroller.nextOffset))")
-                    #endif
                     scroller.nextOffset = nil
                     scroller.ears.removeAll { $0.owner == nil }
                     for ear in scroller.ears { ear.moved() }

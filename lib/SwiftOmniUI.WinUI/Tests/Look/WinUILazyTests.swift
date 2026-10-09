@@ -59,9 +59,6 @@ final class WinUILazyTests: XCTestCase {
                     let offset = scroll.scroller.nextOffset ?? scroll.scroller.standing.offset
                     let along = (horizontal ? offset.x : offset.y) + (phase.isMultiple(of: 2) ? 24 : -24)
                     let target = Point(horizontal ? along : 0, horizontal ? 0 : along)
-                    #if DEBUG
-                    print("LAZY INPUT kind=\(kind) phase=\(phase) id=\(identity) original=\(original) afterGeometry=\(horizontal ? row.origin.x : row.origin.y) placed=\(row.placedFrame) native=\(scroll.scroller.standing.offset) next=\(String(describing: scroll.scroller.nextOffset)) target=\(target)")
-                    #endif
                     scroll.scroller.move(to: target)
                     for _ in 0..<12 { host.step() }
                     let standing = scroll.scroller.standing.offset
@@ -95,11 +92,6 @@ final class WinUILazyTests: XCTestCase {
                     let retained = lazy.mounted.mapValues(\.view)
                     let measured = lazy.cells.measurements
                     let requests = lazy.cells.requests
-                    #if DEBUG
-                    WinUILazyView.measureTimes = []
-                    WinUILazyView.arrangeTimes = []
-                    WinUILazyView.scrollTimes = []
-                    #endif
                     for step in 1...16 {
                         let offset = start + Double(step)
                         scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
@@ -122,14 +114,6 @@ final class WinUILazyTests: XCTestCase {
                     let proposals = incoming.reduce(0) { $0 + (lazy.rowMeasurements[$1]?.count ?? 0) }
                     XCTAssertEqual(lazy.cells.measurements - beforeBoundary, proposals,
                                    "measure each incoming row once per proposal: count \(count), kind \(kind)")
-                    #if DEBUG
-                    for (stage, samples) in [("measure", WinUILazyView.measureTimes), ("arrange", WinUILazyView.arrangeTimes), ("scroll", WinUILazyView.scrollTimes)] {
-                        let sorted = samples.sorted()
-                        if !sorted.isEmpty {
-                            print("LAZY COST count=\(count) kind=\(kind) stage=\(stage) calls=\(sorted.count) p50Ms=\(sorted[sorted.count / 2]) p95Ms=\(sorted[Int(Double(sorted.count - 1) * 0.95)]) maxMs=\(sorted.last!)")
-                        }
-                    }
-                    #endif
                     let idle = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
                     for _ in 0..<20 { host.step() }
                     XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], idle)
@@ -719,39 +703,6 @@ final class WinUILazyTests: XCTestCase {
                         return POINT(x: corner.x + LONG((origin.x + sample.0) * scale),
                                      y: corner.y + LONG((origin.y + sample.1) * scale))
                     }
-                    #if DEBUG
-                    if count == 1_000, !complex, kind == 0 {
-                        var bounds = RECT()
-                        _ = GetClientRect(hwnd, &bounds)
-                        let width = bounds.right, height = bounds.bottom
-                        let dc = GetDC(nil)!
-                        let memory = CreateCompatibleDC(dc)!
-                        let bitmap = CreateCompatibleBitmap(dc, width, height)!
-                        let previous = SelectObject(memory, bitmap)
-                        _ = BitBlt(memory, 0, 0, width, height, dc, corner.x, corner.y, DWORD(SRCCOPY))
-                        _ = SelectObject(memory, previous)
-                        var info = BITMAPINFO()
-                        info.bmiHeader.biSize = DWORD(MemoryLayout<BITMAPINFOHEADER>.size)
-                        info.bmiHeader.biWidth = width
-                        info.bmiHeader.biHeight = -height
-                        info.bmiHeader.biPlanes = 1
-                        info.bmiHeader.biBitCount = 32
-                        var bytes = [UInt8](repeating: 0, count: Int(width * height * 4))
-                        _ = bytes.withUnsafeMutableBytes { GetDIBits(dc, bitmap, 0, UINT(height), $0.baseAddress, &info, UINT(DIB_RGB_COLORS)) }
-                        var header = BITMAPFILEHEADER()
-                        header.bfType = 0x4D42
-                        header.bfOffBits = DWORD(MemoryLayout<BITMAPFILEHEADER>.size + MemoryLayout<BITMAPINFOHEADER>.size)
-                        header.bfSize = header.bfOffBits + DWORD(bytes.count)
-                        var image = withUnsafeBytes(of: &header) { Data($0) }
-                        withUnsafeBytes(of: &info.bmiHeader) { image.append(contentsOf: $0) }
-                        image.append(contentsOf: bytes)
-                        try image.write(to: URL(fileURLWithPath: "C:/Users/zxs20/SwiftOmniUI/artifacts/lazy-pixel-baseline.bmp"))
-                        print("LAZY SCREEN origin=\(origin) scale=\(scale) frame=\(frame) points=\(points) client=\(width)x\(height)")
-                        _ = DeleteObject(bitmap)
-                        _ = DeleteDC(memory)
-                        _ = ReleaseDC(nil, dc)
-                    }
-                    #endif
                     let probe = WinUILazyScreenProbe(window: hwnd, points: points)
                     let rawProbe = Unmanaged.passRetained(probe).toOpaque()
                     let created = CreateThread(nil, 0, WinUILazyScreenProbe.entry, rawProbe, 0, nil)

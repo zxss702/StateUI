@@ -43,11 +43,6 @@ class WinUILazyView: WinUITravellingLayout {
     /// WinUI's effective viewport is the compositor's window in this panel's coordinates.
     private var effectiveViewport: Rect?
     private var lastTargetViewport: Rect?
-    #if DEBUG
-    static var measureTimes: [Double] = []
-    static var arrangeTimes: [Double] = []
-    static var scrollTimes: [Double] = []
-    #endif
 
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
@@ -114,18 +109,10 @@ class WinUILazyView: WinUITravellingLayout {
 
     /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
     func viewportChanged(_ rect: Rect, effective: Bool = true) {
-        guard let scroll = clip else { return }
+        guard clip != nil else { return }
         watchClip()
         if effective { effectiveViewport = rect }
         guard let target = viewport else { return }
-        #if DEBUG
-        let before = cells.built
-        defer {
-            if cells.built != before {
-                print("LAZY WINDOW axis=\(axis) effective=\(effective) target=\(target) native=\(scroll.scroller.standing.offset) next=\(String(describing: scroll.scroller.nextOffset)) before=\(before) after=\(cells.built)")
-            }
-        }
-        #endif
         let grid = self is WinUILazyGridView
         let revision = grid ? cells.runs.revision : cells.extents.revision
         guard lastTargetViewport != target || cells.window?.span != (span ?? 0..<0)
