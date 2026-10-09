@@ -869,8 +869,10 @@ final class WinUILazyTests: XCTestCase {
                     probe.lock.lock()
                     let pixels = probe.samples.map(\.pixel)
                     probe.lock.unlock()
-                    XCTAssertGreaterThan(Set(pixels).count, 3, "native scrolling must paint intermediate rows")
-                    XCTAssertFalse(pixels.contains(0x00FFFFFF), "native animation exposed an unpainted row")
+                    XCTAssertGreaterThan(Set(pixels).count, 3,
+                                         "native scrolling must paint intermediate rows: kind \(kind), target \(target), samples \(pixels.count)")
+                    XCTAssertFalse(pixels.contains(0x00FFFFFF),
+                                   "native animation exposed an unpainted row: kind \(kind), target \(target)")
                     var native = [0.0, 0.0, 0.0, 0.0]
                     swiftomniui_winui_scroller_offset(scroll.scroller.handle, &native)
                     let offset = native[horizontal ? 0 : 1]
@@ -913,6 +915,14 @@ final class WinUILazyTests: XCTestCase {
                     var point = POINT(x: LONG((expected.x - 32) * scale), y: LONG(expected.y * scale))
                     XCTAssertTrue(ClientToScreen(hwnd, &point))
                     let hit = try XCTUnwrap(WindowFromPoint(point))
+                    #if DEBUG
+                    if GetAncestor(hit, UINT(GA_ROOT)) != hwnd {
+                        var rectangle = RECT(), title = [WCHAR](repeating: 0, count: 512)
+                        _ = GetWindowRect(hwnd, &rectangle)
+                        _ = GetWindowTextW(GetAncestor(hit, UINT(GA_ROOT)), &title, Int32(title.count))
+                        print("LAZY SCREEN kind=\(kind) target=\(target) point=\(point) rect=\(rectangle) scale=\(scale) foreign=\(String(decoding: title.prefix { $0 != 0 }, as: UTF16.self))")
+                    }
+                    #endif
                     XCTAssertEqual(GetAncestor(hit, UINT(GA_ROOT)), hwnd)
                     let pixel = GetPixel(dc, point.x, point.y)
                     XCTAssertNotEqual(pixel, 0xFFFFFFFF)
