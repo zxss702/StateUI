@@ -41,16 +41,20 @@
             y: padding.top + margin.top,
             width: max(0, document.width - across),
             height: max(0, document.height - down))
-        let width = Extent.of(
+        let scrollsAcross = orientation == .horizontal || orientation == .both
+        let scrollsDown = orientation == .vertical || orientation == .both
+        let width = scrollsAcross ? Extent.bounded(values.width ?? natural.width,
+            minimum: values.minimumWidth, maximum: values.maximumWidth) : Extent.of(
             option: values.horizontal, stated: values.width, natural: natural.width,
             available: room.width, minimum: values.minimumWidth, maximum: values.maximumWidth)
-        let height = Extent.of(
+        let height = scrollsDown ? Extent.bounded(values.height ?? natural.height,
+            minimum: values.minimumHeight, maximum: values.maximumHeight) : Extent.of(
             option: values.vertical, stated: values.height, natural: natural.height,
             available: room.height, minimum: values.minimumHeight, maximum: values.maximumHeight)
 
         return (document, Rect(
-            x: Extent.start(option: values.horizontal, extent: width, start: room.x, available: room.width),
-            y: Extent.start(option: values.vertical, extent: height, start: room.y, available: room.height),
+            x: scrollsAcross ? room.x : Extent.start(option: values.horizontal, extent: width, start: room.x, available: room.width),
+            y: scrollsDown ? room.y : Extent.start(option: values.vertical, extent: height, start: room.y, available: room.height),
             width: max(0, width),
             height: max(0, height)))
     }

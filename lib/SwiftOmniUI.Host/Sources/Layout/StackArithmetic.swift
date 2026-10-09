@@ -202,8 +202,10 @@
             let values = items[$0].values
             let scrolls = values.scrollAxes == .both
                 || (axis == .vertical ? values.scrollAxes == .vertical : values.scrollAxes == .horizontal)
+            let expands = values.expandingAxes == .both
+                || (axis == .vertical ? values.expandingAxes == .vertical : values.expandingAxes == .horizontal)
             return items[$0].isShown && (values.flex != nil
-                || (scrolls && (axis == .vertical ? values.height == nil : values.width == nil)))
+                || ((scrolls || expands) && (axis == .vertical ? values.height == nil : values.width == nil)))
         }
         guard room > 0, !flexible.isEmpty else { return extents }
 

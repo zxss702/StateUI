@@ -7,10 +7,11 @@
 // same names for a composed view, whose result is opaque.
 
 extension Node {
-    /// A fixed frame encloses earlier padding and a composed view's content.
-    mutating func wrapPaddedFrame() {
-        guard props[.padding] != nil || driven[.padding] != nil || stateful != nil else { return }
+    /// A frame encloses the preceding view, keeping its own size and alignment.
+    mutating func wrapPaddedFrame(alignment: Alignment = .center) {
         var content = self
+        let fillsAcross = content.props[.horizontalAlignment]?.enumeration == AxisAlignment.fill.rawValue
+        let fillsDown = content.props[.verticalAlignment]?.enumeration == AxisAlignment.fill.rawValue
         self = Node(contract: GridContract.self)
         isFrameWrapper = true
         for property: Prop in [.gridRow, .gridColumn, .gridRowSpan, .gridColumnSpan, .area,
@@ -25,6 +26,10 @@ extension Node {
         content.key = nil
         layoutValues = content.layoutValues
         content.layoutValues = [:]
+        content.props[.horizontalAlignmentDefault] = alignment.horizontal.axis.propValue
+        content.props[.verticalAlignmentDefault] = alignment.vertical.axis.propValue
+        if fillsAcross { content.props[.horizontalAlignment] = AxisAlignment.fill.propValue }
+        if fillsDown { content.props[.verticalAlignment] = AxisAlignment.fill.propValue }
         children = [content]
     }
 }
@@ -46,15 +51,11 @@ extension VisualElementProperties where Self: View {
 
     public func frame(width: Double? = nil, height: Double? = nil, alignment: Alignment = .center) -> Modified {
         modified { node in
-            if width != nil || height != nil { node.wrapPaddedFrame() }
+            node.wrapPaddedFrame(alignment: alignment)
             if let width { node.write(VisualElementContract.width, width) }
             if let height { node.write(VisualElementContract.height, height) }
             node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
             node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
-            if alignment != .center {
-                node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
-                node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
-            }
         }
     }
 }
@@ -179,13 +180,14 @@ extension VisualElementProperties {
         alignment: Alignment = .center
     ) -> Modified {
         modified { node in
+            if Self.self is any View.Type { node.wrapPaddedFrame(alignment: alignment) }
             if let minWidth { node.write(VisualElementContract.minimumWidth, minWidth) }
             if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
             if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
             if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
             node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
             node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
-            if alignment != .center {
+            if !(Self.self is any View.Type), alignment != .center {
                 node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
                 node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
             }
@@ -553,15 +555,11 @@ extension View {
         alignment: Alignment = .center
     ) -> ModifiedContent {
         revised { node in
-            if width != nil || height != nil { node.wrapPaddedFrame() }
+            node.wrapPaddedFrame(alignment: alignment)
             if let width { node.write(VisualElementContract.width, width) }
             if let height { node.write(VisualElementContract.height, height) }
             node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
             node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
-            if alignment != .center {
-                node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
-                node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
-            }
         }
     }
 
@@ -578,16 +576,13 @@ extension View {
         alignment: Alignment = .center
     ) -> ModifiedContent {
         revised { node in
+            node.wrapPaddedFrame(alignment: alignment)
             if let minWidth { node.write(VisualElementContract.minimumWidth, minWidth) }
             if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
             if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
             if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
             node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
             node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
-            if alignment != .center {
-                node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
-                node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
-            }
         }
     }
 

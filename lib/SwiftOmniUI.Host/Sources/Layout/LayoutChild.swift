@@ -35,6 +35,9 @@
     /// extent is not a minimum size for the enclosing layout.
     public var scrollAxes = Axis.neither
 
+    /// Axes on which this child or its content accepts the remaining proposal.
+    public var expandingAxes = Axis.neither
+
     /// Across its slot: 0 start, 1 centre, 2 end, 3 fill.
     public var horizontal: Int32 = 3
 
