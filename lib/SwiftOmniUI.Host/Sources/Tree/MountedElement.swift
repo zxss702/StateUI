@@ -568,8 +568,23 @@ import CRT
             values.margin = insets(.padding)
         }
         values.flex = stated(.flex)
-        if type == .scrollView {
+        switch type {
+        case .scrollView:
             values.scrollAxes = value(.orientation)?.enumeration.flatMap(Axis.init(rawValue:)) ?? .vertical
+        case .webView:
+            values.scrollAxes = .both
+        case .hStack, .vStack, .zStack, .grid, .gridRow, .lazyHStack, .lazyVStack,
+             .lazyHGrid, .lazyVGrid, .customLayout, .masked:
+            var horizontal = false, vertical = false
+            for child in arrangedChildren {
+                let axes = child.layoutValues.scrollAxes
+                horizontal = horizontal || axes == .horizontal || axes == .both
+                vertical = vertical || axes == .vertical || axes == .both
+            }
+            values.scrollAxes = horizontal && vertical ? .both : horizontal ? .horizontal
+                : vertical ? .vertical : .neither
+        default:
+            break
         }
         values.horizontal = value(.horizontalAlignment)?.enumeration
             ?? value(.horizontalAlignmentDefault)?.enumeration ?? 3
