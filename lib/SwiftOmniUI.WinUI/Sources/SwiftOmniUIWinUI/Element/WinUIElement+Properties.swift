@@ -121,10 +121,10 @@ extension WinUIElement {
                 break
             }
             (each.view as? WinUILayoutView)?.forgetMeasurements()
+            each.view?.invalidateMeasure()
             element = each.parent
         }
 
-        (view ?? parent?.nearestView)?.invalidateMeasure()
         // Native panels report zero DesiredSize; marking only a changed descendant can skip the
         // placing parents even after their Swift arithmetic was discarded.
         var layout = (view ?? parent?.nearestView)?.placingLayout
