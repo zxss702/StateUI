@@ -154,6 +154,7 @@ public struct GeometryReader: View {
         return Grid {
             build(GeometryProxy(report: report))
         }
+        .flex(0)
         .hearing(ViewContract.namedFramesChanged) { frames in
             guard frames != self.named else { return }
             self.named = frames

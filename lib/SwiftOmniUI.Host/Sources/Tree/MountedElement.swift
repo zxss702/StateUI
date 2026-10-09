@@ -577,10 +577,15 @@ import CRT
             ?? value(.verticalAlignmentDefault)?.enumeration ?? 3
         values.width = stated(.width)
         values.height = stated(.height)
-        values.minimumWidth = stated(.minimumWidth)
-        values.minimumHeight = stated(.minimumHeight)
-        values.maximumWidth = stated(.maximumWidth)
-        values.maximumHeight = stated(.maximumHeight)
+        // A bound covers the padding written before it - the view `.frame(min:)`
+        // wraps in SwiftUI holds the padding inside - so the margin stands
+        // inside the bound, the way the offered room already does.
+        let across = values.margin.left + values.margin.right
+        let down = values.margin.top + values.margin.bottom
+        values.minimumWidth = stated(.minimumWidth).map { max(0, $0 - across) }
+        values.minimumHeight = stated(.minimumHeight).map { max(0, $0 - down) }
+        values.maximumWidth = stated(.maximumWidth).map { max(0, $0 - across) }
+        values.maximumHeight = stated(.maximumHeight).map { max(0, $0 - down) }
         values.row = whole(.gridRow) ?? 0
         values.column = whole(.gridColumn) ?? 0
         values.priority = stated(.layoutPriority) ?? 0

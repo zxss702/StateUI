@@ -19,6 +19,10 @@ extension View {
     ///   - alignment: where on the edge it goes - the edge's other two
     ///     directions are the window's corners.
     ///   - content: the bar.
+    ///
+    /// SPI: the `Edge` form is the host's own; the public name answers
+    /// `VerticalEdge` and `HorizontalEdge`, the way SwiftUI spells them.
+    @_spi(Host)
     public func safeAreaInset<Content: View>(
         edge: Edge,
         alignment: AxisAlignment = .center,

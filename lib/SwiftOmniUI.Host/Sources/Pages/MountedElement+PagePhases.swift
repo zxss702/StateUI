@@ -22,6 +22,7 @@ extension MountedElement {
                 tellPhase(.disappearing)
                 if reason == .navigation { tellPhase(.navigatedFrom) }
             }
+            contentArrangement?.setPagePresented(presented, reason: reason)
         case .navigationStack:
             // A stack whose window comes is navigated to; one whose window goes only disappears.
             let passed: PagePresentationReason = reason == .window ? (presented ? .navigation : .appearance) : reason

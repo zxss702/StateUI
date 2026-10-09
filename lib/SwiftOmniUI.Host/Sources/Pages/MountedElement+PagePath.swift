@@ -10,12 +10,25 @@ extension MountedElement {
     /// The page the user sees in this arrangement: a stack's top, the chosen tab, a split view's detail.
     public var visiblePage: MountedElement? {
         switch type {
-        case .page: self
+        case .page: contentArrangement?.visiblePage ?? self
         case .navigationStack: children.last?.visiblePage
         case .tabView: selectedTab?.visiblePage
         case .navigationSplitView: children.dropFirst().first?.visiblePage
         default: nil
         }
+    }
+
+    /// The arrangement this page's content composes to, crossed through
+    /// composed views alone: a `NavigationStack` written inside a view stands
+    /// a level or two under the page element. nil where the content is a view.
+    var contentArrangement: MountedElement? {
+        var element = children.first
+        while let current = element {
+            if NodeType.pageTypes.contains(current.type) { return current }
+            element = current.native.presentsView ? nil
+                : current.children.first { $0.presentingElement != nil }
+        }
+        return nil
     }
 
     /// The page whose title names the window while this arrangement shows: the visible page, but tabs on a stack are
@@ -24,7 +37,7 @@ extension MountedElement {
     /// Design: docs/design/host/pages.md#the-windows-chrome
     public var titledPage: MountedElement? {
         switch type {
-        case .page: return self
+        case .page: return contentArrangement?.titledPage ?? self
         case .navigationStack: return children.last?.titledPage
         case .navigationSplitView: return children.dropFirst().first?.titledPage
         case .tabView:
@@ -48,14 +61,23 @@ extension MountedElement {
 
     /// The page's own value of `prop`, else what its content's root carries: a
     /// `.navigationTitle` or `.toolbar` written on the content names the page
-    /// itself, as the page holder does when lifting those properties.
+    /// itself, as the page holder does when lifting those properties. The walk
+    /// crosses composed views, whose props sit on the element that presents.
     public func pageValue(_ prop: Prop) -> HostValue? {
-        value(prop) ?? (type == .page ? children.first?.value(prop) : nil)
+        if let found = value(prop) { return found }
+        var element = type == .page ? children.first : nil
+        while let current = element {
+            if let found = current.value(prop) { return found }
+            element = current.native.presentsView ? nil
+                : current.children.first { $0.presentingElement != nil }
+        }
+        return nil
     }
 
     /// The stack around the visible page, where the path has one.
     public var visibleNavigationStack: MountedElement? {
         switch type {
+        case .page: contentArrangement?.visibleNavigationStack
         case .navigationStack: self
         case .tabView: selectedTab?.visibleNavigationStack
         case .navigationSplitView: children.dropFirst().first?.visibleNavigationStack
@@ -73,6 +95,7 @@ extension MountedElement {
     /// The first tabbed view on the visible page path.
     public var visibleTabbedView: MountedElement? {
         switch type {
+        case .page: contentArrangement?.visibleTabbedView
         case .tabView: self
         case .navigationStack: children.last?.visibleTabbedView
         case .navigationSplitView: children.dropFirst().first?.visibleTabbedView
@@ -84,6 +107,7 @@ extension MountedElement {
     /// detail and - while it shows - its sidebar.
     public var shownChildren: [MountedElement] {
         switch type {
+        case .page: contentArrangement.map { [$0] } ?? []
         case .navigationStack: children.last.map { [$0] } ?? []
         case .tabView: selectedTab.map { [$0] } ?? []
         case .navigationSplitView:
@@ -124,7 +148,7 @@ extension MountedElement {
         while let parent = child.parent {
             switch parent.type {
             case .windowScene: return true
-            case .navigationStack: break
+            case .navigationStack, .page: break
             case .navigationSplitView where parent.writingOrder[child.id] != 0: break
             default: return false
             }

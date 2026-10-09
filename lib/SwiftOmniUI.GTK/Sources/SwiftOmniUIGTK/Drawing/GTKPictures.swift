@@ -9,12 +9,15 @@ import CSwiftOmniUIGTK
 /// Design: docs/design/platforms/gtk/drawing.md#the-applications-pictures
 @MainActor
 enum GTKPictures {
-    /// The folder pictures are read from.
-    static var folder = besideExecutable()
+    /// The folders pictures are read from: `Images` beside the executable, and
+    /// each resource bundle beside it - a package's own assets land at its root.
+    static var folders = besideExecutable()
 
     /// The file `name` names (`PictureArithmetic.files`): a PNG the folder holds as an SVG is the SVG. Nil for none.
     static func path(of name: String) -> String? {
-        PictureArithmetic.files(for: name).map { folder + "/" + $0 }.first { g_file_test($0, G_FILE_TEST_IS_REGULAR) != 0 }
+        let files = PictureArithmetic.files(for: name)
+        return folders.lazy.flatMap { folder in files.map { folder + "/" + $0 } }
+            .first { g_file_test($0, G_FILE_TEST_IS_REGULAR) != 0 }
     }
 
     /// An image showing `name` as an icon `size` logical pixels across, which GTK draws at the display's scale:
@@ -34,11 +37,19 @@ enum GTKPictures {
         return image
     }
 
-    private static func besideExecutable() -> String {
-        guard let link = g_file_read_link("/proc/self/exe", nil) else { return "Images" }
+    private static func besideExecutable() -> [String] {
+        guard let link = g_file_read_link("/proc/self/exe", nil) else { return ["Images"] }
         defer { g_free(link) }
-        guard let folder = g_path_get_dirname(link) else { return "Images" }
-        defer { g_free(folder) }
-        return String(cString: folder) + "/Images"
+        guard let bin = g_path_get_dirname(link) else { return ["Images"] }
+        defer { g_free(bin) }
+        let root = String(cString: bin)
+        var folders = [root + "/Images"]
+        guard let entries = g_dir_open(root, 0, nil) else { return folders }
+        defer { g_dir_close(entries) }
+        while let entry = g_dir_read_name(entries) {
+            let name = String(cString: entry)
+            if name.hasSuffix(".bundle") { folders.append(root + "/" + name) }
+        }
+        return folders
     }
 }
