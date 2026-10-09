@@ -92,6 +92,10 @@ enum WinUICallbacks {
             },
             scrolling: { view, x, y in
                 MainActor.assumeIsolated {
+                    #if DEBUG
+                    let began = WinUIFrameClock.monotonic()
+                    defer { WinUILazyView.scrollTimes.append(WinUIFrameClock.monotonic() - began) }
+                    #endif
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
                     scroller.nextOffset = Point(x: x, y: y)
                     scroller.ears.removeAll { $0.owner == nil }

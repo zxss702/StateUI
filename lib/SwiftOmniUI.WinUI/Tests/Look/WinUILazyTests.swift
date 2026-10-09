@@ -98,6 +98,7 @@ final class WinUILazyTests: XCTestCase {
                     #if DEBUG
                     WinUILazyView.measureTimes = []
                     WinUILazyView.arrangeTimes = []
+                    WinUILazyView.scrollTimes = []
                     #endif
                     for step in 1...16 {
                         let offset = start + Double(step)
@@ -122,7 +123,7 @@ final class WinUILazyTests: XCTestCase {
                     XCTAssertEqual(lazy.cells.measurements - beforeBoundary, proposals,
                                    "measure each incoming row once per proposal: count \(count), kind \(kind)")
                     #if DEBUG
-                    for (stage, samples) in [("measure", WinUILazyView.measureTimes), ("arrange", WinUILazyView.arrangeTimes)] {
+                    for (stage, samples) in [("measure", WinUILazyView.measureTimes), ("arrange", WinUILazyView.arrangeTimes), ("scroll", WinUILazyView.scrollTimes)] {
                         let sorted = samples.sorted()
                         if !sorted.isEmpty {
                             print("LAZY COST count=\(count) kind=\(kind) stage=\(stage) calls=\(sorted.count) p50Ms=\(sorted[sorted.count / 2]) p95Ms=\(sorted[Int(Double(sorted.count - 1) * 0.95)]) maxMs=\(sorted.last!)")
