@@ -575,6 +575,10 @@ import CRT
         values.isFrameContent = bool(.isFrameContent) ?? false
         values.isLayoutDecoration = bool(.isLayoutDecoration) ?? false
         switch type {
+        case .textField, .searchField:
+            values.expandingAxes = .horizontal
+        case .textEditor:
+            values.expandingAxes = .both
         case .scrollView:
             values.scrollAxes = value(.orientation)?.enumeration.flatMap(Axis.init(rawValue:)) ?? .vertical
             values.expandingAxes = values.scrollAxes == .vertical ? .both : values.scrollAxes
