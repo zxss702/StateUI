@@ -7,7 +7,18 @@ extension MountedElement {
     public var layoutSpacing: LayoutSpacing {
         if type == .text { return .text(size: spacingFontSize) }
         if type == .checkBox || type == .switch || type == .radioButton { return .toggle }
+        switch type {
+        case .hStack, .vStack, .lazyHStack, .lazyVStack, .zStack, .grid, .gridRow, .masked:
+            var result = containerSpacing
+            result.pad(insets(.contentPadding))
+            return result
+        default: break
+        }
         return LayoutSpacing()
+    }
+
+    private var spacingChildren: [MountedElement] {
+        currentChildren.filter { $0.standsShown && $0.bool(.isLayoutDecoration) != true }
     }
 
     private var spacingFontSize: Double {
