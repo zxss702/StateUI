@@ -13,6 +13,117 @@ import WinSDK
 /// A `LazyVStack` on WinUI answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
 final class WinUILazyTests: XCTestCase {
+    func testChangedGeometryCannotRewriteLaterScrollInput() throws {
+        try onUIThread {
+            for kind in 0..<4 {
+                let horizontal = kind % 2 == 1
+                let perRun = kind < 2 ? 1 : 4
+                let rows = State(wrappedValue: Array(0..<1_000))
+                let height = State(wrappedValue: 40.0)
+                let host = WinUIRenderer.running {
+                    let content = ForEach(rows.wrappedValue) { number in
+                        Text("Row \(number)").frame(width: horizontal ? height.wrappedValue : 80,
+                                                  height: horizontal ? 40 : height.wrappedValue)
+                    }
+                    return ScrollView(horizontal ? .horizontal : .vertical) {
+                        Group {
+                            if kind == 0 { LazyVStack(spacing: 0) { content } }
+                            else if kind == 1 { LazyHStack(spacing: 0) { content } }
+                            else if kind == 2 {
+                                LazyVGrid(columns: Array(repeating: GridItem(.fixed(80)), count: 4), spacing: 0) { content }
+                            } else {
+                                LazyHGrid(rows: Array(repeating: GridItem(.fixed(40)), count: 4), spacing: 0) { content }
+                            }
+                        }
+                    }.frame(width: 480, height: 240).animation(nil)
+                }
+                for _ in 0..<12 { host.step() }
+                let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+                scroll.scroller.move(to: Point(horizontal ? 800 : 0, horizontal ? 0 : 800))
+                for _ in 0..<8 { host.step() }
+                for phase in 0..<6 {
+                    let span = try XCTUnwrap(lazy.span)
+                    let first = kind < 2 ? lazy.cells.places(in: span, overscan: 0).lowerBound
+                        : lazy.cells.runs.places(in: span, overscan: 0, count: rows.wrappedValue.count / perRun).lowerBound * perRun
+                    let identity = lazy.cells.identities[first]
+                    let row = try XCTUnwrap(lazy.mounted[identity]?.view)
+                    let original = horizontal ? row.origin.x : row.origin.y
+                    withAnimation(nil) {
+                        if phase < 2 { rows.wrappedValue.removeFirst(perRun) }
+                        else if phase < 4 { height.wrappedValue += 8 }
+                        else { height.wrappedValue -= 8 }
+                    }
+                    host.runtime.pump.turn()
+                    host.layOut()
+                    let offset = scroll.scroller.nextOffset ?? scroll.scroller.standing.offset
+                    let along = (horizontal ? offset.x : offset.y) + (phase.isMultiple(of: 2) ? 24 : -24)
+                    let target = Point(horizontal ? along : 0, horizontal ? 0 : along)
+                    scroll.scroller.move(to: target)
+                    for _ in 0..<12 { host.step() }
+                    let standing = scroll.scroller.standing.offset
+                    XCTAssertEqual(horizontal ? row.origin.x : row.origin.y,
+                                   original - (phase.isMultiple(of: 2) ? 24 : -24), accuracy: 1,
+                                   "kind \(kind), phase \(phase): geometry must preserve the visible anchor and new input")
+                    var displayed = [Double](repeating: 0, count: 6)
+                    swiftomniui_winui_scroller_viewport(scroll.scroller.handle, lazy.handle, &displayed)
+                    XCTAssertEqual(-displayed[horizontal ? 4 : 5], horizontal ? standing.x : standing.y, accuracy: 1)
+                    XCTAssertFalse(lazy.mounted.isEmpty)
+                }
+            }
+        }
+    }
+
+    func testContinuousScrollWorkIsBoundedByIncomingRows() throws {
+        try onUIThread {
+            for count in [1_000, 10_000] {
+                for kind in 0..<4 {
+                    let host = WinUIRenderer.running { ExactLazyPage(kind: kind, count: count, complex: true) }
+                    for _ in 0..<12 { host.step() }
+                    let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+                    let lazy = try XCTUnwrap(host.views(WinUILazyView.self).first)
+                    let horizontal = kind % 2 == 1
+                    let extent = horizontal ? 80.0 : 40.0
+                    let perRun = kind < 2 ? 1 : 4
+                    let start = extent * 20 + 5
+                    scroll.scroller.move(to: Point(horizontal ? start : 0, horizontal ? 0 : start))
+                    for _ in 0..<8 { host.step() }
+                    let built = lazy.cells.built
+                    let retained = lazy.mounted.mapValues(\.view)
+                    let measured = lazy.cells.measurements
+                    let requests = lazy.cells.requests
+                    var times: [Double] = []
+                    for step in 1...16 {
+                        let offset = start + Double(step)
+                        scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
+                        let began = DispatchTime.now().uptimeNanoseconds
+                        host.step()
+                        host.layOut()
+                        times.append(Double(DispatchTime.now().uptimeNanoseconds - began) / 1_000_000)
+                        XCTAssertEqual(lazy.cells.built, built)
+                    }
+                    XCTAssertEqual(lazy.cells.measurements, measured, "unchanged window: count \(count), kind \(kind)")
+                    XCTAssertEqual(lazy.cells.requests, requests)
+                    for (identity, view) in retained { XCTAssertTrue(lazy.mounted[identity]?.view === view) }
+                    var displayed = [Double](repeating: 0, count: 6)
+                    swiftomniui_winui_scroller_viewport(scroll.scroller.handle, lazy.handle, &displayed)
+                    XCTAssertEqual(-displayed[horizontal ? 4 : 5], start + 16, accuracy: 1)
+                    let beforeBoundary = lazy.cells.measurements
+                    let next = extent * 21 + 5
+                    scroll.scroller.move(to: Point(horizontal ? next : 0, horizontal ? 0 : next))
+                    for _ in 0..<6 { host.step() }
+                    XCTAssertEqual(lazy.cells.measurements - beforeBoundary, perRun,
+                                   "only incoming rows: count \(count), kind \(kind)")
+                    times.sort()
+                    print("LAZY BENCH count=\(count) kind=\(kind) sameWindowMeasures=\(lazy.cells.measurements - beforeBoundary) p50PumpAndLayoutMs=\(times[times.count / 2]) p95PumpAndLayoutMs=\(times[Int(Double(times.count - 1) * 0.95)])")
+                    let idle = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
+                    for _ in 0..<20 { host.step() }
+                    XCTAssertEqual([lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements], idle)
+                }
+            }
+        }
+    }
+
     func testSpeculativeProposalsKeepEveryLazyContainersCommittedGeometry() throws {
         try onUIThread {
             for kind in 0..<4 {
@@ -559,18 +670,25 @@ final class WinUILazyTests: XCTestCase {
                     let extent = horizontal ? 80.0 : 40.0
                     var previous: [String: WinUIView] = [:]
                     var animatedPhases: Set<Int> = []
+                    var phaseStarts: [Double] = []
                     var animatedMove: (phase: Int, from: Double, to: Double)?
-                    let animationEar = WinUIScrollEar(owner: host) { [weak scroller = scroll.scroller] in
-                        guard let scroller, let move = animatedMove else { return }
-                        let offset = scroller.nextOffset ?? scroller.standing.offset
-                        let along = horizontal ? offset.x : offset.y
+                    let animationEar = WinUIScrollEar(owner: host) { [weak scroller = scroll.scroller, weak lazy] in
+                        guard let scroller, let lazy, let move = animatedMove else { return }
+                        var displayed = [Double](repeating: 0, count: 6)
+                        swiftomniui_winui_scroller_viewport(scroller.handle, lazy.handle, &displayed)
+                        let along = -displayed[horizontal ? 4 : 5]
                         if abs(along - move.from) > 1, abs(along - move.to) > 1 {
                             animatedPhases.insert(move.phase)
                         }
                     }
                     scroll.scroller.ears.append(animationEar)
                     defer { animationEar.owner = nil }
-                    let hwnd = try XCTUnwrap(GetActiveWindow())
+                    let window = try XCTUnwrap(host.window)
+                    let title = "SOUILazyPixels-\(count)-\(complex)-\(kind)"
+                    window.setTitle(title)
+                    let name = Array(title.utf16) + [0]
+                    let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
+                    _ = SetForegroundWindow(hwnd)
                     let initial = try XCTUnwrap(lazy.mounted[lazy.cells.identities[0]])
                     let frame = scroll.scroller.laidOutFrame
                     let cross = horizontal
@@ -605,20 +723,25 @@ final class WinUILazyTests: XCTestCase {
                         } else if step < 180, (step - 36).isMultiple(of: 48) {
                             let phase = (step - 36) / 48
                             let offset = [800.0, 4_000.0, 0][phase]
-                            let standing = scroll.scroller.standing.offset
-                            animatedMove = (phase, horizontal ? standing.x : standing.y, offset)
+                            var displayed = [Double](repeating: 0, count: 6)
+                            swiftomniui_winui_scroller_viewport(scroll.scroller.handle, lazy.handle, &displayed)
+                            animatedMove = (phase, -displayed[horizontal ? 4 : 5], offset)
+                            phaseStarts.append(WinUIFrameClock.monotonic())
                             swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                        horizontal ? offset : 0, horizontal ? 0 : offset, true)
                         }
+                        if step == 180 { phaseStarts.append(WinUIFrameClock.monotonic()) }
                         host.step()
-                        // Check the completed layout; the worker samples every intervening displayed frame.
-                        host.layOut()
-                        let span = try XCTUnwrap(lazy.span)
-                        let first = Int((span.lowerBound / extent).rounded(.down))
-                        let last = Int((span.upperBound / extent).rounded(.up))
-                        let expected = max(0, first - 1) * perRun..<min(count, (last + 1) * perRun)
-                        XCTAssertEqual(lazy.cells.built, expected, "kind \(kind), step \(step)")
-                        XCTAssertEqual(lazy.mounted.count, expected.count)
+                        if step < 36 {
+                            // Complete direct jumps; native animations below keep their normal layout schedule.
+                            host.layOut()
+                            let span = try XCTUnwrap(lazy.span)
+                            let first = Int((span.lowerBound / extent).rounded(.down))
+                            let last = Int((span.upperBound / extent).rounded(.up))
+                            let expected = max(0, first - 1) * perRun..<min(count, (last + 1) * perRun)
+                            XCTAssertEqual(lazy.cells.built, expected, "kind \(kind), step \(step)")
+                            XCTAssertEqual(lazy.mounted.count, expected.count)
+                        }
                         for (identity, item) in lazy.mounted {
                             XCTAssertGreaterThan(item.view.laidOutFrame.width, 0)
                             XCTAssertGreaterThan(item.view.laidOutFrame.height, 0)
@@ -639,13 +762,22 @@ final class WinUILazyTests: XCTestCase {
                         XCTAssertGreaterThan(samples.filter { $0.edge == edge }.count, 0,
                                              "both displayed viewport edges must be sampled")
                     }
+                    XCTAssertEqual(phaseStarts.count, 4)
+                    for (phase, interval) in zip(phaseStarts, phaseStarts.dropFirst()).enumerated() {
+                        for edge in 0..<2 {
+                            let captured = samples.filter {
+                                $0.edge == edge && $0.time >= interval.0 && $0.time < interval.1
+                            }
+                            XCTAssertGreaterThan(captured.count, 1, "phase \(phase), edge \(edge) must be sampled")
+                        }
+                    }
                     for sample in samples {
                         let diagnostic = "screen=\(String(sample.pixel, radix: 16)) time=\(sample.time) count=\(count) kind=\(kind) complex=\(complex) leading=\(sample.edge == 0)"
                         XCTAssertGreaterThan(sample.pixel & 255, 160, "incoming cell was not painted: \(diagnostic)")
                         XCTAssertLessThan((sample.pixel >> 8) & 255, 100, "scrolling exposed a white gap: \(diagnostic)")
                     }
                     XCTAssertEqual(animatedPhases, [0, 1, 2],
-                                   "each animated scroll must report an offset between its start and destination")
+                                   "each native animation must display a position between its start and destination")
                     for _ in 0..<12 { host.step() }
                     let work = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
                     for _ in 0..<200 { host.step() }
@@ -734,7 +866,12 @@ final class WinUILazyTests: XCTestCase {
                     XCTAssertTrue(swiftomniui_winui_reaches(button.handle,
                                                          expected.x + 8 - actual.x, expected.y - actual.y),
                                   "the correct row must be reachable at its independent viewport point")
-                    let hwnd = try XCTUnwrap(GetActiveWindow())
+                    let window = try XCTUnwrap(host.window)
+                    let title = "SOUILazyNativeOffsets-\(kind)"
+                    window.setTitle(title)
+                    let name = Array(title.utf16) + [0]
+                    let hwnd = try XCTUnwrap(name.withUnsafeBufferPointer { FindWindowW(nil, $0.baseAddress) })
+                    _ = SetForegroundWindow(hwnd)
                     let dc = try XCTUnwrap(GetDC(nil))
                     defer { _ = ReleaseDC(nil, dc) }
                     let scale = Double(GetDpiForWindow(hwnd)) / 96
@@ -948,7 +1085,7 @@ final class WinUILazyTests: XCTestCase {
     }
 }
 
-/// Reads displayed pixels off the UI thread while a native scroll keeps moving.
+/// Reads displayed pixels off the UI thread during scrolling and layout; polling does not cover every frame.
 private final class WinUILazyScreenProbe: @unchecked Sendable {
     let lock = NSLock()
     let window: HWND
