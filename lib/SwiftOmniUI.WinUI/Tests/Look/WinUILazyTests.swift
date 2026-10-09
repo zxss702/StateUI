@@ -5,6 +5,7 @@
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIWinUI
 import XCTest
+import Foundation
 import SwiftOmniUIConformance
 import CSwiftOmniUIWinUI
 import WinSDK
@@ -474,28 +475,59 @@ final class WinUILazyTests: XCTestCase {
                     let extent = horizontal ? 80.0 : 40.0
                     var previous: [String: WinUIView] = [:]
                     var animatedPhases: Set<Int> = []
-                    var paintedSamples = 0
-                    var lastSpan = lazy.span
+                    var animatedMove: (phase: Int, from: Double, to: Double)?
+                    let animationEar = WinUIScrollEar(owner: host) { [weak scroller = scroll.scroller] in
+                        guard let scroller, let move = animatedMove else { return }
+                        let offset = scroller.nextOffset ?? scroller.standing.offset
+                        let along = horizontal ? offset.x : offset.y
+                        if abs(along - move.from) > 1, abs(along - move.to) > 1 {
+                            animatedPhases.insert(move.phase)
+                        }
+                    }
+                    scroll.scroller.ears.append(animationEar)
+                    defer { animationEar.owner = nil }
+                    let hwnd = try XCTUnwrap(GetActiveWindow())
+                    let initial = try XCTUnwrap(lazy.mounted[lazy.cells.identities[0]])
+                    let frame = scroll.scroller.laidOutFrame
+                    let cross = horizontal
+                        ? initial.view.origin.y - scroll.scroller.origin.y + initial.view.laidOutFrame.height - 3
+                        : initial.view.origin.x - scroll.scroller.origin.x + initial.view.laidOutFrame.width - 3
+                    let origin = scroll.scroller.origin
+                    var corner = POINT()
+                    XCTAssertNotEqual(ClientToScreen(hwnd, &corner), 0)
+                    let scale = Double(GetDpiForWindow(hwnd)) / 96
+                    let points = [3.0, (horizontal ? frame.width : frame.height) - 3].map { along in
+                        let sample = horizontal ? (along, cross) : (cross, along)
+                        return POINT(x: corner.x + LONG((origin.x + sample.0) * scale),
+                                     y: corner.y + LONG((origin.y + sample.1) * scale))
+                    }
+                    let probe = WinUILazyScreenProbe(window: hwnd, points: points)
+                    let rawProbe = Unmanaged.passRetained(probe).toOpaque()
+                    let created = CreateThread(nil, 0, WinUILazyScreenProbe.entry, rawProbe, 0, nil)
+                    if created == nil { Unmanaged<WinUILazyScreenProbe>.fromOpaque(rawProbe).release() }
+                    let thread = try XCTUnwrap(created)
+                    defer {
+                        probe.lock.lock()
+                        probe.stopped = true
+                        probe.lock.unlock()
+                        _ = WaitForSingleObject(thread, 2_000)
+                        _ = CloseHandle(thread)
+                    }
                     for step in 0..<192 {
                         if step < 36 {
                             let run = step < 12 ? step * 3 : step < 24 ? (36 - step) * 3 : (step - 24) * 11
                             let offset = Double(run) * extent + (step.isMultiple(of: 2) ? 1 : 0)
                             scroll.scroller.move(to: Point(horizontal ? offset : 0, horizontal ? 0 : offset))
                         } else if step < 180, (step - 36).isMultiple(of: 48) {
-                            let offset = [800.0, 4_000.0, 0][(step - 36) / 48]
+                            let phase = (step - 36) / 48
+                            let offset = [800.0, 4_000.0, 0][phase]
+                            let standing = scroll.scroller.standing.offset
+                            animatedMove = (phase, horizontal ? standing.x : standing.y, offset)
                             swiftomniui_winui_scroller_move(scroll.scroller.handle,
                                                        horizontal ? offset : 0, horizontal ? 0 : offset, true)
                         }
                         host.step()
                         let span = try XCTUnwrap(lazy.span)
-                        if span != lastSpan {
-                            if step >= 36, step < 180 {
-                                let phase = (step - 36) / 48
-                                let destination = [800.0, 4_000.0, 0][phase]
-                                if abs(span.lowerBound - destination) > 1 { animatedPhases.insert(phase) }
-                            }
-                            lastSpan = span
-                        }
                         let first = Int((span.lowerBound / extent).rounded(.down))
                         let last = Int((span.upperBound / extent).rounded(.up))
                         let expected = max(0, first - 1) * perRun..<min(count, (last + 1) * perRun)
@@ -508,42 +540,27 @@ final class WinUILazyTests: XCTestCase {
                             if let kept = previous[identity] { XCTAssertTrue(kept === item.view) }
                         }
                         previous = lazy.mounted.mapValues(\.view)
-                        for leading in [true, false] where step.isMultiple(of: 6) {
-                            let frame = scroll.scroller.laidOutFrame
-                            let visible = leading ? first : last - 1
-                            let incoming = try XCTUnwrap(lazy.mounted[lazy.cells.identities[visible * perRun]])
-                            let cross = horizontal
-                                ? incoming.view.origin.y - scroll.scroller.origin.y + incoming.view.laidOutFrame.height - 3
-                                : incoming.view.origin.x - scroll.scroller.origin.x + incoming.view.laidOutFrame.width - 3
-                            let along = leading ? 3 : (horizontal ? frame.width : frame.height) - 3
-                            let sample = horizontal ? (along, cross) : (cross, along)
-                            // Read the displayed desktop synchronously as well: RenderTargetBitmap pumps
-                            // messages while capturing and an animated viewport may move during that wait.
-                            var screenPixel: DWORD = 0xFFFFFFFF
-                            if let hwnd = GetActiveWindow(), let dc = GetDC(nil) {
-                                defer { _ = ReleaseDC(nil, dc) }
-                                var corner = POINT()
-                                _ = ClientToScreen(hwnd, &corner)
-                                let scale = Double(GetDpiForWindow(hwnd)) / 96
-                                let origin = scroll.scroller.origin
-                                let point = POINT(x: corner.x + LONG((origin.x + sample.0) * scale),
-                                                  y: corner.y + LONG((origin.y + sample.1) * scale))
-                                if let hit = WindowFromPoint(point), GetAncestor(hit, UINT(GA_ROOT)) == hwnd {
-                                    screenPixel = GetPixel(dc, point.x, point.y)
-                                }
-                            }
-                            print("LAZY-SAMPLE", WinUIFrameClock.monotonic(), lazy.number, "count", count, "kind", kind, "complex", complex, "step", step, "leading", leading, "pixel", String(screenPixel, radix: 16), "span", span, "offset", scroll.scroller.standing.offset, "incoming", incoming.view.laidOutFrame)
-                            if screenPixel != 0xFFFFFFFF {
-                                paintedSamples += 1
-                                let diagnostic = "screen=\(String(screenPixel, radix: 16)) count=\(count) kind=\(kind) complex=\(complex) step=\(step) leading=\(leading) sample=\(sample) span=\(span) offset=\(scroll.scroller.standing.offset) built=\(lazy.cells.built)"
-                                XCTAssertGreaterThan(screenPixel & 255, 160, "incoming cell was not painted: \(diagnostic)")
-                                XCTAssertLessThan((screenPixel >> 8) & 255, 100, "scrolling exposed a white gap: \(diagnostic)")
-                            }
-                        }
                     }
-                    XCTAssertGreaterThan(paintedSamples, 0, "the displayed test window must be sampled")
+                    probe.lock.lock()
+                    probe.stopped = true
+                    probe.lock.unlock()
+                    XCTAssertEqual(WaitForSingleObject(thread, 2_000), 0, "the pixel sampler must finish")
+                    probe.lock.lock()
+                    let samples = probe.samples
+                    probe.lock.unlock()
+                    XCTAssertGreaterThan(samples.count, 0, "the displayed test window must be sampled")
+                    for edge in 0..<2 {
+                        XCTAssertGreaterThan(samples.filter { $0.edge == edge }.count, 0,
+                                             "both displayed viewport edges must be sampled")
+                    }
+                    for sample in samples {
+                        print("LAZY-SAMPLE", sample.time, lazy.number, "count", count, "kind", kind, "complex", complex, "leading", sample.edge == 0, "pixel", String(sample.pixel, radix: 16))
+                        let diagnostic = "screen=\(String(sample.pixel, radix: 16)) time=\(sample.time) count=\(count) kind=\(kind) complex=\(complex) leading=\(sample.edge == 0)"
+                        XCTAssertGreaterThan(sample.pixel & 255, 160, "incoming cell was not painted: \(diagnostic)")
+                        XCTAssertLessThan((sample.pixel >> 8) & 255, 100, "scrolling exposed a white gap: \(diagnostic)")
+                    }
                     XCTAssertEqual(animatedPhases, [0, 1, 2],
-                                   "each animated scroll must exercise an intermediate effective viewport")
+                                   "each animated scroll must report an offset between its start and destination")
                     for _ in 0..<12 { host.step() }
                     let work = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
                     for _ in 0..<200 { host.step() }
@@ -739,6 +756,45 @@ final class WinUILazyTests: XCTestCase {
             host.settle { host.views(WinUILabelView.self).count == 30 }
 
             XCTAssertEqual(host.views(WinUILabelView.self).count, 30)
+        }
+    }
+}
+
+/// Reads displayed pixels off the UI thread while a native scroll keeps moving.
+private final class WinUILazyScreenProbe: @unchecked Sendable {
+    let lock = NSLock()
+    let window: HWND
+    let points: [POINT]
+    var stopped = false
+    var samples: [(time: Double, edge: Int, pixel: DWORD)] = []
+
+    init(window: HWND, points: [POINT]) {
+        self.window = window
+        self.points = points
+    }
+
+    nonisolated static let entry: @convention(c) (UnsafeMutableRawPointer?) -> DWORD = { raw in
+        guard let raw else { return 1 }
+        let probe = Unmanaged<WinUILazyScreenProbe>.fromOpaque(raw).takeRetainedValue()
+        guard let dc = GetDC(nil) else { return 1 }
+        defer { _ = ReleaseDC(nil, dc) }
+        while true {
+            probe.lock.lock()
+            let stopped = probe.stopped
+            probe.lock.unlock()
+            if stopped { return 0 }
+            for (edge, point) in probe.points.enumerated() {
+                guard let hit = WindowFromPoint(point),
+                      GetAncestor(hit, UINT(GA_ROOT)) == probe.window else { continue }
+                let pixel = GetPixel(dc, point.x, point.y)
+                if pixel != 0xFFFFFFFF {
+                    let time = WinUIFrameClock.monotonic()
+                    probe.lock.lock()
+                    probe.samples.append((time, edge, pixel))
+                    probe.lock.unlock()
+                }
+            }
+            Sleep(8)
         }
     }
 }
