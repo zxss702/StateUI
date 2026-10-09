@@ -140,7 +140,8 @@ final class WinUIWindowController {
         // second bar for them.
         chrome.actions = composed.leadingActions.map(Self.action) + composed.primaryActions.map(Self.action)
         chrome.overflow = composed.overflowActions.map(Self.action)
-        chrome.background = composed.background
+        chrome.background = composed.toolbarBackground?.enumeration == Visibility.hidden.rawValue
+            ? Color.clear.propValue : composed.background
         chrome.foreground = composed.foreground
         // A placement group's entries stand for the platform's own menus: the app menu's button carries them.
         // A scene's own command menus stand beside the page's in the bar.

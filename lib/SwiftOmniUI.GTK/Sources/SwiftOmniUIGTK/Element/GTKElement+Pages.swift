@@ -49,6 +49,14 @@ extension GTKElement {
         chrome.showsBar = page.pageValue(.hasNavigationBar)?.bool != false
         chrome.offersBack = page.pageValue(.hasBackButton)?.bool != false
         (chrome.barBackground, chrome.barForeground) = page.barColors
+        if let window = element.enclosing(type: .windowScene) {
+            let arrangement = window.currentChildren.first { NodeType.pageTypes.contains($0.type) }
+            let composed = WindowChrome(window: window, arrangement: arrangement)
+            if composed.toolbarVisibility?.enumeration == Visibility.hidden.rawValue { chrome.showsBar = false }
+            if composed.toolbarBackground?.enumeration == Visibility.hidden.rawValue {
+                chrome.barBackground = Color.clear.propValue
+            }
+        }
         // The scene's commands stand once in a window, on the bar at its leading edge - a split view's sidebar
         // while it shows, else the page the user sees - not on every bar an arrangement shows.
         let arrangement = element.enclosing(type: .windowScene)?.children.first { NodeType.pageTypes.contains($0.type) }

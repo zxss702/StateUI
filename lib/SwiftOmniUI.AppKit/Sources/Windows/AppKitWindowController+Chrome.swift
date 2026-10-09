@@ -66,6 +66,11 @@ extension AppKitWindowController {
             overflow: chrome.overflowActions.map(Self.action),
             trailing: chrome.trailing?.appKit.view))
         synchronizeBar(window, color: barColor, split: split)
+        if chrome.toolbarBackground?.enumeration == Visibility.hidden.rawValue {
+            window.titlebarAppearsTransparent = true
+            content.barColor = nil
+            split?.setDetailBarColor(nil)
+        }
         synchronizeTitleAccessory(
             window,
             titleBar: titleBar,

@@ -79,9 +79,9 @@
         windowBackground = arrangement?.titledPage?.pageValue(.windowBackground)
             ?? arrangement?.value(.windowBackground)
         toolbarVisibility = arrangement?.titledPage?.pageValue(.toolbarVisibility)
-            ?? arrangement?.value(.toolbarVisibility)
+            ?? arrangement?.pageValue(.toolbarVisibility)
         toolbarBackground = arrangement?.titledPage?.pageValue(.toolbarBackground)
-            ?? arrangement?.value(.toolbarBackground)
+            ?? arrangement?.pageValue(.toolbarBackground)
         back = arrangement?.visibleBackStack.map { stack in
             let pages = stack.currentChildren
             return (stack, pages[pages.count - 2].value(.backButtonTitle)?.string ?? "Back")
