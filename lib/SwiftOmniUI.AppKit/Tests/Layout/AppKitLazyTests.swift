@@ -187,7 +187,7 @@ final class AppKitLazyTests: XCTestCase {
             let perRun = kind < 2 ? 1 : 4
             let extent = horizontal ? 80.0 : 40.0
             XCTAssertEqual(scroll.contentView.bounds.width, 480, accuracy: 1)
-            XCTAssertEqual(scroll.contentView.bounds.height, 240, accuracy: 1)
+            XCTAssertEqual(scroll.contentView.bounds.height, horizontal ? Double(perRun) * 40 : 240, accuracy: 1)
             XCTAssertEqual(horizontal ? scroll.documentView!.frame.width : scroll.documentView!.frame.height,
                            1_000 / Double(perRun) * extent, accuracy: 1)
             var previous: [String: NSView] = [:]
