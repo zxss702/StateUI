@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#if DEBUG
+#include <cstdio>
+#endif
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Xaml.Hosting.h>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
@@ -52,6 +55,10 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_scroller_make(int64_t view) {
                 }
             }
             args.Anchor(anchor);
+            #if DEBUG
+            static int traced = 0;
+            if (traced++ < 80) std::printf("LAZY NATIVE ANCHOR offset=%f first=%f candidates=%u\n", offset, first, args.AnchorCandidates().Size());
+            #endif
         }));
         scroller.ViewChanging(guarded("handling ViewChanging",
             [view](IInspectable const &, controls::ScrollViewerViewChangingEventArgs const &args) {

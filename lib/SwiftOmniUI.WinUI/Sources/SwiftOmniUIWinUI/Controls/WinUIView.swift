@@ -207,6 +207,9 @@ class WinUIView {
                     WinUIDoorbell.afterPass { [weak self] in
                         guard let self else { return }
                         let proposals = self.pendingMeasures
+                        #if DEBUG
+                        print("LAZY DEFER proposals view=\(self.number) parent=\(String(describing: self.placingLayout?.number)) widths=\(proposals.map { String(describing: $0.width) })")
+                        #endif
                         self.pendingMeasures.removeAll(keepingCapacity: true)
                         for proposal in proposals {
                             _ = self.measure(width: proposal.width, height: proposal.height)
@@ -254,6 +257,9 @@ class WinUIView {
                    !measuredSizes.contains(where: { $0.width == Double(Float(place.width)) && $0.height == nil }) {
                     WinUIDoorbell.afterPass { [weak self] in
                         guard let self, let layout = self as? WinUILayoutView, let width = layout.standsAt else { return }
+                        #if DEBUG
+                        print("LAZY DEFER allocation view=\(self.number) parent=\(String(describing: self.placingLayout?.number)) width=\(width)")
+                        #endif
                         layout.invalidateMeasurements()
                         _ = self.measure(width: width, height: nil)
                         var ancestor = self.placingLayout
