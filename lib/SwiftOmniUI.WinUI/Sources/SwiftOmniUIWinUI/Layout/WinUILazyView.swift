@@ -342,17 +342,14 @@ final class WinUILazyStackView: WinUILazyView {
             if cells.extents.revision != revision || total != measuredExtent { geometryChanged = true }
             measuredExtent = total
             measuredRevision = measurementRevision
-        } else {
-            if !preparing {
-                preparing = true
-                WinUIDoorbell.afterPass { [weak self] in
-                    guard let self else { return }
-                    self.preparing = false
-                    self.invalidateMeasurements()
-                    _ = self.measure(width: self.standsAt ?? bounds.width, height: nil)
-                }
+        } else if !preparing {
+            preparing = true
+            WinUIDoorbell.afterPass { [weak self] in
+                guard let self else { return }
+                self.preparing = false
+                self.invalidateMeasurements()
+                _ = self.measure(width: self.standsAt ?? bounds.width, height: nil)
             }
-            return
         }
         super.arrange(in: bounds)
         for (identity, item) in mounted {
