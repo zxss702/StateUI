@@ -6,6 +6,7 @@
 @testable import SwiftOmniUIGTK
 import SwiftOmniUIConformance
 import XCTest
+import CSwiftOmniUIGTK
 
 /// A `LazyVStack` on GTK answers the same window questions as everywhere:
 /// the rows the scroller's reach holds are mounted, and no more.
@@ -245,12 +246,17 @@ final class GTKLazyTests: XCTestCase {
                 scroll.scroller.move(to: scroll.scroller.standing.reach)
                 for _ in 0..<30 { host.step() }
                 let last = try XCTUnwrap(host.views(GTKLabelView.self).first { $0.text == "Cell 499" })
-                XCTAssertEqual(last.frame.y + last.frame.height, total, accuracy: 1)
-                XCTAssertEqual(last.frame.y + last.frame.height - scroll.scroller.standing.offset.y,
+                var bottom = graphene_point_t(x: Float(last.frame.width / 2), y: Float(last.frame.height))
+                var inGrid = graphene_point_t()
+                XCTAssertNotEqual(gtk_widget_compute_point(last.widget, grid.widget, &bottom, &inGrid), 0)
+                XCTAssertEqual(Double(inGrid.y), total, accuracy: 1)
+                var inScroll = graphene_point_t()
+                XCTAssertNotEqual(gtk_widget_compute_point(last.widget, scroll.widget, &bottom, &inScroll), 0)
+                XCTAssertEqual(Double(inScroll.y),
                                scroll.frame.height, accuracy: 1,
                                "the last rendered row must meet the viewport's bottom without an empty tail")
                 let colors = GTKTestHost.pixels(of: scroll.widget, at: [
-                    (last.frame.x + last.frame.width / 2, scroll.frame.height - 4),
+                    (Double(inScroll.x), scroll.frame.height - 4),
                 ])
                 XCTAssertEqual(colors, [0xFFFF0000], "GTK must paint the last cell at the actual viewport bottom")
             }
