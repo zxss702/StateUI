@@ -8,7 +8,7 @@ import PackageDescription
 // The host a build is for: SWIFTOMNIUI_HOST - appkit, uikit, android, winui, gtk or web -
 // which its script or the editor sets, or none for plain Swift. The
 // application's Swift for that host alone stands under its condition -
-// `#if APPKIT` - and ../../lib/SwiftOmniUI.Head brings the host itself to the head.
+// `#if APPKIT` - and the root package brings the host itself to the head.
 let host = ["AppKit", "UIKit", "Android", "WinUI", "GTK", "Web"]
     .first { $0.lowercased() == Context.environment["SWIFTOMNIUI_HOST"] }
 
@@ -18,7 +18,7 @@ let settings: [SwiftSetting] = [.enableUpcomingFeature("NonisolatedNonsendingByD
     + (host.map { [.define($0.uppercased())] } ?? [])
 
 var products: [Product] = [
-    // Dynamic, so a head and its host share one SwiftOmniUI runtime; on the Web one module holds them all.
+    // The application module; a platform head depends on its target.
     .library(name: "HelloWorldUI", type: host == "Web" ? nil : .dynamic, targets: ["HelloWorldUI"]),
 ]
 
@@ -31,7 +31,7 @@ var targets: [Target] = [
 
 // The head in Platforms/<Host>: an executable its host runs, and on Android a
 // library the platform loads. SwiftOmniUIHead brings the host.
-let head: [Target.Dependency] = ["HelloWorldUI", .product(name: "SwiftOmniUIHead", package: "SwiftOmniUIHead")]
+let head: [Target.Dependency] = ["HelloWorldUI", .product(name: "SwiftOmniUIHead", package: "SwiftOmniUIRoot")]
 switch host {
 case "Android"?:
     products.append(.library(name: "HelloWorldAndroid", type: .dynamic, targets: ["HelloWorldAndroid"]))
@@ -56,7 +56,6 @@ let package = Package(
     // The SwiftOmniUI checkout: the library at its root, and a head's host.
     // Named, so the checkout's folder may carry any name - a path dependency's
     // identity would otherwise be the folder's.
-    dependencies: [.package(name: "SwiftOmniUIRoot", path: "../..")]
-        + (host == nil ? [] : [.package(name: "SwiftOmniUIHead", path: "../../lib/SwiftOmniUI.Head")]),
+    dependencies: [.package(name: "SwiftOmniUIRoot", path: "../..")],
     targets: targets
 )

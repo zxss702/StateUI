@@ -7,10 +7,7 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repository_dir="$(cd "$script_dir/.." && pwd)"
 
-swift test --package-path "$repository_dir"
-swift test --package-path "$repository_dir/lib/SwiftOmniUI.Host"
-swift test --package-path "$repository_dir/lib/SwiftOmniUI.Conformance"
-swift test --package-path "$repository_dir/lib/SwiftOmniUI.AppKit"
+SWIFTOMNIUI_HOST=appkit swift test --package-path "$repository_dir"
 swift test --package-path "$repository_dir/apps/Gallery"
 swift test --package-path "$repository_dir/apps/HelloWorld"
 

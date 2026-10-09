@@ -47,7 +47,10 @@ uikit_bundle () {
   rm -rf "$bundle"
   mkdir -p "$bundle/Images" "$bundle/Frameworks" "$tools"
   cp "$binary_dir/$product" "$bundle/$product"
-  cp "$binary_dir"/*.dylib "$bundle/Frameworks/"
+  local library
+  for library in "$binary_dir"/*.dylib; do
+    [[ ! -f "$library" ]] || cp "$library" "$bundle/Frameworks/"
+  done
   install_name_tool -add_rpath @executable_path/Frameworks "$bundle/$product" 2>/dev/null || true
 
   local rasterizer="$tools/rasterize-images"
@@ -67,7 +70,7 @@ uikit_bundle () {
   plutil -insert CFBundleInfoDictionaryVersion -string 6.0 "$plist"
   plutil -insert CFBundleName -string "$name" "$plist"
   plutil -insert CFBundlePackageType -string APPL "$plist"
-  plutil -insert CFBundleShortVersionString -string 0.5.1 "$plist"
+  plutil -insert CFBundleShortVersionString -string 0.5.2 "$plist"
   plutil -insert CFBundleVersion -string 1 "$plist"
   plutil -insert CFBundleSupportedPlatforms -array "$plist"
   plutil -insert CFBundleSupportedPlatforms.0 -string "$platform" "$plist"
@@ -102,7 +105,9 @@ MERGE
   fi
 
   if [[ -z "$device" ]]; then
-    codesign --force --sign - "$bundle"/Frameworks/*.dylib >/dev/null 2>&1
+    for library in "$bundle"/Frameworks/*.dylib; do
+      [[ ! -f "$library" ]] || codesign --force --sign - "$library" >/dev/null 2>&1
+    done
     codesign --force --sign - "$bundle" >/dev/null 2>&1
     return 0
   fi
@@ -175,8 +180,12 @@ PICK
   profile="$(sed -n 1p <<< "$chosen")"
   identity="$(sed -n 2p <<< "$chosen")"
   cp "$profile" "$bundle/embedded.mobileprovision"
-  codesign --force --sign "$identity" --timestamp=none "$bundle"/Frameworks/*.dylib >/dev/null \
-    || { echo "ERROR: the libraries could not be signed" >&2; return 1; }
+  local library
+  for library in "$bundle"/Frameworks/*.dylib; do
+    [[ -f "$library" ]] || continue
+    codesign --force --sign "$identity" --timestamp=none "$library" >/dev/null \
+      || { echo "ERROR: the libraries could not be signed" >&2; return 1; }
+  done
   codesign --force --sign "$identity" --timestamp=none --entitlements "$tools/entitlements.plist" "$bundle" >/dev/null \
     || { echo "ERROR: the bundle could not be signed" >&2; return 1; }
 }

@@ -2,7 +2,7 @@
   "name": "swiftomniui",
   "displayName": "SwiftOmniUI",
   "description": "Build, run and debug SwiftOmniUI applications on AppKit, UIKit, Android, WinUI, GTK and the Web.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publisher": "zxss702",
   "license": "Apache-2.0",
   "icon": "icon.png",

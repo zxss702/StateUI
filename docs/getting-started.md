@@ -2,14 +2,14 @@
 
 SwiftOmniUI applications keep their interface and application state in a
 platform-neutral Swift module. A small native executable imports that module
-and the selected host package. The same application module can therefore be
+and the selected host module. The same application module can therefore be
 started by another host without changing its view tree.
 
 Five native hosts are active - AppKit, UIKit, Android Views, WinUI 3 and
 GTK 4 - each Swift, in the application's own process. The supported setup is a
-SwiftOmniUI checkout: each host is a sibling Swift package whose manifest uses a
-local dependency on the repository root. No host has a published package route
-yet.
+SwiftOmniUI checkout: one root package declares the core and all host targets.
+Applications select its products, and `SWIFTOMNIUI_HOST` selects the platform
+targets without changing module names or imports.
 
 ## Requirements
 
@@ -103,7 +103,7 @@ Every launch has a command-line equivalent. Build HelloWorld's AppKit head from
 the repository root:
 
 ```bash
-SWIFTOMNIUI_APPKIT=1 swift build --package-path apps/HelloWorld --product HelloWorldAppKit
+SWIFTOMNIUI_HOST=appkit swift build --package-path apps/HelloWorld --product HelloWorldAppKit
 ```
 
 The variable is what makes it an AppKit build: the manifest then declares the

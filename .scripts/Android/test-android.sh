@@ -51,7 +51,7 @@ done < <(find "$tests_dir/Sources" -name '*.swift')
 [[ -z "$unlisted" ]] || { echo "ERROR: listed nowhere, so never run:$unlisted"; exit 1; }
 
 if [[ "${1:-}" == --build ]]; then
-  build_head "$tests_dir" SwiftOmniUIAndroidTests debug "${2:?an ABI: arm64-v8a or x86_64}"
+  build_head "$tests_dir" SwiftOmniUIAndroidTests debug "${2:?an ABI: arm64-v8a or x86_64}" "$repository_dir"
   exit
 fi
 
@@ -74,7 +74,7 @@ serial="$(device_serial "${1:-${ANDROID_SERIAL:-}}")"
 abi="$(device_abi "$serial")"
 echo "device:     $serial ($abi)"
 
-apk="${SWIFTOMNIUI_TEST_APK:-$(build_head "$tests_dir" SwiftOmniUIAndroidTests debug "$abi")}"
+apk="${SWIFTOMNIUI_TEST_APK:-$(build_head "$tests_dir" SwiftOmniUIAndroidTests debug "$abi" "$repository_dir")}"
 package="$("$AAPT2" dump packagename "$apk")"
 "$ADB" -s "$serial" install -r "$apk" >/dev/null
 # The verdicts of a run before this one stay in the APK's files: none may stand for this run's.

@@ -44,6 +44,7 @@ mkdir -p "$executable_dir" "$resources_dir/Images"
 
 cp "$binary_dir/$product" "$executable_dir/$product"
 for library in "$binary_dir"/lib*.dylib; do
+    [[ -f "$library" ]] || continue
     cp "$library" "$executable_dir/$(basename "$library")"
 done
 cp -R "$gallery_dir/Resources/Images/." "$resources_dir/Images"
@@ -78,7 +79,7 @@ plutil -insert CFBundleIdentifier -string com.swiftomniui.gallery "$plist"
 plutil -insert CFBundleInfoDictionaryVersion -string 6.0 "$plist"
 plutil -insert CFBundleName -string "SwiftOmniUI Gallery" "$plist"
 plutil -insert CFBundlePackageType -string APPL "$plist"
-plutil -insert CFBundleShortVersionString -string 0.5.1 "$plist"
+plutil -insert CFBundleShortVersionString -string 0.5.2 "$plist"
 plutil -insert CFBundleVersion -string 1 "$plist"
 plutil -insert LSMinimumSystemVersion -string 26.0 "$plist"
 plutil -insert NSHighResolutionCapable -bool true "$plist"

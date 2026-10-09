@@ -17,7 +17,8 @@
       "label": "Test SwiftOmniUI.AppKit",
       "type": "shell",
       "command": "swift",
-      "args": ["test", "--package-path", "${workspaceFolder}/lib/SwiftOmniUI.AppKit"],
+      "args": ["test", "--package-path", "${workspaceFolder}", "--filter", "SwiftOmniUIAppKitTests"],
+      "options": { "env": { "SWIFTOMNIUI_HOST": "appkit" } },
       "problemMatcher": [],
       "group": "test",
       "presentation": { "reveal": "always", "panel": "dedicated" }
@@ -70,7 +71,7 @@
       ],
       // What makes this an AppKit build: the manifest declares the head and
       // defines APPKIT only then - see apps/Gallery/Package.swift.
-      "options": { "env": { "SWIFTOMNIUI_APPKIT": "1" } },
+      "options": { "env": { "SWIFTOMNIUI_HOST": "appkit" } },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
@@ -87,7 +88,7 @@
         "--product",
         "HelloWorldAppKit"
       ],
-      "options": { "env": { "SWIFTOMNIUI_APPKIT": "1" } },
+      "options": { "env": { "SWIFTOMNIUI_HOST": "appkit" } },
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "dedicated" }
     }

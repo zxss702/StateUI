@@ -20,14 +20,8 @@
 // which it reads from the root of EACH package and resolves against it - so it
 // is written beside every application's Package.swift, and ignored by git.
 //
-// AND THE INDEX IS PREPARED BY BUILDING, not by the server's default
-// preparation. An application depends on the DYNAMIC SwiftOmniUI product, and
-// SwiftPM's `--experimental-prepare-for-indexing` then asks for a
-// libSwiftOmniUI.dylib it never links - measured on the command line: "couldn't
-// build GalleryUI.swiftmodule because of missing inputs: …/libSwiftOmniUI.dylib",
-// exit 1, where a plain build of the target succeeds in 8 s. Without the module,
-// nothing in Platforms/AppKit that imports the application resolves. So the
-// same file says `backgroundPreparationMode: build`.
+// The index is prepared by a normal build, which also prepares the toolkit
+// relays and generated resources selected by the root manifest.
 //
 // AND A RESTART WAITS FOR THE BUILDS ALREADY RUNNING THERE. A server that is
 // stopped does not stop the build it started, so a quick switch there and back
@@ -49,7 +43,7 @@ import { execFile } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { describe, environment, Host, HostDescription, hostVariable, hosts, plainIndexPath } from "./hosts";
+import { describe, environment, Host, hostVariable, hosts, plainIndexPath } from "./hosts";
 
 let queue: Promise<unknown> = Promise.resolve();
 
@@ -118,24 +112,16 @@ export function setHostEnvironment(host: Host | undefined): boolean {
     return changed;
 }
 
-/**
- * `exclusions` - `swift.excludePathsFromActivation` - excluding the packages of every host but `host`, and of every
- * host with none: each host's own `lib/SwiftOmniUI/SwiftOmniUI.<Host>` (with the packages inside it) and its backends
- * `lib/Backends/<Element>.<Host>`. Anything else it says is kept.
- */
-export function otherHostsExcluded(host: Host | undefined, exclusions: Readonly<Record<string, boolean>>): Record<string, boolean> {
-    const patterns = (each: HostDescription): string[] =>
-        [`**/lib/SwiftOmniUI/SwiftOmniUI.${each.label}`, `**/lib/Backends/*.${each.label}`];
-    const owned = new Set(hosts.flatMap(patterns));
-    const kept = Object.entries(exclusions).filter(([pattern]) => !owned.has(pattern));
-    const excluded = hosts.filter((each) => each.id !== host).flatMap(patterns).map((pattern) => [pattern, true] as const);
-    return Object.fromEntries([...kept, ...excluded].sort(([a], [b]) => a.localeCompare(b)));
+/** Remove exclusions owned by the former host packages; the root manifest selects targets. */
+export function otherHostsExcluded(_host: Host | undefined, exclusions: Readonly<Record<string, boolean>>): Record<string, boolean> {
+    const owned = new Set(hosts.flatMap((each) => [
+        `**/lib/SwiftOmniUI/SwiftOmniUI.${each.label}`, `**/lib/SwiftOmniUI.${each.label}`, `**/lib/Backends/*.${each.label}`,
+    ]));
+    return Object.fromEntries(Object.entries(exclusions).filter(([pattern]) => !owned.has(pattern))
+        .sort(([a], [b]) => a.localeCompare(b)));
 }
 
-/**
- * Keeps the Swift extension from loading the packages of the hosts the editor does not work as - each costs its
- * activation seconds - in the user's settings, which it reads as it starts: the next start of the editor.
- */
+/** Clean up the extension's obsolete package exclusions without changing user exclusions. */
 async function excludeOtherHosts(host: Host | undefined): Promise<void> {
     const swift = vscode.workspace.getConfiguration("swift");
     const current = swift.inspect<Record<string, boolean>>("excludePathsFromActivation")?.globalValue ?? {};

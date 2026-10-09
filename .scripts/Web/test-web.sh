@@ -24,14 +24,15 @@ set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 checkout="$(cd "$here/../.." && pwd)"
-package="$checkout/lib/SwiftOmniUI.Web/Testing"
-scratch="$package/.build/web"
+harness="$checkout/lib/SwiftOmniUI.Web/Testing"
+package="$checkout"
+scratch="$package/.build/web-tests"
 
 . "$here/swift-sdk.sh"
 
 SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --build-tests
 products="$(SWIFTOMNIUI_HOST=web swift build --package-path "$package" --scratch-path "$scratch" --swift-sdk "$sdk" --show-bin-path)"
-program="$products/SwiftOmniUIWebTests-test-runner.wasm"
+program="$products/SwiftOmniUIRootTests-test-runner.wasm"
 relay="$checkout/lib/SwiftOmniUI.Web/JavaScript/swiftomniui-web.js"
 conformance="SwiftOmniUIWebTests.WebConformanceTests"
 # The classes whose tests need a browser's own page: the host's own, and the conformance suite.
@@ -54,7 +55,7 @@ browser () {
 if [[ "${1:-}" == "--browser" ]]; then
   shift
   # Every family by name: each runs in a program of its own (run-in-browser.mjs says why).
-  families="$(node "$package/JavaScript/run.mjs" "$relay" "$program" --list-tests | grep -E "^$conformance/" | paste -sd, -)"
+  families="$(node "$harness/JavaScript/run.mjs" "$relay" "$program" --list-tests | grep -E "^$conformance/" | paste -sd, -)"
   selected="$families,$hosts_in_browser"
   if [[ "${1:-}" == "--host" ]]; then
     selected="$hosts_in_browser"
@@ -62,13 +63,13 @@ if [[ "${1:-}" == "--browser" ]]; then
     selected="$(printf "$conformance/test%s," "$@")"
     selected="${selected%,}"
   fi
-  exec node "$package/JavaScript/run-in-browser.mjs" "$(browser)" "$program" "$selected"
+  exec node "$harness/JavaScript/run-in-browser.mjs" "$(browser)" "$program" "$selected"
 fi
 
 # The host's own tests, every one but those the browser runs where none is named.
 selected="${1:-}"
 if [[ -z "$selected" ]]; then
-  selected="$(node "$package/JavaScript/run.mjs" "$relay" "$program" --list-tests \
+  selected="$(node "$harness/JavaScript/run.mjs" "$relay" "$program" --list-tests \
     | grep -E '^SwiftOmniUIWebTests\.' | grep -v -E "^(${in_browser//,/|})/" | paste -sd, -)"
 fi
-exec node "$package/JavaScript/run.mjs" "$relay" "$program" "$selected"
+exec node "$harness/JavaScript/run.mjs" "$relay" "$program" "$selected"

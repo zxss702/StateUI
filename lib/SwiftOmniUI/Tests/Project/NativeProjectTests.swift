@@ -91,16 +91,16 @@ final class NativeProjectTests: XCTestCase {
         XCTAssertGreaterThan(read, 100, "the walk read almost nothing")
     }
 
-    /// The Android Views host is a Swift package beside AppKit's, with its Java
-    /// layer, its tests in a package of their own and the scripts under
+    /// The Android Views host is a target beside AppKit's, with its Java
+    /// layer, its test runner in the root package and the scripts under
     /// `.scripts/Android`; and every native method the Java layer declares is
     /// one the host registers, by name - one left out is found only on a
     /// device, as an `UnsatisfiedLinkError`.
-    func testTheAndroidViewsHostIsAHostPackageBesideAppKit() throws {
+    func testTheAndroidViewsHostIsATargetBesideAppKit() throws {
         let repository = SourceTree.repository
         let host = "lib/SwiftOmniUI.Android"
         for relative in [
-            "\(host)/Package.swift", "\(host)/Tests/Package.swift",
+            "Package.swift", "\(host)/Tests/Sources",
             "\(host)/Tests/Platforms/Android/build.gradle.kts",
             "\(host)/Java/swiftomniui/android/SwiftOmniUIActivity.java",
             ".scripts/Android/build-swift.sh", ".scripts/Android/run-app.sh",
@@ -126,16 +126,16 @@ final class NativeProjectTests: XCTestCase {
         XCTAssertEqual(declared, registered, "the Java layer and the host disagree on the native methods")
     }
 
-    /// The WinUI 3 host is a Swift package beside the others, with its C++/WinRT
+    /// The WinUI 3 host is a Swift target beside the others, with its C++/WinRT
     /// relay as a C++ target of its own and its scripts under `.scripts/WinUI`;
     /// and every function the relay's header declares is one the relay defines -
     /// a declaration with nothing behind it is found only when a head links.
-    func testTheWinUIHostIsAHostPackageBesideTheOthers() throws {
+    func testTheWinUIHostIsATargetBesideTheOthers() throws {
         let repository = SourceTree.repository
         let host = "lib/SwiftOmniUI.WinUI"
         let relay = "\(host)/Sources/CSwiftOmniUIWinUI"
         for relative in [
-            "\(host)/Package.swift", "\(relay)/include/CSwiftOmniUIWinUI.h",
+            "Package.swift", "\(relay)/include/CSwiftOmniUIWinUI.h",
             ".scripts/WinUI/tools.ps1", ".scripts/WinUI/run-app.ps1", ".scripts/WinUI/test-winui.ps1",
         ] {
             XCTAssertTrue(
@@ -312,9 +312,8 @@ final class NativeProjectTests: XCTestCase {
 
             let manifest = try text("Package.swift")
             for shape in [
-                "environment[\"SWIFTOMNIUI_WINUI\"] == \"1\"", "hasWinUIHead ? [.define(\"WINUI\")] : []",
-                "name: \"\(name)WinUI\"", "name: \"SwiftOmniUIWinUI\"", "path: \"Platforms/WinUI\"",
-                "\"/SUBSYSTEM:WINDOWS\"", "\"/ENTRY:mainCRTStartup\"",
+                "environment[\"SWIFTOMNIUI_HOST\"]", "host.map { [.define($0.uppercased())] }",
+                "name: \"\(name)WinUI\"", "name: \"SwiftOmniUIHead\"", "path: \"Platforms/WinUI\"",
             ] {
                 XCTAssertTrue(manifest.contains(shape), "\(name)'s Package.swift does not say \(shape)")
             }
@@ -328,14 +327,17 @@ final class NativeProjectTests: XCTestCase {
         XCTAssertGreaterThan(heads, 0, "no WinUI head found")
     }
 
-    /// The conformance suite is a package of its own that links the one SwiftOmniUI runtime as
-    /// its product, and none of its sources names a toolkit: what it asserts is what executing the contract does, on
+    /// The conformance suite is a target depending directly on core and Host,
+    /// and none of its sources names a toolkit: what it asserts is what executing the contract does, on
     /// every host.
     func testTheConformanceSuiteNamesNoToolkit() throws {
         let package = SourceTree.repository.appendingPathComponent("lib/SwiftOmniUI.Conformance")
-        let manifest = try String(contentsOf: package.appendingPathComponent("Package.swift"), encoding: .utf8)
-        XCTAssertTrue(manifest.contains(#".product(name: "SwiftOmniUI", package: "SwiftOmniUIRoot")"#), "SwiftOmniUI linked as a product")
-        XCTAssertFalse(manifest.contains(#"dependencies: ["SwiftOmniUI"]"#), "a second SwiftOmniUI runtime")
+        let manifest = try String(contentsOf: SourceTree.repository.appendingPathComponent("Package.swift"), encoding: .utf8)
+        XCTAssertTrue(manifest.contains(#"path: "lib/SwiftOmniUI.Conformance/Sources""#))
+        XCTAssertFalse(manifest.contains("ThroughTheRoot"), "internal forwarding targets remain")
+        XCTAssertFalse(manifest.contains(#".product(name: "SwiftOmniUI""#), "core must be a direct target dependency")
+        XCTAssertFalse(manifest.contains("JsonDataDynamic"), "JsonData must use its ordinary product")
+        XCTAssertFalse(FileManager.default.fileExists(atPath: package.appendingPathComponent("Package.swift").path))
 
         let sources = package.appendingPathComponent("Sources")
         let files = try SourceTree.files(under: sources, entering: { _ in true }).filter { $0.hasSuffix(".swift") }
@@ -389,14 +391,14 @@ final class NativeProjectTests: XCTestCase {
         }
     }
 
-    /// The GTK 4 host is a Swift package beside the others, Swift alone over GTK's C API: its C module is
+    /// The GTK 4 host is a Swift target beside the others, Swift alone over GTK's C API: its C module is
     /// the system's headers and nothing else - a module map and one header that includes libadwaita's -
     /// and its scripts stand under `.scripts/GTK`.
     func testTheGTKHostIsSwiftAloneOverGTKsCAPI() throws {
         let repository = SourceTree.repository
         let host = "lib/SwiftOmniUI.GTK"
         let module = "\(host)/Sources/CSwiftOmniUIGTK"
-        for relative in ["\(host)/Package.swift", ".scripts/GTK/run-app.sh"] {
+        for relative in ["Package.swift", ".scripts/GTK/run-app.sh"] {
             XCTAssertTrue(
                 FileManager.default.fileExists(atPath: repository.appendingPathComponent(relative).path),
                 "missing \(relative)")
@@ -432,8 +434,8 @@ final class NativeProjectTests: XCTestCase {
 
             let manifest = try text("Package.swift")
             for shape in [
-                "environment[\"SWIFTOMNIUI_GTK\"] == \"1\"", "hasGTKHead ? [.define(\"GTK\")] : []",
-                "name: \"\(name)GTK\"", "name: \"SwiftOmniUIGTK\"", "path: \"Platforms/GTK\"",
+                "environment[\"SWIFTOMNIUI_HOST\"]", "host.map { [.define($0.uppercased())] }",
+                "name: \"\(name)GTK\"", "name: \"SwiftOmniUIHead\"", "path: \"Platforms/GTK\"",
             ] {
                 XCTAssertTrue(manifest.contains(shape), "\(name)'s Package.swift does not say \(shape)")
             }
@@ -465,8 +467,8 @@ final class NativeProjectTests: XCTestCase {
 
             let manifest = try text("Package.swift")
             for shape in [
-                "environment[\"SWIFTOMNIUI_ANDROID\"] == \"1\"", "hasAndroidHead ? [.define(\"ANDROID\")] : []",
-                "name: \"\(name)Android\"", "name: \"SwiftOmniUIAndroid\"", "path: \"Platforms/Android/Swift\"",
+                "environment[\"SWIFTOMNIUI_HOST\"]", "host.map { [.define($0.uppercased())] }",
+                "name: \"\(name)Android\"", "name: \"SwiftOmniUIHead\"", "path: \"Platforms/Android/Swift\"",
             ] {
                 XCTAssertTrue(manifest.contains(shape), "\(name)'s Package.swift does not say \(shape)")
             }
@@ -576,7 +578,7 @@ final class NativeProjectTests: XCTestCase {
             let manifest = try text(relative)
 
             XCTAssertTrue(
-                manifest.contains("hasAppKitHead ? [.define(\"APPKIT\")] : []"),
+                manifest.contains("host.map { [.define($0.uppercased())] }"),
                 "\(relative) does not define APPKIT for an AppKit build")
 
             // No module is left compiling without it.
@@ -636,7 +638,7 @@ final class NativeProjectTests: XCTestCase {
     /// one.
     ///
     /// An application declares that target, the product it makes and the
-    /// SwiftOmniUIAppKit dependency only when `SWIFTOMNIUI_APPKIT` is set, so that
+    /// SwiftOmniUIAppKit dependency only when `SWIFTOMNIUI_HOST` is set, so that
     /// `swift test` compiles no part of one host's half. A build that leaves
     /// the variable out asks for a product the manifest never declared, and a
     /// page that leaves it out hands a reader a command that cannot work.
@@ -654,7 +656,7 @@ final class NativeProjectTests: XCTestCase {
             "docs/development.md", "docs/getting-started.md",
         ] {
             XCTAssertTrue(
-                try text(relative).contains("SWIFTOMNIUI_APPKIT=1"),
+                try text(relative).contains("SWIFTOMNIUI_HOST=appkit"),
                 "\(relative) builds an AppKit head without telling the manifest there is one")
         }
 
@@ -670,7 +672,7 @@ final class NativeProjectTests: XCTestCase {
 
         for task in tasks {
             XCTAssertTrue(
-                task.contains("\"SWIFTOMNIUI_APPKIT\": \"1\""),
+                task.contains("\"SWIFTOMNIUI_HOST\": \"appkit\""),
                 ".vscode/tasks.json builds an AppKit head without telling the manifest there is one")
         }
     }

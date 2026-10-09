@@ -123,7 +123,33 @@ function Write-SwiftOmniUIEditorBuilds {
 # components declare registered in the manifest beside each one, and
 # resources.pri. An executable is never rewritten after its build: the next
 # build would link it again.
-function Set-SwiftOmniUISelfContained([string]$Directory, [string[]]$Executables, [string]$Architecture = $SwiftOmniUIArchitecture) {
+# The selected product's target closure determines which native backends ship.
+function Get-SwiftOmniUILinkedBackends([string]$Package, [string]$Product) {
+    $json = swift package --package-path $Package dump-package
+    if ($LASTEXITCODE) { throw 'the application manifest could not be read' }
+    $manifest = ($json -join "`n") | ConvertFrom-Json
+    $productTargets = @($manifest.products | Where-Object name -eq $Product | ForEach-Object { $_.targets })
+    $pending = [Collections.Generic.Stack[string]]::new()
+    if ($productTargets.Count) { foreach ($name in $productTargets) { $pending.Push($name) } }
+    else { $pending.Push($Product) } # SwiftPM's implicit executable product.
+    $seen = [Collections.Generic.HashSet[string]]::new()
+    $linked = [Collections.Generic.HashSet[string]]::new()
+    while ($pending.Count) {
+        $name = $pending.Pop()
+        if (-not $seen.Add($name)) { continue }
+        if ($name -eq 'SwiftOmniUIWebViewWinUI') { $linked.Add($name) | Out-Null }
+        $target = $manifest.targets | Where-Object name -eq $name
+        foreach ($dependency in $target.dependencies) {
+            if ($dependency.product) {
+                if ($dependency.product[0] -eq 'SwiftOmniUIWebViewWinUI') { $linked.Add($dependency.product[0]) | Out-Null }
+            } elseif ($dependency.target) { $pending.Push($dependency.target[0]) }
+            elseif ($dependency.byName) { $pending.Push($dependency.byName[0]) }
+        }
+    }
+    return @($linked)
+}
+
+function Set-SwiftOmniUISelfContained([string]$Directory, [string[]]$Executables, [string]$Architecture = $SwiftOmniUIArchitecture, [string[]]$Backends = @()) {
     $components = 'microsoft.windowsappsdk.winui', 'microsoft.windowsappsdk.foundation',
         'microsoft.windowsappsdk.interactiveexperiences' | ForEach-Object { Get-SwiftOmniUIPackage $_ }
 
@@ -135,7 +161,10 @@ function Set-SwiftOmniUISelfContained([string]$Directory, [string[]]$Executables
     # What a backend's engine needs beside an application linking it, each backend lays itself.
     foreach ($backend in Get-ChildItem (Join-Path $SwiftOmniUIRepository 'lib\Backends') -Directory -Filter '*.WinUI') {
         $lays = Join-Path $backend.FullName 'SelfContained.ps1'
-        if (Test-Path $lays) { & $lays -Directory $Directory -Architecture $Architecture }
+        if (Test-Path $lays) {
+            $linked = $Backends -contains ('SwiftOmniUI' + $backend.Name.Replace('.', ''))
+            & $lays -Directory $Directory -Architecture $Architecture -Linked $linked
+        }
     }
     if ($Architecture -ne $SwiftOmniUIArchitecture) { Add-SwiftOmniUISwiftRuntime -Directory $Directory -Architecture $Architecture }
     $global:LASTEXITCODE = 0

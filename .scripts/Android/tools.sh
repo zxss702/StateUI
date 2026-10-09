@@ -46,7 +46,7 @@ gradle_binary () {
 # Builds the Android head of the application in $1 - its Swift product $2, in
 # configuration $3, for ABI $4 - and says where the APK is, on its last line.
 build_head () {
-  local app="$1" product="$2" configuration="$3" abi="$4" head build java gradle apk task
+  local app="$1" product="$2" configuration="$3" abi="$4" package="${5:-$1}" head build java gradle apk task
   head="$app/Platforms/Android"
   build="$app/.build/android"
   [[ -f "$head/build.gradle.kts" ]] || { echo "ERROR: $(basename "$app") has no Android head ($head)" >&2; return 1; }
@@ -54,7 +54,7 @@ build_head () {
   # A command substitution runs this function without `set -e`, so every
   # step that can fail says so: a failed build must never package the last one.
   SWIFTOMNIUI_HOST=android SWIFT_CONFIG="$configuration" ABIS="$abi" \
-    "$script_dir/build-swift.sh" "$app" "$product" "$build" >&2 || return 1
+    "$script_dir/build-swift.sh" "$package" "$product" "$build" >&2 || return 1
 
   # Android draws no SVG: the application's pictures are drawn for it, into the APK's assets.
   local rasterizer="$build/tools/rasterize-images"

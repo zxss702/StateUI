@@ -589,10 +589,7 @@ final class UIThreadTests: XCTestCase {
     }
 
     func testEverywhereSwiftIsCompiledInheritsTheCallersExecutor() throws {
-        var places = [
-            "Package.swift",
-            "lib/SwiftOmniUI.AppKit/Package.swift",
-        ]
+        var places = ["Package.swift"]
 
         for app in try appManifests() {
             places.append(app)

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ---------------------------------------------------------------------------
-# Runs the WinUI host's tests: `swift test` in lib\SwiftOmniUI.WinUI\Testing,
+# Runs the root package's WinUI test target,
 # whose test runner is given the Windows App SDK first, as an application is -
 # WinUI's classes are found through the runner's manifest.
 #
@@ -41,9 +41,9 @@ param(
 . (Join-Path $PSScriptRoot 'tools.ps1')
 
 Initialize-SwiftOmniUIProjection
-# Our layout keeps the test target inside the host package (Tests/), not
-# upstream's nested Testing package - the package root is the build path.
-$testing = $SwiftOmniUIWinUIHost
+# All suites belong to the root package; WinUI selects its native targets.
+$testing = $SwiftOmniUIRepository
+$env:SWIFTOMNIUI_HOST = 'winui'
 $env:SWIFTOMNIUI_STALE_ONLY = if ($Stale) { '1' } else { '' }
 $scratch = @()
 if ($ScratchPath) { $scratch = @('--scratch-path', $ScratchPath) }
@@ -54,12 +54,12 @@ swift build --package-path $testing --build-tests @scratch
 if ($LASTEXITCODE) { throw 'the WinUI host tests did not build' }
 Write-Host 'laying the Windows App SDK beside the test runner'
 $bin = (swift build --package-path $testing @scratch --show-bin-path).Trim()
-Set-SwiftOmniUISelfContained -Directory $bin -Executables (Join-Path $bin 'SwiftOmniUIWinUITests-test-runner.exe')
+Set-SwiftOmniUISelfContained -Directory $bin -Executables (Join-Path $bin 'SwiftOmniUIRootTests-test-runner.exe')
 
 # A variable's name is its parameter's whatever the case, so the arguments have one of their own.
 $apart = @('--parallel', '--num-workers', '1')
 $narrowing = if ($Filter) { @('--filter', $Filter) + $apart }
     elseif ($Conformance -or $Stale) { @('--filter', 'WinUIConformanceTests') + $apart }
-    else { @('--skip', 'WinUIConformanceTests') }
+    else { @('--filter', 'SwiftOmniUIWinUITests', '--skip', 'WinUIConformanceTests') }
 swift test --package-path $testing @scratch --skip-build @narrowing
 exit $LASTEXITCODE

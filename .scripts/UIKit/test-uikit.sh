@@ -22,8 +22,10 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$script_dir/tools.sh"
 repository_dir="$(cd "$script_dir/../.." && pwd)"
-package="$repository_dir/lib/SwiftOmniUI.UIKit/Tests"
-scratch="$package/.build"
+harness="$repository_dir/lib/SwiftOmniUI.UIKit/Tests"
+package="$repository_dir"
+scratch="$package/.build/uikit-tests"
+export SWIFTOMNIUI_HOST=uikit
 product="SwiftOmniUIUIKitTests"
 identifier="com.swiftomniui.uikit.tests"
 
@@ -47,7 +49,7 @@ binary_dir="$(uikit_build "$package" "$scratch" debug "$product" \
   -Xlinker -F -Xlinker "$frameworks" -Xlinker -L -Xlinker "$libraries" \
   -Xlinker -rpath -Xlinker "$frameworks" -Xlinker -rpath -Xlinker "$libraries")"
 bundle="$scratch/debug/$product.app"
-uikit_bundle "$binary_dir" "$product" "$product" "$identifier" "$package/Resources" "$bundle" "$scratch/tools" ""
+uikit_bundle "$binary_dir" "$product" "$product" "$identifier" "$harness/Resources" "$bundle" "$scratch/tools" ""
 
 xcrun simctl install "$device" "$bundle"
 output="$(mktemp)"

@@ -153,7 +153,7 @@ export async function run(): Promise<void> {
         say(`appkit suites: ${appkitSuites.join(", ")}`);
         say(`suites with no host: ${plainSuites.map((each) => each.label).join(", ")}`);
         check("appkit runs the core, SwiftOmniUI.AppKit and the Gallery, and no device",
-            appkitSuites.includes("SwiftOmniUI") && appkitSuites.includes("lib/SwiftOmniUI/SwiftOmniUI.AppKit")
+            appkitSuites.includes("SwiftOmniUI") && appkitSuites.includes("SwiftOmniUIAppKit")
             && appkitSuites.includes("apps/Gallery") && !appkitSuites.some((each) => each.endsWith("Tests")));
         check("HelloWorld's example test runs with the rest - as an AppKit build on its .build/appkit, or as plain Swift",
             findSuites(root.uri.fsPath, "appkit").some((each) => each.label === "apps/HelloWorld"
@@ -161,8 +161,8 @@ export async function run(): Promise<void> {
             && plainSuites.some((each) => each.label === "apps/HelloWorld"));
         check("with no host the core and the Gallery run as plain Swift, and no host's own package",
             plainSuites.some((each) => each.label === "SwiftOmniUI") && plainSuites.some((each) => each.label === "apps/Gallery")
-            && plainSuites.every((each) => each.command === "swift" && Object.keys(each.env).length === 0 && !each.onDevice)
-            && !plainSuites.some((each) => each.label === "lib/SwiftOmniUI/SwiftOmniUI.AppKit" || each.label === "lib/SwiftOmniUI/SwiftOmniUI.Android/Tests"));
+            && plainSuites.every((each) => each.command === "swift" && each.env.SWIFTOMNIUI_HOST === "" && !each.onDevice)
+            && !plainSuites.some((each) => each.label === "SwiftOmniUIAppKit" || each.label === "lib/SwiftOmniUI.Android/Tests"));
 
         // 6. Android: the environment, the language server's file, the
         //    devices, and the commands a launch and a suite run - captured,
@@ -174,12 +174,12 @@ export async function run(): Promise<void> {
         {
             const asWinUI = otherHostsExcluded("winui", { "**/mine": true, "**/lib/SwiftOmniUI/SwiftOmniUI.WinUI": true });
             const excluded = Object.keys(asWinUI).filter((pattern) => asWinUI[pattern]);
-            check("as WinUI the Swift extension loads no other host's package nor backend, and the user's own exclusions stay",
-                excluded.includes("**/lib/SwiftOmniUI/SwiftOmniUI.Android") && excluded.includes("**/lib/Backends/*.GTK")
-                && !excluded.some((pattern) => pattern.endsWith(".WinUI")) && asWinUI["**/mine"] === true
-                && Object.keys(otherHostsExcluded(undefined, {})).length === hosts.length * 2);
-            check("every host's own package stands where its exclusion names it",
-                hosts.every((host) => fs.existsSync(path.join(root.uri.fsPath, "lib", "SwiftOmniUI", `SwiftOmniUI.${host.label}`, "Package.swift"))));
+            check("the root manifest selects hosts, old package exclusions are removed, and user exclusions stay",
+                JSON.stringify(excluded) === JSON.stringify(["**/mine"]) && asWinUI["**/mine"] === true
+                && Object.keys(otherHostsExcluded(undefined, {})).length === 0);
+            const manifest = fs.readFileSync(path.join(root.uri.fsPath, "Package.swift"), "utf8");
+            check("every host is declared as a target in the root package",
+                hosts.every((host) => manifest.includes(`name: "SwiftOmniUI${host.label}"`)));
         }
         {
             const sdk = "swift-6.4.0-RELEASE_android";
@@ -300,11 +300,11 @@ export async function run(): Promise<void> {
             check("android runs the core and the Gallery as plain Swift, and no AppKit",
                 androidSuites.some((each) => each.label === "SwiftOmniUI" && forDevice(each, "emulator-5554") === each)
                 && galleryRun?.args.join(" ") === `test --package-path ${gallery}` && Object.keys(galleryRun.env).length === 0
-                && !androidSuites.some((each) => each.label === "lib/SwiftOmniUI/SwiftOmniUI.AppKit"));
+                && !androidSuites.some((each) => each.label === "SwiftOmniUIAppKit"));
             check("android runs test-android.sh <serial> on the device, and only android does",
-                onDevice.length === 1 && onDevice[0].label === "lib/SwiftOmniUI/SwiftOmniUI.Android/Tests"
+                onDevice.length === 1 && onDevice[0].label === "lib/SwiftOmniUI.Android/Tests"
                 && [onDevice[0].command, ...onDevice[0].args].join(" ") === `bash ${path.join(root.uri.fsPath, ".scripts", "Android", "test-android.sh")} emulator-5554`
-                && !appkitSuites.includes("lib/SwiftOmniUI/SwiftOmniUI.Android/Tests"));
+                && !appkitSuites.includes("lib/SwiftOmniUI.Android/Tests"));
         }
         // 6a. UIKit: the language server's file, the simulators, and the
         //     commands a launch and a suite run - captured, not run.
@@ -410,9 +410,9 @@ export async function run(): Promise<void> {
             const onSimulator = uiKitSuites.filter((each) => each.onDevice).map((each) => forDevice(each, "SIM-1"));
             check("uikit runs the core and the Gallery as plain Swift, and test-uikit.sh <udid> on the simulator",
                 uiKitSuites.some((each) => each.label === "SwiftOmniUI")
-                && onSimulator.length === 1 && onSimulator[0].label === "lib/SwiftOmniUI/SwiftOmniUI.UIKit/Tests"
+                && onSimulator.length === 1 && onSimulator[0].label === "lib/SwiftOmniUI.UIKit/Tests"
                 && [onSimulator[0].command, ...onSimulator[0].args].join(" ") === `bash ${path.join(root.uri.fsPath, ".scripts", "UIKit", "test-uikit.sh")} SIM-1`
-                && !uiKitSuites.some((each) => each.label === "lib/SwiftOmniUI/SwiftOmniUI.AppKit" || each.label === "lib/SwiftOmniUI/SwiftOmniUI.Android/Tests"));
+                && !uiKitSuites.some((each) => each.label === "SwiftOmniUIAppKit" || each.label === "lib/SwiftOmniUI.Android/Tests"));
         }
 
         // 6b. WinUI: HelloWorld's head, built by run-app.ps1 -BuildOnly and
@@ -449,7 +449,7 @@ export async function run(): Promise<void> {
             check("winui runs the core and the Gallery as plain Swift, its own package by test-winui.ps1, and no AppKit or Android",
                 winUISuites.some((each) => each.label === "SwiftOmniUI")
                 && own?.command === "powershell" && own.args[own.args.length - 1].endsWith("test-winui.ps1")
-                && !winUISuites.some((each) => each.label === "lib/SwiftOmniUI/SwiftOmniUI.AppKit" || each.label === "lib/SwiftOmniUI/SwiftOmniUI.Android/Tests"));
+                && !winUISuites.some((each) => each.label === "SwiftOmniUIAppKit" || each.label === "lib/SwiftOmniUI.Android/Tests"));
         }
 
         // 6c. GTK: HelloWorld's head, built by run-app.sh --build-only and
@@ -487,7 +487,7 @@ export async function run(): Promise<void> {
             check("gtk runs the core and the Gallery as plain Swift, its own tests' package by swift test, and no other host's",
                 gtkSuites.some((each) => each.label === "SwiftOmniUI")
                 && own?.command === "swift" && own.args.join(" ") === `test --package-path ${testing}`
-                && !gtkSuites.some((each) => ["lib/SwiftOmniUI/SwiftOmniUI.AppKit", "lib/SwiftOmniUI/SwiftOmniUI.WinUI", "lib/SwiftOmniUI/SwiftOmniUI.Android/Tests",
+                && !gtkSuites.some((each) => ["SwiftOmniUIAppKit", "lib/SwiftOmniUI/SwiftOmniUI.WinUI", "lib/SwiftOmniUI.Android/Tests",
                     "lib/Backends/WebView.WinUI"].includes(each.label)));
         }
 
@@ -558,7 +558,7 @@ export async function run(): Promise<void> {
                 webSuites.some((each) => each.label === "SwiftOmniUI") && webSuites.some((each) => each.label === "apps/Gallery")
                 && own?.command === "bash" && own.args[0] === path.join(root.uri.fsPath, ".scripts", "Web", "test-web.sh")
                 && webSuites.filter((each) => each !== own).every((each) => each.command === "swift" && !each.onDevice)
-                && !webSuites.some((each) => ["lib/SwiftOmniUI/SwiftOmniUI.AppKit", "lib/SwiftOmniUI/SwiftOmniUI.GTK/Testing"].includes(each.label)));
+                && !webSuites.some((each) => ["SwiftOmniUIAppKit", "lib/SwiftOmniUI/SwiftOmniUI.GTK/Testing"].includes(each.label)));
             check("the Web makes no conformance marks yet", rebuildSteps(root.uri.fsPath, "web", "all") === undefined);
         }
 

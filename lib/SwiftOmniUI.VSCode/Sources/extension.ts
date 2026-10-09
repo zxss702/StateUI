@@ -58,8 +58,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<SwiftO
     /** The applications that have a head for `host`. */
     const runnable = (host: Host): Application[] => applications().filter((each) => hasHead(each, host));
 
-    // The packages whose manifest reads a host's variable: the applications.
-    const roots = (): string[] => applications().map((each) => each.directory);
+    // Both the library root and its consumers select targets with the host variable.
+    const roots = (): string[] => [...new Set([
+        ...applications().flatMap((each) => [each.directory, ...(each.checkout ? [each.checkout] : [])]),
+        ...(vscode.workspace.workspaceFolders ?? []).map((each) => each.uri.fsPath).filter(isCheckout),
+    ])];
 
     // The one chosen, where this machine runs it; else the first this machine
     // runs that an application here has a head for; none where it runs none.

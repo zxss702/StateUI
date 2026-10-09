@@ -1,8 +1,8 @@
 # SwiftOmniUI core
 
-The core is the `SwiftOmniUI` library, in `lib/SwiftOmniUI/Sources`: one dynamic
-library, the same on every platform, which every application and every host
-links, so a process holds one copy of SwiftOmniUI's types. It imports no
+The core is the `SwiftOmniUI` target, in `lib/SwiftOmniUI/Sources`, exposed by
+an ordinary library product from the root package. Every host depends on that
+target directly. It imports no
 Foundation and no platform framework, depends on no package and exports no C
 function. It owns the UI tree, state, identity and diffing, the state side of
 the display cycle, the timing laws of animation, acts, scenes and sessions, and
@@ -22,7 +22,7 @@ decides again; one concept has one owner, one spelling and one source:
   depends on it through `@_spi(Host)`, a host reaches it only through that
   boundary, and the core depends on nothing. A relay in a platform's own
   language never calls the core; it is handed pointers, never ownership.
-  ([The packages](../design/architecture.md#the-packages))
+  ([The package and targets](../design/architecture.md#the-package-and-targets))
 - **One declaration of state.** `@State` is the only one. Read in a body, a
   write rebuilds that body (reactive path 1); handed on as `$x`, the host
   carries it with no rebuild (reactive path 2). Its journey is part of it.
@@ -556,12 +556,12 @@ never against a stored copy
   resolves every `Design:` reference and holds the golden rule of comments;
   `DocumentationTests` refuses an undocumented public declaration;
   `LicenceTests` holds the SPDX lines; `NativeProjectTests` keeps each host a
-  sibling package named only under its condition, and a library that exports
+  target selected by the root manifest, and a library that exports
   no C function; `RuntimeArchitectureTests` reads every host's sources
   ([what a host never does](host-layer.md#what-a-host-never-does));
   `ToolchainTests`, `ReleaseTests`, `AppsTests` and `VsCodeTests` keep one
   Swift release, one version, the applications and the editor.
-- **The host layer's suite**, `swift test --package-path lib/SwiftOmniUI.Host`,
+- **The host layer's suite**, `swift test --filter SwiftOmniUIHostTests`,
   proves its rules with no toolkit, the core's `HostMotionLaw` among them
   (`MotionLawTests`). ([Testing](host-layer.md#testing))
 - **The conformance suite**, `lib/SwiftOmniUI.Conformance`, proves the contract's

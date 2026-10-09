@@ -62,13 +62,12 @@ rewrite; it moves on the display cycle with no rebuild at all (reactive path 2).
 
 ## The typed boundary
 
-Every host is Swift in the application's process. It links the core's dynamic
-library and calls `HostBoundary`, behind `@_spi(Host)`: `render(baseline:)`
+Every host is Swift in the application's process. Its target depends directly on core
+and calls `HostBoundary`, behind `@_spi(Host)`: `render(baseline:)`
 answers a typed `HostRender` holding the sparse `HostPatch`, `cycle` a
 `HostCycle`, `takeActCalls` typed `HostActCall`s, and the reports come back
 the same way - `dispatch`, `report`, `reply`, `raise`, one setter per standard
-provider. One process holds one copy of SwiftOmniUI's types, and nothing
-serializes the patch between the core and a host. Code in a platform's own
+provider. Nothing serializes the patch between the core and a host. Code in a platform's own
 language - Java through JNI, C++ behind a C ABI - is a relay beneath the Swift
 host and never calls the core.
 

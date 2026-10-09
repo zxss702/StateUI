@@ -70,7 +70,8 @@ if ($LASTEXITCODE) { throw "the WinUI head of $name did not build" }
 Write-Host "laying the Windows App SDK beside ${name}WinUI.exe"
 $bin = (swift build --package-path $application -c $Configuration --scratch-path $scratch --show-bin-path @arch).Trim()
 $executable = Join-Path $bin "${name}WinUI.exe"
-Set-SwiftOmniUISelfContained -Directory $bin -Executables $executable -Architecture $Architecture
+$backends = @(Get-SwiftOmniUILinkedBackends -Package $application -Product "${name}WinUI")
+Set-SwiftOmniUISelfContained -Directory $bin -Executables $executable -Architecture $Architecture -Backends $backends
 
 # The application's pictures stand beside it, where its WinUI host reads them.
 # They live at Resources\Images, or - a library holding its own assets - Sources\<target>\Assets\Images.

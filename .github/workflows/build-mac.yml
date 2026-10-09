@@ -30,13 +30,17 @@ jobs:
       - name: Report the toolchain
         run: swift --version
       - name: Test SwiftOmniUI
-        run: swift test
+        run: swift test --filter SwiftOmniUITests
       - name: Test SwiftOmniUI.Host
-        run: swift test --package-path lib/SwiftOmniUI.Host
+        run: swift test --filter SwiftOmniUIHostTests
+      - name: Foundation bridge tests
+        run: swift test --filter SwiftOmniUIFoundationTests
+      - name: JsonData bridge tests
+        run: swift test --filter SwiftOmniUIJsonDataTests
       # The conformance runner's own rules and every contract's family complete,
       # pure Swift: no host runs here, so no verdict is read or written.
       - name: Test SwiftOmniUI.Conformance
-        run: swift test --package-path lib/SwiftOmniUI.Conformance
+        run: swift test --filter SwiftOmniUIConformanceTests
 
   gallery:
     name: Gallery

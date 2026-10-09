@@ -176,7 +176,7 @@ breakpoint in the application's Swift holds from the first line.
 ## Testing
 
 ```bash
-swift test --package-path lib/SwiftOmniUI.GTK
+SWIFTOMNIUI_HOST=gtk swift test --filter SwiftOmniUIGTKTests
 ```
 
 The suite is XCTest. GTK's widgets stand on the test thread with no main loop

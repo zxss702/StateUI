@@ -221,7 +221,7 @@ Platform-native classes are implementation choices behind semantic SwiftOmniUI
 tokens. They never enter application source, `HostPatch`, event payloads, or
 state values.
 
-Each host is a sibling package linked to the `SwiftOmniUI` library, so platform
+Each host is a target depending on `SwiftOmniUI` in the root package, so platform
 dependencies never enter the core. `PlacedLayout` and
 `GalleryView` remain SwiftOmniUI-owned composition mechanisms and do not justify a
 larger renderer surface.

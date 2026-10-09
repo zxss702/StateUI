@@ -26,7 +26,7 @@ its parts; [the host layer](../../internals/host-layer.md) maps them.
        |
        v
   toolkit half             frame signal, each element's native half,
-  one package per host     realizations, layout views, scrolling, gestures,
+  one target per host     realizations, layout views, scrolling, gestures,
   (lib/SwiftOmniUI.AppKit,     focus, accessibility, windows and menus
   lib/SwiftOmniUI.Android,
   lib/SwiftOmniUI.WinUI,
@@ -36,8 +36,8 @@ its parts; [the host layer](../../internals/host-layer.md) maps them.
   native views
 ```
 
-A host links the core's dynamic library and takes the typed patch, so one
-process holds one copy of SwiftOmniUI's types.
+A host target depends directly on core and Host in the root package and takes
+the typed patch. Module boundaries remain; internal dynamic-library boundaries do not.
 
 ## The parts
 
