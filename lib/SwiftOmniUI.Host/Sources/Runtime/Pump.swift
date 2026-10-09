@@ -116,7 +116,13 @@
 
     /// Applies the core's render; a drifted one is asked for whole, once.
     private func render() {
+        #if DEBUG
+        let started = now()
+        #endif
         let rendered = core.render(baseline: intake.baseline)
+        #if DEBUG
+        let applied = now()
+        #endif
 
         if !intake.take(rendered.root, generation: rendered.generation, apply: {
             tree.apply($0, complete: rendered.complete)
@@ -129,6 +135,10 @@
         }
 
         displayCycle.presentStateChannels()
+        #if DEBUG
+        let finished = now()
+        if finished - started > 32 { print("LAZY RENDER core=\(applied - started) patch=\(finished - applied)") }
+        #endif
         presenter?.presentRendered()
     }
 }

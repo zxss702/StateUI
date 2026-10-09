@@ -182,6 +182,13 @@ final class WinUIRenderer {
 
 extension WinUIRenderer: TurnPresenter {
     func presentRendered() {
+        #if DEBUG
+        let started = WinUIFrameClock.monotonic(), before = WinUILayoutView.sizings
+        defer {
+            let elapsed = WinUIFrameClock.monotonic() - started
+            if elapsed > 32 { print("LAZY PRESENT duration=\(elapsed) sizings=\(WinUILayoutView.sizings - before)") }
+        }
+        #endif
         showWindows()
         if let text = scenes.changed(root: runtime.tree.root) { WinUIPersistence.writeScenes(text) }
     }
