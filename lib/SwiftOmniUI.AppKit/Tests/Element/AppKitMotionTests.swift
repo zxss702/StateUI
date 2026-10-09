@@ -126,7 +126,7 @@ final class AppKitMotionTests: XCTestCase {
         XCTAssertEqual(stack.padding.left, 0, accuracy: 0.000_001)
         XCTAssertEqual(stack.padding.bottom, 0, accuracy: 0.000_001)
         XCTAssertEqual(stack.padding.right, 0, accuracy: 0.000_001)
-        XCTAssertEqual(stack.spacing, 0, accuracy: 0.000_001)
+        XCTAssertEqual(try XCTUnwrap(stack.spacing), 0, accuracy: 0.000_001)
 
         now = 100
         renderer.advanceAnimationsForTesting()
@@ -134,7 +134,7 @@ final class AppKitMotionTests: XCTestCase {
         XCTAssertEqual(stack.padding.left, 10, accuracy: 0.000_001)
         XCTAssertEqual(stack.padding.bottom, 40, accuracy: 0.000_001)
         XCTAssertEqual(stack.padding.right, 30, accuracy: 0.000_001)
-        XCTAssertEqual(stack.spacing, 5, accuracy: 0.000_001)
+        XCTAssertEqual(try XCTUnwrap(stack.spacing), 5, accuracy: 0.000_001)
     }
 
     @MainActor
@@ -183,7 +183,7 @@ final class AppKitMotionTests: XCTestCase {
             1)
         XCTAssertEqual(stack.padding.top, 20, accuracy: 0.000_001)
         XCTAssertEqual(stack.padding.left, 10, accuracy: 0.000_001)
-        XCTAssertEqual(stack.spacing, 5, accuracy: 0.000_001)
+        XCTAssertEqual(try XCTUnwrap(stack.spacing), 5, accuracy: 0.000_001)
         XCTAssertEqual(nativeLabel.alphaValue, 0.5, accuracy: 0.000_001)
         XCTAssertEqual(
             try XCTUnwrap(nativeLabel.layer).affineTransform().tx,
