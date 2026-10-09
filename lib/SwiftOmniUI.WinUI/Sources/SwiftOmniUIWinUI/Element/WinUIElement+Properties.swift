@@ -119,6 +119,14 @@ extension WinUIElement {
         }
 
         (view ?? parent?.nearestView)?.invalidateMeasure()
+        // Native panels report zero DesiredSize; marking only a changed descendant can skip the
+        // placing parents even after their Swift arithmetic was discarded.
+        var layout = (view ?? parent?.nearestView)?.placingLayout
+        while let parent = layout {
+            parent.forgetMeasurements()
+            parent.invalidateMeasure()
+            layout = (parent as? WinUIScrollDocument)?.scrollView ?? parent.placingLayout
+        }
     }
 
     /// Hands the scroller's reports to this element, and its wish for the display's frames to the renderer.

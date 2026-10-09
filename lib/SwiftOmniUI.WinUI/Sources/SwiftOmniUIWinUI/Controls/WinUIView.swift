@@ -198,17 +198,11 @@ class WinUIView {
             // that proposal after this pass and discard the ancestors' provisional arithmetic. Coalesce all
             // proposals for this view into one turn; once measured, the same arrangement posts nothing.
             if !pendingMeasures.contains(where: { $0.width == width && $0.height == height }) {
-                #if DEBUG
-                print("LAZY-PROPOSAL-QUEUE", WinUIFrameClock.monotonic(), number, String(describing: type(of: self)), String(describing: width), desiredSize)
-                #endif
                 let scheduled = !pendingMeasures.isEmpty
                 pendingMeasures.append((width, height))
                 if !scheduled {
                     WinUIDoorbell.afterPass { [weak self] in
                         guard let self else { return }
-                        #if DEBUG
-                        print("LAZY-PROPOSAL-RUN", WinUIFrameClock.monotonic(), self.number)
-                        #endif
                         let proposals = self.pendingMeasures
                         self.pendingMeasures.removeAll(keepingCapacity: true)
                         for proposal in proposals {
@@ -217,9 +211,9 @@ class WinUIView {
                         var ancestor = self.placingLayout
                         while let layout = ancestor {
                             layout.forgetMeasurements()
-                            ancestor = layout.placingLayout
+                            layout.invalidateMeasure()
+                            ancestor = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
                         }
-                        self.placingLayout?.invalidateMeasure()
                     }
                 }
             }
@@ -253,16 +247,17 @@ class WinUIView {
             // pass ends - measuring an element while WinUI arranges marks it for another pass, for ever.
             // Design: docs/design/platforms/winui/layout.md#measured-every-pass
             if let layout = self as? WinUILayoutView, placingLayout != nil {
-                if layout.standsAt != place.width,
-                   !measuredSizes.contains(where: { $0.width == Double(Float(place.width)) && $0.height == nil }) {
-                    #if DEBUG
-                    print("LAZY-WIDTH-QUEUE", WinUIFrameClock.monotonic(), number, String(describing: type(of: self)), place)
-                    #endif
+                if layout.standsAt != place.width {
                     WinUIDoorbell.afterPass { [weak self] in
-                        #if DEBUG
-                        print("LAZY-WIDTH-RUN", WinUIFrameClock.monotonic(), self?.number ?? 0)
-                        #endif
-                        _ = self?.measure(width: place.width, height: nil)
+                        guard let self, let layout = self as? WinUILayoutView, let width = layout.standsAt else { return }
+                        layout.invalidateMeasurements()
+                        _ = self.measure(width: width, height: nil)
+                        var ancestor = self.placingLayout
+                        while let parent = ancestor {
+                            parent.forgetMeasurements()
+                            parent.invalidateMeasure()
+                            ancestor = (parent as? WinUIScrollDocument)?.scrollView ?? parent.placingLayout
+                        }
                     }
                 }
                 layout.standsAt = place.width

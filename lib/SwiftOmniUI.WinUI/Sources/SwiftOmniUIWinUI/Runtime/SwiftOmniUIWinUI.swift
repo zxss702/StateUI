@@ -80,10 +80,6 @@ enum WinUICallbacks {
                 MainActor.assumeIsolated {
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
                     scroller.nextOffset = Point(x: x, y: y)
-                    for ear in scroller.ears where ear.owner != nil { ear.moved() }
-                    #if DEBUG
-                    print("LAZY-SCROLLING", WinUIFrameClock.monotonic(), view, x, y)
-                    #endif
                     scroller.ears.removeAll { $0.owner == nil }
                     for ear in scroller.ears { ear.moved() }
                 }
@@ -92,9 +88,8 @@ enum WinUICallbacks {
                 MainActor.assumeIsolated {
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
                     scroller.nextOffset = nil
-                    #if DEBUG
-                    print("LAZY-SCROLLED", WinUIFrameClock.monotonic(), view, x, y)
-                    #endif
+                    scroller.ears.removeAll { $0.owner == nil }
+                    for ear in scroller.ears { ear.moved() }
                     scroller.onScrolled?(Point(x: x, y: y))
                     WinUIRenderer.shared?.runtime.frames.laidOut()
                 }

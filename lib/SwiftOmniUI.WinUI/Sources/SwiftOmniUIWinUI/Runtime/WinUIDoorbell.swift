@@ -41,8 +41,9 @@ extension WinUIDoorbell {
     /// Runs `work` in the next turn posted, once the layout pass under way is over: what a pass decides - a split
     /// view's first room - is said once WinUI has finished laying out.
     @MainActor static func afterPass(_ work: @escaping @MainActor () -> Void) {
+        let needsTurn = pending.isEmpty
         pending.append(work)
-        swiftomniui_winui_post_turn()
+        if needsTurn { swiftomniui_winui_post_turn() }
     }
 
     /// Work waiting for the pass under way to end.

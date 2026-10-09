@@ -737,6 +737,7 @@ void swiftomniui_winui_scroller_modes(SwiftOmniUIObjectRef scroller, int32_t ver
 /// Moves the scroller's view to `x`, `y` DIPs at once; the scroller keeps it within what it can reach, and says where
 /// it stands through `scrolled` once it has moved.
 void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef scroller, double x, double y, bool animated);
+/// Commits the displayed document offset after its virtualized window has been arranged.
 void swiftomniui_winui_scroller_commit(SwiftOmniUIObjectRef content, double x, double y, bool virtualized);
 
 /// Where the scroller's view would stand for `descendant` where the anchors say, in DIPs, read into `place`: the
@@ -748,7 +749,8 @@ void swiftomniui_winui_scroller_place_for(SwiftOmniUIObjectRef scroller, SwiftOm
 /// Where the scroller's view stands, then the farthest it reaches across and down, in DIPs: four values.
 void swiftomniui_winui_scroller_offset(SwiftOmniUIObjectRef scroller, double *offset);
 
-/// The viewport in a descendant's coordinates, calculated in the document so composition scrolling cannot lag.
+/// Six DIPs: document-relative viewport x, y, width, height, then the descendant's displayed x, y
+/// relative to the native scroll content presenter. The last pair preserves ancestor clipping.
 void swiftomniui_winui_scroller_viewport(SwiftOmniUIObjectRef scroller, SwiftOmniUIObjectRef descendant, double *viewport);
 
 /// An ItemsView: WinUI's ItemsView over the identities the host gives it; the cell of each entry is the host's

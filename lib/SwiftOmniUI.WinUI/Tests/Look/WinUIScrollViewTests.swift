@@ -14,9 +14,9 @@ final class WinUIScrollViewTests: XCTestCase {
         try onUIThread {
             let host = WinUIRenderer.running {
                 VStack {
-                    ScrollView { ColorPicker(.red).frame(height: 2000) }.frame(height: 100)
+                    ScrollView { Rectangle().fill(.red).frame(height: 2000) }.frame(height: 100)
                 }
-                .frame(height: 300)
+                .frame(height: 300, alignment: .top)
                 .verticalAlignment(.start)
             }
             let stack = try XCTUnwrap(host.views(WinUIStackView.self).first)
@@ -30,7 +30,7 @@ final class WinUIScrollViewTests: XCTestCase {
         try onUIThread {
             let host = WinUIRenderer.running {
                 ScrollView {
-                    ColorPicker(.red).frame(height: 400)
+                    Rectangle().fill(.red).frame(height: 400)
                 }
                 .contentPadding(10)
                 .shape(.roundedRectangle(20))

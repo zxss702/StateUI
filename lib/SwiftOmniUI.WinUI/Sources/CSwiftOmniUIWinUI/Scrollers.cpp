@@ -7,7 +7,11 @@
 
 #include "Relay.h"
 
+#include <algorithm>
 #include <cmath>
+#include <winrt/Microsoft.UI.Composition.h>
+#include <winrt/Microsoft.UI.Xaml.Hosting.h>
+#include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <winrt/Windows.Foundation.h>
 
 using namespace swiftomniui;
@@ -178,16 +182,21 @@ extern "C" void swiftomniui_winui_scroller_offset(SwiftOmniUIObjectRef handle, d
 extern "C" void swiftomniui_winui_scroller_viewport(
     SwiftOmniUIObjectRef handle, SwiftOmniUIObjectRef descendant, double *viewport
 ) {
-    viewport[0] = viewport[1] = viewport[2] = viewport[3] = 0;
+    std::fill_n(viewport, 6, 0);
     try {
         auto scroller = borrow<controls::ScrollViewer>(handle);
         auto content = scroller.Content().try_as<xaml::UIElement>();
         if (!content) return;
-        auto corner = as<xaml::UIElement>(descendant).TransformToVisual(content).TransformPoint({0, 0});
+        auto element = as<xaml::UIElement>(descendant);
+        auto corner = element.TransformToVisual(content).TransformPoint({0, 0});
         viewport[0] = scroller.HorizontalOffset() - corner.X;
         viewport[1] = scroller.VerticalOffset() - corner.Y;
         viewport[2] = scroller.ViewportWidth();
         viewport[3] = scroller.ViewportHeight();
+        auto parent = xaml::Media::VisualTreeHelper::GetParent(content).as<xaml::UIElement>();
+        auto displayed = element.TransformToVisual(parent).TransformPoint({0, 0});
+        viewport[4] = displayed.X;
+        viewport[5] = displayed.Y;
     } catch (...) {
         report("reading a descendant's scroll viewport");
     }
