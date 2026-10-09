@@ -70,11 +70,6 @@
         let now = element?.value(.items)?.strings ?? []
         let revision = element?.lazyContentRevision ?? 0
         guard now != identities || revision != contentRevision else { return false }
-        #if DEBUG
-        if contentRevision >= 0 {
-            print("LAZY SOURCE same=\(now == identities) rev=\(contentRevision)->\(revision) count=\(now.count) built=\(built)")
-        }
-        #endif
         if contentRevision >= 0 {
             animatesChanges = true
             inserting.formUnion(Set(now).subtracting(identities))
@@ -142,7 +137,6 @@
         let revision = grid ? runs.revision : extents.revision
         guard window?.span != span || window?.revision != revision || window?.perRun != perRun else { return }
         let moved = window?.revision == revision && window?.span != span
-        if moved { inserting.removeAll() }
         window = (span, revision, perRun)
         searches += 1
         let wanted = grid
@@ -163,6 +157,7 @@
         let lower = min(identities.count, max(0, wanted.lowerBound - 1) * perRun)
         let upper = min(identities.count, (wanted.upperBound + 1) * perRun)
         let within = !wanted.isEmpty && lower < upper ? lower..<upper : 0..<0
+        inserting.formIntersection(identities[within])
         guard within != built else { return }
         if !inserting.isDisjoint(with: identities[within]) { animatesChanges = true }
         built = within
