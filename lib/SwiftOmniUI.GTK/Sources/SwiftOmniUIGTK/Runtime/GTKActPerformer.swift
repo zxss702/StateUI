@@ -95,8 +95,6 @@ final class GTKActPerformer {
     /// it, an empty list a cancel; a `Choice` keeps the dialog and the call
     /// until GTK is heard.
     private func chooseFiles(_ call: HostActCall, window: GTKWindow?) {
-        guard let window else { return fail(call, "there is no window to ask in") }
-
         let dialog = gtk_file_dialog_new()!
         let multiple = call.arguments.value(0)?.bool ?? false
         let types = call.arguments.value(1)?.strings ?? []
@@ -118,9 +116,9 @@ final class GTKActPerformer {
             MainActor.assumeIsolated { choice.finish(result) }
         }
         if multiple {
-            gtk_file_dialog_open_multiple(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+            gtk_file_dialog_open_multiple(dialog, window?.widget.of(GtkWindow.self), nil, ready, data)
         } else {
-            gtk_file_dialog_open(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+            gtk_file_dialog_open(dialog, window?.widget.of(GtkWindow.self), nil, ready, data)
         }
     }
 
@@ -128,8 +126,6 @@ final class GTKActPerformer {
     /// answer it as `ChosenFile`s, an empty list a cancel; a `FolderChoice`
     /// keeps the dialog and the call until GTK is heard.
     private func openFolders(_ call: HostActCall, window: GTKWindow?) {
-        guard let window else { return fail(call, "there is no window to ask in") }
-
         let dialog = gtk_file_dialog_new()!
         let multiple = call.arguments.value(0)?.bool ?? false
         let choice = FolderChoice(call: call, dialog: dialog, multiple: multiple, core: core)
@@ -140,9 +136,9 @@ final class GTKActPerformer {
             MainActor.assumeIsolated { choice.finish(result) }
         }
         if multiple {
-            gtk_file_dialog_select_multiple_folders(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+            gtk_file_dialog_select_multiple_folders(dialog, window?.widget.of(GtkWindow.self), nil, ready, data)
         } else {
-            gtk_file_dialog_select_folder(dialog, window.widget.of(GtkWindow.self), nil, ready, data)
+            gtk_file_dialog_select_folder(dialog, window?.widget.of(GtkWindow.self), nil, ready, data)
         }
     }
 
