@@ -122,7 +122,7 @@ final class WebWindowController {
         let split = chrome.sidebarToggle?.web.view as? WebSplitView
         window.bar.show(chrome, title: title, sidebar: split?.isPresented)
         // The page the user sees may stand with no bar over it.
-        window.bar.setShown(presentation.arrangement?.visiblePage?.value(.hasNavigationBar)?.bool != false)
+        window.bar.setShown(presentation.arrangement?.visiblePage?.pageValue(.hasNavigationBar)?.bool != false)
         for (page, sheet) in sheets {
             let own = WindowChrome(window: element, arrangement: page)
             let named = own.title.flatMap { $0.isEmpty ? nil : $0 } ?? ""

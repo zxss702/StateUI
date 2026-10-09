@@ -28,8 +28,8 @@ extension WinUIElement {
                 children.map { child in
                     // A badge stands by its tab's title in brackets, the way
                     // the platform counts in tab labels.
-                    let title = child.value(.title)?.string ?? ""
-                    guard let badge = child.value(.badge)?.string, !badge.isEmpty else { return title }
+                    let title = child.pageValue(.title)?.string ?? ""
+                    guard let badge = child.pageValue(.badge)?.string, !badge.isEmpty else { return title }
                     return title.isEmpty ? badge : "\(title) (\(badge))"
                 },
                 requested: value(.currentPage)?.number.map { Int($0) })

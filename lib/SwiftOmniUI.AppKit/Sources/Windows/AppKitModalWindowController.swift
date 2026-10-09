@@ -56,8 +56,8 @@ final class AppKitModalWindowController: NSWindowController, NSWindowDelegate {
             window.contentView = content
         }
         let page = node.element.visiblePage
-        window.title = page?.value(.title)?.string ?? "SwiftOmniUI"
-        allowsUserDismissal = !(page?.value(.interactiveDismissDisabled)?.bool ?? false)
+        window.title = page?.pageValue(.title)?.string ?? "SwiftOmniUI"
+        allowsUserDismissal = !(page?.pageValue(.interactiveDismissDisabled)?.bool ?? false)
         window.standardWindowButton(.closeButton)?.isEnabled = allowsUserDismissal
         sizeForDetents(of: page, window)
     }
@@ -65,7 +65,7 @@ final class AppKitModalWindowController: NSWindowController, NSWindowDelegate {
     /// A macOS sheet has no detents: the first one asked for becomes the
     /// sheet's height, measured against the parent.
     private func sizeForDetents(of page: MountedElement?, _ window: NSWindow) {
-        guard let detents = page?.value(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
+        guard let detents = page?.pageValue(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
               let first = detents.first,
               let parent = window.sheetParent ?? window.parent ?? stateUIOwner?.window
         else { return }

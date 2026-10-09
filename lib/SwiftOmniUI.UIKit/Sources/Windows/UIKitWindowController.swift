@@ -81,7 +81,7 @@ final class UIKitWindowController {
         }
         presentation.arrangement?.uiKit.composeChrome()
         presentation.sheets.forEach { $0.uiKit.composeChrome() }
-        let title = presentation.arrangement?.titledPage?.value(.title)?.string
+        let title = presentation.arrangement?.titledPage?.pageValue(.title)?.string
         window?.windowScene?.title = title.flatMap { $0.isEmpty ? nil : $0 } ?? element.value(.title)?.string
     }
 
@@ -217,10 +217,10 @@ final class UIKitRootViewController: UIViewController, UIAdaptivePresentationCon
     /// What the page asks of its sheet: the detents UIKit can truly run, the
     /// grabber, and whether a swipe may take it away.
     private func apply(_ page: MountedElement?, to sheet: UIViewController) {
-        sheet.isModalInPresentation = page?.value(.interactiveDismissDisabled)?.bool ?? false
+        sheet.isModalInPresentation = page?.pageValue(.interactiveDismissDisabled)?.bool ?? false
 
         guard let sheetController = sheet.sheetPresentationController else { return }
-        if let asked = page?.value(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
+        if let asked = page?.pageValue(.presentationDetents).flatMap({ [PresentationDetent](propValue: $0) }),
            !asked.isEmpty {
             sheetController.detents = asked.map { detent in
                 switch detent {
@@ -233,7 +233,7 @@ final class UIKitRootViewController: UIViewController, UIAdaptivePresentationCon
                 }
             }
         }
-        if let visibility = page?.value(.presentationDragIndicator).flatMap({ Visibility(propValue: $0) }),
+        if let visibility = page?.pageValue(.presentationDragIndicator).flatMap({ Visibility(propValue: $0) }),
            visibility != .automatic {
             sheetController.prefersGrabberVisible = visibility == .visible
         }

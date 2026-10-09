@@ -103,6 +103,10 @@ enum EventBuffer {
 /// The differ whose handler is running.
 enum DispatchContext {
     nonisolated(unsafe) static var differ: Differ?
+
+    /// The keyed environment the running handler was registered under - a
+    /// view it stores for later mounting carries it.
+    nonisolated(unsafe) static var envValues: EnvironmentValues?
 }
 
 /// The outcome of the act being answered, read by the continuation it resumes.

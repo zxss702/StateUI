@@ -180,6 +180,9 @@ extension Node {
         stack.children = overlays.layers.map { key, view in
             var node = view.node
             node.key = key.name
+            if let written = overlays.environments[key] {
+                node.environmentValues = node.environmentValues.overlaid(with: written)
+            }
             return node
         }
         return Node(contract: OverlayContract.self, children: [stack])

@@ -182,9 +182,12 @@ final class Differ {
 
         var patch = HostPatch(id: rendered.id, type: rendered.type)
 
-        // What this element provided stays in scope while its children are walked.
+        // What this element provided stays in scope while its children are walked -
+        // its keyed writes overlaid the same way `element` found them.
         scope.append(contentsOf: rendered.provided)
-        defer { scope.removeLast(rendered.provided.count) }
+        let outerValues = envValues
+        envValues = envValues.overlaid(with: rendered.environmentValues)
+        defer { scope.removeLast(rendered.provided.count); envValues = outerValues }
 
         // A kept element's `.focusedValue` writes keep the subtree inside the
         // publishing branch, the way `element` finds them on a fresh node.
@@ -264,20 +267,36 @@ final class Differ {
 
             let heard = watch.last
             rendered.preferenceWatches[index].last = answer
-            fired.append { try await watch.run(heard, answer) }
+            fire { try await watch.run(heard, answer) }
         }
 
         return (rendered, patch)
     }
 
-    /// What an element's event runs - the handler knows its own differ.
+    /// The keyed environment each handler was registered under, by handler id.
+    var handlerEnvironments: [Int: EnvironmentValues] = [:]
+
+    /// What an element's event runs - the handler knows its own differ and the
+    /// keyed environment it was registered in.
     func handler(_ id: Int) -> EventHandler? {
         guard let found = handlers[id] else { return nil }
 
         return { [weak self] in
             DispatchContext.differ = self
-            defer { DispatchContext.differ = nil }
+            DispatchContext.envValues = self?.handlerEnvironments[id]
+            defer { DispatchContext.differ = nil; DispatchContext.envValues = nil }
             try await found()
+        }
+    }
+
+    /// A handler queued for the end of a walk, run under the keyed environment
+    /// it was registered in.
+    func fire(_ handler: @escaping EventHandler) {
+        let environment = envValues
+        fired.append {
+            DispatchContext.envValues = environment
+            defer { DispatchContext.envValues = nil }
+            try await handler()
         }
     }
 
@@ -305,6 +324,7 @@ final class Differ {
     func forget(_ node: RenderedNode) {
         for id in node.events.values {
             handlers.removeValue(forKey: id)
+            handlerEnvironments.removeValue(forKey: id)
         }
 
         // Its code objects: no host asks of an element that left.

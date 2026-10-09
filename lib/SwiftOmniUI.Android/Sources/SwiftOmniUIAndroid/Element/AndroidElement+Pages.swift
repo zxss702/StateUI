@@ -44,7 +44,7 @@ extension AndroidElement {
         var row = AndroidTabbedView.Row()
         row.tabs = children.map { tab in
             AndroidTabbedView.Tab(
-                title: tab.value(.title)?.string ?? "",
+                title: tab.pageValue(.title)?.string ?? "",
                 picture: tab.value(.icon)?.string.flatMap { $0.isEmpty ? nil : $0 })
         }
         row.background = value(.barBackgroundColor)
@@ -117,7 +117,7 @@ extension AndroidElement {
         let colors = page?.barColors ?? element.barColors
 
         var content = AndroidBarView.Content()
-        content.title = element.titledPage?.value(.title)?.string ?? ""
+        content.title = element.titledPage?.pageValue(.title)?.string ?? ""
         content.background = colors.background
         content.foreground = BandWords.color(on: colors.background, written: colors.foreground)
         content.actions = shown.map { item in

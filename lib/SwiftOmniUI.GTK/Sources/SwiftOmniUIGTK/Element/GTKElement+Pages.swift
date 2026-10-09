@@ -31,9 +31,9 @@ extension GTKElement {
     var chrome: GTKPageChrome {
         if type == .tabView {
             var chrome = element.selectedTab?.visiblePage?.gtk.chrome ?? GTKPageChrome()
-            chrome.title = element.titledPage?.value(.title)?.string
+            chrome.title = element.titledPage?.pageValue(.title)?.string
                 ?? element.enclosing(type: .windowScene)?.value(.title)?.string ?? ""
-            chrome.subtitle = element.titledPage?.value(.subtitle)?.string ?? ""
+            chrome.subtitle = element.titledPage?.pageValue(.subtitle)?.string ?? ""
             chrome.tabs = (view as? GTKTabbedView)?.switcher
             chrome.showsBar = value(.hasNavigationBar)?.bool != false
             chrome.offersBack = value(.hasBackButton)?.bool != false
@@ -42,11 +42,11 @@ extension GTKElement {
         }
 
         var chrome = GTKPageChrome()
-        chrome.title = value(.title)?.string ?? ""
-        chrome.subtitle = value(.subtitle)?.string ?? ""
+        chrome.title = element.pageValue(.title)?.string ?? ""
+        chrome.subtitle = element.pageValue(.subtitle)?.string ?? ""
         chrome.titleView = element.slotContent(.titleView)?.gtk.view
-        chrome.showsBar = value(.hasNavigationBar)?.bool != false
-        chrome.offersBack = value(.hasBackButton)?.bool != false
+        chrome.showsBar = element.pageValue(.hasNavigationBar)?.bool != false
+        chrome.offersBack = element.pageValue(.hasBackButton)?.bool != false
         (chrome.barBackground, chrome.barForeground) = element.barColors
         // The scene's commands stand once in a window, on the bar at its leading edge - a split view's sidebar
         // while it shows, else the page the user sees - not on every bar an arrangement shows.
@@ -97,7 +97,7 @@ extension GTKElement {
                 if index == children.count - 1 { chrome.sidebar = sidebar }
                 frame.show(chrome)
                 navigation.describe(
-                    frame, title: page.element.visiblePage?.value(.title)?.string ?? "", canPop: chrome.offersBack)
+                    frame, title: page.element.visiblePage?.pageValue(.title)?.string ?? "", canPop: chrome.offersBack)
                 page.composeChrome()
             }
         case .navigationSplitView:

@@ -115,6 +115,16 @@ class GTKTextView: GTKView {
         gtk_label_set_yalign(widget.opaque, vertical == .start ? 0 : vertical == .center ? 0.5 : 1)
     }
 
+    /// Where the label's contents stand inside the bounds its `frame` gave it, across.
+    func setContentAlignment(horizontal: AxisAlignment) {
+        gtk_label_set_xalign(widget.opaque, horizontal == .start ? 0 : horizontal == .end ? 1 : 0.5)
+    }
+
+    /// Where the label's contents stand inside the bounds its `frame` gave it, down.
+    func setContentAlignment(vertical: AxisAlignment) {
+        gtk_label_set_yalign(widget.opaque, vertical == .start ? 0 : vertical == .end ? 1 : 0.5)
+    }
+
     override func travels(to destination: Rect?) {
         bound = destination
     }

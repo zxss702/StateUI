@@ -15,6 +15,10 @@ public struct WindowOverlays {
     /// The layers, in the order each key was first written.
     private(set) var layers: [(key: OverlayKey, view: any View)] = []
 
+    /// The keyed environment each layer was written under - the layer mounts
+    /// at the window but resolves as though written where it was.
+    private(set) var environments: [OverlayKey: EnvironmentValues] = [:]
+
     /// None.
     public init() {}
 
@@ -26,9 +30,15 @@ public struct WindowOverlays {
             let index = layers.firstIndex { $0.key == key }
 
             switch (index, newValue) {
-            case let (index?, view?): layers[index].view = view
-            case let (index?, nil): layers.remove(at: index)
-            case let (nil, view?): layers.append((key, view))
+            case let (index?, view?):
+                layers[index].view = view
+                environments[key] = DispatchContext.envValues
+            case let (index?, nil):
+                layers.remove(at: index)
+                environments.removeValue(forKey: key)
+            case let (nil, view?):
+                layers.append((key, view))
+                environments[key] = DispatchContext.envValues
             case (nil, nil): break
             }
         }

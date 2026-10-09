@@ -86,16 +86,25 @@ final class WinUIScrollView: WinUILayoutView {
     private var defaultAnchor: (x: Double, y: Double)?
     private var anchoredOnce = false
 
+    /// Whether each axis moves only where the content fills the view: WinUI's `ScrollMode`.
+    private var modes = (vertical: Int32(1), horizontal: Int32(1))
+
     /// The scroller's orientation, padding, bars, where a reader's default
     /// anchor asks it to begin, and an offset the tree moved it to.
     func apply(
         orientation: Axis, padding: EdgeInsets, verticalBar: ScrollIndicatorVisibility,
-        horizontalBar: ScrollIndicatorVisibility, defaultAnchor: UnitPoint?, offset: Point?
+        horizontalBar: ScrollIndicatorVisibility, defaultAnchor: UnitPoint?, offset: Point?,
+        bounce: ScrollBounceBehavior, bounceAxes: Axis.Set
     ) {
+        let mode: Int32 = bounce == .basedOnSize ? 2 : 1
+        modes = (vertical: bounceAxes.contains(.vertical) ? mode : 1,
+                 horizontal: bounceAxes.contains(.horizontal) ? mode : 1)
         if orientation != self.orientation || verticalBar != bars.vertical || horizontalBar != bars.horizontal {
             self.orientation = orientation
             bars = (verticalBar, horizontalBar)
             configure()
+        } else {
+            scroller.setModes(vertical: modes.vertical, horizontal: modes.horizontal)
         }
         document.padding = padding
         document.orientation = orientation
@@ -190,6 +199,7 @@ final class WinUIScrollView: WinUILayoutView {
     private func configure() {
         scroller.set(
             content: document, orientation: orientation, verticalBar: bars.vertical, horizontalBar: bars.horizontal)
+        scroller.setModes(vertical: modes.vertical, horizontal: modes.horizontal)
     }
 
     /// Scrolls until `descendant` stands where the anchors say: fractions

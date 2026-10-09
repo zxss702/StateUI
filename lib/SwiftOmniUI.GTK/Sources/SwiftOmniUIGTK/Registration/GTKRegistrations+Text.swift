@@ -24,6 +24,12 @@ extension GTKRegistrations {
             label.property(TextAlignmentElementContract.verticalTextAlignment) { view, alignment in
                 view.setAlignment(vertical: alignment ?? .start)
             }
+            label.property(ViewContract.horizontalContentAlignment) { view, alignment in
+                if let alignment { view.setContentAlignment(horizontal: alignment) }
+            }
+            label.property(ViewContract.verticalContentAlignment) { view, alignment in
+                if let alignment { view.setContentAlignment(vertical: alignment) }
+            }
             label.property(VisualElementContract.background) { view, background in
                 view.setBackground(background?.propValue)
             }

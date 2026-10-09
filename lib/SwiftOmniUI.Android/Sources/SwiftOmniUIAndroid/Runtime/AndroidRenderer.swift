@@ -241,13 +241,13 @@ final class AndroidRenderer {
     private var systemWayBack: WayBack? {
         if let way = presentation.wayBack {
             if case .dismissSheet = way,
-               presentation.sheets.last?.visiblePage?.value(.interactiveDismissDisabled)?.bool == true {
+               presentation.sheets.last?.visiblePage?.pageValue(.interactiveDismissDisabled)?.bool == true {
                 return nil
             }
             return way
         }
         guard let stack = (presentation.sheets.last ?? presentation.arrangement)?.visibleNavigationStack,
-              stack.children.count > 1, stack.children.last?.value(.hasBackButton)?.bool != false
+              stack.children.count > 1, stack.children.last?.pageValue(.hasBackButton)?.bool != false
         else { return nil }
         return .pop(stack)
     }

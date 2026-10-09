@@ -98,6 +98,8 @@ extension VisualElementProperties {
         modified { node in
             if let width { node.write(VisualElementContract.width, width) }
             if let height { node.write(VisualElementContract.height, height) }
+            node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
+            node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
             if alignment != .center {
                 node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
                 node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
@@ -128,6 +130,8 @@ extension VisualElementProperties {
             if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
             if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
             if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
+            node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
+            node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
             if alignment != .center {
                 node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
                 node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
@@ -498,6 +502,8 @@ extension View {
         revised { node in
             if let width { node.write(VisualElementContract.width, width) }
             if let height { node.write(VisualElementContract.height, height) }
+            node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
+            node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
             if alignment != .center {
                 node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
                 node.write(ViewContract.verticalAlignment, alignment.vertical.axis)
@@ -522,6 +528,8 @@ extension View {
             if let maxWidth { node.write(VisualElementContract.maximumWidth, maxWidth) }
             if let minHeight { node.write(VisualElementContract.minimumHeight, minHeight) }
             if let maxHeight { node.write(VisualElementContract.maximumHeight, maxHeight) }
+            node.write(ViewContract.horizontalContentAlignment, alignment.horizontal.axis)
+            node.write(ViewContract.verticalContentAlignment, alignment.vertical.axis)
             if alignment != .center {
                 node.write(ViewContract.horizontalAlignment, alignment.horizontal.axis)
                 node.write(ViewContract.verticalAlignment, alignment.vertical.axis)

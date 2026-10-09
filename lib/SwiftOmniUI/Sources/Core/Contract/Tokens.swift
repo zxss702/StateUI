@@ -177,6 +177,7 @@ extension NodeType {
     static let height = VisualElementContract.height.token
     static let hideSingle = PositionIndicatorContract.hideSingle.token
     static let horizontalAlignment = ViewContract.horizontalAlignment.token
+    static let horizontalContentAlignment = ViewContract.horizontalContentAlignment.token
 
     /// A stack's `alignment:` - or an overlay's - where the child names no
     /// `horizontalAlignment` of its own; the child's own, a shape's `.fill`
@@ -334,6 +335,7 @@ extension NodeType {
 
     static let value = SliderContract.value.token
     static let verticalAlignment = ViewContract.verticalAlignment.token
+    static let verticalContentAlignment = ViewContract.verticalContentAlignment.token
 
     /// The same as `horizontalAlignmentDefault`, down the other axis.
     static let verticalAlignmentDefault = Prop("verticalAlignmentDefault")

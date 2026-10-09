@@ -39,16 +39,16 @@ extension UIKitElement {
     var chrome: UIKitPageChrome {
         if type == .tabView {
             var chrome = element.selectedTab?.visiblePage?.uiKit.chrome ?? UIKitPageChrome()
-            chrome.title = element.titledPage?.value(.title)?.string ?? ""
+            chrome.title = element.titledPage?.pageValue(.title)?.string ?? ""
             return chrome
         }
 
         var chrome = UIKitPageChrome()
-        chrome.title = value(.title)?.string ?? ""
+        chrome.title = element.pageValue(.title)?.string ?? ""
         chrome.titleView = element.slotContent(.titleView)?.uiKit.view
-        chrome.showsBar = value(.hasNavigationBar)?.bool != false
-        chrome.offersBack = value(.hasBackButton)?.bool != false
-        chrome.backButtonTitle = value(.backButtonTitle)?.string
+        chrome.showsBar = element.pageValue(.hasNavigationBar)?.bool != false
+        chrome.offersBack = element.pageValue(.hasBackButton)?.bool != false
+        chrome.backButtonTitle = element.pageValue(.backButtonTitle)?.string
         (chrome.barBackground, chrome.barForeground) = element.barColors
         let actions = element.chromeActions
         // A spacer is room a navigation bar composes itself; the bar takes the actions alone.
@@ -105,8 +105,8 @@ extension UIKitElement {
             tabs.show(
                 children.compactMap { tab in
                     tab.controller.map {
-                        ($0, tab.value(.title)?.string ?? "", tab.value(.icon)?.string,
-                         tab.value(.badge)?.string)
+                        ($0, tab.pageValue(.title)?.string ?? "", tab.value(.icon)?.string,
+                         tab.pageValue(.badge)?.string)
                     }
                 },
                 requested: value(.currentPage)?.number.map { Int($0) })

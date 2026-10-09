@@ -16,7 +16,7 @@ extension MountedElement {
     /// `.toolbar { … }` under it wrote - a slot under a nested arrangement is
     /// that arrangement's own.
     public var chromeActions: (leading: [MountedElement], primary: [MountedElement], overflow: [MountedElement]) {
-        guard value(.hasNavigationBar)?.bool != false else { return ([], [], []) }
+        guard pageValue(.hasNavigationBar)?.bool != false else { return ([], [], []) }
 
         var items: [MountedElement] = []
         gatherToolbarItems(under: self, into: &items)

@@ -46,14 +46,14 @@ extension GTKElement {
         (view as? GTKNavigationView)?.titles = arranged.map { child in
             // A badge stands by its page's title in brackets, the way the
             // platform counts in tab labels.
-            let title = child.element.visiblePage?.value(.title)?.string ?? ""
-            guard let badge = child.element.visiblePage?.value(.badge)?.string, !badge.isEmpty else { return title }
+            let title = child.element.visiblePage?.pageValue(.title)?.string ?? ""
+            guard let badge = child.element.visiblePage?.pageValue(.badge)?.string, !badge.isEmpty else { return title }
             return title.isEmpty ? badge : "\(title) (\(badge))"
         }
         (view as? GTKSplitView)?.framedPanes = arranged.map { Self.framedTypes.contains($0.type) }
-        (view as? GTKSplitView)?.sidebarWidthBounds = arranged.first?.element.value(.preferredColumnWidth)?.numbers
+        (view as? GTKSplitView)?.sidebarWidthBounds = arranged.first?.element.pageValue(.preferredColumnWidth)?.numbers
         (view as? GTKSplitView)?.contentWidthBounds = arranged.count > 2
-            ? arranged[1].element.value(.preferredColumnWidth)?.numbers
+            ? arranged[1].element.pageValue(.preferredColumnWidth)?.numbers
             : nil
         if let custom = view as? GTKCustomLayoutView {
             custom.direction = element.layoutDirection

@@ -87,6 +87,9 @@ final class RenderedNode {
     /// What this element provided to its subtree, pushed again by the clean walk.
     var provided: [(key: ObjectIdentifier, object: AnyObject)]
 
+    /// The keyed environment this element wrote, overlaid again by the clean walk.
+    var environmentValues = EnvironmentValues()
+
     /// The `.focusedValue` bag this element publishes while the focus stands
     /// in its subtree - what the `FocusedValueStore`'s chain fold reads. Kept
     /// so the clean walk folds the same tree.

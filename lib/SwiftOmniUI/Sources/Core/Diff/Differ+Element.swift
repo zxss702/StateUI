@@ -347,6 +347,7 @@ extension Differ {
                 provided: Array(scope.suffix(pushed)),
                 seen: seen,
                 children: children)
+            result.environmentValues = node.environmentValues
             // Its writes and listeners fanned out into the children above; what
             // a parent's fold reads of it is theirs alone.
             result.preferenceValues = foldedPreferences(seeds: [], transforms: [], children: children)
@@ -505,7 +506,7 @@ extension Differ {
                 // Nil: the stored value is of another type, and the slot starts over.
                 if watch.matches(old) == false {
                     let new = watch.value
-                    fired.append { try await watch.run(old, new) }
+                    fire { try await watch.run(old, new) }
                 }
             }
         }
@@ -513,7 +514,7 @@ extension Differ {
         // `.onAppear` for an element that was not here.
         // Design: docs/design/core/identity-and-diffing.md#created-and-destroying
         if previous == nil {
-            fired.append(contentsOf: node.created)
+            node.created.forEach(fire)
 
             // A node type the host does not realize is said once, with near misses.
             if let unrealized = HostRealizations.unrealized(node.type) {
@@ -555,12 +556,14 @@ extension Differ {
             let handlerId = previous?.events[name] ?? allocateHandlerId()
             events[name] = handlerId
             handlers[handlerId] = handler
+            handlerEnvironments[handlerId] = envValues
         }
 
         if let previous = previous {
             // An event this element no longer handles takes its id with it.
             for (name, handlerId) in previous.events where events[name] == nil {
                 handlers.removeValue(forKey: handlerId)
+                handlerEnvironments.removeValue(forKey: handlerId)
             }
         }
 
@@ -656,10 +659,10 @@ extension Differ {
                 if previous?.preferenceWatches.count == node.preferenceObservers.count,
                     let heard = previous?.preferenceWatches[index].last {
                     if !observer.box.same(heard, answer) {
-                        fired.append { try await observer.run(heard, answer) }
+                        fire { try await observer.run(heard, answer) }
                     }
                 } else {
-                    fired.append { try await observer.run(answer, answer) }
+                    fire { try await observer.run(answer, answer) }
                 }
 
                 return PreferenceWatch(box: observer.box, last: answer, run: observer.run)
@@ -687,6 +690,7 @@ extension Differ {
             readings: readings,
             children: children
         )
+        result.environmentValues = node.environmentValues
         result.lazySource = lazySource
         result.sizesArrive = sizesArrive
         result.visualInput = visualInput

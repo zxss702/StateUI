@@ -17,6 +17,7 @@
 
 #include <shcore.h>
 #include <shlwapi.h>
+#include <wincodec.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -46,6 +47,21 @@ namespace {
     winrt::Windows::Foundation::Uri address(std::wstring path) {
         for (auto &character : path) if (character == L'\\') character = L'/';
         return winrt::Windows::Foundation::Uri(L"file:///" + path);
+    }
+
+    /// A bitmap's own size, read synchronously so the layout holds the room
+    /// the picture will take: a BitmapImage answers it only once decoded.
+    void bitmapSize(std::wstring const &path, double *size) {
+        winrt::com_ptr<IWICImagingFactory> factory;
+        if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                                    IID_PPV_ARGS(factory.put())))) return;
+        winrt::com_ptr<IWICBitmapDecoder> decoder;
+        if (FAILED(factory->CreateDecoderFromFilename(path.c_str(), nullptr, GENERIC_READ,
+                                                      WICDecodeMetadataCacheOnLoad, decoder.put()))) return;
+        winrt::com_ptr<IWICBitmapFrameDecode> frame;
+        if (FAILED(decoder->GetFrame(0, frame.put()))) return;
+        UINT width = 0, height = 0;
+        if (SUCCEEDED(frame->GetSize(&width, &height))) { size[0] = width; size[1] = height; }
     }
 
     /// Where attribute `name`'s value begins in an SVG's opening tag; npos for none.
@@ -291,6 +307,7 @@ extern "C" bool swiftomniui_winui_image_set(
                 report("reading a picture");
             }));
             image.Source(bitmap);
+            bitmapSize(path, size);
             return true;
         }
 

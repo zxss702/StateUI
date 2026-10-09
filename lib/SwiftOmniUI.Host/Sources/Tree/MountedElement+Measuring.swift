@@ -24,5 +24,6 @@ extension MountedElement {
         .stroke, .fill, .strokeWidth, .strokeDashPattern, .strokeDashOffset, .strokeLineCap, .strokeLineJoin,
         .strokeMiterLimit, .shape, .cornerRadius, .renderTransform, .barBackgroundColor, .barForegroundColor,
         .drawable, .scrollOffset, .clipsContent, .ignoresInput, .letsInputThrough,
+        .horizontalContentAlignment, .verticalContentAlignment,
     ]).union(transformProperties).union(accessibilityProperties)
 }

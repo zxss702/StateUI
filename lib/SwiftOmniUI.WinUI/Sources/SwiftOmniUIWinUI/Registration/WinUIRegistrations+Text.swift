@@ -21,6 +21,12 @@ extension WinUIRegistrations {
             label.property(TextAlignmentElementContract.verticalTextAlignment) { view, alignment in
                 view.setVerticalAlignment(alignment ?? .start)
             }
+            label.property(ViewContract.horizontalContentAlignment) { view, alignment in
+                if let alignment { view.setAlignment(horizontal: .init(rawValue: alignment.rawValue) ?? .center) }
+            }
+            label.property(ViewContract.verticalContentAlignment) { view, alignment in
+                if let alignment { view.setVerticalAlignment(.init(rawValue: alignment.rawValue) ?? .center) }
+            }
             label.property(VisualElementContract.background) { view, background in
                 view.setBackground(background?.propValue)
             }

@@ -46,6 +46,13 @@ extension MountedElement {
         }
     }
 
+    /// The page's own value of `prop`, else what its content's root carries: a
+    /// `.navigationTitle` or `.toolbar` written on the content names the page
+    /// itself, as the page holder does when lifting those properties.
+    public func pageValue(_ prop: Prop) -> HostValue? {
+        value(prop) ?? (type == .page ? children.first?.value(prop) : nil)
+    }
+
     /// The stack around the visible page, where the path has one.
     public var visibleNavigationStack: MountedElement? {
         switch type {
@@ -59,7 +66,7 @@ extension MountedElement {
     /// Whether the stack this element stands on shows its bar over it: over a page that keeps its bar, and over an
     /// arrangement only where the page it shows stands in no stack of its own - that stack's bar is the one.
     public var showsTheStacksBar: Bool {
-        guard let page = visiblePage, page.value(.hasNavigationBar)?.bool != false else { return false }
+        guard let page = visiblePage, page.pageValue(.hasNavigationBar)?.bool != false else { return false }
         return type == .page || visibleNavigationStack == nil
     }
 
@@ -101,7 +108,7 @@ extension MountedElement {
     /// The visible stack whose top page can go back: more than one page, and a top showing its bar and its way back.
     public var visibleBackStack: MountedElement? {
         guard let stack = visibleNavigationStack, stack.children.count > 1, let top = stack.children.last,
-              top.value(.hasNavigationBar)?.bool != false, top.value(.hasBackButton)?.bool != false
+              top.pageValue(.hasNavigationBar)?.bool != false, top.pageValue(.hasBackButton)?.bool != false
         else { return nil }
 
         return stack

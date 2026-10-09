@@ -71,16 +71,16 @@
     public init(window: MountedElement, arrangement: MountedElement?) {
         let page = arrangement?.visiblePage
         let titleBar = window.children.first { $0.type == .titleBar }
-        title = arrangement?.titledPage?.value(.title)?.string ?? window.value(.title)?.string
-        subtitle = arrangement?.titledPage?.value(.subtitle)?.string
+        title = arrangement?.titledPage?.pageValue(.title)?.string ?? window.value(.title)?.string
+        subtitle = arrangement?.titledPage?.pageValue(.subtitle)?.string
             ?? arrangement?.value(.subtitle)?.string
-        document = arrangement?.titledPage?.value(.document)?.string
+        document = arrangement?.titledPage?.pageValue(.document)?.string
             ?? arrangement?.value(.document)?.string
-        windowBackground = arrangement?.titledPage?.value(.windowBackground)
+        windowBackground = arrangement?.titledPage?.pageValue(.windowBackground)
             ?? arrangement?.value(.windowBackground)
-        toolbarVisibility = arrangement?.titledPage?.value(.toolbarVisibility)
+        toolbarVisibility = arrangement?.titledPage?.pageValue(.toolbarVisibility)
             ?? arrangement?.value(.toolbarVisibility)
-        toolbarBackground = arrangement?.titledPage?.value(.toolbarBackground)
+        toolbarBackground = arrangement?.titledPage?.pageValue(.toolbarBackground)
             ?? arrangement?.value(.toolbarBackground)
         back = arrangement?.visibleBackStack.map { stack in
             (stack, stack.children[stack.children.count - 2].value(.backButtonTitle)?.string ?? "Back")

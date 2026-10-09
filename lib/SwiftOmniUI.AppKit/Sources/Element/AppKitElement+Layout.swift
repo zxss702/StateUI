@@ -23,9 +23,11 @@ extension AppKitElement {
             label.apply(
                 attributedText: attributedLabelText(),
                 padding: insets(.contentPadding),
-                horizontalAlignment: textAlignment(enumeration(.multilineTextAlignment)),
+                horizontalAlignment: textAlignment(
+                    enumeration(.horizontalContentAlignment) ?? enumeration(.multilineTextAlignment)),
                 verticalAlignment: AppKitVerticalTextAlignment(
-                    rawValue: enumeration(.verticalTextAlignment) ?? 0) ?? .start,
+                    rawValue: enumeration(.verticalContentAlignment)
+                        ?? enumeration(.verticalTextAlignment) ?? 0) ?? .start,
                 breaking: lineBreak,
                 maximumNumberOfLines: lineLimit(),
                 selectable: value(.selectable)?.bool ?? false)
@@ -55,9 +57,9 @@ extension AppKitElement {
 
         if let split = view as? AppKitSplitView {
             split.apply(
-                sidebarWidth: children.first?.value(.preferredColumnWidth)?.numbers,
-                contentWidth: children.count > 2 ? children[1].value(.preferredColumnWidth)?.numbers : nil,
-                detailWidth: children.count > 1 ? children[children.count - 1].value(.preferredColumnWidth)?.numbers : nil)
+                sidebarWidth: children.first?.element.pageValue(.preferredColumnWidth)?.numbers,
+                contentWidth: children.count > 2 ? children[1].element.pageValue(.preferredColumnWidth)?.numbers : nil,
+                detailWidth: children.count > 1 ? children[children.count - 1].element.pageValue(.preferredColumnWidth)?.numbers : nil)
             split.setItems(items)
             return
         }

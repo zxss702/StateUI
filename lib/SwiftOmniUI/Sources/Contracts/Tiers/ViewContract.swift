@@ -90,6 +90,14 @@ public enum ViewContract: Contract {
     public static let horizontalAlignment = ElementProperty<Self, AxisAlignment>(
         "horizontalAlignment", layer: .native)
 
+    /// Where the view's contents stand inside the bounds `frame` gave it, across.
+    public static let horizontalContentAlignment = ElementProperty<Self, AxisAlignment>(
+        "horizontalContentAlignment", layer: .native)
+
+    /// Where the view's contents stand inside the bounds `frame` gave it, down.
+    public static let verticalContentAlignment = ElementProperty<Self, AxisAlignment>(
+        "verticalContentAlignment", layer: .native)
+
     /// The named coordinate spaces enclosing the view, innermost first, each
     /// its declaring view's frame in window coordinates; sent with a frame
     /// report, ahead of its numbers.
@@ -168,10 +176,11 @@ public enum ViewContract: Contract {
     public static let members: [any ContractMember] = [
         allowDrop, area, canDrag, coordinateSpaceName, dragLeave,
         dragOver, dragStarting, dragText, drop, dropCompleted, dropPaths, flex, frameChanged, gridColumn,
-        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, horizontalGuide, layoutPriority,
+        gridColumnSpan, gridRow, gridRowSpan, horizontalAlignment, horizontalContentAlignment, horizontalGuide,
+        layoutPriority,
         namedFramesChanged, padding, panTouchCount,
         panUpdated, panXChannel, panYChannel, pinchUpdated, pointerEntered, pointerExited,
         pointerMoved, pointerPressed, pointerReleased, pointerStyle, swipeDirection, swipeThreshold, swiped,
-        tag, tapCount, tapGesture, verticalAlignment, verticalGuide,
+        tag, tapCount, tapGesture, verticalAlignment, verticalContentAlignment, verticalGuide,
     ]
 }

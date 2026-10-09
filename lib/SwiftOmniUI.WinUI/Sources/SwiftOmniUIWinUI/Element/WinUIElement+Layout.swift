@@ -40,9 +40,9 @@ extension WinUIElement {
             return
         }
         if let split = view as? WinUISplitView {
-            split.sidebarPaneLength = arranged.first?.element.value(.preferredColumnWidth)?.numbers
+            split.sidebarPaneLength = arranged.first?.element.pageValue(.preferredColumnWidth)?.numbers
             split.contentPaneLength = arranged.count > 2
-                ? arranged[1].element.value(.preferredColumnWidth)?.numbers
+                ? arranged[1].element.pageValue(.preferredColumnWidth)?.numbers
                 : nil
         }
         if let custom = view as? WinUICustomLayoutView {

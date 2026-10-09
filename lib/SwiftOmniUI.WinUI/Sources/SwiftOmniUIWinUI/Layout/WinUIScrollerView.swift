@@ -41,6 +41,11 @@ final class WinUIScrollerView: WinUIView {
         swiftomniui_winui_scroller_set(handle, content.handle, way, Self.bar(verticalBar), Self.bar(horizontalBar))
     }
 
+    /// Whether each axis moves at all: WinUI's own `ScrollMode` - 0 off, 1 on, 2 where the content fills the view.
+    func setModes(vertical: Int32, horizontal: Int32) {
+        swiftomniui_winui_scroller_modes(handle, vertical, horizontal)
+    }
+
     private static func bar(_ visibility: ScrollIndicatorVisibility) -> Int32 {
         switch visibility {
         case .visible: 1
