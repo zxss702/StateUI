@@ -202,13 +202,23 @@ extern "C" void swiftomniui_winui_menu_button_set_indicator(SwiftOmniUIObjectRef
 extern "C" void swiftomniui_winui_menu_button_set_borderless(SwiftOmniUIObjectRef handle, int32_t borderless) {
     try {
         auto button = borrow<controls::Button>(handle);
+        auto transparent = xaml::Media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent());
+        for (auto key : {L"ButtonBackgroundPointerOver", L"ButtonBackgroundPressed", L"ButtonBackgroundDisabled",
+                        L"ButtonBorderBrushPointerOver", L"ButtonBorderBrushPressed", L"ButtonBorderBrushDisabled"}) {
+            auto name = winrt::box_value(key);
+            if (borderless) button.Resources().Insert(name, transparent);
+            else if (button.Resources().HasKey(name)) button.Resources().Remove(name);
+        }
         if (!borderless) {
             button.ClearValue(xaml::FrameworkElement::StyleProperty());
+            button.ClearValue(controls::Control::BackgroundProperty());
+            button.ClearValue(controls::Control::BorderThicknessProperty());
+            button.ClearValue(controls::Control::PaddingProperty());
             return;
         }
-        auto resources = xaml::Application::Current().Resources();
-        auto name = winrt::box_value(L"TextButtonStyle");
-        if (resources.HasKey(name)) button.Style(resources.Lookup(name).as<xaml::Style>());
+        button.Background(transparent);
+        button.BorderThickness({0, 0, 0, 0});
+        button.Padding({0, 0, 0, 0});
     } catch (...) {
         report("styling a menu button");
     }
