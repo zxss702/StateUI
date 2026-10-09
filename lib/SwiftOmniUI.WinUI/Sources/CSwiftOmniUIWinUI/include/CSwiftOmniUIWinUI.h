@@ -739,7 +739,6 @@ void swiftomniui_winui_scroller_modes(SwiftOmniUIObjectRef scroller, int32_t ver
 /// it stands through `scrolled` once it has moved.
 void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef scroller, double x, double y, bool animated);
 /// Commits the displayed document offset after its virtualized window has been arranged.
-void swiftomniui_winui_scroller_commit(SwiftOmniUIObjectRef content, double x, double y, bool virtualized);
 void swiftomniui_winui_scroller_anchor(SwiftOmniUIObjectRef element, bool enabled);
 
 /// Where the scroller's view would stand for `descendant` where the anchors say, in DIPs, read into `place`: the

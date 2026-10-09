@@ -9,12 +9,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
-#if DEBUG
-#include <cstdio>
-#endif
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <winrt/Windows.Foundation.h>
 
@@ -34,32 +28,6 @@ namespace {
 extern "C" SwiftOmniUIObjectRef swiftomniui_winui_scroller_make(int64_t view) {
     try {
         controls::ScrollViewer scroller;
-        scroller.AnchorRequested(guarded("choosing a lazy scroll anchor",
-            [](controls::ScrollViewer const &scroller, controls::AnchorRequestedEventArgs const &args) {
-            auto content = scroller.Content().try_as<xaml::UIElement>();
-            if (!content) return;
-            auto vertical = scroller.VerticalScrollMode() == controls::ScrollMode::Enabled;
-            auto offset = vertical ? scroller.VerticalOffset() : scroller.HorizontalOffset();
-            auto room = vertical ? scroller.ViewportHeight() : scroller.ViewportWidth();
-            double first = std::numeric_limits<double>::infinity();
-            xaml::UIElement anchor{nullptr};
-            for (auto const &candidate : args.AnchorCandidates()) {
-                auto element = candidate.as<xaml::FrameworkElement>();
-                auto bounds = element.TransformToVisual(content).TransformBounds(
-                    winrt::Windows::Foundation::Rect(0, 0, (float)element.ActualWidth(), (float)element.ActualHeight()));
-                auto start = vertical ? bounds.Y : bounds.X;
-                auto extent = vertical ? bounds.Height : bounds.Width;
-                if (start < offset + room && start + extent > offset && start < first) {
-                    first = start;
-                    anchor = candidate;
-                }
-            }
-            args.Anchor(anchor);
-            #if DEBUG
-            static int traced = 0;
-            if (traced++ < 80) std::printf("LAZY NATIVE ANCHOR offset=%f first=%f candidates=%u\n", offset, first, args.AnchorCandidates().Size());
-            #endif
-        }));
         scroller.ViewChanging(guarded("handling ViewChanging",
             [view](IInspectable const &, controls::ScrollViewerViewChangingEventArgs const &args) {
             auto next = args.NextView();
@@ -129,39 +97,6 @@ extern "C" void swiftomniui_winui_scroller_anchor(SwiftOmniUIObjectRef element, 
         auto view = as<xaml::UIElement>(element);
         if (view.CanBeScrollAnchor() != enabled) view.CanBeScrollAnchor(enabled);
     } catch (...) { report("registering a scroll anchor"); }
-}
-
-extern "C" void swiftomniui_winui_scroller_commit(SwiftOmniUIObjectRef content, double x, double y, bool virtualized) {
-    try {
-        auto element = as<xaml::UIElement>(content);
-        auto visual = xaml::Hosting::ElementCompositionPreview::GetElementVisual(element);
-        auto properties = visual.Properties();
-        winrt::Windows::Foundation::Numerics::float3 committed;
-        auto status = properties.TryGetVector3(L"RealizedScrollOffset", committed);
-        float active = 0;
-        properties.TryGetScalar(L"RealizedScrolling", active);
-        if (!virtualized) {
-            if (status == winrt::Microsoft::UI::Composition::CompositionGetValueStatus::Succeeded) {
-                visual.StopAnimation(L"Translation");
-                properties.InsertVector3(L"Translation", {0, 0, 0});
-                properties.InsertScalar(L"RealizedScrolling", 0);
-            }
-            return;
-        }
-        properties.InsertVector3(L"RealizedScrollOffset", {static_cast<float>(x), static_cast<float>(y), 0});
-        if (active != 1) {
-            xaml::Hosting::ElementCompositionPreview::SetIsTranslationEnabled(element, true);
-            // XAML owns the primary visual's offset and manipulation matrix. Translation is a separate
-            // prepend visual: cancel independent scrolling and apply only the offset arranged this pass.
-            auto expression = visual.Compositor().CreateExpressionAnimation(
-                L"Vector3(-Native.Offset.X - Native.TransformMatrix._41, "
-                L"-Native.Offset.Y - Native.TransformMatrix._42, 0) - Realized.RealizedScrollOffset");
-            expression.SetReferenceParameter(L"Native", visual);
-            expression.SetReferenceParameter(L"Realized", properties);
-            visual.StartAnimation(L"Translation", expression);
-            properties.InsertScalar(L"RealizedScrolling", 1);
-        }
-    } catch (...) { report("committing a virtualized scroller"); }
 }
 
 extern "C" void swiftomniui_winui_scroller_place_for(

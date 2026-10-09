@@ -35,10 +35,5 @@ final class WinUIScrollDocument: WinUILayoutView {
             item, padding: padding, orientation: orientation,
             in: LayoutSize(width: bounds.width, height: bounds.height))
         item.view.layout(arranged.place)
-        if let scrollView {
-            let virtualized = scrollView.scroller.ears.contains { $0.owner is WinUILazyView }
-            let offset = scrollView.scroller.nextOffset ?? scrollView.scroller.standing.offset
-            swiftomniui_winui_scroller_commit(handle, offset.x, offset.y, virtualized)
-        }
     }
 }
