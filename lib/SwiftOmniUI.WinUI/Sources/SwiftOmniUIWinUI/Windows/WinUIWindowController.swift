@@ -30,6 +30,9 @@ final class WinUIWindowController {
     /// the page the user sees and the window made before the window is first shown, and so before it hears it came
     /// to the front.
     func present(_ element: MountedElement, in runtime: HostRuntime, windowOf: (MountedElement) -> WinUIWindow?) {
+        #if DEBUG
+        let began = WinUIFrameClock.monotonic()
+        #endif
         self.element = element
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
@@ -38,12 +41,24 @@ final class WinUIWindowController {
         showSheets(presentation.sheets)
         if let overlay = changes.overlay { window.showOverlay(overlay?.winUI.view) }
         refreshChrome(in: runtime)
+        #if DEBUG
+        let refreshed = WinUIFrameClock.monotonic()
+        #endif
         boundContent(element, requested: changes.frame)
+        #if DEBUG
+        let bounded = WinUIFrameClock.monotonic()
+        #endif
         let asked = WindowFrame(of: element)
         if asked.x == nil, asked.y == nil, let anchor = element.value(.defaultPosition)?.numbers {
             window.place(anchor)
         }
         window.presentContent()
+        #if DEBUG
+        let presented = WinUIFrameClock.monotonic()
+        if presented - began > 5 {
+            print("LAZY WINDOW PRESENT refresh=\(refreshed - began) bounds=\(bounded - refreshed) window=\(presented - bounded)")
+        }
+        #endif
     }
 
     /// Stands the window as the element asks: the place, the size, the bounds and the traits the tree changed, and
@@ -55,16 +70,31 @@ final class WinUIWindowController {
     }
 
     private func boundContent(_ element: MountedElement, requested: WindowFrame?) {
+        #if DEBUG
+        let began = WinUIFrameClock.monotonic()
+        #endif
         let sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
             guard let item = node.winUI.layoutItem else { return nil }
             return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
         }
         if let traits { window.apply(traits, isResizable: sizing.isResizable) }
+        #if DEBUG
+        let measured = WinUIFrameClock.monotonic()
+        #endif
         let chromeHeight = window.chromeHeight
+        #if DEBUG
+        let caption = WinUIFrameClock.monotonic()
+        #endif
         window.boundContent(sizing.bounds, chromeHeight: chromeHeight)
         if let requested { window.requestContent(requested, chromeHeight: chromeHeight) }
         let frame = sizing.constrain(window.contentSize(chromeHeight: chromeHeight))
         if !frame.isEmpty { window.requestContent(frame, chromeHeight: chromeHeight) }
+        #if DEBUG
+        let ended = WinUIFrameClock.monotonic()
+        if ended - began > 5 {
+            print("LAZY BOUNDS sizing=\(measured - began) caption=\(caption - measured) setting=\(ended - caption)")
+        }
+        #endif
     }
 
     /// Keeps a sheet for each page shown as one, in its order, each under its page's title.

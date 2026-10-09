@@ -70,6 +70,10 @@ enum WinUICallbacks {
             },
             viewportChanged: { view, x, y, width, height in
                 MainActor.assumeIsolated {
+                    #if DEBUG
+                    let began = WinUIFrameClock.monotonic()
+                    defer { WinUILazyView.scrollTimes.append(WinUIFrameClock.monotonic() - began) }
+                    #endif
                     (WinUIView.find(view) as? WinUILazyView)?.viewportChanged(
                         Rect(x: x, y: y, width: width, height: height))
                 }
@@ -92,10 +96,6 @@ enum WinUICallbacks {
             },
             scrolling: { view, x, y in
                 MainActor.assumeIsolated {
-                    #if DEBUG
-                    let began = WinUIFrameClock.monotonic()
-                    defer { WinUILazyView.scrollTimes.append(WinUIFrameClock.monotonic() - began) }
-                    #endif
                     guard let scroller = WinUIView.find(view) as? WinUIScrollerView else { return }
                     #if DEBUG
                     print("LAZY CHANGING next=\(Point(x: x, y: y)) published=\(scroller.standing.offset)")
