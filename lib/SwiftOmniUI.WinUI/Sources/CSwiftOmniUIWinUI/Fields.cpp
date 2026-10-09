@@ -22,6 +22,20 @@ using namespace swiftomniui;
 namespace media = winrt::Microsoft::UI::Xaml::Media;
 
 namespace {
+    void centerSingleLine(controls::TextBox const &box) {
+        if (box.AcceptsReturn()) return;
+        box.ApplyTemplate();
+        std::vector<xaml::DependencyObject> pending{box};
+        while (!pending.empty()) {
+            auto at = pending.back(); pending.pop_back();
+            if (auto element = at.try_as<xaml::FrameworkElement>(); element &&
+                (element.Name() == L"ContentElement" || element.Name() == L"PlaceholderTextContentPresenter"))
+                element.VerticalAlignment(xaml::VerticalAlignment::Center);
+            for (int32_t index = 0, count = media::VisualTreeHelper::GetChildrenCount(at); index < count; ++index)
+                pending.push_back(media::VisualTreeHelper::GetChild(at, index));
+        }
+    }
+
     /// Tells the view `view` of each change of the box's words. TextChanging, not TextChanged: it is raised in the
     /// write that makes it, so a program's write is known as one, where TextChanged comes later.
     void hearWords(controls::TextBox const &box, int64_t view) {
@@ -59,6 +73,9 @@ namespace {
 extern "C" SwiftOmniUIObjectRef swiftomniui_winui_field_make(int64_t view) {
     try {
         controls::TextBox field;
+        field.Loaded(guarded("centering a field's words", [](IInspectable const &sender, xaml::RoutedEventArgs const &) {
+            centerSingleLine(sender.as<controls::TextBox>());
+        }));
         hearWords(field, view);
         hearEnter(field, view);
         return detach(field);
@@ -71,6 +88,7 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_field_make(int64_t view) {
 extern "C" void swiftomniui_winui_field_set_style(SwiftOmniUIObjectRef handle, int kind) {
     try {
         auto box = boxOf(handle);
+        if (kind == 0) kind = 1;
         auto transparent = media::SolidColorBrush(winrt::Windows::UI::Colors::Transparent());
         for (auto key : {L"TextControlBackgroundPointerOver", L"TextControlBackgroundFocused",
                         L"TextControlBackgroundDisabled", L"TextControlBorderBrushPointerOver",
@@ -79,8 +97,7 @@ extern "C" void swiftomniui_winui_field_set_style(SwiftOmniUIObjectRef handle, i
             if (kind == 1) box.Resources().Insert(name, transparent);
             else if (box.Resources().HasKey(name)) box.Resources().Remove(name);
         }
-        // The kind is logical: plain takes the chrome away, square is the same
-        // box unrounded, and everything else is the platform's own field.
+        // Automatic and plain are bare text; explicit border styles retain the native box.
         if (kind == 1) {
             box.Padding({0, 0, 0, 0});
             box.BorderThickness({0, 0, 0, 0});
@@ -92,6 +109,7 @@ extern "C" void swiftomniui_winui_field_set_style(SwiftOmniUIObjectRef handle, i
         }
         if (kind == 3) box.CornerRadius({0, 0, 0, 0});
         else box.ClearValue(controls::Control::CornerRadiusProperty());
+        centerSingleLine(box);
     } catch (...) {
         report("styling a field");
     }
