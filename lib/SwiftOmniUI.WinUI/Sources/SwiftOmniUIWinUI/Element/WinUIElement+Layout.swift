@@ -24,7 +24,7 @@ extension WinUIElement {
             lazy.setItems(element.arrangedChildren.compactMap { child in
                 guard case .manual(let identity) = child.id, let item = child.winUI.layoutItem
                 else { return nil }
-                return (identity, item)
+                return (child.lazyIdentity ?? identity, item)
             })
             return
         }

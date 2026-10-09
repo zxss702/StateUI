@@ -97,7 +97,10 @@
 
     /// The mounted subtree of `identity`, where there is one.
     public func item(_ identity: String) -> MountedElement? {
-        element?.children.first { $0.id == .manual(identity) }
+        element?.children.first {
+            if let source = $0.lazyIdentity { return source == identity }
+            return $0.id == .manual(identity)
+        }
     }
 
     /// The mounted children, each with the place its identity stands at, in
@@ -105,7 +108,8 @@
     public var mounted: [(place: Int, item: MountedElement)] {
         guard let element else { return [] }
         return element.children.compactMap { child in
-            guard case .manual(let identity) = child.id, let place = positions[identity] else { return nil }
+            guard case .manual(let identity) = child.id,
+                  let place = positions[child.lazyIdentity ?? identity] else { return nil }
             return (place, child)
         }
         .sorted { $0.0 < $1.0 }

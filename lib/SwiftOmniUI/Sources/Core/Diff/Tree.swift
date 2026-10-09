@@ -48,6 +48,9 @@ final class RenderedNode {
     /// The builder path the element was written at (`Node.key`).
     var key: String?
 
+    /// The source row this element contributes to its lazy parent's geometry.
+    var lazyIdentity: String?
+
     /// The composed views this element was built by, outermost first: each one's
     /// type, its state boxes by path, and what it was built with.
     /// Design: docs/design/core/identity-and-diffing.md#state-survives-a-rebuild
@@ -246,6 +249,7 @@ extension HostPatch {
     @_spi(Host) public var isEmpty: Bool {
         !replace
             && !lazyContentChanged
+            && lazyIdentity == nil
             && animation == nil
             && properties.isEmpty
             && clearedProperties.isEmpty
@@ -284,6 +288,7 @@ extension HostPatch {
         merged.clearedProperties.sort()
 
         merged.lazyContentChanged = lazyContentChanged || later.lazyContentChanged
+        merged.lazyIdentity = later.lazyIdentity ?? lazyIdentity
         merged.animation = later.animation ?? animation
         merged.driven = later.driven ?? driven
         merged.events = later.events ?? events

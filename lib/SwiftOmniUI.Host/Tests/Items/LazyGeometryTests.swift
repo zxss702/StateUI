@@ -6,6 +6,33 @@
 import XCTest
 
 final class LazyGeometryTests: XCTestCase {
+    @MainActor
+    func testExplicitViewIdentityKeepsItsLazySourcePositionAcrossUpdates() throws {
+        let runtime = HostRuntime.still()
+        var patch = HostPatch(id: .manual("lazy"), type: .lazyVStack)
+        patch.properties = [.items: .strings(["source-0", "source-1"])]
+        var row = HostPatch(id: .manual("business-row"), type: .text)
+        row.lazyIdentity = "source-1"
+        patch.children = .arranged([row])
+        runtime.tree.apply(patch, complete: true)
+        let cells = LazyCells(try XCTUnwrap(runtime.tree.root), in: runtime)
+        cells.takeItems()
+        let mounted = try XCTUnwrap(cells.item("source-1"))
+        XCTAssertEqual(mounted.id, .manual("business-row"))
+        XCTAssertEqual(cells.mounted.map(\.place), [1])
+        row.lazyIdentity = "source-0"
+        patch.children = .changed([row])
+        runtime.tree.apply(patch, complete: false)
+        XCTAssertTrue(cells.item("source-0") === mounted)
+        XCTAssertEqual(cells.mounted.map(\.place), [0])
+        row.lazyIdentity = nil
+        row.properties = [.text: .string("Updated")]
+        patch.children = .changed([row])
+        runtime.tree.apply(patch, complete: false)
+        XCTAssertEqual(mounted.lazyIdentity, "source-0", "sparse content patches keep source ownership")
+        XCTAssertEqual(cells.mounted.map(\.place), [0])
+    }
+
     func testEstimatedLengthAndExactIntersections() {
         let identities = (0..<10_000).map(String.init)
         var extents = LazyExtents()

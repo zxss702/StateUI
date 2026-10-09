@@ -25,7 +25,7 @@ extension GTKElement {
             lazy.setItems(element.arrangedChildren.compactMap { child in
                 guard case .manual(let identity) = child.id, let item = child.gtk.layoutItem
                 else { return nil }
-                return (identity, item)
+                return (child.lazyIdentity ?? identity, item)
             })
             return
         }
@@ -84,6 +84,12 @@ extension GTKElement {
     var layoutItem: GTKLayoutItem? {
         guard let view else { return children.lazy.compactMap(\.layoutItem).first }
 
+        #if DEBUG
+        if element.value(.maximumWidth) != nil || element.value(.width) != nil
+            || element.value(.horizontalAlignment) != nil {
+            GTKRenderer.log.note("ITEM-PROPS \(element.id) \(Swift.type(of: view)) rawMax=\(String(describing: element.value(.maximumWidth))) rawH=\(String(describing: element.value(.horizontalAlignment))) rawHD=\(String(describing: element.value(.horizontalAlignmentDefault))) values.h=\(element.layoutValues.horizontal) values.max=\(String(describing: element.layoutValues.maximumWidth))")
+        }
+        #endif
         var item = GTKLayoutItem(view: view, values: element.layoutValues, isShown: isShown)
         item.mount = element.mount
         item.codeId = element.id

@@ -50,7 +50,7 @@ extension AppKitElement {
             lazy.setItems(children.compactMap { child in
                 guard case .manual(let identity) = child.id, let item = child.layoutItem
                 else { return nil }
-                return (identity, item)
+                return (child.element.lazyIdentity ?? identity, item)
             })
             return
         }

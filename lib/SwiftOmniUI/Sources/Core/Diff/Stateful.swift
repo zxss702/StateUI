@@ -283,6 +283,7 @@ extension Node {
                 node.inherit(property, member: member)
             }
             node.hasExplicitFontBasis = node.hasExplicitFontBasis || written.hasExplicitFontBasis
+            node.lazyIdentity = written.lazyIdentity ?? node.lazyIdentity
 
             // A fragment keeps no element of its own to write on: what the author
             // wrote on the view lands on each child the body splices in.
@@ -361,6 +362,7 @@ extension Node {
             child.destroying += written.destroying
             child.engines += written.engines
             child.children += written.children
+            child.lazyIdentity = written.lazyIdentity ?? child.lazyIdentity
             if child.session == nil { child.session = written.session }
             child.id = written.id ?? child.id
             child.key = written.key.map { scope in
@@ -463,6 +465,7 @@ extension Node {
     /// them in scope already.
     mutating func absorbFragmentWrites(of fragment: Node, environments: Bool = true) {
         hasExplicitFontBasis = hasExplicitFontBasis || fragment.hasExplicitFontBasis
+        lazyIdentity = fragment.lazyIdentity ?? lazyIdentity
         props.merge(fragment.props) { _, wrote in wrote }
         driven.merge(fragment.driven) { _, wrote in wrote }
         animation = AnimationPlan.merged(animation, under: fragment.animation)

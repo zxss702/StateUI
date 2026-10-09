@@ -29,6 +29,9 @@
     /// Hosts invalidate cached offscreen sizes when that source can have changed.
     public var lazyContentChanged = false
 
+    /// The source row used by lazy geometry; the element's own `id` still retains its view.
+    public var lazyIdentity: String?
+
     /// Whether this render brings the complete element. Renderer-only merge
     /// bookkeeping; it is not part of the host contract and never crosses a
     /// typed boundary.

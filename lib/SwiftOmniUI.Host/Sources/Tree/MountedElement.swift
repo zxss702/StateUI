@@ -37,6 +37,8 @@ import CRT
 
     /// A content rebuild invalidates lazy measurements; viewport updates do not.
     public private(set) var lazyContentRevision = 0
+    /// A lazy parent's data identity, kept separately from the view's explicit `.id()`.
+    public private(set) var lazyIdentity: String?
     private var lazyIdentities: Set<String> = []
 
     /// The child the host keeps for this element as one its parent's view draws - a map's marker - the same object
@@ -146,6 +148,7 @@ import CRT
         }
 
         if patch.lazyContentChanged { lazyContentRevision += 1 }
+        if let identity = patch.lazyIdentity { lazyIdentity = identity }
         let previouslyShown = isPagePresented ? shownChildren : []
         var changed = Set(patch.clearedProperties)
         changed.formUnion(patch.properties.keys)
@@ -285,7 +288,7 @@ import CRT
         for child in before where !staying.contains(ObjectIdentifier(child)) {
             let recycling: Bool
             if case .manual(let identity) = child.id, let virtualized {
-                recycling = virtualized.contains(identity)
+                recycling = virtualized.contains(child.lazyIdentity ?? identity)
             } else {
                 recycling = false
             }
@@ -349,6 +352,7 @@ import CRT
     private func departed(_ child: MountedElement) {
         children.removeAll { $0 === child }
         native.arrangeChildren()
+        tree?.arrangementChanged = true
     }
 
     /// Ties this element to the channels of the states its properties wear.
@@ -400,9 +404,9 @@ import CRT
     /// The window this one belongs to: its scene's main window, where it is a window of a kind of its own; nil for a
     /// main window, and for any other element.
     public var ownerWindow: MountedElement? {
-        guard type == .windowScene, value(.windowType) != nil else { return nil }
+        guard type == .windowScene, id != .manual("main"), value(.windowType) != nil else { return nil }
 
-        return enclosing(type: .scene)?.windows.first { $0.value(.windowType) == nil }
+        return enclosing(type: .scene)?.windows.first { $0.id == .manual("main") }
     }
 
     /// The first element with key `sought` in this subtree, this one first.
@@ -576,13 +580,23 @@ import CRT
         case .hStack, .vStack, .zStack, .grid, .gridRow, .lazyHStack, .lazyVStack,
              .lazyHGrid, .lazyVGrid, .customLayout, .masked:
             var horizontal = false, vertical = false
-            for child in arrangedChildren {
-                let axes = child.layoutValues.scrollAxes
+            var expandsAcross = false, expandsDown = false
+            for child in currentChildren {
+                let childValues = child.layoutValues
+                let axes = childValues.scrollAxes
+                let expands = childValues.expandingAxes
+                expandsAcross = expandsAcross || expands == .horizontal || expands == .both
+                    || (childValues.flex != nil && childValues.width == nil && type != .vStack && type != .lazyVStack)
+                expandsDown = expandsDown || expands == .vertical || expands == .both
+                    || (childValues.flex != nil && childValues.height == nil
+                        && type != .hStack && type != .lazyHStack && type != .gridRow)
                 horizontal = horizontal || axes == .horizontal || axes == .both
                 vertical = vertical || axes == .vertical || axes == .both
             }
             values.scrollAxes = horizontal && vertical ? .both : horizontal ? .horizontal
                 : vertical ? .vertical : .neither
+            values.expandingAxes = expandsAcross && expandsDown ? .both : expandsAcross ? .horizontal
+                : expandsDown ? .vertical : .neither
         default:
             break
         }
@@ -599,8 +613,18 @@ import CRT
         let down = values.margin.top + values.margin.bottom
         values.minimumWidth = stated(.minimumWidth).map { max(0, $0 - across) }
         values.minimumHeight = stated(.minimumHeight).map { max(0, $0 - down) }
-        values.maximumWidth = stated(.maximumWidth).map { max(0, $0 - across) }
-        values.maximumHeight = stated(.maximumHeight).map { max(0, $0 - down) }
+        values.maximumWidth = number(.maximumWidth).flatMap { $0 >= 0 ? max(0, $0 - across) : nil }
+        values.maximumHeight = number(.maximumHeight).flatMap { $0 >= 0 ? max(0, $0 - down) : nil }
+        let expandsAcross = values.width == nil && (values.maximumWidth == .infinity
+            || value(.horizontalAlignment)?.enumeration == AxisAlignment.fill.rawValue
+            || values.expandingAxes == .horizontal || values.expandingAxes == .both
+            || values.scrollAxes == .horizontal || values.scrollAxes == .both)
+        let expandsDown = values.height == nil && (values.maximumHeight == .infinity
+            || value(.verticalAlignment)?.enumeration == AxisAlignment.fill.rawValue
+            || values.expandingAxes == .vertical || values.expandingAxes == .both
+            || values.scrollAxes == .vertical || values.scrollAxes == .both)
+        values.expandingAxes = expandsAcross && expandsDown ? .both : expandsAcross ? .horizontal
+            : expandsDown ? .vertical : .neither
         values.row = whole(.gridRow) ?? 0
         values.column = whole(.gridColumn) ?? 0
         values.priority = stated(.layoutPriority) ?? 0

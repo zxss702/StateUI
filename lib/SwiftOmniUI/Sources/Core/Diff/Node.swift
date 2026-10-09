@@ -230,6 +230,9 @@ public struct Node {
     /// a collection's rows need one.
     public var id: String?
 
+    /// The owning lazy source row, independent of a view's explicit identity.
+    var lazyIdentity: String?
+
     /// The aim put on this view with `.aim(_:)`: a box the differ fills with the
     /// element's key. It takes no part in matching and never crosses.
     var aim: AimBox?

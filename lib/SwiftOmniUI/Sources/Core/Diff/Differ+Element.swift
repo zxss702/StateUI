@@ -421,6 +421,9 @@ extension Differ {
         var patch = HostPatch(id: id, type: node.type)
         patch.replace = replace
         patch.fresh = describeAll || previous == nil
+        if patch.fresh || node.lazyIdentity != previous?.lazyIdentity {
+            patch.lazyIdentity = node.lazyIdentity
+        }
 
         // How this element's values animate: its own plan, or the application's.
         let plan = node.animation
@@ -692,6 +695,7 @@ extension Differ {
         )
         result.environmentValues = node.environmentValues
         result.lazySource = lazySource
+        result.lazyIdentity = node.lazyIdentity
         result.sizesArrive = sizesArrive
         result.visualInput = visualInput
         result.visualState = visualState
@@ -792,6 +796,7 @@ extension Differ {
         guard node.props == kept.props,
             node.inheritedMembers == kept.inheritedMembers,
             node.hasExplicitFontBasis == kept.hasExplicitFontBasis,
+            node.lazyIdentity == kept.lazyIdentity,
             node.animation == kept.animation,
             node.children.isEmpty, kept.children.isEmpty,
             node.engines.isEmpty, kept.engines.isEmpty,

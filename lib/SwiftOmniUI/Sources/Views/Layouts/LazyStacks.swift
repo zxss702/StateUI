@@ -302,6 +302,11 @@ struct LazyHStackElement: StackBase {
                 }
                 // A builder fragment has no box. Apply the container's defaults to its actual
                 // children, where explicit alignment and flexible frame modifiers are visible.
+                if child.type == .fragment, child.children.count == 1 {
+                    child.children[0].lazyIdentity = identity
+                } else if child.type != .fragment {
+                    child.lazyIdentity = identity
+                }
                 if child.type == .fragment {
                     for index in child.children.indices { prepare(&child.children[index], owner.place) }
                 } else {

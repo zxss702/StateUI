@@ -244,6 +244,30 @@ final class LazyStackTests: XCTestCase {
         let shown = try lazy(.lazyVStack, in: realize(["0.2"], in: renders, lazy: stack))
         XCTAssertEqual(shown.children.map(\.id), [.manual("row-2")], "the author's id names the row")
         XCTAssertEqual(shown.child("row-2")?.props[.text], .string("2"))
+        XCTAssertEqual(shown.child("row-2")?.lazyIdentity, "0.2", "geometry follows the source row")
+    }
+
+    @MainActor
+    func testExplicitIdsKeepSourceGeometryThroughComposedRowsInEveryLazyContainer() throws {
+        for type in [NodeType.lazyVStack, .lazyHStack, .lazyVGrid, .lazyHGrid] {
+            let renders = Renders()
+            let content = { ForEach(0..<10) { row in LazyPage { Text("Row \(row)") }.id("row-\(row)") } }
+            let patch = renders.render(LazyPage {
+                switch type {
+                case .lazyVStack: LazyVStack { content() }
+                case .lazyHStack: LazyHStack { content() }
+                case .lazyVGrid: LazyVGrid(columns: [GridItem()]) { content() }
+                default: LazyHGrid(rows: [GridItem()]) { content() }
+                }
+            }.node)
+            let container = try lazy(type, in: patch)
+            let shown = try lazy(type, in: realize(["0.2", "0.3"], in: renders, lazy: container))
+            XCTAssertEqual(shown.children.map(\.id), [.manual("row-2"), .manual("row-3")])
+            XCTAssertEqual(shown.children.map(\.lazyIdentity), ["0.2", "0.3"])
+            let moved = try lazy(type, in: realize(["0.3", "0.4"], in: renders, lazy: container))
+            XCTAssertEqual(moved.child("row-4")?.lazyIdentity, "0.4")
+            XCTAssertNil(moved.child("row-2"))
+        }
     }
 
     /// Static children beside a `ForEach` are named by place, built when the
