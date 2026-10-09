@@ -9,6 +9,64 @@ import XCTest
 /// arrives, and a child on its way bends, keeps its way, or stops as it leaves.
 @MainActor
 final class LayoutMotionTests: XCTestCase {
+    func testBusinessFrameReadArrivesEvenDuringAnExistingLayoutAnimation() {
+        for y in [2.0, 0.25] {
+            let layout = HandWoundLayout()
+            let moved = Placed()
+            layout.arrange([(moved, 1, Self.row(0, x: 80, y: 2))])
+            layout.arrange([(moved, 1, Self.row(0, x: 40, y: 2))])
+            layout.frame(at: 100)
+            layout.places.framesRead = true
+            let target = Self.row(0, x: 40, y: y)
+            layout.arrange([(moved, 1, target)], patched: false)
+            XCTAssertEqual(moved.placedFrame, target)
+            XCTAssertFalse(layout.animator.isMoving)
+        }
+    }
+
+    func testStationaryGeometryCorrectionKeepsTheOtherAxisOnItsOriginalTimeline() throws {
+        let layout = HandWoundLayout()
+        let moved = Placed()
+        layout.arrange([(moved, 1, Self.row(0, x: 80, y: 2))])
+        layout.arrange([(moved, 1, Self.row(0, x: 40, y: 2))])
+        layout.frame(at: 100)
+        let corrected = Self.row(0, x: 40, y: 0.25)
+        layout.arrange([(moved, 1, corrected)], width: 400, patched: false)
+        XCTAssertEqual(moved.placedFrame.x, 60, accuracy: 1e-9)
+        XCTAssertEqual(moved.placedFrame.y, 0.25, accuracy: 1e-9)
+        XCTAssertEqual(try XCTUnwrap(layout.animator.animation(for: .placed(1))).began, 0)
+        layout.frame(at: 150)
+        XCTAssertEqual(moved.placedFrame.x, 50, accuracy: 1e-9)
+        layout.frame(at: 200)
+        XCTAssertEqual(moved.placedFrame, corrected)
+        XCTAssertFalse(layout.animator.isMoving)
+    }
+
+    func testTextOriginReportsKeepLayoutMotionWhileGeometryReadsStillArrive() throws {
+        for event in [Event.textFrameChanged, .frameChanged] {
+            let runtime = HostRuntime.still()
+            var text = HostPatch(id: .manual("text"), type: .text)
+            text.events = .replace([event: 1])
+            var stack = HostPatch(id: .manual("stack"), type: .vStack)
+            stack.children = .arranged([text])
+            runtime.tree.apply(stack, complete: true)
+            let root = try XCTUnwrap(runtime.tree.root)
+            let words = try XCTUnwrap(root.children.first)
+            XCTAssertTrue(words.readsOwnFrame)
+            XCTAssertEqual(root.framesRead, event == .frameChanged)
+            let layout = HandWoundLayout()
+            layout.places.framesRead = root.framesRead
+            let moved = Placed()
+            layout.arrange([(moved, 1, Self.row(1))])
+            layout.arrange([(moved, 1, Self.row(0))])
+            XCTAssertEqual(moved.placedFrame.y, event == .frameChanged ? 0 : 40)
+            layout.frame(at: 100)
+            XCTAssertEqual(moved.placedFrame.y, event == .frameChanged ? 0 : 20)
+            layout.frame(at: 200)
+            XCTAssertEqual(moved.placedFrame.y, 0)
+        }
+    }
+
     /// A child a patch moves starts from where it stood, travels on the layout's law, and lands exactly on its new
     /// place; the first arrangement is an arrival.
     func testAChildAPatchMovesTravelsToItsNewPlace() {

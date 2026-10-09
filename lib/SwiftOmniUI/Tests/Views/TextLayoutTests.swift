@@ -70,6 +70,23 @@ private func findEvent(_ patch: HostPatch, _ event: String) -> Int? {
 }
 
 final class TextLayoutTests: XCTestCase {
+    func testTextOriginReportsDoNotBecomeBusinessGeometryReads() throws {
+        let renders = Renders()
+        let heard = Received<[Text.Layout]>()
+        let patch = renders.settled(stack([
+            LayoutEar(heard: heard) { Text("body") }.node,
+        ], id: "root"))
+        let handler = try XCTUnwrap(findEvent(patch, "textFrameChanged"))
+        XCTAssertNil(findEvent(patch, "frameChanged"))
+        XCTAssertFalse(Text("body").node.reportsFrame)
+        XCTAssertTrue(Text("body").onFrameChanged { _ in }.node.reportsFrame)
+        let layout = try XCTUnwrap(heard.values.first?.first)
+        XCTAssertNil(layout.origin.box.frame)
+        XCTAssertTrue(renders.fire(handler, with: [
+            .numbers([10, 20, 100, 14, 110, 220, 0, 44, 400, 600])]))
+        XCTAssertEqual(layout.origin.box.frame, Rect(110, 220, 100, 14))
+    }
+
     /// A picture among words is a run of one attachment glyph, its source on
     /// the run's `image` - what `NSTextAttachment` and Pango paint of it.
     func testAPictureStandsAsARun() {

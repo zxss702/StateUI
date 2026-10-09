@@ -30,11 +30,18 @@ extension PlacedView {
     /// Whether a child that joins the layout fades in.
     public var fades: Bool
 
+    /// Whether business geometry feedback requires the complete frame to arrive.
+    public var framesRead: Bool
+
     /// An arrangement that animates `lanes` under `law`, fading in a joining child when `fades`.
-    public init(law: Animation = .none, lanes: AnimationLanes = [], fades: Bool = false) {
+    public init(
+        law: Animation = .none, lanes: AnimationLanes = [],
+        fades: Bool = false, framesRead: Bool = false
+    ) {
         self.law = law
         self.lanes = lanes
         self.fades = fades
+        self.framesRead = framesRead
     }
 }
 
@@ -70,9 +77,11 @@ extension PlacedView {
     public func arrangement(said: Bool, resized: Bool, animation: HostLayoutMotion?, framesRead: Bool) -> Arrangement {
         let lanes = animation?.lanes ?? .all
 
-        guard said, !lanes.isEmpty, let law = law(of: animation) else { return Arrangement() }
+        guard said, !lanes.isEmpty, let law = law(of: animation)
+        else { return Arrangement(framesRead: framesRead) }
 
-        return Arrangement(law: law, lanes: resized || framesRead ? [] : lanes, fades: true)
+        return Arrangement(law: law, lanes: resized || framesRead ? [] : lanes,
+                           fades: true, framesRead: framesRead)
     }
 
     /// The timing `animation` resolves to, or nil where nothing animates.
@@ -116,8 +125,28 @@ extension PlacedView {
         let running = animator.animation(for: key)
 
         // The same place asked for again keeps its animation rather than starting it over.
-        if let running, running.destination == destination {
+        if let running, running.destination == destination, !arrangement.framesRead {
             if let standing = seat.standing { view.placedFrame = standing }
+            return
+        }
+
+        // A correction to a stationary side does not finish another side's journey.
+        // Keep its original timing while the corrected sides arrive immediately.
+        if let running, arrangement.lanes.isEmpty, !arrangement.framesRead,
+           destination.indices.allSatisfy({ running.destination[$0] == destination[$0]
+               || (running.from[$0] == running.destination[$0] && running.velocity[$0] == 0) }) {
+            var from = running.from
+            for index in destination.indices where running.destination[index] != destination[index] {
+                from[index] = destination[index]
+            }
+            let moved = RunningAnimation(from: from, destination: destination,
+                                         velocity: running.velocity, animation: running.animation,
+                                         began: running.began)
+            let standing = Self.rect(moved.position(at: now()).value)
+            animator.start(moved, for: key)
+            seats[mount]?.standing = standing
+            view.travels(to: target)
+            view.placedFrame = standing
             return
         }
 

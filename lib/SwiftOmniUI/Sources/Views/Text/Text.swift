@@ -79,12 +79,12 @@ public struct Text: VisualElement, TextElement, FontElement, TextAlignmentElemen
         var node = Node(contract: TextContract.self)
         let box = TextLayoutBox()
         node.textLayoutBox = box
-        // The text's own frame, watched like an `anchorPreference`'s box, is
-        // what `Layout.origin` reads - a laid-out text knows where it stands.
+        // The text's position feeds `Layout.origin` without treating every
+        // text as a business geometry read that suppresses layout animation.
         let anchorBox = AnchorBox()
-        node.addHandler(.frameChanged) {
+        node.addHandler(.textFrameChanged) {
             guard let numbers = MemberValues.carried(
-                EventBuffer.current, by: "frameChanged", as: [Double].self),
+                EventBuffer.current, by: "textFrameChanged", as: [Double].self),
                 let report = FrameReport(numbers)
             else { return }
             anchorBox.frame = report.global
