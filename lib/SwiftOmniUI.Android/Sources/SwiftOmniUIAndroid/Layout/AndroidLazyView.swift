@@ -178,8 +178,9 @@ final class AndroidLazyStackView: AndroidLazyView {
             let frame: Rect
             if axis == .vertical {
                 let open = across - margin.left - margin.right
+                let expands = item.values.expandingAxes == .horizontal || item.values.expandingAxes == .both
                 let width = Extent.of(
-                    option: item.values.horizontal, stated: item.values.width,
+                    option: expands ? 3 : item.values.horizontal, stated: item.values.width,
                     natural: size.width,
                     available: open, minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
@@ -192,8 +193,9 @@ final class AndroidLazyStackView: AndroidLazyView {
                              height: extent - margin.top - margin.bottom)
             } else {
                 let open = across - margin.top - margin.bottom
+                let expands = item.values.expandingAxes == .vertical || item.values.expandingAxes == .both
                 let height = Extent.of(
-                    option: item.values.vertical, stated: item.values.height,
+                    option: expands ? 3 : item.values.vertical, stated: item.values.height,
                     natural: size.height,
                     available: open, minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)
@@ -331,8 +333,9 @@ final class AndroidLazyGridView: AndroidLazyView {
             let frame: Rect
             if axis == .vertical {
                 let open = widths[track] - margin.left - margin.right
+                let expands = item.values.expandingAxes == .horizontal || item.values.expandingAxes == .both
                 let width = Extent.of(
-                    option: item.values.horizontal, stated: item.values.width,
+                    option: expands ? 3 : item.values.horizontal, stated: item.values.width,
                     natural: size.width,
                     available: max(0, open), minimum: item.values.minimumWidth,
                     maximum: item.values.maximumWidth)
@@ -345,8 +348,9 @@ final class AndroidLazyGridView: AndroidLazyView {
                              height: runExtent - margin.top - margin.bottom)
             } else {
                 let open = widths[track] - margin.top - margin.bottom
+                let expands = item.values.expandingAxes == .vertical || item.values.expandingAxes == .both
                 let height = Extent.of(
-                    option: item.values.vertical, stated: item.values.height,
+                    option: expands ? 3 : item.values.vertical, stated: item.values.height,
                     natural: size.height,
                     available: max(0, open), minimum: item.values.minimumHeight,
                     maximum: item.values.maximumHeight)

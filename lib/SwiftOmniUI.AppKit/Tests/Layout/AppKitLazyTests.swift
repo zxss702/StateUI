@@ -606,14 +606,15 @@ final class AppKitLazyTests: XCTestCase {
         settle(renderer)
         let lazy = try XCTUnwrap(renderer.nativeViews(AppKitLazyStackView.self).first)
         let row = try XCTUnwrap(renderer.nativeViews(AppKitLabelView.self).first { $0.stringValue == "Row 2" })
-        let root = try XCTUnwrap(row.superview)
+        let parent = try XCTUnwrap(row.superview)
+        let root = try XCTUnwrap(lazy.held.values.first { row.isDescendant(of: $0.view) }?.view)
         let origin = root.frame.minY
         let button = try XCTUnwrap(renderer.nativeViews(NSButton.self).first { $0.title == "Delete 1" })
         button.performClick(nil)
         var positions: [CGFloat] = []
         for _ in 0..<35 {
             settle(renderer, turns: 1)
-            XCTAssertTrue(row.superview === root)
+            XCTAssertTrue(row.superview === parent)
             XCTAssertEqual(root.alphaValue, 1)
             for view in root.subviews { XCTAssertEqual(view.alphaValue, 1) }
             positions.append(root.frame.minY)
