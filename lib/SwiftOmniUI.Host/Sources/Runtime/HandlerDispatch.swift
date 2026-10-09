@@ -29,7 +29,7 @@
     }
 
     /// Whether a handler raised now waits: a message applies, or the user's transaction runs.
-    private var isHeld: Bool { intake.isApplying || transactions > 0 }
+    var isHeld: Bool { intake.isApplying || transactions > 0 }
 
     /// Whether the user's transaction runs.
     public var inTransaction: Bool { transactions > 0 }
