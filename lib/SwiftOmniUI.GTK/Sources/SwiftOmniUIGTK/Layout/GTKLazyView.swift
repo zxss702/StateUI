@@ -318,6 +318,9 @@ final class GTKLazyStackView: GTKLazyView {
             }
             var placed = item
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
+            #if DEBUG
+            GTKRenderer.log.note("LAZY-ROW id=\(identity) boundsW=\(bounds.width) across=\(across) item=\(type(of: item.view)) h=\(item.values.horizontal) w=\(String(describing: item.values.width)) max=\(String(describing: item.values.maximumWidth)) natural=\(measured[identity]?.size.width ?? -1) frame=\(frame)")
+            #endif
             self.place(placed, at: direction.places(frame, in: bounds))
         }
     }
@@ -339,6 +342,10 @@ final class GTKLazyGridView: GTKLazyView {
         didSet { if runSpacing != oldValue { cells.runs.spacing = runSpacing; invalidateMeasurements() } }
     }
 
+    /// Where the tracks stand together across the grid.
+    var trackAlignment: AxisAlignment = .center {
+        didSet { if trackAlignment != oldValue { invalidateMeasurements() } }
+    }
     /// The room between the tracks.
     var trackSpacing = 0.0 { didSet { if trackSpacing != oldValue { columns = [] } } }
 
@@ -438,7 +445,10 @@ final class GTKLazyGridView: GTKLazyView {
         }
         measuredRevision = measurements.revision
         var trackOrigins: [Double] = []
-        var start = axis == .vertical ? padding.left : padding.top
+        let extent = widths.reduce(0, +) + Double(max(widths.count - 1, 0)) * trackSpacing
+        var start = Extent.start(option: trackAlignment.rawValue, extent: extent,
+                                 start: axis == .vertical ? padding.left : padding.top,
+                                 available: acrossRoom)
         for width in widths {
             trackOrigins.append(start)
             start += width + trackSpacing

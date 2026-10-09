@@ -99,11 +99,12 @@ public struct LazyVGrid: View {
         let count = max(columns.count, 1)
         let held = $realized
         let across = alignment.axis
+        element.node.write(ViewContract.horizontalContentAlignment, across)
         element.node.write(
             LazyVGridContract.items,
             children.take(content(), into: &element.node, realized: held) { cell, index in
                 let item = columns.isEmpty ? GridItem() : columns[index % count]
-                let over = item.alignment?.horizontal.axis ?? across
+                let over = item.alignment?.horizontal.axis ?? .center
                 if cell.props[.horizontalAlignment] == nil {
                     cell.write(ViewContract.horizontalAlignment,
                                cell.props[.maximumWidth]?.number == .infinity ? .fill : over)
@@ -202,11 +203,12 @@ public struct LazyHGrid: View {
         let count = max(rows.count, 1)
         let held = $realized
         let down = alignment.axis
+        element.node.write(ViewContract.verticalContentAlignment, down)
         element.node.write(
             LazyHGridContract.items,
             children.take(content(), into: &element.node, realized: held) { cell, index in
                 let item = rows.isEmpty ? GridItem() : rows[index % count]
-                let over = item.alignment?.vertical.axis ?? down
+                let over = item.alignment?.vertical.axis ?? .center
                 if cell.props[.verticalAlignment] == nil {
                     cell.write(ViewContract.verticalAlignment,
                                cell.props[.maximumHeight]?.number == .infinity ? .fill : over)

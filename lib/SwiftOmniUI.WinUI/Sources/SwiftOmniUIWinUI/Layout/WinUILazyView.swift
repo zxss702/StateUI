@@ -67,6 +67,9 @@ class WinUILazyView: WinUITravellingLayout {
             }
         }
         mounted = now
+        #if DEBUG
+        print("LAZY-MOUNT", WinUIFrameClock.monotonic(), number, "built", cells.built, "mounted", mounted.count)
+        #endif
         for item in items { item.item.view.placingLayout = self }
         setChildren(items.map(\.item.view))
         invalidateMeasurements()
@@ -106,7 +109,18 @@ class WinUILazyView: WinUITravellingLayout {
     func viewportChanged(_ rect: Rect) {
         guard clip != nil, effectiveViewport != rect else { return }
         effectiveViewport = rect
-        invalidateMeasure()
+        #if DEBUG
+        print("LAZY-VIEWPORT", WinUIFrameClock.monotonic(), number, rect, "built", cells.built, "mounted", mounted.count)
+        #endif
+        // These panels report zero DesiredSize to their native parents. Marking this panel alone
+        // can leave the placing chain's cached arithmetic intact and skip its realization entirely.
+        invalidateMeasurements()
+        var parent = placingLayout
+        while let layout = parent {
+            layout.forgetMeasurements()
+            layout.invalidateMeasure()
+            parent = (layout as? WinUIScrollDocument)?.scrollView ?? layout.placingLayout
+        }
     }
 
     /// The window the run shows, clipped to its document extent.
@@ -204,12 +218,19 @@ class WinUILazyView: WinUITravellingLayout {
     /// Measuring again, the window is re-asked: a new pass is a new chance
     /// for the places the run holds.
     override func measure(width: Double, height: Double) -> LayoutSize {
+        #if DEBUG
+        let began = WinUIFrameClock.monotonic()
+        #endif
         if WinUIView.arranging == 0 {
             watchClip()
             if watching != nil { tellWindow(span ?? 0..<0) }
         }
         retell()
-        return super.measure(width: width, height: height)
+        let result = super.measure(width: width, height: height)
+        #if DEBUG
+        print("LAZY-MEASURE", began, WinUIFrameClock.monotonic() - began, number, "span", String(describing: span), "built", cells.built, "mounted", mounted.count, "measured", measured.count, "arranging", WinUIView.arranging)
+        #endif
+        return result
     }
 
     override func detach() {
@@ -332,6 +353,9 @@ final class WinUILazyStackView: WinUILazyView {
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
             self.place(placed, at: direction.places(frame, in: bounds))
         }
+        #if DEBUG
+        print("LAZY-ARRANGE", WinUIFrameClock.monotonic(), number, "built", cells.built, "mounted", mounted.count, "measured", measured.count, "bounds", bounds)
+        #endif
     }
 
     override func tellWindow(_ span: Range<Double>) {
@@ -358,6 +382,10 @@ final class WinUILazyGridView: WinUILazyView {
         didSet { if runSpacing != oldValue { cells.runs.spacing = runSpacing; invalidateMeasurements() } }
     }
 
+    /// Where the tracks stand together across the grid.
+    var trackAlignment: AxisAlignment = .center {
+        didSet { if trackAlignment != oldValue { invalidateMeasurements() } }
+    }
     /// The room between the tracks.
     var trackSpacing = 0.0 {
         didSet {
@@ -451,7 +479,10 @@ final class WinUILazyGridView: WinUILazyView {
         let widths = columns
         guard !widths.isEmpty else { return }
         var trackOrigins: [Double] = []
-        var start = axis == .vertical ? padding.left : padding.top
+        let extent = widths.reduce(0, +) + Double(max(widths.count - 1, 0)) * trackSpacing
+        var start = Extent.start(option: trackAlignment.rawValue, extent: extent,
+                                 start: axis == .vertical ? padding.left : padding.top,
+                                 available: acrossRoom)
         for width in widths {
             trackOrigins.append(start)
             start += width + trackSpacing
@@ -498,6 +529,9 @@ final class WinUILazyGridView: WinUILazyView {
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
             self.place(placed, at: direction.places(frame, in: bounds))
         }
+        #if DEBUG
+        print("LAZY-ARRANGE", WinUIFrameClock.monotonic(), number, "built", cells.built, "mounted", mounted.count, "measured", measured.count, "bounds", bounds)
+        #endif
     }
 
     override func tellWindow(_ span: Range<Double>) {

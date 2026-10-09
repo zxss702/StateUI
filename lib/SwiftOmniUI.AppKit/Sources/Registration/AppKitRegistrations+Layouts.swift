@@ -43,6 +43,9 @@ extension AppKitRegistrations {
         }
 
         registry.add(LazyVGridContract.self, madeByHost: AppKitLazyGridView.self) { grid in
+            grid.property(ViewContract.horizontalContentAlignment) { view, alignment in
+                view.trackAlignment = alignment ?? .center
+            }
             grid.applies([
                 LazyVGridContract.items, LazyVGridContract.flowColumns, LazyVGridContract.rowSpacing,
                 LazyVGridContract.columnSpacing, PaddingElementContract.contentPadding,
@@ -56,6 +59,9 @@ extension AppKitRegistrations {
         }
 
         registry.add(LazyHGridContract.self, madeByHost: AppKitLazyGridView.self) { grid in
+            grid.property(ViewContract.verticalContentAlignment) { view, alignment in
+                view.trackAlignment = alignment ?? .center
+            }
             grid.applies([
                 LazyHGridContract.items, LazyHGridContract.flowRows, LazyHGridContract.rowSpacing,
                 LazyHGridContract.columnSpacing, PaddingElementContract.contentPadding,

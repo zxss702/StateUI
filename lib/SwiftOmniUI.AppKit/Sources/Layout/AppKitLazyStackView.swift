@@ -374,6 +374,10 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
         didSet { if runSpacing != oldValue { cells.runs.spacing = Double(runSpacing); invalidateMeasurements() } }
     }
 
+    /// Where the tracks stand together across the grid.
+    var trackAlignment: AxisAlignment = .center {
+        didSet { if trackAlignment != oldValue { invalidateMeasurements() } }
+    }
     /// The room between the tracks.
     var trackSpacing: CGFloat = 0 { didSet { if trackSpacing != oldValue { columns = [] } } }
 
@@ -483,7 +487,10 @@ final class AppKitLazyGridView: AppKitLazyView, AppKitWidthConstrainedMeasuring 
         }
         measuredRevision = measurements.revision
         var trackOrigins: [Double] = []
-        var start = axis == .vertical ? Double(padding.left) : Double(padding.top)
+        let extent = widths.reduce(0, +) + Double(max(widths.count - 1, 0)) * Double(trackSpacing)
+        var start = Extent.start(option: trackAlignment.rawValue, extent: extent,
+                                 start: axis == .vertical ? Double(padding.left) : Double(padding.top),
+                                 available: Double(max(0, acrossRoom)))
         for width in widths {
             trackOrigins.append(start)
             start += width + Double(trackSpacing)

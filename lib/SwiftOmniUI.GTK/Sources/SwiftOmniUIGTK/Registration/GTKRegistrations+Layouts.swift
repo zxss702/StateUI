@@ -77,6 +77,9 @@ extension GTKRegistrations {
         }
 
         registry.add(LazyVGridContract.self, madeByHost: GTKLazyGridView.self) { grid in
+            grid.property(ViewContract.horizontalContentAlignment) { view, alignment in
+                view.trackAlignment = alignment ?? .center
+            }
             grid.applies([
                 LazyVGridContract.items, LazyVGridContract.flowColumns, LazyVGridContract.rowSpacing,
                 LazyVGridContract.columnSpacing, PaddingElementContract.contentPadding,
@@ -94,6 +97,9 @@ extension GTKRegistrations {
         }
 
         registry.add(LazyHGridContract.self, madeByHost: GTKLazyGridView.self) { grid in
+            grid.property(ViewContract.verticalContentAlignment) { view, alignment in
+                view.trackAlignment = alignment ?? .center
+            }
             grid.applies([
                 LazyHGridContract.items, LazyHGridContract.flowRows, LazyHGridContract.rowSpacing,
                 LazyHGridContract.columnSpacing, PaddingElementContract.contentPadding,
