@@ -92,6 +92,16 @@ extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, dou
     }
 }
 
+extern "C" void swiftomniui_winui_scroller_read_modes(SwiftOmniUIObjectRef handle, int32_t *modes) {
+    try {
+        auto scroller = borrow<controls::ScrollViewer>(handle);
+        modes[0] = static_cast<int32_t>(scroller.VerticalScrollMode());
+        modes[1] = static_cast<int32_t>(scroller.HorizontalScrollMode());
+    } catch (...) {
+        report("reading a scroller's modes");
+    }
+}
+
 extern "C" void swiftomniui_winui_scroller_anchor(SwiftOmniUIObjectRef element, bool enabled) {
     try {
         auto view = as<xaml::UIElement>(element);

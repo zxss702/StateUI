@@ -738,6 +738,9 @@ void swiftomniui_winui_scroller_set(SwiftOmniUIObjectRef scroller, SwiftOmniUIOb
 /// enough to move (2). `scrollBounceBehavior`'s `.basedOnSize` is the last.
 void swiftomniui_winui_scroller_modes(SwiftOmniUIObjectRef scroller, int32_t verticalMode, int32_t horizontalMode);
 
+/// Native vertical and horizontal ScrollMode values, in that order.
+void swiftomniui_winui_scroller_read_modes(SwiftOmniUIObjectRef scroller, int32_t *modes);
+
 /// Moves the scroller's view to `x`, `y` DIPs at once; the scroller keeps it within what it can reach, and says where
 /// it stands through `scrolled` once it has moved.
 void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef scroller, double x, double y, bool animated);

@@ -6,8 +6,33 @@
 @testable import SwiftOmniUIWinUI
 import SwiftOmniUIConformance
 import XCTest
+import CSwiftOmniUIWinUI
 
 final class WinUIScrollViewTests: XCTestCase {
+    func testBounceConfigurationNeverEnablesAnUnrequestedAxis() throws {
+        try onUIThread {
+            for axis in [Axis.vertical, .horizontal, .both, .neither] {
+                let axes: Axis.Set = axis == .vertical ? .vertical : axis == .horizontal ? .horizontal
+                    : axis == .both ? [.vertical, .horizontal] : []
+                let host = WinUIRenderer.running {
+                    ScrollView(axes) { Color.red.frame(width: 1_000, height: 1_000) }
+                        .frame(width: 240, height: 240)
+                }
+                let scroll = try XCTUnwrap(host.views(WinUIScrollView.self).first)
+                for bounce in [ScrollBounceBehavior.always, .basedOnSize] {
+                    scroll.apply(orientation: axis, padding: EdgeInsets(0), verticalBar: .automatic,
+                                 horizontalBar: .automatic, defaultAnchor: nil, offset: nil,
+                                 bounce: bounce, bounceAxes: [.vertical, .horizontal])
+                    var modes = [Int32](repeating: -1, count: 2)
+                    swiftomniui_winui_scroller_read_modes(scroll.scroller.handle, &modes)
+                    let allowed: Int32 = bounce == .basedOnSize ? 2 : 1
+                    XCTAssertEqual(modes[0], axis == .horizontal || axis == .neither ? 0 : allowed)
+                    XCTAssertEqual(modes[1], axis == .vertical || axis == .neither ? 0 : allowed)
+                }
+            }
+        }
+    }
+
     /// A scroller shows its content through its viewport: what is scrolled away is cut off at its edges, where any
     /// other SwiftOmniUI layout draws past them.
     func testAScrollerCutsItsContentOffAtItsEdges() throws {
