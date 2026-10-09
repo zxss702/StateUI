@@ -61,6 +61,10 @@ final class GTKElement: NativeElement {
         configureLayoutMotion()
         arrangeChildren()
         arrangePages(changed: changed)
+        if wasDescribed, element.childrenChanged, type == .navigationStack,
+           let enclosing = element.parent?.enclosing(type: .page)?.enclosing(type: .navigationStack) {
+            enclosing.gtk.arrangeChildren()
+        }
         offerContextMenu()
         if let view { host?.runtime.frames.follow(self, order: view.number, reads: readsFrame) }
     }

@@ -18,17 +18,14 @@ extension MountedElement {
         }
     }
 
-    /// The arrangement this page's content composes to, crossed through
-    /// composed views alone: a `NavigationStack` written inside a view stands
-    /// a level or two under the page element. nil where the content is a view.
+    /// The arrangement this page's content composes to, found down its arranged
+    /// children. Slots stay with their owner; a found arrangement keeps its own.
     var contentArrangement: MountedElement? {
-        var element = children.first
-        while let current = element {
-            if NodeType.pageTypes.contains(current.type) { return current }
-            element = current.native.presentsView ? nil
-                : current.children.first { $0.presentingElement != nil }
+        func arrangement(in element: MountedElement) -> MountedElement? {
+            if NodeType.pageTypes.contains(element.type) { return element }
+            return element.arrangedChildren.lazy.compactMap(arrangement).first
         }
-        return nil
+        return arrangedChildren.lazy.compactMap(arrangement).first
     }
 
     /// The page whose title names the window while this arrangement shows: the visible page, but tabs on a stack are
@@ -59,19 +56,22 @@ extension MountedElement {
         }
     }
 
-    /// The page's own value of `prop`, else what its content's root carries: a
-    /// `.navigationTitle` or `.toolbar` written on the content names the page
-    /// itself, as the page holder does when lifting those properties. The walk
-    /// crosses composed views, whose props sit on the element that presents.
+    /// The page's own value of `prop`, else the nearest one its content carries: a `.navigationTitle` written on a
+    /// branch of the content names the page itself. The walk keeps slots and nested arrangements to their owners.
     public func pageValue(_ prop: Prop) -> HostValue? {
         if let found = value(prop) { return found }
-        var element = type == .page ? children.first : nil
-        while let current = element {
-            if let found = current.value(prop) { return found }
-            element = current.native.presentsView ? nil
-                : current.children.first { $0.presentingElement != nil }
-        }
-        return nil
+        guard type == .page else { return nil }
+        return arrangedChildren.lazy.compactMap { child in
+            NodeType.pageTypes.contains(child.type) ? nil : child.contentValue(prop)
+        }.first
+    }
+
+    /// This element's `prop`, else the nearest one below it; slots and nested arrangements stand in no page's path.
+    private func contentValue(_ prop: Prop) -> HostValue? {
+        if let found = value(prop) { return found }
+        return arrangedChildren.lazy.compactMap { child in
+            NodeType.pageTypes.contains(child.type) ? nil : child.contentValue(prop)
+        }.first
     }
 
     /// The stack around the visible page, where the path has one.
@@ -83,6 +83,33 @@ extension MountedElement {
         case .navigationSplitView: children.dropFirst().first?.visibleNavigationStack
         default: nil
         }
+    }
+
+    /// Whether this stack's pushes are shown by the stack around its page; its own view keeps only the root.
+    var mergesIntoPageStack: Bool {
+        guard type == .navigationStack, let page = parent?.enclosing(type: .page),
+              page.contentArrangement === self
+        else { return false }
+        return page.parent?.enclosing(type: .navigationStack) != nil
+    }
+
+    /// The stack's items as a host shows them: a top page's own stack joins it, its pushed pages above.
+    public var stackedChildren: [MountedElement] {
+        let shown = arrangedChildren
+        guard type == .navigationStack else { return shown }
+        if mergesIntoPageStack { return Array(shown.prefix(1)) }
+        guard let top = shown.last,
+              let nested = top.contentArrangement, nested.type == .navigationStack,
+              nested.children.count > 1
+        else { return shown }
+
+        return Array(shown.dropLast()) + [top] + nested.children.dropFirst()
+    }
+
+    /// The page whose chrome this page shows: itself, or the visible page of a stack merged through it.
+    public var chromePage: MountedElement {
+        guard type == .page, contentArrangement?.type == .navigationStack else { return self }
+        return visiblePage ?? self
     }
 
     /// Whether the stack this element stands on shows its bar over it: over a page that keeps its bar, and over an
@@ -129,13 +156,22 @@ extension MountedElement {
         native.showsSidebar ?? (value(.isSidebarVisible)?.bool == true)
     }
 
-    /// The visible stack whose top page can go back: more than one page, and a top showing its bar and its way back.
+    /// The visible stack whose top page can go back. A stack merged into a page takes its own pushes first; once it
+    /// is back at its root, the stack around the page takes the way back.
     public var visibleBackStack: MountedElement? {
-        guard let stack = visibleNavigationStack, stack.children.count > 1, let top = stack.children.last,
-              top.pageValue(.hasNavigationBar)?.bool != false, top.pageValue(.hasBackButton)?.bool != false
-        else { return nil }
-
-        return stack
+        var stack = visiblePage?.parent?.enclosing(type: .navigationStack)
+        while let candidate = stack {
+            guard candidate.children.count > 1 else {
+                stack = candidate.parent?.enclosing(type: .navigationStack)
+                continue
+            }
+            guard let top = candidate.visiblePage,
+                  top.pageValue(.hasNavigationBar)?.bool != false,
+                  top.pageValue(.hasBackButton)?.bool != false
+            else { return nil }
+            return candidate
+        }
+        return nil
     }
 
     /// Whether a tabbed view's tabs stand in its window's row: the first tabbed view down the window's stacks and

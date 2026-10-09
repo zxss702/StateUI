@@ -41,23 +41,25 @@ extension GTKElement {
             return chrome
         }
 
+        let page = element.chromePage
         var chrome = GTKPageChrome()
-        chrome.title = element.pageValue(.title)?.string ?? ""
-        chrome.subtitle = element.pageValue(.subtitle)?.string ?? ""
-        chrome.titleView = element.slotContent(.titleView)?.gtk.view
-        chrome.showsBar = element.pageValue(.hasNavigationBar)?.bool != false
-        chrome.offersBack = element.pageValue(.hasBackButton)?.bool != false
-        (chrome.barBackground, chrome.barForeground) = element.barColors
+        chrome.title = page.pageValue(.title)?.string ?? ""
+        chrome.subtitle = page.pageValue(.subtitle)?.string ?? ""
+        chrome.titleView = page.slotContent(.titleView)?.gtk.view
+        chrome.showsBar = page.pageValue(.hasNavigationBar)?.bool != false
+        chrome.offersBack = page.pageValue(.hasBackButton)?.bool != false
+        (chrome.barBackground, chrome.barForeground) = page.barColors
         // The scene's commands stand once in a window, on the bar at its leading edge - a split view's sidebar
         // while it shows, else the page the user sees - not on every bar an arrangement shows.
         let arrangement = element.enclosing(type: .windowScene)?.children.first { NodeType.pageTypes.contains($0.type) }
-        chrome.appMenu = arrangement?.leadingPage === element ? Self.appMenuEntries(of: element) : []
+        chrome.appMenu = arrangement?.leadingPage === page ? Self.appMenuEntries(of: page) : []
 
-        let actions = element.chromeActions
+        let actions = page.chromeActions
+        GTKRenderer.log.note("CHROME page=\(page.id) title=\(page.pageValue(.title)?.string ?? "nil") actions=\(actions.primary.count) leading=\(actions.leading.count) overflow=\(actions.overflow.count)")
         chrome.leadingActions = actions.leading.map(Self.action)
         chrome.actions = actions.primary.map(Self.action)
         chrome.overflow = actions.overflow.map(Self.action)
-        let menus = element.children.first { $0.type == .menuBar }.map { MenuEntry.menus(of: $0) } ?? []
+        let menus = page.children.first { $0.type == .menuBar }.map { MenuEntry.menus(of: $0) } ?? []
         chrome.mainMenu = menus.isEmpty ? nil : GTKMenu(menus)
         return chrome
     }
@@ -92,9 +94,10 @@ extension GTKElement {
         switch type {
         case .navigationStack:
             guard let navigation = view as? GTKNavigationView else { return }
-            for (index, (page, frame)) in zip(children, navigation.frames).enumerated() {
+            let pages = element.stackedChildren.map(\.gtk)
+            for (index, (page, frame)) in zip(pages, navigation.frames).enumerated() {
                 var chrome = page.chrome
-                if index == children.count - 1 { chrome.sidebar = sidebar }
+                if index == pages.count - 1 { chrome.sidebar = sidebar }
                 frame.show(chrome)
                 navigation.describe(
                     frame, title: page.element.visiblePage?.pageValue(.title)?.string ?? "", canPop: chrome.offersBack)
@@ -165,17 +168,24 @@ extension GTKElement {
 
     /// Takes the visible stack's top page away as the user does; whether there was one to take.
     func goBack() -> Bool {
-        guard let stack = element.visibleNavigationStack, stack.children.count > 1,
-              let navigation = stack.gtk.view as? GTKNavigationView
-        else { return false }
+        guard let stack = element.visibleBackStack else { return false }
+        if let navigation = stack.gtk.view as? GTKNavigationView { return navigation.popByUser() }
 
-        return navigation.popByUser()
+        return (stack.parent?.enclosing(type: .page)?.enclosing(type: .navigationStack)?.gtk.view
+            as? GTKNavigationView)?.popByUser() ?? false
     }
 
     /// The user took the stack's top pages away - the back button, the swipe, the keys: the path is told how long
     /// it is now.
     private func userPopped(remaining: Int) {
-        guard type == .navigationStack, let handler = element.handler(.popped) else { return }
+        guard type == .navigationStack else { return }
+        let ownCount = element.arrangedChildren.count
+        if remaining >= ownCount, let nested = element.arrangedChildren.last?.visibleNavigationStack,
+           nested !== element, nested.children.count > 1, let handler = nested.handler(.popped) {
+            host?.runtime.dispatch(handler, payload: [.number(Double(remaining - ownCount))])
+            return
+        }
+        guard let handler = element.handler(.popped) else { return }
         host?.runtime.dispatch(handler, payload: [.number(Double(remaining - 1))])
     }
 

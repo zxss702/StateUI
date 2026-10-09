@@ -32,7 +32,7 @@ extension GTKElement {
         if let label = view as? GTKLabelView {
             return arrangeRuns(of: label)
         }
-        let arranged = element.arrangedChildren.map(\.gtk)
+        let arranged = (type == .navigationStack ? element.stackedChildren : element.arrangedChildren).map(\.gtk)
 
         if let menu = view as? GTKMenuButtonView {
             // The menu is a slot's - the layout never places it, so it is read among the element's own children.

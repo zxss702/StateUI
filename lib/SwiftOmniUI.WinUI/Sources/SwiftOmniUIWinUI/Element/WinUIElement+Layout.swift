@@ -31,7 +31,7 @@ extension WinUIElement {
         if let label = view as? WinUILabelView {
             return arrangeRuns(of: label)
         }
-        let arranged = element.arrangedChildren.map(\.winUI)
+        let arranged = (type == .navigationStack ? element.stackedChildren : element.arrangedChildren).map(\.winUI)
 
         if let menu = view as? WinUIMenuButtonView {
             // The menu is a slot's - the layout never places it, so it is read among the element's own children.

@@ -38,7 +38,12 @@ extension GTKElement {
             let overlay = GTKSingleChildView()
             overlay.passesBeside = true
             return overlay
-        case .navigationStack: return GTKNavigationView()
+        case .navigationStack:
+            guard element.parent?.enclosing(type: .page)?.enclosing(type: .navigationStack) != nil
+            else { return GTKNavigationView() }
+            let stack = GTKSingleChildView()
+            stack.holdsOnlyFirstItem = true
+            return stack
         case .navigationSplitView: return GTKSplitView()
         case .tabView: return GTKTabbedView()
         default: return GTKUnsupportedView(type)

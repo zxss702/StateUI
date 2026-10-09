@@ -12,6 +12,13 @@ class GTKSingleChildView: GTKLayoutView {
         didSet { if padding != oldValue { invalidateMeasurements() } }
     }
 
+    /// Whether items beyond the first stand elsewhere: a page's stack merged into an enclosing one.
+    var holdsOnlyFirstItem = false
+
+    override func heldViews() -> [GTKView] {
+        holdsOnlyFirstItem ? items.prefix(1).map(\.view) : super.heldViews()
+    }
+
     override func contentSize(width: Double?) -> LayoutSize {
         SingleChildArithmetic.size(of: items.first, padding: padding, width: width)
     }
