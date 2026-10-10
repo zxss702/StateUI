@@ -8,7 +8,9 @@
 #include "Relay.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
+#include <vector>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <winrt/Windows.Foundation.h>
 
@@ -22,6 +24,72 @@ namespace {
         case 2: return controls::ScrollBarVisibility::Hidden;
         default: return controls::ScrollBarVisibility::Auto;
         }
+    }
+
+    // An animated move is stepped on the UI thread, each step a snapped
+    // ChangeView: every position the compositor is asked to show is one the
+    // layouts under it already realize, so nothing it crosses stands blank.
+    struct ScrollFlight {
+        winrt::weak_ref<controls::ScrollViewer> scroller;
+        double fromX = 0, fromY = 0, toX = 0, toY = 0;
+        std::chrono::steady_clock::time_point began;
+    };
+    std::vector<ScrollFlight>& scrollFlights() {
+        static std::vector<ScrollFlight> list;
+        return list;
+    }
+    winrt::event_token& scrollFlightToken() {
+        static winrt::event_token token;
+        return token;
+    }
+
+    void scrollFlightTick(IInspectable const &, IInspectable const &) {
+        auto now = std::chrono::steady_clock::now();
+        auto &list = scrollFlights();
+        struct Step { controls::ScrollViewer scroller; double x, y; };
+        std::vector<Step> steps;
+        for (auto &flight : list) {
+            auto scroller = flight.scroller.get();
+            double t = std::min(1.0, std::chrono::duration<double>(now - flight.began).count() / 0.24);
+            double eased = 1 - std::pow(1 - t, 3.0);
+            steps.push_back({scroller,
+                flight.fromX + (flight.toX - flight.fromX) * eased,
+                flight.fromY + (flight.toY - flight.fromY) * eased});
+        }
+        list.erase(std::remove_if(list.begin(), list.end(), [&](ScrollFlight const &flight) {
+            return !flight.scroller.get()
+                || std::chrono::duration<double>(now - flight.began).count() >= 0.24;
+        }), list.end());
+        if (list.empty() && scrollFlightToken()) {
+            xaml::Media::CompositionTarget::Rendering(scrollFlightToken());
+            scrollFlightToken() = {};
+        }
+        for (auto &step : steps) {
+            if (!step.scroller) continue;
+            step.scroller.ChangeView(
+                winrt::box_value(step.x).as<winrt::Windows::Foundation::IReference<double>>(),
+                winrt::box_value(step.y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
+        }
+    }
+
+    void scrollLand(controls::ScrollViewer const &scroller) {
+        auto &list = scrollFlights();
+        for (auto i = list.size(); i > 0; --i)
+            if (list[i - 1].scroller.get() == scroller) list.erase(list.begin() + i - 1);
+        if (list.empty() && scrollFlightToken()) {
+            xaml::Media::CompositionTarget::Rendering(scrollFlightToken());
+            scrollFlightToken() = {};
+        }
+    }
+
+    void scrollFlyTo(controls::ScrollViewer const &scroller, double x, double y) {
+        scrollLand(scroller);
+        if (scrollFlights().empty())
+            scrollFlightToken() = xaml::Media::CompositionTarget::Rendering(
+                { guarded("stepping an animated scroll", &scrollFlightTick) });
+        scrollFlights().push_back({winrt::make_weak(scroller),
+            (double)scroller.HorizontalOffset(), (double)scroller.VerticalOffset(),
+            x, y, std::chrono::steady_clock::now()});
     }
 }
 
@@ -39,7 +107,8 @@ extern "C" SwiftOmniUIObjectRef swiftomniui_winui_scroller_make(int64_t view) {
             callbacks.scrolled(view, scroller.HorizontalOffset(), scroller.VerticalOffset());
         }));
         scroller.DirectManipulationStarted(guarded("handling DirectManipulationStarted",
-            [view](IInspectable const &, IInspectable const &) {
+            [view](IInspectable const &sender, IInspectable const &) {
+            if (auto held = sender.try_as<controls::ScrollViewer>()) scrollLand(held);
             callbacks.held(view, true);
         }));
         scroller.DirectManipulationCompleted(guarded("handling DirectManipulationCompleted",
@@ -84,9 +153,15 @@ extern "C" void swiftomniui_winui_scroller_modes(
 
 extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, double x, double y, bool animated) {
     try {
-        borrow<controls::ScrollViewer>(handle).ChangeView(
-            winrt::box_value(x).as<winrt::Windows::Foundation::IReference<double>>(),
-            winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, !animated);
+        auto scroller = borrow<controls::ScrollViewer>(handle);
+        scrollLand(scroller);
+        if (!animated) {
+            scroller.ChangeView(
+                winrt::box_value(x).as<winrt::Windows::Foundation::IReference<double>>(),
+                winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
+            return;
+        }
+        scrollFlyTo(scroller, x, y);
     } catch (...) {
         report("moving a scroller");
     }

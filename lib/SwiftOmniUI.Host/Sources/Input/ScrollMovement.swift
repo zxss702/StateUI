@@ -31,6 +31,10 @@
     /// Whether the user holds the scroller, so the movement cannot rest.
     private var held = false
 
+    /// Whether the user holds the scroller - a live scroll the compositor can
+    /// carry on between this thread's notices.
+    public var holding: Bool { held }
+
     /// Whether the user moved the scroller since the last frame.
     private var movedSinceFrame = false
 

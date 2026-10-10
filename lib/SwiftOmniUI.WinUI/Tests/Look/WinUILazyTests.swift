@@ -111,8 +111,7 @@ final class WinUILazyTests: XCTestCase {
                     for _ in 0..<6 { host.step() }
                     let incoming = lazy.mounted.keys.filter { retained[$0] == nil }
                     XCTAssertEqual(incoming.count, perRun)
-                    let proposals = incoming.reduce(0) { $0 + (lazy.rowMeasurements[$1]?.count ?? 0) }
-                    XCTAssertEqual(lazy.cells.measurements - beforeBoundary, proposals,
+                    XCTAssertEqual(lazy.cells.measurements - beforeBoundary, incoming.count,
                                    "measure each incoming row once per proposal: count \(count), kind \(kind)")
                     let idle = [lazy.cells.searches, lazy.cells.requests, lazy.cells.measurements]
                     for _ in 0..<20 { host.step() }

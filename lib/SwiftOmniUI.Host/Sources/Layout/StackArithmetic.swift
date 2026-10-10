@@ -15,18 +15,19 @@
         case vertical
     }
 
+    /// The gap between two children where a stack states none.
+    public static let automaticSpacing = 8.0
+
     /// The gap before each child; hidden children never interrupt adjacency.
     @MainActor
     public static func gaps<Child: LayoutChild>(
         of items: [Child], axis: Axis, spacing: Double?
     ) -> [Double] {
-        var previous: LayoutSpacing?
+        var shownBefore = false
         return items.map { item in
             guard item.isShown else { return 0 }
-            let preference = item.spacing
-            defer { previous = preference }
-            guard let previous else { return 0 }
-            return spacing ?? previous.distance(to: preference, along: axis)
+            defer { shownBefore = true }
+            return shownBefore ? spacing ?? automaticSpacing : 0
         }
     }
 

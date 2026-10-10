@@ -43,13 +43,11 @@ class GTKLazyView: GTKTravellingLayout {
     init(axis: StackArithmetic.Axis, cells: LazyCells) {
         self.axis = axis
         self.cells = cells
-        cells.extents.axis = axis
         super.init()
     }
 
     /// The mounted children, held by identity.
     func setItems(_ items: [(identity: String, item: GTKLayoutItem)]) {
-        cells.updateSpacing()
         let now = Dictionary(items.map { ($0.0, $0.1) }, uniquingKeysWith: { first, _ in first })
         guard now.keys != mounted.keys || now.contains(where: {
             mounted[$0.key]?.view !== $0.value.view || mounted[$0.key]?.values != $0.value.values
@@ -261,7 +259,7 @@ final class GTKLazyStackView: GTKLazyView {
             let extent = axis == .vertical
                 ? size.height + margin.top + margin.bottom
                 : size.width + margin.left + margin.right
-            cells.extents.measure(identity, extent: extent, preference: item.spacing)
+            cells.extents.measure(identity, extent: extent)
         }
         let cross = mounted.compactMap { identity, item -> Double? in
             guard !item.departing, let size = measured[identity]?.size else { return nil }

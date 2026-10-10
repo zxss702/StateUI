@@ -148,7 +148,7 @@ final class WinUIRenderer {
     /// Shows every window element in a WinUI window of its own, in the tree's order - a window the tree no longer
     /// holds closes - and tells each, once, in its turn, that it was made.
     /// Design: docs/design/platforms/winui/runtime.md#the-window
-    private func showWindows() {
+    private func showWindows(keepingSizing: Bool = false) {
         let hasScenes = runtime.tree.root?.children.isEmpty == false
         if hasScenes { swiftomniui_winui_keep_scene_alive(true) }
         let first = roster.update(
@@ -160,7 +160,8 @@ final class WinUIRenderer {
             runtime.pump.turn()
         }
         for (element, controller) in roster.windows where !controller.window.isClosed {
-            controller.present(element, in: runtime, windowOf: { [roster] in roster.controller(of: $0)?.window })
+            controller.present(element, in: runtime, keepingSizing: keepingSizing,
+                               windowOf: { [roster] in roster.controller(of: $0)?.window })
         }
     }
 
@@ -183,6 +184,7 @@ final class WinUIRenderer {
 extension WinUIRenderer: TurnPresenter {
     func presentRendered() {
         showWindows()
+        LazyCells.realizing = false
         if let text = scenes.changed(root: runtime.tree.root) { WinUIPersistence.writeScenes(text) }
     }
 
@@ -203,7 +205,7 @@ extension WinUIRenderer: FramePresenter {
     func present(states: [Int32: HostStateValue], properties: [UInt64: Set<Prop>]) {
         let impact = runtime.tree.present(states: states, properties: properties)
         if impact.windowChrome {
-            showWindows()
+            showWindows(keepingSizing: true)
             refreshWindowChrome()
         }
     }

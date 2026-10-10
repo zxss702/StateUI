@@ -178,6 +178,10 @@ final class WinUIScrollView: WinUILayoutView {
     /// Whether the scroller needs the display's frames.
     var wantsFrames: Bool { movement.wantsFrames }
 
+    /// Whether the user holds the scroller: a live scroll the compositor sweeps
+    /// under its own power, ahead of this thread's notices.
+    var held: Bool { movement.holding }
+
     /// One frame of the display: what the scroller has to say, said here and nowhere else.
     func frame(now: Double) {
         for report in movement.frame(now: now) {

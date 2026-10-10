@@ -29,7 +29,8 @@ final class WinUIWindowController {
     /// Shows what the element asks for now, the window it belongs to found by `windowOf`. The host layer tells
     /// the page the user sees and the window made before the window is first shown, and so before it hears it came
     /// to the front.
-    func present(_ element: MountedElement, in runtime: HostRuntime, windowOf: (MountedElement) -> WinUIWindow?) {
+    func present(_ element: MountedElement, in runtime: HostRuntime, keepingSizing: Bool = false,
+                 windowOf: (MountedElement) -> WinUIWindow?) {
         self.element = element
         let changes = presentation.show(element, in: runtime.lifecycle)
         if let owner = changes.owner { window.setOwner(owner.flatMap(windowOf)) }
@@ -38,7 +39,7 @@ final class WinUIWindowController {
         showSheets(presentation.sheets)
         if let overlay = changes.overlay { window.showOverlay(overlay?.winUI.view) }
         refreshChrome(in: runtime)
-        boundContent(element, requested: changes.frame)
+        boundContent(element, requested: changes.frame, quiet: changes.arrangement == nil && changes.traits == nil, keepingSizing: keepingSizing)
         let asked = WindowFrame(of: element)
         if asked.x == nil, asked.y == nil, let anchor = element.value(.defaultPosition)?.numbers {
             window.place(anchor)
@@ -54,10 +55,22 @@ final class WinUIWindowController {
         if let hidden = changes.hidden { window.setHidden(hidden) }
     }
 
-    private func boundContent(_ element: MountedElement, requested: WindowFrame?) {
-        let sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
-            guard let item = node.winUI.layoutItem else { return nil }
-            return SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
+    /// The sizing last made: the window's content bounds, which neither an animation's frame nor a lazy
+    /// window moving changes - measuring the whole page for them each frame is what a frame must not do.
+    private var sized: WindowContentSizing?
+
+    private func boundContent(_ element: MountedElement, requested: WindowFrame?, quiet: Bool, keepingSizing: Bool) {
+        let sizing: WindowContentSizing
+        if quiet, keepingSizing || LazyCells.realizing, let sized { sizing = sized } else {
+            var asked: [Double?: [ObjectIdentifier: LayoutSize]] = [:]
+            sizing = WindowContentSizing(of: element, content: presentation.arrangement) { node, width in
+                guard let item = node.winUI.layoutItem else { return nil }
+                if let known = asked[width]?[ObjectIdentifier(node)] { return known }
+                let size = SingleChildArithmetic.size(of: item, padding: EdgeInsets(0), width: width)
+                asked[width, default: [:]][ObjectIdentifier(node)] = size
+                return size
+            }
+            sized = sizing
         }
         if let traits { window.apply(traits, isResizable: sizing.isResizable) }
         let chromeHeight = window.chromeHeight
