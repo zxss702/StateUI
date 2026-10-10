@@ -13,7 +13,6 @@ struct WinUILayoutItem: LayoutChild {
     /// What the layout reads of the child.
     var values = LayoutValues()
     weak var element: MountedElement?
-    var spacing: LayoutSpacing { element?.layoutSpacing ?? values.spacing }
 
     /// Whether the child is shown; a hidden child takes no room.
     var isShown = true
