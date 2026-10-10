@@ -4,7 +4,7 @@
 #if os(iOS)
 import Network
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The color scheme, the user's locale, the battery and the network, told to the core as the host starts and whenever one

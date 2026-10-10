@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The stable native root of one SwiftOmniUI window. Pages and overlays occupy

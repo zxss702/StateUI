@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Where a row of an arrangement's own - a tabbed view's tabs - stands beside its page, the same on every host: across
 /// the top or across the bottom, the page taking the rest of the room.

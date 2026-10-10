@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A SwiftOmniUI layout: its children's views placed by the host layer's arithmetic, each on its way to its place where

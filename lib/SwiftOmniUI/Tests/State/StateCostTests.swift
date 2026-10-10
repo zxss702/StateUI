@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What declaring a piece of state costs.
 ///

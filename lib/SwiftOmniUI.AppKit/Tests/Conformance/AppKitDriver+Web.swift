@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import WebKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIAppKit
 @_spi(Host) import SwiftOmniUIConformance

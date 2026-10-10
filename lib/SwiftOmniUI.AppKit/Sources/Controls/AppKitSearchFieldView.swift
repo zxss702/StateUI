@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// AppKit's native search field with separate edit and submit reports.

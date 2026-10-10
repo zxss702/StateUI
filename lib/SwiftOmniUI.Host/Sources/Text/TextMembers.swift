@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What an element showing words takes of the text tiers, read the same on every host: the words in their case,
 /// and the look its font and colour give them.

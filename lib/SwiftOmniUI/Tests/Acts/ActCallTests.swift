@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ActCallTests: XCTestCase {
     // MARK: - The name

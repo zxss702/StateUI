@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A window as an author declares one: a page, and nothing else - what it is
 /// told, a title bar included, being its session's.

@@ -7,7 +7,7 @@
 // of - see Brush.swift.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class BrushTests: XCTestCase {
     /// One colour, and no geometry to speak of.

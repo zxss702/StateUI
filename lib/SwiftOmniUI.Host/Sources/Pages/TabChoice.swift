@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Which tab a tabbed view shows, the same on every host: none chosen until the tree or the user chooses one; a tab
 /// the tree asks for anew is chosen; the user's choice stands where it is another tab there is.

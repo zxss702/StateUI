@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a user does to a control, a page or a window, which a driver does through its toolkit's own path.
 public enum UserAct: Equatable, Sendable, CustomStringConvertible {

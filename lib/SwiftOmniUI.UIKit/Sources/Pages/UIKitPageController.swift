@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A page as UIKit's controllers hold it: its view standing within the safe area the bars leave - out to the screen's

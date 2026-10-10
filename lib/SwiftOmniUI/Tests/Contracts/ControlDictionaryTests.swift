@@ -3,7 +3,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The control dictionary - docs/controls - is the contracts and the verdicts of
 /// the hosts' test runs rendered, and the verdicts are held to the contracts.

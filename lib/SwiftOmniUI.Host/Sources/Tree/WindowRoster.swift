@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The windows a tree holds, the same on every host: its window elements in the tree's order, each with the host's
 /// controller of it - the one a window the tree keeps had, made for one new, closed for one gone, the last first, so

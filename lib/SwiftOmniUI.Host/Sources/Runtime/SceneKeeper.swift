@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a host keeps of the application's scenes on a platform that restores no windows, the same on every such
 /// host: at the start each scene it kept comes back with its values, and is offered the windows it had open; as the

@@ -7,7 +7,7 @@
 // likely meant, and nothing at all until the host has said what it realizes.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class HostRealizationTests: XCTestCase {
     /// A view type as far as a registry can tell.

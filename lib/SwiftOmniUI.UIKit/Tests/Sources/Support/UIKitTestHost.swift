@@ -3,7 +3,7 @@
 
 import UIKit
 import XCTest
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIUIKit
 @_spi(Host) import SwiftOmniUIConformance

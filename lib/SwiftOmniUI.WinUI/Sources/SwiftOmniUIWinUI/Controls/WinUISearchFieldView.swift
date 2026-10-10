@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 import CSwiftOmniUIWinUI
 
 /// A SearchField: WinUI's `AutoSuggestBox` with its search glyph, whose query submits. The box types in the text box

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A kept value as the words a platform's store holds, the same on every host: a key's new value kept as its key's
 /// kind where the application lists the key, as the value's own kind where it does not, and read back as its key's

@@ -3,7 +3,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What this host's runs write into the repository's `exports`: what its runtime realizes, and what its passing
 /// tests proved - held to the file, or written into it on a run with SWIFTOMNIUI_UPDATE_EXPORTS=1, then read in the

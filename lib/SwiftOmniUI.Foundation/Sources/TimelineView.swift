@@ -6,7 +6,7 @@
 // lives here where Foundation stands.
 
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// When a `TimelineView` rebuilds. A value type carrying the interval - the
 /// one spelling SCE needs - rather than SwiftUI's protocol of schedules.

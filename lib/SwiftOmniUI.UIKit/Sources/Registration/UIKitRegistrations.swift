@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The elements UIKit realizes, each with its view and the members it takes, and what every view shares.

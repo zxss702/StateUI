@@ -13,7 +13,7 @@
 
 import Foundation
 import JsonData
-import SwiftOmniUI
+import SwiftOmniUICore
 
 /// A value `MainActor.assumeIsolated` hands back, whose result must be
 /// `Sendable` though what the UI thread reads never leaves it.

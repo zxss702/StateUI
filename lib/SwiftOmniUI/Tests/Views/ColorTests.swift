@@ -9,7 +9,7 @@
 // silence.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ColorTests: XCTestCase {
     // MARK: - Reading hex

@@ -8,7 +8,7 @@
 // one property. Coming back there is one report, and it says what is true now.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The pane. A page like any other, which is the whole point - and it carries
 /// a title, written as it comes into the tree, so the pane arrives with one.

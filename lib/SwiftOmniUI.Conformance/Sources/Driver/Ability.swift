@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// An ability as a driver names it, taken apart: "tap on Text" is the act "tap" done on a Text; a read or a fact -
 /// "read isOn of Switch" - has no element "on" it.

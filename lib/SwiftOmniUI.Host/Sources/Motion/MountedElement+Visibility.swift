@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A native view whose showing and opacity the host layer's visibility rule moves.
 @_spi(Host) @MainActor public protocol FadingView: AnyObject {

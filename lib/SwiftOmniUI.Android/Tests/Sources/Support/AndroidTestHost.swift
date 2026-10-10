@@ -3,7 +3,7 @@
 
 import Android
 import CSwiftOmniUIAndroid
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIAndroid
 import SwiftOmniUIConformance

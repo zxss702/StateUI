@@ -11,7 +11,7 @@
 // plain text.
 
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Extra run styling for `AttributedString`s built where Foundation's
 /// Apple attribute scopes do not exist - the portable spelling of what a

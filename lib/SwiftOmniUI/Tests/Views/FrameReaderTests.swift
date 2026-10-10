@@ -7,7 +7,7 @@
 // GeometryReader.swift.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class FrameReaderTests: XCTestCase {
     /// What the last handler run was given, shared with the assert the way a

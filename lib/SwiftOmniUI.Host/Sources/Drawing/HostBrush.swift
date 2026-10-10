@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A fill as every host reads what the tree sends: nothing, one colour, or a gradient's stops over a geometry in
 /// fractions of what it paints - its colours as the tree gives them, which a host turns into its toolkit's.

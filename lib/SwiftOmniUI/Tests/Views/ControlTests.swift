@@ -29,7 +29,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// One control, built with everything of its own that it can do.
 private struct ControlCase {

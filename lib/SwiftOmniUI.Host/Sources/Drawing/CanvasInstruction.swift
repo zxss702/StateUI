@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// One instruction of a canvas's drawing as a host drawing in Swift replays it, read from the record it crosses as -
 /// the same on every such host; a record that does not read whole is left out.

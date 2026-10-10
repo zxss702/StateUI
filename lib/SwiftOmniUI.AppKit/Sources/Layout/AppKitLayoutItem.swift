@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// One child as its AppKit layout places it: its view, and what the layout reads of it.

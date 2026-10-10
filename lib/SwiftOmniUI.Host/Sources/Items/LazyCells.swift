@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a host's lazy container holds of one lazy layout, and what it tells
 /// the tree - alike on every host: the children's identities in order, the
@@ -80,18 +80,22 @@
         }
         contentRevision = revision
         inserting.formIntersection(now)
-        if now != identities { extents.keep(identities: Set(now)) }
-        else { extents.reset() }
+        // Identities arriving or leaving change what the window mounts and
+        // which measurements survive. A content revision bump alone changes
+        // neither; the patched children re-measure on their next layout pass.
+        if now != identities {
+            extents.keep(identities: Set(now))
+            positions = Dictionary(now.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
+            extents.adopt(positions: positions)
+            built = 0..<0
+            window = nil
+            runs.reset()
+        }
         identities = now
         if now.isEmpty {
             anchor = nil
             anchorShift = 0
         }
-        positions = Dictionary(identities.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
-        extents.adopt(positions: positions)
-        built = 0..<0
-        window = nil
-        runs.reset()
         return true
     }
 

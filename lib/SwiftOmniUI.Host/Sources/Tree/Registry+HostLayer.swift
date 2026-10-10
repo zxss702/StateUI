@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What every element realizes through the host layer's own rules, declared once: a host whose views take their
 /// place, their drawing and the user's input by those rules names the group, not each member.

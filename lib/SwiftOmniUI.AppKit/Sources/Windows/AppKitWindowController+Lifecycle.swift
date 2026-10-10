@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// What AppKit tells of the window - the keyboard coming and going, minimizing, closing, restoration - handed to the

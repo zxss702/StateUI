@@ -7,7 +7,7 @@
 // exact rather than matched by shape.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class AimTests: XCTestCase {
     override func setUp() {

@@ -3,7 +3,7 @@
 
 import CSwiftOmniUIWinUI
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIWinUI
 @_spi(Host) import SwiftOmniUIConformance

@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// UIKit's menus, built from the host layer's walk (`MenuEntry`): an action for each item, which tells its element when

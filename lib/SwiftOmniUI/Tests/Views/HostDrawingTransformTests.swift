@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// Every host draws a view's transform from this one matrix, so its pivot,
 /// its order and its perspective are pinned here rather than in each host.

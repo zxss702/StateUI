@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// AppKit's click recognizer, each click told with its place in a quick run of clicks: how many clicks in a run make

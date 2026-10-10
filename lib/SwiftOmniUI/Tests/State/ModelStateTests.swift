@@ -15,7 +15,7 @@
 
 import Observation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private final class Cart {
     @State var items: [String] = []

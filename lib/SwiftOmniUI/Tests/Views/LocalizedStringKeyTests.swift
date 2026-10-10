@@ -8,7 +8,7 @@
 // SwiftUI makes.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class LocalizedStringKeyTests: XCTestCase {
     /// A plain literal is a key of itself and nothing else.

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The runtime's parts every host holds alike, wired once: the core's link, the patch's intake, the animator and
 /// the motions, the display cycle on the host's frame clock, the mounted tree and the pump - and the roads a

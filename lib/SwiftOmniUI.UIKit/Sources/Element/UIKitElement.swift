@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The UIKit half of a mounted element: its view, made by the registry, given the element's properties, placed where

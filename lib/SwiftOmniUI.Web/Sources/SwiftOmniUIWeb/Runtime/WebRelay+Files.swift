@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 import CSwiftOmniUIWeb
 
 /// The files the user opens and saves, and what the browser launches, in Swift's words: a file is the number the

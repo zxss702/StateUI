@@ -13,7 +13,7 @@
 // the chain - and a moved answer rebuilds exactly the readers.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A command the focused branch publishes - the run-action shape of the
 /// SwiftUI example, a string here so a label can show it.

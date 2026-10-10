@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The window under every styled application here.
 private struct HomeWindow: WindowScene {

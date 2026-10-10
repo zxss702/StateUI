@@ -7,7 +7,7 @@ import Testing
 import AppKit
 #endif
 @testable import SwiftOmniUIFoundation
-import SwiftOmniUI
+import SwiftOmniUICore
 
 struct FoundationSurfaceTests {
     /// An attributed string's runs land as spans, one per run, in order.

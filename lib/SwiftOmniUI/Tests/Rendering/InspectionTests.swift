@@ -8,7 +8,7 @@
 // shows: every scene has its own.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A state an author keeps on a model.
 private final class Counts {

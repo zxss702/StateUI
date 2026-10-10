@@ -8,7 +8,7 @@
 // back - and prefers an edge for its arrow.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class PopoverTests: XCTestCase {
     @State private var shown = true

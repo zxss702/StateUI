@@ -26,7 +26,7 @@
 //      pairs, filled the same way, in one process, still iterate differently.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// An application's tabs, and its routes: the two typed vocabularies the page
 /// primitives are steered by.

@@ -4,7 +4,7 @@
 // What a render says, and - more often - what it does not.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What a handler wrote, shared with the test the way a `@State` box is: a
 /// class, so the closure and the assert read one storage.

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a window element asks its host to show, as it changes, the same on every host: the arrangement of pages
 /// among its children, its sheets, what it lays over them, its frame, its bounds, its traits, the window it belongs

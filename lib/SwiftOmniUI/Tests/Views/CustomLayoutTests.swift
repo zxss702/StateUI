@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 import XCTest
 
 /// A `Layout`'s calls are code, so the differ keeps the object by element
@@ -46,7 +46,7 @@ import XCTest
 
         func sizeThatFits(
             proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache
-        ) -> SwiftOmniUI.Size {
+        ) -> SwiftOmniUICore.Size {
             measured.append(proposal)
             return Size(width: 10 * Double(subviews.count) + Double(cache), height: 20)
         }

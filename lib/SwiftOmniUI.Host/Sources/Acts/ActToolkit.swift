@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a host's toolkit does for the acts every host performs (`HostActPerformer`): the time and the zones, a
 /// question shown, a word to a screen reader, the focus and the on-screen keyboard, a value kept.

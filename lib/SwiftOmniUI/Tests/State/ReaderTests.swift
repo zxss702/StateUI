@@ -8,7 +8,7 @@
 // state on as `$x` makes no reader at all (CarriedStateTests).
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// Keeps what a closure saw and how often it ran.
 private final class Said {

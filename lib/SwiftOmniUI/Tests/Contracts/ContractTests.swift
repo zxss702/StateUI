@@ -6,7 +6,7 @@
 // answered as its declared values - each refusing a value of another shape.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ContractTests: XCTestCase {
     /// A place a handler writes - a plain class captured in a test method,

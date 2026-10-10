@@ -9,7 +9,7 @@
 // join is here, and an owner it works out is an owner nobody typed.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class HostDeclarationTests: XCTestCase {
 

@@ -5,7 +5,7 @@
 // control shows, followed from what the user does, and heard once entered.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class VisualStateTests: XCTestCase {
     private let green = Color("#008000").propValue

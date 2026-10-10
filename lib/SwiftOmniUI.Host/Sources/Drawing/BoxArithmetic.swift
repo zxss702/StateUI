@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A box's outline and corners - a layout's, a button's, a colour box's, a rectangle's - as every host draws them.
 /// Design: docs/design/host/layout.md#a-box

@@ -5,7 +5,7 @@
 // the declaration, so nothing here can disagree with the code.
 
 import Foundation
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 @testable import SwiftOmniUIUIKit
 import XCTest

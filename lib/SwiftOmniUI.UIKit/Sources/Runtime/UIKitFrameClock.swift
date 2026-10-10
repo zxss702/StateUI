@@ -4,7 +4,7 @@
 #if os(iOS)
 import QuartzCore
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The frame clock: the display's frames by a display link, running only while something holds it.

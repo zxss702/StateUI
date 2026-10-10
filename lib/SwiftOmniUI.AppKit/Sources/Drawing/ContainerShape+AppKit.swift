@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A box's outline in AppKit's terms - the host layer's (`BoxArithmetic`): its path, and the cut of a layer to it.

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #if os(iOS)
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// What this host realizes beyond its registry, whose export says the rest - the UIKit column of the control

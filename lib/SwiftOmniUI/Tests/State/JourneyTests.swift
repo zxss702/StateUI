@@ -15,7 +15,7 @@
 // file is about the journey itself.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class JourneyTests: XCTestCase {
     override func setUp() {

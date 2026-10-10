@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What the platform's keyboard and its checking of the words do for a view the user types into, by whether the
 /// tree has them spell checked and predicted and what they are for - the same on every host.

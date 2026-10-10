@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What turns one list of identities into another, for a collection told its changes one by one: the positions
 /// removed from the old list, last first, then the positions inserted into the new, first first. An identity in

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// An offset the tree writes to a scroller, the same on every host: moved to at once where the scroller was laid out
 /// or scrolls neither way, else kept for its first layout - the last one written waiting.

@@ -5,7 +5,7 @@
 // layer's types - `@Model`, `ModelContext`, `ModelContainer` - arrive with
 // it, as `import SwiftData` does under SwiftUI.
 @_exported import JsonData
-import SwiftOmniUI
+import SwiftOmniUICore
 
 // The model context in the environment, as SwiftData hands it down in SwiftUI:
 // `.modelContainer(...)` above, `@Environment(\.modelContext)` and `@Query`

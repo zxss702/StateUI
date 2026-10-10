@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A grid's arithmetic: fixed, automatic and proportional tracks, and each shown child in its cells.
 /// Design: docs/design/host/layout.md#grids

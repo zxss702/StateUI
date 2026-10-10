@@ -133,7 +133,8 @@ extern "C" void swiftomniui_winui_panel_watch_viewport(SwiftOmniUIObjectRef hand
                 guarded("handling EffectiveViewportChanged",
                     [view = owner->view](xaml::FrameworkElement const &, xaml::EffectiveViewportChangedEventArgs const &args) {
                         auto viewport = args.EffectiveViewport();
-                        callbacks.viewportChanged(view, viewport.X, viewport.Y, viewport.Width, viewport.Height);
+                        callbacks.viewportChanged(view, viewport.X, viewport.Y, viewport.Width, viewport.Height,
+                            args.BringIntoViewDistanceX(), args.BringIntoViewDistanceY());
                     }));
         }
     } catch (...) {

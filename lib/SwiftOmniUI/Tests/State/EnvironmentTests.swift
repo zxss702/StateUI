@@ -20,7 +20,7 @@
 //   - `$context.property` lends one property on, writes included.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private final class Session {
     @State var name = "guest"

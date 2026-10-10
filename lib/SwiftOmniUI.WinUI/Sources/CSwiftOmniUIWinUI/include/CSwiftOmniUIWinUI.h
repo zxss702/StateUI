@@ -115,7 +115,8 @@ typedef struct {
     void (*arrange)(int64_t view, double width, double height);
 
     /// A virtualizing panel's effective viewport, including independent touch scrolling and ancestor clipping.
-    void (*viewportChanged)(int64_t view, double x, double y, double width, double height);
+    void (*viewportChanged)(int64_t view, double x, double y, double width, double height,
+                            double bringX, double bringY);
 
     /// A button's Click.
     void (*clicked)(int64_t view);
@@ -132,8 +133,9 @@ typedef struct {
     /// A single-line field's Enter.
     void (*submitted)(int64_t view);
 
-    /// The next view WinUI is about to display, before its ViewChanged notification.
-    void (*scrolling)(int64_t view, double x, double y);
+    /// The next view WinUI is about to display (x, y), and the one it finally lands on (fx, fy), before its
+    /// ViewChanged notification.
+    void (*scrolling)(int64_t view, double x, double y, double fx, double fy);
 
     /// A scroller's view changed: where it stands now, in DIPs.
     void (*scrolled)(int64_t view, double x, double y);

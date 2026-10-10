@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// One native sheet in the modal arrangement owned by a SwiftOmniUI window.

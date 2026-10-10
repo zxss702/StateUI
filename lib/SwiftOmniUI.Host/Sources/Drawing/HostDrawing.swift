@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A canvas's drawing as three flat lists, which a host's relay replays in one crossing: its instructions as the host
 /// layer reads them (`CanvasInstruction`), an arc as the curves it runs along (`CanvasArithmetic.arc`) - so no relay

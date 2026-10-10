@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a window's element says of the window it is, the same on every host: whether the user may maximize and
 /// minimize it - nil where it says nothing, which leaves the toolkit's own - whether the desktop shows through it,

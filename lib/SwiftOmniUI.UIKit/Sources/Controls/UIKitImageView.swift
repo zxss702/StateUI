@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// An Image: a `UIImageView` showing one of the application's pictures - its dark one where the user's appearance is
@@ -23,7 +23,7 @@ final class UIKitImageView: UIImageView {
     }
 
     /// The picture and how it fills the room it stands in.
-    func apply(source: ImageSource?, aspect: SwiftOmniUI.ContentMode) {
+    func apply(source: ImageSource?, aspect: SwiftOmniUICore.ContentMode) {
         self.source = source
         contentMode = switch aspect {
         case .fit: .scaleAspectFit

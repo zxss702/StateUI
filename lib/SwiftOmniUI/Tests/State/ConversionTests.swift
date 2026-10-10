@@ -8,7 +8,7 @@
 // build that makes a body a reader of the sources.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// Counts builds of a body.
 private final class Builds {

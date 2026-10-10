@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 
 /// A scroller says where it went once a frame and rests once a movement: at

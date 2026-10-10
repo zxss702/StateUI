@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Words on a band the tree paints - a bar, a row of tabs - the same on every host: light on a dark band, dark on a
 /// light one, where the tree writes no colour for them.

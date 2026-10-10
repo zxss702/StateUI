@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 @testable import SwiftOmniUIGTK
 import CSwiftOmniUIGTK

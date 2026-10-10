@@ -6,7 +6,7 @@
 // view built with the same inputs is not built again. These count the builds.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private final class Builds {
     var count = 0

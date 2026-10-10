@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The acts an application performs on its host, beside those the host performs itself, the same on every host:
 /// each registered by its member and handed the values its contract declares - an aimed one the control of the

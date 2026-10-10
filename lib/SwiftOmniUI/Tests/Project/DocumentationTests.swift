@@ -17,7 +17,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class DocumentationTests: XCTestCase {
     /// Names every public declaration with no `///` above it.

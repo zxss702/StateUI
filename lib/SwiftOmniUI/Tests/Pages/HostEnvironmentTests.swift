@@ -16,7 +16,7 @@
 //   - every report lands whole, each field on the provider's property.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// Reads the battery - the view a report should rebuild.
 private struct BatteryLabel: View {

@@ -21,7 +21,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A composed view that reads one state - a live reader of it for as long as
 /// the tree that holds it stands.

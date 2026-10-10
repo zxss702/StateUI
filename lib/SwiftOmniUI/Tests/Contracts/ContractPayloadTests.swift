@@ -8,7 +8,7 @@
 // as a handler that never runs.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ContractPayloadTests: XCTestCase {
     /// The events the table checked, as `Contract.member`.

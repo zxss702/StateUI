@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A container an author's `Layout` arranges: the layout object pulled back
@@ -34,7 +34,7 @@ final class GTKCustomLayoutView: GTKTravellingLayout {
                 priority: item.values.priority,
                 measureSize: { proposal in
                     let measured = item.size(offered: proposal.width)
-                    return SwiftOmniUI.Size(width: measured.width, height: measured.height)
+                    return SwiftOmniUICore.Size(width: measured.width, height: measured.height)
                 },
                 measureDimensions: { proposal in
                     let measured = item.size(offered: proposal.width)

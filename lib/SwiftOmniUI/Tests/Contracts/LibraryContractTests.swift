@@ -9,7 +9,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class LibraryContractTests: XCTestCase {
     /// One library member, with the contract it is declared in.

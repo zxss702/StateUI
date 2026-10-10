@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import Android
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 @testable import SwiftOmniUIAndroid
 @_spi(Host) import SwiftOmniUIConformance

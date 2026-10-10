@@ -8,7 +8,7 @@
 // for the system to restore.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private extension WindowType {
     static let fonts = WindowType("fonts")

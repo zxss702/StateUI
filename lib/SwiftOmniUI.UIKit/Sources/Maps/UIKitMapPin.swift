@@ -4,7 +4,7 @@
 #if os(iOS)
 import UIKit
 import MapKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A map's marker as MapKit holds it: its place, its label and subtitle as the marker's title and subtitle, its kind,
 /// and the child it stands for, whose events it raises.

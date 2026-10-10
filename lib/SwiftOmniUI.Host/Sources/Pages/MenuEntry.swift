@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// One entry of a menu as every host walks it - an item, a separator, or a submenu holding entries of its own - with
 /// its caption, its picture, whether it can be chosen, whether it destroys something and its identifier; the host

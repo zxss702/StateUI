@@ -23,7 +23,7 @@
 // derived state, and the conversion pointing back).
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A view that runs one closure of the test's while it is described.
 private struct Held: View {

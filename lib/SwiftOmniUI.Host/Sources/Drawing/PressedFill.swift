@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// How opaque a control's own fill - a button's background, an accent - is drawn as the user reaches for it, the
 /// same on every host drawing that fill itself: a little fainter under the pointer, fainter still pressed.

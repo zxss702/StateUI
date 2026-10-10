@@ -6,7 +6,7 @@
 // no platform has to report.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A view that says when it comes and goes, into a log it is lent.
 private struct Coming: View {

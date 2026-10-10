@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import UniformTypeIdentifiers
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// AppKit's part of the acts every host performs (`HostActPerformer`): the clock and the zones, a question as an

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 import CSwiftOmniUIWinUI
 
@@ -17,7 +17,11 @@ extension WinUIElement {
     func arrangeChildren() {
         if let items = view as? WinUIItemsView { return items.childrenChanged() }
         if let lazy = view as? WinUILazyView {
+            let before = lazy.cells.identities
             if lazy.cells.takeItems() {
+                #if DEBUG
+                WinUIDebugLog.log("lazy[\(ObjectIdentifier(lazy).hashValue)] takeItems ids=\(lazy.cells.identities.count) sameIDs=\(before == lazy.cells.identities)")
+                #endif
                 lazy.measured = [:]
                 lazy.invalidateMeasurements()
             }

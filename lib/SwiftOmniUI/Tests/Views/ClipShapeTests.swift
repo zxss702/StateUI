@@ -9,7 +9,7 @@
 // hit test honours.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ClipShapeTests: XCTestCase {
     /// The layout the view was wrapped in: the clip and the hit outline stand

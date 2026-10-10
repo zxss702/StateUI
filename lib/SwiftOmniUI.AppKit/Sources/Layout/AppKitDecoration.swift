@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// What a layout draws of its own box: its background and its outline on its shape, and - where it clips - the cut

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a canvas draws with: each setting holds until the next of its kind, `saveState` remembers them all and
 /// `restoreState` puts them back - the same on every host drawing in Swift.

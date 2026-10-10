@@ -20,7 +20,7 @@
 // modifiers events are heard through.
 
 import Foundation
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What an event carries, read off its declaration.
 fileprivate protocol EventShape {

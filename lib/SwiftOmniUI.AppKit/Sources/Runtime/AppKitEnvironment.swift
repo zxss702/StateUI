@@ -5,7 +5,7 @@
 import AppKit
 import IOKit.ps
 import Network
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The user's locale, the battery and the network, told to the core as the host starts and whenever one changes,

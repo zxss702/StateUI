@@ -9,7 +9,7 @@
 // children answer.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A page with a link on it, named as it comes into the tree.
 private struct Opener: View {

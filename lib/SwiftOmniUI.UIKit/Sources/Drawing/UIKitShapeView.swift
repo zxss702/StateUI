@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// One of the six shapes: its geometry drawn for the room its layout gives it by shape layers, filled and outlined
@@ -16,7 +16,7 @@ final class UIKitShapeView: UIView {
     enum Geometry: Equatable {
         case rectangle([Double], transform: [Double]?)
         case ellipse(transform: [Double]?)
-        case authored([HostCurveCommand], evenOdd: Bool, aspect: SwiftOmniUI.ContentMode, transform: [Double]?)
+        case authored([HostCurveCommand], evenOdd: Bool, aspect: SwiftOmniUICore.ContentMode, transform: [Double]?)
     }
 
     /// How the outline is drawn: its width, its dashes and gaps with their offset in widths, its ends and joins.

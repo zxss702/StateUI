@@ -7,7 +7,7 @@
 // live here with Foundation.
 
 import Foundation
-import SwiftOmniUI
+import SwiftOmniUICore
 
 extension OpenURLAction {
     /// What the handler answers for a URL - SwiftUI's `OpenURLAction.Result`.

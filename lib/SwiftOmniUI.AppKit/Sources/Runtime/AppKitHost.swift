@@ -5,7 +5,7 @@
 import AppKit
 import Foundation
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// Runs a SwiftOmniUI application as native AppKit controls in the current process.

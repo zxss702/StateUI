@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Where a page's content stands against the window's safe area, the same on every host that has one: clear of the
 /// bars and the notch, but on an edge where its layout lets it under them - edge to edge, or clear of the keyboard

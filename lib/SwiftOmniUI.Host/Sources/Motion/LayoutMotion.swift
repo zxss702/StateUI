@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A view a layout places, at a rectangle in its layout's coordinates, y growing down.
 @_spi(Host) @MainActor public protocol PlacedView: AnyObject {

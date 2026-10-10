@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 import XCTest
 
@@ -112,11 +112,13 @@ final class LazyGeometryTests: XCTestCase {
             XCTAssertEqual(cells.extents.extent(of: "header"), 20)
             XCTAssertEqual(cells.extents.extent(of: "999"), 52)
         }
-        // An update with unchanged identities can change the content's natural height.
+        // An update with unchanged identities keeps the sizes it already knows;
+        // changed rows re-measure on their next layout pass.
         runtime.tree.apply(patch, complete: false)
         XCTAssertTrue(cells.takeItems())
         cells.extents.measure("999", extent: 100)
-        XCTAssertEqual(cells.extents.extent(of: "500"), 100)
+        XCTAssertEqual(cells.extents.extent(of: "501"), 52)
+        XCTAssertEqual(cells.extents.extent(of: "999"), 100)
 
     }
 

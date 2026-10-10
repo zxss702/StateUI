@@ -4,7 +4,7 @@
 import CSwiftOmniUIGTK
 import CWebKitGTK
 import SwiftOmniUIGTK
-import SwiftOmniUI
+import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A WebView on GTK: WebKitGTK's own web view, telling what its page does by the host layer's web rules.

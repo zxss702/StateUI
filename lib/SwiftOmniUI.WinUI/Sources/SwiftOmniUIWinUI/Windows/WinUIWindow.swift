@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import CSwiftOmniUIWinUI
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A WinUI window: its title, its one chrome across the top, its menu bar and the row of tabs beneath it, and the

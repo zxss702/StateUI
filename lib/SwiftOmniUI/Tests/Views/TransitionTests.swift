@@ -5,7 +5,7 @@
 // element was described with, and the type crosses as the contract's value.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class TransitionTests: XCTestCase {
     private func transition(_ view: some View) -> AnyTransition? {

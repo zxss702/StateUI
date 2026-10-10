@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// How a map frames a region alike on every host: the radius is the circle around the centre that the map shows
 /// whole, so the shorter side of what it shows spans the circle's width.

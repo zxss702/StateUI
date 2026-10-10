@@ -10,7 +10,7 @@
 // where it was written - and where each placement lands.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A composed view with toolbar entries written ON it - the case a slot is
 /// easiest to lose, because a View has no node of its own to keep one in.

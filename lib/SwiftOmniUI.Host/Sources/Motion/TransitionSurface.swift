@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The properties a host moves frame by frame, element by element: those its views present and whose values travel.
 /// Every other pair arrives at once, rather than keeping a animation alive that nothing shows.

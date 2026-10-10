@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a host's toolkit does for the files the user opens and saves and for what the system launches
 /// (`HostActs.files`), handed to its `HostActPerformer` beside its `ActToolkit`.

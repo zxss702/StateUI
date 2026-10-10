@@ -10,7 +10,7 @@
 // realizes told to the core.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class RegistryTests: XCTestCase {
     /// A platform view, as far as a registry can tell: what every view it

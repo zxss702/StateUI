@@ -12,7 +12,7 @@
 // which arrives because a value following a finger must not lag behind it.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class MotionTests: XCTestCase {
     /// A panel of a stated opacity, which is a number with a half-way.

@@ -4,7 +4,7 @@
 #if os(iOS)
 import UIKit
 import MapKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A Map: MapKit's own map. It shows the region the tree gives it or an act slides it to, the kind of map and what

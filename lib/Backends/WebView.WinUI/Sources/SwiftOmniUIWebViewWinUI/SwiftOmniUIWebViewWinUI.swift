@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import SwiftOmniUIWinUI
-import SwiftOmniUI
+import SwiftOmniUICore
 
 /// The web view's WinUI backend: WinUI's WebView2, made by this package's relay and realized through the WinUI host's
 /// registration of an application's own controls.

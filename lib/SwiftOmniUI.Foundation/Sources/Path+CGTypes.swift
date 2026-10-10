@@ -10,7 +10,7 @@
 import CoreGraphics
 #endif
 import Foundation
-import SwiftOmniUI
+import SwiftOmniUICore
 
 extension Point {
     /// `value`, in device units.

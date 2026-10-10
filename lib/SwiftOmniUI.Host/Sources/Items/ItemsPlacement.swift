@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// How the entries stand in a collection that knows no groups and shares a grid's width equally among its columns:
 /// whether each is a header or a footer, the columns it spans, and the room it keeps around it, which spaces the items

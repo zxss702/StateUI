@@ -8,7 +8,7 @@
 
 import Observation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A model of the kind an application ships: Swift's own `@Observable`.
 @Observable

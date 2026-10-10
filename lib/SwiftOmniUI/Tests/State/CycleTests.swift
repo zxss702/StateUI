@@ -10,7 +10,7 @@
 
 import Synchronization
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What each engine did, kept in a class so the state walk leaves it alone.
 private final class Ran {

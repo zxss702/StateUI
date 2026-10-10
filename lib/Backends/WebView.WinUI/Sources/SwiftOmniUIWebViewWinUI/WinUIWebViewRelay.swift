@@ -3,7 +3,7 @@
 
 import CWebViewWinUI
 @_spi(Host) import SwiftOmniUIHost
-import SwiftOmniUI
+import SwiftOmniUICore
 
 /// What the relay's web views tell their Swift halves - each reached by the number it was made with - and the
 /// scripts waiting for their answers, by ticket.

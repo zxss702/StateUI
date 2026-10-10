@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import WebKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A WebView: WebKit's own web view. What the page does comes back as the element's events - a navigation as it

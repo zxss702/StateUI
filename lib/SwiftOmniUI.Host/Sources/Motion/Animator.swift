@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What an animation moves: a state's channel, a described property, or a layout's place.
 @_spi(Host) public enum AnimationTarget: Hashable, Comparable {

@@ -12,7 +12,7 @@
 // moved OR when its parent was built again - never skipped on a guess.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// Counts how often a body ran. A class, so the Mirror walk that collects
 /// state boxes leaves it alone.

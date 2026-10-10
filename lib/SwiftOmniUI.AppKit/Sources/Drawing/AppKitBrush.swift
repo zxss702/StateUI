@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A fill drawn by AppKit: the host layer's reading of it (`HostBrush`), its colours in sRGB, painted on a path.

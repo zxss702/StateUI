@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 import CSwiftOmniUIWinUI
 
@@ -73,9 +73,16 @@ class WinUILazyView: WinUITravellingLayout {
         if now.contains(where: { identity, item in
             mounted[identity].map { $0.values != item.values } ?? false
         }) {
+            #if DEBUG
+            WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)] valuesChanged -> extents.reset")
+            #endif
             cells.extents.reset()
             cells.runs.reset()
         }
+        #if DEBUG
+        let churned = mounted.keys.filter { now[$0]?.view !== mounted[$0]?.view }.count
+        WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)] setItems now=\(now.count) churnedViews=\(churned)")
+        #endif
         for (identity, previous) in mounted {
             if now[identity]?.view !== previous.view {
                 swiftomniui_winui_scroller_anchor(previous.view.handle, false)
@@ -121,7 +128,8 @@ class WinUILazyView: WinUITravellingLayout {
     /// Native viewport changes realize the required rows before XAML measures and arranges the new window.
     /// `override` is the freshest window a scroller's own notice can name - where its
     /// pending move already stands - while `rect` is the effective viewport reported.
-    func viewportChanged(_ rect: Rect, effective: Bool = true, target override: Rect? = nil) {
+    func viewportChanged(_ rect: Rect, effective: Bool = true, target override: Rect? = nil,
+                         bring: Point = .zero) {
         guard clip != nil else { return }
         watchClip()
         if effective {
@@ -166,6 +174,12 @@ class WinUILazyView: WinUITravellingLayout {
                 min($0.lowerBound, window.lowerBound)..<max($0.upperBound, window.upperBound)
             } ?? window
         }
+        // A held scroller's notices trail the compositor by whole screens: keep
+        // a viewport of run past either end mounted so what sweeps in next is painted.
+        if held, let realized = realize {
+            let room = axis == .vertical ? rect.height : rect.width
+            realize = max(0, realized.lowerBound - room)..<(realized.upperBound + room)
+        }
         if override != nil { lastAnnounced = incoming }
         guard lastTargetViewport != target || cells.window?.span != (span ?? 0..<0)
             || cells.window?.realize != (realize ?? 0..<0)
@@ -188,6 +202,16 @@ class WinUILazyView: WinUITravellingLayout {
                 return
             }
         }
+        #if DEBUG
+        if abs(rect.x - (-16)) > 1 {
+            var raw = [Double](repeating: 0, count: 6)
+            if let scroll = watching {
+                swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &raw)
+            }
+            WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)].drift rect=\(rect) eff=\(effective) placed=\(String(describing: placed)) held=\(held) built=\(cells.built) raw=(\(raw[0]),\(raw[1])) displayed=(\(raw[4]),\(raw[5]))")
+        }
+        WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)].viewport rect=\(rect) eff=\(effective) span=\(String(describing: span)) realize=\(String(describing: realize)) held=\(held) built=\(cells.built) bring=\(bring)")
+        #endif
         let built = cells.built
         invalidateMeasure()
         tellWindow(span ?? 0..<0, realize: realize ?? 0..<0)
@@ -199,6 +223,10 @@ class WinUILazyView: WinUITravellingLayout {
             _ = contentSize(width: standsAt ?? placed.width)
             arrange(width: placed.width, height: placed.height)
         }
+        #if DEBUG
+        WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)].window built=\(built) -> \(cells.built) total=\(cells.total) est=\(cells.extents.estimate) ids=\(cells.identities.count) shift=\(cells.anchorShift)")
+        WinUIDebugLog.flush()
+        #endif
     }
 
     /// The window `rect` shows of the run, clipped to its document extent.
@@ -262,6 +290,9 @@ class WinUILazyView: WinUITravellingLayout {
     /// The ScrollViewer owns the physical scroll adjustment through its native anchor.
     func commitAnchor(perRun: Int = 1, grid: Bool = false) {
         guard let origin = cells.correctedOrigin(perRun: perRun, grid: grid) else { return }
+        #if DEBUG
+        WinUIDebugLog.log("lazy.commitAnchor origin=\(origin) shift=\(cells.anchorShift)")
+        #endif
         if axis == .vertical { effectiveViewport?.y = origin }
         else { effectiveViewport?.x = origin }
     }
@@ -291,7 +322,10 @@ class WinUILazyView: WinUITravellingLayout {
         swiftomniui_winui_scroller_viewport(scroll.scroller.handle, handle, &raw)
         var rect = Rect(x: raw[0], y: raw[1], width: raw[2], height: raw[3])
         let standing = scroll.scroller.standing.offset
-        let next = scroll.scroller.nextOffset ?? standing
+        // The announced target is the change's landing - inertia's predicted final
+        // offset when one is named, else the next step: where the view will be,
+        // ahead of where it stands, is what an incoming window realizes for.
+        let next = scroll.scroller.finalOffset ?? scroll.scroller.nextOffset ?? standing
         // The announced window: the scroller's own read says where the view
         // stands now; the effective viewport lends its size, whose fractions
         // the direct read rounds away, and the notice's next offset moves it.
@@ -299,6 +333,9 @@ class WinUILazyView: WinUITravellingLayout {
         rect.height = effectiveViewport?.height ?? raw[3]
         if axis == .vertical { rect.y += next.y - standing.y } else { rect.x += next.x - standing.x }
         announcedRect = rect
+        #if DEBUG
+        WinUIDebugLog.log("lazy.moved standing=(\(standing.x),\(standing.y)) next=(\(next.x),\(next.y)) raw=(\(raw[0]),\(raw[1]),\(raw[2])x\(raw[3])) -> \(rect)")
+        #endif
         viewportChanged(rect, effective: effectiveViewport == nil, target: rect)
     }
 
@@ -337,6 +374,11 @@ class WinUILazyView: WinUITravellingLayout {
 
 /// A lazy stack: one child a place.
 final class WinUILazyStackView: WinUILazyView {
+    #if DEBUG
+    /// Each identity's last placed cross-axis origin, for drift tracing.
+    private var lastX: [String: Double] = [:]
+    #endif
+
     /// The room between two children.
     var spacing: Double? {
         didSet { cells.extents.spacing = spacing; if spacing != oldValue { invalidateMeasurements() } }
@@ -451,6 +493,12 @@ final class WinUILazyStackView: WinUILazyView {
             var placed = item
             if cells.inserting.remove(identity) == nil { placed.fadeIn = nil }
             self.place(placed, at: direction.places(frame, in: bounds))
+            #if DEBUG
+            if abs(frame.x - (lastX[identity] ?? frame.x)) > 0.5 {
+                WinUIDebugLog.log("lazy[\(ObjectIdentifier(self).hashValue)].rowx \(identity) x=\(frame.x) w=\(frame.width) natural=\(size.width)")
+            }
+            lastX[identity] = frame.x
+            #endif
         }
     }
 

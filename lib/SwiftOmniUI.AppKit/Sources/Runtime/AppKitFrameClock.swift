@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The frame clock: the display link of the window shown first, moved on when that window closes.

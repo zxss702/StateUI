@@ -240,7 +240,7 @@ extension Node {
         let kind = (content.stateful?.viewType ?? content.type.name) + (content.id.map { "#\($0)" } ?? "")
         let request = ElementSession(PageSession.self) { PageSession() }
 
-        var node = composed(ShownView(content: content), type: "SwiftOmniUI.Page(\(kind))") {
+        var node = composed(ShownView(content: content), type: "SwiftOmniUICore.Page(\(kind))") {
             page(around: content, session: request.held(as: PageSession.self))
         }
 

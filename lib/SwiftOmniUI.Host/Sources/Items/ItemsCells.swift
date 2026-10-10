@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A cell of a platform's collection, as the host layer holds it to the entry it shows.
 @_spi(Host) @MainActor public protocol ItemsHolding: AnyObject {

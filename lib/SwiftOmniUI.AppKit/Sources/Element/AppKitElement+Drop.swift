@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import ObjectiveC
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 // File drops: `allowDrop` registers a view for `.fileURL` and names its

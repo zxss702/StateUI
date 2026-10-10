@@ -7,7 +7,7 @@
 // raises for `.onOpenURL`, and a window scene's `defaultPosition`.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private struct MainWindow: WindowScene {
     var page: any Page { ModifiedContent(node: label("main")) }

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import SwiftOmniUI
+import SwiftOmniUICore
 import CSwiftOmniUIAndroid
 
 /// An Image: an `android.widget.ImageView` showing a picture of the application's, cut to its bounds.

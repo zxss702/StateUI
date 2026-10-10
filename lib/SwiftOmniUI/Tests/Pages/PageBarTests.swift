@@ -10,7 +10,7 @@
 // `Renders.settled` answers.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A page with a toolbar and a menu, which are lists of things that are not
 /// views and hang BESIDE the content - written into the page's session as it

@@ -5,7 +5,7 @@
 // core modifier only knows a document path as text.
 
 import Foundation
-import SwiftOmniUI
+import SwiftOmniUICore
 
 extension View {
     /// The document the page stands for, as a file `URL` - SwiftUI's

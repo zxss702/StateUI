@@ -3,7 +3,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 
 /// The two animation laws every runtime animates with, as numbers - and the
@@ -140,7 +140,7 @@ final class MotionLawTests: XCTestCase {
 
     /// One animation: a law, where each lane began, and the instants it is read at.
     private struct Run {
-        let motion: SwiftOmniUI.Animation
+        let motion: SwiftOmniUICore.Animation
         let from: [Double]
         let destination: [Double]
         let velocity: [Double]

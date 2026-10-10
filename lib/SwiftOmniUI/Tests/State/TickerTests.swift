@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class TickerTests: XCTestCase {
     /// Takes turns of the UI thread - the host's job, here done by hand -

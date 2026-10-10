@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The typed host boundary carries every part of the sparse patch. A native
 /// host may ignore a capability it has not implemented yet, but the boundary

@@ -4,7 +4,7 @@
 // State that outlives the process: what is hydrated, what is shared, what is saved.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// An enum kept as the text it is spelled with - one line, which is the point.
 private enum Appearance: String, PersistentValue {

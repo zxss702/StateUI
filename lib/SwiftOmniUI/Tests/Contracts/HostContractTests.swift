@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The native-host contract is closed over SwiftOmniUI's built-in vocabulary even
 /// though applications remain free to declare their own contracts.

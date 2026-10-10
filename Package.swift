@@ -9,6 +9,7 @@ let host = ["AppKit", "UIKit", "Android", "WinUI", "GTK", "Web"]
 let selectedHost = host
 var products: [Product] = [
     .library(name: "SwiftOmniUI", targets: ["SwiftOmniUI"]),
+    .library(name: "SwiftOmniUICore", targets: ["SwiftOmniUICore"]),
     .library(name: "SwiftOmniUIHost", targets: ["SwiftOmniUIHost"]),
     .library(name: "SwiftOmniUIFoundation", targets: ["SwiftOmniUIFoundation"]),
     .library(name: "SwiftOmniUIJsonData", targets: ["SwiftOmniUIJsonData"]),
@@ -17,27 +18,37 @@ var products: [Product] = [
 ]
 
 var targets: [Target] = [
+        // The facade an application imports: SwiftUI where the platform ships
+        // it, the engine everywhere else - see Sources/SwiftOmniUI.
         .target(
             name: "SwiftOmniUI",
+            dependencies: ["SwiftOmniUICore", "SwiftOmniUIFoundation", "SwiftOmniUIJsonData"],
+            path: "Sources/SwiftOmniUI",
+            swiftSettings: settings
+        ),
+        // The engine itself: imported by every target in this package, reached
+        // by an application only through the facade above.
+        .target(
+            name: "SwiftOmniUICore",
             path: "lib/SwiftOmniUI/Sources",
             swiftSettings: settings
         ),
         .target(
             name: "SwiftOmniUIHost",
-            dependencies: ["SwiftOmniUI"],
+            dependencies: ["SwiftOmniUICore"],
             path: "lib/SwiftOmniUI.Host/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
         .target(
             name: "SwiftOmniUIFoundation",
-            dependencies: ["SwiftOmniUI"],
+            dependencies: ["SwiftOmniUICore"],
             path: "lib/SwiftOmniUI.Foundation/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
         .target(
             name: "SwiftOmniUIJsonData",
             dependencies: [
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
                 // The same ordinary JsonData product applications consume.
                 .product(name: "JsonData", package: "JsonData"),
             ],
@@ -46,7 +57,7 @@ var targets: [Target] = [
         ),
         .target(
             name: "SwiftOmniUIConformance",
-            dependencies: ["SwiftOmniUI",
+            dependencies: ["SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.Conformance/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -75,11 +86,11 @@ var targets: [Target] = [
 // Device and Web suites use their own platform runners.
 if selectedHost != "UIKit" && selectedHost != "Android" && selectedHost != "Web" {
     targets += [
-        .testTarget(name: "SwiftOmniUITests", dependencies: ["SwiftOmniUI"],
+        .testTarget(name: "SwiftOmniUITests", dependencies: ["SwiftOmniUICore"],
             path: "lib/SwiftOmniUI/Tests", swiftSettings: settings),
         .testTarget(
             name: "SwiftOmniUIHostTests",
-            dependencies: ["SwiftOmniUIHost", "SwiftOmniUI"],
+            dependencies: ["SwiftOmniUIHost", "SwiftOmniUICore"],
             path: "lib/SwiftOmniUI.Host/Tests",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
         ),
@@ -97,7 +108,7 @@ if selectedHost != "UIKit" && selectedHost != "Android" && selectedHost != "Web"
         ),
         .testTarget(
             name: "SwiftOmniUIConformanceTests",
-            dependencies: ["SwiftOmniUIConformance", "SwiftOmniUI",
+            dependencies: ["SwiftOmniUIConformance", "SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.Conformance/Tests",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -113,7 +124,7 @@ case "AppKit"?:
     targets += [
         .target(
             name: "SwiftOmniUIAppKit",
-            dependencies: ["SwiftOmniUI",
+            dependencies: ["SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.AppKit/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")],
@@ -123,7 +134,7 @@ case "AppKit"?:
             name: "SwiftOmniUIAppKitTests",
             dependencies: [
                 "SwiftOmniUIAppKit",
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIConformance",
             ],
@@ -142,7 +153,7 @@ case "GTK"?:
         .systemLibrary(name: "CSwiftOmniUIGTK", path: "lib/SwiftOmniUI.GTK/Sources/CSwiftOmniUIGTK", pkgConfig: "libadwaita-1"),
         .target(
             name: "SwiftOmniUIGTK",
-            dependencies: ["CSwiftOmniUIGTK", "SwiftOmniUI",
+            dependencies: ["CSwiftOmniUIGTK", "SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.GTK/Sources/SwiftOmniUIGTK",
             resources: [.copy("Resources/Icons")],
@@ -151,7 +162,7 @@ case "GTK"?:
         .testTarget(
             name: "SwiftOmniUIGTKTests",
             dependencies: [
-                "SwiftOmniUIGTK", "CSwiftOmniUIGTK", "SwiftOmniUI",
+                "SwiftOmniUIGTK", "CSwiftOmniUIGTK", "SwiftOmniUICore",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIConformance",
                 "SwiftOmniUIWebViewGTK",
@@ -167,7 +178,7 @@ case "GTK"?:
                 "CWebKitGTK",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIGTK",
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
             ],
             path: "lib/Backends/WebView.GTK/Sources/SwiftOmniUIWebViewGTK", swiftSettings: settings + [.define("GTK")]),
     ]
@@ -191,7 +202,7 @@ case "WinUI"?:
         ),
         .target(
             name: "SwiftOmniUIWinUI",
-            dependencies: ["CSwiftOmniUIWinUI", "SwiftOmniUI",
+            dependencies: ["CSwiftOmniUIWinUI", "SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.WinUI/Sources/SwiftOmniUIWinUI",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -199,7 +210,7 @@ case "WinUI"?:
         .testTarget(
             name: "SwiftOmniUIWinUITests",
             dependencies: [
-                "SwiftOmniUIWinUI", "CSwiftOmniUIWinUI", "SwiftOmniUI",
+                "SwiftOmniUIWinUI", "CSwiftOmniUIWinUI", "SwiftOmniUICore",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIConformance",
             ],
@@ -220,7 +231,7 @@ case "WinUI"?:
                 "CWebViewWinUI",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIWinUI",
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
             ],
             path: "lib/Backends/WebView.WinUI/Sources/SwiftOmniUIWebViewWinUI", swiftSettings: settings + [.define("WINUI")]),
     ]
@@ -232,7 +243,7 @@ case "UIKit"?:
     targets += [
         .target(
             name: "SwiftOmniUIUIKit",
-            dependencies: ["SwiftOmniUI",
+            dependencies: ["SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.UIKit/Sources",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")],
@@ -241,7 +252,7 @@ case "UIKit"?:
         .executableTarget(
             name: "SwiftOmniUIUIKitTests",
             dependencies: [
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
                 "SwiftOmniUIUIKit",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIConformance",
@@ -265,7 +276,7 @@ case "Android"?:
         ),
         .target(
             name: "SwiftOmniUIAndroid",
-            dependencies: ["CSwiftOmniUIAndroid", "SwiftOmniUI",
+            dependencies: ["CSwiftOmniUIAndroid", "SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.Android/Sources/SwiftOmniUIAndroid",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -273,7 +284,7 @@ case "Android"?:
         .target(
             name: "SwiftOmniUIAndroidTests",
             dependencies: [
-                "SwiftOmniUI",
+                "SwiftOmniUICore",
                 "SwiftOmniUIAndroid",
                 "SwiftOmniUIHost",
                 "SwiftOmniUIConformance",
@@ -290,7 +301,7 @@ case "Web"?:
         .systemLibrary(name: "CSwiftOmniUIWeb", path: "lib/SwiftOmniUI.Web/Sources/CSwiftOmniUIWeb"),
         .target(
             name: "SwiftOmniUIWeb",
-            dependencies: ["CSwiftOmniUIWeb", "SwiftOmniUI",
+            dependencies: ["CSwiftOmniUIWeb", "SwiftOmniUICore",
                 "SwiftOmniUIHost"],
             path: "lib/SwiftOmniUI.Web/Sources/SwiftOmniUIWeb",
             swiftSettings: [.enableUpcomingFeature("NonisolatedNonsendingByDefault")]
@@ -300,7 +311,7 @@ case "Web"?:
             name: "SwiftOmniUIWebTests",
             dependencies: [
                 "CWebTesting", "SwiftOmniUIWeb",
-                "SwiftOmniUIHost", "SwiftOmniUI",
+                "SwiftOmniUIHost", "SwiftOmniUICore",
                 "SwiftOmniUIConformance",
             ],
             path: "lib/SwiftOmniUI.Web/Testing/Tests",

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What assistive technology meets of an element: its words, its heading level, and whether it is met at all.
 /// Design: docs/design/host/tree.md#what-assistive-technology-meets

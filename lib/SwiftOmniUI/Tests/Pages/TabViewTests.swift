@@ -9,7 +9,7 @@
 // page became current - and it writes the bound selection.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// An application's own tabs: a typed enum, which is what replaces an index.
 private enum Tab: Hashable, CaseIterable {

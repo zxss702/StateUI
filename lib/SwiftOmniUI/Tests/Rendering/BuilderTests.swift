@@ -9,7 +9,7 @@
 // ViewBuilder.swift.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class BuilderTests: XCTestCase {
     // MARK: - Reading a patch

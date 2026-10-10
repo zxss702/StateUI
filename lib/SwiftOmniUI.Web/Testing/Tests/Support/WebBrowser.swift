@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import CWebTesting
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The browser's page as the conformance suite reaches it (Testing/JavaScript/browser.mjs): the page going on a
 /// frame while the program waits, a script run on an element, and the controller beside the browser asked for the

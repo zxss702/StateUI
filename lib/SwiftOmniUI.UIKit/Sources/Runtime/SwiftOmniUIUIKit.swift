@@ -4,7 +4,7 @@
 #if os(iOS)
 import Foundation
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The UIKit host: an application's iOS head hands it the process, and it runs the application's scenes in the

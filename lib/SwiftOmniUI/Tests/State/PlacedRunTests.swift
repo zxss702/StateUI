@@ -14,7 +14,7 @@
 // host's half is MotionPlacement in SwiftOmniUI.Runtime's MotionTargets.cs.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class PlacedRunTests: XCTestCase {
     override func setUp() {

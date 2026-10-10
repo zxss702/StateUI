@@ -4,7 +4,7 @@
 #if os(iOS)
 import QuartzCore
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// How a view is drawn over its place: its own transform, then a placing layout's, as one matrix on its layer, and

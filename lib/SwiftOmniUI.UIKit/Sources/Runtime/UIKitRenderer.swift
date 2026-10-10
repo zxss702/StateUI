@@ -3,7 +3,7 @@
 
 #if os(iOS)
 import UIKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The UIKit host's runtime: the host layer's (`HostRuntime`) over UIKit's windows - each SwiftOmniUI window in a

@@ -18,7 +18,7 @@
 //     where the words stand until the host says again.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// An attribute the way Markdown writes one - a payload only the laid-out
 /// run answers for.

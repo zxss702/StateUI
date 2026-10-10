@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The arithmetic of a value a control holds inside a range - a slider's, a stepper's, a bar's - the same on every
 /// host: the range's ends in order, a step that moves, the share of work done, and how a stepped number is written.

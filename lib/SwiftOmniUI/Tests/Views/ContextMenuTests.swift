@@ -9,7 +9,7 @@
 // one entry carries that entry alone.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A composed view with a menu written ON it - the case a slot is easiest to
 /// lose, because a View has no node of its own to keep one in.

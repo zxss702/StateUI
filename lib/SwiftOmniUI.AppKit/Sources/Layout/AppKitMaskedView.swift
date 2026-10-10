@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A `.mask` realized: the content laid out in the room, and the mask laid

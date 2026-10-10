@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The platform identity and SwiftOmniUI ownership needed to restore one window.

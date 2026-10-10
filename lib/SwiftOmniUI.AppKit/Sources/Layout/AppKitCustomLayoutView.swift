@@ -3,7 +3,7 @@
 
 #if os(macOS)
 import AppKit
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A container an author's `Layout` arranges: the layout object pulled back
@@ -42,7 +42,7 @@ final class AppKitCustomLayoutView: AppKitTravellingLayout, AppKitWidthConstrain
                 priority: item.values.priority,
                 measureSize: { proposal in
                     let measured = item.fittingSize(width: proposal.width.map { CGFloat($0) })
-                    return SwiftOmniUI.Size(width: Double(measured.width), height: Double(measured.height))
+                    return SwiftOmniUICore.Size(width: Double(measured.width), height: Double(measured.height))
                 },
                 measureDimensions: { proposal in
                     let measured = item.fittingSize(width: proposal.width.map { CGFloat($0) })

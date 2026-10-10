@@ -12,7 +12,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class ActCallShapeTests: XCTestCase {
     private typealias Act<Value> = nonisolated(nonsending) () async throws -> Value

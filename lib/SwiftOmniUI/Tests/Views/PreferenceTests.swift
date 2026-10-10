@@ -22,7 +22,7 @@
 //   - seeds cross fragments - a `Group` or `ForEach` is transparent to them.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A sum over whatever children offer - the `MarkdownLayoutKey` shape, where
 /// the answer is what every descendant wrote.

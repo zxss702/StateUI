@@ -6,7 +6,7 @@
 
 import XCTest
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What a handler heard, in order - a class, so a closure can append to it.
 private final class Received<Value> {

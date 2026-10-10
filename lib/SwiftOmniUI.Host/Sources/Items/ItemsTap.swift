@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a tap on an item does where the toolkit's collection decides nothing of it: it chooses the item - adding it
 /// to a choice of many or taking it away - and opens it, unless it changes a choice of many.

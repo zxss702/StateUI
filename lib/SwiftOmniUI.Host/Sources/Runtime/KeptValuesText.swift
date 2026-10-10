@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The application's kept values as the text of a file of the host's own, for a platform that keeps no store an
 /// application can use: a line a key, its name and its words apart by a tab. The same values write the same text.

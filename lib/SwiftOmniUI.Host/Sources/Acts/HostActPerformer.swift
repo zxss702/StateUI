@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Performs the acts the application calls on the host, and answers each - a reply with its values, or a failure
 /// with the reason - so a caller never waits on an act nobody performs: the same on every host, the toolkit's part

@@ -6,7 +6,7 @@
 
 import XCTest
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// How many times each row was built - a class, so the closure that counts
 /// into it is not walked for state.

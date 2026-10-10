@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A split view's one adaptation, the same on every host: first given room at least as wide as the platform's own
 /// breakpoint, it shows its sidebar, said as the user's; after that the user and the application decide.

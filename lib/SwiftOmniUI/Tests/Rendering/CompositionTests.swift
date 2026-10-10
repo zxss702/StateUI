@@ -29,7 +29,7 @@
 import Foundation
 import XCTest
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class CompositionTests: XCTestCase {
     /// What every composed view is checked for: nothing a caller may leave out

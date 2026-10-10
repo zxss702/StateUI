@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Where a placing run stands a ZStack's children, and in what order it draws them, the same on every host.
 /// Design: docs/design/host/layout.md#a-placing-run

@@ -6,7 +6,7 @@
 // host drains them.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class HostEventsTests: XCTestCase {
     /// A place a handler writes - a plain class captured in a test method,

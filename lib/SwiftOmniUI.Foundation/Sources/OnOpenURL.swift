@@ -6,7 +6,7 @@
 // holds no Foundation - and this bridge says it as a URL.
 
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 extension View {
     /// Runs `action` with each URL the platform hands the application -

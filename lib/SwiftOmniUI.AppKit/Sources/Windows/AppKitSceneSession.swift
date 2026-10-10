@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// What AppKit keeps of one scene for the system's window restoration: the identifier its windows are restored by -

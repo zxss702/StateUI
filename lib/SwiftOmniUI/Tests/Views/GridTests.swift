@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XCTest
-@testable import SwiftOmniUI
+@testable import SwiftOmniUICore
 
 /// A `LazyVGrid`'s columns, and a `Grid`'s `GridRow`s, as the nodes the differ sees.
 @MainActor final class GridTests: XCTestCase {

@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import Foundation
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// One window element shown in an AppKit window: what the host layer says it shows - its arrangement of pages, its

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The phases a page hears as it is shown and hidden, the same on every host, each rendered in its turn.
 /// Design: docs/design/host/pages.md#a-pages-phases

@@ -3,7 +3,7 @@
 
 import CWebViewWinUI
 import SwiftOmniUIWinUI
-import SwiftOmniUI
+import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A WebView on WinUI: WinUI's WebView2, made by the backend's relay. What the page does comes back as the element's

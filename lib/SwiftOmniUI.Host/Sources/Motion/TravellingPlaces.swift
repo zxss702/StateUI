@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// One layout's children travelling to their places, the same on every host: as an arrangement begins, it decides
 /// once for every child whether the places a patch or a new width gave them animate, and each child then stands at

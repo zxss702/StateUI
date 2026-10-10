@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a canvas's `measureText` act asks - the words, the font decomposed the way `FontElementContract`'s
 /// members carry it, and the width the words wrap at - which every host reads the same and measures with its

@@ -13,7 +13,7 @@
 // from the library's own enums, so the dump can lack a vocabulary but never
 // misspell one.
 
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 enum PatchDump {
     /// A patch and everything under it.

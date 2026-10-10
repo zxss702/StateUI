@@ -19,7 +19,7 @@
 // `Renders.settled`, which runs it the way the renderer does.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A page that writes EVERYTHING a page's session holds, as it comes into the
 /// tree.

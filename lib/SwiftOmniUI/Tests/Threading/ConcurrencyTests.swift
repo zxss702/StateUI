@@ -18,7 +18,7 @@
 // the host loop below has an end.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// The gallery Card's exact shape: the handler literal written inside a
 /// conforming struct's `body` GETTER, an `async let` child inside it, and

@@ -3,7 +3,7 @@
 
 import WASILibc
 import XCTest
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIConformance
 
 /// What this host's conformance runs write into the library's `exports` folder: the verdicts its cases gave - held

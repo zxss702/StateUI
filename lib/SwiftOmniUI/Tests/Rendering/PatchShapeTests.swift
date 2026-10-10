@@ -6,7 +6,7 @@
 // puts in one is next door, in ControlTests.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class PatchShapeTests: XCTestCase {
     /// The counter page of the sample, in miniature: enough to carry a title, a

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A host's views by number, held weakly: what a toolkit's callback names a view by - a number crossing C where
 /// an object cannot - and what a test counts to see every view let go.

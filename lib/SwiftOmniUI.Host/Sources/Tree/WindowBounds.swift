@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The least and greatest size a window's element allows, in DIPs, the same on every host: nil where it says
 /// nothing, which leaves the toolkit's own, and a greatest never below the least.

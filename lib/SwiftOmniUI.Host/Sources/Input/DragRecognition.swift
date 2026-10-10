@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// A press on its way to a drag, the same on every host whose toolkit tells a press and its moves and no drag of its
 /// own: a drag once it has moved more than the platform's distance from where it went down, then each move the

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import ucrt
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// Words handed to the relay as C strings.

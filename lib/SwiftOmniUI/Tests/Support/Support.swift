@@ -9,7 +9,7 @@
 
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 extension HostPatch {
     var props: [Prop: HostValue] { properties }

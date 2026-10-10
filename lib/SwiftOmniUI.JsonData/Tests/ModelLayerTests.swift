@@ -5,7 +5,7 @@ import Foundation
 import Testing
 @testable import SwiftOmniUIJsonData
 import JsonData
-import SwiftOmniUI
+import SwiftOmniUICore
 
 /// A model the query tests keep in memory.
 @Model

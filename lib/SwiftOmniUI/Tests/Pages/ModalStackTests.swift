@@ -13,7 +13,7 @@
 // presented - the sheet the user dragged down has already gone.
 //
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// What an application presents over itself. An enum, because the destination
 /// is a `switch` and the compiler is what says every case has a page.

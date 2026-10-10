@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What an arrangement of pages shows, the same on every host: a stack's top page, the chosen tab, a split view's
 /// detail and, while it shows, its sidebar.

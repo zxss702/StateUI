@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The day and the time a picker holds, the same on every host: a day not in the Gregorian calendar refused, one
 /// past the range held at its end, and a time added up from midnight around the day.

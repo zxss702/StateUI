@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a view heard of the user's input, as a host's toolkit tells it, in the contract's terms.
 /// Design: docs/design/host/runtime.md#what-the-user-does-with-a-finger

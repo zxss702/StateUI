@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import SwiftOmniUIGTK
-import SwiftOmniUI
+import SwiftOmniUICore
 
 /// The web view's GTK backend: WebKitGTK's web view, realized through the GTK host's registration of an application's
 /// own controls.

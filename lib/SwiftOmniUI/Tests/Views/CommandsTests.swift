@@ -11,7 +11,7 @@
 // under the page.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private extension WindowType {
     static let palettes = WindowType("palettes")

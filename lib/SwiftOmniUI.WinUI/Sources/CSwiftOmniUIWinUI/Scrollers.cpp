@@ -1,119 +1,164 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// A ScrollView's scroller: WinUI's ScrollViewer around the document the host
+// A ScrollView's scroller: WinUI's ScrollView around the document the host
 // lays out, saying where its view stands and when the user holds it.
 // Design: docs/design/platforms/winui/layout.md#scrolling
 
 #include "Relay.h"
 
 #include <algorithm>
-#include <chrono>
 #include <cmath>
-#include <vector>
+#include <memory>
 #include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <winrt/Windows.Foundation.h>
 
 using namespace swiftomniui;
 
 namespace {
-    controls::ScrollBarVisibility visibility(bool scrolls, int32_t bar) {
-        if (!scrolls) return controls::ScrollBarVisibility::Disabled;
+    controls::ScrollingScrollBarVisibility visibility(bool scrolls, int32_t bar) {
+        if (!scrolls) return controls::ScrollingScrollBarVisibility::Hidden;
         switch (bar) {
-        case 1: return controls::ScrollBarVisibility::Visible;
-        case 2: return controls::ScrollBarVisibility::Hidden;
-        default: return controls::ScrollBarVisibility::Auto;
+        case 1: return controls::ScrollingScrollBarVisibility::Visible;
+        case 2: return controls::ScrollingScrollBarVisibility::Hidden;
+        default: return controls::ScrollingScrollBarVisibility::Auto;
         }
     }
 
-    // An animated move is stepped on the UI thread, each step a snapped
-    // ChangeView: every position the compositor is asked to show is one the
-    // layouts under it already realize, so nothing it crosses stands blank.
-    struct ScrollFlight {
-        winrt::weak_ref<controls::ScrollViewer> scroller;
-        double fromX = 0, fromY = 0, toX = 0, toY = 0;
-        std::chrono::steady_clock::time_point began;
+    // The wire's scroll mode - 0 off, 1 on, 2 where the content fills the view -
+    // named on the new scroller, whose enum numbers Enabled first.
+    controls::ScrollingScrollMode scrollMode(int32_t mode) {
+        switch (mode) {
+        case 0: return controls::ScrollingScrollMode::Disabled;
+        case 1: return controls::ScrollingScrollMode::Enabled;
+        default: return controls::ScrollingScrollMode::Auto;
+        }
+    }
+
+    int32_t scrollModeBack(controls::ScrollingScrollMode mode) {
+        switch (mode) {
+        case controls::ScrollingScrollMode::Disabled: return 0;
+        case controls::ScrollingScrollMode::Enabled: return 1;
+        default: return 2;
+        }
+    }
+
+    controls::ScrollingContentOrientation contentOrientation(int32_t orientation) {
+        switch (orientation) {
+        case 0: return controls::ScrollingContentOrientation::Vertical;
+        case 1: return controls::ScrollingContentOrientation::Horizontal;
+        case 2: return controls::ScrollingContentOrientation::Both;
+        default: return controls::ScrollingContentOrientation::None;
+        }
+    }
+
+    // A delta on a disabled axis finds no listener: it scrolls nothing here and
+    // chains nowhere, rather than ending a pan the whole document bounces back
+    // from. The live axis chains the way nested scrollers expect.
+    void modes(controls::ScrollView const &scroller, int32_t verticalMode, int32_t horizontalMode) {
+        auto vertical = scrollMode(verticalMode);
+        auto horizontal = scrollMode(horizontalMode);
+        scroller.VerticalScrollMode(vertical);
+        scroller.HorizontalScrollMode(horizontal);
+        scroller.VerticalScrollChainMode(vertical == controls::ScrollingScrollMode::Disabled
+            ? controls::ScrollingChainMode::Never : controls::ScrollingChainMode::Auto);
+        scroller.HorizontalScrollChainMode(horizontal == controls::ScrollingScrollMode::Disabled
+            ? controls::ScrollingChainMode::Never : controls::ScrollingChainMode::Auto);
+    }
+
+    // The landing an animation announced, shared by the move's notices: while
+    // one flies the compositor's per-frame word pairs where it stands with
+    // where it lands, and the run's window realizes both ends.
+    struct ScrollerFlight {
+        double x = std::nan(""), y = std::nan("");
+        bool held = false;
     };
-    std::vector<ScrollFlight>& scrollFlights() {
-        static std::vector<ScrollFlight> list;
-        return list;
-    }
-    winrt::event_token& scrollFlightToken() {
-        static winrt::event_token token;
-        return token;
-    }
 
-    void scrollFlightTick(IInspectable const &, IInspectable const &) {
-        auto now = std::chrono::steady_clock::now();
-        auto &list = scrollFlights();
-        struct Step { controls::ScrollViewer scroller; double x, y; };
-        std::vector<Step> steps;
-        for (auto &flight : list) {
-            auto scroller = flight.scroller.get();
-            double t = std::min(1.0, std::chrono::duration<double>(now - flight.began).count() / 0.24);
-            double eased = 1 - std::pow(1 - t, 3.0);
-            steps.push_back({scroller,
-                flight.fromX + (flight.toX - flight.fromX) * eased,
-                flight.fromY + (flight.toY - flight.fromY) * eased});
-        }
-        list.erase(std::remove_if(list.begin(), list.end(), [&](ScrollFlight const &flight) {
-            return !flight.scroller.get()
-                || std::chrono::duration<double>(now - flight.began).count() >= 0.24;
-        }), list.end());
-        if (list.empty() && scrollFlightToken()) {
-            xaml::Media::CompositionTarget::Rendering(scrollFlightToken());
-            scrollFlightToken() = {};
-        }
-        for (auto &step : steps) {
-            if (!step.scroller) continue;
-            step.scroller.ChangeView(
-                winrt::box_value(step.x).as<winrt::Windows::Foundation::IReference<double>>(),
-                winrt::box_value(step.y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
-        }
-    }
-
-    void scrollLand(controls::ScrollViewer const &scroller) {
-        auto &list = scrollFlights();
-        for (auto i = list.size(); i > 0; --i)
-            if (list[i - 1].scroller.get() == scroller) list.erase(list.begin() + i - 1);
-        if (list.empty() && scrollFlightToken()) {
-            xaml::Media::CompositionTarget::Rendering(scrollFlightToken());
-            scrollFlightToken() = {};
-        }
-    }
-
-    void scrollFlyTo(controls::ScrollViewer const &scroller, double x, double y) {
-        scrollLand(scroller);
-        if (scrollFlights().empty())
-            scrollFlightToken() = xaml::Media::CompositionTarget::Rendering(
-                { guarded("stepping an animated scroll", &scrollFlightTick) });
-        scrollFlights().push_back({winrt::make_weak(scroller),
-            (double)scroller.HorizontalOffset(), (double)scroller.VerticalOffset(),
-            x, y, std::chrono::steady_clock::now()});
+    // Temporary migration diagnostics: one line in C:\Users\zxs20\lui-lazy.log.
+    void scrollDiag(char const *fmt, ...) {
+        FILE *log = fopen("C:\\Users\\zxs20\\lui-lazy.log", "a");
+        if (!log) return;
+        va_list args;
+        va_start(args, fmt);
+        vfprintf(log, fmt, args);
+        va_end(args);
+        fputc('\n', log);
+        fclose(log);
     }
 }
 
 extern "C" SwiftOmniUIObjectRef swiftomniui_winui_scroller_make(int64_t view) {
     try {
-        controls::ScrollViewer scroller;
-        scroller.ViewChanging(guarded("handling ViewChanging",
-            [view](IInspectable const &, controls::ScrollViewerViewChangingEventArgs const &args) {
-            auto next = args.NextView();
-            callbacks.scrolling(view, next.HorizontalOffset(), next.VerticalOffset());
-        }));
+        controls::ScrollView scroller;
+        auto flight = std::make_shared<ScrollerFlight>();
+        scroller.ZoomMode(controls::ScrollingZoomMode::Disabled);
+        // The InteractionTracker's word of the view, every frame it moves: the
+        // ear hears where it stands now paired with where an animation lands.
         scroller.ViewChanged(guarded("handling ViewChanged",
-            [view](IInspectable const &sender, controls::ScrollViewerViewChangedEventArgs const &) {
-            auto scroller = sender.as<controls::ScrollViewer>();
-            callbacks.scrolled(view, scroller.HorizontalOffset(), scroller.VerticalOffset());
+            [view, flight](controls::ScrollView const &scroller, IInspectable const &) {
+            double x = scroller.HorizontalOffset(), y = scroller.VerticalOffset();
+            callbacks.scrolling(view, x, y,
+                std::isnan(flight->x) ? x : flight->x, std::isnan(flight->y) ? y : flight->y);
+            if (scroller.State() == controls::ScrollingInteractionState::Interaction)
+                callbacks.scrolled(view, x, y);
         }));
-        scroller.DirectManipulationStarted(guarded("handling DirectManipulationStarted",
-            [view](IInspectable const &sender, IInspectable const &) {
-            if (auto held = sender.try_as<controls::ScrollViewer>()) scrollLand(held);
-            callbacks.held(view, true);
+        // Temporary migration diagnostics.
+        scroller.ViewChanged(guarded("tracing ViewChanged",
+            [](controls::ScrollView const &scroller, IInspectable const &) {
+            static int skipped = 0;
+            if (scroller.State() != controls::ScrollingInteractionState::Idle || ++skipped % 60 == 1)
+                scrollDiag("view.changed at=(%g,%g) state=%d room=(%g,%g) view=%gx%g presenter=%d",
+                    scroller.HorizontalOffset(), scroller.VerticalOffset(), (int)scroller.State(),
+                    scroller.ScrollableWidth(), scroller.ScrollableHeight(),
+                    scroller.ViewportWidth(), scroller.ViewportHeight(),
+                    scroller.ScrollPresenter() != nullptr);
         }));
-        scroller.DirectManipulationCompleted(guarded("handling DirectManipulationCompleted",
-            [view](IInspectable const &, IInspectable const &) {
-            callbacks.held(view, false);
+        scroller.SizeChanged(guarded("tracing SizeChanged",
+            [view](IInspectable const &sender, xaml::SizeChangedEventArgs const &args) {
+            auto scroller = sender.as<controls::ScrollView>();
+            auto now = args.NewSize(), was = args.PreviousSize();
+            scrollDiag("scroller[%lld].sized (%gx%g)->(%gx%g) align=%d desired=(%gx%g) presenter=%g",
+                view, was.Width, was.Height, now.Width, now.Height,
+                (int)scroller.VerticalAlignment(),
+                scroller.DesiredSize().Width, scroller.DesiredSize().Height,
+                scroller.ScrollPresenter() ? scroller.ScrollPresenter().ActualHeight() : -1.0);
+        }));
+        // An animation - inertia's or a move the program animated - names its
+        // landing as it starts: realized before the compositor can reach it.
+        scroller.ScrollAnimationStarting(guarded("handling ScrollAnimationStarting",
+            [view, flight](controls::ScrollView const &scroller,
+                controls::ScrollingScrollAnimationStartingEventArgs const &args) {
+            auto end = args.EndPosition();
+            flight->x = end.x;
+            flight->y = end.y;
+            callbacks.scrolling(view,
+                scroller.HorizontalOffset(), scroller.VerticalOffset(), end.x, end.y);
+        }));
+        // Idle is the view at rest: anything else - the user's hand, the throw
+        // after it, or a driven animation - is the scroller held.
+        scroller.StateChanged(guarded("handling StateChanged",
+            [view, flight](controls::ScrollView const &scroller, IInspectable const &) {
+            auto state = scroller.State();
+            bool held = state != controls::ScrollingInteractionState::Idle;
+            if (held != flight->held) {
+                flight->held = held;
+                callbacks.held(view, held);
+            }
+            if (state == controls::ScrollingInteractionState::Interaction)
+                flight->x = flight->y = std::nan("");
+            if (state == controls::ScrollingInteractionState::Idle) {
+                flight->x = flight->y = std::nan("");
+                callbacks.scrolled(view, scroller.HorizontalOffset(), scroller.VerticalOffset());
+            }
+            scrollDiag("state.changed state=%d at=(%g,%g)", (int)state,
+                scroller.HorizontalOffset(), scroller.VerticalOffset());
+        }));
+        // An anchor to hold the view by when the extent moves: the document
+        // itself stands in for a run with no registered cell.
+        scroller.AnchorRequested(guarded("handling AnchorRequested",
+            [](controls::ScrollView const &scroller,
+                controls::ScrollingAnchorRequestedEventArgs const &args) {
+            if (auto content = scroller.Content()) args.AnchorCandidates().Append(content);
         }));
         return detach(scroller);
     } catch (...) {
@@ -126,11 +171,11 @@ extern "C" void swiftomniui_winui_scroller_set(
     SwiftOmniUIObjectRef handle, SwiftOmniUIObjectRef content, int32_t orientation, int32_t verticalBar, int32_t horizontalBar
 ) {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto scroller = borrow<controls::ScrollView>(handle);
         auto down = orientation == 0 || orientation == 2;
         auto across = orientation == 1 || orientation == 2;
-        scroller.VerticalScrollMode(down ? controls::ScrollMode::Enabled : controls::ScrollMode::Disabled);
-        scroller.HorizontalScrollMode(across ? controls::ScrollMode::Enabled : controls::ScrollMode::Disabled);
+        modes(scroller, down ? 1 : 0, across ? 1 : 0);
+        scroller.ContentOrientation(contentOrientation(orientation));
         scroller.VerticalScrollBarVisibility(visibility(down, verticalBar));
         scroller.HorizontalScrollBarVisibility(visibility(across, horizontalBar));
         auto element = content ? as<xaml::UIElement>(content) : xaml::UIElement{nullptr};
@@ -143,9 +188,7 @@ extern "C" void swiftomniui_winui_scroller_set(
 extern "C" void swiftomniui_winui_scroller_modes(
     SwiftOmniUIObjectRef handle, int32_t verticalMode, int32_t horizontalMode) {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
-        scroller.VerticalScrollMode(static_cast<controls::ScrollMode>(verticalMode));
-        scroller.HorizontalScrollMode(static_cast<controls::ScrollMode>(horizontalMode));
+        modes(borrow<controls::ScrollView>(handle), verticalMode, horizontalMode);
     } catch (...) {
         report("setting a scroller's modes");
     }
@@ -153,15 +196,22 @@ extern "C" void swiftomniui_winui_scroller_modes(
 
 extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, double x, double y, bool animated) {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
-        scrollLand(scroller);
-        if (!animated) {
-            scroller.ChangeView(
-                winrt::box_value(x).as<winrt::Windows::Foundation::IReference<double>>(),
-                winrt::box_value(y).as<winrt::Windows::Foundation::IReference<double>>(), nullptr, true);
-            return;
-        }
-        scrollFlyTo(scroller, x, y);
+        auto scroller = borrow<controls::ScrollView>(handle);
+        scrollDiag("scroll.move to=(%g,%g) anim=%d at=(%g,%g) room=(%g,%g) view=(%gx%g) doc=(%gx%g) presenter=%d state=%d actual=(%gx%g) presenterActual=(%gx%g) desired=(%gx%g)",
+            x, y, (int)animated, scroller.HorizontalOffset(), scroller.VerticalOffset(),
+            scroller.ScrollableWidth(), scroller.ScrollableHeight(),
+            scroller.ViewportWidth(), scroller.ViewportHeight(),
+            scroller.ExtentWidth(), scroller.ExtentHeight(),
+            scroller.ScrollPresenter() != nullptr, (int)scroller.State(),
+            scroller.ActualWidth(), scroller.ActualHeight(),
+            scroller.ScrollPresenter() ? scroller.ScrollPresenter().ActualWidth() : -1.0,
+            scroller.ScrollPresenter() ? scroller.ScrollPresenter().ActualHeight() : -1.0,
+            scroller.DesiredSize().Width, scroller.DesiredSize().Height);
+        auto id = scroller.ScrollTo(x, y, controls::ScrollingScrollOptions(
+            animated ? controls::ScrollingAnimationMode::Enabled : controls::ScrollingAnimationMode::Disabled,
+            controls::ScrollingSnapPointsMode::Ignore));
+        scrollDiag("scroll.moved id=%d at=(%g,%g)", (int)id,
+            scroller.HorizontalOffset(), scroller.VerticalOffset());
     } catch (...) {
         report("moving a scroller");
     }
@@ -169,9 +219,9 @@ extern "C" void swiftomniui_winui_scroller_move(SwiftOmniUIObjectRef handle, dou
 
 extern "C" void swiftomniui_winui_scroller_read_modes(SwiftOmniUIObjectRef handle, int32_t *modes) {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
-        modes[0] = static_cast<int32_t>(scroller.VerticalScrollMode());
-        modes[1] = static_cast<int32_t>(scroller.HorizontalScrollMode());
+        auto scroller = borrow<controls::ScrollView>(handle);
+        modes[0] = scrollModeBack(scroller.VerticalScrollMode());
+        modes[1] = scrollModeBack(scroller.HorizontalScrollMode());
     } catch (...) {
         report("reading a scroller's modes");
     }
@@ -179,8 +229,9 @@ extern "C" void swiftomniui_winui_scroller_read_modes(SwiftOmniUIObjectRef handl
 
 extern "C" void swiftomniui_winui_scroller_anchor(SwiftOmniUIObjectRef element, bool enabled) {
     try {
-        auto view = as<xaml::UIElement>(element);
-        if (view.CanBeScrollAnchor() != enabled) view.CanBeScrollAnchor(enabled);
+        // The framework registers every flagged descendant with the anchor
+        // provider above it, whichever scroller that is.
+        as<xaml::UIElement>(element).CanBeScrollAnchor(enabled);
     } catch (...) { report("registering a scroll anchor"); }
 }
 
@@ -189,7 +240,7 @@ extern "C" void swiftomniui_winui_scroller_place_for(
     int32_t *found, double *place)
 {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto scroller = borrow<controls::ScrollView>(handle);
         auto element = as<xaml::FrameworkElement>(descendant);
         auto content = scroller.Content().try_as<xaml::UIElement>();
         if (!element || !content) { *found = 0; return; }
@@ -205,12 +256,12 @@ extern "C" void swiftomniui_winui_scroller_place_for(
 
         double x = scroller.HorizontalOffset();
         double y = scroller.VerticalOffset();
-        if (scroller.HorizontalScrollMode() == controls::ScrollMode::Enabled) {
+        if (scroller.ComputedHorizontalScrollMode() == controls::ScrollingScrollMode::Enabled) {
             x = std::isnan(anchorX)
                 ? nearest(bounds.X, bounds.Width, scroller.ViewportWidth(), x)
                 : bounds.X + anchorX * bounds.Width - anchorX * scroller.ViewportWidth();
         }
-        if (scroller.VerticalScrollMode() == controls::ScrollMode::Enabled) {
+        if (scroller.ComputedVerticalScrollMode() == controls::ScrollingScrollMode::Enabled) {
             y = std::isnan(anchorY)
                 ? nearest(bounds.Y, bounds.Height, scroller.ViewportHeight(), y)
                 : bounds.Y + anchorY * bounds.Height - anchorY * scroller.ViewportHeight();
@@ -226,7 +277,7 @@ extern "C" void swiftomniui_winui_scroller_place_for(
 
 extern "C" void swiftomniui_winui_scroller_offset(SwiftOmniUIObjectRef handle, double *offset) {
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto scroller = borrow<controls::ScrollView>(handle);
         offset[0] = scroller.HorizontalOffset();
         offset[1] = scroller.VerticalOffset();
         offset[2] = scroller.ScrollableWidth();
@@ -241,7 +292,7 @@ extern "C" void swiftomniui_winui_scroller_viewport(
 ) {
     std::fill_n(viewport, 6, 0);
     try {
-        auto scroller = borrow<controls::ScrollViewer>(handle);
+        auto scroller = borrow<controls::ScrollView>(handle);
         auto content = scroller.Content().try_as<xaml::UIElement>();
         if (!content) return;
         auto element = as<xaml::UIElement>(descendant);

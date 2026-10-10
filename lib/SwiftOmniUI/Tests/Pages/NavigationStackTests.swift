@@ -9,7 +9,7 @@
 // COMPLETED - and it truncates the path.
 //
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// An application's own routes: a typed enum with its parameters as associated
 /// values, which is what replaces a route string and a `[String: String]`.

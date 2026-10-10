@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// What a case puts on a specimen that only a view of a known kind takes - a state its frame lands in, the states a
 /// pan carries, an aim - put on whatever kind the specimen is.

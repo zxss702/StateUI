@@ -10,7 +10,7 @@
 // These count the builds, because that is the only way to tell.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 private final class Builds {
     var count = 0

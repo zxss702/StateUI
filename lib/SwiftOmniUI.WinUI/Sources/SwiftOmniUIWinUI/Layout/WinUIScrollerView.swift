@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 import CSwiftOmniUIWinUI
 
@@ -14,6 +14,9 @@ final class WinUIScrollerView: WinUIView {
 
     /// The next actual viewport during ViewChanging. It is not the inertia's predicted final offset.
     var nextOffset: Point?
+
+    /// Where the view finally lands once a move - inertia's own included - is over, per ViewChanging's own word.
+    var finalOffset: Point?
 
     /// Says the user took hold of the scroller, or let go of it.
     var onHeld: ((Bool) -> Void)?

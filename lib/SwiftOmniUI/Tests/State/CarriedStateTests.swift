@@ -16,7 +16,7 @@
 // controls - is its StateChannels, CarriedReports and DisplayCycle.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 /// A view on a carried state somebody else declared, reading it - so a test can
 /// see that reading one records nothing, and that `@Binding` is how a carried

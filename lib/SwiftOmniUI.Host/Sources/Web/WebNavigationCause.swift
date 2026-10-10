@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// Why a web view's navigation began: the step the program asked for - back, forward, the page again - else what the
 /// platform tells, kept to the navigation's end whatever is asked meanwhile.

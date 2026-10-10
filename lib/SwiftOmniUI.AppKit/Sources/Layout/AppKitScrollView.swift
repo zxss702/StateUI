@@ -4,7 +4,7 @@
 #if os(macOS)
 import AppKit
 import QuartzCore
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// A native scroll surface: its document geometry, its offset reported on the

@@ -10,7 +10,7 @@
 // reads a property off its own frames or off the tree.
 
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 
 @MainActor final class DrivenPatchTests: XCTestCase {
     override func setUp() {

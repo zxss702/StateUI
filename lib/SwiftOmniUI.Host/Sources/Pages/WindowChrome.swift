@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Paweł Krzywdziński and Contributors
 // SPDX-License-Identifier: Apache-2.0
 
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 
 /// The one chrome a window composes from what it shows, the same on every host: its title, the way back, the visible
 /// page's actions, what stands in the title's place and beside it, the bars' colours, the page's menus and the

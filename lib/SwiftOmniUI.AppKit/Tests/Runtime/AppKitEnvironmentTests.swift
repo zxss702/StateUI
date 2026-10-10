@@ -4,7 +4,7 @@
 #if os(macOS)
 import Foundation
 import XCTest
-@_spi(Host) @testable import SwiftOmniUI
+@_spi(Host) @testable import SwiftOmniUICore
 @_spi(Host) @testable import SwiftOmniUIHost
 @testable import SwiftOmniUIAppKit
 

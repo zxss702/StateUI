@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #if os(Linux)
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @_spi(Host) import SwiftOmniUIHost
 
 /// The GTK host's string tables: where a `LocalizedStringKey` is answered.

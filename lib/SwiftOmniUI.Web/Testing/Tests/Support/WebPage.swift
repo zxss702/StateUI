@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import CWebTesting
-@_spi(Host) import SwiftOmniUI
+@_spi(Host) import SwiftOmniUICore
 @testable import SwiftOmniUIWeb
 
 /// What the page holds, as the suite reads it - an element's children, its style, its attributes, its words and a
