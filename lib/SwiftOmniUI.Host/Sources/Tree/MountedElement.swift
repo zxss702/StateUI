@@ -186,9 +186,12 @@ import CRT
             arrange(childPatches, tree: tree, virtualized: lazy ? lazyIdentities : nil)
 
         case .changed(let childPatches):
+            // Each child patch finds its child by id: one table for a long list, not a search a patch.
+            let places = childPatches.count > 4
+                ? Dictionary(children.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first }) : nil
             for childPatch in childPatches {
                 // A new child arrives only in an arranged list; a sparse list naming a stranger drifted.
-                guard let index = children.firstIndex(where: { $0.id == childPatch.id }) else {
+                guard let index = places?[childPatch.id] ?? children.firstIndex(where: { $0.id == childPatch.id }) else {
                     tree.intake.drifted(
                         "a patch names child '\(childPatch.id)' that '\(id)' does not have")
                     continue
